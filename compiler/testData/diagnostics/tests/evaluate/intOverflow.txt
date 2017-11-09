@@ -20,6 +20,9 @@ public val l20: kotlin.Int = -1702967296
 public val l21: kotlin.Int = 0
 public val l22: kotlin.Int = 0
 public val l23: kotlin.Int = -1
+public val l24: kotlin.Int = -1
+public val l25: kotlin.Int = -1
+public val l26: kotlin.Int = -1
 public fun foo(): kotlin.Unit
 
 public final class A {

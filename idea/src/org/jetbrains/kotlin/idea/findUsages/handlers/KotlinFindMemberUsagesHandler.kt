@@ -45,13 +45,13 @@ import org.jetbrains.kotlin.idea.search.excludeKotlinSources
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
+import org.jetbrains.kotlin.idea.search.isOnlyKotlinSearch
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
     protected constructor(declaration: T, elementsToSearch: Collection<PsiElement>, factory: KotlinFindUsagesHandlerFactory)
@@ -113,7 +113,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
                     when (access) {
                         ReadWriteAccessDetector.Access.Read -> kotlinOptions.isReadAccess
                         ReadWriteAccessDetector.Access.Write -> kotlinOptions.isWriteAccess
-                        ReadWriteAccessDetector.Access.ReadWrite -> true
+                        ReadWriteAccessDetector.Access.ReadWrite -> kotlinOptions.isReadWriteAccess
                     }
                 }
             }
@@ -147,15 +147,18 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
                     addTask { query.forEach(referenceProcessor) }
                 }
 
-
-                for (psiMethod in element.toLightMethods()) {
-                    var searchScope = options.searchScope
+                if (element is KtElement && !isOnlyKotlinSearch(options.searchScope)) {
                     // TODO: very bad code!! ReferencesSearch does not work correctly for constructors and annotation parameters
-                    if (element is KtNamedFunction || (element is KtParameter && element.dataClassComponentFunction() != null)) {
-                        searchScope = searchScope.excludeKotlinSources()
+                    val psiMethodScopeSearch = when {
+                        element is KtNamedFunction || element is KtParameter && element.dataClassComponentFunction() != null ->
+                            options.searchScope.excludeKotlinSources()
+                        else -> options.searchScope
                     }
-                    applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, searchScope, true)).let { query ->
-                        addTask { query.forEach(referenceProcessor) }
+
+                    for (psiMethod in element.toLightMethods()) {
+                        applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, psiMethodScopeSearch, true)).let { query ->
+                            addTask { query.forEach(referenceProcessor) }
+                        }
                     }
                 }
             }
@@ -164,7 +167,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
                 addTask {
                     val overriders = HierarchySearchRequest(element, options.searchScope, true).searchOverriders()
                     overriders.all {
-                        val element = runReadAction { it.check { it.isValid }?.navigationElement } ?: return@all true
+                        val element = runReadAction { it.takeIf { it.isValid }?.navigationElement } ?: return@all true
                         KotlinFindUsagesHandler.processUsage(uniqueProcessor, element)
                     }
                 }
@@ -180,7 +183,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
                                              options: FindUsagesOptions,
                                              query: Query<PsiReference>): Query<PsiReference>
 
-    override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean = !isSingleFile
+    override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean = !isSingleFile && psiElement !is KtParameter
 
     override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
         val callableDescriptor = (target as? KtCallableDeclaration)?.resolveToDescriptorIfAny() as? CallableDescriptor

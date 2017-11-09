@@ -17,26 +17,24 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.types.Variance
-import java.util.Collections
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import java.util.*
 
-object CreateGetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtArrayAccessExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): KtArrayAccessExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, KtArrayAccessExpression::class.java)
-    }
-
+object CreateGetFunctionActionFactory : CreateGetSetFunctionActionFactory(isGet = true) {
     override fun createCallableInfo(element: KtArrayAccessExpression, diagnostic: Diagnostic): CallableInfo? {
         val arrayExpr = element.arrayExpression ?: return null
 
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
         val parameters = element.indexExpressions.map { ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE)) }
         val returnType = TypeInfo(element, Variance.OUT_VARIANCE)
-        return FunctionInfo("get", arrayType, returnType, Collections.emptyList(), parameters, isOperator = true)
+        return FunctionInfo(
+                OperatorNameConventions.GET.asString(), arrayType, returnType, Collections.emptyList(), parameters, isOperator = true
+        )
     }
 }

@@ -495,14 +495,15 @@ public class TokenStream {
     }
 
     public TokenStream(Reader in,
-                       String sourceName, int lineno)
+                       String sourceName, CodePosition position)
     {
-        this.in = new LineBuffer(in, lineno);
+        this.in = new LineBuffer(in, position);
         this.pushbackToken = EOF;
         this.sourceName = sourceName;
         flags = 0;
-        secondToLastPosition = new CodePosition(lineno, 0);
-        lastPosition = new CodePosition(lineno, 0);
+        secondToLastPosition = position;
+        lastPosition = position;
+        lastTokenPosition = position;
     }
 
     /* return and pop the token from the stream if it matches...
@@ -514,8 +515,7 @@ public class TokenStream {
             return true;
 
         // didn't match, push back token
-        tokenno--;
-        this.pushbackToken = token;
+        ungetToken(token);
         return false;
     }
 
@@ -526,6 +526,8 @@ public class TokenStream {
             throw new RuntimeException(message);
         }
         this.pushbackToken = tt;
+        lastPosition = secondToLastPosition;
+        lastTokenPosition = tokenPosition;
         tokenno--;
     }
 
@@ -533,6 +535,8 @@ public class TokenStream {
         int result = getToken();
 
         this.pushbackToken = result;
+        lastPosition = secondToLastPosition;
+        lastTokenPosition = tokenPosition;
         tokenno--;
         return result;
     }
@@ -583,13 +587,14 @@ public class TokenStream {
     }
 
     public int getToken() throws IOException {
-      int c;
-      do {
-        c = getTokenHelper();
-      } while (c == RETRY_TOKEN);
+        lastTokenPosition = tokenPosition;
+        int c;
+        do {
+            c = getTokenHelper();
+        } while (c == RETRY_TOKEN);
 
-      updatePosition();
-      return c;
+        updatePosition();
+        return c;
     }
 
     private int getTokenHelper() throws IOException {
@@ -613,6 +618,7 @@ public class TokenStream {
             }
         } while (isJSSpace(c) || c == '\n');
 
+        tokenPosition = new CodePosition(in.getLineno(), Math.max(in.getOffset() - 1, 0));
         if (c == EOF_CHAR)
             return EOF;
         if (c != '-' && c != '\n')
@@ -694,8 +700,8 @@ public class TokenStream {
             }
             in.unread();
 
-               String str = getStringFromBuffer();
-            if (!containsEscape) {
+            String str = getStringFromBuffer();
+            if (!containsEscape && !treatKeywordAsIdentifier) {
                 // OPT we shouldn't have to make a string (object!) to
                 // check if it's a keyword.
 
@@ -1475,8 +1481,11 @@ public class TokenStream {
 
     CodePosition secondToLastPosition;
     CodePosition lastPosition;
+    CodePosition tokenPosition;
+    CodePosition lastTokenPosition;
 
     private int op;
+    public boolean treatKeywordAsIdentifier;
 
     // Set this to an inital non-null value so that the Parser has
     // something to retrieve even if an error has occured and no

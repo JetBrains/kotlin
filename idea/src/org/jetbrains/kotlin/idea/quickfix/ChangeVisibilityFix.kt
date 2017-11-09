@@ -35,15 +35,15 @@ import org.jetbrains.kotlin.resolve.ExposedVisibilityChecker
 
 open class ChangeVisibilityFix(
         element: KtModifierListOwner,
-        protected val elementName: String,
-        protected val visibilityModifier: KtModifierKeywordToken
+        private val elementName: String,
+        private val visibilityModifier: KtModifierKeywordToken
 ) : KotlinQuickFixAction<KtModifierListOwner>(element) {
 
     override fun getText() = "Make '$elementName' $visibilityModifier"
     override fun getFamilyName() = "Make $visibilityModifier"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        element.setVisibility(visibilityModifier)
+        element?.setVisibility(visibilityModifier)
     }
 
     protected class ChangeToPublicFix(element: KtModifierListOwner, elementName: String) :
@@ -52,8 +52,10 @@ open class ChangeVisibilityFix(
     protected class ChangeToProtectedFix(element: KtModifierListOwner, elementName: String) :
             ChangeVisibilityFix(element, elementName, KtTokens.PROTECTED_KEYWORD) {
 
-        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) =
-                super.isAvailable(project, editor, file) && element.canBeProtected()
+        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+            val element = element ?: return false
+            return super.isAvailable(project, editor, file) && element.canBeProtected()
+        }
     }
 
     protected class ChangeToInternalFix(element: KtModifierListOwner, elementName: String) :
@@ -62,8 +64,10 @@ open class ChangeVisibilityFix(
     protected class ChangeToPrivateFix(element: KtModifierListOwner, elementName: String) :
             ChangeVisibilityFix(element, elementName, KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
 
-        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) =
-                super.isAvailable(project, editor, file) && element.canBePrivate()
+        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+            val element = element ?: return false
+            return super.isAvailable(project, editor, file) && element.canBePrivate()
+        }
     }
 
     companion object {

@@ -1,0 +1,6 @@
+info:
+info: <unknown>
+info:   bar (reachable from simple.js:7)
+info:   console
+info:     log (reachable from simple.js:7)
+OK

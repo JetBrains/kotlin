@@ -17,14 +17,24 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.engine.DebuggerManagerThreadImpl
+import com.intellij.debugger.engine.events.DebuggerCommandImpl
+import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
+import com.intellij.psi.PsiElement
 import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_ASM_TYPE
+import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
+import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
+import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.util.*
@@ -50,6 +60,24 @@ fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debug
     return markerLocalVariables.firstOrNull {
         lambdaOrdinalByLocalVariable(it.name()) == lambdaOrdinal && functionNameByLocalVariable(it.name()) == functionName
     } != null
+}
+
+fun <T : Any> DebugProcessImpl.invokeInManagerThread(f: (DebuggerContextImpl) -> T?): T? {
+    var result: T? = null
+    val command: DebuggerCommandImpl = object : DebuggerCommandImpl() {
+        override fun action() {
+            result = runReadAction { f(debuggerContext) }
+        }
+    }
+
+    when {
+        DebuggerManagerThreadImpl.isManagerThread() ->
+            managerThread.invoke(command)
+        else ->
+            managerThread.invokeAndWait(command)
+    }
+
+    return result
 }
 
 private fun lambdaOrdinalByArgument(elementAt: KtFunction, context: BindingContext): Int {
@@ -124,4 +152,86 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
 
     override fun getArgumentValues(): List<Value> = emptyList()
     override fun virtualMachine() = vm
+}
+
+private val DO_RESUME_SIGNATURE = "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;"
+
+fun isInSuspendMethod(location: Location): Boolean {
+    val method = location.method()
+    val signature = method.signature()
+
+    return signature.contains(CONTINUATION_ASM_TYPE.toString()) ||
+           (method.name() == DO_RESUME_METHOD_NAME && signature == DO_RESUME_SIGNATURE)
+}
+
+fun suspendFunctionFirstLineLocation(location: Location): Int? {
+    if (!isInSuspendMethod(location)) {
+        return null
+    }
+
+    val lineNumber = location.method().location()?.lineNumber()
+    if (lineNumber == -1) {
+        return null
+    }
+
+    return lineNumber
+}
+
+fun isOnSuspendReturnOrReenter(location: Location): Boolean {
+    val suspendStartLineNumber = suspendFunctionFirstLineLocation(location) ?: return false
+    return suspendStartLineNumber == location.lineNumber()
+}
+
+fun isLastLineLocationInMethod(location: Location): Boolean {
+    val knownLines = location.method().allLineLocations().map { it.lineNumber() }.filter { it != -1 }
+    if (knownLines.isEmpty()) {
+        return false
+    }
+
+    return knownLines.max() == location.lineNumber()
+}
+
+fun isOneLineMethod(location: Location): Boolean {
+    val allLineLocations = location.method().allLineLocations()
+    val firstLine = allLineLocations.firstOrNull()?.lineNumber()
+    val lastLine = allLineLocations.lastOrNull()?.lineNumber()
+
+    return firstLine != null && firstLine == lastLine
+}
+
+fun findElementAtLine(file: KtFile, line: Int): PsiElement? {
+    val lineStartOffset = file.getLineStartOffset(line) ?: return null
+    val lineEndOffset = file.getLineEndOffset(line) ?: return null
+
+    var topMostElement: PsiElement? = null
+    var elementAt: PsiElement?
+    for (offset in lineStartOffset until lineEndOffset) {
+        elementAt = file.findElementAt(offset)
+        if (elementAt != null) {
+            topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, offset)
+            if (topMostElement is KtElement) {
+                break
+            }
+        }
+    }
+
+    return topMostElement
+}
+
+fun findCallByEndToken(element: PsiElement): KtCallExpression? {
+    if (element is KtElement) return null
+
+    return when (element.node.elementType) {
+        KtTokens.RPAR -> (element.parent as? KtValueArgumentList)?.parent as? KtCallExpression
+        KtTokens.RBRACE -> {
+            val braceParent = CodeInsightUtils.getTopParentWithEndOffset(element, KtCallExpression::class.java)
+            when (braceParent) {
+                is KtCallExpression -> braceParent
+                is KtLambdaArgument -> braceParent.parent as? KtCallExpression
+                is KtValueArgument -> (braceParent.parent as? KtValueArgumentList)?.parent as? KtCallExpression
+                else -> null
+            }
+        }
+        else -> null
+    }
 }

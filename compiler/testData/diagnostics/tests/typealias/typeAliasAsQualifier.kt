@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+
 class C {
     typealias Self = C
     class Nested {

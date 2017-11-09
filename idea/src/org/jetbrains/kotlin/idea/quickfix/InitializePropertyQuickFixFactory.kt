@@ -28,10 +28,11 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
+import org.jetbrains.kotlin.idea.codeInsight.shorten.runRefactoringAndKeepDelayedRequests
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.appendElement
@@ -55,6 +56,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
         override fun getFamilyName() = text
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val element = element ?: return
             val descriptor = element.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
             val initializerText = CodeInsightUtils.defaultInitializer(descriptor.type) ?: "null"
             val initializer = element.setInitializer(KtPsiFactory(project).createExpression(initializerText))!!
@@ -72,7 +74,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
 
         override fun startInWriteAction(): Boolean = false
 
-        private fun configureChangeSignature(propertyDescriptor: PropertyDescriptor): KotlinChangeSignatureConfiguration {
+        private fun configureChangeSignature(property: KtProperty, propertyDescriptor: PropertyDescriptor): KotlinChangeSignatureConfiguration {
             return object : KotlinChangeSignatureConfiguration {
                 override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                     return originalDescriptor.modify {
@@ -81,9 +83,9 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                                 callableDescriptor = originalDescriptor.baseDescriptor,
                                 name = propertyDescriptor.name.asString(),
                                 originalTypeInfo = KotlinTypeInfo(false, propertyDescriptor.type),
-                                valOrVar = element.valOrVarKeyword.toValVar(),
-                                modifierList = element.modifierList,
-                                defaultValueForCall = KtPsiFactory(element.project).createExpression(initializerText)
+                                valOrVar = property.valOrVarKeyword.toValVar(),
+                                modifierList = property.modifierList,
+                                defaultValueForCall = KtPsiFactory(property.project).createExpression(initializerText)
                         )
                         it.addParameter(newParam)
                     }
@@ -94,6 +96,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
         }
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val element = element ?: return
             val klass = element.containingClassOrObject ?: return
             val propertyDescriptor = element.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
 
@@ -108,11 +111,11 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 val constructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
                 val contextElement = constructorDescriptor.source.getPsi() ?: return
                 val constructorPointer = contextElement.createSmartPointer()
-                val config = configureChangeSignature(propertyDescriptor)
+                val config = configureChangeSignature(element, propertyDescriptor)
                 val changeSignature = { runChangeSignature(project, constructorDescriptor, config, contextElement, text) }
                 changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
                     val constructorOrClass = constructorPointer.element
-                    val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.getPrimaryConstructor()
+                    val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.primaryConstructor
                     constructor?.getValueParameters()?.lastOrNull()?.replace(parameterToInsert)
                 }
             }
@@ -135,14 +138,16 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                         val classDescriptor = propertyDescriptor.containingDeclaration as ClassDescriptorWithResolutionScopes
                         val constructorScope = classDescriptor.scopeForClassHeaderResolution
                         val validator = CollectingNameValidator(originalDescriptor.parameters.map { it.name }) { name ->
-                            constructorScope.getContributedDescriptors(DescriptorKindFilter.VARIABLES, { it.asString() == name }).isEmpty()
+                            constructorScope.getContributedDescriptors(DescriptorKindFilter.VARIABLES).all {
+                                it !is VariableDescriptor || it.name.asString() != name
+                            }
                         }
                         val initializerText = CodeInsightUtils.defaultInitializer(propertyDescriptor.type) ?: "null"
                         val newParam = KotlinParameterInfo(
                                 callableDescriptor = originalDescriptor.baseDescriptor,
                                 name = KotlinNameSuggester.suggestNameByName(propertyDescriptor.name.asString(), validator),
                                 originalTypeInfo = KotlinTypeInfo(false, propertyDescriptor.type),
-                                defaultValueForCall = KtPsiFactory(element.project).createExpression(initializerText)
+                                defaultValueForCall = KtPsiFactory(element!!.project).createExpression(initializerText)
                         )
                         it.addParameter(newParam)
                     }
@@ -159,6 +164,8 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 descriptorsToProcess: Iterator<ConstructorDescriptor>,
                 visitedElements: MutableSet<PsiElement> = HashSet()
         ) {
+            val element = element!!
+
             if (!descriptorsToProcess.hasNext()) return
             val descriptor = descriptorsToProcess.next()
             val constructorPointer = descriptor.source.getPsi()?.createSmartPointer()
@@ -167,26 +174,24 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
 
             changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
                 val constructorOrClass = constructorPointer?.element
-                val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.getPrimaryConstructor()
+                val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.primaryConstructor
                 if (constructor == null || !visitedElements.add(constructor)) return@runRefactoringWithPostprocessing
                 constructor.getValueParameters().lastOrNull()?.let { newParam ->
                     val psiFactory = KtPsiFactory(project)
-                    if (constructor is KtSecondaryConstructor) {
-                        constructor.getOrCreateBody().appendElement(psiFactory.createExpression("this.${element.name} = ${newParam.name!!}"))
-                    }
-                    else {
-                        element.setInitializer(psiFactory.createExpression(newParam.name!!))
-                    }
+                    (constructor as? KtSecondaryConstructor)?.getOrCreateBody()?.appendElement(
+                            psiFactory.createExpression("this.${element.name} = ${newParam.name!!}")
+                    ) ?: element.setInitializer(psiFactory.createExpression(newParam.name!!))
                 }
                 processConstructors(project, propertyDescriptor, descriptorsToProcess)
             }
         }
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val element = element ?: return
             val propertyDescriptor = element.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
             val classDescriptor = propertyDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes ?: return
             val klass = element.containingClassOrObject ?: return
-            val constructorDescriptors = if (klass.hasExplicitPrimaryConstructor() || klass.getSecondaryConstructors().isEmpty()) {
+            val constructorDescriptors = if (klass.hasExplicitPrimaryConstructor() || klass.secondaryConstructors.isEmpty()) {
                 listOf(classDescriptor.unsubstitutedPrimaryConstructor!!)
             }
             else {
@@ -196,7 +201,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 }
             }
 
-            project.runWithElementsToShortenIsEmptyIgnored {
+            project.runRefactoringAndKeepDelayedRequests {
                 processConstructors(project, propertyDescriptor, constructorDescriptors.iterator())
             }
         }
@@ -217,7 +222,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
         (property.containingClassOrObject as? KtClass)?.let { klass ->
             if (klass.isAnnotation() || klass.isInterface()) return@let
 
-            if (property.accessors.isNotEmpty() || klass.getSecondaryConstructors().any { !it.getDelegationCall().isCallToThis }) {
+            if (property.accessors.isNotEmpty() || klass.secondaryConstructors.any { !it.getDelegationCall().isCallToThis }) {
                 actions.add(InitializeWithConstructorParameter(property))
             }
             else {

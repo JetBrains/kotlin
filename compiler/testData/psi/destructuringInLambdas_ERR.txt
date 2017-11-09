@@ -1,4 +1,4 @@
-JetFile: destructuringInLambdas_ERR.kt
+KtFile: destructuringInLambdas_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

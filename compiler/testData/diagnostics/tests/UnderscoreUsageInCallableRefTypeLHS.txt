@@ -1,0 +1,21 @@
+package
+
+public val tesLHSTypeFQN: kotlin.reflect.KClass<___.____>
+public val testCallableRefLHSType: kotlin.reflect.KFunction1<___, kotlin.String>
+public val testCallableRefLHSType2: kotlin.reflect.KFunction1<___, kotlin.String>
+public val testClassLiteralLHSType: kotlin.reflect.KClass<___>
+public val testClassLiteralLHSType2: kotlin.reflect.KClass<___>
+
+public final class ___ {
+    public constructor ___()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class ____ {
+        public constructor ____()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -27,7 +27,7 @@ import java.io.File
 abstract class AbstractKDocLexerTest : TestCase() {
     protected fun doTest(fileName: String) {
         val text = File(fileName).readText()
-        val lexerResult = printTokens(text, 0, KDocLexer())
+        val lexerResult = printTokens(StringUtil.convertLineSeparators(text), 0, KDocLexer())
         KtUsefulTestCase.assertSameLinesWithFile(fileName.replaceAfterLast(".", "txt"), lexerResult)
     }
 

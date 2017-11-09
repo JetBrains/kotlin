@@ -42,11 +42,13 @@ import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 class ArtificialElementInsertHandler(
-        val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
+        private val textBeforeCaret: String,
+        private val textAfterCaret: String,
+        private val shortenRefs: Boolean
+) : InsertHandler<LookupElement>{
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val offset = context.editor.caretModel.offset
         val startOffset = offset - item.lookupString.length
@@ -209,11 +211,12 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun <T : DeclarationDescriptor?> T.substituteFixed(substitutor: TypeSubstitutor): T {
-    if (this is LocalVariableDescriptor || this is ValueParameterDescriptor || this is TypeParameterDescriptor) { // TODO: it's not implemented for them
+    if (this is LocalVariableDescriptor || this is ValueParameterDescriptor || this !is Substitutable<*>) {
         return this
     }
-    return this?.substitute(substitutor) as T
+    return this.substitute(substitutor) as T
 }
 
 private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () -> Collection<LookupElement>, matchedInfos: Collection<ExpectedInfo>) {
@@ -262,10 +265,15 @@ fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade,
 }
 
 enum class SmartCompletionItemPriority {
+    ARRAY_LITERAL_IN_ANNOTATION,
     MULTIPLE_ARGUMENTS_ITEM,
+    LAMBDA_SIGNATURE,
+    LAMBDA_SIGNATURE_EXPLICIT_PARAMETER_TYPES,
     IT,
     TRUE,
     FALSE,
+    NAMED_ARGUMENT_TRUE,
+    NAMED_ARGUMENT_FALSE,
     CLASS_LITERAL,
     THIS,
     DELEGATES_STATIC_MEMBER,
@@ -278,6 +286,7 @@ enum class SmartCompletionItemPriority {
     LAMBDA,
     CALLABLE_REFERENCE,
     NULL,
+    NAMED_ARGUMENT_NULL,
     INHERITOR_INSTANTIATION
 }
 
@@ -296,7 +305,7 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
 ): Collection<FuzzyType> {
     if (callTypeAndReceiver is CallTypeAndReceiver.CALLABLE_REFERENCE) {
         val lhs = callTypeAndReceiver.receiver?.let { bindingContext[BindingContext.DOUBLE_COLON_LHS, it] }
-        return (this as? CallableDescriptor)?.callableReferenceType(resolutionFacade, lhs).singletonOrEmptyList()
+        return listOfNotNull((this as? CallableDescriptor)?.callableReferenceType(resolutionFacade, lhs))
     }
 
     if (this is CallableDescriptor) {
@@ -310,11 +319,11 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
             return emptyList()
         }
 
-        if (this is VariableDescriptor) { //TODO: generic properties!
-            return smartCastCalculator.types(this).map { it.toFuzzyType(emptyList()) }
+        return if (this is VariableDescriptor) { //TODO: generic properties!
+            smartCastCalculator.types(this).map { it.toFuzzyType(emptyList()) }
         }
         else {
-            return listOf(returnType)
+            listOf(returnType)
         }
     }
     else if (this is ClassDescriptor && kind.isSingleton) {

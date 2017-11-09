@@ -1,20 +1,25 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
 class Controller {
     var result = ""
     var ok = false
-    suspend fun suspendHere(v: String, x: Continuation<Unit>) {
+    suspend fun suspendHere(v: String): Unit = suspendCoroutineOrReturn { x ->
         result += v
         x.resume(Unit)
-    }
-
-    operator fun handleResult(u: Unit, v: Continuation<Nothing>) {
-        ok = true
+        COROUTINE_SUSPENDED
     }
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {
+fun builder(c: suspend Controller.() -> Unit): String {
     val controller = Controller()
-    c(controller).resume(Unit)
-    if (!controller.ok) throw java.lang.RuntimeException("Fail ok")
+    c.startCoroutine(controller, handleResultContinuation {
+        controller.ok = true
+    })
+    if (!controller.ok) throw RuntimeException("Fail ok")
     return controller.result
 }
 

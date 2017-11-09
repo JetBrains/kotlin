@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.idea.editor;
 import com.intellij.codeInsight.editorActions.BackspaceHandlerDelegate;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtFile;
+
+import static org.jetbrains.kotlin.idea.editor.LtGtTypingUtils.isAfterToken;
 
 public class KotlinBackspaceHandler extends BackspaceHandlerDelegate {
     private boolean deleteGt;
@@ -27,7 +30,9 @@ public class KotlinBackspaceHandler extends BackspaceHandlerDelegate {
     @Override
     public void beforeCharDeleted(char c, PsiFile file, Editor editor) {
         int offset = editor.getCaretModel().getOffset() - 1;
-        deleteGt = c =='<' && file instanceof KtFile && LtGtTypingUtils.shouldAutoCloseAngleBracket(offset, editor);
+        deleteGt = c =='<' && file instanceof KtFile &&
+                   (isAfterToken(offset, editor, KtTokens.FUN_KEYWORD) ||
+                    isAfterToken(offset, editor, KtTokens.IDENTIFIER));
     }
 
     @Override

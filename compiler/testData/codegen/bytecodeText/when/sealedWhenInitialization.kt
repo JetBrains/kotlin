@@ -4,8 +4,10 @@ sealed class A {
     class C : A()
 }
 
+fun foo(): A = A.C()
+
 fun box(): String {
-    val a: A = A.C()
+    val a: A = foo()
     val b: Boolean
     when (a) {
         A.B -> b = true

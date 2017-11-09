@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,25 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.util.ArrayUtil;
-import kotlin.text.StringsKt;
-import org.apache.maven.artifact.Artifact;
+import com.intellij.openapi.util.text.StringUtil;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.utils.LibraryUtils;
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
-import org.jetbrains.kotlin.js.JavaScript;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -57,22 +56,28 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     private String outputFile;
 
     /**
-     * Flag enables or disables metafile generation
+     * Flag enables or disables .meta.js and .kjsm files generation, used to create libraries
      */
     @Parameter(defaultValue = "true")
     private boolean metaInfo;
-
-    /**
-     * Flag enables or disables kjsm generation
-     */
-    @Parameter(defaultValue = "true")
-    private boolean kjsm;
 
     /**
      * Flags enables or disable source map generation
      */
     @Parameter(defaultValue = "false")
     private boolean sourceMap;
+
+    @Parameter
+    private String sourceMapPrefix;
+
+    @Parameter(defaultValue = "inlining")
+    private String sourceMapEmbedSources;
+
+    /**
+     * Main invocation behaviour. Possible values are <b>call</b> and <b>noCall</b>.
+     */
+    @Parameter
+    private String main;
 
     /**
      * <p>Specifies which JS module system to generate compatible sources for. Options are:</p>
@@ -90,29 +95,47 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     private String moduleKind;
 
     @Override
-    protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments) throws MojoExecutionException {
-        arguments.outputFile = outputFile;
-        arguments.noStdlib = true;
-        arguments.metaInfo = metaInfo;
-        arguments.kjsm = kjsm;
-        arguments.moduleKind = moduleKind;
+    protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
+        arguments.setOutputFile(outputFile);
+        arguments.setNoStdlib(true);
+        arguments.setMetaInfo(metaInfo);
+        arguments.setModuleKind(moduleKind);
+        arguments.setMain(main);
 
-        List<String> libraries = getKotlinJavascriptLibraryFiles();
-        getLog().debug("libraryFiles: " + libraries);
-        arguments.libraryFiles = ArrayUtil.toStringArray(libraries);
+        List<String> libraries;
+        try {
+            libraries = getKotlinJavascriptLibraryFiles();
+        } catch (DependencyResolutionRequiredException e) {
+            throw new MojoExecutionException("Unresolved dependencies", e);
+        }
+        getLog().debug("libraries: " + libraries);
+        arguments.setLibraries(StringUtil.join(libraries, File.pathSeparator));
 
-        arguments.sourceMap = sourceMap;
-
-        Set<String> collector = getOutputDirectoriesCollector();
+        arguments.setSourceMap(sourceMap);
+        arguments.setSourceMapPrefix(sourceMapPrefix);
+        arguments.setSourceMapEmbedSources(sourceMapEmbedSources);
 
         if (outputFile != null) {
-            collector.add(new File(outputFile).getParent());
+            ConcurrentMap<String, List<String>> collector = getOutputDirectoriesCollector();
+            String key = project.getArtifactId();
+            List<String> paths = collector.computeIfAbsent(key, k -> Collections.synchronizedList(new ArrayList<>()));
+            paths.add(new File(outputFile).getParent());
         }
-        if (metaInfo) {
-            String output = com.google.common.base.Objects.firstNonNull(outputFile, ""); // fqname here because of J8 compatibility issues
-            String metaFile = StringsKt.substringBeforeLast(output, JavaScript.DOT_EXTENSION, output) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX;
-            collector.add(new File(metaFile).getParent());
+
+        StringBuilder sourceMapSourceRoots = new StringBuilder();
+        if (!sourceRoots.isEmpty()) {
+            sourceMapSourceRoots.append(sourceRoots.get(0).getAbsolutePath());
+            for (int i = 1; i < sourceRoots.size(); ++i) {
+                sourceMapSourceRoots.append(File.pathSeparator);
+                sourceMapSourceRoots.append(sourceRoots.get(i).getAbsolutePath());
+            }
         }
+
+        arguments.setSourceMapBaseDirs(sourceMapSourceRoots.toString());
+    }
+
+    protected List<String> getClassPathElements() throws DependencyResolutionRequiredException {
+        return project.getCompileClasspathElements();
     }
 
     /**
@@ -121,27 +144,30 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
      * @return array of paths to kotlin javascript libraries
      */
     @NotNull
-    private List<String> getKotlinJavascriptLibraryFiles() {
-        List<String> libraries = new ArrayList<String>();
+    private List<String> getKotlinJavascriptLibraryFiles() throws DependencyResolutionRequiredException {
+        List<String> libraries = new ArrayList<>();
 
-        for (Artifact artifact : project.getArtifacts()) {
-            if (artifact.getScope().equals(Artifact.SCOPE_COMPILE)) {
-                File file = artifact.getFile();
-                if (LibraryUtils.isKotlinJavascriptLibrary(file)) {
-                    libraries.add(file.getAbsolutePath());
-                }
-                else {
-                    getLog().warn("artifact " + artifact + " is not a Kotlin Javascript Library");
-                }
+        for (String path : getClassPathElements()) {
+            File file = new File(path);
+
+            if (file.exists() && LibraryUtils.isKotlinJavascriptLibrary(file)) {
+                libraries.add(file.getAbsolutePath());
+            }
+            else {
+                getLog().debug("artifact " + file.getAbsolutePath() + " is not a Kotlin Javascript Library");
             }
         }
 
-        for (String file : getOutputDirectoriesCollector()) {
-            if (new File(file).exists()) {
-                libraries.add(file);
-            }
-            else {
-                getLog().warn("JS output directory missing: " + file);
+        for (List<String> paths : getOutputDirectoriesCollector().values()) {
+            for (String path : paths) {
+                File file = new File(path);
+
+                if (file.exists() && LibraryUtils.isKotlinJavascriptLibrary(file)) {
+                    libraries.add(file.getAbsolutePath());
+                }
+                else {
+                    getLog().debug("JS output directory missing: " + file);
+                }
             }
         }
 
@@ -154,18 +180,24 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         return new K2JSCompilerArguments();
     }
 
+    @Override
+    protected List<String> getRelatedSourceRoots(MavenProject project) {
+        return project.getCompileSourceRoots();
+    }
+
     @NotNull
     @Override
     protected K2JSCompiler createCompiler() {
         return new K2JSCompiler();
     }
 
-    private Set<String> getOutputDirectoriesCollector() {
+    @SuppressWarnings("unchecked")
+    protected ConcurrentMap<String, List<String>> getOutputDirectoriesCollector() {
         lock.lock();
         try {
-            Set<String> collector = (Set<String>) getPluginContext().get(OUTPUT_DIRECTORIES_COLLECTOR_PROPERTY_NAME);
+            ConcurrentMap<String, List<String>> collector = (ConcurrentMap<String, List<String>>) getPluginContext().get(OUTPUT_DIRECTORIES_COLLECTOR_PROPERTY_NAME);
             if (collector == null) {
-                collector = new ConcurrentSkipListSet<String>();
+                collector = new ConcurrentSkipListMap<>();
                 getPluginContext().put(OUTPUT_DIRECTORIES_COLLECTOR_PROPERTY_NAME, collector);
             }
 

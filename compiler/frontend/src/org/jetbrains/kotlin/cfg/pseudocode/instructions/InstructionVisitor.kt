@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 
-open class InstructionVisitor() {
+open class InstructionVisitor {
     open fun visitAccessInstruction(instruction: AccessValueInstruction) {
         visitInstructionWithNext(instruction)
     }
@@ -32,6 +31,10 @@ open class InstructionVisitor() {
 
     open fun visitLocalFunctionDeclarationInstruction(instruction: LocalFunctionDeclarationInstruction) {
         visitInstructionWithNext(instruction)
+    }
+
+    open fun visitInlinedLocalFunctionDeclarationInstruction(instruction: InlinedLocalFunctionDeclarationInstruction) {
+        visitLocalFunctionDeclarationInstruction(instruction)
     }
 
     open fun visitVariableDeclarationInstruction(instruction: VariableDeclarationInstruction) {

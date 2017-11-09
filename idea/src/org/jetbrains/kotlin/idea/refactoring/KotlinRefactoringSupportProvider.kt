@@ -71,6 +71,7 @@ class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
                     return grandparent is KtCatchClause || grandparent is KtFunctionLiteral
                 }
             }
+            is KtLabeledExpression, is KtImportAlias -> return true
         }
         return false
     }

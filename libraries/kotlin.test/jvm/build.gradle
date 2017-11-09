@@ -1,0 +1,40 @@
+
+description = 'Kotlin Test'
+
+apply plugin: 'kotlin-platform-jvm'
+
+configureJvm6Project(project)
+configurePublishing(project)
+
+dependencies {
+    expectedBy project(':kotlin-test:kotlin-test-common')
+    compile project(':kotlin-stdlib')
+    testCompile project(":kotlin-test:kotlin-test-junit")
+    testCompile('junit:junit:4.12')
+}
+
+
+archivesBaseName = 'kotlin-test'
+
+jar {
+    manifestAttributes(manifest, project, 'Test')
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+dist {
+    from (jar, sourcesJar)
+}
+
+compileKotlin {
+    // TODO: Why "-Xmulti-platfrom" ?
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable",
+                                      "-Xmulti-platform", "-module-name", project.archivesBaseName]
+}
+
+compileTestKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+}

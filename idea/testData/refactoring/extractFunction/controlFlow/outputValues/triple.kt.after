@@ -3,8 +3,8 @@
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
-// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var b: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var c: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var d: kotlin.Int defined in foo
 // SIBLING:
@@ -13,7 +13,7 @@ fun foo(a: Int): Int {
     var c: Int = 1
     var d: Int = 1
 
-    val triple = triple(a, b, c, d)
+    val triple = triple(b, a, c, d)
     b = triple.first
     c = triple.second
     d = triple.third
@@ -21,7 +21,7 @@ fun foo(a: Int): Int {
     return b + c + d
 }
 
-private fun triple(a: Int, b: Int, c: Int, d: Int): Triple<Int, Int, Int> {
+private fun triple(b: Int, a: Int, c: Int, d: Int): Triple<Int, Int, Int> {
     var b1 = b
     var c1 = c
     var d1 = d

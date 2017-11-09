@@ -1,0 +1,3 @@
+11 val x = <bold>foo</bold>
+4 	var <bold>foo: Int</bold>
+5 		get() = <bold>1</bold>

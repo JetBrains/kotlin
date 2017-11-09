@@ -49,7 +49,7 @@ import java.io.File
 
     fun testClassCompletionInLambda() = doTest(1, "String", " (kotlin)", '\n')
 
-    fun testClassCompletionBeforeName() = doTest(1, "StringBuilder", " (java.lang)", '\n')
+    fun testClassCompletionBeforeName() = doTest(1, "StringBuilder", " (kotlin.text)", '\n')
 
     fun testDoNotInsertImportForAlreadyImported() = doTest()
 
@@ -65,9 +65,9 @@ import java.io.File
 
     fun testNamedParametersCompletion() = doTest()
 
-    fun testNamedParametersCompletionOnEqual() = doTest(0, "paramTest", "paramTest =", null, '=')
+    fun testNamedParametersCompletionOnEqual() = doTest(0, "paramTest =", "paramTest =", null, '=')
 
-    fun testNamedParameterKeywordName() = doTest(1, "class", "class =", null, '\n')
+    fun testNamedParameterKeywordName() = doTest(1, "class =", "class =", null, '\n')
 
     fun testInsertJavaClassImport() = doTest()
 
@@ -129,7 +129,7 @@ import java.io.File
     fun testClassFromClassObject() = doTest(1, "Some", null, '\n')
     fun testClassFromClassObjectInPackage() = doTest(1, "Some", null, '\n')
 
-    fun testParameterType() = doTest(1, "StringBuilder", " (java.lang)", '\n')
+    fun testParameterType() = doTest(1, "StringBuilder", " (kotlin.text)", '\n')
 
     fun testLocalClassCompletion() = doTest(1, "LocalClass", null, '\n')
     fun testNestedLocalClassCompletion() = doTest(1, "Nested", null, '\n')

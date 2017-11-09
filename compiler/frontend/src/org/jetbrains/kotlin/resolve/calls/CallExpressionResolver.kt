@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -70,7 +71,8 @@ class CallExpressionResolver(
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val builtIns: KotlinBuiltIns,
-        private val qualifiedExpressionResolver: QualifiedExpressionResolver
+        private val qualifiedExpressionResolver: QualifiedExpressionResolver,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -279,11 +281,11 @@ class CallExpressionResolver(
                 }
                 else when (resolutionResult.resultCode) {
                     NAME_NOT_FOUND, CANDIDATES_WITH_WRONG_RECEIVER -> false
-                    else -> true
+                    else -> !USE_NEW_INFERENCE || resolutionResult.isSuccess
                 }
             }
 
-    fun resolveSimpleName(
+    private fun resolveSimpleName(
             context: ExpressionTypingContext, expression: KtSimpleNameExpression
     ): OverloadResolutionResults<VariableDescriptor> {
         val temporaryForVariable = TemporaryTraceAndCache.create(context, "trace to resolve as local variable or property", expression)
@@ -323,7 +325,7 @@ class CallExpressionResolver(
             // Additional "receiver != null" information should be applied if we consider a safe call
             if (receiverCanBeNull) {
                 initialDataFlowInfoForArguments = initialDataFlowInfoForArguments.disequate(
-                        receiverDataFlowValue, DataFlowValue.nullValue(builtIns))
+                        receiverDataFlowValue, DataFlowValue.nullValue(builtIns), languageVersionSettings)
             }
             else if (receiver is ReceiverValue) {
                 reportUnnecessarySafeCall(context.trace, receiver.type, element.node, receiver)
@@ -501,10 +503,9 @@ class CallExpressionResolver(
             val receiverQualifier = context.trace.get(BindingContext.QUALIFIER, expression.receiverExpression)
 
             if (receiverQualifier == null && expressionQualifier != null) {
-                assert(expressionQualifier is ClassQualifier) { "Only class can (package cannot) be accessed by instance reference: " + expressionQualifier }
-                context.trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(
-                        selectorExpression,
-                        (expressionQualifier as ClassQualifier).descriptor))
+                assert(expressionQualifier is ClassifierQualifier) { "Only class can (package cannot) be accessed by instance reference: " + expressionQualifier }
+                val descriptor = (expressionQualifier as ClassifierQualifier).descriptor
+                context.trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(selectorExpression, descriptor))
             }
         }
     }

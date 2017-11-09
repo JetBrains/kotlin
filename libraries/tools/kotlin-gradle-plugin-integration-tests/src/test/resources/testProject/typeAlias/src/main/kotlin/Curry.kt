@@ -1,8 +1,8 @@
 package foo
 
-class Curry<T, R>(private val f: FN2, private val arg1: T) {
-    typealias FN2 = (T, T) -> R
+typealias FN2<T, R> = (T, T) -> R
 
+class Curry<T, R>(private val f: FN2<T, R>, private val arg1: T) {
     operator fun invoke(arg2: T): R =
             f(arg1, arg2)
 }

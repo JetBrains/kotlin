@@ -1,0 +1,35 @@
+LineBreakpoint created at delegatedPropertyInClassWoRenderer.kt:9
+Run Java
+Connected to the target VM
+delegatedPropertyInClassWoRenderer.kt:9
+package delegatedPropertyInClassWoRenderer
+
+import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
+
+fun main(args: Array<String>) {
+    val a = A()
+    //Breakpoint!
+    args.size
+}
+
+class A {
+    val prop by MyDelegate()
+}
+
+class MyDelegate {
+    operator fun getValue(t: Any?, p: KProperty<*>): Int = 1
+}
+
+// RENDER_DELEGATED_PROPERTIES: false
+// PRINT_FRAME
+
+Compile bytecode for args.size
+ frame    = main:9, DelegatedPropertyInClassWoRendererKt {delegatedPropertyInClassWoRenderer}
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 6)
+   local    = a: delegatedPropertyInClassWoRenderer.A = {delegatedPropertyInClassWoRenderer.A@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 7)
+     field    = prop: int = {delegatedPropertyInClassWoRenderer.MyDelegate@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 13)
+                - Class has no fields
+Disconnected from the target VM
+
+Process finished with exit code 0

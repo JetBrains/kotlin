@@ -1,0 +1,4 @@
+3 class A(<bold>n: Int</bold>) {
+4 	val <bold>x = n</bold>
+6 	val <bold>y: Int</bold>
+14 	fun bar(<bold>m: Int</bold>) {

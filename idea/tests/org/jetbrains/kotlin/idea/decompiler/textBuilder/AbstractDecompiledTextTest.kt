@@ -30,7 +30,7 @@ abstract class AbstractDecompiledTextTest(baseDirectory: String, allowKotlinPack
     override fun getFileToDecompile(): VirtualFile = getClassFile(TEST_PACKAGE, getTestName(false), myModule!!)
 
     override fun checkPsiFile(psiFile: PsiFile) =
-            assertTrue(psiFile is KtClsFile, "Expecting decompiled kotlin file, was: " + psiFile.javaClass)
+            assertTrue(psiFile is KtClsFile, "Expecting decompiled kotlin file, was: " + psiFile::class.java)
 }
 
 abstract class AbstractCommonDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledText", true)

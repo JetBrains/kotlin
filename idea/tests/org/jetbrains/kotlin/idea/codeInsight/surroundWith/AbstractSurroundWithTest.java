@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,14 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
         doTest(path, new KotlinIfElseSurrounder());
     }
 
+    public void doTestWithIfElseExpressionSurrounder(String path) throws Exception {
+        doTest(path, new KotlinIfElseExpressionSurrounder(false));
+    }
+
+    public void doTestWithIfElseExpressionBracesSurrounder(String path) throws Exception {
+        doTest(path, new KotlinIfElseExpressionSurrounder(true));
+    }
+
     public void doTestWithNotSurrounder(String path) throws Exception {
         doTest(path, new KotlinNotSurrounder());
     }
@@ -63,8 +71,16 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
         doTest(path, new KotlinTryCatchSurrounder());
     }
 
+    public void doTestWithTryCatchExpressionSurrounder(String path) throws Exception {
+        doTest(path, new KotlinTryExpressionSurrounder.TryCatch());
+    }
+
     public void doTestWithTryCatchFinallySurrounder(String path) throws Exception {
         doTest(path, new KotlinTryCatchFinallySurrounder());
+    }
+
+    public void doTestWithTryCatchFinallyExpressionSurrounder(String path) throws Exception {
+        doTest(path, new KotlinTryExpressionSurrounder.TryCatchFinally());
     }
 
     public void doTestWithTryFinallySurrounder(String path) throws Exception {

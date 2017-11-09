@@ -1,0 +1,4 @@
+7 val x = <bold>1</bold>
+7 	val <bold>x = 1</bold>
+2 		fun foo(<bold>n: Int</bold>) {
+3 			val <bold>y = n</bold>

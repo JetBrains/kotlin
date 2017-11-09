@@ -15,7 +15,7 @@ class MyFragment: Fragment() {
 
 // 2 public _\$_findCachedViewById
 // 2 public _\$_clearFindViewByIdCache
-// 1 INVOKEVIRTUAL test/MyFragment\.getView
+// 1 INVOKEVIRTUAL android/app/Fragment\.getView
 // 1 GETSTATIC test/R\$id\.login : I
 // 1 GETSTATIC test/R\$id\.loginButton : I
 // 1 INVOKEVIRTUAL test/MyActivity\._\$_findCachedViewById

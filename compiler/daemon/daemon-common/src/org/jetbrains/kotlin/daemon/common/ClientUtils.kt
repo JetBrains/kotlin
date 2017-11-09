@@ -40,29 +40,51 @@ fun makePortFromRunFilenameExtractor(digest: String): (String) -> Int? {
     }
 }
 
+private const val ORPHANED_RUN_FILE_AGE_THRESHOLD_MS = 1000000L
 
+data class DaemonWithMetadata(val daemon: CompileService, val runFile: File, val jvmOptions: DaemonJVMOptions)
+
+// TODO: write metadata into discovery file to speed up selection
+// TODO: consider using compiler jar signature (checksum) as a CompilerID (plus java version, plus ???) instead of classpath checksum
+//    would allow to use same compiler from taken different locations
+//    reqs: check that plugins (or anything els) should not be part of the CP
 fun walkDaemons(registryDir: File,
                 compilerId: CompilerId,
-                filter: (File, Int) -> Boolean = { f, p -> true },
-                report: (DaemonReportCategory, String) -> Unit = { cat, msg -> }
-): Sequence<CompileService> {
+                fileToCompareTimestamp: File,
+                filter: (File, Int) -> Boolean = { _, _ -> true },
+                report: (DaemonReportCategory, String) -> Unit = { _, _ -> }
+): Sequence<DaemonWithMetadata> {
     val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk()
             .map { Pair(it, portExtractor(it.name)) }
-            .filter { it.second != null && filter(it.first, it.second!!) }
-            .mapNotNull {
-                assert(it.second!! > 0 && it.second!! < MAX_PORT_NUMBER)
-                report(DaemonReportCategory.DEBUG, "found daemon on port ${it.second}, trying to connect")
-                val daemon = tryConnectToDaemon(it.second!!, report)
+            .filter { (file, port) -> port != null && filter(file, port) }
+            .mapNotNull { (file, port) ->
+                assert(port!! in 1..(MAX_PORT_NUMBER - 1))
+                val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
+                report(DaemonReportCategory.DEBUG, "found daemon on port $port ($relativeAge ms old), trying to connect")
+                val daemon = tryConnectToDaemon(port, report)
                 // cleaning orphaned file; note: daemon should shut itself down if it detects that the run file is deleted
-                if (daemon == null && !it.first.delete()) {
-                    report(DaemonReportCategory.INFO, "WARNING: unable to delete seemingly orphaned file '${it.first.absolutePath}', cleanup recommended")
+                if (daemon == null) {
+                    if (relativeAge - ORPHANED_RUN_FILE_AGE_THRESHOLD_MS <= 0) {
+                        report(DaemonReportCategory.DEBUG, "found fresh run file '${file.absolutePath}' ($relativeAge ms old), but no daemon, ignoring it")
+                    }
+                    else {
+                        report(DaemonReportCategory.DEBUG, "found seemingly orphaned run file '${file.absolutePath}' ($relativeAge ms old), deleting it")
+                        if (!file.delete()) {
+                            report(DaemonReportCategory.INFO, "WARNING: unable to delete seemingly orphaned file '${file.absolutePath}', cleanup recommended")
+                        }
+                    }
                 }
-                daemon
+                try {
+                    daemon?.let { DaemonWithMetadata(it, file, it.getDaemonJVMOptions().get()) }
+                }
+                catch (e: Exception) {
+                    report(DaemonReportCategory.INFO, "ERROR: unable to retrieve daemon JVM options, assuming daemon is dead: ${e.message}")
+                    null
+                }
             }
 }
-
 
 private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileService? {
 
@@ -72,7 +94,7 @@ private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, 
         when (daemon) {
             null -> report(DaemonReportCategory.EXCEPTION, "daemon not found")
             is CompileService -> return daemon
-            else -> report(DaemonReportCategory.EXCEPTION, "Unable to cast compiler service, actual class received: ${daemon.javaClass.name}")
+            else -> report(DaemonReportCategory.EXCEPTION, "Unable to cast compiler service, actual class received: ${daemon::class.java.name}")
         }
     }
     catch (e: Throwable) {
@@ -81,10 +103,26 @@ private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, 
     return null
 }
 
+private const val validFlagFileKeywordChars = "abcdefghijklmnopqrstuvwxyz0123456789-_"
 
-fun makeAutodeletingFlagFile(keyword: String = "compiler-client"): File {
-    val validChars = "^a-zA-Z0-9-_"
-    val flagFile = File.createTempFile("kotlin-${keyword.filter { validChars.contains(it) }}-", "-is-running")
+fun makeAutodeletingFlagFile(keyword: String = "compiler-client", baseDir: File? = null): File {
+    val flagFile = File.createTempFile("kotlin-${keyword.filter { validFlagFileKeywordChars.contains(it.toLowerCase()) }}-", "-is-running", baseDir?.takeIf { it.isDirectory && it.exists() })
     flagFile.deleteOnExit()
     return flagFile
 }
+
+// Comparator for reliable choice between daemons
+class FileAgeComparator : Comparator<File> {
+    override fun compare(left: File, right: File): Int {
+        val leftTS = left.lastModified()
+        val rightTS = right.lastModified()
+        return when {
+            leftTS == 0L || rightTS == 0L -> 0 // cannot read any file timestamp, => undecidable
+            leftTS > rightTS -> -1
+            leftTS < rightTS -> 1
+            else -> compareValues(left.canonicalPath, right.canonicalPath)
+        }
+    }
+}
+
+const val LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE = "Assuming other daemons have"

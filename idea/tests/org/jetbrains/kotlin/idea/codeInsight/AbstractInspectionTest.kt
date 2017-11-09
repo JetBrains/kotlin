@@ -16,20 +16,12 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.analysis.AnalysisScope
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
-import com.intellij.codeInspection.ex.InspectionManagerEx
-import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
-import com.intellij.testFramework.IdeaTestUtil
-import com.intellij.testFramework.InspectionTestUtil
-import com.intellij.testFramework.LightProjectDescriptor
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
+import com.intellij.testFramework.TestLoggerFactory
+import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
@@ -42,11 +34,15 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
         val ENTRY_POINT_ANNOTATION = "test.anno.EntryPoint"
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
-
     override fun setUp() {
-        super.setUp()
-        EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(ENTRY_POINT_ANNOTATION)
+        try {
+            super.setUp()
+            EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(ENTRY_POINT_ANNOTATION)
+        }
+        catch (e: Throwable) {
+            TestLoggerFactory.onTestFinished(false)
+            throw e
+        }
     }
 
     override fun tearDown() {
@@ -58,17 +54,13 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
 
     }
 
+    protected open val forceUsePackageFolder: Boolean = false //workaround for IDEA-176033
+
     protected fun doTest(path: String) {
         val optionsFile = File(path)
         val options = FileUtil.loadFile(optionsFile, true)
 
         val inspectionClass = Class.forName(InTextDirectivesUtils.findStringWithPrefixes(options, "// INSPECTION_CLASS: ")!!)
-        val toolWrapper = LocalInspectionToolWrapper(inspectionClass.newInstance() as LocalInspectionTool)
-
-        val tool = toolWrapper.tool
-        if (tool is DifferentKotlinGradleVersionInspection) {
-            tool.testVersionMessage = "\$PLUGIN_VERSION"
-        }
 
         val fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(options, "// FIXTURE_CLASS: ")
 
@@ -89,7 +81,17 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                                     text
                                 else
                                     "package ${file.nameWithoutExtension};$text"
-                        configureByText(file.name, fileText)!!
+                        if (forceUsePackageFolder) {
+                            val packageName = fileText.substring(
+                                    "package".length,
+                                    fileText.indexOfAny(charArrayOf(';', '\n'))
+                            ).trim()
+                            val projectFileName = packageName.replace('.', '/') + "/" + file.name
+                            addFileToProject(projectFileName, fileText)
+                        }
+                        else {
+                            configureByText(file.name, fileText)!!
+                        }
                     }
                     file.extension == "gradle" -> {
                         val text = FileUtil.loadFile(file, true)
@@ -103,42 +105,16 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                 }
             }.toList()
 
-            val isJs = srcDir.endsWith("js")
-
-            val isWithRuntime = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.text, "// WITH_RUNTIME") != null }
-            val fullJdk = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.text, "// FULL_JDK") != null }
-
-            if (isJs) {
-                assertFalse(isWithRuntime)
-                assertFalse(fullJdk)
-            }
-
             try {
-                if (isJs) {
-                    ConfigLibraryUtil.configureKotlinJsRuntime(myFixture.module)
-                }
-                if (isWithRuntime) {
-                    ConfigLibraryUtil.configureKotlinRuntimeAndSdk(
-                            myFixture.module,
-                            if (fullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
-                    )
-                }
-
                 fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
 
                 configExtra(psiFiles, options)
 
-                val scope = AnalysisScope(project, psiFiles.map { it.virtualFile!! })
-                scope.invalidate()
-
-                val inspectionManager = (InspectionManager.getInstance(project) as InspectionManagerEx)
-                val globalContext = CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, project, inspectionManager, toolWrapper)
-
-                InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
-                InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, inspectionsTestDir.path)
+                val presentation = runInspection(
+                        inspectionClass, project, files = psiFiles.map { it.virtualFile!!}, withTestDir = inspectionsTestDir.path)
 
                 if (afterFiles.isNotEmpty()) {
-                    globalContext.getPresentation(toolWrapper).problemDescriptors.forEach {
+                    presentation.problemDescriptors.forEach {
                         problem ->
                         problem.fixes?.forEach {
                             CommandProcessor.getInstance().executeCommand(project, {
@@ -156,13 +132,6 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             }
             finally {
                 fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
-
-                if (isWithRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myFixture.module, IdeaTestUtil.getMockJdk17())
-                }
-                if (isJs) {
-                    ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(myFixture.module, IdeaTestUtil.getMockJdk17())
-                }
             }
         }
     }

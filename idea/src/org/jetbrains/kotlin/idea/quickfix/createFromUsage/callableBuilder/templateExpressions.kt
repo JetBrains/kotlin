@@ -104,14 +104,17 @@ internal class ParameterNameExpression(
 internal abstract class TypeExpression(val typeCandidates: List<TypeCandidate>) : Expression() {
     class ForTypeReference(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
         override val cachedLookupElements: Array<LookupElement> =
-                typeCandidates.map { LookupElementBuilder.create(it, it.renderedType!!) }.toTypedArray()
+                typeCandidates.map { LookupElementBuilder.create(it, it.renderedTypes.first()) }.toTypedArray()
     }
 
     class ForDelegationSpecifier(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
         override val cachedLookupElements: Array<LookupElement> =
                 typeCandidates.map {
-                    val descriptor = it.theType.constructor.declarationDescriptor as ClassDescriptor
-                    val text = it.renderedType!! + if (descriptor.kind == ClassKind.INTERFACE) "" else "()"
+                    val types = it.theType.decomposeIntersection()
+                    val text = (types zip it.renderedTypes).joinToString { (type, renderedType) ->
+                        val descriptor = type.constructor.declarationDescriptor as ClassDescriptor
+                        renderedType + if (descriptor.kind == ClassKind.INTERFACE) "" else "()"
+                    }
                     LookupElementBuilder.create(it, text)
                 }.toTypedArray()
     }
@@ -174,7 +177,7 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
         currentTypeParameters = sortedRenderedTypeParameters.map { it.typeParameter }
 
         return TextResult(
-                if (sortedRenderedTypeParameters.isEmpty()) "" else sortedRenderedTypeParameters.map { it.text }.joinToString(", ", prefix, ">")
+                if (sortedRenderedTypeParameters.isEmpty()) "" else sortedRenderedTypeParameters.joinToString(", ", prefix, ">") { it.text }
         )
     }
 

@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
 object StaticFacadeIndexUtil {
@@ -30,14 +30,16 @@ object StaticFacadeIndexUtil {
             partFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
-    ) : Collection<KtFile> =
-            PackagePartClassUtils.getFilesWithCallables(
-                    KotlinFileFacadeFqNameIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
+    ) : Collection<KtFile> = runReadAction {
+        PackagePartClassUtils.getFilesWithCallables(
+                KotlinFileFacadeFqNameIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
+    }
 
     @JvmStatic fun getMultifileClassForPart(
             partFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
-    ): Collection<KtFile> =
-            KotlinMultifileClassPartIndex.INSTANCE.get(partFqName.asString(), project, searchScope)
+    ): Collection<KtFile> = runReadAction {
+        KotlinMultifileClassPartIndex.INSTANCE.get(partFqName.asString(), project, searchScope)
+    }
 }

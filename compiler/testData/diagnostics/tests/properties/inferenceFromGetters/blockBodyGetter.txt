@@ -1,0 +1,3 @@
+package
+
+public val x: [ERROR : No type, no body]

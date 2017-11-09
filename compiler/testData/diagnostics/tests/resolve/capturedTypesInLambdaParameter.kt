@@ -37,6 +37,6 @@ fun test(b: B<out Number>) {
     b.foo(Number::foobar)
 
     b.baz {
-        b -> b checkType { _<B<out Number>>() }
+        <!NAME_SHADOWING!>b<!> -> b checkType { _<B<out Number>>() }
     }
 }

@@ -17,33 +17,49 @@
 
 package org.jetbrains.kotlin.codegen
 
+import com.google.common.collect.Maps
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
+import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
+import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -218,7 +234,7 @@ fun ClassBuilder.generateMethod(
 
 
 fun reportTarget6InheritanceErrorIfNeeded(
-        classDescriptor: ClassDescriptor, classElement: KtClassOrObject, restrictedInheritance: List<FunctionDescriptor>, state:GenerationState
+        classDescriptor: ClassDescriptor, classElement: PsiElement, restrictedInheritance: List<FunctionDescriptor>, state:GenerationState
 ) {
     if (!restrictedInheritance.isEmpty()) {
         val groupBy = restrictedInheritance.groupBy { descriptor -> descriptor.containingDeclaration as ClassDescriptor }
@@ -227,8 +243,9 @@ fun reportTarget6InheritanceErrorIfNeeded(
             state.diagnostics.report(
                     ErrorsJvm.TARGET6_INTERFACE_INHERITANCE.on(
                             classElement, classDescriptor, key,
-                            value.map { Renderers.COMPACT.render(JvmCodegenUtil.getDirectMember(it), RenderingContext.Empty) }.
-                                    joinToString(separator = "\n", prefix = "\n")
+                            value.joinToString(separator = "\n", prefix = "\n") {
+                                Renderers.COMPACT.render(JvmCodegenUtil.getDirectMember(it), RenderingContext.Empty)
+                            }
                     )
             )
         }
@@ -255,3 +272,155 @@ private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) 
             }
             else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
         }
+
+fun Collection<VariableDescriptor>.filterOutDescriptorsWithSpecialNames() = filterNot { it.name.isSpecial }
+
+
+class TypeAndNullability(@JvmField val type: Type, @JvmField val isNullable: Boolean)
+
+fun calcTypeForIEEE754ArithmeticIfNeeded(expression: KtExpression?, bindingContext: BindingContext, descriptor: DeclarationDescriptor): TypeAndNullability? {
+    val ktType = expression.kotlinType(bindingContext) ?: return null
+
+    if (KotlinBuiltIns.isDoubleOrNullableDouble(ktType)) {
+        return TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(ktType))
+    }
+
+    if (KotlinBuiltIns.isFloatOrNullableFloat(ktType)) {
+        return TypeAndNullability(Type.FLOAT_TYPE, TypeUtils.isNullableType(ktType))
+    }
+
+    val dataFlow = DataFlowValueFactory.createDataFlowValue(expression!!, ktType, bindingContext, descriptor)
+    val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow)
+    return stableTypes.firstNotNullResult {
+        when {
+            KotlinBuiltIns.isDoubleOrNullableDouble(it) -> TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(it))
+            KotlinBuiltIns.isFloatOrNullableFloat(it) -> TypeAndNullability(Type.FLOAT_TYPE, TypeUtils.isNullableType(it))
+            else -> null
+        }
+    }
+}
+
+fun KotlinType.asmType(typeMapper: KotlinTypeMapper) = typeMapper.mapType(this)
+
+fun KtExpression?.asmType(typeMapper: KotlinTypeMapper, bindingContext: BindingContext): Type =
+        this.kotlinType(bindingContext)?.asmType(typeMapper) ?: Type.VOID_TYPE
+
+fun KtExpression?.kotlinType(bindingContext: BindingContext) = this?.let(bindingContext::getType)
+
+fun Collection<Type>.withVariableIndices(): List<Pair<Int, Type>> = mutableListOf<Pair<Int, Type>>().apply {
+    var index = 0
+    for (type in this@withVariableIndices) {
+        add(index to type)
+        index += type.size
+    }
+}
+
+fun FunctionDescriptor.isGenericToArray(): Boolean {
+    if (valueParameters.size != 1 || typeParameters.size != 1) return false
+
+    val returnType = returnType ?: throw AssertionError(toString())
+    val paramType = valueParameters[0].type
+
+    if (!KotlinBuiltIns.isArray(returnType) || !KotlinBuiltIns.isArray(paramType)) return false
+
+    val elementType = typeParameters[0].defaultType
+    return KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(returnType)) &&
+           KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(paramType))
+}
+
+fun FunctionDescriptor.isNonGenericToArray(): Boolean {
+    if (!valueParameters.isEmpty() || !typeParameters.isEmpty()) return false
+
+    val returnType = returnType
+    return returnType != null && KotlinBuiltIns.isArray(returnType)
+}
+
+fun MemberDescriptor.isToArrayFromCollection(): Boolean {
+    if (this !is FunctionDescriptor) return false
+
+    val containingClassDescriptor = containingDeclaration as? ClassDescriptor ?: return false
+    if (containingClassDescriptor.source == SourceElement.NO_SOURCE) return false
+
+    val collectionClass = builtIns.collection
+    if (!isSubclass(containingClassDescriptor, collectionClass)) return false
+
+    return isGenericToArray() || isNonGenericToArray()
+}
+
+fun FqName.topLevelClassInternalName() = JvmClassName.byClassId(ClassId(parent(), shortName())).internalName
+fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
+
+fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>) {
+    val savedIsShouldMarkLineNumbers = codegen.isShouldMarkLineNumbers
+    // Do not write line numbers until destructuring happens
+    // (otherwise destructuring variables will be uninitialized in the beginning of lambda)
+    codegen.isShouldMarkLineNumbers = false
+
+    for (parameterDescriptor in valueParameters) {
+        if (parameterDescriptor !is ValueParameterDescriptorImpl.WithDestructuringDeclaration) continue
+
+        for (entry in parameterDescriptor.destructuringVariables.filterOutDescriptorsWithSpecialNames()) {
+            codegen.myFrameMap.enter(entry, codegen.typeMapper.mapType(entry.type))
+        }
+
+        val destructuringDeclaration =
+                (DescriptorToSourceUtils.descriptorToDeclaration(parameterDescriptor) as? KtParameter)?.destructuringDeclaration
+                ?: error("Destructuring declaration for descriptor $parameterDescriptor not found")
+
+        codegen.initializeDestructuringDeclarationVariables(
+                destructuringDeclaration,
+                TransientReceiver(parameterDescriptor.type),
+                codegen.findLocalOrCapturedValue(parameterDescriptor) ?: error("Local var not found for parameter $parameterDescriptor")
+        )
+    }
+
+    codegen.isShouldMarkLineNumbers = savedIsShouldMarkLineNumbers
+}
+
+fun <D : CallableDescriptor> D.unwrapFrontendVersion() = unwrapInitialDescriptorForSuspendFunction()
+
+inline fun FrameMap.useTmpVar(type: Type, block: (index: Int) -> Unit) {
+    val index = enterTemp(type)
+    block(index)
+    leaveTemp(type)
+}
+
+fun InstructionAdapter.generateNewInstanceDupAndPlaceBeforeStackTop(
+        frameMap: FrameMap,
+        topStackType: Type,
+        newInstanceInternalName: String
+) {
+    frameMap.useTmpVar(topStackType) { index ->
+        store(index, topStackType)
+        anew(Type.getObjectType(newInstanceInternalName))
+        dup()
+        load(index, topStackType)
+    }
+}
+
+fun extractReificationArgument(type: KotlinType): Pair<TypeParameterDescriptor, ReificationArgument>? {
+    var type = type
+    var arrayDepth = 0
+    val isNullable = type.isMarkedNullable
+    while (KotlinBuiltIns.isArray(type)) {
+        arrayDepth++
+        type = type.arguments[0].type
+    }
+
+    val parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type) ?: return null
+
+    return Pair(parameterDescriptor, ReificationArgument(parameterDescriptor.name.asString(), isNullable, arrayDepth))
+}
+
+fun unwrapInitialSignatureDescriptor(function: FunctionDescriptor): FunctionDescriptor =
+        function.initialSignatureDescriptor ?: function
+
+fun ExpressionCodegen.generateCallReceiver(rangeCall: ResolvedCall<out CallableDescriptor>): StackValue =
+        generateReceiverValue(rangeCall.extensionReceiver ?: rangeCall.dispatchReceiver!!, false)
+
+fun ExpressionCodegen.generateCallSingleArgument(rangeCall: ResolvedCall<out CallableDescriptor>): StackValue =
+        gen(ExpressionCodegen.getSingleArgumentExpression(rangeCall)!!)
+
+fun ClassDescriptor.isPossiblyUninitializedSingleton() =
+        DescriptorUtils.isEnumEntry(this) ||
+        DescriptorUtils.isCompanionObject(this) && DescriptorUtils.isInterface(this.containingDeclaration)

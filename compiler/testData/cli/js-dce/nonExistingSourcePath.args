@@ -1,0 +1,3 @@
+nonExistingSourceFile.js
+-output-dir
+$TEMP_DIR/min

@@ -7,3 +7,7 @@ public open class Activity {
 public open class Fragment {
     public open fun getView(): android.view.View = null!!
 }
+
+open class Dialog {
+    open fun findViewById(id: Int): android.view.View? = null
+}

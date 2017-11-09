@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -31,9 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class RenameBackingFieldReferenceHandler: VariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
-        val refExpression = PsiTreeUtil.findElementOfClassAtOffset(
-                file, editor.caretModel.offset, KtSimpleNameExpression::class.java, false
-        ) ?: return false
+        val refExpression = file.findElementForRename<KtSimpleNameExpression>(editor.caretModel.offset) ?: return false
         if (refExpression.text != "field") return false
         return refExpression.analyze()[BindingContext.REFERENCE_TARGET, refExpression] is SyntheticFieldDescriptor
     }

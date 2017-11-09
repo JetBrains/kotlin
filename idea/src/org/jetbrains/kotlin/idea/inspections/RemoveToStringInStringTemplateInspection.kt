@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
@@ -30,13 +30,15 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class RemoveToStringInStringTemplateInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
             object : KtVisitorVoid() {
-                override fun visitCallExpression(expression: KtCallExpression) {
-                    val qualifiedExpression = expression.parent as? KtDotQualifiedExpression ?: return
-                    if (qualifiedExpression.parent !is KtBlockStringTemplateEntry) return
-                    if (qualifiedExpression.receiverExpression is KtSuperExpression) return
-                    if (!qualifiedExpression.isToString()) return
+                override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+                    super.visitDotQualifiedExpression(expression)
 
-                    holder.registerProblem(expression,
+                    if (expression.parent !is KtBlockStringTemplateEntry) return
+                    if (expression.receiverExpression is KtSuperExpression) return
+                    val selectorExpression = expression.selectorExpression ?: return
+                    if (!expression.isToString()) return
+
+                    holder.registerProblem(selectorExpression,
                                            "Redundant 'toString()' call in string template",
                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                            RemoveToStringFix())
@@ -56,6 +58,8 @@ class RemoveToStringFix: LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val element = descriptor.psiElement.parent as? KtDotQualifiedExpression ?: return
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
+
         val receiverExpression = element.receiverExpression
         if (receiverExpression is KtNameReferenceExpression) {
             val templateEntry = receiverExpression.parent.parent

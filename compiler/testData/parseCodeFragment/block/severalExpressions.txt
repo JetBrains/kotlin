@@ -1,4 +1,4 @@
-JetFile: fragment.kt
+KtFile: fragment.kt
   BLOCK
     BINARY_EXPRESSION
       INTEGER_CONSTANT

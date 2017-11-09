@@ -1,0 +1,58 @@
+description = 'Kotlin Test for JS'
+
+apply plugin: 'kotlin-platform-js'
+
+configurePublishing(project)
+
+dependencies {
+    expectedBy project(':kotlin-test:kotlin-test-common')
+    compile project(':kotlin-test:kotlin-test-annotations-common') // TODO: replace with impl-dependency
+    compile project(':kotlin-stdlib-js')
+}
+
+compileKotlin2Js {
+    // TODO: Why "-Xmulti-platfrom" ?
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
+    kotlinOptions {
+        moduleKind = "umd"
+        outputFile = "${buildDir}/classes/main/kotlin-test.js"
+        sourceMap = true
+        sourceMapPrefix = "./"
+        sourceMapEmbedSources = "always"
+    }
+}
+
+compileTestKotlin2Js {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions {
+        metaInfo = false
+    }
+}
+
+
+archivesBaseName = 'kotlin-test-js'
+
+jar {
+    manifestAttributes(manifest, project, 'Test')
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from (sourceSets.main.allSource)
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+task distJs(type: Copy) {
+    dependsOn(compileKotlin2Js)
+    from(compileKotlin2Js.kotlinOptions.outputFile)
+    into "$distDir/js"
+}
+
+dist {
+    dependsOn distJs
+    from (jar, sourcesJar)
+}

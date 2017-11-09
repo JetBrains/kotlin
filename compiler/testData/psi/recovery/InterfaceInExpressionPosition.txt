@@ -1,4 +1,4 @@
-JetFile: InterfaceInExpressionPosition.kt
+KtFile: InterfaceInExpressionPosition.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

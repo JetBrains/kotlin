@@ -1,0 +1,34 @@
+package
+
+public fun foo(/*0*/ a: kotlin.Any?): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    @MyNullable public final var staticN: J!
+}
+
+public open class JJ {
+    public constructor JJ()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final var staticNN: JJ!
+}
+
+public open class JJJ {
+    public constructor JJJ()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    @MyNonnull public final var staticNNN: JJJ!
+}

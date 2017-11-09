@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.psi.KtFile
@@ -28,17 +29,17 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : AbstractDiagnosticsTestWithJsStdLib() {
     override fun analyzeModuleContents(
             moduleContext: ModuleContext,
-            ktFiles: MutableList<KtFile>,
+            files: List<KtFile>,
             moduleTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings?,
+            languageVersionSettings: LanguageVersionSettings,
             separateModules: Boolean
     ): JsAnalysisResult {
-        val analysisResult = super.analyzeModuleContents(moduleContext, ktFiles, moduleTrace, languageVersionSettings, separateModules)
+        val analysisResult = super.analyzeModuleContents(moduleContext, files, moduleTrace, languageVersionSettings, separateModules)
         val diagnostics = analysisResult.bindingTrace.bindingContext.diagnostics
 
         if (!hasError(diagnostics)) {
             val translator = K2JSTranslator(config)
-            translator.translate(ktFiles, MainCallParameters.noCall(), analysisResult)
+            translator.translate(object : JsConfig.Reporter() {}, files, MainCallParameters.noCall(), analysisResult)
         }
 
         return analysisResult

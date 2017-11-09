@@ -1,6 +1,5 @@
+// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
-
-import java.util.*
 
 class Itr : Iterator<String> by ArrayList<String>().iterator()
 class MItr : MutableIterator<String> by ArrayList<String>().iterator()
@@ -34,7 +33,7 @@ inline fun asFailsWithCCE(operation: String, block: () -> Unit) {
     try {
         block()
     }
-    catch (e: java.lang.ClassCastException) {
+    catch (e: ClassCastException) {
         return
     }
     catch (e: Throwable) {

@@ -1,4 +1,4 @@
-import java.util.HashSet
+// TARGET_BACKEND: JVM
 
 fun box(): String {
     val a = HashSet<String>()

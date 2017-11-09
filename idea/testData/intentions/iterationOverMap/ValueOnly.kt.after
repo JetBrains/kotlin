@@ -2,7 +2,7 @@
 
 fun main(args: Array<String>) {
     val map = hashMapOf(1 to 1)
-    for ((key, value) in map) {
+    for ((_, value) in map) {
         println(value)
     }
 }

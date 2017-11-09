@@ -30,11 +30,11 @@ public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends Diagnosti
     }
 
     public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
-        return new DiagnosticFactory3<T, A, B, C>(severity, positioningStrategy);
+        return new DiagnosticFactory3<>(severity, positioningStrategy);
     }
 
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b, @NotNull C c) {
-        return new DiagnosticWithParameters3<E, A, B, C>(element, a, b, c, this, getSeverity());
+        return new DiagnosticWithParameters3<>(element, a, b, c, this, getSeverity());
     }
 }

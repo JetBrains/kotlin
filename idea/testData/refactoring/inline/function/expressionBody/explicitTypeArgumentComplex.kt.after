@@ -1,0 +1,9 @@
+interface SomeFace
+interface GeneOut<out T> {}
+object Empty : GeneOut<Nothing>
+fun <T> downUnder(): GeneOut<T> = Empty
+
+fun callDown() {
+    // BUG: KT-17402
+    val v2 = downUnder()
+}

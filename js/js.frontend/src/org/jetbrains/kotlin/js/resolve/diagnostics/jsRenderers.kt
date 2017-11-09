@@ -35,8 +35,7 @@ abstract class JsCallDataRenderer : DiagnosticParameterRenderer<JsCallData> {
     override fun render(data: JsCallData, context: RenderingContext): String =
             when (data) {
                 is JsCallDataWithCode -> format(data)
-                is JsCallData -> data.message
-                else -> throw AssertionError("Cannot render null data")
+                else -> data.message
             }
 }
 
@@ -44,7 +43,7 @@ object JsCallDataTextRenderer : JsCallDataRenderer() {
     override fun format(data: JsCallDataWithCode): String {
         val codeRange = data.codeRange
         val code = data.code.underlineAsText(codeRange.startOffset, codeRange.endOffset)
-        return "${data.message} in code:\n${code}"
+        return "${data.message} in code:\n$code"
     }
 }
 
@@ -52,7 +51,7 @@ object JsCallDataHtmlRenderer : JsCallDataRenderer() {
     override fun format(data: JsCallDataWithCode): String {
         val codeRange = data.codeRange
         val code = data.code.underlineAsHtml(codeRange.startOffset, codeRange.endOffset)
-        return "${data.message} in code:<br><pre>${code}</pre>"
+        return "${data.message} in code:<br><pre>$code</pre>"
     }
 }
 

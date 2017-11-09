@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.utils.alwaysTrue
@@ -82,13 +80,11 @@ class LazyJavaPackageScope(
                     )
                 }
 
-
-                val javaClassFqName = javaClass?.fqName ?: return@classByRequest null
-                assert(!javaClassFqName.isRoot && javaClassFqName.parent() == ownerDescriptor.fqName) {
-                    "Java class by request $requestClassId should be contained in package ${ownerDescriptor.fqName}, but it's fq-name: $javaClassFqName"
-                }
-
-                LazyJavaClassDescriptor(c, ownerDescriptor, javaClass)
+                val actualFqName = javaClass?.fqName
+                if (actualFqName == null || actualFqName.isRoot || actualFqName.parent() != ownerDescriptor.fqName)
+                    null
+                else
+                    LazyJavaClassDescriptor(c, ownerDescriptor, javaClass)
             }
         }
     }
@@ -99,25 +95,20 @@ class LazyJavaPackageScope(
         object SyntheticClass : KotlinClassLookupResult()
     }
 
-    private fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult {
-        if (kotlinClass == null) return KotlinClassLookupResult.NotFound
-
-        val header = kotlinClass.classHeader
-        return when {
-            !header.metadataVersion.isCompatible() -> {
-                c.components.errorReporter.reportIncompatibleMetadataVersion(kotlinClass.classId, kotlinClass.location, header.metadataVersion)
-                KotlinClassLookupResult.NotFound
+    private fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult =
+            when {
+                kotlinClass == null -> {
+                    KotlinClassLookupResult.NotFound
+                }
+                kotlinClass.classHeader.kind == KotlinClassHeader.Kind.CLASS -> {
+                    val descriptor = c.components.deserializedDescriptorResolver.resolveClass(kotlinClass)
+                    if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
+                }
+                else -> {
+                    // This is a package or interface DefaultImpls or something like that
+                    KotlinClassLookupResult.SyntheticClass
+                }
             }
-            header.kind == KotlinClassHeader.Kind.CLASS -> {
-                val descriptor = c.components.deserializedDescriptorResolver.resolveClass(kotlinClass)
-                if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
-            }
-            else -> {
-                // This is a package or interface DefaultImpls or something like that
-                KotlinClassLookupResult.SyntheticClass
-            }
-        }
-    }
 
     // javaClass here is only for sake of optimizations
     private class FindClassRequest(val name: Name, val javaClass: JavaClass?) {
@@ -158,17 +149,10 @@ class LazyJavaPackageScope(
     }
 
     override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
-        // optimization: only SAM-constructors may exist in java package
-        if (kindFilter.excludes.contains(SamConstructorDescriptorKindExclude)) return emptySet()
-
-        // For SAM-constructors
-        return computeClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
+        return emptySet()
     }
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        c.components.samConversionResolver.resolveSamConstructor(ownerDescriptor) {
-            getContributedClassifier(name, NoLookupLocation.FOR_ALREADY_TRACKED)
-        }?.let { result.add(it) }
     }
 
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) = emptySet<Name>()

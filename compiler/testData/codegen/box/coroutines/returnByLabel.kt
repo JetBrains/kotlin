@@ -1,19 +1,21 @@
-class Controller {
-    var res = 0
-    suspend fun suspendHere(x: Continuation<String>) {
-        x.resume("OK")
-    }
+// WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
-    operator fun handleResult(x: Int, y: Continuation<Nothing>) {
-        res = x
-    }
+suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+    x.resume("OK")
+    COROUTINE_SUSPENDED
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): Int {
-    val controller = Controller()
-    c(controller).resume(Unit)
+fun builder(c: suspend () -> Int): Int {
+    var res = 0
+    c.startCoroutine(handleResultContinuation {
+        res = it
+    })
 
-    return controller.res
+    return res
 }
 
 fun box(): String {

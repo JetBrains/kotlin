@@ -66,13 +66,14 @@ fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
         return !name.isSpecial
     }
 
-    val parentClass = containingDeclaration as? ClassDescriptor ?: return false
-    if (!parentClass.canBeReferencedViaImport()) return false
+    //Both TypeAliasDescriptor and ClassDescriptor
+    val parentClassifier = containingDeclaration as? ClassifierDescriptorWithTypeParameters ?: return false
+    if (!parentClassifier.canBeReferencedViaImport()) return false
 
     return when (this) {
-        is ConstructorDescriptor -> !parentClass.isInner // inner class constructors can't be referenced via import
-        is ClassDescriptor -> true
-        else -> parentClass.kind == ClassKind.OBJECT
+        is ConstructorDescriptor -> !parentClassifier.isInner // inner class constructors can't be referenced via import
+        is ClassDescriptor, is TypeAliasDescriptor -> true
+        else -> parentClassifier is ClassDescriptor && parentClassifier.kind == ClassKind.OBJECT
     }
 }
 

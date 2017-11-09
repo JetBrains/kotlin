@@ -53,7 +53,7 @@ class Foo : Bar() { // Error
 
 When a primary constructor is present, explicit constructors are called *secondary*.
 
-Every class **must** have a constructor. the following is an error:
+Every class **must** have a constructor. The following is an error:
 ``` kotlin
 class Parent
 class Child : Parent { }
@@ -77,7 +77,7 @@ Passing lambdas outside parentheses is not allowed in `constructorDelegationCall
 ## Rules for delegating calls
 
 The only situation when an explicit constructor may not have an explicit delegating call is
-- when there's no primary constructor **and** teh superclass has a constructor that can be called with no parameters passed to it
+- when there's no primary constructor **and** the superclass has a constructor that can be called with no parameters passed to it
 
 ``` kotlin
 class Parent {}
@@ -98,9 +98,9 @@ class Child(): Parent() {
 ## Initialization code outside constructors
 
 The primary constructor's body consists of
-- super class intialization from class header
+- super class initialization from class header
 - assignments to properties from constructor parameters declared with `val` or `var`
-- property initializers and bodies of anonymous initializers following in the order of appearence in the class body
+- property initializers and bodies of anonymous initializers following in the order of appearance in the class body
 
 If the primary constructor is not present, property initializers and anonymous initializers are conceptually "prepended" to the body 
 of each explicit constructor that has a delegating call to super class, and their contents are checked accordingly for definite

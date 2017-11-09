@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
@@ -33,10 +34,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
@@ -49,9 +47,10 @@ public class DescriptorUtils {
     public static final Name ENUM_VALUES = Name.identifier("values");
     public static final Name ENUM_VALUE_OF = Name.identifier("valueOf");
     public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
-    public static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
-    public static final FqName SYNCHRONIZED = new FqName("kotlin.jvm.Synchronized");
-    public static final FqName CONTINUATION_INTERFACE_FQ_NAME = new FqName("kotlin.coroutines.Continuation");
+    private static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
+    private static final FqName SYNCHRONIZED = new FqName("kotlin.jvm.Synchronized");
+    public static final FqName COROUTINES_PACKAGE_FQ_NAME = new FqName("kotlin.coroutines.experimental");
+    public static final FqName CONTINUATION_INTERFACE_FQ_NAME = COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Continuation"));
 
     private DescriptorUtils() {
     }
@@ -448,7 +447,7 @@ public class DescriptorUtils {
     }
 
     public static boolean shouldRecordInitializerForProperty(@NotNull VariableDescriptor variable, @NotNull KotlinType type) {
-        if (variable.isVar() || type.isError()) return false;
+        if (variable.isVar() || KotlinTypeKt.isError(type)) return false;
 
         if (TypeUtils.acceptsNullable(type)) return true;
 
@@ -459,7 +458,11 @@ public class DescriptorUtils {
                KotlinTypeChecker.DEFAULT.equalTypes(builtIns.getAnyType(), type);
     }
 
-    public static boolean classCanHaveAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
+    public static boolean classCanHaveAbstractFakeOverride(@NotNull ClassDescriptor classDescriptor) {
+        return classCanHaveAbstractDeclaration(classDescriptor) || classDescriptor.isExpect();
+    }
+
+    public static boolean classCanHaveAbstractDeclaration(@NotNull ClassDescriptor classDescriptor) {
         return classDescriptor.getModality() == Modality.ABSTRACT
                || isSealedClass(classDescriptor)
                || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
@@ -520,10 +523,14 @@ public class DescriptorUtils {
 
     @Nullable
     public static String getJvmName(@NotNull Annotated annotated) {
-        AnnotationDescriptor jvmNameAnnotation = getAnnotationByFqName(annotated.getAnnotations(), JVM_NAME);
+        return getJvmName(getJvmNameAnnotation(annotated));
+    }
+
+    @Nullable
+    private static String getJvmName(@Nullable AnnotationDescriptor jvmNameAnnotation) {
         if (jvmNameAnnotation == null) return null;
 
-        Map<ValueParameterDescriptor, ConstantValue<?>> arguments = jvmNameAnnotation.getAllValueArguments();
+        Map<Name, ConstantValue<?>> arguments = jvmNameAnnotation.getAllValueArguments();
         if (arguments.isEmpty()) return null;
 
         ConstantValue<?> name = arguments.values().iterator().next();
@@ -570,4 +577,47 @@ public class DescriptorUtils {
     public static Collection<DeclarationDescriptor> getAllDescriptors(@NotNull MemberScope scope) {
         return scope.getContributedDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.getALL_NAME_FILTER());
     }
+
+    @NotNull
+    public static FunctionDescriptor getFunctionByName(@NotNull MemberScope scope, @NotNull Name name) {
+        FunctionDescriptor result = getFunctionByNameOrNull(scope, name);
+
+        if (result == null) {
+            throw new IllegalStateException("Function not found");
+        }
+
+        return result;
+    }
+
+    @Nullable
+    public static FunctionDescriptor getFunctionByNameOrNull(@NotNull MemberScope scope, @NotNull Name name) {
+        Collection<SimpleFunctionDescriptor> functions = scope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND);
+        for (SimpleFunctionDescriptor d : functions) {
+            if (name.equals(d.getOriginal().getName())) {
+                return d;
+            }
+        }
+
+        return null;
+    }
+
+    @NotNull
+    public static PropertyDescriptor getPropertyByName(@NotNull MemberScope scope, @NotNull Name name) {
+        Collection<PropertyDescriptor> properties = scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND);
+        for (PropertyDescriptor d : properties) {
+            if (name.equals(d.getOriginal().getName())) {
+                return d;
+            }
+        }
+
+        throw new IllegalStateException("Property not found");
+    }
+
+    @NotNull
+    public static CallableMemberDescriptor getDirectMember(@NotNull CallableMemberDescriptor descriptor) {
+        return descriptor instanceof PropertyAccessorDescriptor
+               ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
+               : descriptor;
+    }
+
 }

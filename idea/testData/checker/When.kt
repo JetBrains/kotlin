@@ -5,8 +5,8 @@ fun foo() : Int {
     val x = 1
     when (x) {
       is <error>String</error> -> <warning>1</warning>
-      !is Int -> <warning>1</warning>
-      is Any<warning>?</warning> -> <warning>1</warning>
+      <warning>!is Int</warning> -> <warning>1</warning>
+      <warning>is Any<warning>?</warning></warning> -> <warning>1</warning>
       <error>s</error> -> <warning>1</warning>
       1 -> <warning>1</warning>
       1 + <error>a</error> -> <warning>1</warning>

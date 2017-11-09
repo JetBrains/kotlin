@@ -50,8 +50,6 @@ class KotlinCompletionContributor : CompletionContributor() {
 
     companion object {
         val DEFAULT_DUMMY_IDENTIFIER: String = CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$" // add '$' to ignore context after the caret
-
-        private val STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET = OffsetKey.create("STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET")
     }
 
     init {
@@ -82,7 +80,6 @@ class KotlinCompletionContributor : CompletionContributor() {
                     val prefix = tokenBefore.text.substring(0, offset - tokenBefore.startOffset)
                     context.dummyIdentifier = "{" + expression.text + prefix + CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "}"
                     context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, expression.startOffset)
-                    context.offsetMap.addOffset(STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET, offset + 1)
                     return
                 }
             }
@@ -134,10 +131,12 @@ class KotlinCompletionContributor : CompletionContributor() {
                 }
             }
 
-            if (tokenAt.node.elementType == KtTokens.IDENTIFIER) {
+            // IDENTIFIER when 'f<caret>oo: Foo'
+            // COLON when 'foo<caret>: Foo'
+            if (tokenAt.node.elementType == KtTokens.IDENTIFIER || tokenAt.node.elementType == KtTokens.COLON) {
                 val parameter = tokenAt.parent as? KtParameter
                 if (parameter != null) {
-                    context.offsetMap.addOffset(ParameterNameAndTypeCompletion.REPLACEMENT_OFFSET, parameter.endOffset)
+                    context.offsetMap.addOffset(VariableOrParameterNameWithTypeCompletion.REPLACEMENT_OFFSET, parameter.endOffset)
                 }
             }
         }
@@ -241,8 +240,13 @@ class KotlinCompletionContributor : CompletionContributor() {
             val expression = (position.parent as KtBlockStringTemplateEntry).expression
             if (expression is KtDotQualifiedExpression) {
                 val correctedPosition = (expression.selectorExpression as KtNameReferenceExpression).firstChild
-                val context = position.getUserData(CompletionContext.COMPLETION_CONTEXT_KEY)!!
-                val correctedOffset = context.offsetMap.getOffset(STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET)
+                // Workaround for KT-16848
+                // ex:
+                // expression: some.IntellijIdeaRulezzz
+                // correctedOffset: ^
+                // expression: some.funcIntellijIdeaRulezzz
+                // correctedOffset      ^
+                val correctedOffset = correctedPosition.endOffset - CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED.length
                 val correctedParameters = parameters.withPosition(correctedPosition, correctedOffset)
                 doComplete(correctedParameters, toFromOriginalFileMapper, result,
                            lookupElementPostProcessor = { wrapLookupElementForStringTemplateAfterDotCompletion(it) })
@@ -384,22 +388,22 @@ class KotlinCompletionContributor : CompletionContributor() {
         val nameRef = nameToken.parent as? KtNameReferenceExpression ?: return null
         val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
         val targets = nameRef.getReferenceTargets(bindingContext)
-        if (targets.isNotEmpty() && targets.all { it is FunctionDescriptor || it is ClassDescriptor && it.kind == ClassKind.CLASS }) {
-            return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ">".repeat(balance) + "$"
+        return if (targets.isNotEmpty() && targets.all { it is FunctionDescriptor || it is ClassDescriptor && it.kind == ClassKind.CLASS }) {
+            CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ">".repeat(balance) + "$"
         }
         else {
-            return null
+            null
         }
     }
 
     private fun unclosedTypeArgListNameAndBalance(tokenBefore: PsiElement): Pair<PsiElement, Int>? {
         val nameToken = findCallNameTokenIfInTypeArgs(tokenBefore) ?: return null
         val pair = unclosedTypeArgListNameAndBalance(nameToken)
-        if (pair == null) {
-            return Pair(nameToken, 1)
+        return if (pair == null) {
+            Pair(nameToken, 1)
         }
         else {
-            return Pair(pair.first, pair.second + 1)
+            Pair(pair.first, pair.second + 1)
         }
     }
 

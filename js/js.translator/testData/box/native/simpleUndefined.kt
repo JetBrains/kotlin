@@ -1,7 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1109
 package foo
 
-@native
-val c: Any? = noImpl
+external val c: Any? = definedExternally
 
 fun box(): String {
     if (c != null) return "fail1"

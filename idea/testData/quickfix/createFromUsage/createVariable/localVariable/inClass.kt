@@ -3,6 +3,7 @@
 // ACTION: Create parameter 'foo'
 // ACTION: Create property 'foo'
 // ACTION: Rename reference
+// ACTION: Move to constructor
 // ERROR: Unresolved reference: foo
 
 class A {

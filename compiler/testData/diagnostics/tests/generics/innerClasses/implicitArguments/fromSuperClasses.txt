@@ -14,13 +14,13 @@ public final class A : Outer<kotlin.Double, kotlin.Short> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        public final fun x(): Outer<kotlin.Float, kotlin.Long>.Alias<kotlin.String> /* = kotlin.collections.Map<kotlin.String, out kotlin.Float> */
+        public final fun x(): Outer<kotlin.Float, kotlin.Long>.Alias<kotlin.String> /* = kotlin.collections.Map<kotlin.String, kotlin.Float> */
     }
 }
 
 public final class Derived : Outer<kotlin.String, kotlin.Int> {
     public constructor Derived()
-    public final fun baz(): Outer<kotlin.String, kotlin.Int>.Alias<kotlin.Char> /* = kotlin.collections.Map<kotlin.Char, out kotlin.String> */
+    public final fun baz(): Outer<kotlin.String, kotlin.Int>.Alias<kotlin.Char> /* = kotlin.collections.Map<kotlin.Char, kotlin.String> */
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): Outer<kotlin.String, kotlin.Int>.Inner<kotlin.Char>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

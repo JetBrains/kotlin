@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,32 +53,14 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
     }
 
     @Nullable
-    public ASTNode getAliasNameNode() {
-        boolean asPassed = false;
-        ASTNode childNode = getNode().getFirstChildNode();
-        while (childNode != null) {
-            IElementType tt = childNode.getElementType();
-            if (tt == KtTokens.AS_KEYWORD) asPassed = true;
-            if (asPassed && tt == KtTokens.IDENTIFIER) {
-                return childNode;
-            }
-
-            childNode = childNode.getTreeNext();
-        }
-        return null;
+    public KtImportAlias getAlias() {
+        return getStubOrPsiChild(KtStubElementTypes.IMPORT_ALIAS);
     }
 
     @Nullable
     public String getAliasName() {
-        KotlinImportDirectiveStub stub = getStub();
-        if (stub != null) {
-            return stub.getAliasName();
-        }
-        ASTNode aliasNameNode = getAliasNameNode();
-        if (aliasNameNode == null) {
-            return null;
-        }
-        return aliasNameNode.getText();
+        KtImportAlias alias = getAlias();
+        return alias != null ? alias.getName() : null;
     }
 
     public boolean isAllUnder() {

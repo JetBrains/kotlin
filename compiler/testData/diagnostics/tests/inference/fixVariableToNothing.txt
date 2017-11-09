@@ -1,0 +1,6 @@
+package
+
+public fun </*0*/ Y> emptyList(): kotlin.collections.List<Y>
+public fun </*0*/ X> listOf(/*0*/ element: X): kotlin.collections.List<X>
+public fun test(/*0*/ l: kotlin.collections.List<kotlin.String>): kotlin.collections.List<kotlin.String>
+public fun </*0*/ T> kotlin.collections.List<T>.optimizeReadOnlyList(): kotlin.collections.List<T>

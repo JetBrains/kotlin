@@ -46,7 +46,7 @@ class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtPackageD
 
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
 
-        val file = element.getContainingKtFile()
+        val file = element.containingKtFile
         val project = file.project
 
         val nameExpression = element.packageNameExpression!!

@@ -1,4 +1,4 @@
-JetFile: Labels.kt
+KtFile: Labels.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

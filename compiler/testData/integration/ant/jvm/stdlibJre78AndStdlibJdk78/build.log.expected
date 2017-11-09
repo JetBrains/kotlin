@@ -1,0 +1,10 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+  [kotlinc] Compiling [[TestData]/main.kt] => [[Temp]/test.jar]
+
+BUILD SUCCESSFUL
+Total time: [time]
+
+Return code: 0

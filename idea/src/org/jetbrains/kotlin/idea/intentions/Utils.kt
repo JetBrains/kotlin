@@ -20,45 +20,25 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import java.lang.IllegalArgumentException
-
-fun KtCallableDeclaration.setType(type: KotlinType, shortenReferences: Boolean = true) {
-    if (type.isError) return
-    setType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type), shortenReferences)
-}
-
-fun KtCallableDeclaration.setType(typeString: String, shortenReferences: Boolean = true) {
-    val typeReference = KtPsiFactory(project).createType(typeString)
-    setTypeReference(typeReference)
-    if (shortenReferences) {
-        ShortenReferences.DEFAULT.process(getTypeReference()!!)
-    }
-}
-
-fun KtCallableDeclaration.setReceiverType(type: KotlinType) {
-    if (type.isError) return
-    val typeReference = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
-    setReceiverTypeReference(typeReference)
-    ShortenReferences.DEFAULT.process(receiverTypeReference!!)
-}
 
 fun KtContainerNode.description(): String? {
     when (node.elementType) {
@@ -80,16 +60,21 @@ fun KtCallExpression.isMethodCall(fqMethodName: String): Boolean {
     return resolvedCall.resultingDescriptor.fqNameUnsafe.asString() == fqMethodName
 }
 
-fun isAutoCreatedItUsage(expression: KtNameReferenceExpression): Boolean {
-    if (expression.getReferencedName() != "it") return false
+fun isAutoCreatedItUsage(expression: KtNameReferenceExpression) = resolveToAutoCreatedItDescriptor(expression) != null
+
+fun resolveToAutoCreatedItDescriptor(expression: KtNameReferenceExpression): ValueParameterDescriptor? {
+    if (expression.getReferencedName() != "it") return null
     val context = expression.analyze(BodyResolveMode.PARTIAL)
-    val target = expression.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return false
-    return context[BindingContext.AUTO_CREATED_IT, target]!!
+    val target = expression.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor ?: return null
+    return if (context[BindingContext.AUTO_CREATED_IT, target] == true) target else null
 }
+
+fun getLambdaByImplicitItReference(expression: KtNameReferenceExpression) =
+        resolveToAutoCreatedItDescriptor(expression)?.containingDeclaration?.source?.getPsi() as? KtFunctionLiteral
 
 // returns assignment which replaces initializer
 fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
-    val parent = property.parent!!
+    val parent = property.parent
 
     val initializer = property.initializer!!
 
@@ -121,11 +106,9 @@ fun KtQualifiedExpression.toResolvedCall(bodyResolveMode: BodyResolveMode): Reso
     return callExpression.getResolvedCall(callExpression.analyze(bodyResolveMode)) ?: return null
 }
 
-fun KtExpression.isExitStatement(): Boolean {
-    when (this) {
-        is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression -> return true
-        else -> return false
-    }
+fun KtExpression.isExitStatement(): Boolean = when (this) {
+    is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression -> true
+    else -> false
 }
 
 // returns false for call of super, static method or method from package
@@ -166,8 +149,8 @@ private fun KtExpression.specialNegation(): KtExpression? {
             if (operationReference.getReferencedName() == "!") {
                 val baseExpression = baseExpression
                 if (baseExpression != null) {
-                    val context = baseExpression.analyzeAndGetResult().bindingContext
-                    val type = context.getType(baseExpression)
+                    val bindingContext = baseExpression.analyze(BodyResolveMode.PARTIAL)
+                    val type = bindingContext.getType(baseExpression)
                     if (type != null && KotlinBuiltIns.isBoolean(type)) {
                         return KtPsiUtil.safeDeparenthesize(baseExpression)
                     }
@@ -235,42 +218,75 @@ private fun KtExpression.ifBranchesOrThis(): List<KtExpression?> {
     return listOf(then) + `else`?.ifBranchesOrThis().orEmpty()
 }
 
-private val arrayName = Name.identifier("Array")
-
-private val collectionName = Name.identifier("Collection")
-
-private val stringName = Name.identifier("String")
-
-fun ResolvedCall<out CallableDescriptor>.resolvedToArrayType() =
-        resultingDescriptor.returnType?.nameIfStandardType == arrayName
-
-fun ResolvedCall<out CallableDescriptor>.resolvedToCollectionType() =
-        resultingDescriptor.returnType?.constructor?.supertypes?.firstOrNull {
-            it.nameIfStandardType == collectionName
-        } != null
-
-fun ResolvedCall<out CallableDescriptor>.resolvedToStringType() =
-        resultingDescriptor.returnType?.nameIfStandardType == stringName
+fun ResolvedCall<out CallableDescriptor>.resolvedToArrayType(): Boolean =
+        resultingDescriptor.returnType.let { type ->
+            type != null && (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type))
+        }
 
 fun KtElement?.isZero() = this?.text == "0"
 
 fun KtElement?.isOne() = this?.text == "1"
 
+private fun KtExpression.isExpressionOfTypeOrSubtype(predicate: (KotlinType) -> Boolean): Boolean {
+    val returnType = getResolvedCall(analyze())?.resultingDescriptor?.returnType
+    return returnType != null && (returnType.constructor.supertypes + returnType).any(predicate)
+}
+
 fun KtElement?.isSizeOrLength(): Boolean {
     if (this !is KtDotQualifiedExpression) return false
+
     return when (selectorExpression?.text) {
-        "size" -> receiverExpression.isArrayOrCollection()
-        "length" -> receiverExpression.isString()
+        "size" -> receiverExpression.isExpressionOfTypeOrSubtype { type ->
+            KotlinBuiltIns.isArray(type) ||
+            KotlinBuiltIns.isPrimitiveArray(type) ||
+            KotlinBuiltIns.isCollectionOrNullableCollection(type) ||
+            KotlinBuiltIns.isMapOrNullableMap(type)
+        }
+        "length" -> receiverExpression.isExpressionOfTypeOrSubtype(KotlinBuiltIns::isCharSequenceOrNullableCharSequence)
         else -> false
     }
 }
 
-private fun KtExpression.isArrayOrCollection(): Boolean {
-    val resolvedCall = getResolvedCall(analyze()) ?: return false
-    return resolvedCall.resolvedToArrayType() || resolvedCall.resolvedToCollectionType()
+
+fun KtDotQualifiedExpression.getLeftMostReceiverExpression(): KtExpression =
+        (receiverExpression as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: receiverExpression
+
+fun KtDotQualifiedExpression.replaceFirstReceiver(
+        factory: KtPsiFactory,
+        newReceiver: KtExpression,
+        safeAccess: Boolean = false
+): KtExpression {
+    val replaced = (if (safeAccess) {
+        this.replaced(factory.createExpressionByPattern("$0?.$1", receiverExpression, selectorExpression!!))
+    } else this) as KtQualifiedExpression
+    val receiver = replaced.receiverExpression
+    when (receiver) {
+        is KtDotQualifiedExpression -> {
+            receiver.replace(receiver.replaceFirstReceiver(factory, newReceiver, safeAccess))
+        }
+        else -> {
+            receiver.replace(newReceiver)
+        }
+    }
+    return replaced
 }
 
-private fun KtExpression.isString(): Boolean {
+fun KtDotQualifiedExpression.deleteFirstReceiver(): KtExpression {
+    val receiver = receiverExpression
+    when (receiver) {
+        is KtDotQualifiedExpression -> receiver.deleteFirstReceiver()
+        else -> selectorExpression?.let { return this.replace(it) as KtExpression }
+    }
+    return this
+}
+
+private val ARRAY_OF_METHODS = setOf(CollectionLiteralResolver.ARRAY_OF_FUNCTION) +
+                               CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY.values.toSet() +
+                               Name.identifier("emptyArray")
+
+fun KtCallExpression.isArrayOfMethod(): Boolean {
     val resolvedCall = getResolvedCall(analyze()) ?: return false
-    return resolvedCall.resolvedToStringType()
+    val descriptor = resolvedCall.candidateDescriptor
+    return (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
+           ARRAY_OF_METHODS.contains(descriptor.name)
 }

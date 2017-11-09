@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 // FULL_JDK
 
@@ -22,8 +25,10 @@ fun box(): String {
 
     // Java class without nested classes
     assertEquals(emptyList<String>(), nestedNames(Error::class))
+    // Java interface with nested classes
+    assertEquals(listOf("Entry"), nestedNames(java.util.Map::class))
     // Java class with nested classes
-    assertEquals(listOf("State", "UncaughtExceptionHandler"), nestedNames(Thread::class))
+    assertEquals(listOf("SimpleEntry", "SimpleImmutableEntry"), nestedNames(java.util.AbstractMap::class))
 
     // Built-ins
     assertEquals(emptyList<String>(), nestedNames(Array<Any>::class))

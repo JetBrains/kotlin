@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.name;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A class name which is used to uniquely identify a Kotlin class.
@@ -73,9 +74,10 @@ public final class ClassId {
         return new ClassId(getPackageFqName(), relativeClassName.child(name), local);
     }
 
-    @NotNull
+    @Nullable
     public ClassId getOuterClassId() {
-        return new ClassId(getPackageFqName(), relativeClassName.parent(), local);
+        FqName parent = relativeClassName.parent();
+        return parent.isRoot() ? null : new ClassId(getPackageFqName(), parent, local);
     }
 
     public boolean isNestedClass() {
@@ -86,6 +88,10 @@ public final class ClassId {
     public FqName asSingleFqName() {
         if (packageFqName.isRoot()) return relativeClassName;
         return new FqName(packageFqName.asString() + "." + relativeClassName.asString());
+    }
+
+    public boolean startsWith(@NotNull Name segment) {
+        return packageFqName.startsWith(segment);
     }
 
     /**

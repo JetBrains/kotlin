@@ -49,7 +49,10 @@ class CanBeValInspection : AbstractKotlinInspection() {
 
                 when (declaration) {
                     is KtProperty -> {
-                        if (declaration.isVar && declaration.isLocal && canBeVal(declaration, declaration.hasInitializer(), listOf(declaration))) {
+                        if (declaration.isVar && declaration.isLocal &&
+                            canBeVal(declaration,
+                                     declaration.hasInitializer() || declaration.hasDelegateExpression(),
+                                     listOf(declaration))) {
                             reportCanBeVal(declaration)
                         }
                     }
@@ -63,17 +66,21 @@ class CanBeValInspection : AbstractKotlinInspection() {
                 }
             }
 
-            private fun canBeVal(declaration: KtVariableDeclaration, hasInitializer: Boolean, allDeclarations: Collection<KtVariableDeclaration>): Boolean {
+            private fun canBeVal(
+                    declaration: KtVariableDeclaration,
+                    hasInitializerOrDelegate: Boolean,
+                    allDeclarations: Collection<KtVariableDeclaration>
+            ): Boolean {
                 if (allDeclarations.all { ReferencesSearch.search(it, it.useScope).none() }) {
                     // do not report for unused var's (otherwise we'll get it highlighted immediately after typing the declaration
                     return false
                 }
 
-                if (hasInitializer) {
+                return if (hasInitializerOrDelegate) {
                     val hasWriteUsages = ReferencesSearch.search(declaration, declaration.useScope).any {
                         (it as? KtSimpleNameReference)?.element?.readWriteAccess(useResolveForReadWrite = true)?.isWrite == true
                     }
-                    return !hasWriteUsages
+                    !hasWriteUsages
                 }
                 else {
                     val bindingContext = declaration.analyze(BodyResolveMode.FULL)
@@ -83,7 +90,7 @@ class CanBeValInspection : AbstractKotlinInspection() {
                     val writeInstructions = pseudocode.collectWriteInstructions(descriptor)
                     if (writeInstructions.isEmpty()) return false // incorrect code - do not report
 
-                    return writeInstructions.none { canReach(it, writeInstructions) }
+                    writeInstructions.none { it.owner !== pseudocode || canReach(it, writeInstructions) }
                 }
             }
 

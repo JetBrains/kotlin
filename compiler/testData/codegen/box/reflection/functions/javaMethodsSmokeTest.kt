@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 // WITH_REFLECT
 // FILE: J.java
 

@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZE
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.*
 
@@ -51,7 +53,20 @@ object DescriptorToSourceUtils {
         return result
     }
 
+    // TODO Fix in descriptor
+    @JvmStatic private fun getSourceForExtensionReceiverParameterDescriptor(descriptor: ReceiverParameterDescriptor): PsiElement? {
+        // Only for extension receivers
+        if (descriptor.source != SourceElement.NO_SOURCE || descriptor.value !is ExtensionReceiver) return null
+        val containingDeclaration = descriptor.containingDeclaration as? CallableDescriptor ?: return null
+        val psi = containingDeclaration.source.getPsi() as? KtCallableDeclaration ?: return null
+        return psi.receiverTypeReference
+    }
+
     @JvmStatic fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
+        if (descriptor is ReceiverParameterDescriptor) {
+            getSourceForExtensionReceiverParameterDescriptor(descriptor)?.let { return it }
+        }
+
         return (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
     }
 

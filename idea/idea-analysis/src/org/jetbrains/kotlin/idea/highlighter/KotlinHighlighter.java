@@ -70,6 +70,8 @@ public class KotlinHighlighter extends SyntaxHighlighterBase {
         keys1.put(KtTokens.RBRACKET, KotlinHighlightingColors.BRACKETS);
         keys1.put(KtTokens.COMMA, KotlinHighlightingColors.COMMA);
         keys1.put(KtTokens.SEMICOLON, KotlinHighlightingColors.SEMICOLON);
+        keys1.put(KtTokens.COLON, KotlinHighlightingColors.COLON);
+        keys1.put(KtTokens.COLONCOLON, KotlinHighlightingColors.DOUBLE_COLON);
         keys1.put(KtTokens.DOT, KotlinHighlightingColors.DOT);
         keys1.put(KtTokens.ARROW, KotlinHighlightingColors.ARROW);
 
@@ -90,8 +92,8 @@ public class KotlinHighlighter extends SyntaxHighlighterBase {
         keys1.put(KtTokens.DOC_COMMENT, KotlinHighlightingColors.DOC_COMMENT);
 
         fillMap(keys1, KDocTokens.KDOC_HIGHLIGHT_TOKENS, KotlinHighlightingColors.DOC_COMMENT);
-        keys1.put(KDocTokens.TAG_NAME, KotlinHighlightingColors.KDOC_TAG);
-        keys2.put(KDocTokens.TAG_NAME, KotlinHighlightingColors.DOC_COMMENT);
+        keys1.put(KDocTokens.TAG_NAME, KotlinHighlightingColors.DOC_COMMENT);
+        keys2.put(KDocTokens.TAG_NAME, KotlinHighlightingColors.KDOC_TAG);
 
         keys1.put(TokenType.BAD_CHARACTER, KotlinHighlightingColors.BAD_CHARACTER);
     }

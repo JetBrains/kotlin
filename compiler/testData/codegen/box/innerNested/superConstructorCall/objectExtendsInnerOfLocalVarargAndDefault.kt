@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM
-
 fun box(): String {
     val capture = "oh"
 

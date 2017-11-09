@@ -1,0 +1,10 @@
+PROTO DIFFERENCE in test/AnnotationAdded: JS_EXT_CLASS_ANNOTATION_LIST
+CHANGES in test/AnnotationAdded: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/AnnotationListBecomeEmpty: FLAGS, JS_EXT_CLASS_ANNOTATION_LIST
+CHANGES in test/AnnotationListBecomeEmpty: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/AnnotationListBecomeNotEmpty: FLAGS, JS_EXT_CLASS_ANNOTATION_LIST
+CHANGES in test/AnnotationListBecomeNotEmpty: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/AnnotationRemoved: JS_EXT_CLASS_ANNOTATION_LIST
+CHANGES in test/AnnotationRemoved: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/AnnotationReplaced: JS_EXT_CLASS_ANNOTATION_LIST
+CHANGES in test/AnnotationReplaced: CLASS_SIGNATURE

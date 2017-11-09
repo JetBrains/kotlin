@@ -5,6 +5,7 @@ package kotlin.io
 
 import java.io.*
 import java.util.*
+import kotlin.comparisons.*
 
 /**
  * Creates an empty directory in the specified [directory], using the given [prefix] and [suffix] to generate its name.
@@ -94,7 +95,7 @@ public fun File.relativeTo(base: File): File = File(this.toRelativeString(base))
  * @return File with relative path from [base] to this, or `this` if this and base paths have different roots.
  */
 public fun File.relativeToOrSelf(base: File): File
-        = toRelativeStringOrNull(base)?.let { File(it) } ?: this
+        = toRelativeStringOrNull(base)?.let(::File) ?: this
 
 /**
  * Calculates the relative path for this file from [base] file.
@@ -104,7 +105,7 @@ public fun File.relativeToOrSelf(base: File): File
  * @return File with relative path from [base] to this, or `null` if this and base paths have different roots.
  */
 public fun File.relativeToOrNull(base: File): File?
-        = toRelativeStringOrNull(base)?.let { File(it) }
+        = toRelativeStringOrNull(base)?.let(::File)
 
 
 private fun File.toRelativeStringOrNull(base: File): String? {
@@ -120,7 +121,7 @@ private fun File.toRelativeStringOrNull(base: File): String? {
 
     val sameCount = run countSame@ {
         var i = 0
-        val maxSameCount = Math.min(thisCount, baseCount)
+        val maxSameCount = minOf(thisCount, baseCount)
         while (i < maxSameCount && thisComponents.segments[i] == baseComponents.segments[i])
             i++
         return@countSame i
@@ -163,6 +164,8 @@ private fun File.toRelativeStringOrNull(base: File): String? {
  *
  * If this file is a directory, it is copied without its content, i.e. an empty [target] directory is created.
  * If you want to copy directory including its contents, use [copyRecursively].
+ *
+ * The operation doesn't preserve copied file attributes such as creation/modification date, permissions, etc.
  *
  * @param overwrite `true` if destination overwrite is allowed.
  * @param bufferSize the buffer size to use when copying.
@@ -221,25 +224,34 @@ private class TerminateException(file: File) : FileSystemException(file) {}
  * Copies this file with all its children to the specified destination [target] path.
  * If some directories on the way to the destination are missing, then they will be created.
  *
+ * If this file path points to a single file, then it will be copied to a file with the path [target].
+ * If this file path points to a directory, then its children will be copied to a directory with the path [target].
+ *
+ * If the [target] already exists, it will be deleted before copying when the [overwrite] parameter permits so.
+ *
+ * The operation doesn't preserve copied file attributes such as creation/modification date, permissions, etc.
+ *
  * If any errors occur during the copying, then further actions will depend on the result of the call
  * to `onError(File, IOException)` function, that will be called with arguments,
  * specifying the file that caused the error and the exception itself.
  * By default this function rethrows exceptions.
+ *
  * Exceptions that can be passed to the `onError` function:
- * NoSuchFileException - if there was an attempt to copy a non-existent file
- * FileAlreadyExistsException - if there is a conflict
- * AccessDeniedException - if there was an attempt to open a directory that didn't succeed.
- * IOException - if some problems occur when copying.
+ *
+ * - [NoSuchFileException] - if there was an attempt to copy a non-existent file
+ * - [FileAlreadyExistsException] - if there is a conflict
+ * - [AccessDeniedException] - if there was an attempt to open a directory that didn't succeed.
+ * - [IOException] - if some problems occur when copying.
+ *
+ * Note that if this function fails, then partial copying may have taken place.
  *
  * @param overwrite `true` if it is allowed to overwrite existing destination files and directories.
  * @return `false` if the copying was terminated, `true` otherwise.
-*
-* Note that if this function fails, then partial copying may have taken place.
  */
 public fun File.copyRecursively(target: File,
                                 overwrite: Boolean = false,
                                 onError: (File, IOException) -> OnErrorAction =
-                                { file, exception -> throw exception }
+                                         { _, exception -> throw exception }
 ): Boolean {
     if (!exists()) {
         return onError(this, NoSuchFileException(file = this, reason = "The source file doesn't exist.")) !=

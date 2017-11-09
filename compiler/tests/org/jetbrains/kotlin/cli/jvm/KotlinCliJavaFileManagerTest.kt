@@ -13,16 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.search.GlobalSearchScope
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -31,9 +38,8 @@ import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 
-
 class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
-    private var javaFilesDir: File? = null
+    private lateinit var javaFilesDir: File
 
     fun testCommon() {
         val manager = configureManager(
@@ -179,7 +185,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         javaFilesDir = KotlinTestUtils.tmpDir("java-file-manager-test")
 
         val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir!!)
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir)
         )
 
         return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -192,11 +198,16 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         File(fooPackageDir, "$className.java").writeText(text)
 
         @Suppress("UNUSED_VARIABLE") // used to implicitly initialize classpath/index in the manager
-        val coreJavaFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
+        val coreJavaFileFinder = VirtualFileFinder.SERVICE.getInstance(project)
         val coreJavaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
-        val root = environment.contentRootToVirtualFile(JavaSourceRoot(javaFilesDir!!, null))!!
-        coreJavaFileManager.initIndex(JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))))
+        val root = StandardFileSystems.local().findFileByPath(javaFilesDir.path)!!
+        coreJavaFileManager.initialize(
+                JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))),
+                emptyList(),
+                SingleJavaFileRootsIndex(emptyList()),
+                useFastClassFilesReading = true
+        )
 
         return coreJavaFileManager
     }
@@ -207,14 +218,14 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         val classId = ClassId(FqName(packageFQName), FqName(classFqName), false)
         val stringRequest = classId.asSingleFqName().asString()
 
-        val foundByClassId = manager.findClass(classId, allScope)
+        val foundByClassId = (manager.findClass(classId, allScope) as JavaClassImpl).psi
         val foundByString = manager.findClass(stringRequest, allScope)
 
         TestCase.assertNotNull("Could not find: $classId", foundByClassId)
         TestCase.assertNotNull("Could not find: $stringRequest", foundByString)
 
         TestCase.assertEquals(foundByClassId, foundByString)
-        TestCase.assertEquals("Found ${foundByClassId!!.qualifiedName} instead of $packageFQName", packageFQName + "." + classFqName,
+        TestCase.assertEquals("Found ${foundByClassId.qualifiedName} instead of $packageFQName", packageFQName + "." + classFqName,
                               foundByClassId.qualifiedName)
     }
 

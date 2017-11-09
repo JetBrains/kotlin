@@ -1,0 +1,3 @@
+package
+
+public inline fun </*0*/ reified R, /*1*/ C : kotlin.collections.MutableCollection<in R>> kotlin.Array<*>.filterIsInstanceTo(/*0*/ destination: C): C

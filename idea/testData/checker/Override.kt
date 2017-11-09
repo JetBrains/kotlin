@@ -26,11 +26,11 @@ package override
     }
 
     <error>class MyIllegalClass4</error> : MyTrait, MyAbstractClass() {
-        <error>fun foo()</error> {}
+        fun <error>foo</error>() {}
         <error>override</error> fun other() {}
     }
 
     class MyChildClass1 : MyClass() {
-        <error>fun foo()</error> {}
+        fun <error>foo</error>() {}
         override fun bar() {}
     }

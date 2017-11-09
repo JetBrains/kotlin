@@ -1,4 +1,4 @@
-JetFile: SimpleModifiers.kt
+KtFile: SimpleModifiers.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

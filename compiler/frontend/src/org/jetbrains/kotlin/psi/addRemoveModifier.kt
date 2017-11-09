@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,30 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
-private fun createModifierList(text: String, owner: KtModifierListOwner): KtModifierList {
-    val newModifierList = KtPsiFactory(owner).createModifierList(text)
-    val anchor = owner.firstChild!!
+private fun KtModifierListOwner.addModifierList(newModifierList: KtModifierList): KtModifierList {
+    val anchor = firstChild!!
             .siblings(forward = true)
             .dropWhile { it is PsiComment || it is PsiWhiteSpace }
             .first()
-    return owner.addBefore(newModifierList, anchor) as KtModifierList
+    return addBefore(newModifierList, anchor) as KtModifierList
+}
+
+private fun createModifierList(text: String, owner: KtModifierListOwner): KtModifierList {
+    return owner.addModifierList(KtPsiFactory(owner).createModifierList(text))
+}
+
+fun KtModifierListOwner.setModifierList(newModifierList: KtModifierList) {
+    val currentModifierList = modifierList
+    if (currentModifierList != null) {
+        currentModifierList.replace(newModifierList)
+    }
+    else {
+        addModifierList(newModifierList)
+    }
 }
 
 fun addModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
@@ -71,10 +83,11 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
         }
         return
     }
-    if (modifierToReplace != null) {
+    if (modifierToReplace != null && modifierList.firstChild == modifierList.lastChild) {
         modifierToReplace.replace(newModifier)
     }
     else {
+        modifierToReplace?.delete()
         val newModifierOrder = MODIFIERS_ORDER.indexOf(modifier)
 
         fun placeAfter(child: PsiElement): Boolean {
@@ -85,12 +98,12 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
             return newModifierOrder > order
         }
 
-        val lastChild = modifierList.getLastChild()
+        val lastChild = modifierList.lastChild
         val anchor = lastChild?.siblings(forward = false)?.firstOrNull(::placeAfter)
         modifierList.addAfter(newModifier, anchor)
 
         if (anchor == lastChild) { // add line break if needed, otherwise visibility keyword may appear on previous line
-            val whiteSpace = modifierList.getNextSibling() as? PsiWhiteSpace
+            val whiteSpace = modifierList.nextSibling as? PsiWhiteSpace
             if (whiteSpace != null && whiteSpace.text.contains('\n')) {
                 modifierList.addAfter(whiteSpace, anchor)
                 whiteSpace.delete()
@@ -116,10 +129,27 @@ private val MODIFIERS_TO_REPLACE = mapOf(
         PUBLIC_KEYWORD to listOf(PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD),
         PROTECTED_KEYWORD to listOf(PUBLIC_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD),
         PRIVATE_KEYWORD to listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, INTERNAL_KEYWORD),
-        INTERNAL_KEYWORD to listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD)
+        INTERNAL_KEYWORD to listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD),
+        HEADER_KEYWORD to listOf(IMPL_KEYWORD, ACTUAL_KEYWORD, EXPECT_KEYWORD),
+        IMPL_KEYWORD to listOf(HEADER_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD),
+        EXPECT_KEYWORD to listOf(IMPL_KEYWORD, ACTUAL_KEYWORD, HEADER_KEYWORD),
+        ACTUAL_KEYWORD to listOf(HEADER_KEYWORD, EXPECT_KEYWORD, IMPL_KEYWORD)
 )
 
 private val MODIFIERS_ORDER = listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD,
-                                     FINAL_KEYWORD, OPEN_KEYWORD, ABSTRACT_KEYWORD,
+                                     HEADER_KEYWORD, IMPL_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD,
+                                     FINAL_KEYWORD, OPEN_KEYWORD, ABSTRACT_KEYWORD, SEALED_KEYWORD,
+                                     CONST_KEYWORD,
+                                     EXTERNAL_KEYWORD,
                                      OVERRIDE_KEYWORD,
-                                     INNER_KEYWORD, ENUM_KEYWORD, COMPANION_KEYWORD, INFIX_KEYWORD, OPERATOR_KEYWORD)
+                                     LATEINIT_KEYWORD,
+                                     TAILREC_KEYWORD,
+                                     VARARG_KEYWORD,
+                                     SUSPEND_KEYWORD,
+                                     INNER_KEYWORD,
+                                     ENUM_KEYWORD, ANNOTATION_KEYWORD,
+                                     COMPANION_KEYWORD,
+                                     INLINE_KEYWORD,
+                                     INFIX_KEYWORD,
+                                     OPERATOR_KEYWORD,
+                                     DATA_KEYWORD)

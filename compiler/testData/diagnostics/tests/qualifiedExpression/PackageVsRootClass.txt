@@ -37,20 +37,10 @@ package
 
 public fun test(/*0*/ _ab: a.b): kotlin.Unit
 
-public final class a {
-    // -- Module: <m2> --
-}
-
 package a {
     public fun test(/*0*/ a_b: a.b): kotlin.Unit
-
-    public final class b {
-        // -- Module: <m1> --
-    }
 }
 
 package some {
     public fun test(/*0*/ a_b: a.b): kotlin.Unit
 }
-
-

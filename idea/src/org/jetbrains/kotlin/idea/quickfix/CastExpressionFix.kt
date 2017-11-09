@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class CastExpressionFix(element: KtExpression, type: KotlinType) : KotlinQuickFixAction<KtExpression>(element) {
     private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
@@ -39,15 +40,17 @@ class CastExpressionFix(element: KtExpression, type: KotlinType) : KotlinQuickFi
     private val upOrDownCast: Boolean = run {
         val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element)
         expressionType != null && (type.isSubtypeOf(expressionType) || expressionType.isSubtypeOf(type))
+        && expressionType != type.makeNullable() //covered by AddExclExclCallFix
     }
 
     override fun getFamilyName() = "Cast expression"
-    override fun getText() = "Cast expression '${element.text}' to '$typePresentation'"
+    override fun getText() = element?.let { "Cast expression '${it.text}' to '$typePresentation'" } ?: ""
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
             = upOrDownCast && super.isAvailable(project, editor, file)
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val expressionToInsert = KtPsiFactory(file).createExpressionByPattern("$0 as $1", element, typeSourceCode)
         val newExpression = element.replaced(expressionToInsert)
         ShortenReferences.DEFAULT.process((KtPsiUtil.safeDeparenthesize(newExpression) as KtBinaryExpressionWithTypeRHS).right!!)

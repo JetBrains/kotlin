@@ -311,4 +311,51 @@ class ComponentContainerTest {
         assertTrue(a === bc1.get<B>().a)
         assertTrue(a === bc1.get<A>())
     }
+
+    @DefaultImplementation(impl = Impl::class)
+    abstract class I
+
+    class Impl : I()
+
+    class Impl2: I()
+
+    class Use(val i: I)
+
+    @Test
+    fun default_implementation() {
+        class Use(val i: I)
+
+        val u = composeContainer("a") {
+            useImpl<Use>()
+        }.get<Use>()
+
+        assertTrue(u.i is Impl)
+    }
+
+    @Test
+    fun non_default_implementation() {
+        val ac = composeContainer("a") {
+            useImpl<Impl2>()
+            useImpl<Use>()
+        }
+
+        val u = ac.get<Use>()
+        assertTrue(u.i is Impl2)
+    }
+
+    @DefaultImplementation(impl = A::class)
+    interface S
+
+    object A: S
+
+    class UseS(val s: S)
+
+    @Test
+    fun test_default_object() {
+        val useS = composeContainer("s") {
+            useImpl<UseS>()
+        }.get<UseS>()
+
+        assertTrue(useS.s === A)
+    }
 }

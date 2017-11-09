@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.InspectionsBundle
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 object DeleteEqualsAndHashCodeFix : LocalQuickFix {
     override fun getName() = "Delete equals()/hashCode()"
@@ -42,6 +42,7 @@ object DeleteEqualsAndHashCodeFix : LocalQuickFix {
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
         val objectDeclaration = descriptor.psiElement.getStrictParentOfType<KtObjectDeclaration>() ?: return
         val classDescriptor = objectDeclaration.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
         classDescriptor.findDeclaredEquals(false)?.source?.getPsi()?.delete()
@@ -60,7 +61,10 @@ sealed class GenerateEqualsOrHashCodeFix : LocalQuickFix {
 
     override fun getFamilyName() = name
 
+    override fun startInWriteAction() = false
+
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
         KotlinGenerateEqualsAndHashcodeAction().doInvoke(project, null, descriptor.psiElement.parent as KtClass)
     }
 }
@@ -77,7 +81,7 @@ class EqualsOrHashCodeInspection : AbstractKotlinInspection() {
 
                 when (classDescriptor.kind) {
                     ClassKind.OBJECT -> {
-                        if (classOrObject.getSuperTypeListEntries().isNotEmpty()) return
+                        if (classOrObject.superTypeListEntries.isNotEmpty()) return
                         holder.registerProblem(nameIdentifier, "equals()/hashCode() in object declaration", DeleteEqualsAndHashCodeFix)
                     }
                     ClassKind.CLASS -> {

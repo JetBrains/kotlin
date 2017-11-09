@@ -51,7 +51,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
     public List<KtTypeProjection> getTypeArguments() {
         // TODO: empty elements in PSI
         KtTypeArgumentList typeArgumentList = getTypeArgumentList();
-        return typeArgumentList == null ? Collections.<KtTypeProjection>emptyList() : typeArgumentList.getArguments();
+        return typeArgumentList == null ? Collections.emptyList() : typeArgumentList.getArguments();
     }
 
     @NotNull

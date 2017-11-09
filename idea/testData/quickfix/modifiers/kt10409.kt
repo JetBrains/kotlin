@@ -1,6 +1,6 @@
 // "Make 'IterablePipeline' abstract" "true"
 // ERROR: 'pipe' overrides nothing
-// ERROR: One type argument expected for interface Pipeline<TPipeline> defined in root package
+// ERROR: One type argument expected for interface Pipeline<TPipeline>
 
 // Actually this test is about getting rid of assertion happenning while creating quick fixes
 // See KT-10409

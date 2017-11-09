@@ -2,10 +2,8 @@ enum class E {
     A,
 
     B {
-        override fun bar() {
-        }
+        override fun bar() {}
     };
 
-    internal open fun bar() {
-    }
+    internal open fun bar() {}
 }

@@ -29,9 +29,13 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesImpl
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.move.invokeMoveFilesOrDirectoriesRefactoring
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinSelectNestedClassRefactoringDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinNestedClassesDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
@@ -45,7 +49,11 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     private fun getUniqueContainer(elements: Array<out PsiElement>): PsiElement? {
         val getContainer: (PsiElement) -> PsiElement? =
                 if (elements.any { it.parent !is KtFile }) { e ->
-                    (e as? KtNamedDeclaration)?.containingClassOrObject
+                    when (e) {
+                        is KtNamedDeclaration -> e.containingClassOrObject ?: e.parent
+                        is KtFile -> e.parent
+                        else -> null
+                    }
                 }
                 else { e ->
                     e.containingFile?.parent
@@ -53,7 +61,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         return elements.mapNotNullTo(LinkedHashSet(), getContainer).singleOrNull()
     }
 
-    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal() else parent is KtFile
+    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal else parent is KtFile
 
     private fun doMoveWithCheck(
             project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?, editor: Editor?
@@ -68,7 +76,13 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
             return false
         }
 
-        val elementsToSearch = elements.mapTo(LinkedHashSet()) { it as KtNamedDeclaration }
+        val elementsToSearch = elements.flatMapTo(LinkedHashSet<KtNamedDeclaration>()) {
+            when (it) {
+                is KtNamedDeclaration -> listOf(it)
+                is KtFile -> it.declarations.filterIsInstance<KtNamedDeclaration>()
+                else -> emptyList()
+            }
+        }
 
         // todo: allow moving companion object
         if (elementsToSearch.any { it is KtObjectDeclaration && it.isCompanion() }) {
@@ -86,6 +100,22 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         if (elementsToSearch.any { it is KtEnumEntry }) {
             val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is not supported for enum entries")
             CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
+            return true
+        }
+
+        if (elements.all { it is KtFile }) {
+            val initialTargetElement = when {
+                targetContainer is PsiPackage || targetContainer is PsiDirectory -> targetContainer
+                container is PsiPackage || container is PsiDirectory -> container
+                else -> null
+            }
+            val initialTargetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, initialTargetElement)
+            val dialog = KotlinAwareMoveFilesOrDirectoriesDialog(project) {
+                invokeMoveFilesOrDirectoriesRefactoring(it, project, elements, initialTargetDirectory, callback)
+            }
+            dialog.setData(elements, initialTargetDirectory, "refactoring.moveFile")
+            dialog.show()
+
             return true
         }
 
@@ -141,10 +171,14 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         }
 
         return elements.all { e ->
-            if (e is KtClass || (e is KtObjectDeclaration && !e.isObjectLiteral()) || e is KtNamedFunction || e is KtProperty) {
-                (editorMode || (e as KtNamedDeclaration).canMove()) && e.canRefactor()
+            when {
+                e is KtClass || e is KtObjectDeclaration && !e.isObjectLiteral() || e is KtNamedFunction || e is KtProperty ->
+                    (editorMode || (e as KtNamedDeclaration).canMove()) && e.canRefactor()
+                e is KtFile ->
+                    e.declarations.any { it is KtNamedDeclaration } && e.canRefactor()
+                else ->
+                    false
             }
-            else false
         }
     }
 
@@ -168,7 +202,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     override fun tryToMove(
             element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?
     ): Boolean {
-        val elementsToMove = arrayOf(element)
+        val elementsToMove = element.unwrapped?.let { arrayOf(it) } ?: PsiElement.EMPTY_ARRAY
         val targetContainer = dataContext?.let { dataContext -> LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext) }
         return canMove(elementsToMove, targetContainer, true) && doMoveWithCheck(project, elementsToMove, targetContainer, null, editor)
     }

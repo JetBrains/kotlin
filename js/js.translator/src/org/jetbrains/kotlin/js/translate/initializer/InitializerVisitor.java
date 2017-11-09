@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,24 @@
 
 package org.jetbrains.kotlin.js.translate.initializer;
 
-import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.declaration.PropertyTranslatorKt;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsStatementAndMergeInBlockIfNeeded;
 import static org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
 import static org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForProperty;
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptor;
 
 public final class InitializerVisitor extends TranslatorVisitor<Void> {
     @Override
@@ -37,21 +43,61 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public final Void visitProperty(@NotNull KtProperty property, @NotNull TranslationContext context) {
+        PropertyDescriptor descriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), property);
+        JsExpression value = PropertyTranslatorKt.translateDelegateOrInitializerExpression(context, property);
+        JsStatement statement = null;
+
         KtExpression initializer = property.getInitializer();
+        KtExpression delegate = property.getDelegateExpression();
         if (initializer != null) {
-            JsStatement statement = generateInitializerForProperty(context, getPropertyDescriptor(context.bindingContext(), property),
-                                                                   Translation.translateAsExpression(initializer, context));
-            if (!JsAstUtils.isEmptyStatement(statement)) {
-                context.addStatementsToCurrentBlock(JsAstUtils.flattenStatement(statement));
-            }
+            assert value != null;
+            KotlinType type = TranslationUtils.isReferenceToSyntheticBackingField(descriptor) ?
+                              descriptor.getType() :
+                              TranslationUtils.getReturnTypeForCoercion(descriptor);
+            value = TranslationUtils.coerce(context, value, type);
+            statement = generateInitializerForProperty(context, descriptor, value);
+        }
+        else if (delegate != null) {
+            assert value != null;
+            statement = generateInitializerForDelegate(context, descriptor, value);
+        }
+        else if (Boolean.TRUE.equals(context.bindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
+            JsNameRef backingFieldReference = TranslationUtils.backingFieldReference(context, descriptor);
+            JsExpression defaultValue = generateDefaultValue(descriptor, backingFieldReference);
+            statement = TranslationUtils.assignmentToBackingField(context, descriptor, defaultValue).source(property).makeStmt();
+        }
+        else if (JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
+            JsNameRef propRef = new JsNameRef(context.getNameForDescriptor(descriptor), new JsThisRef());
+            JsExpression defaultValue = generateDefaultValue(descriptor, propRef);
+            statement = JsAstUtils.assignment(propRef, defaultValue).source(property).makeStmt();
         }
 
-        JsStatement delegate = generateInitializerForDelegate(context, property);
-        if (delegate != null) {
-            context.addStatementToCurrentBlock(delegate);
+        if (statement != null && !JsAstUtils.isEmptyStatement(statement)) {
+            context.addStatementsToCurrentBlock(JsAstUtils.flattenStatement(statement));
         }
 
         return null;
+    }
+
+    @NotNull
+    private static JsExpression generateDefaultValue(
+            @NotNull PropertyDescriptor property,
+            @NotNull JsExpression lateInitDefault
+    ) {
+        if (property.isLateInit()) return lateInitDefault.deepCopy();
+
+        KotlinType type = property.getType();
+        if (KotlinBuiltIns.isInt(type) || KotlinBuiltIns.isFloat(type) || KotlinBuiltIns.isDouble(type) ||
+            KotlinBuiltIns.isByte(type) || KotlinBuiltIns.isShort(type)
+        ) {
+            return new JsIntLiteral(0);
+        }
+        else if (KotlinBuiltIns.isBoolean(type)) {
+            return new JsBooleanLiteral(false);
+        }
+        else {
+            return new JsNullLiteral();
+        }
     }
 
     @Override

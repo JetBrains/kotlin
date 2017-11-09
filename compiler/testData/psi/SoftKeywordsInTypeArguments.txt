@@ -1,4 +1,4 @@
-JetFile: SoftKeywordsInTypeArguments.kt
+KtFile: SoftKeywordsInTypeArguments.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

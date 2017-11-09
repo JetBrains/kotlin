@@ -1,6 +1,9 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 
-import kotlin.reflect.allSupertypes
+import kotlin.reflect.full.allSupertypes
 import kotlin.test.assertEquals
 
 interface A<A1, A2>

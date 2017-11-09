@@ -1,0 +1,31 @@
+/**
+## Annotations
+*/
+
+annotations
+  : (annotation | annotationList)*
+  ;
+
+annotation
+  : "@" (annotationUseSiteTarget ":")? unescapedAnnotation
+  ;
+
+annotationList
+  : "@" (annotationUseSiteTarget ":")? "[" unescapedAnnotation+ "]"
+  ;
+
+annotationUseSiteTarget
+  : "field"
+  : "file"
+  : "property"
+  : "get"
+  : "set"
+  : "receiver"
+  : "param"
+  : "setparam"
+  : "delegate"
+  ;
+
+unescapedAnnotation
+  : SimpleName{"."} typeArguments? valueArguments?
+  ;

@@ -26,8 +26,24 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 public class LocalVariableDescriptor extends VariableDescriptorWithInitializerImpl implements VariableDescriptorWithAccessors {
     private final boolean isDelegated;
-    private VariableAccessorDescriptor getter;
-    private VariableAccessorDescriptor setter;
+    private final boolean isLateInit;
+    private LocalVariableAccessorDescriptor.Getter getter;
+    private LocalVariableAccessorDescriptor.Setter setter;
+
+    public LocalVariableDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            @NotNull Name name,
+            @Nullable KotlinType type,
+            boolean mutable,
+            boolean isDelegated,
+            boolean isLateInit,
+            @NotNull SourceElement source
+    ) {
+        super(containingDeclaration, annotations, name, type, mutable, source);
+        this.isDelegated = isDelegated;
+        this.isLateInit = isLateInit;
+    }
 
     public LocalVariableDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -38,8 +54,17 @@ public class LocalVariableDescriptor extends VariableDescriptorWithInitializerIm
             boolean isDelegated,
             @NotNull SourceElement source
     ) {
-        super(containingDeclaration, annotations, name, type, mutable, source);
-        this.isDelegated = isDelegated;
+        this(containingDeclaration, annotations, name, type, mutable, isDelegated, false, source);
+    }
+
+    public LocalVariableDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            @NotNull Name name,
+            @Nullable KotlinType type,
+            @NotNull SourceElement source
+    ) {
+        this(containingDeclaration, annotations, name, type, false, false, false, source);
     }
 
     @Override
@@ -73,17 +98,25 @@ public class LocalVariableDescriptor extends VariableDescriptorWithInitializerIm
 
     @Nullable
     @Override
-    public VariableAccessorDescriptor getGetter() {
+    public LocalVariableAccessorDescriptor.Getter getGetter() {
         return getter;
     }
 
     @Nullable
     @Override
-    public VariableAccessorDescriptor getSetter() {
+    public LocalVariableAccessorDescriptor.Setter getSetter() {
         return setter;
     }
 
+    // This override is not deprecated because local variables can only come from sources,
+    // and we can be sure that they won't be recompiled independently
+    @Override
     public boolean isDelegated() {
         return isDelegated;
+    }
+
+    @Override
+    public boolean isLateInit() {
+        return isLateInit;
     }
 }

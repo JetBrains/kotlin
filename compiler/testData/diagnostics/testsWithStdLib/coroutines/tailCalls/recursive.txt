@@ -1,0 +1,7 @@
+package
+
+public suspend fun int1(): kotlin.Int
+public suspend fun int2(): kotlin.Int
+public suspend fun int3(): kotlin.Int
+public suspend fun unit1(): kotlin.Unit
+public suspend fun unit2(): kotlin.Unit

@@ -57,8 +57,10 @@ open class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, priv
         return result
     }
 
+    override fun getClassifierNames(): Set<Name> = emptySet()
+
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.simpleName, " {")
+        p.println(this::class.java.simpleName, " {")
         p.pushIndent()
 
         p.popIndent()

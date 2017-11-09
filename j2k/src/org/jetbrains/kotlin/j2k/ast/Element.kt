@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.j2k.ast
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.j2k.CodeConverter
-import org.jetbrains.kotlin.j2k.Converter
 import org.jetbrains.kotlin.j2k.EmptyDocCommentConverter
 
 fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?, inheritance: CommentsAndSpacesInheritance = CommentsAndSpacesInheritance()): TElement {
@@ -109,8 +108,7 @@ abstract class Element {
 
 // this class should never be created directly - Converter.deferredElement() should be used!
 class DeferredElement<TResult : Element>(
-        private val generator: (CodeConverter) -> TResult,
-        val converterState: Converter.PersonalState
+        private val generator: (CodeConverter) -> TResult
 ) : Element() {
 
     private var result: TResult? = null

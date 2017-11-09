@@ -2,7 +2,6 @@
 
 package kotlin
 
-import java.io.Serializable
 import kotlin.reflect.KProperty
 
 /**

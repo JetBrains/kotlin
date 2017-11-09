@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.android.synthetic.res
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.io.ByteArrayInputStream
@@ -30,31 +28,23 @@ class CliAndroidLayoutXmlFileManager(
         applicationPackage: String,
         variants: List<AndroidVariant>
 ) : AndroidLayoutXmlFileManager(project) {
-    private companion object {
-        val LOG = Logger.getInstance(CliAndroidLayoutXmlFileManager::class.java)
-    }
-
     override val androidModule = AndroidModule(applicationPackage, variants)
 
     private val saxParser: SAXParser = initSAX()
 
-    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource> {
-        val resources = arrayListOf<AndroidResource>()
+    override fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup {
+        val layouts = layoutGroup.layouts.map { layout ->
+            val resources = arrayListOf<AndroidResource>()
 
-        val handler = AndroidXmlHandler { id, tag ->
-            resources += parseAndroidResource(id, tag, null)
+            val inputStream = ByteArrayInputStream(layout.virtualFile.contentsToByteArray())
+            saxParser.parse(inputStream, AndroidXmlHandler { id, tag ->
+                resources += parseAndroidResource(id, tag, null)
+            })
+
+            AndroidLayout(resources)
         }
 
-        for (file in files) {
-            try {
-                val inputStream = ByteArrayInputStream(file.virtualFile.contentsToByteArray())
-                saxParser.parse(inputStream, handler)
-            } catch (e: Throwable) {
-                LOG.error(e)
-            }
-        }
-
-        return resources
+        return AndroidLayoutGroup(layoutGroup.name, layouts)
     }
 
     private fun initSAX(): SAXParser {

@@ -1,4 +1,4 @@
-JetFile: BitArith.kt
+KtFile: BitArith.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

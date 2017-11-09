@@ -58,6 +58,8 @@ With that, an exact type of an expression can be checked in the following way:
        expr checkType { _<A>() }
     }
 
+`CHECK_TYPE` directive also disables `UNDERSCORE_USAGE_WITHOUT_BACKTICKS` diagnostics output.
+
 #### Usage:
 
     // !CHECK_TYPE
@@ -76,13 +78,16 @@ The directive lets you compose a test consisting of several files in one actual 
 
 ### 4. LANGUAGE
 
-This directive lets you enable or disable certain language features. Language features are named as enum entries of the class `LanguageFeature`. Each feature can be enabled with `+` or disabled with `-`.
+This directive lets you enable or disable certain language features. Language features are named as enum entries of the class `LanguageFeature`.
+Each feature can be enabled with `+`, disabled with `-`, or enabled with warning with `warn:`.
 
 #### Usage:
 
     // !LANGUAGE: -TopLevelSealedInheritance
 
     // !LANGUAGE: +TypeAliases -LocalDelegatedProperties
+
+    // !LANGUAGE: warn:Coroutines
 
 ### 5. API_VERSION
 

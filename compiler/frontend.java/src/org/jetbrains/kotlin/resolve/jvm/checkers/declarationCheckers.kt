@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class LocalFunInlineChecker : SimpleDeclarationChecker {
@@ -45,7 +45,7 @@ class LocalFunInlineChecker : SimpleDeclarationChecker {
             declaration is KtNamedFunction &&
             descriptor is FunctionDescriptor &&
             descriptor.visibility == Visibilities.LOCAL) {
-            diagnosticHolder.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, declaration, descriptor))
+            diagnosticHolder.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, "Local inline functions"))
         }
     }
 }
@@ -88,7 +88,7 @@ class PlatformStaticAnnotationChecker : SimpleDeclarationChecker {
             else -> declaration
         }
 
-        if (insideObject && checkDeclaration.getModifierList()?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
+        if (insideObject && checkDeclaration.modifierList?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
             diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration))
         }
 
@@ -183,24 +183,32 @@ class OverloadsAnnotationChecker: SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (descriptor.hasJvmOverloadsAnnotation()) {
-            checkDeclaration(declaration, descriptor, diagnosticHolder)
+        descriptor.findJvmOverloadsAnnotation()?.let { annotation ->
+            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation)
+            if (annotationEntry != null) {
+                checkDeclaration(annotationEntry, descriptor, diagnosticHolder)
+            }
         }
     }
 
-    private fun checkDeclaration(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+    private fun checkDeclaration(annotationEntry: KtAnnotationEntry, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor !is CallableDescriptor) {
             return
         }
-        if (descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(declaration))
+        if ((descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE) {
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_INTERFACE.on(annotationEntry))
         }
-        else if ((!descriptor.visibility.isPublicAPI && descriptor.visibility != Visibilities.INTERNAL) ||
-                 DescriptorUtils.isLocal(descriptor)) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(declaration))
+        else if (descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(annotationEntry))
+        }
+        else if (DescriptorUtils.isLocal(descriptor)) {
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_LOCAL.on(annotationEntry))
+        }
+        else if (!descriptor.visibility.isPublicAPI && descriptor.visibility != Visibilities.INTERNAL) {
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(annotationEntry))
         }
         else if (descriptor.valueParameters.none { it.declaresDefaultValue() }) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.on(declaration))
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.on(annotationEntry))
         }
     }
 }
@@ -221,42 +229,6 @@ class TypeParameterBoundIsNotArrayChecker : SimpleDeclarationChecker {
                 val element = DescriptorToSourceUtils.descriptorToDeclaration(typeParameter) ?: declaration
                 diagnosticHolder.report(ErrorsJvm.UPPER_BOUND_CANNOT_BE_ARRAY.on(element))
             }
-        }
-    }
-}
-
-class ReifiedTypeParameterAnnotationChecker : SimpleDeclarationChecker {
-
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
-        if (descriptor is CallableDescriptor &&
-            !(InlineUtil.isInline(descriptor) || InlineUtil.isPropertyWithAllAccessorsAreInline(descriptor))) {
-            checkTypeParameterDescriptorsAreNotReified(descriptor.typeParameters, diagnosticHolder)
-        }
-
-        if (descriptor is ClassDescriptor) {
-            checkTypeParameterDescriptorsAreNotReified(descriptor.declaredTypeParameters, diagnosticHolder)
-        }
-    }
-
-
-    private fun checkTypeParameterDescriptorsAreNotReified(
-            typeParameterDescriptors: List<TypeParameterDescriptor>,
-            diagnosticHolder: DiagnosticSink
-    ) {
-        for (reifiedTypeParameterDescriptor in typeParameterDescriptors.filter { it.isReified }) {
-            val typeParameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(reifiedTypeParameterDescriptor)
-            if (typeParameterDeclaration !is KtTypeParameter) throw AssertionError("JetTypeParameter expected")
-
-            diagnosticHolder.report(
-                    Errors.REIFIED_TYPE_PARAMETER_NO_INLINE.on(
-                            typeParameterDeclaration.getModifierList()!!.getModifier(KtTokens.REIFIED_KEYWORD)!!
-                    )
-            )
         }
     }
 }

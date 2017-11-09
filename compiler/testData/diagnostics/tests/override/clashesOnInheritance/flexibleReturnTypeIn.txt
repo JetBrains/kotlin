@@ -1,9 +1,5 @@
 package
 
-public /*synthesized*/ fun J1(/*0*/ function: () -> In<kotlin.String!>!): J1
-public /*synthesized*/ fun J2(/*0*/ function: () -> In<kotlin.String!>): J2
-public /*synthesized*/ fun J3(/*0*/ function: () -> In<kotlin.String!>?): J3
-
 public interface In</*0*/ in T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -7,17 +7,12 @@ End of files
 Compiling files:
   src/fun.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Cleaning output files:
   out/production/module/JavaUsage.class
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/test/OtherKt.class
 End of files
-Compiling files:
-  src/other.kt
-End of files
-Exit code: OK
+Exit code: NOTHING_DONE
 ------------------------------------------
 Compiling files:
   src/JavaUsage.java

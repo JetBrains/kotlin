@@ -2,7 +2,7 @@
 
 fun main(args: Array<String>) {
     val list = listOf(MyClass(1, 2, 3, 4))
-    for ((a, b, c) in list) {
+    for ((a, _, c) in list) {
         println("$a$c")
     }
 }

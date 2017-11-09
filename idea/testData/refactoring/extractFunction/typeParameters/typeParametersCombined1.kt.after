@@ -1,7 +1,7 @@
 // PARAM_TYPES: A<T>
 // PARAM_TYPES: A<T>.B<U>
 // PARAM_TYPES: V, Data
-// PARAM_DESCRIPTOR: public final class A<T : Data> defined in root package
+// PARAM_DESCRIPTOR: public final class A<T : Data> defined in root package in file typeParametersCombined1.kt
 // PARAM_DESCRIPTOR: public final inner class B<U : Data> defined in A
 // PARAM_DESCRIPTOR: value-parameter v: V defined in A.B.foo
 open class Data(val x: Int)

@@ -1,5 +1,6 @@
 class C {
-fun foo0() {}
+fun foo0() {
+}
 
 private
 fun foo() {

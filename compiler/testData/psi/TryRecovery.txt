@@ -1,4 +1,4 @@
-JetFile: TryRecovery.kt
+KtFile: TryRecovery.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

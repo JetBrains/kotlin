@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.js.test.utils
 
-import com.google.dart.compiler.backend.js.ast.JsExpressionStatement
-import com.google.dart.compiler.backend.js.ast.JsNullLiteral
-import com.google.dart.compiler.backend.js.ast.JsProgram
-import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
+import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
+import org.jetbrains.kotlin.js.backend.ast.JsNullLiteral
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
 import org.junit.Assert
 
 fun JsProgram.verifyAst() {

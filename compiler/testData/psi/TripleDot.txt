@@ -1,4 +1,4 @@
-JetFile: TripleDot.kt
+KtFile: TripleDot.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

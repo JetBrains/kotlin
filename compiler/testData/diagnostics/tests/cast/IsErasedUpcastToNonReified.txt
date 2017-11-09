@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ T> foo(/*0*/ x: kotlin.collections.List<T>, /*1*/ y: kotlin.collections.List<T>?): kotlin.Unit
+public inline fun </*0*/ reified T> test(/*0*/ x: T?): kotlin.Unit
+public fun </*0*/ T, /*1*/ S : T> test(/*0*/ x: T?, /*1*/ y: S, /*2*/ z: T): kotlin.Unit

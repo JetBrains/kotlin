@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("IMPLEMENTING_FUNCTION_INTERFACE")
 package kotlin.reflect
 
 /**
@@ -87,6 +88,14 @@ public interface KProperty0<out R> : KProperty<R>, () -> R {
      */
     public fun get(): R
 
+    /**
+     * Returns the value of the delegate if this is a delegated property, or `null` if this property is not delegated.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/delegated-properties.html)
+     * for more information.
+     */
+    @SinceKotlin("1.1")
+    public fun getDelegate(): Any?
+
     override val getter: Getter<R>
 
     public interface Getter<out R> : KProperty.Getter<R>, () -> R
@@ -124,6 +133,23 @@ public interface KProperty1<T, out R> : KProperty<R>, (T) -> R {
      *                 or an extension receiver if this is a top level extension property.
      */
     public fun get(receiver: T): R
+
+    /**
+     * Returns the value of the delegate if this is a delegated property, or `null` if this property is not delegated.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/delegated-properties.html)
+     * for more information.
+     *
+     * Note that for a top level **extension** property, the delegate is the same for all extension receivers,
+     * so the actual [receiver] instance passed in is not going to make any difference, it must only be a value of [T].
+     *
+     * @param receiver the receiver which is used to obtain the value of the property delegate.
+     *                 For example, it should be a class instance if this is a member property of that class,
+     *                 or an extension receiver if this is a top level extension property.
+     *
+     * @see [KProperty1.getExtensionDelegate]
+     */
+    @SinceKotlin("1.1")
+    public fun getDelegate(receiver: T): Any?
 
     override val getter: Getter<T, R>
 
@@ -169,6 +195,22 @@ public interface KProperty2<D, E, out R> : KProperty<R>, (D, E) -> R {
      * @param receiver2 the instance of the second receiver.
      */
     public fun get(receiver1: D, receiver2: E): R
+
+    /**
+     * Returns the value of the delegate if this is a delegated property, or `null` if this property is not delegated.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/delegated-properties.html)
+     * for more information.
+     *
+     * In case of the extension property in a class, the instance of the class should be passed first
+     * and the instance of the extension receiver second.
+     *
+     * @param receiver1 the instance of the first receiver.
+     * @param receiver2 the instance of the second receiver.
+     *
+     * @see [KProperty2.getExtensionDelegate]
+     */
+    @SinceKotlin("1.1")
+    public fun getDelegate(receiver1: D, receiver2: E): Any?
 
     override val getter: Getter<D, E, R>
 

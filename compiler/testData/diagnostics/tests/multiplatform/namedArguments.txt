@@ -1,0 +1,32 @@
+// -- Module: <m1-common> --
+package
+
+public expect fun f2(/*0*/ xxx: kotlin.Int): kotlin.Unit
+public fun testCommon(): kotlin.Unit
+
+public final expect class Foo {
+    public constructor Foo(/*0*/ aaa: kotlin.Boolean)
+    public constructor Foo(/*0*/ zzz: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final expect fun f1(/*0*/ xxx: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+
+// -- Module: <m2-jvm> --
+package
+
+public actual fun f2(/*0*/ xxx: kotlin.Int): kotlin.Unit
+public fun testCommon(): kotlin.Unit
+public fun testPlatform(): kotlin.Unit
+
+public final actual class Foo {
+    public constructor Foo(/*0*/ aaa: kotlin.Boolean)
+    public constructor Foo(/*0*/ zzz: kotlin.Int)
+    public final val aaa: kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final actual fun f1(/*0*/ xxx: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

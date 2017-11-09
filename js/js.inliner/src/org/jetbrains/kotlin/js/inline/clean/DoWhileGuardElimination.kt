@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.backend.ast.*
 
 /**
  * During inlining we can sometimes get the following representation for do..while statement:
@@ -62,7 +62,7 @@ internal class DoWhileGuardElimination(private val root: JsStatement) {
                 val body = x.body
                 val guard = when (body) {
                     is JsBlock -> {
-                        val firstStatement = body.statements.first()
+                        val firstStatement = body.statements.firstOrNull()
                         if (firstStatement is JsLabel && body.statements.size == 1) {
                             firstStatement
                         }

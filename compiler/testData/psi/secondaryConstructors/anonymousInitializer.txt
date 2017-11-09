@@ -1,4 +1,4 @@
-JetFile: anonymousInitializer.kt
+KtFile: anonymousInitializer.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

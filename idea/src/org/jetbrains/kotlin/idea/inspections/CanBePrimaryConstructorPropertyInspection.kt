@@ -16,20 +16,19 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.util.CommentSaver
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.idea.intentions.MovePropertyToConstructorIntention
+import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
@@ -44,8 +43,6 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
 
                 val context = property.analyzeFully()
                 val assignedDescriptor = context.get(BindingContext.REFERENCE_TARGET, assigned) as? ValueParameterDescriptor ?: return
-                // to prevent some exotic situations
-                if (!assignedDescriptor.annotations.isEmpty() || !assigned.getAnnotationEntries().isEmpty()) return
 
                 val containingConstructor = assignedDescriptor.containingDeclaration as? ClassConstructorDescriptor ?: return
                 if (containingConstructor.containingDeclaration.isData) return
@@ -60,36 +57,17 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
                 val assignedParameter = DescriptorToSourceUtils.descriptorToDeclaration(assignedDescriptor) as? KtParameter ?: return
                 if (property.containingClassOrObject !== assignedParameter.containingClassOrObject) return
 
+                if (property.containingClassOrObject?.isInterfaceClass() ?: false) return
+
                 holder.registerProblem(holder.manager.createProblemDescriptor(
                         nameIdentifier,
                         nameIdentifier,
                         "Property is explicitly assigned to parameter ${assignedDescriptor.name}, can be declared directly in constructor",
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         isOnTheFly,
-                        MakeConstructorPropertyFix(property, assignedParameter)
+                        MovePropertyToConstructorIntention()
                 ))
             }
-        }
-    }
-
-    class MakeConstructorPropertyFix(val original: KtProperty, val parameter: KtParameter) : LocalQuickFix {
-        override fun getName() = "Move to constructor"
-
-        override fun getFamilyName() = "Move to constructor"
-
-        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val commentSaver = CommentSaver(original)
-            val isVar = original.isVar
-            val modifiers = original.modifierList?.text
-            val factory = KtPsiFactory(project)
-            val valOrVar = if (isVar) factory.createVarKeyword() else factory.createValKeyword()
-            parameter.addBefore(valOrVar, parameter.nameIdentifier)
-            if (modifiers != null) {
-                val newModifiers = factory.createModifierList(modifiers)
-                parameter.addBefore(newModifiers, parameter.valOrVarKeyword)
-            }
-            original.delete()
-            commentSaver.restore(parameter)
         }
     }
 }

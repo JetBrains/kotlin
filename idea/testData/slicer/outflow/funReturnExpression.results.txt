@@ -1,0 +1,4 @@
+4 return <bold>n</bold>
+3 	fun <bold>foo(n: Int): Int {</bold>
+8 		val x = <bold>foo(1)</bold>
+8 			val <bold>x = foo(1)</bold>

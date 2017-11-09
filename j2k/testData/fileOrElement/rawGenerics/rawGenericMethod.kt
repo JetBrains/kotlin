@@ -1,8 +1,7 @@
 package demo
 
 internal class TestT {
-    fun <T> getT() {
-    }
+    fun <T> getT() {}
 }
 
 internal class U {

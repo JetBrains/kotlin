@@ -5,4 +5,4 @@ val tl = <caret>topLevel()
 // CONTEXT: return <ref-caret>local()
 // WITH_LIBRARY: /resolve/referenceInLib/inLibrarySource
 
-// REF: local()
+// REF: (in inlibrary.test.topLevel).local()

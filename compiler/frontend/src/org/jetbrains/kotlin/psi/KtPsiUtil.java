@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
@@ -42,12 +41,12 @@ import org.jetbrains.kotlin.parsing.KotlinExpressionParsing;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.StatementFilterKt;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class KtPsiUtil {
     private KtPsiUtil() {
@@ -69,14 +68,24 @@ public class KtPsiUtil {
 
     @NotNull
     public static KtExpression safeDeparenthesize(@NotNull KtExpression expression) {
-        KtExpression deparenthesized = deparenthesize(expression);
+        return safeDeparenthesize(expression, false);
+    }
+
+    @NotNull
+    public static KtExpression safeDeparenthesize(@NotNull KtExpression expression, boolean keepAnnotations) {
+        KtExpression deparenthesized = deparenthesize(expression, keepAnnotations);
         return deparenthesized != null ? deparenthesized : expression;
     }
 
     @Nullable
-    public static KtExpression deparenthesize(@Nullable KtExpression expression ) {
+    public static KtExpression deparenthesize(@Nullable KtExpression expression) {
+        return deparenthesize(expression, false);
+    }
+
+    @Nullable
+    public static KtExpression deparenthesize(@Nullable KtExpression expression, boolean keepAnnotations) {
         while (true) {
-            KtExpression baseExpression = deparenthesizeOnce(expression);
+            KtExpression baseExpression = deparenthesizeOnce(expression, keepAnnotations);
 
             if (baseExpression == expression) return baseExpression;
             expression = baseExpression;
@@ -87,7 +96,14 @@ public class KtPsiUtil {
     public static KtExpression deparenthesizeOnce(
             @Nullable KtExpression expression
     ) {
-        if (expression instanceof KtAnnotatedExpression) {
+        return deparenthesizeOnce(expression, false);
+    }
+
+    @Nullable
+    public static KtExpression deparenthesizeOnce(
+            @Nullable KtExpression expression, boolean keepAnnotations
+    ) {
+        if (expression instanceof KtAnnotatedExpression && !keepAnnotations) {
             return ((KtAnnotatedExpression) expression).getBaseExpression();
         }
         else if (expression instanceof KtLabeledExpression) {
@@ -109,8 +125,8 @@ public class KtPsiUtil {
 
     @NotNull
     public static Set<KtElement> findRootExpressions(@NotNull Collection<KtElement> unreachableElements) {
-        Set<KtElement> rootElements = new HashSet<KtElement>();
-        final Set<KtElement> shadowedElements = new HashSet<KtElement>();
+        Set<KtElement> rootElements = new HashSet<>();
+        Set<KtElement> shadowedElements = new HashSet<>();
         KtVisitorVoid shadowAllChildren = new KtVisitorVoid() {
             @Override
             public void visitKtElement(@NotNull KtElement element) {
@@ -280,9 +296,8 @@ public class KtPsiUtil {
         if (!(declaration instanceof KtVariableDeclaration)) return false;
         if (declaration instanceof KtProperty) return true;
         assert declaration instanceof KtDestructuringDeclarationEntry;
-        KtDestructuringDeclaration parentDeclaration = (KtDestructuringDeclaration) declaration.getParent();
-        List<KtDestructuringDeclarationEntry> entries = parentDeclaration.getEntries();
-        return entries.size() > 1 && entries.get(entries.size() - 1) == declaration;
+        // We can always replace destructuring entry with _
+        return true;
     }
 
     @Nullable
@@ -318,7 +333,7 @@ public class KtPsiUtil {
         return isBooleanConstant(condition) && condition.getNode().findChildByType(KtTokens.FALSE_KEYWORD) != null;
     }
 
-    private static boolean isBooleanConstant(@Nullable KtExpression condition) {
+    public static boolean isBooleanConstant(@Nullable KtExpression condition) {
         return condition != null && condition.getNode().getElementType() == KtNodeTypes.BOOLEAN_CONSTANT;
     }
 
@@ -469,8 +484,11 @@ public class KtPsiUtil {
         }
 
         if (parentElement instanceof KtCallExpression && currentInner == ((KtCallExpression) parentElement).getCalleeExpression()) {
+            KtCallExpression parentCall = (KtCallExpression) parentElement;
             if (innerExpression instanceof KtSimpleNameExpression) return false;
             if (KtPsiUtilKt.getQualifiedExpressionForSelector(parentElement) != null) return true;
+            if (innerExpression instanceof KtCallExpression
+                && parentCall.getValueArgumentList() == null) return true;
             return !(innerExpression instanceof KtThisExpression
                      || innerExpression instanceof KtArrayAccessExpression
                      || innerExpression instanceof KtConstantExpression
@@ -505,8 +523,26 @@ public class KtPsiUtil {
         if (parentElement instanceof KtLabeledExpression) return false;
 
         // 'x ?: ...' case
-        if (parentElement instanceof KtBinaryExpression && parentOperation == KtTokens.ELVIS && currentInner == ((KtBinaryExpression) parentElement).getRight()) {
+        if (parentElement instanceof KtBinaryExpression &&
+            parentOperation == KtTokens.ELVIS &&
+            !(innerExpression instanceof KtBinaryExpression) &&
+            currentInner == ((KtBinaryExpression) parentElement).getRight()) {
             return false;
+        }
+
+        if (innerExpression instanceof KtBinaryExpression) {
+            // '(x operator return [...]) operator ...' case
+            if (parentElement instanceof KtBinaryExpression) {
+                KtBinaryExpression innerBinary = (KtBinaryExpression) innerExpression;
+                if (innerBinary.getRight() instanceof KtReturnExpression) {
+                    return true;
+                }
+            }
+            // '(x operator y)' case
+            if (innerOperation != KtTokens.ELVIS &&
+                isKeepBinaryExpressionParenthesized((KtBinaryExpression) innerExpression)) {
+                return true;
+            }
         }
 
         int innerPriority = getPriority(innerExpression);
@@ -530,6 +566,21 @@ public class KtPsiUtil {
         return innerPriority < parentPriority;
     }
 
+    private static boolean isKeepBinaryExpressionParenthesized(KtBinaryExpression expression) {
+        PsiElement expr = expression.getFirstChild();
+        while (expr != null) {
+            if (expr instanceof PsiWhiteSpace && expr.textContains('\n')) {
+                return true;
+            }
+            if (expr instanceof KtOperationReferenceExpression) {
+                break;
+            }
+            expr = expr.getNextSibling();
+        }
+        return (expression.getRight() instanceof KtBinaryExpression && isKeepBinaryExpressionParenthesized((KtBinaryExpression) expression.getRight())) ||
+               (expression.getLeft() instanceof KtBinaryExpression && isKeepBinaryExpressionParenthesized((KtBinaryExpression) expression.getLeft()));
+    }
+
     public static boolean isAssignment(@NotNull PsiElement element) {
         return element instanceof KtBinaryExpression &&
                KtTokens.ALL_ASSIGNMENTS.contains(((KtBinaryExpression) element).getOperationToken());
@@ -538,6 +589,14 @@ public class KtPsiUtil {
     public static boolean isOrdinaryAssignment(@NotNull PsiElement element) {
         return element instanceof KtBinaryExpression &&
                ((KtBinaryExpression) element).getOperationToken().equals(KtTokens.EQ);
+    }
+
+    public static boolean isSafeCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
+        return expression.getOperationReference().getReferencedNameElementType() == KtTokens.AS_SAFE;
+    }
+
+    public static boolean isUnsafeCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
+        return expression.getOperationReference().getReferencedNameElementType() == KtTokens.AS_KEYWORD;
     }
 
     public static boolean checkVariableDeclarationInBlock(@NotNull KtBlockExpression block, @NotNull String varName) {
@@ -585,13 +644,6 @@ public class KtPsiUtil {
 
         return null;
     }
-
-    public static final Predicate<KtElement> ANY_JET_ELEMENT = new Predicate<KtElement>() {
-        @Override
-        public boolean apply(@Nullable KtElement input) {
-            return true;
-        }
-    };
 
     @NotNull
     public static String getText(@Nullable PsiElement element) {
@@ -643,17 +695,17 @@ public class KtPsiUtil {
     public static KtElement getOutermostDescendantElement(
             @Nullable PsiElement root,
             boolean first,
-            final @NotNull Predicate<KtElement> predicate
+            @NotNull Predicate<KtElement> predicate
     ) {
         if (!(root instanceof KtElement)) return null;
 
-        final List<KtElement> results = Lists.newArrayList();
+        List<KtElement> results = Lists.newArrayList();
 
         root.accept(
                 new KtVisitorVoid() {
                     @Override
                     public void visitKtElement(@NotNull KtElement element) {
-                        if (predicate.apply(element)) {
+                        if (predicate.test(element)) {
                             //noinspection unchecked
                             results.add(element);
                         }
@@ -679,7 +731,7 @@ public class KtPsiUtil {
     public static PsiElement skipSiblingsBackwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
         if (element == null) return null;
         for (PsiElement e = element.getPrevSibling(); e != null; e = e.getPrevSibling()) {
-            if (elementsToSkip.apply(e)) continue;
+            if (elementsToSkip.test(e)) continue;
             return e;
         }
         return null;
@@ -732,6 +784,16 @@ public class KtPsiUtil {
         return PsiTreeUtil.getStubOrPsiParent(grandparent) instanceof KtObjectLiteralExpression;
     }
 
+    private static boolean isNonLocalCallable(@Nullable KtDeclaration declaration) {
+        if (declaration instanceof KtProperty) {
+            return !((KtProperty) declaration).isLocal();
+        }
+        else if (declaration instanceof KtFunction) {
+            return !((KtFunction) declaration).isLocal();
+        }
+        return false;
+    }
+
     @Nullable
     public static KtElement getEnclosingElementForLocalDeclaration(@NotNull KtDeclaration declaration, boolean skipParameters) {
         if (declaration instanceof KtTypeParameter && skipParameters) {
@@ -749,8 +811,9 @@ public class KtPsiUtil {
             if (((KtParameter) declaration).hasValOrVar() && parent != null && parent.getParent() instanceof KtPrimaryConstructor) {
                 return getEnclosingElementForLocalDeclaration(((KtPrimaryConstructor) parent.getParent()).getContainingClassOrObject(), skipParameters);
             }
-
-            else if (skipParameters && parent != null && parent.getParent() instanceof KtNamedFunction) {
+            else if (skipParameters && parent != null &&
+                     !(parent instanceof KtForExpression) &&
+                     parent.getParent() instanceof KtNamedFunction) {
                 declaration = (KtNamedFunction) parent.getParent();
             }
         }
@@ -761,6 +824,7 @@ public class KtPsiUtil {
 
         // No appropriate stub-tolerant method in PsiTreeUtil, nor JetStubbedPsiUtil, writing manually
         PsiElement current = PsiTreeUtil.getStubOrPsiParent(declaration);
+        boolean isNonLocalCallable = isNonLocalCallable(declaration);
         while (current != null) {
             PsiElement parent = PsiTreeUtil.getStubOrPsiParent(current);
             if (parent instanceof KtScript) return null;
@@ -775,11 +839,26 @@ public class KtPsiUtil {
                     return (KtElement) parent;
                 }
             }
-            if (current instanceof KtBlockExpression || current instanceof KtParameter) {
+            if (current instanceof KtParameter) {
                 return (KtElement) current;
             }
             if (current instanceof KtValueArgument) {
-                return (KtElement) current;
+                // for members, value argument is never enough, see KT-10546
+                if (!isNonLocalCallable) {
+                    return (KtElement) current;
+                }
+            }
+            if (current instanceof KtBlockExpression) {
+                // For members also not applicable if has function literal parent
+                if (!isNonLocalCallable || !(current.getParent() instanceof KtFunctionLiteral)) {
+                    return (KtElement) current;
+                }
+            }
+            if (current instanceof KtDelegatedSuperTypeEntry || current instanceof KtSuperTypeCallEntry) {
+                PsiElement grandParent = current.getParent().getParent();
+                if (grandParent instanceof KtClassOrObject && !(grandParent.getParent() instanceof KtObjectLiteralExpression)) {
+                    return (KtElement) grandParent;
+                }
             }
 
             current = parent;
@@ -859,5 +938,27 @@ public class KtPsiUtil {
             }
         }
         return deparenthesizedExpression;
+    }
+
+    public static boolean isStatementContainer(@Nullable PsiElement container) {
+        return container instanceof KtBlockExpression ||
+               container instanceof KtContainerNodeForControlStructureBody ||
+               container instanceof KtWhenEntry;
+    }
+
+    public static boolean isStatement(@NotNull PsiElement element) {
+        return isStatementContainer(element.getParent());
+    }
+
+    public static boolean isInOrNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
+        return isInOperation(binaryExpression) || isNotInOperation(binaryExpression);
+    }
+
+    public static boolean isNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
+        return (binaryExpression.getOperationToken() == KtTokens.NOT_IN);
+    }
+
+    private static boolean isInOperation(@NotNull KtBinaryExpression binaryExpression) {
+        return (binaryExpression.getOperationToken() == KtTokens.IN_KEYWORD);
     }
 }

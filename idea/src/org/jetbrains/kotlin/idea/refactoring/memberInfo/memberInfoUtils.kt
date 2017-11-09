@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 fun PsiNamedElement.getClassDescriptorIfAny(resolutionFacade: ResolutionFacade? = null): ClassDescriptor? {
     return when (this) {
-        is KtClass -> (resolutionFacade ?: getResolutionFacade()).resolveToDescriptor(this) as ClassDescriptor
+        is KtClassOrObject -> (resolutionFacade ?: getResolutionFacade()).resolveToDescriptor(this) as ClassDescriptor
         is PsiClass -> getJavaClassDescriptor()
         else -> null
     }

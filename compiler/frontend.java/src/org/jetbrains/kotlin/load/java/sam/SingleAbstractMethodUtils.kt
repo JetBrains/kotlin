@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 // If type 'samType' contains no projection, then it's non-projection parametrization is 'samType' itself
 // Else each projection type argument 'out/in A_i' (but star projections) is replaced with it's bound 'A_i'
@@ -43,8 +42,8 @@ internal fun nonProjectionParametrization(samType: SimpleType): SimpleType? {
                     projection.projectionKind == Variance.INVARIANT -> projection
 
                     projection.isStarProjection ->
-                        parameter.upperBounds.first().check {
-                            t -> !t.contains { it.constructor.declarationDescriptor in parametersSet }
+                        parameter.upperBounds.first().takeUnless {
+                            t -> t.contains { it.constructor.declarationDescriptor in parametersSet }
                         }?.asTypeProjection() ?: return@nonProjectionParametrization null
 
                     else -> projection.type.asTypeProjection()

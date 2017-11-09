@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,16 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.KotlinType
@@ -35,66 +39,70 @@ interface ImplicitScopeTower {
 
     val syntheticScopes: SyntheticScopes
 
-    val syntheticConstructorsProvider: SyntheticConstructorsProvider
-
     val location: LookupLocation
 
     val isDebuggerContext: Boolean
 }
 
 interface ScopeTowerLevel {
-    fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+    fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
 
-    fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+    fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
 
-    fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>>
+    fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
+
+    fun recordLookup(name: Name)
 }
 
-interface CandidateWithBoundDispatchReceiver<out D : CallableDescriptor> {
-    val descriptor: D
+interface CandidateWithBoundDispatchReceiver {
+    val descriptor: CallableDescriptor
 
     val diagnostics: List<ResolutionDiagnostic>
 
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?
-
-    fun copy(newDescriptor: @UnsafeVariance D): CandidateWithBoundDispatchReceiver<D>
 }
 
-data class ResolutionCandidateStatus(val diagnostics: List<ResolutionDiagnostic>) {
-    val resultingApplicability: ResolutionCandidateApplicability = diagnostics.asSequence().map { it.candidateLevel }.max()
-                                                                   ?: ResolutionCandidateApplicability.RESOLVED
-}
+fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>) = diagnostics.maxBy { it.candidateApplicability }?.candidateApplicability
+                                                                      ?: RESOLVED
 
 enum class ResolutionCandidateApplicability {
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
-    RESOLVED_SYNTHESIZED, // todo remove it (need for SAM adapters which created inside some MemberScope)
     RESOLVED_LOW_PRIORITY,
     CONVENTION_ERROR, // missing infix, operator etc
     MAY_THROW_RUNTIME_ERROR, // unsafe call or unstable smart cast
     RUNTIME_ERROR, // problems with visibility
     IMPOSSIBLE_TO_GENERATE, // access to outer class from nested
-    INAPPLICABLE, // arguments not matched
+    INAPPLICABLE, // arguments have wrong types
+    INAPPLICABLE_ARGUMENTS_MAPPING_ERROR, // arguments not mapped to parameters (i.e. different size of arguments and parameters)
+    INAPPLICABLE_WRONG_RECEIVER, // receiver not matched
     HIDDEN, // removed from resolve
-    // todo wrong receiver
 }
 
-abstract class ResolutionDiagnostic(val candidateLevel: ResolutionCandidateApplicability)
+abstract class ResolutionDiagnostic(candidateApplicability: ResolutionCandidateApplicability): KotlinCallDiagnostic(candidateApplicability) {
+    override fun report(reporter: DiagnosticReporter) {
+        // do nothing
+    }
+}
 
 // todo error for this access from nested class
-class VisibilityError(val invisibleMember: DeclarationDescriptorWithVisibility): ResolutionDiagnostic(ResolutionCandidateApplicability.RUNTIME_ERROR)
-class NestedClassViaInstanceReference(val classDescriptor: ClassDescriptor): ResolutionDiagnostic(ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE)
-class InnerClassViaStaticReference(val classDescriptor: ClassDescriptor): ResolutionDiagnostic(ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE)
-class UnsupportedInnerClassCall(val message: String): ResolutionDiagnostic(ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE)
-class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType): ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED)
+class VisibilityError(val invisibleMember: DeclarationDescriptorWithVisibility): ResolutionDiagnostic(RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}
 
-object ErrorDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED) // todo discuss and change to INAPPLICABLE
-object LowPriorityDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY)
-object SynthesizedDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
-object DynamicDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY)
-object UnstableSmartCastDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR)
-object ExtensionWithStaticTypeWithDynamicReceiver: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
-object HiddenDescriptor: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
+class NestedClassViaInstanceReference(val classDescriptor: ClassDescriptor): ResolutionDiagnostic(IMPOSSIBLE_TO_GENERATE)
+class InnerClassViaStaticReference(val classDescriptor: ClassDescriptor): ResolutionDiagnostic(IMPOSSIBLE_TO_GENERATE)
+class UnsupportedInnerClassCall(val message: String): ResolutionDiagnostic(IMPOSSIBLE_TO_GENERATE)
+class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType): ResolutionDiagnostic(RESOLVED)
 
-object InvokeConventionCallNoOperatorModifier : ResolutionDiagnostic(ResolutionCandidateApplicability.CONVENTION_ERROR)
-object InfixCallNoInfixModifier : ResolutionDiagnostic(ResolutionCandidateApplicability.CONVENTION_ERROR)
-object DeprecatedUnaryPlusAsPlus : ResolutionDiagnostic(ResolutionCandidateApplicability.CONVENTION_ERROR)
+object ErrorDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED) // todo discuss and change to INAPPLICABLE
+object LowPriorityDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
+object DynamicDescriptorDiagnostic: ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
+object UnstableSmartCastDiagnostic: ResolutionDiagnostic(MAY_THROW_RUNTIME_ERROR)
+object HiddenExtensionRelatedToDynamicTypes: ResolutionDiagnostic(HIDDEN)
+object HiddenDescriptor: ResolutionDiagnostic(HIDDEN)
+
+object InvokeConventionCallNoOperatorModifier : ResolutionDiagnostic(CONVENTION_ERROR)
+object InfixCallNoInfixModifier : ResolutionDiagnostic(CONVENTION_ERROR)
+object DeprecatedUnaryPlusAsPlus : ResolutionDiagnostic(CONVENTION_ERROR)

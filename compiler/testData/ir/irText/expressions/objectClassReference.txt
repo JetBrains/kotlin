@@ -1,0 +1,22 @@
+FILE /objectClassReference.kt
+  CLASS OBJECT A
+    $this: VALUE_PARAMETER this@A: A
+    CONSTRUCTOR private constructor A()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  FUN public fun test(): kotlin.Unit
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL '<get-java>() on KClass<A>: Class<A>' type=java.lang.Class<A> origin=GET_PROPERTY
+          $receiver: CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
+

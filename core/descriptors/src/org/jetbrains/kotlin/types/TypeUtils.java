@@ -49,11 +49,6 @@ public class TypeUtils {
             throw new IllegalStateException(name);
         }
 
-        @Override
-        public boolean isError() {
-            return false;
-        }
-
         @NotNull
         @Override
         public SimpleType replaceAnnotations(@NotNull Annotations newAnnotations) {
@@ -66,6 +61,7 @@ public class TypeUtils {
             throw new IllegalStateException(name);
         }
 
+        @NotNull
         @Override
         public String toString() {
             return name;
@@ -201,7 +197,7 @@ public class TypeUtils {
         }
         TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
-        return KotlinTypeFactory.simpleType(
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 Annotations.Companion.getEMPTY(),
                 typeConstructor,
                 arguments,
@@ -216,7 +212,7 @@ public class TypeUtils {
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
             result.add(new TypeProjectionImpl(parameterDescriptor.getDefaultType()));
         }
-        return org.jetbrains.kotlin.utils.CollectionsKt.toReadOnlyList(result);
+        return CollectionsKt.toList(result);
     }
 
     @NotNull
@@ -304,8 +300,7 @@ public class TypeUtils {
         }
 
         for (KotlinType supertype : getImmediateSupertypes(type)) {
-            if (supertype.isMarkedNullable()) return true;
-            if (hasNullableSuperType(supertype)) return true;
+            if (isNullableType(supertype)) return true;
         }
 
         return false;
@@ -351,7 +346,7 @@ public class TypeUtils {
     }
 
     public static boolean equalTypes(@NotNull KotlinType a, @NotNull KotlinType b) {
-        return KotlinTypeChecker.DEFAULT.isSubtypeOf(a, b) && KotlinTypeChecker.DEFAULT.isSubtypeOf(b, a);
+        return KotlinTypeChecker.DEFAULT.equalTypes(a, b);
     }
 
     public static boolean dependsOnTypeParameters(@NotNull KotlinType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
@@ -399,6 +394,16 @@ public class TypeUtils {
             && (contains(flexibleType.getLowerBound(), isSpecialType) || contains(flexibleType.getUpperBound(), isSpecialType))) {
             return true;
         }
+
+        TypeConstructor typeConstructor = type.getConstructor();
+        if (typeConstructor instanceof IntersectionTypeConstructor) {
+            IntersectionTypeConstructor intersectionTypeConstructor = (IntersectionTypeConstructor) typeConstructor;
+            for (KotlinType supertype : intersectionTypeConstructor.getSupertypes()) {
+                if (contains(supertype, isSpecialType)) return true;
+            }
+            return false;
+        }
+
         for (TypeProjection projection : type.getArguments()) {
             if (!projection.isStarProjection() && contains(projection.getType(), isSpecialType)) return true;
         }
@@ -445,7 +450,7 @@ public class TypeUtils {
             @NotNull IntegerValueTypeConstructor numberValueTypeConstructor,
             @NotNull KotlinType expectedType
     ) {
-        if (noExpectedType(expectedType) || expectedType.isError()) {
+        if (noExpectedType(expectedType) || KotlinTypeKt.isError(expectedType)) {
             return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
         }
         for (KotlinType primitiveNumberType : numberValueTypeConstructor.getSupertypes()) {

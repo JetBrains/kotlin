@@ -66,13 +66,13 @@ fun runChangeSignature(project: Project,
     return KotlinChangeSignature(project, callableDescriptor, configuration, defaultValueContext, commandName).run()
 }
 
-class KotlinChangeSignature(project: Project,
-                                   callableDescriptor: CallableDescriptor,
-                                   val configuration: KotlinChangeSignatureConfiguration,
-                                   val defaultValueContext: PsiElement,
-                                   commandName: String?): CallableRefactoring<CallableDescriptor>(project,
-                                                                                               callableDescriptor,
-                                                                                               commandName ?: ChangeSignatureHandler.REFACTORING_NAME) {
+class KotlinChangeSignature(
+        project: Project,
+        callableDescriptor: CallableDescriptor,
+        val configuration: KotlinChangeSignatureConfiguration,
+        val defaultValueContext: PsiElement,
+        commandName: String?
+): CallableRefactoring<CallableDescriptor>(project, callableDescriptor, commandName ?: ChangeSignatureHandler.REFACTORING_NAME) {
 
     private val LOG = Logger.getInstance(KotlinChangeSignature::class.java)
 
@@ -222,8 +222,7 @@ class KotlinChangeSignature(project: Project,
 ): KotlinChangeInfo? {
     val jetChangeSignature = KotlinChangeSignature(project, callableDescriptor, configuration, defaultValueContext, null)
     val declarations =
-            if (callableDescriptor is CallableMemberDescriptor) callableDescriptor.getDeepestSuperDeclarations()
-            else listOf(callableDescriptor)
+            (callableDescriptor as? CallableMemberDescriptor)?.getDeepestSuperDeclarations() ?: listOf(callableDescriptor)
 
     val adjustedDescriptor = jetChangeSignature.adjustDescriptor(declarations) ?: return null
 
@@ -233,5 +232,5 @@ class KotlinChangeSignature(project: Project,
             adjustedDescriptor,
             defaultValueContext
     ) as KotlinChangeSignatureProcessor
-    return processor.changeInfo
+    return processor.ktChangeInfo
 }

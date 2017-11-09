@@ -1,4 +1,4 @@
-import java.util.ArrayList
+// IGNORE_BACKEND: NATIVE
 
 open class BaseStringList: ArrayList<String>() {
 }

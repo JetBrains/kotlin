@@ -1,9 +1,12 @@
+// TARGET_BACKEND: JVM
+
 // WITH_RUNTIME
 // FULL_JDK
 
 package testeval
 
-import java.util.*
+import java.util.LinkedList
+import java.util.Deque
 
 interface Expression
 class Num(val value : Int) : Expression

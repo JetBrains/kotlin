@@ -25,7 +25,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -70,7 +70,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
                 }
             }
 
-            val parent = ktElement.parent ?: return null
+            val parent = ktElement.parent
 
             val newExpression = when (parent) {
                 is KtThisExpression -> parent
@@ -120,7 +120,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
             return when {
                 newExpression is KtExpression -> newExpression
                 ktElement is KtSimpleNameExpression -> {
-                    val context = ktElement.analyzeAndGetResult().bindingContext
+                    val context = ktElement.analyze()
                     val qualifier = context[BindingContext.QUALIFIER, ktElement]
                     if (qualifier != null && !DescriptorUtils.isObject(qualifier.descriptor)) {
                         null
@@ -138,7 +138,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
                 arrayOf(KtUserType::class.java, KtImportDirective::class.java, KtPackageDirective::class.java, KtValueArgumentName::class.java)
 
         fun isAcceptedAsCodeFragmentContext(element: PsiElement): Boolean {
-            return !NOT_ACCEPTED_AS_CONTEXT_TYPES.contains(element.javaClass as Class<*>) &&
+            return !NOT_ACCEPTED_AS_CONTEXT_TYPES.contains(element::class.java as Class<*>) &&
                    PsiTreeUtil.getParentOfType(element, *NOT_ACCEPTED_AS_CONTEXT_TYPES) == null
         }
     }

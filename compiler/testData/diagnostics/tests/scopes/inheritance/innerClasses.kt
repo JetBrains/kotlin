@@ -33,10 +33,10 @@ class E: A() {
 
     object Z {
         init {
-            <!UNRESOLVED_REFERENCE!>B<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!>()
-            <!UNRESOLVED_REFERENCE!>B<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+            <!RESOLUTION_TO_CLASSIFIER!>B<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!>()
+            <!RESOLUTION_TO_CLASSIFIER!>B<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
 
-            <!UNRESOLVED_REFERENCE!>D<!>()
+            <!RESOLUTION_TO_CLASSIFIER!>D<!>()
             C()
         }
     }
@@ -58,7 +58,7 @@ class F: A() {
     companion object {
         init {
             B().fas()
-            <!UNRESOLVED_REFERENCE!>D<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>f<!>()
+            <!RESOLUTION_TO_CLASSIFIER!>D<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>f<!>()
         }
     }
 }

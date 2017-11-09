@@ -1,0 +1,6 @@
+package
+
+package foo {
+    @kotlin.js.JsModule(import = "bar") public external var bar: kotlin.Int
+    @kotlin.js.JsNonModule public external var baz: kotlin.Int
+}

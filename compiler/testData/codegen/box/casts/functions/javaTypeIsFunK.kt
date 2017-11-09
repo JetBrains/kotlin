@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // FILE: JFun.java
 
 class JFun implements kotlin.jvm.functions.Function0<String> {

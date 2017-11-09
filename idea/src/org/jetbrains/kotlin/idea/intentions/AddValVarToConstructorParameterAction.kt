@@ -46,7 +46,7 @@ interface AddValVarToConstructorParameterAction {
     fun invoke(element: KtParameter, editor: Editor?) {
         val project = element.project
 
-        element.addAfter(KtPsiFactory(project).createValKeyword(), null)
+        element.addBefore(KtPsiFactory(project).createValKeyword(), element.nameIdentifier)
 
         if (editor == null) return
 
@@ -80,11 +80,13 @@ interface AddValVarToConstructorParameterAction {
     class QuickFix(parameter: KtParameter) :
             KotlinQuickFixAction<KtParameter>(parameter),
             AddValVarToConstructorParameterAction {
-        override fun getText() = getActionText(element)
+        override fun getText() = element?.let { getActionText(it) } ?: ""
 
         override fun getFamilyName() = actionFamily
 
-        override fun invoke(project: Project, editor: Editor?, file: KtFile) = invoke(element, editor)
+        override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            invoke(element ?: return, editor)
+        }
     }
 
     object QuickFixFactory : KotlinSingleIntentionActionFactory() {

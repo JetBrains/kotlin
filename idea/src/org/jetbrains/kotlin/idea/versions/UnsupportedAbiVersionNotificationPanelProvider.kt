@@ -47,11 +47,9 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinPluginUpdater
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
-import org.jetbrains.kotlin.idea.framework.getJsStdLibJar
-import org.jetbrains.kotlin.idea.framework.getReflectJar
-import org.jetbrains.kotlin.idea.framework.getRuntimeJar
-import org.jetbrains.kotlin.idea.framework.getTestJar
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil.isJsKotlinModule
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -86,8 +84,8 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
         val kotlinLibraries = findAllUsedLibraries(project).keySet()
         val badRuntimeLibraries = kotlinLibraries.filter { library ->
-            val runtimeJar = getLocalJar(getRuntimeJar(library))
-            val jsLibJar = getLocalJar(getJsStdLibJar(library))
+            val runtimeJar = getLocalJar(LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(library))
+            val jsLibJar = getLocalJar(LibraryJarDescriptor.JS_STDLIB_JAR.findExistingJar(library))
             badRootFiles.contains(runtimeJar) || badRootFiles.contains(jsLibJar)
         }
 
@@ -120,7 +118,11 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
             }
 
             val actionLabelText = MessageFormat.format("$updateAction {0,choice,0#|1#|1<all }Kotlin runtime librar{0,choice,0#|1#y|1<ies} ", badRuntimeLibraries.size)
-            answer.createActionLabel(actionLabelText) { updateLibraries(project, badRuntimeLibraries) }
+            answer.createActionLabel(actionLabelText) {
+                ApplicationManager.getApplication().invokeLater {
+                    updateLibraries(project, badRuntimeLibraries)
+                }
+            }
         }
         else if (badVersionedRoots.size == 1) {
             val badVersionedRoot = badVersionedRoots.first()
@@ -229,7 +231,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
     fun checkAndCreate(module: Module): EditorNotificationPanel? {
         val state = ServiceManager.getService(project, SuppressNotificationState::class.java).state
-        if (state != null && state.isSuppressed) {
+        if (state.isSuppressed) {
             return null
         }
 
@@ -256,10 +258,9 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
         }
 
         badRuntimeLibraries.forEach { library ->
-            addToBadRoots(getLocalJar(getRuntimeJar(library)))
-            addToBadRoots(getLocalJar(getJsStdLibJar(library)))
-            addToBadRoots(getLocalJar(getReflectJar(library)))
-            addToBadRoots(getLocalJar(getTestJar(library)))
+            for (descriptor in LibraryJarDescriptor.values()) {
+                addToBadRoots(getLocalJar(descriptor.findExistingJar(library)))
+            }
         }
 
         return badRootsInLibraries
@@ -335,15 +336,13 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
         }
 
         fun collectBadRoots(module: Module): Collection<BinaryVersionedFile<BinaryVersion>> {
-            val badRoots =
-                    if (!isJsKotlinModule(module))
-                        getLibraryRootsWithAbiIncompatibleKotlinClasses(module)
-                    else
-                        getLibraryRootsWithAbiIncompatibleForKotlinJs(module)
+            val badRoots = when (TargetPlatformDetector.getPlatform(module)) {
+                JvmPlatform -> getLibraryRootsWithAbiIncompatibleKotlinClasses(module)
+                JsPlatform -> getLibraryRootsWithAbiIncompatibleForKotlinJs(module)
+                else -> return emptyList()
+            }
 
-            if (badRoots.isEmpty()) return emptyList()
-
-            return badRoots.toHashSet()
+            return if (badRoots.isEmpty()) emptyList() else badRoots.toHashSet()
         }
     }
 }

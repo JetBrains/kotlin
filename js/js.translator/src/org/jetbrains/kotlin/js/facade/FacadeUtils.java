@@ -28,7 +28,7 @@ public final class FacadeUtils {
 
     @NotNull
     public static List<String> parseString(@NotNull String argumentString) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         StringTokenizer stringTokenizer = new StringTokenizer(argumentString);
         while (stringTokenizer.hasMoreTokens()) {
             result.add(stringTokenizer.nextToken());

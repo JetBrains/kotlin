@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+import java.io.File
+
+fun main(args: Array<String>) {
+    val writer = File("hello-world.txt").bufferedWriter()
+    writer.use { <selection>writer</selection> ->
+        writer.write("123")
+        writer.newLine()
+        writer.write("456")
+    }
+}

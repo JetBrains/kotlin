@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.core.implicitVisibility
+import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
@@ -28,11 +29,13 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
         return object : KtVisitorVoid() {
             override fun visitDeclaration(declaration: KtDeclaration) {
                 val visibilityModifier = declaration.visibilityModifier() ?: return
-                if (visibilityModifier.node.elementType == declaration.implicitVisibility()) {
+                val implicitVisibility = declaration.implicitVisibility()
+                if (visibilityModifier.node.elementType == implicitVisibility) {
                     holder.registerProblem(visibilityModifier,
                                            "Redundant visibility modifier",
                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                           RemoveModifierFix("Remove redundant visibility modifier"))
+                                           IntentionWrapper(RemoveModifierFix(declaration, implicitVisibility, isRedundant = true),
+                                                            declaration.containingFile))
                 }
             }
         }

@@ -1,0 +1,5 @@
+package
+
+public var noSetter: kotlin.Int
+public var x: kotlin.Int
+public fun foo(): kotlin.Unit

@@ -1,0 +1,8 @@
+package
+
+public fun bar(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun baz(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun foo(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun gav(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun gaz(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun run(/*0*/ f: () -> kotlin.Unit): kotlin.Unit

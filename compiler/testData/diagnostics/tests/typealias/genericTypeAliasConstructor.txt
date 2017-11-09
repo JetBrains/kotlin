@@ -1,9 +1,9 @@
 package
 
-public val test1: C<kotlin.String>
-public val test2: C<kotlin.String>
-public val test3: C<kotlin.String>
-public val test4: C<kotlin.String>
+public val test1: GTC<kotlin.String> /* = C<kotlin.String> */
+public val test2: GTC<kotlin.String> /* = C<kotlin.String> */
+public val test3: GTC<kotlin.String> /* = C<kotlin.String> */
+public val test4: GTC<kotlin.String> /* = C<kotlin.String> */
 
 public final class C</*0*/ T> {
     public constructor C</*0*/ T>(/*0*/ x: T)

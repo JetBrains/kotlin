@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
 interface CodeAnalyzerInitializer {
     fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer)
@@ -36,5 +36,5 @@ class DummyCodeAnalyzerInitializer: CodeAnalyzerInitializer {
         // Do nothing
     }
 
-    override fun createTrace(): BindingTrace = BindingTraceContext()
+    override fun createTrace(): BindingTrace = BindingTraceContext(true)
 }

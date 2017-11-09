@@ -1,5 +1,5 @@
 {
-  "type": "SYNTHETIC_PROPERTY",
+  "type": "AUTO_DETECT",
   "mainFile": "test.kt",
   "newName": "isProp2"
 }

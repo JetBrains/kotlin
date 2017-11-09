@@ -17,8 +17,23 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 interface DeserializationConfiguration {
+    val skipMetadataVersionCheck: Boolean
+        get() = false
+
+    val skipPreReleaseCheck: Boolean
+        get() = false
+
     val typeAliasesAllowed: Boolean
         get() = true
+
+    val isJvmPackageNameSupported: Boolean
+        get() = true
+
+    val returnsEffectAllowed: Boolean
+        get() = false
+
+    val callsInPlaceEffectAllowed: Boolean
+        get() = false
 
     object Default : DeserializationConfiguration
 }

@@ -1,4 +1,6 @@
 // INTENTION_TEXT: Replace with '%' operator
+// IS_APPLICABLE: false
+
 fun test() {
     class Test {
         operator fun mod(a: Int): Test = Test()

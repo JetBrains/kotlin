@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.serialization
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
-
 import java.io.OutputStream
 
 interface StringTable {

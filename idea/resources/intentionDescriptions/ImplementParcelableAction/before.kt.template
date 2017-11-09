@@ -1,0 +1,1 @@
+class SomeData(val number: Int, val text: String, val flag: Boolean)

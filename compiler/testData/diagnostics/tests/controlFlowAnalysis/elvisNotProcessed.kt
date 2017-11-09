@@ -1,6 +1,6 @@
 // See KT-8277
 
-val v = { true } <!USELESS_ELVIS!><!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> ( { true } <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> null!! )<!>
+val v = { true } <!USELESS_ELVIS!>?: ( { true } <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> null!! )<!>
 
 val w = if (true) {
     { true }
@@ -32,6 +32,6 @@ val bbb = null ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 val bbbb = ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>) ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 
 fun f(x : Long?): Long {
-    var a = x ?: (<!TYPE_MISMATCH!>fun() {}<!> <!USELESS_ELVIS!><!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> <!TYPE_MISMATCH!>fun() {}<!><!>)
+    var a = x ?: (<!TYPE_MISMATCH!>fun() {}<!> <!USELESS_ELVIS!>?: <!TYPE_MISMATCH!>fun() {}<!><!>)
     return <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>
 }

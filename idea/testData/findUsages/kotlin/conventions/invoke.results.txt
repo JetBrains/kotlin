@@ -1,4 +1,4 @@
-Function call 14 f(1).invoke(2)
-Implicit 'invoke' 15 f(2)(2)
+Function call 14 f().invoke(2)
+Implicit 'invoke' 15 f()(2)
 Implicit 'invoke' 18 v(1)
-Implicit 'invoke' 20 listOf(pack.Obj)[0](1)
+Implicit 'invoke' 20 listOf(Obj)[0](1)

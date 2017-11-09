@@ -1,0 +1,25 @@
+package
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER}) public final annotation class A : kotlin.Annotation {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER}) public final annotation class B : kotlin.Annotation {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias Test0 = @A @B kotlin.Int
+public typealias Test1 = @A @A kotlin.Int
+public typealias Test2 = @A @B kotlin.Int
+public typealias Test3 = @A() (@A kotlin.Int) -> kotlin.Int
+public typealias Test4 = @A @B kotlin.Int?
+public typealias Test5 = @A @B kotlin.Int?
+public typealias Test6 = @A @B kotlin.Int
+public typealias Test7 = @A @B kotlin.Int?
+public typealias Test8 = @A @B kotlin.Int?
+public typealias Test9 = @A @B kotlin.Int?

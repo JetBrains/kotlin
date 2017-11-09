@@ -1,13 +1,13 @@
 interface NoC {
-  <error>init {
+  <error>init</error> {
 
-  }</error>
+  }
 
   val a : Int get() = 1
 
-  <error>init {
+  <error>init</error> {
 
-  }</error>
+  }
 }
 
 class WithC() {

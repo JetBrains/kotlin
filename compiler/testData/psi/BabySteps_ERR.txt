@@ -1,4 +1,4 @@
-JetFile: BabySteps_ERR.kt
+KtFile: BabySteps_ERR.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

@@ -1,0 +1,41 @@
+error: incompatible classes were found in dependencies. Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:5:16: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+fun baz(param: A, nested: A.Nested) {
+               ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:5:27: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+fun baz(param: A, nested: A.Nested) {
+                          ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:5:29: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+fun baz(param: A, nested: A.Nested) {
+                            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:6:23: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val constructor = A()
+                      ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:7:18: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val nested = A.Nested()
+                 ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:7:20: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val nested = A.Nested()
+                   ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:8:22: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val methodCall = param.method()
+                     ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:8:28: error: unresolved reference: method
+    val methodCall = param.method()
+                           ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:9:30: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val supertype = object : A() {}
+                             ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:11:13: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val x = foo()
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:12:13: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val y = bar
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:13:5: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    bar = 239
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:14:12: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val z: TA = ""
+           ^
+COMPILATION_ERROR

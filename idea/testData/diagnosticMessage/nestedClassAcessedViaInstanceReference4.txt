@@ -1,2 +1,2 @@
 <!-- nestedClassAcessedViaInstanceReference4 -->
-Nested class 'Nested' accessed via instance reference
+Nested typealias 'NestedAlias' accessed via instance reference

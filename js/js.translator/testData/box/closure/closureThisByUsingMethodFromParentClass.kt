@@ -1,21 +1,5 @@
+// EXPECTED_REACHABLE_NODES: 1129
 package foo
-
-// HACKS
-
-@native
-const val ROOT = "Kotlin.modules.JS_TESTS"
-@native
-const val PATH_TO_F_CREATOR = "foo.B.far\$f"
-@native
-const val PATH_TO_G_CREATOR = "foo.B.gar\$f"
-
-@native("$ROOT.$PATH_TO_F_CREATOR")
-val F_CREATOR: Any = noImpl
-@native("$ROOT.$PATH_TO_G_CREATOR")
-val G_CREATOR: Any = noImpl
-
-
-// Test
 
 open class A {
     fun foo() = "A::foo"
@@ -37,8 +21,8 @@ fun box(): String {
     assertEquals("A::foo", f())
     assertEquals("B::boo", g())
 
-    val fs = F_CREATOR.toString()
-    val gs = G_CREATOR.toString().replaceAll("boo", "foo")
+    val fs: String = eval("B\$far\$lambda").toString()
+    val gs = (eval("B\$gar\$lambda").toString() as String).replaceAll("boo", "foo").replaceAll("gar", "far")
 
     assertEquals(gs, fs)
 
@@ -48,10 +32,8 @@ fun box(): String {
 
 // Helpers
 
-@native
-fun String.replace(regexp: RegExp, replacement: String): String = noImpl
+inline fun String.replace(regexp: RegExp, replacement: String): String = asDynamic().replace(regexp, replacement)
 
 fun String.replaceAll(regexp: String, replacement: String): String = replace(RegExp(regexp, "g"), replacement)
 
-@native
-class RegExp(regexp: String, flags: String)
+external class RegExp(regexp: String, flags: String)

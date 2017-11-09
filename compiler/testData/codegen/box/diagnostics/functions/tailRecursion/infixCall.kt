@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
+
 tailrec infix fun Int.test(x : Int) : Int {
     if (this > 1) {
         return (this - 1) test x

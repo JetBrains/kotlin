@@ -1,0 +1,22 @@
+package
+
+public val test1: [ERROR : Type for CA]
+public val test2: [ERROR : Type for CA.Companion]
+public val test3: kotlin.Int = 42
+public val test4: [ERROR : <ERROR PROPERTY TYPE>]
+
+public final class C {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    @kotlin.SinceKotlin(version = "1.1") public companion object Companion {
+        private constructor Companion()
+        public final val x: kotlin.Int = 42
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+public typealias CA = C

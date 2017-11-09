@@ -25,7 +25,7 @@ class ReflectJavaArrayType(override val reflectType: Type) : ReflectJavaType(), 
         when {
             this is GenericArrayType -> ReflectJavaType.create(genericComponentType)
             this is Class<*> && isArray() -> ReflectJavaType.create(getComponentType())
-            else -> throw IllegalArgumentException("Not an array type (${reflectType.javaClass}): $reflectType")
+            else -> throw IllegalArgumentException("Not an array type (${reflectType::class.java}): $reflectType")
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.utils.identity as ID
 
@@ -29,14 +30,12 @@ import org.jetbrains.kotlin.utils.identity as ID
 object LongOperationFIF : FunctionIntrinsicFactory {
 
     val LONG_EQUALS_ANY = pattern("Long.equals")
-    val LONG_BINARY_OPERATION_LONG = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod|and|or|xor(Long)")
+    val LONG_BINARY_OPERATION_LONG = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod|rem|and|or|xor(Long)")
     val LONG_BIT_SHIFTS = pattern("Long.shl|shr|ushr(Int)")
-    val LONG_BINARY_OPERATION_INTEGER = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod(Int|Short|Byte)")
-    val LONG_BINARY_OPERATION_FLOATING_POINT = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod(Double|Float)")
-    val INTEGER_BINARY_OPERATION_LONG = pattern("Int|Short|Byte.compareTo|rangeTo|plus|minus|times|div|mod(Long)")
-    val CHAR_BINARY_OPERATION_LONG = pattern("Char.compareTo|rangeTo|plus|minus|times|div|mod(Long)")
-    val LONG_BINARY_OPERATION_CHAR = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod(Char)")
-    val FLOATING_POINT_BINARY_OPERATION_LONG = pattern("Double|Float.compareTo|rangeTo|plus|minus|times|div|mod(Long)")
+    val LONG_BINARY_OPERATION_INTEGER = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod|rem(Int|Short|Byte)")
+    val LONG_BINARY_OPERATION_FLOATING_POINT = pattern("Long.compareTo|plus|minus|times|div|mod|rem(Double|Float)")
+    val INTEGER_BINARY_OPERATION_LONG = pattern("Int|Short|Byte.compareTo|rangeTo|plus|minus|times|div|mod|rem(Long)")
+    val FLOATING_POINT_BINARY_OPERATION_LONG = pattern("Double|Float.compareTo|plus|minus|times|div|mod|rem(Long)")
 
     private val longBinaryIntrinsics =
             (
@@ -49,6 +48,7 @@ object LongOperationFIF : FunctionIntrinsicFactory {
                             "times" to "multiply",
                             "div" to "div",
                             "mod" to "modulo",
+                            "rem" to "modulo",
                             "shl" to "shiftLeft",
                             "shr" to "shiftRight",
                             "ushr" to "shiftRightUnsigned",
@@ -60,15 +60,16 @@ object LongOperationFIF : FunctionIntrinsicFactory {
     private val floatBinaryIntrinsics: Map<String, BaseBinaryIntrinsic> =
             mapOf(
                     "compareTo" to BaseBinaryIntrinsic(::primitiveCompareTo),
-                    "rangeTo" to BaseBinaryIntrinsic(::numberRangeTo),
                     "plus" to BaseBinaryIntrinsic(::sum),
                     "minus" to BaseBinaryIntrinsic(::subtract),
                     "times" to BaseBinaryIntrinsic(::mul),
                     "div" to BaseBinaryIntrinsic(::div),
-                    "mod" to BaseBinaryIntrinsic(::mod)
+                    "mod" to BaseBinaryIntrinsic(::mod),
+                    "rem" to BaseBinaryIntrinsic(::mod)
             )
 
-    class BaseBinaryIntrinsic(val applyFun: (left: JsExpression, right: JsExpression) -> JsExpression) : FunctionIntrinsic() {
+    class BaseBinaryIntrinsic(val applyFun: (left: JsExpression, right: JsExpression) -> JsExpression) :
+            FunctionIntrinsicWithReceiverComputed() {
         override fun apply(receiver: JsExpression?, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
             assert(receiver != null)
             assert(arguments.size == 1)
@@ -85,19 +86,15 @@ object LongOperationFIF : FunctionIntrinsicFactory {
    override fun getIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? {
        val operationName = descriptor.name.asString()
        return when {
-           LONG_EQUALS_ANY.apply(descriptor) || LONG_BINARY_OPERATION_LONG.apply(descriptor) || LONG_BIT_SHIFTS.apply(descriptor) ->
+           LONG_EQUALS_ANY.test(descriptor) || LONG_BINARY_OPERATION_LONG.test(descriptor) || LONG_BIT_SHIFTS.test(descriptor) ->
                longBinaryIntrinsics[operationName]
-           INTEGER_BINARY_OPERATION_LONG.apply(descriptor) ->
-               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], { longFromInt(it) }, ID())
-           LONG_BINARY_OPERATION_INTEGER.apply(descriptor) ->
-               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ID(), { longFromInt(it) })
-           CHAR_BINARY_OPERATION_LONG.apply(descriptor) ->
-               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], { longFromInt(charToInt(it)) }, ID())
-           LONG_BINARY_OPERATION_CHAR.apply(descriptor) ->
-               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ID(), { longFromInt(charToInt(it)) })
-           FLOATING_POINT_BINARY_OPERATION_LONG.apply(descriptor) ->
+           INTEGER_BINARY_OPERATION_LONG.test(descriptor) ->
+               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ::longFromInt, ID())
+           LONG_BINARY_OPERATION_INTEGER.test(descriptor) ->
+               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ID(), ::longFromInt)
+           FLOATING_POINT_BINARY_OPERATION_LONG.test(descriptor) ->
                wrapIntrinsicIfPresent(floatBinaryIntrinsics[operationName], ID(), { invokeMethod(it, Namer.LONG_TO_NUMBER) })
-           LONG_BINARY_OPERATION_FLOATING_POINT.apply(descriptor) ->
+           LONG_BINARY_OPERATION_FLOATING_POINT.test(descriptor) ->
                wrapIntrinsicIfPresent(floatBinaryIntrinsics[operationName], { invokeMethod(it, Namer.LONG_TO_NUMBER) }, ID())
            else ->
                null

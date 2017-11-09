@@ -92,7 +92,7 @@ public class IntellijLintRequest extends LintRequest {
   public Collection<com.android.tools.klint.detector.api.Project> getProjects() {
     if (mProjects == null) {
       if (myIncremental && myFileList != null && myFileList.size() == 1 && myModules.size() == 1) {
-        Pair<com.android.tools.klint.detector.api.Project, com.android.tools.klint.detector.api.Project> pair =
+        Pair<com.android.tools.klint.detector.api.Project,com.android.tools.klint.detector.api.Project> pair =
           IntellijLintProject.createForSingleFile(mLintClient, myFileList.get(0), myModules.get(0));
         mProjects = pair.first != null ? Collections.singletonList(pair.first)
                                        : Collections.<com.android.tools.klint.detector.api.Project>emptyList();

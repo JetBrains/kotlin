@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.resolve.jvm.diagnostics;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -37,8 +39,6 @@ public interface ErrorsJvm {
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory1<PsiElement, ConflictingJvmDeclarationsData> CONFLICTING_INHERITED_JVM_DECLARATIONS =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
-
-    DiagnosticFactory1<PsiElement, FqName> MISSING_DEPENDENCY_CLASS = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtDeclaration> OVERRIDE_CANNOT_BE_STATIC = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtDeclaration> JVM_STATIC_NOT_IN_OBJECT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
@@ -57,9 +57,11 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> VOLATILE_ON_DELEGATE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> SYNCHRONIZED_ON_ABSTRACT = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<KtDeclaration> OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> OVERLOADS_ABSTRACT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> OVERLOADS_PRIVATE = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_ABSTRACT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_INTERFACE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_PRIVATE = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_LOCAL = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtDeclaration> EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT = DiagnosticFactory0.create(ERROR, ABSTRACT_MODIFIER);
     DiagnosticFactory0<KtDeclaration> EXTERNAL_DECLARATION_CANNOT_HAVE_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
@@ -70,6 +72,11 @@ public interface ErrorsJvm {
     DiagnosticFactory1<KtAnnotationEntry, FqName> DEPRECATED_JAVA_ANNOTATION = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<KtAnnotationEntry> NON_SOURCE_REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtAnnotationEntry, FqName> ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES = DiagnosticFactory1.create(ERROR);
+
+    DiagnosticFactory0<KtAnnotationEntry> JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_MULTIFILE_CLASSES = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> JVM_PACKAGE_NAME_CANNOT_BE_EMPTY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> JVM_PACKAGE_NAME_MUST_BE_VALID_NAME = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC = DiagnosticFactory0.create(ERROR);
@@ -87,7 +94,38 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtExpression> WHEN_ENUM_CAN_BE_NULL_IN_JAVA = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory3<KtExpression, DeclarationDescriptor, DeclarationDescriptor, String> TARGET6_INTERFACE_INHERITANCE = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<PsiElement, DeclarationDescriptor, DeclarationDescriptor, String> TARGET6_INTERFACE_INHERITANCE = DiagnosticFactory3.create(ERROR);
+
+    DiagnosticFactory0<PsiElement> DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM = DiagnosticFactory2.create(ERROR);
+
+    DiagnosticFactory1<PsiElement, String> JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory2<PsiElement, String, String> JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE = DiagnosticFactory2.create(ERROR);
+
+    DiagnosticFactory0<KtExpression> API_VERSION_IS_AT_LEAST_ARGUMENT_SHOULD_BE_CONSTANT = DiagnosticFactory0.create(WARNING);
+
+    enum NullabilityInformationSource {
+        KOTLIN {
+            @NotNull
+            @Override
+            public String toString() {
+                return "Kotlin";
+            }
+        },
+        JAVA {
+            @NotNull
+            @Override
+            public String toString() {
+                return "Java";
+            }
+        }
+    }
+
+    DiagnosticFactory2<KtElement, NullabilityInformationSource, NullabilityInformationSource> NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+            = DiagnosticFactory2.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

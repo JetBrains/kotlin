@@ -22,19 +22,18 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
 
 class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
-    override fun getInfo(element: PsiElement?): RunLineMarkerContributor.Info? {
-        val function = element?.parent as? KtNamedFunction
-        if (function == null) return null
+    override fun getInfo(element: PsiElement): Info? {
+        val function = element.parent as? KtNamedFunction ?: return null
 
         if (function.nameIdentifier != element) return null
 
-        val detector = MainFunctionDetector { function ->
-            function.resolveToDescriptor() as FunctionDescriptor
+        val detector = MainFunctionDetector { someFunction ->
+            someFunction.resolveToDescriptorIfAny() as? FunctionDescriptor
         }
 
         if (detector.isMain(function)) {

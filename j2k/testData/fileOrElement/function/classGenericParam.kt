@@ -1,3 +1,2 @@
 val t: T
-    get() {
-    }
+    get() {}

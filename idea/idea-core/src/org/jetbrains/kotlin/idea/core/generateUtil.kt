@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.ifEmpty
@@ -71,8 +72,7 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
     }
 
     if (element is KtDeclarationWithInitializer && element.hasInitializer()) {
-        val expression = element.initializer
-        if (expression == null) throw AssertionError()
+        val expression = element.initializer ?: throw AssertionError()
 
         val initializerRange = expression.textRange
 
@@ -81,7 +81,8 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
         editor.moveCaret(offset)
 
         if (initializerRange != null) {
-            editor.selectionModel.setSelection(initializerRange.startOffset, initializerRange.endOffset)
+            val endOffset = expression.siblings(forward = true, withItself = false).lastOrNull()?.endOffset ?: initializerRange.endOffset
+            editor.selectionModel.setSelection(initializerRange.startOffset, endOffset)
         }
 
         return true
@@ -175,7 +176,7 @@ fun <T : KtDeclaration> insertMembersAfter(
             val body = classOrObject.getOrCreateBody()
 
             var afterAnchor = anchor ?: findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList<T>()
-            otherMembers.mapNotNullTo(insertedMembers) {
+            otherMembers.mapTo(insertedMembers) {
                 if (classOrObject is KtClass && classOrObject.isEnum()) {
                     val enumEntries = classOrObject.declarations.filterIsInstance<KtEnumEntry>()
                     val bound = (enumEntries.lastOrNull() ?: classOrObject.allChildren.firstOrNull { it.node.elementType == KtTokens.SEMICOLON })
@@ -203,10 +204,10 @@ fun <T : KtDeclaration> insertMembersAfter(
             moveCaretIntoGeneratedElement(editor, insertedMembers.first())
         }
 
-        insertedMembers
-    }.apply {
         val codeStyleManager = CodeStyleManager.getInstance(classOrObject.project)
-        forEach { codeStyleManager.reformat(it) }
+        insertedMembers.forEach { codeStyleManager.reformat(it) }
+
+        insertedMembers
     }
 }
 

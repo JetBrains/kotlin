@@ -1,4 +1,4 @@
 package test
 
-class ClassWithSuperTypeListChanged : java.io.Serializable {
+class ClassWithSuperTypeListChanged : Throwable() {
 }

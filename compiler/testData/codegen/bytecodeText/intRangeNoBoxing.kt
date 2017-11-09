@@ -1,6 +1,7 @@
 fun Int.until(other: Int) = this..other - 1
 fun foo() {
-    for (i in 1 until 2) {
+    val range = 1 until 2
+    for (i in range) {
     }
 
     for (i in 1..2 step 4) {}

@@ -22,28 +22,30 @@ import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiParameterList;
+import com.intellij.psi.PsiType;
+
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.uast.UFunction;
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UType;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-
 /**
  * Checks for errors related to Date Formats
  */
-public class DateFormatDetector extends Detector implements UastScanner {
+public class DateFormatDetector extends Detector implements Detector.UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             DateFormatDetector.class,
-            Scope.SOURCE_FILE_SCOPE);
+            Scope.JAVA_FILE_SCOPE);
 
     /** Constructing SimpleDateFormat without an explicit locale */
     public static final Issue DATE_FORMAT = Issue.create(
@@ -75,12 +77,6 @@ public class DateFormatDetector extends Detector implements UastScanner {
     public DateFormatDetector() {
     }
 
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
     // ---- Implements UastScanner ----
 
     @Nullable
@@ -90,24 +86,28 @@ public class DateFormatDetector extends Detector implements UastScanner {
     }
 
     @Override
-    public void visitConstructor(UastAndroidContext context, UCallExpression functionCall, UFunction constructor) {
+    public void visitConstructor(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression node, @NonNull UMethod constructor) {
         if (!specifiesLocale(constructor)) {
-            Location location = context.getLocation(functionCall);
+            Location location = context.getUastLocation(node);
             String message =
-              "To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, " +
-              "or `getTimeInstance()`, or use `new SimpleDateFormat(String template, " +
-              "Locale locale)` with for example `Locale.US` for ASCII dates.";
-            context.report(DATE_FORMAT, functionCall, location, message);
+                    "To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, " +
+                            "or `getTimeInstance()`, or use `new SimpleDateFormat(String template, " +
+                            "Locale locale)` with for example `Locale.US` for ASCII dates.";
+            context.report(DATE_FORMAT, node, location, message);
         }
     }
 
-    private static boolean specifiesLocale(@NonNull UFunction method) {
-        for (int i = 0, n = method.getValueParameterCount(); i < n; i++) {
-            UType parameterType = method.getValueParameters().get(i).getType();
-            if (parameterType.matchesFqName(LOCALE_CLS)) {
-                return true;
+    private static boolean specifiesLocale(@NonNull PsiMethod method) {
+        PsiParameterList parameterList = method.getParameterList();
+        PsiParameter[] parameters = parameterList.getParameters();
+        for (PsiParameter parameter : parameters) {
+            PsiType type = parameter.getType();
+            if (type.getCanonicalText().equals(LOCALE_CLS)) {
+                    return true;
             }
         }
+
         return false;
     }
 }

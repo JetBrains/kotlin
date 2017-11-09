@@ -1,0 +1,4 @@
+StateMyAnnotation.java:
+
+package generated;
+class StateMyAnnotation {}

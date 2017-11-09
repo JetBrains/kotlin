@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.script.util.resolvers
 
 import org.jetbrains.kotlin.script.util.DependsOn
+import org.jetbrains.kotlin.script.util.Repository
 import java.io.File
-import java.lang.IllegalArgumentException
 
 interface Resolver {
     fun tryResolve(dependsOn: DependsOn): Iterable<File>?
@@ -26,7 +26,7 @@ interface Resolver {
 
 class DirectResolver : Resolver {
     override fun tryResolve(dependsOn: DependsOn): Iterable<File>? =
-            if (dependsOn.value.isNotBlank() && File(dependsOn.value).exists()) listOf(File(dependsOn.value)) else null
+            dependsOn.value.takeUnless(String::isBlank)?.let(::File)?.takeIf { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
 }
 
 class FlatLibDirectoryResolver(val path: File) : Resolver {
@@ -36,9 +36,11 @@ class FlatLibDirectoryResolver(val path: File) : Resolver {
     }
 
     override fun tryResolve(dependsOn: DependsOn): Iterable<File>? =
-            when {
-                dependsOn.value.isNotBlank() && File(path, dependsOn.value).exists() -> listOf(File(path, dependsOn.value))
-                // TODO: add coordinates and wildcard matching
-                else -> null
-            }
+            // TODO: add coordinates and wildcard matching
+            dependsOn.value.takeUnless(String::isBlank)?.let { File(path, it) }?.takeIf { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
+
+    companion object {
+        fun tryCreate(annotation: Repository): FlatLibDirectoryResolver? =
+                annotation.value.takeUnless(String::isBlank)?.let(::File)?.takeIf { it.exists() && it.isDirectory }?.let(::FlatLibDirectoryResolver)
+    }
 }

@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.cli.common.messages;
 
-import com.google.common.base.Predicate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Predicate;
 
 public class FilteringMessageCollector implements MessageCollector {
     private final MessageCollector messageCollector;
@@ -34,10 +36,8 @@ public class FilteringMessageCollector implements MessageCollector {
     }
 
     @Override
-    public void report(
-            @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
-    ) {
-        if (!decline.apply(severity)) {
+    public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location) {
+        if (!decline.test(severity)) {
             messageCollector.report(severity, message, location);
         }
     }

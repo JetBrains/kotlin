@@ -1,6 +1,7 @@
-import java.util.HashSet
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
 
-val NAN = java.lang.Float.NaN
+val NAN = Float.NaN
 
 data class A(val x: Float)
 

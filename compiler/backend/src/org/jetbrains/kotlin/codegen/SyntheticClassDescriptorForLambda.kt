@@ -31,7 +31,8 @@ class SyntheticClassDescriptorForLambda(
         name: Name,
         supertypes: Collection<KotlinType>,
         element: KtElement
-) : ClassDescriptorImpl(containingDeclaration, name, Modality.FINAL, ClassKind.CLASS, supertypes, element.toSourceElement()) {
+) : ClassDescriptorImpl(containingDeclaration, name, Modality.FINAL, ClassKind.CLASS, supertypes, element.toSourceElement(),
+                        /* isExternal = */ false) {
     init {
         initialize(MemberScope.Empty, emptySet(), null)
     }

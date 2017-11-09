@@ -17,23 +17,29 @@
 package org.jetbrains.kotlin.frontend.di
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
 
 fun StorageComponentContainer.configureModule(
-        moduleContext: ModuleContext, platform: TargetPlatform
+        moduleContext: ModuleContext,
+        platform: TargetPlatform,
+        platformVersion: TargetPlatformVersion
 ) {
     useInstance(moduleContext)
     useInstance(moduleContext.module)
@@ -42,11 +48,12 @@ fun StorageComponentContainer.configureModule(
     useInstance(moduleContext.module.builtIns)
 
     useInstance(platform)
+    useInstance(platformVersion)
 
     platform.platformConfigurator.configureModuleComponents(this)
 
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
-        extension.addDeclarations(this, platform)
+        extension.registerModuleComponents(this, platform,  moduleContext.module)
     }
 
     configurePlatformIndependentComponents()
@@ -54,12 +61,16 @@ fun StorageComponentContainer.configureModule(
 
 private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<SupertypeLoopCheckerImpl>()
+    useImpl<KotlinResolutionStatelessCallbacksImpl>()
 }
 
 fun StorageComponentContainer.configureModule(
-        moduleContext: ModuleContext, platform: TargetPlatform, trace: BindingTrace
+        moduleContext: ModuleContext,
+        platform: TargetPlatform,
+        platformVersion: TargetPlatformVersion,
+        trace: BindingTrace
 ) {
-    configureModule(moduleContext, platform)
+    configureModule(moduleContext, platform, platformVersion)
     useInstance(trace)
 }
 
@@ -68,15 +79,16 @@ fun createContainerForBodyResolve(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         statementFilter: StatementFilter,
+        targetPlatformVersion: TargetPlatformVersion,
         languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("BodyResolve", platform) {
-    configureModule(moduleContext, platform, bindingTrace)
+    configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
     useInstance(statementFilter)
 
-    useInstance(LookupTracker.DO_NOTHING)
     useInstance(BodyResolveCache.ThrowException)
     useInstance(languageVersionSettings)
+    useImpl<AnnotationResolverImpl>()
 
     useImpl<BodyResolver>()
 }
@@ -87,15 +99,16 @@ fun createContainerForLazyBodyResolve(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         bodyResolveCache: BodyResolveCache,
+        targetPlatformVersion: TargetPlatformVersion,
         languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("LazyBodyResolve", platform) {
-    configureModule(moduleContext, platform, bindingTrace)
+    configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
-    useInstance(LookupTracker.DO_NOTHING)
     useInstance(kotlinCodeAnalyzer)
     useInstance(kotlinCodeAnalyzer.fileScopeProvider)
     useInstance(bodyResolveCache)
     useInstance(languageVersionSettings)
+    useImpl<AnnotationResolverImpl>()
     useImpl<LazyTopDownAnalyzer>()
     useImpl<BasicAbsentDescriptorHandler>()
 }
@@ -105,10 +118,12 @@ fun createContainerForLazyLocalClassifierAnalyzer(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         lookupTracker: LookupTracker,
+        targetPlatformVersion: TargetPlatformVersion,
         languageVersionSettings: LanguageVersionSettings,
+        statementFilter: StatementFilter,
         localClassDescriptorHolder: LocalClassDescriptorHolder
 ): StorageComponentContainer = createContainer("LocalClassifierAnalyzer", platform) {
-    configureModule(moduleContext, platform, bindingTrace)
+    configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
     useInstance(localClassDescriptorHolder)
     useInstance(lookupTracker)
@@ -120,11 +135,13 @@ fun createContainerForLazyLocalClassifierAnalyzer(
     CompilerEnvironment.configure(this)
 
     useInstance(FileScopeProvider.ThrowException)
+    useImpl<AnnotationResolverImpl>()
 
     useImpl<DeclarationScopeProviderForLocalClassifierAnalyzer>()
     useImpl<LocalLazyDeclarationResolver>()
 
     useInstance(languageVersionSettings)
+    useInstance(statementFilter)
 }
 
 fun createContainerForLazyResolve(
@@ -132,31 +149,29 @@ fun createContainerForLazyResolve(
         declarationProviderFactory: DeclarationProviderFactory,
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
+        targetPlatformVersion: TargetPlatformVersion,
         targetEnvironment: TargetEnvironment,
         languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("LazyResolve", platform) {
-    configureModule(moduleContext, platform, bindingTrace)
+    configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
     useInstance(declarationProviderFactory)
-    useInstance(LookupTracker.DO_NOTHING)
     useInstance(languageVersionSettings)
 
-    useImpl<FileScopeProviderImpl>()
+    useImpl<AnnotationResolverImpl>()
     useImpl<CompilerDeserializationConfiguration>()
     targetEnvironment.configure(this)
 
-    useImpl<LazyResolveToken>()
     useImpl<ResolveSession>()
 }
 
-@JvmOverloads
-fun createLazyResolveSession(
-        moduleContext: ModuleContext,
-        declarationProviderFactory: DeclarationProviderFactory,
-        bindingTrace: BindingTrace,
-        platform: TargetPlatform,
-        languageVersionSettings: LanguageVersionSettings,
-        targetEnvironment: TargetEnvironment = CompilerEnvironment
-): ResolveSession = createContainerForLazyResolve(
-        moduleContext, declarationProviderFactory, bindingTrace, platform, targetEnvironment, languageVersionSettings
-).get<ResolveSession>()
+fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtFile>): ResolveSession =
+        createContainerForLazyResolve(
+                moduleContext,
+                FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
+                BindingTraceContext(),
+                TargetPlatform.Common,
+                TargetPlatformVersion.NoVersion,
+                CompilerEnvironment,
+                LanguageVersionSettingsImpl.DEFAULT
+        ).get<ResolveSession>()

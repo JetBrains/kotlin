@@ -21,8 +21,9 @@ import com.intellij.psi.PsiConstantEvaluationHelper
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.impl.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -48,12 +49,13 @@ class KotlinLightConstantExpressionEvaluator : ConstantExpressionEvaluator {
             throwExceptionOnOverflow: Boolean,
             auxEvaluator: PsiConstantEvaluationHelper.AuxEvaluator?
     ): Any? {
-        if (expression !is KtLightAnnotation.LightExpressionValue<*>) return null
+        if (expression !is KtLightAnnotationForSourceEntry.LightExpressionValue<*>) return null
         val expressionToCompute = expression.originalExpression ?: return null
         return when (expressionToCompute) {
             is KtExpression -> {
                 val resolutionFacade = expressionToCompute.getResolutionFacade()
-                val evaluator = FrontendConstantExpressionEvaluator(resolutionFacade.moduleDescriptor.builtIns)
+                val evaluator = FrontendConstantExpressionEvaluator(resolutionFacade.moduleDescriptor.builtIns,
+                                                                    expressionToCompute.languageVersionSettings)
                 val evaluatorTrace = DelegatingBindingTrace(resolutionFacade.analyze(expressionToCompute), "Evaluating annotation argument")
 
                 val constant = evaluator.evaluateExpression(expressionToCompute, evaluatorTrace) ?: return null
@@ -64,7 +66,7 @@ class KotlinLightConstantExpressionEvaluator : ConstantExpressionEvaluator {
             is PsiExpression -> {
                 JavaPsiFacade.getInstance(expressionToCompute.project)
                         .constantEvaluationHelper
-                        .computeExpression(expression, throwExceptionOnOverflow, auxEvaluator)
+                        .computeExpression(expressionToCompute, throwExceptionOnOverflow, auxEvaluator)
             }
 
             else -> null

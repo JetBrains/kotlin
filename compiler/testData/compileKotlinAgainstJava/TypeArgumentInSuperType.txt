@@ -1,0 +1,20 @@
+package test
+
+internal fun func(): test.Interface1.InnerInterface<kotlin.String>
+
+public/*package*/ interface Interface1 {
+
+    public interface InnerInterface</*0*/ T : kotlin.Any!> {
+    }
+}
+
+public/*package*/ interface Interface2 : test.Interface1 {
+}
+
+public open class TypeArgumentInSuperType {
+    public constructor TypeArgumentInSuperType()
+
+    public final class Impl : test.Interface1.InnerInterface<kotlin.String!> {
+        public constructor Impl()
+    }
+}

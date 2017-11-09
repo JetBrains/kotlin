@@ -1,5 +1,5 @@
 fun test() {
-   if (1 is Int) {
+   if (<warning>1 is Int</warning>) {
      if (1 is <error>Boolean</error>) {
 
      }

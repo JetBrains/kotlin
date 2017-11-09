@@ -1,4 +1,4 @@
-JetFile: Simple.kt
+KtFile: Simple.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

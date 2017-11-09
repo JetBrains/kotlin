@@ -1,9 +1,11 @@
 package kotlin.text
 
-import kotlin.text.js.RegExp
+import kotlin.js.RegExp
 
-internal inline fun String.nativeIndexOf(ch : Char, fromIndex : Int) : Int = nativeIndexOf(ch.toString(), fromIndex)
-internal inline fun String.nativeLastIndexOf(ch : Char, fromIndex : Int) : Int = nativeLastIndexOf(ch.toString(), fromIndex)
+@kotlin.internal.InlineOnly
+internal inline fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = nativeIndexOf(ch.toString(), fromIndex)
+@kotlin.internal.InlineOnly
+internal inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = nativeLastIndexOf(ch.toString(), fromIndex)
 
 /**
  * Returns `true` if this string starts with the specified prefix.
@@ -37,9 +39,9 @@ public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
 
 
 
-public inline fun String.matches(regex : String) : Boolean {
+public fun String.matches(regex: String): Boolean {
     val result = this.match(regex)
-    return result != null && result.size > 0
+    return result != null && result.size != 0
 }
 
 public fun CharSequence.isBlank(): Boolean = length == 0 || (if (this is String) this else this.toString()).matches("^[\\s\\xA0]+$")
@@ -62,7 +64,7 @@ public fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, othe
  *
  * @includeFunctionBody ../../test/StringTest.kt capitalize
  */
-public inline fun String.capitalize(): String {
+public fun String.capitalize(): String {
     return if (isNotEmpty()) substring(0, 1).toUpperCase() + substring(1) else this
 }
 
@@ -71,7 +73,7 @@ public inline fun String.capitalize(): String {
  *
  * @includeFunctionBody ../../test/StringTest.kt decapitalize
  */
-public inline fun String.decapitalize(): String {
+public fun String.decapitalize(): String {
     return if (isNotEmpty()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 
@@ -80,7 +82,7 @@ public inline fun String.decapitalize(): String {
  * @throws [IllegalArgumentException] when n < 0.
  */
 public fun CharSequence.repeat(n: Int): String {
-    require (n >= 0) { "Count 'n' must be non-negative, but was $n." }
+    require(n >= 0) { "Count 'n' must be non-negative, but was $n." }
     return when (n) {
         0 -> ""
         1 -> this.toString()
@@ -110,10 +112,6 @@ public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolea
 
 public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String =
         nativeReplace(RegExp(Regex.escape(oldChar.toString()), if (ignoreCase) "gi" else "g"), newChar.toString())
-
-@Deprecated("Use replaceFirst(String, String) instead.", ReplaceWith("replaceFirst(oldValue, newValue, ignoreCase = ignoreCase)"))
-public fun String.replaceFirstLiteral(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
-        nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "i" else ""), Regex.escapeReplacement(newValue))
 
 public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
         nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "i" else ""), Regex.escapeReplacement(newValue))

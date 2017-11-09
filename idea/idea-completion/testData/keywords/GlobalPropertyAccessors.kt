@@ -31,7 +31,7 @@ var a : Int
 // EXIST:  var
 // EXIST:  operator
 // EXIST:  infix
-// EXIST:  sealed
+// EXIST:  sealed class
 // EXIST:  data
 // EXIST:  inline
 // EXIST:  tailrec
@@ -40,4 +40,7 @@ var a : Int
 // EXIST:  const
 // EXIST:  suspend
 // EXIST:  typealias
+// EXIST:  expect
+// EXIST:  actual
+// EXIST:  lateinit var
 // NOTHING_ELSE

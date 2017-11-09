@@ -1,0 +1,11 @@
+package
+
+public fun test(/*0*/ f: Foo?): kotlin.reflect.KClass<out Foo>?
+public fun test2(): kotlin.reflect.KClass<out Foo>?
+
+public final class Foo {
+    public constructor Foo()
+    public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

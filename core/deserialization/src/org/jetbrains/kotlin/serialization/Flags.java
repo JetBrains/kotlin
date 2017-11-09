@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.protobuf.Internal;
 public class Flags {
     private Flags() {}
 
-    // Common
+    // Types
+    public static final BooleanFlagField SUSPEND_TYPE = FlagField.booleanFirst();
+
+    // Common for declarations
 
     public static final BooleanFlagField HAS_ANNOTATIONS = FlagField.booleanFirst();
     public static final FlagField<ProtoBuf.Visibility> VISIBILITY = FlagField.after(HAS_ANNOTATIONS, ProtoBuf.Visibility.values());
@@ -35,6 +38,8 @@ public class Flags {
     public static final FlagField<ProtoBuf.Class.Kind> CLASS_KIND = FlagField.after(MODALITY, ProtoBuf.Class.Kind.values());
     public static final BooleanFlagField IS_INNER = FlagField.booleanAfter(CLASS_KIND);
     public static final BooleanFlagField IS_DATA = FlagField.booleanAfter(IS_INNER);
+    public static final BooleanFlagField IS_EXTERNAL_CLASS = FlagField.booleanAfter(IS_DATA);
+    public static final BooleanFlagField IS_EXPECT_CLASS = FlagField.booleanAfter(IS_EXTERNAL_CLASS);
 
     // Constructors
 
@@ -52,6 +57,7 @@ public class Flags {
     public static final BooleanFlagField IS_TAILREC = FlagField.booleanAfter(IS_INLINE);
     public static final BooleanFlagField IS_EXTERNAL_FUNCTION = FlagField.booleanAfter(IS_TAILREC);
     public static final BooleanFlagField IS_SUSPEND = FlagField.booleanAfter(IS_EXTERNAL_FUNCTION);
+    public static final BooleanFlagField IS_EXPECT_FUNCTION = FlagField.booleanAfter(IS_SUSPEND);
 
     // Properties
 
@@ -61,13 +67,15 @@ public class Flags {
     public static final BooleanFlagField IS_CONST = FlagField.booleanAfter(HAS_SETTER);
     public static final BooleanFlagField IS_LATEINIT = FlagField.booleanAfter(IS_CONST);
     public static final BooleanFlagField HAS_CONSTANT = FlagField.booleanAfter(IS_LATEINIT);
+    public static final BooleanFlagField IS_EXTERNAL_PROPERTY = FlagField.booleanAfter(HAS_CONSTANT);
+    public static final BooleanFlagField IS_DELEGATED = FlagField.booleanAfter(IS_EXTERNAL_PROPERTY);
+    public static final BooleanFlagField IS_EXPECT_PROPERTY = FlagField.booleanAfter(IS_DELEGATED);
 
     // Parameters
 
     public static final BooleanFlagField DECLARES_DEFAULT_VALUE = FlagField.booleanAfter(HAS_ANNOTATIONS);
     public static final BooleanFlagField IS_CROSSINLINE = FlagField.booleanAfter(DECLARES_DEFAULT_VALUE);
     public static final BooleanFlagField IS_NOINLINE = FlagField.booleanAfter(IS_CROSSINLINE);
-    public static final BooleanFlagField IS_COROUTINE = FlagField.booleanAfter(IS_NOINLINE);
 
     // Accessors
 
@@ -75,7 +83,16 @@ public class Flags {
     public static final BooleanFlagField IS_EXTERNAL_ACCESSOR = FlagField.booleanAfter(IS_NOT_DEFAULT);
     public static final BooleanFlagField IS_INLINE_ACCESSOR = FlagField.booleanAfter(IS_EXTERNAL_ACCESSOR);
 
+    // Contracts expressions
+    public static final BooleanFlagField IS_NEGATED = FlagField.booleanFirst();
+    public static final BooleanFlagField IS_NULL_CHECK_PREDICATE = FlagField.booleanAfter(IS_NEGATED);
+
+
     // ---
+
+    public static int getTypeFlags(boolean isSuspend) {
+        return SUSPEND_TYPE.toFlags(isSuspend);
+    }
 
     public static int getClassFlags(
             boolean hasAnnotations,
@@ -84,7 +101,9 @@ public class Flags {
             ClassKind kind,
             boolean inner,
             boolean isCompanionObject,
-            boolean isData
+            boolean isData,
+            boolean isExternal,
+            boolean isExpect
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
@@ -92,6 +111,8 @@ public class Flags {
                | CLASS_KIND.toFlags(classKind(kind, isCompanionObject))
                | IS_INNER.toFlags(inner)
                | IS_DATA.toFlags(isData)
+               | IS_EXTERNAL_CLASS.toFlags(isExternal)
+               | IS_EXPECT_CLASS.toFlags(isExpect)
                ;
     }
 
@@ -136,7 +157,8 @@ public class Flags {
             boolean isInline,
             boolean isTailrec,
             boolean isExternal,
-            boolean isSuspend
+            boolean isSuspend,
+            boolean isExpect
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -148,6 +170,7 @@ public class Flags {
                | IS_TAILREC.toFlags(isTailrec)
                | IS_EXTERNAL_FUNCTION.toFlags(isExternal)
                | IS_SUSPEND.toFlags(isSuspend)
+               | IS_EXPECT_FUNCTION.toFlags(isExpect)
                 ;
     }
 
@@ -161,7 +184,10 @@ public class Flags {
             boolean hasSetter,
             boolean hasConstant,
             boolean isConst,
-            boolean lateInit
+            boolean lateInit,
+            boolean isExternal,
+            boolean isDelegated,
+            boolean isExpect
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -173,6 +199,9 @@ public class Flags {
                | IS_CONST.toFlags(isConst)
                | IS_LATEINIT.toFlags(lateInit)
                | HAS_CONSTANT.toFlags(hasConstant)
+               | IS_EXTERNAL_PROPERTY.toFlags(isExternal)
+               | IS_DELEGATED.toFlags(isDelegated)
+               | IS_EXPECT_PROPERTY.toFlags(isExpect)
                 ;
     }
 
@@ -191,6 +220,14 @@ public class Flags {
                | IS_EXTERNAL_ACCESSOR.toFlags(isExternal)
                | IS_INLINE_ACCESSOR.toFlags(isInlineAccessor)
                ;
+    }
+
+    public static int getContractExpressionFlags(
+            @NotNull boolean isNegated,
+            @NotNull boolean isNullCheckPredicate
+    ) {
+        return IS_NEGATED.toFlags(isNegated)
+                | IS_NULL_CHECK_PREDICATE.toFlags(isNullCheckPredicate);
     }
 
     @NotNull
@@ -250,14 +287,12 @@ public class Flags {
             boolean hasAnnotations,
             boolean declaresDefaultValue,
             boolean isCrossinline,
-            boolean isNoinline,
-            boolean isCoroutine
+            boolean isNoinline
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | DECLARES_DEFAULT_VALUE.toFlags(declaresDefaultValue)
                | IS_CROSSINLINE.toFlags(isCrossinline)
                | IS_NOINLINE.toFlags(isNoinline)
-               | IS_COROUTINE.toFlags(isCoroutine)
                ;
     }
 
@@ -317,6 +352,8 @@ public class Flags {
         public int toFlags(Boolean value) {
             return value ? 1 << offset : 0;
         }
+
+        public int invert(int flags) { return (flags ^ (1 << offset)); }
     }
 
     private static class EnumLiteFlagField<E extends Internal.EnumLite> extends FlagField<E> {

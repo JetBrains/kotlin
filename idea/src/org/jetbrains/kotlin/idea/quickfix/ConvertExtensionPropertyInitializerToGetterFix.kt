@@ -32,6 +32,7 @@ class ConvertExtensionPropertyInitializerToGetterFix(element: KtExpression) : Ko
     override fun getFamilyName(): String = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val property = element.getParentOfType<KtProperty>(true) ?: return
         ConvertPropertyInitializerToGetterIntention.convertPropertyInitializerToGetter(property, editor)
     }

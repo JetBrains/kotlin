@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types.expressions;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
@@ -168,65 +167,62 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     }
 
     @NotNull
-    private KotlinTypeInfo getTypeInfo(@NotNull final KtExpression expression, final ExpressionTypingContext context, final KtVisitor<KotlinTypeInfo, ExpressionTypingContext> visitor) {
-        return typeInfoPerfCounter.time(new Function0<KotlinTypeInfo>() {
-            @Override
-            public KotlinTypeInfo invoke() {
+    private KotlinTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context, KtVisitor<KotlinTypeInfo, ExpressionTypingContext> visitor) {
+        return typeInfoPerfCounter.time(() -> {
+            try {
+                KotlinTypeInfo recordedTypeInfo = BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
+                if (recordedTypeInfo != null) {
+                    return recordedTypeInfo;
+                }
+
+                context.trace.record(BindingContext.DATA_FLOW_INFO_BEFORE, expression, context.dataFlowInfo);
+
+                KotlinTypeInfo result;
                 try {
-                    KotlinTypeInfo recordedTypeInfo = BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
-                    if (recordedTypeInfo != null) {
-                        return recordedTypeInfo;
-                    }
-                    KotlinTypeInfo result;
-                    try {
-                        result = expression.accept(visitor, context);
-                        // Some recursive definitions (object expressions) must put their types in the cache manually:
-                        //noinspection ConstantConditions
-                        if (context.trace.get(BindingContext.PROCESSED, expression) == Boolean.TRUE) {
-                            KotlinType type = context.trace.getBindingContext().getType(expression);
-                            return result.replaceType(type);
-                        }
-
-                        if (result.getType() instanceof DeferredType) {
-                            result = result.replaceType(((DeferredType) result.getType()).getDelegate());
-                        }
-                        context.trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, result);
-                    }
-                    catch (ReenteringLazyValueComputationException e) {
-                        context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
-                        result = TypeInfoFactoryKt.noTypeInfo(context);
+                    result = expression.accept(visitor, context);
+                    // Some recursive definitions (object expressions) must put their types in the cache manually:
+                    //noinspection ConstantConditions
+                    if (context.trace.get(BindingContext.PROCESSED, expression) == Boolean.TRUE) {
+                        KotlinType type = context.trace.getBindingContext().getType(expression);
+                        return result.replaceType(type);
                     }
 
-                    context.trace.record(BindingContext.PROCESSED, expression);
+                    if (result.getType() instanceof DeferredType) {
+                        result = result.replaceType(((DeferredType) result.getType()).getDelegate());
+                    }
+                    context.trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, result);
+                }
+                catch (ReenteringLazyValueComputationException e) {
+                    context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
+                    result = TypeInfoFactoryKt.noTypeInfo(context);
+                }
 
-                    // todo save scope before analyze and fix debugger: see CodeFragmentAnalyzer.correctContextForExpression
-                    BindingContextUtilsKt.recordScope(context.trace, context.scope, expression);
-                    BindingContextUtilsKt.recordDataFlowInfo(context.replaceDataFlowInfo(result.getDataFlowInfo()), expression);
-                    try {
-                        // Here we have to resolve some types, so the following exception is possible
-                        // Example: val a = ::a, fun foo() = ::foo
-                        recordTypeInfo(expression, result);
-                    }
-                    catch (ReenteringLazyValueComputationException e) {
-                        context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
-                        return TypeInfoFactoryKt.noTypeInfo(context);
-                    }
-                    return result;
+                context.trace.record(BindingContext.PROCESSED, expression);
+
+                // todo save scope before analyze and fix debugger: see CodeFragmentAnalyzer.correctContextForExpression
+                BindingContextUtilsKt.recordScope(context.trace, context.scope, expression);
+                BindingContextUtilsKt.recordDataFlowInfo(context.replaceDataFlowInfo(result.getDataFlowInfo()), expression);
+                try {
+                    // Here we have to resolve some types, so the following exception is possible
+                    // Example: val a = ::a, fun foo() = ::foo
+                    recordTypeInfo(expression, result);
                 }
-                catch (ProcessCanceledException e) {
-                    throw e;
+                catch (ReenteringLazyValueComputationException e) {
+                    context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
+                    return TypeInfoFactoryKt.noTypeInfo(context);
                 }
-                catch (KotlinFrontEndException e) {
-                    throw e;
-                }
-                catch (Throwable e) {
-                    context.trace.report(Errors.EXCEPTION_FROM_ANALYZER.on(expression, e));
-                    logOrThrowException(expression, e);
-                    return TypeInfoFactoryKt.createTypeInfo(
-                            ErrorUtils.createErrorType(e.getClass().getSimpleName() + " from analyzer"),
-                            context
-                    );
-                }
+                return result;
+            }
+            catch (ProcessCanceledException | KotlinFrontEndException e) {
+                throw e;
+            }
+            catch (Throwable e) {
+                context.trace.report(Errors.EXCEPTION_FROM_ANALYZER.on(expression, e));
+                logOrThrowException(expression, e);
+                return TypeInfoFactoryKt.createTypeInfo(
+                        ErrorUtils.createErrorType(e.getClass().getSimpleName() + " from analyzer"),
+                        context
+                );
             }
         });
     }

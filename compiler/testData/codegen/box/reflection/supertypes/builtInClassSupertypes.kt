@@ -1,7 +1,12 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 
 import java.io.Serializable
-import kotlin.reflect.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KCallable
+import kotlin.reflect.full.*
 import kotlin.test.assertEquals
 
 inline fun <reified T : Any> check(vararg callables: KCallable<*>) {
@@ -29,14 +34,14 @@ fun box(): String {
     check<Any>()
     checkAll<Any>()
 
-    check<String>(::comparableOfString, ::charSequence, ::serializable)
+    check<String>(::comparableOfString, ::charSequence, ::serializable, ::any)
     checkAll<String>(::comparableOfString, ::charSequence, ::serializable, ::any)
 
     check<Int>(::number, ::comparableOfInt, ::serializable)
     checkAll<Int>(::number, ::comparableOfInt, ::serializable, ::any)
 
-    check<Array<Any>>(::cloneable, ::serializable)
-    checkAll<Array<Any>>(::cloneable, ::serializable, ::any)
+    check<Array<Any>>(::any, ::cloneable, ::serializable)
+    checkAll<Array<Any>>(::any, ::cloneable, ::serializable)
 
     return "OK"
 }

@@ -266,8 +266,8 @@ public class TypeIntrinsics {
     }
 
     public static int getFunctionArity(Object obj) {
-        if (obj instanceof FunctionImpl) {
-            return ((FunctionImpl) obj).getArity();
+        if (obj instanceof FunctionBase) {
+            return ((FunctionBase) obj).getArity();
         }
         else if (obj instanceof Function0) {
             return 0;

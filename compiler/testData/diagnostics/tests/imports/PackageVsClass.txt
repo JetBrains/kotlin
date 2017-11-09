@@ -56,20 +56,10 @@ public fun test(/*0*/ a_b: a.b): kotlin.Unit
 public fun test2(/*0*/ ab_c: a.b.c): kotlin.Unit
 
 package a {
-    public fun a_fun(): kotlin.Unit
     public fun test(/*0*/ a_b: a.b): kotlin.Unit
     public fun test2(/*0*/ ab_c: a.b.c): kotlin.Unit
 
-    public final class b {
-        // -- Module: <m2> --
-    }
-
     package a.b {
-        public fun ab_fun(): kotlin.Unit
-
-        public final class c {
-            // -- Module: <m1> --
-        }
     }
 }
 
@@ -81,21 +71,9 @@ public fun test(/*0*/ a_b: a.b): kotlin.Unit
 public fun test2(/*0*/ ab_c: a.b.c): kotlin.Unit
 
 package a {
-    public fun a_fun(): kotlin.Unit
     public fun test(/*0*/ a_b: a.b): kotlin.Unit
     public fun test2(/*0*/ ab_c: a.b.c): kotlin.Unit
 
-    public final class b {
-        // -- Module: <m2> --
-    }
-
     package a.b {
-        public fun ab_fun(): kotlin.Unit
-
-        public final class c {
-            // -- Module: <m1> --
-        }
     }
 }
-
-

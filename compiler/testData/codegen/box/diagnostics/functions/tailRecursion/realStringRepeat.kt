@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
+
 tailrec fun String.repeat(num : Int, acc : StringBuilder = StringBuilder()) : String =
         if (num == 0) acc.toString()
         else repeat(num - 1, acc.append(this))

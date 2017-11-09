@@ -1,4 +1,4 @@
-JetFile: twoAnnotationLists.kt
+KtFile: twoAnnotationLists.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

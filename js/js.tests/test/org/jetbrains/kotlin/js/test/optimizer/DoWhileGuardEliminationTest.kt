@@ -24,4 +24,6 @@ class DoWhileGuardEliminationTest : BasicOptimizerTest("do-while-guard-eliminati
     @Test fun innerContinue() = box()
 
     @Test fun innerBreakInLoopWithoutLabel() = box()
+
+    @Test fun emptyDoWhile() = box()
 }

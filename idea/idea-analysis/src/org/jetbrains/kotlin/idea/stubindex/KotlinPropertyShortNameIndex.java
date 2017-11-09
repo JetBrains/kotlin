@@ -22,12 +22,12 @@ import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtProperty;
+import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 
 import java.util.Collection;
 
-public class KotlinPropertyShortNameIndex extends StringStubIndexExtension<KtProperty> {
-    private static final StubIndexKey<String, KtProperty> KEY = KotlinIndexUtil.createIndexKey(KotlinPropertyShortNameIndex.class);
+public class KotlinPropertyShortNameIndex extends StringStubIndexExtension<KtNamedDeclaration> {
+    private static final StubIndexKey<String, KtNamedDeclaration> KEY = KotlinIndexUtil.createIndexKey(KotlinPropertyShortNameIndex.class);
 
     private static final KotlinPropertyShortNameIndex ourInstance = new KotlinPropertyShortNameIndex();
 
@@ -39,13 +39,13 @@ public class KotlinPropertyShortNameIndex extends StringStubIndexExtension<KtPro
 
     @NotNull
     @Override
-    public StubIndexKey<String, KtProperty> getKey() {
+    public StubIndexKey<String, KtNamedDeclaration> getKey() {
         return KEY;
     }
 
     @NotNull
     @Override
-    public Collection<KtProperty> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return StubIndex.getElements(KEY, s, project, scope, KtProperty.class);
+    public Collection<KtNamedDeclaration> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+        return StubIndex.getElements(KEY, s, project, scope, KtNamedDeclaration.class);
     }
 }

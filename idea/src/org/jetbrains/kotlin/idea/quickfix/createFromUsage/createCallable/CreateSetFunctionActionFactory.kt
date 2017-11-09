@@ -32,13 +32,10 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
-object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtArrayAccessExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): KtArrayAccessExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, KtArrayAccessExpression::class.java)
-    }
-
+object CreateSetFunctionActionFactory : CreateGetSetFunctionActionFactory(isGet = false) {
     override fun createCallableInfo(element: KtArrayAccessExpression, diagnostic: Diagnostic): CallableInfo? {
         val arrayExpr = element.arrayExpression ?: return null
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
@@ -65,6 +62,8 @@ object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtA
         parameters.add(ParameterInfo(valType, "value"))
 
         val returnType = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE)
-        return FunctionInfo("set", arrayType, returnType, Collections.emptyList(), parameters, isOperator = true)
+        return FunctionInfo(
+                OperatorNameConventions.SET.asString(), arrayType, returnType, Collections.emptyList(), parameters, isOperator = true
+        )
     }
 }

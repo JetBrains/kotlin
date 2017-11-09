@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.resolve.calls.KotlinResolutionConfigurationKt;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformerKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
@@ -52,8 +54,15 @@ public class OverloadResolutionResultsUtil {
     ) {
         if (results.isSingleResult() && contextDependency == ContextDependency.INDEPENDENT) {
             ResolvedCall<D> resultingCall = results.getResultingCall();
-            if (!((MutableResolvedCall<D>)resultingCall).hasInferredReturnType()) {
-                return null;
+            if (!KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE()) {
+                if (!((MutableResolvedCall<D>) resultingCall).hasInferredReturnType()) {
+                    return null;
+                }
+            }
+            else {
+                if (KotlinToResolvedCallTransformerKt.isNewNotCompleted(resultingCall)) {
+                    return null;
+                }
             }
         }
         return results.isSingleResult() ? results.getResultingCall() : null;

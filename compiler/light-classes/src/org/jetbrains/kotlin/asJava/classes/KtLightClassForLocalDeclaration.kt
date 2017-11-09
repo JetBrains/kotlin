@@ -22,6 +22,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.light.LightClass
 import com.intellij.psi.impl.light.LightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
@@ -36,7 +37,7 @@ open class KtLightClassForLocalDeclaration(
 
     override fun getParent() = _parent
 
-    private val _parent: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION, this::computeParent)
+    private val _parent: PsiElement? by lazyPub(this::computeParent)
 
     private fun computeParent(): PsiElement? {
         fun getParentByPsiMethod(method: PsiMethod?, name: String?, forceMethodWrapping: Boolean): PsiElement? {
@@ -60,7 +61,7 @@ open class KtLightClassForLocalDeclaration(
             if (createWrapper) {
                 return object : LightMethod(myManager, method, containingClass!!, KotlinLanguage.INSTANCE) {
                     override fun getParent(): PsiElement {
-                        return getContainingClass()!!
+                        return getContainingClass()
                     }
 
                     override fun getName(): String {

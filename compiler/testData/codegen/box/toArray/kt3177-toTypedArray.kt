@@ -1,8 +1,5 @@
 // WITH_RUNTIME
 
-import java.util.ArrayList
-import java.util.Arrays
-
 fun box(): String {
     val list = ArrayList<Pair<String,String>>()
     list.add(Pair("Sample", "http://cyber.law.harvard.edu/rss/examples/rss2sample.xml"))
@@ -10,7 +7,7 @@ fun box(): String {
 
     val keys = list.map { it.first }.toTypedArray<String>()
 
-    val keysToString = Arrays.toString(keys)
+    val keysToString = keys.contentToString()
     if (keysToString != "[Sample, Scripting]") return keysToString
 
     return "OK"

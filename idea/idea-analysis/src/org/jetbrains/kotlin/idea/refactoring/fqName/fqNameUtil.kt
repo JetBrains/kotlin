@@ -32,7 +32,7 @@ fun PsiElement.getKotlinFqName(): FqName? {
     val element = namedUnwrappedElement
     return when (element) {
         is PsiPackage -> FqName(element.qualifiedName)
-        is PsiClass -> element.qualifiedName?.let { FqName(it) }
+        is PsiClass -> element.qualifiedName?.let(::FqName)
         is PsiMember -> element.getName()?.let { name ->
             val prefix = element.containingClass?.qualifiedName
             FqName(if (prefix != null) "$prefix.$name" else name)
@@ -45,17 +45,17 @@ fun PsiElement.getKotlinFqName(): FqName? {
 fun FqName.isImported(importPath: ImportPath, skipAliasedImports: Boolean = true): Boolean {
     return when {
         skipAliasedImports && importPath.hasAlias() -> false
-        importPath.isAllUnder && !isRoot -> importPath.fqnPart() == this.parent()
-        else -> importPath.fqnPart() == this
+        importPath.isAllUnder && !isRoot -> importPath.fqName == this.parent()
+        else -> importPath.fqName == this
     }
 }
 
 fun ImportPath.isImported(alreadyImported: ImportPath): Boolean {
-    return if (isAllUnder || hasAlias()) this == alreadyImported else fqnPart().isImported(alreadyImported)
+    return if (isAllUnder || hasAlias()) this == alreadyImported else fqName.isImported(alreadyImported)
 }
 
 private fun ImportPath.isImported(imports: Iterable<ImportPath>): Boolean = imports.any { isImported(it) }
 
 fun ImportPath.isImported(imports: Iterable<ImportPath>, excludedFqNames: Iterable<FqName>): Boolean {
-    return isImported(imports) && (isAllUnder || this.fqnPart() !in excludedFqNames)
+    return isImported(imports) && (isAllUnder || this.fqName !in excludedFqNames)
 }

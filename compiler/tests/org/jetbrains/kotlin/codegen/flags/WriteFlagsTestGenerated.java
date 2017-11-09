@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.flags;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     public void testAllFilesPresentInWriteFlags() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("compiler/testData/writeFlags/callableReference")
@@ -40,7 +41,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInCallableReference() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("compiler/testData/writeFlags/callableReference/visibility")
@@ -48,7 +49,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("functionReference.kt")
@@ -82,7 +83,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Class extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("compiler/testData/writeFlags/class/accessFlags")
@@ -90,12 +91,18 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AccessFlags extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInAccessFlags() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/accessFlags"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/accessFlags"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("defaultImpls.kt")
             public void testDefaultImpls() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/defaultImpls.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerSealed.kt")
+            public void testInnerSealed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/innerSealed.kt");
                 doTest(fileName);
             }
 
@@ -147,7 +154,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("class.kt")
@@ -186,7 +193,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("compiler/testData/writeFlags/class/visibility/internal")
@@ -194,7 +201,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Internal extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInInternal() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/internal"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/internal"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("class.kt")
@@ -251,7 +258,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Private extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInPrivate() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/private"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/private"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("class.kt")
@@ -308,7 +315,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Public extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInPublic() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/public"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/public"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("class.kt")
@@ -367,7 +374,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DelegatedProperty extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInDelegatedProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("compiler/testData/writeFlags/delegatedProperty/visibility")
@@ -375,7 +382,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("privateSet.kt")
@@ -391,7 +398,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Function extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInFunction() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("compiler/testData/writeFlags/function/classObjectPrivate")
@@ -399,7 +406,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassObjectPrivate extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInClassObjectPrivate() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/classObjectPrivate"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/classObjectPrivate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("privateFun.kt")
@@ -426,7 +433,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Constructors extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInConstructors() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/constructors"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/constructors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("classObject.kt")
@@ -459,7 +466,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("emptyGetter.kt")
@@ -540,7 +547,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WithDefaultArguments extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInWithDefaultArguments() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/withDefaultArguments"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/withDefaultArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("funInClass.kt")
@@ -552,6 +559,18 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestMetadata("funInClassObject.kt")
             public void testFunInClassObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/funInClassObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineOnlyFunInClass.kt")
+            public void testInlineOnlyFunInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/inlineOnlyFunInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("reifiedFunInClass.kt")
+            public void testReifiedFunInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/reifiedFunInClass.kt");
                 doTest(fileName);
             }
 
@@ -568,7 +587,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Hidden extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInHidden() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/hidden"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/hidden"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("function.kt")
@@ -590,12 +609,39 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         }
     }
 
+    @TestMetadata("compiler/testData/writeFlags/inline")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inline extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInInline() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("lostInnerClass.kt")
+        public void testLostInnerClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/inline/lostInnerClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lostInnerClass2.kt")
+        public void testLostInnerClass2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/inline/lostInnerClass2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lostInnerClass3.kt")
+        public void testLostInnerClass3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/inline/lostInnerClass3.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/writeFlags/innerClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InnerClass extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInInnerClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/innerClass"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/innerClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("compiler/testData/writeFlags/innerClass/visibility")
@@ -603,7 +649,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/innerClass/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/innerClass/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("internal.kt")
@@ -649,7 +695,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Lambda extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInLambda() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/lambda"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/lambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("lambdaInInlineFunction.kt")
@@ -670,7 +716,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Lateinit extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInLateinit() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/lateinit"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/lateinit"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("lateinitGetter.kt")
@@ -697,7 +743,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Property extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("compiler/testData/writeFlags/property/classObject")
@@ -705,7 +751,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassObject extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInClassObject() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("compiler/testData/writeFlags/property/classObject/class")
@@ -713,7 +759,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Class extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInClass() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/class"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/class"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("delegatedProtectedVar.kt")
@@ -824,7 +870,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Rename extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInRename() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/rename"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/rename"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("constructorAndClassObject.kt")
@@ -857,7 +903,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Trait extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInTrait() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/trait"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/trait"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("delegatedProtectedVar.kt")
@@ -987,7 +1033,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("propertyInClass.kt")
@@ -1003,12 +1049,39 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SyntheticAnnotationsMethod extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInSyntheticAnnotationsMethod() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("privateProperty.kt")
+            public void testPrivateProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/privateProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("protectedProperty.kt")
+            public void testProtectedProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/protectedProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("publicProperty.kt")
+            public void testPublicProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/publicProperty.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/writeFlags/property/visibility")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("internal.kt")
@@ -1026,6 +1099,36 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestMetadata("public.kt")
             public void testPublic() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/visibility/public.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
+    @TestMetadata("compiler/testData/writeFlags/typealias")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Typealias extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInTypealias() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/typealias"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SyntheticAnnotationsMethod extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInSyntheticAnnotationsMethod() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("privateTypealias.kt")
+            public void testPrivateTypealias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod/privateTypealias.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("publicTypealias.kt")
+            public void testPublicTypealias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod/publicTypealias.kt");
                 doTest(fileName);
             }
         }

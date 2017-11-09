@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1121
 package foo
 
 class A(val value: Int) : Comparable<A> {

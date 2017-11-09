@@ -3,6 +3,8 @@ fun acceptingBoxed(x : Int?) : Int ? = x
 
 class A(var x : Int? = null)
 
+val one = 1
+
 fun foo() {
     val rb = returningBoxed()
     acceptingBoxed(2)
@@ -20,8 +22,8 @@ fun foo() {
     val z: Int? = 8
     val res = y === z
 
-    val c1: Any = if (1 == 1) 0 else "abc"
-    val c2: Any = if (1 != 1) 0 else "abc"
+    val c1: Any = if (1 == one) 0 else "abc"
+    val c2: Any = if (1 != one) 0 else "abc"
 }
 
 // 9 java/lang/Integer.valueOf

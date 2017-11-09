@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.text.Regex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
@@ -30,9 +29,15 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 
 public final class JvmAbi {
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
+
+    /**
+     * Warning: use DEFAULT_IMPLS_CLASS_NAME and TypeMappingConfiguration.innerClassNameFactory when possible.
+     * This is false for KAPT3 mode.
+     */
     public static final String DEFAULT_IMPLS_SUFFIX = "$" + DEFAULT_IMPLS_CLASS_NAME;
     public static final String DEFAULT_IMPLS_DELEGATE_SUFFIX = "$defaultImpl";
 
@@ -46,18 +51,17 @@ public final class JvmAbi {
     public static final String DELEGATED_PROPERTIES_ARRAY_NAME = "$$delegatedProperties";
     public static final String DELEGATE_SUPER_FIELD_PREFIX = "$$delegate_";
     private static final String ANNOTATIONS_SUFFIX = "$annotations";
-    public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = ANNOTATIONS_SUFFIX;
-    public static final String ANNOTATED_TYPEALIAS_METHOD_NAME_SUFFIX = ANNOTATIONS_SUFFIX;
+    private static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = ANNOTATIONS_SUFFIX;
+    private static final String ANNOTATED_TYPEALIAS_METHOD_NAME_SUFFIX = ANNOTATIONS_SUFFIX;
 
     public static final String INSTANCE_FIELD = "INSTANCE";
+    public static final String HIDDEN_INSTANCE_FIELD = "$$" + INSTANCE_FIELD;
 
     public static final String DEFAULT_MODULE_NAME = "main";
     public static final ClassId REFLECTION_FACTORY_IMPL = ClassId.topLevel(new FqName("kotlin.reflect.jvm.internal.ReflectionFactoryImpl"));
 
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT = "$i$a$";
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION = "$i$f$";
-
-    private static final Regex SANITIZE_AS_JAVA_INVALID_CHARACTERS = new Regex("[^\\p{L}\\p{Digit}]");
 
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
@@ -87,9 +91,10 @@ public final class JvmAbi {
 
     @NotNull
     public static String setterName(@NotNull String propertyName) {
-        return startsWithIsPrefix(propertyName)
-               ? SET_PREFIX + propertyName.substring(IS_PREFIX.length())
-               : SET_PREFIX + CapitalizeDecapitalizeKt.capitalizeAsciiOnly(propertyName);
+        return SET_PREFIX +
+               (startsWithIsPrefix(propertyName)
+                ? propertyName.substring(IS_PREFIX.length())
+                : CapitalizeDecapitalizeKt.capitalizeAsciiOnly(propertyName));
     }
 
     public static boolean startsWithIsPrefix(String name) {
@@ -97,11 +102,6 @@ public final class JvmAbi {
         if (name.length() == IS_PREFIX.length()) return false;
         char c = name.charAt(IS_PREFIX.length());
         return !('a' <= c && c <= 'z');
-    }
-
-    @NotNull
-    public static String sanitizeAsJavaIdentifier(@NotNull String str) {
-        return SANITIZE_AS_JAVA_INVALID_CHARACTERS.replace(str, "_");
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
@@ -112,6 +112,16 @@ public final class JvmAbi {
     public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
         return isCompanionObject(companionObject) &&
                isClassOrEnumClass(companionObject.getContainingDeclaration()) &&
-               !CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
+               !isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
+    }
+
+    public static boolean isMappedIntrinsicCompanionObject(@NotNull ClassDescriptor companionObject) {
+        return CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject(companionObject);
+    }
+
+    public static boolean isCompanionObjectInInterfaceNotIntrinsic(@NotNull DeclarationDescriptor companionObject) {
+        return isCompanionObject(companionObject) &&
+               isInterface(companionObject.getContainingDeclaration()) &&
+               !isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
     }
 }

@@ -1,4 +1,4 @@
-JetFile: AssertNotNull.kt
+KtFile: AssertNotNull.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

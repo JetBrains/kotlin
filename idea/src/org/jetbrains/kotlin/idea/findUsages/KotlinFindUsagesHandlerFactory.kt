@@ -22,22 +22,19 @@ import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesHandlerFactory
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinTypeParameterFindUsagesHandler
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
-import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import java.lang.IllegalArgumentException
 
@@ -57,29 +54,17 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
             element is KtTypeParameter ||
             element is KtConstructor<*>
 
-    fun createFindUsagesHandlerNoQuestions(element: PsiElement): FindUsagesHandler {
-        return createFindUsagesHandler(element, forHighlightUsages = false, canAsk = false)
-    }
-
     override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
-        return createFindUsagesHandler(element, forHighlightUsages, canAsk = !forHighlightUsages)
-    }
-
-    private fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean, canAsk: Boolean): FindUsagesHandler {
-        val handler = createFindUsagesHandlerNoDecoration(element, canAsk)
-
-        return Extensions.getArea(element.project).getExtensionPoint(KotlinFindUsagesHandlerDecorator.EP_NAME).extensions.fold(handler) {
-            handler, decorator -> decorator.decorateHandler(element, forHighlightUsages, handler)
-        }
-    }
-
-    private fun createFindUsagesHandlerNoDecoration(element: PsiElement, canAsk: Boolean): FindUsagesHandler {
         when (element) {
             is KtClassOrObject ->
                 return KotlinFindClassUsagesHandler(element, this)
 
             is KtParameter -> {
-                if (canAsk) {
+                if (!forHighlightUsages) {
+                    if (element.hasValOrVar()) {
+                        val declarationsToSearch = checkSuperMethods(element, null, "find usages of")
+                        return handlerForMultiple(element, declarationsToSearch)
+                    }
                     val function = element.ownerFunction
                     if (function != null && function.isOverridable()) {
                         val psiMethod = function.toLightMethods().singleOrNull()
@@ -90,8 +75,8 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
                                 val parameterIndex = element.parameterIndex()
                                 assert(parameterIndex < parametersCount)
                                 val overridingParameters = OverridingMethodsSearch.search(psiMethod, true)
-                                        .filter { it.parameterList.parametersCount == parametersCount }
-                                        .mapNotNull { it.parameterList.parameters[parameterIndex].unwrapped }
+                                    .filter { it.parameterList.parametersCount == parametersCount }
+                                    .mapNotNull { it.parameterList.parameters[parameterIndex].unwrapped }
                                 return handlerForMultiple(element, listOf(element) + overridingParameters)
                             }
                         }
@@ -105,7 +90,7 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
             is KtNamedFunction, is KtProperty, is KtConstructor<*> -> {
                 val declaration = element as KtNamedDeclaration
 
-                if (!canAsk) {
+                if (forHighlightUsages) {
                     return KotlinFindMemberUsagesHandler.getInstance(declaration, factory = this)
                 }
 

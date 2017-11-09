@@ -1,0 +1,28 @@
+package test
+
+public/*package*/ abstract class AbstractInheritance : test.Interface {
+    public/*package*/ constructor AbstractInheritance()
+    public open fun getAnswer(): kotlin.Int
+}
+
+public/*package*/ interface I {
+    public abstract fun getAnswer(): kotlin.Int
+}
+
+public/*package*/ interface I2 : test.I {
+    public abstract fun getAnswer(): kotlin.Int
+}
+
+public open class Inheritance : test.AbstractInheritance {
+    public constructor Inheritance()
+    public open /*fake_override*/ fun getAnswer(): kotlin.Int
+}
+
+public final class InheritanceImpl : test.Inheritance, test.I2 {
+    public constructor InheritanceImpl()
+    public open /*fake_override*/ fun getAnswer(): kotlin.Int
+}
+
+public/*package*/ interface Interface : test.I {
+    public abstract fun getAnswer(): kotlin.Int
+}

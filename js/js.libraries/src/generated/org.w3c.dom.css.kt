@@ -5,8 +5,10 @@
  * See libraries/tools/idl2k for details
  */
 
+@file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.dom.css
 
+import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
 import org.w3c.dom.events.*
@@ -20,854 +22,390 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public interface CSSStyleDeclaration {
-    var cssText: String
-        get() = noImpl
-        set(value) = noImpl
-    val length: Int
-        get() = noImpl
-    val parentRule: CSSRule?
-        get() = noImpl
-    var cssFloat: String
-        get() = noImpl
-        set(value) = noImpl
-    var _dashed_attribute: String
-        get() = noImpl
-        set(value) = noImpl
-    var _camel_cased_attribute: String
-        get() = noImpl
-        set(value) = noImpl
-    var alignContent: String
-        get() = noImpl
-        set(value) = noImpl
-    var alignItems: String
-        get() = noImpl
-        set(value) = noImpl
-    var alignSelf: String
-        get() = noImpl
-        set(value) = noImpl
-    var animation: String
-        get() = noImpl
-        set(value) = noImpl
-    var animationDelay: String
-        get() = noImpl
-        set(value) = noImpl
-    var animationDirection: String
-        get() = noImpl
-        set(value) = noImpl
-    var animationDuration: String
-        get() = noImpl
-        set(value) = noImpl
-    var animationFillMode: String
-        get() = noImpl
-        set(value) = noImpl
-    var animationIterationCount: String
-        get() = noImpl
-        set(value) = noImpl
-    var animationName: String
-        get() = noImpl
-        set(value) = noImpl
-    var animationPlayState: String
-        get() = noImpl
-        set(value) = noImpl
-    var animationTimingFunction: String
-        get() = noImpl
-        set(value) = noImpl
-    var backfaceVisibility: String
-        get() = noImpl
-        set(value) = noImpl
-    var background: String
-        get() = noImpl
-        set(value) = noImpl
-    var backgroundAttachment: String
-        get() = noImpl
-        set(value) = noImpl
-    var backgroundClip: String
-        get() = noImpl
-        set(value) = noImpl
-    var backgroundColor: String
-        get() = noImpl
-        set(value) = noImpl
-    var backgroundImage: String
-        get() = noImpl
-        set(value) = noImpl
-    var backgroundOrigin: String
-        get() = noImpl
-        set(value) = noImpl
-    var backgroundPosition: String
-        get() = noImpl
-        set(value) = noImpl
-    var backgroundRepeat: String
-        get() = noImpl
-        set(value) = noImpl
-    var backgroundSize: String
-        get() = noImpl
-        set(value) = noImpl
-    var border: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderBottom: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderBottomColor: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderBottomLeftRadius: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderBottomRightRadius: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderBottomStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderBottomWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderCollapse: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderColor: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderImage: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderImageOutset: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderImageRepeat: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderImageSlice: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderImageSource: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderImageWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderLeft: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderLeftColor: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderLeftStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderLeftWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderRadius: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderRight: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderRightColor: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderRightStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderRightWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderSpacing: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderTop: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderTopColor: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderTopLeftRadius: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderTopRightRadius: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderTopStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderTopWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var borderWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var bottom: String
-        get() = noImpl
-        set(value) = noImpl
-    var boxDecorationBreak: String
-        get() = noImpl
-        set(value) = noImpl
-    var boxShadow: String
-        get() = noImpl
-        set(value) = noImpl
-    var boxSizing: String
-        get() = noImpl
-        set(value) = noImpl
-    var breakAfter: String
-        get() = noImpl
-        set(value) = noImpl
-    var breakBefore: String
-        get() = noImpl
-        set(value) = noImpl
-    var breakInside: String
-        get() = noImpl
-        set(value) = noImpl
-    var captionSide: String
-        get() = noImpl
-        set(value) = noImpl
-    var clear: String
-        get() = noImpl
-        set(value) = noImpl
-    var clip: String
-        get() = noImpl
-        set(value) = noImpl
-    var color: String
-        get() = noImpl
-        set(value) = noImpl
-    var columnCount: String
-        get() = noImpl
-        set(value) = noImpl
-    var columnFill: String
-        get() = noImpl
-        set(value) = noImpl
-    var columnGap: String
-        get() = noImpl
-        set(value) = noImpl
-    var columnRule: String
-        get() = noImpl
-        set(value) = noImpl
-    var columnRuleColor: String
-        get() = noImpl
-        set(value) = noImpl
-    var columnRuleStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var columnRuleWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var columnSpan: String
-        get() = noImpl
-        set(value) = noImpl
-    var columnWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var columns: String
-        get() = noImpl
-        set(value) = noImpl
-    var content: String
-        get() = noImpl
-        set(value) = noImpl
-    var counterIncrement: String
-        get() = noImpl
-        set(value) = noImpl
-    var counterReset: String
-        get() = noImpl
-        set(value) = noImpl
-    var cursor: String
-        get() = noImpl
-        set(value) = noImpl
-    var direction: String
-        get() = noImpl
-        set(value) = noImpl
-    var display: String
-        get() = noImpl
-        set(value) = noImpl
-    var emptyCells: String
-        get() = noImpl
-        set(value) = noImpl
-    var filter: String
-        get() = noImpl
-        set(value) = noImpl
-    var flex: String
-        get() = noImpl
-        set(value) = noImpl
-    var flexBasis: String
-        get() = noImpl
-        set(value) = noImpl
-    var flexDirection: String
-        get() = noImpl
-        set(value) = noImpl
-    var flexFlow: String
-        get() = noImpl
-        set(value) = noImpl
-    var flexGrow: String
-        get() = noImpl
-        set(value) = noImpl
-    var flexShrink: String
-        get() = noImpl
-        set(value) = noImpl
-    var flexWrap: String
-        get() = noImpl
-        set(value) = noImpl
-    var font: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontFamily: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontFeatureSettings: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontKerning: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontLanguageOverride: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontSize: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontSizeAdjust: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontStretch: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontSynthesis: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontVariant: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontVariantAlternates: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontVariantCaps: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontVariantEastAsian: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontVariantLigatures: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontVariantNumeric: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontVariantPosition: String
-        get() = noImpl
-        set(value) = noImpl
-    var fontWeight: String
-        get() = noImpl
-        set(value) = noImpl
-    var hangingPunctuation: String
-        get() = noImpl
-        set(value) = noImpl
-    var height: String
-        get() = noImpl
-        set(value) = noImpl
-    var hyphens: String
-        get() = noImpl
-        set(value) = noImpl
-    var imageOrientation: String
-        get() = noImpl
-        set(value) = noImpl
-    var imageRendering: String
-        get() = noImpl
-        set(value) = noImpl
-    var imageResolution: String
-        get() = noImpl
-        set(value) = noImpl
-    var imeMode: String
-        get() = noImpl
-        set(value) = noImpl
-    var justifyContent: String
-        get() = noImpl
-        set(value) = noImpl
-    var left: String
-        get() = noImpl
-        set(value) = noImpl
-    var letterSpacing: String
-        get() = noImpl
-        set(value) = noImpl
-    var lineBreak: String
-        get() = noImpl
-        set(value) = noImpl
-    var lineHeight: String
-        get() = noImpl
-        set(value) = noImpl
-    var listStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var listStyleImage: String
-        get() = noImpl
-        set(value) = noImpl
-    var listStylePosition: String
-        get() = noImpl
-        set(value) = noImpl
-    var listStyleType: String
-        get() = noImpl
-        set(value) = noImpl
-    var margin: String
-        get() = noImpl
-        set(value) = noImpl
-    var marginBottom: String
-        get() = noImpl
-        set(value) = noImpl
-    var marginLeft: String
-        get() = noImpl
-        set(value) = noImpl
-    var marginRight: String
-        get() = noImpl
-        set(value) = noImpl
-    var marginTop: String
-        get() = noImpl
-        set(value) = noImpl
-    var mark: String
-        get() = noImpl
-        set(value) = noImpl
-    var markAfter: String
-        get() = noImpl
-        set(value) = noImpl
-    var markBefore: String
-        get() = noImpl
-        set(value) = noImpl
-    var marks: String
-        get() = noImpl
-        set(value) = noImpl
-    var marqueeDirection: String
-        get() = noImpl
-        set(value) = noImpl
-    var marqueePlayCount: String
-        get() = noImpl
-        set(value) = noImpl
-    var marqueeSpeed: String
-        get() = noImpl
-        set(value) = noImpl
-    var marqueeStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var mask: String
-        get() = noImpl
-        set(value) = noImpl
-    var maskType: String
-        get() = noImpl
-        set(value) = noImpl
-    var maxHeight: String
-        get() = noImpl
-        set(value) = noImpl
-    var maxWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var minHeight: String
-        get() = noImpl
-        set(value) = noImpl
-    var minWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var navDown: String
-        get() = noImpl
-        set(value) = noImpl
-    var navIndex: String
-        get() = noImpl
-        set(value) = noImpl
-    var navLeft: String
-        get() = noImpl
-        set(value) = noImpl
-    var navRight: String
-        get() = noImpl
-        set(value) = noImpl
-    var navUp: String
-        get() = noImpl
-        set(value) = noImpl
-    var objectFit: String
-        get() = noImpl
-        set(value) = noImpl
-    var objectPosition: String
-        get() = noImpl
-        set(value) = noImpl
-    var opacity: String
-        get() = noImpl
-        set(value) = noImpl
-    var order: String
-        get() = noImpl
-        set(value) = noImpl
-    var orphans: String
-        get() = noImpl
-        set(value) = noImpl
-    var outline: String
-        get() = noImpl
-        set(value) = noImpl
-    var outlineColor: String
-        get() = noImpl
-        set(value) = noImpl
-    var outlineOffset: String
-        get() = noImpl
-        set(value) = noImpl
-    var outlineStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var outlineWidth: String
-        get() = noImpl
-        set(value) = noImpl
-    var overflowWrap: String
-        get() = noImpl
-        set(value) = noImpl
-    var overflowX: String
-        get() = noImpl
-        set(value) = noImpl
-    var overflowY: String
-        get() = noImpl
-        set(value) = noImpl
-    var padding: String
-        get() = noImpl
-        set(value) = noImpl
-    var paddingBottom: String
-        get() = noImpl
-        set(value) = noImpl
-    var paddingLeft: String
-        get() = noImpl
-        set(value) = noImpl
-    var paddingRight: String
-        get() = noImpl
-        set(value) = noImpl
-    var paddingTop: String
-        get() = noImpl
-        set(value) = noImpl
-    var pageBreakAfter: String
-        get() = noImpl
-        set(value) = noImpl
-    var pageBreakBefore: String
-        get() = noImpl
-        set(value) = noImpl
-    var pageBreakInside: String
-        get() = noImpl
-        set(value) = noImpl
-    var perspective: String
-        get() = noImpl
-        set(value) = noImpl
-    var perspectiveOrigin: String
-        get() = noImpl
-        set(value) = noImpl
-    var phonemes: String
-        get() = noImpl
-        set(value) = noImpl
-    var position: String
-        get() = noImpl
-        set(value) = noImpl
-    var quotes: String
-        get() = noImpl
-        set(value) = noImpl
-    var resize: String
-        get() = noImpl
-        set(value) = noImpl
-    var rest: String
-        get() = noImpl
-        set(value) = noImpl
-    var restAfter: String
-        get() = noImpl
-        set(value) = noImpl
-    var restBefore: String
-        get() = noImpl
-        set(value) = noImpl
-    var right: String
-        get() = noImpl
-        set(value) = noImpl
-    var tabSize: String
-        get() = noImpl
-        set(value) = noImpl
-    var tableLayout: String
-        get() = noImpl
-        set(value) = noImpl
-    var textAlign: String
-        get() = noImpl
-        set(value) = noImpl
-    var textAlignLast: String
-        get() = noImpl
-        set(value) = noImpl
-    var textCombineUpright: String
-        get() = noImpl
-        set(value) = noImpl
-    var textDecoration: String
-        get() = noImpl
-        set(value) = noImpl
-    var textDecorationColor: String
-        get() = noImpl
-        set(value) = noImpl
-    var textDecorationLine: String
-        get() = noImpl
-        set(value) = noImpl
-    var textDecorationStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var textIndent: String
-        get() = noImpl
-        set(value) = noImpl
-    var textJustify: String
-        get() = noImpl
-        set(value) = noImpl
-    var textOrientation: String
-        get() = noImpl
-        set(value) = noImpl
-    var textOverflow: String
-        get() = noImpl
-        set(value) = noImpl
-    var textShadow: String
-        get() = noImpl
-        set(value) = noImpl
-    var textTransform: String
-        get() = noImpl
-        set(value) = noImpl
-    var textUnderlinePosition: String
-        get() = noImpl
-        set(value) = noImpl
-    var top: String
-        get() = noImpl
-        set(value) = noImpl
-    var transform: String
-        get() = noImpl
-        set(value) = noImpl
-    var transformOrigin: String
-        get() = noImpl
-        set(value) = noImpl
-    var transformStyle: String
-        get() = noImpl
-        set(value) = noImpl
-    var transition: String
-        get() = noImpl
-        set(value) = noImpl
-    var transitionDelay: String
-        get() = noImpl
-        set(value) = noImpl
-    var transitionDuration: String
-        get() = noImpl
-        set(value) = noImpl
-    var transitionProperty: String
-        get() = noImpl
-        set(value) = noImpl
-    var transitionTimingFunction: String
-        get() = noImpl
-        set(value) = noImpl
-    var unicodeBidi: String
-        get() = noImpl
-        set(value) = noImpl
-    var verticalAlign: String
-        get() = noImpl
-        set(value) = noImpl
-    var visibility: String
-        get() = noImpl
-        set(value) = noImpl
-    var voiceBalance: String
-        get() = noImpl
-        set(value) = noImpl
-    var voiceDuration: String
-        get() = noImpl
-        set(value) = noImpl
-    var voicePitch: String
-        get() = noImpl
-        set(value) = noImpl
-    var voicePitchRange: String
-        get() = noImpl
-        set(value) = noImpl
-    var voiceRate: String
-        get() = noImpl
-        set(value) = noImpl
-    var voiceStress: String
-        get() = noImpl
-        set(value) = noImpl
-    var voiceVolume: String
-        get() = noImpl
-        set(value) = noImpl
-    var whiteSpace: String
-        get() = noImpl
-        set(value) = noImpl
-    var widows: String
-        get() = noImpl
-        set(value) = noImpl
-    var width: String
-        get() = noImpl
-        set(value) = noImpl
-    var wordBreak: String
-        get() = noImpl
-        set(value) = noImpl
-    var wordSpacing: String
-        get() = noImpl
-        set(value) = noImpl
-    var wordWrap: String
-        get() = noImpl
-        set(value) = noImpl
-    var writingMode: String
-        get() = noImpl
-        set(value) = noImpl
-    var zIndex: String
-        get() = noImpl
-        set(value) = noImpl
-    fun item(index: Int): String = noImpl
-    @nativeGetter
-    operator fun get(index: Int): String? = noImpl
-    fun getPropertyValue(property: String): String = noImpl
-    fun getPropertyPriority(property: String): String = noImpl
-    fun setProperty(property: String, value: String, priority: String = ""): Unit = noImpl
-    fun setPropertyValue(property: String, value: String): Unit = noImpl
-    fun setPropertyPriority(property: String, priority: String): Unit = noImpl
-    fun removeProperty(property: String): String = noImpl
+/**
+ * Exposes the JavaScript [CSSStyleDeclaration](https://developer.mozilla.org/en/docs/Web/API/CSSStyleDeclaration) to Kotlin
+ */
+public external abstract class CSSStyleDeclaration : ItemArrayLike<String> {
+    open var cssText: String
+    override val length: Int
+    open val parentRule: CSSRule?
+    open var cssFloat: String
+    open var _dashed_attribute: String
+    open var _camel_cased_attribute: String
+    open var _webkit_cased_attribute: String
+    open var alignContent: String
+    open var alignItems: String
+    open var alignSelf: String
+    open var animation: String
+    open var animationDelay: String
+    open var animationDirection: String
+    open var animationDuration: String
+    open var animationFillMode: String
+    open var animationIterationCount: String
+    open var animationName: String
+    open var animationPlayState: String
+    open var animationTimingFunction: String
+    open var backfaceVisibility: String
+    open var background: String
+    open var backgroundAttachment: String
+    open var backgroundClip: String
+    open var backgroundColor: String
+    open var backgroundImage: String
+    open var backgroundOrigin: String
+    open var backgroundPosition: String
+    open var backgroundRepeat: String
+    open var backgroundSize: String
+    open var border: String
+    open var borderBottom: String
+    open var borderBottomColor: String
+    open var borderBottomLeftRadius: String
+    open var borderBottomRightRadius: String
+    open var borderBottomStyle: String
+    open var borderBottomWidth: String
+    open var borderCollapse: String
+    open var borderColor: String
+    open var borderImage: String
+    open var borderImageOutset: String
+    open var borderImageRepeat: String
+    open var borderImageSlice: String
+    open var borderImageSource: String
+    open var borderImageWidth: String
+    open var borderLeft: String
+    open var borderLeftColor: String
+    open var borderLeftStyle: String
+    open var borderLeftWidth: String
+    open var borderRadius: String
+    open var borderRight: String
+    open var borderRightColor: String
+    open var borderRightStyle: String
+    open var borderRightWidth: String
+    open var borderSpacing: String
+    open var borderStyle: String
+    open var borderTop: String
+    open var borderTopColor: String
+    open var borderTopLeftRadius: String
+    open var borderTopRightRadius: String
+    open var borderTopStyle: String
+    open var borderTopWidth: String
+    open var borderWidth: String
+    open var bottom: String
+    open var boxDecorationBreak: String
+    open var boxShadow: String
+    open var boxSizing: String
+    open var breakAfter: String
+    open var breakBefore: String
+    open var breakInside: String
+    open var captionSide: String
+    open var clear: String
+    open var clip: String
+    open var color: String
+    open var columnCount: String
+    open var columnFill: String
+    open var columnGap: String
+    open var columnRule: String
+    open var columnRuleColor: String
+    open var columnRuleStyle: String
+    open var columnRuleWidth: String
+    open var columnSpan: String
+    open var columnWidth: String
+    open var columns: String
+    open var content: String
+    open var counterIncrement: String
+    open var counterReset: String
+    open var cursor: String
+    open var direction: String
+    open var display: String
+    open var emptyCells: String
+    open var filter: String
+    open var flex: String
+    open var flexBasis: String
+    open var flexDirection: String
+    open var flexFlow: String
+    open var flexGrow: String
+    open var flexShrink: String
+    open var flexWrap: String
+    open var font: String
+    open var fontFamily: String
+    open var fontFeatureSettings: String
+    open var fontKerning: String
+    open var fontLanguageOverride: String
+    open var fontSize: String
+    open var fontSizeAdjust: String
+    open var fontStretch: String
+    open var fontStyle: String
+    open var fontSynthesis: String
+    open var fontVariant: String
+    open var fontVariantAlternates: String
+    open var fontVariantCaps: String
+    open var fontVariantEastAsian: String
+    open var fontVariantLigatures: String
+    open var fontVariantNumeric: String
+    open var fontVariantPosition: String
+    open var fontWeight: String
+    open var hangingPunctuation: String
+    open var height: String
+    open var hyphens: String
+    open var imageOrientation: String
+    open var imageRendering: String
+    open var imageResolution: String
+    open var imeMode: String
+    open var justifyContent: String
+    open var left: String
+    open var letterSpacing: String
+    open var lineBreak: String
+    open var lineHeight: String
+    open var listStyle: String
+    open var listStyleImage: String
+    open var listStylePosition: String
+    open var listStyleType: String
+    open var margin: String
+    open var marginBottom: String
+    open var marginLeft: String
+    open var marginRight: String
+    open var marginTop: String
+    open var mark: String
+    open var markAfter: String
+    open var markBefore: String
+    open var marks: String
+    open var marqueeDirection: String
+    open var marqueePlayCount: String
+    open var marqueeSpeed: String
+    open var marqueeStyle: String
+    open var mask: String
+    open var maskType: String
+    open var maxHeight: String
+    open var maxWidth: String
+    open var minHeight: String
+    open var minWidth: String
+    open var navDown: String
+    open var navIndex: String
+    open var navLeft: String
+    open var navRight: String
+    open var navUp: String
+    open var objectFit: String
+    open var objectPosition: String
+    open var opacity: String
+    open var order: String
+    open var orphans: String
+    open var outline: String
+    open var outlineColor: String
+    open var outlineOffset: String
+    open var outlineStyle: String
+    open var outlineWidth: String
+    open var overflowWrap: String
+    open var overflowX: String
+    open var overflowY: String
+    open var padding: String
+    open var paddingBottom: String
+    open var paddingLeft: String
+    open var paddingRight: String
+    open var paddingTop: String
+    open var pageBreakAfter: String
+    open var pageBreakBefore: String
+    open var pageBreakInside: String
+    open var perspective: String
+    open var perspectiveOrigin: String
+    open var phonemes: String
+    open var position: String
+    open var quotes: String
+    open var resize: String
+    open var rest: String
+    open var restAfter: String
+    open var restBefore: String
+    open var right: String
+    open var tabSize: String
+    open var tableLayout: String
+    open var textAlign: String
+    open var textAlignLast: String
+    open var textCombineUpright: String
+    open var textDecoration: String
+    open var textDecorationColor: String
+    open var textDecorationLine: String
+    open var textDecorationStyle: String
+    open var textIndent: String
+    open var textJustify: String
+    open var textOrientation: String
+    open var textOverflow: String
+    open var textShadow: String
+    open var textTransform: String
+    open var textUnderlinePosition: String
+    open var top: String
+    open var transform: String
+    open var transformOrigin: String
+    open var transformStyle: String
+    open var transition: String
+    open var transitionDelay: String
+    open var transitionDuration: String
+    open var transitionProperty: String
+    open var transitionTimingFunction: String
+    open var unicodeBidi: String
+    open var verticalAlign: String
+    open var visibility: String
+    open var voiceBalance: String
+    open var voiceDuration: String
+    open var voicePitch: String
+    open var voicePitchRange: String
+    open var voiceRate: String
+    open var voiceStress: String
+    open var voiceVolume: String
+    open var whiteSpace: String
+    open var widows: String
+    open var width: String
+    open var wordBreak: String
+    open var wordSpacing: String
+    open var wordWrap: String
+    open var writingMode: String
+    open var zIndex: String
+    override fun item(index: Int): String
+    fun getPropertyValue(property: String): String
+    fun getPropertyPriority(property: String): String
+    fun setProperty(property: String, value: String, priority: String = definedExternally): Unit
+    fun setPropertyValue(property: String, value: String): Unit
+    fun setPropertyPriority(property: String, priority: String): Unit
+    fun removeProperty(property: String): String
+}
+@kotlin.internal.InlineOnly inline operator fun CSSStyleDeclaration.get(index: Int): String? = asDynamic()[index]
+
+public external abstract class MediaList : ItemArrayLike<String> {
+    open var mediaText: String
+    override val length: Int
+    override fun item(index: Int): String?
+    fun appendMedium(medium: String): Unit
+    fun deleteMedium(medium: String): Unit
+}
+@kotlin.internal.InlineOnly inline operator fun MediaList.get(index: Int): String? = asDynamic()[index]
+
+/**
+ * Exposes the JavaScript [StyleSheet](https://developer.mozilla.org/en/docs/Web/API/StyleSheet) to Kotlin
+ */
+public external abstract class StyleSheet {
+    open val type: String
+    open val href: String?
+    open val ownerNode: UnionElementOrProcessingInstruction?
+    open val parentStyleSheet: StyleSheet?
+    open val title: String?
+    open val media: MediaList
+    open var disabled: Boolean
 }
 
-@native public interface MediaList {
-    var mediaText: String
-        get() = noImpl
-        set(value) = noImpl
-    val length: Int
-        get() = noImpl
-    fun item(index: Int): String? = noImpl
-    @nativeGetter
-    operator fun get(index: Int): String? = noImpl
-    fun appendMedium(medium: String): Unit = noImpl
-    fun deleteMedium(medium: String): Unit = noImpl
+/**
+ * Exposes the JavaScript [CSSStyleSheet](https://developer.mozilla.org/en/docs/Web/API/CSSStyleSheet) to Kotlin
+ */
+public external abstract class CSSStyleSheet : StyleSheet {
+    open val ownerRule: CSSRule?
+    open val cssRules: CSSRuleList
+    fun insertRule(rule: String, index: Int): Int
+    fun deleteRule(index: Int): Unit
 }
 
-@native public interface StyleSheet {
-    val type: String
-        get() = noImpl
-    val href: String?
-        get() = noImpl
-    val ownerNode: UnionElementOrProcessingInstruction?
-        get() = noImpl
-    val parentStyleSheet: StyleSheet?
-        get() = noImpl
-    val title: String?
-        get() = noImpl
-    val media: MediaList
-        get() = noImpl
-    var disabled: Boolean
-        get() = noImpl
-        set(value) = noImpl
+/**
+ * Exposes the JavaScript [StyleSheetList](https://developer.mozilla.org/en/docs/Web/API/StyleSheetList) to Kotlin
+ */
+public external abstract class StyleSheetList : ItemArrayLike<StyleSheet> {
+    override val length: Int
+    override fun item(index: Int): StyleSheet?
+}
+@kotlin.internal.InlineOnly inline operator fun StyleSheetList.get(index: Int): StyleSheet? = asDynamic()[index]
+
+/**
+ * Exposes the JavaScript [LinkStyle](https://developer.mozilla.org/en/docs/Web/API/LinkStyle) to Kotlin
+ */
+public external interface LinkStyle {
+    val sheet: StyleSheet?
 }
 
-@native public interface CSSStyleSheet : StyleSheet {
-    val ownerRule: CSSRule?
-        get() = noImpl
-    val cssRules: CSSRuleList
-        get() = noImpl
-    fun insertRule(rule: String, index: Int): Int = noImpl
-    fun deleteRule(index: Int): Unit = noImpl
+/**
+ * Exposes the JavaScript [CSSRuleList](https://developer.mozilla.org/en/docs/Web/API/CSSRuleList) to Kotlin
+ */
+public external abstract class CSSRuleList : ItemArrayLike<CSSRule> {
+    override val length: Int
+    override fun item(index: Int): CSSRule?
 }
+@kotlin.internal.InlineOnly inline operator fun CSSRuleList.get(index: Int): CSSRule? = asDynamic()[index]
 
-@native public interface StyleSheetList {
-    val length: Int
-        get() = noImpl
-    fun item(index: Int): StyleSheet? = noImpl
-    @nativeGetter
-    operator fun get(index: Int): StyleSheet? = noImpl
-}
-
-@native public interface CSSRuleList {
-    val length: Int
-        get() = noImpl
-    fun item(index: Int): CSSRule? = noImpl
-    @nativeGetter
-    operator fun get(index: Int): CSSRule? = noImpl
-}
-
-@native public interface CSSRule {
-    val type: Short
-        get() = noImpl
-    var cssText: String
-        get() = noImpl
-        set(value) = noImpl
-    val parentRule: CSSRule?
-        get() = noImpl
-    val parentStyleSheet: CSSStyleSheet?
-        get() = noImpl
+/**
+ * Exposes the JavaScript [CSSRule](https://developer.mozilla.org/en/docs/Web/API/CSSRule) to Kotlin
+ */
+public external abstract class CSSRule {
+    open val type: Short
+    open var cssText: String
+    open val parentRule: CSSRule?
+    open val parentStyleSheet: CSSStyleSheet?
 
     companion object {
-        val STYLE_RULE: Short = 1
-        val CHARSET_RULE: Short = 2
-        val IMPORT_RULE: Short = 3
-        val MEDIA_RULE: Short = 4
-        val FONT_FACE_RULE: Short = 5
-        val PAGE_RULE: Short = 6
-        val MARGIN_RULE: Short = 9
-        val NAMESPACE_RULE: Short = 10
+        val STYLE_RULE: Short
+        val CHARSET_RULE: Short
+        val IMPORT_RULE: Short
+        val MEDIA_RULE: Short
+        val FONT_FACE_RULE: Short
+        val PAGE_RULE: Short
+        val MARGIN_RULE: Short
+        val NAMESPACE_RULE: Short
     }
 }
 
-@native public interface CSSStyleRule : CSSRule {
-    var selectorText: String
-        get() = noImpl
-        set(value) = noImpl
+/**
+ * Exposes the JavaScript [CSSStyleRule](https://developer.mozilla.org/en/docs/Web/API/CSSStyleRule) to Kotlin
+ */
+public external abstract class CSSStyleRule : CSSRule {
+    open var selectorText: String
+    open val style: CSSStyleDeclaration
+}
+
+public external abstract class CSSImportRule : CSSRule {
+    open val href: String
+    open val media: MediaList
+    open val styleSheet: CSSStyleSheet
+}
+
+/**
+ * Exposes the JavaScript [CSSGroupingRule](https://developer.mozilla.org/en/docs/Web/API/CSSGroupingRule) to Kotlin
+ */
+public external abstract class CSSGroupingRule : CSSRule {
+    open val cssRules: CSSRuleList
+    fun insertRule(rule: String, index: Int): Int
+    fun deleteRule(index: Int): Unit
+}
+
+/**
+ * Exposes the JavaScript [CSSMediaRule](https://developer.mozilla.org/en/docs/Web/API/CSSMediaRule) to Kotlin
+ */
+public external abstract class CSSMediaRule : CSSGroupingRule {
+    open val media: MediaList
+}
+
+/**
+ * Exposes the JavaScript [CSSPageRule](https://developer.mozilla.org/en/docs/Web/API/CSSPageRule) to Kotlin
+ */
+public external abstract class CSSPageRule : CSSGroupingRule {
+    open var selectorText: String
+    open val style: CSSStyleDeclaration
+}
+
+public external abstract class CSSMarginRule : CSSRule {
+    open val name: String
+    open val style: CSSStyleDeclaration
+}
+
+/**
+ * Exposes the JavaScript [CSSNamespaceRule](https://developer.mozilla.org/en/docs/Web/API/CSSNamespaceRule) to Kotlin
+ */
+public external abstract class CSSNamespaceRule : CSSRule {
+    open val namespaceURI: String
+    open val prefix: String
+}
+
+public external interface ElementCSSInlineStyle {
     val style: CSSStyleDeclaration
-        get() = noImpl
 }
 
-@native public interface CSSImportRule : CSSRule {
-    val href: String
-        get() = noImpl
-    val media: MediaList
-        get() = noImpl
-    val styleSheet: CSSStyleSheet
-        get() = noImpl
-}
-
-@native public interface CSSGroupingRule : CSSRule {
-    val cssRules: CSSRuleList
-        get() = noImpl
-    fun insertRule(rule: String, index: Int): Int = noImpl
-    fun deleteRule(index: Int): Unit = noImpl
-}
-
-@native public interface CSSMediaRule : CSSGroupingRule {
-    val media: MediaList
-        get() = noImpl
-}
-
-@native public interface CSSPageRule : CSSGroupingRule {
-    var selectorText: String
-        get() = noImpl
-        set(value) = noImpl
-    val style: CSSStyleDeclaration
-        get() = noImpl
-}
-
-@native public interface CSSMarginRule : CSSRule {
-    val name: String
-        get() = noImpl
-    val style: CSSStyleDeclaration
-        get() = noImpl
-}
-
-@native public interface CSSNamespaceRule : CSSRule {
-    var namespaceURI: String
-        get() = noImpl
-        set(value) = noImpl
-    var prefix: String
-        get() = noImpl
-        set(value) = noImpl
-}
-
-@native public interface PseudoElement : GeometryNode {
-    val cascadedStyle: CSSStyleDeclaration
-        get() = noImpl
-    val defaultStyle: CSSStyleDeclaration
-        get() = noImpl
-    val rawComputedStyle: CSSStyleDeclaration
-        get() = noImpl
-    val usedStyle: CSSStyleDeclaration
-        get() = noImpl
-    fun getBoxQuads(options: BoxQuadOptions = noImpl): Array<DOMQuad> = noImpl
-    fun convertQuadFromNode(quad: DOMQuad, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
-    fun convertRectFromNode(rect: DOMRectReadOnly, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
-    fun convertPointFromNode(point: DOMPointInit, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMPoint = noImpl
-}
-
-@native public interface CSS {
+/**
+ * Exposes the JavaScript [CSS](https://developer.mozilla.org/en/docs/Web/API/CSS) to Kotlin
+ */
+public external abstract class CSS {
 
     companion object {
-        fun escape(ident: String): String = noImpl
+        fun escape(ident: String): String
     }
 }
 

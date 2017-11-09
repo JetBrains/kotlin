@@ -208,7 +208,7 @@ class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun testPropertyAccessors() {
         val tree = createStubTree("var c: Int\nget() = 3\nset(i: Int) {}")
         val propertyStub = tree.findChildStubByType(KtStubElementTypes.PROPERTY)!!
-        val accessors = propertyStub.getChildrenByType(KtStubElementTypes.PROPERTY_ACCESSOR, KtStubElementTypes.PROPERTY_ACCESSOR.arrayFactory)!!
+        val accessors = propertyStub.getChildrenByType(KtStubElementTypes.PROPERTY_ACCESSOR, KtStubElementTypes.PROPERTY_ACCESSOR.arrayFactory)
         assertEquals("getter for STUB: var c: Int", accessors[0].getDebugText())
         assertEquals("setter for STUB: var c: Int", accessors[1].getDebugText())
     }
@@ -216,7 +216,7 @@ class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun testEnumEntry() {
         val tree = createStubTree("enum class Enum { E1, E2(), E3(1, 2)}")
         val enumClass = tree.findChildStubByType(KtStubElementTypes.CLASS)!!.findChildStubByType(KtStubElementTypes.CLASS_BODY)!!
-        val entries = enumClass.getChildrenByType(KtStubElementTypes.ENUM_ENTRY, KtStubElementTypes.ENUM_ENTRY.arrayFactory)!!
+        val entries = enumClass.getChildrenByType(KtStubElementTypes.ENUM_ENTRY, KtStubElementTypes.ENUM_ENTRY.arrayFactory)
         assertEquals("STUB: enum entry E1", entries[0].getDebugText())
         assertEquals("STUB: enum entry E2 : Enum", entries[1].getDebugText())
         assertEquals("STUB: enum entry E3 : Enum", entries[2].getDebugText())

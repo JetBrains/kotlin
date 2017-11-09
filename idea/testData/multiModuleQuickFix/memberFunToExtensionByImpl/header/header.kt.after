@@ -1,0 +1,4 @@
+expect class Foo {
+}
+
+expect fun Foo.foo(n: Int)

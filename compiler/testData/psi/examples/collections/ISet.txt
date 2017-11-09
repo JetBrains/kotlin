@@ -1,4 +1,4 @@
-JetFile: ISet.kt
+KtFile: ISet.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 fun LookupTracker.record(expression: KtExpression, type: KotlinType) {

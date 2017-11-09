@@ -31,6 +31,7 @@ import java.util.*
 
 
 val SOCKET_ANY_FREE_PORT  = 0
+val JAVA_RMI_SERVER_HOSTNAME = "java.rmi.server.hostname"
 
 object LoopbackNetworkInterface {
 
@@ -96,3 +97,12 @@ fun findPortAndCreateRegistry(attempts: Int, portRangeStart: Int, portRangeEnd: 
     throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
 }
 
+/**
+ * Needs to be set up on both client and server to prevent localhost resolution,
+ * which may be slow and can cause a timeout when there is a network problem/misconfiguration.
+ */
+fun ensureServerHostnameIsSetUp() {
+    if (System.getProperty(JAVA_RMI_SERVER_HOSTNAME) == null) {
+        System.setProperty(JAVA_RMI_SERVER_HOSTNAME, LoopbackNetworkInterface.loopbackInetAddressName)
+    }
+}

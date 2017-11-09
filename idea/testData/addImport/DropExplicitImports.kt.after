@@ -1,4 +1,4 @@
-// IMPORT: java.util.HashMap
+// IMPORT: java.util.Calendar
 package p
 
 import java.sql.*
@@ -9,5 +9,5 @@ import java.util.HashSet as JavaHashSet // alias import should not be dropped
 fun foo() {
     val v1 = JavaHashSet()
     val v2 = Date()
-    val v3 = ArrayList()
+    val v3 = Properties()
 }

@@ -1,4 +1,4 @@
 package
 
 public fun box(): kotlin.String
-public tailrec fun kotlin.String.repeat(/*0*/ num: kotlin.Int, /*1*/ acc: java.lang.StringBuilder = ...): kotlin.String
+public tailrec fun kotlin.String.repeat(/*0*/ num: kotlin.Int, /*1*/ acc: kotlin.text.StringBuilder /* = java.lang.StringBuilder */ = ...): kotlin.String

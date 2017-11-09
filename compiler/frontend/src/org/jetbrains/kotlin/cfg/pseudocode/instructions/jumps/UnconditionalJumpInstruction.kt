@@ -29,9 +29,7 @@ class UnconditionalJumpInstruction(
         visitor.visitUnconditionalJump(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitUnconditionalJump(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitUnconditionalJump(this)
 
     override fun toString(): String = "jmp(${targetLabel.name})"
 

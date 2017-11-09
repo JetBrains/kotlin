@@ -1,0 +1,5 @@
+package
+
+public val x: kotlin.Nothing?
+public val y: kotlin.Nothing
+public fun foo(): kotlin.Unit

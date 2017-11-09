@@ -18,19 +18,38 @@ package org.jetbrains.kotlin.idea.util
 
 import com.intellij.ide.highlighter.ArchiveFileType
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.injected.editor.VirtualFileWindow
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.FileIndex
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.idea.KotlinModuleFileType
 import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
-import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
-private val classFileLike = listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType, KotlinModuleFileType.INSTANCE)
+private val kotlinBinaries = listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType, KotlinModuleFileType.INSTANCE)
+
+fun FileType.isKotlinBinary(): Boolean = this in kotlinBinaries
+
+fun FileIndex.isInSourceContentWithoutInjected(file: VirtualFile): Boolean {
+    return file !is VirtualFileWindow && isInSourceContent(file)
+}
+
+fun VirtualFile.getSourceRoot(project: Project): VirtualFile? = ProjectRootManager.getInstance(project).fileIndex.getSourceRootForFile(this)
+
+val PsiFileSystemItem.sourceRoot: VirtualFile?
+    get() = virtualFile?.getSourceRoot(project)
 
 object ProjectRootsUtil {
     @JvmStatic fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,
@@ -39,21 +58,22 @@ object ProjectRootsUtil {
                                fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project),
                                isJsProjectRef: Ref<Boolean?>? = null): Boolean {
 
-        if (includeProjectSource && fileIndex.isInSourceContent(file)) return true
+        if (includeProjectSource && fileIndex.isInSourceContentWithoutInjected(file)) return true
 
         if (!includeLibraryClasses && !includeLibrarySource) return false
 
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
-        val canContainClassFiles = file.fileType == ArchiveFileType.INSTANCE || file.isDirectory
-        val isClassFile = file.fileType in classFileLike
+        val fileType = file.fileType
+        val canContainClassFiles = fileType == ArchiveFileType.INSTANCE || file.isDirectory
+        val isBinary = fileType.isKotlinBinary()
 
-        val scriptConfigurationManager = if (includeScriptDependencies) KotlinScriptConfigurationManager.getInstance(project) else null
+        val scriptConfigurationManager = if (includeScriptDependencies) ScriptDependenciesManager.getInstance(project) else null
 
-        if (includeLibraryClasses && (isClassFile || canContainClassFiles)) {
+        if (includeLibraryClasses && (isBinary || canContainClassFiles)) {
             if (fileIndex.isInLibraryClasses(file)) return true
             if (scriptConfigurationManager?.getAllScriptsClasspathScope()?.contains(file) == true) return true
         }
-        if (includeLibrarySource && !isClassFile) {
+        if (includeLibrarySource && !isBinary) {
             if (fileIndex.isInLibrarySource(file)) return true
             if (scriptConfigurationManager?.getAllLibrarySourcesScope()?.contains(file) == true) return true
         }
@@ -120,3 +140,9 @@ object ProjectRootsUtil {
         return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = true, includeScriptDependencies = true)
     }
 }
+
+val Module.rootManager: ModuleRootManager
+    get() = ModuleRootManager.getInstance(this)
+
+val PsiElement.module: Module?
+    get() = ModuleUtilCore.findModuleForPsiElement(this)

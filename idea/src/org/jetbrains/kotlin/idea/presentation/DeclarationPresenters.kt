@@ -25,6 +25,7 @@ import com.intellij.openapi.util.Iconable
 import org.jetbrains.kotlin.idea.KotlinIconProvider
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 open class KotlinDefaultNamedDeclarationPresentation(private val declaration: KtNamedDeclaration) : ColoredItemPresentation {
 
@@ -38,6 +39,11 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
     override fun getPresentableText() = declaration.name
 
     override fun getLocationString(): String? {
+        if ((declaration is KtFunction && declaration.isLocal) || (declaration is KtClassOrObject && declaration.isLocal)) {
+            val containingDeclaration = declaration.getStrictParentOfType<KtNamedDeclaration>() ?: return null
+            val containerName = containingDeclaration.fqName ?: containingDeclaration.name
+            return "(in $containerName)"
+        }
         val name = declaration.fqName ?: return null
         val qualifiedContainer = name.parent().toString()
         val parent = declaration.parent
@@ -48,14 +54,10 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
             qualifiedContainer
         }
         val receiverTypeRef = (declaration as? KtCallableDeclaration)?.receiverTypeReference
-        if (receiverTypeRef != null) {
-            return "(for " + receiverTypeRef.text + " in " + containerText + ")"
-        }
-        else if (parent is KtFile) {
-            return "(" + containerText + ")"
-        }
-        else {
-            return "(in " + containerText + ")"
+        return when {
+            receiverTypeRef != null -> "(for " + receiverTypeRef.text + " in " + containerText + ")"
+            parent is KtFile -> "($containerText)"
+            else -> "(in $containerText)"
         }
     }
 
@@ -77,7 +79,9 @@ class KtFunctionPresenter : ItemPresentationProvider<KtFunction> {
                     function.name?.let { append(it) }
 
                     append("(")
-                    append(function.valueParameters.joinToString { it.typeReference?.text ?: "" })
+                    append(function.valueParameters.joinToString {
+                        (if (it.isVarArg) "vararg " else "") + (it.typeReference?.text ?: "")
+                    })
                     append(")")
                 }
             }

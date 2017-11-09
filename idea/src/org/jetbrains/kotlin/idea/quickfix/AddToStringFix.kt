@@ -31,6 +31,7 @@ class AddToStringFix(element: KtExpression, private val nullable: Boolean) : Kot
     override fun getText() = if (nullable) "Add safe '?.toString()' call" else "Add 'toString()' call"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val pattern = if (nullable) "$0?.toString()" else "$0.toString()"
         val expressionToInsert = KtPsiFactory(file).createExpressionByPattern(pattern, element)
         val newExpression = element.replaced(expressionToInsert)

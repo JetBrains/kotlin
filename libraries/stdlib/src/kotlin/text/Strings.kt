@@ -20,6 +20,9 @@
 
 package kotlin.text
 
+import kotlin.comparisons.*
+import kotlin.internal.contracts.*
+
 
 /**
  * Returns a sub sequence of this char sequence having leading and trailing characters matching the [predicate] trimmed.
@@ -123,7 +126,7 @@ public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
 /**
  * Returns a sub sequence of this char sequence having leading and trailing whitespace trimmed.
  */
-public fun CharSequence.trim(): CharSequence = trim { it.isWhitespace() }
+public fun CharSequence.trim(): CharSequence = trim(Char::isWhitespace)
 
 /**
  * Returns a string with leading and trailing whitespace trimmed.
@@ -134,7 +137,7 @@ public inline fun String.trim(): String = (this as CharSequence).trim().toString
 /**
  * Returns a sub sequence of this char sequence having leading whitespace removed.
  */
-public fun CharSequence.trimStart(): CharSequence = trimStart { it.isWhitespace() }
+public fun CharSequence.trimStart(): CharSequence = trimStart(Char::isWhitespace)
 
 /**
  * Returns a string with leading whitespace removed.
@@ -145,7 +148,7 @@ public inline fun String.trimStart(): String = (this as CharSequence).trimStart(
 /**
  * Returns a sub sequence of this char sequence having trailing whitespace removed.
  */
-public fun CharSequence.trimEnd(): CharSequence = trimEnd { it.isWhitespace() }
+public fun CharSequence.trimEnd(): CharSequence = trimEnd(Char::isWhitespace)
 
 /**
  * Returns a string with trailing whitespace removed.
@@ -223,7 +226,13 @@ public fun String.padEnd(length: Int, padChar: Char = ' '): String
  * Returns `true` if this nullable char sequence is either `null` or empty.
  */
 @kotlin.internal.InlineOnly
-public inline fun CharSequence?.isNullOrEmpty(): Boolean = this == null || this.length == 0
+public inline fun CharSequence?.isNullOrEmpty(): Boolean {
+    contract {
+        returns(false) implies (this@isNullOrEmpty != null)
+    }
+
+    return this == null || this.length == 0
+}
 
 /**
  * Returns `true` if this char sequence is empty (contains no characters).
@@ -251,7 +260,13 @@ public inline fun CharSequence.isNotBlank(): Boolean = !isBlank()
  * Returns `true` if this nullable char sequence is either `null` or empty or consists solely of whitespace characters.
  */
 @kotlin.internal.InlineOnly
-public inline fun CharSequence?.isNullOrBlank(): Boolean = this == null || this.isBlank()
+public inline fun CharSequence?.isNullOrBlank(): Boolean {
+    contract {
+        returns(false) implies (this@isNullOrBlank != null)
+    }
+
+    return this == null || this.isBlank()
+}
 
 /**
  * Iterator for characters of the given char sequence.
@@ -306,6 +321,7 @@ public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence
  * Replace parameter names with the same as those of [CharSequence.subSequence].
  */
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning
 @Deprecated("Use parameters named startIndex and endIndex.", ReplaceWith("subSequence(startIndex = start, endIndex = end)"))
 public inline fun String.subSequence(start: Int, end: Int): CharSequence = subSequence(start, end)
 
@@ -675,7 +691,7 @@ public inline fun CharSequence.replaceFirst(regex: Regex, replacement: String): 
  * Returns `true` if this char sequence matches the given regular expression.
  */
 @kotlin.internal.InlineOnly
-public inline fun CharSequence.matches(regex: Regex): Boolean = regex.matches(this)
+public inline infix fun CharSequence.matches(regex: Regex): Boolean = regex.matches(this)
 
 /**
  * Implementation of [regionMatches] for CharSequences.
@@ -747,7 +763,7 @@ public fun CharSequence.endsWith(suffix: CharSequence, ignoreCase: Boolean = fal
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
  */
 public fun CharSequence.commonPrefixWith(other: CharSequence, ignoreCase: Boolean = false): String {
-    val shortestLength = Math.min(this.length, other.length)
+    val shortestLength = minOf(this.length, other.length)
 
     var i = 0
     while (i < shortestLength && this[i].equals(other[i], ignoreCase = ignoreCase)) {
@@ -769,7 +785,7 @@ public fun CharSequence.commonPrefixWith(other: CharSequence, ignoreCase: Boolea
 public fun CharSequence.commonSuffixWith(other: CharSequence, ignoreCase: Boolean = false): String {
     val thisLength = this.length
     val otherLength = other.length
-    val shortestLength = Math.min(thisLength, otherLength)
+    val shortestLength = minOf(thisLength, otherLength)
 
     var i = 0
     while (i < shortestLength && this[thisLength - i - 1].equals(other[otherLength - i - 1], ignoreCase = ignoreCase)) {
@@ -791,7 +807,7 @@ private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase
         return if (index < 0) null else index to char
     }
 
-    val indices = if (!last) Math.max(startIndex, 0)..lastIndex else Math.min(startIndex, lastIndex) downTo 0
+    val indices = if (!last) startIndex.coerceAtLeast(0)..lastIndex else startIndex.coerceAtMost(lastIndex) downTo 0
     for (index in indices) {
         val charAtIndex = get(index)
         val matchingCharIndex = chars.indexOfFirst { it.equals(charAtIndex, ignoreCase) }
@@ -1028,7 +1044,7 @@ private class DelimitedRangesSequence(private val input: CharSequence, private v
 
     override fun iterator(): Iterator<IntRange> = object : Iterator<IntRange> {
         var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue
-        var currentStartIndex: Int = Math.min(Math.max(startIndex, 0), input.length)
+        var currentStartIndex: Int = startIndex.coerceIn(0, input.length)
         var nextSearchIndex: Int = currentStartIndex
         var nextItem: IntRange? = null
         var counter: Int = 0

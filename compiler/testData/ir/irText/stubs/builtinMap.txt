@@ -1,0 +1,37 @@
+FILE /builtinMap.kt
+  FUN public fun <K, V> kotlin.collections.Map<out K, V>.plus(pair: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+    TYPE_PARAMETER <K>
+    TYPE_PARAMETER <V>
+    $receiver: VALUE_PARAMETER this@plus: Map<out K, V>
+    VALUE_PARAMETER value-parameter pair: kotlin.Pair<K, V>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='plus(Pair<K, V>) on Map<out K, V>: Map<K, V>'
+        WHEN type=kotlin.collections.Map<K, V> origin=null
+          BRANCH
+            if: CALL 'isEmpty(): Boolean' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'this@plus: Map<out K, V>' type=kotlin.collections.Map<out K, V> origin=null
+            then: CALL 'mapOf(Pair<K, V>): Map<K, V>' type=kotlin.collections.Map<K, V> origin=null
+              <K>: K
+              <V>: V
+              pair: GET_VAR 'value-parameter pair: Pair<K, V>' type=kotlin.Pair<K, V> origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value='true'
+            then: CALL 'apply(LinkedHashMap<K!, V!> /* = LinkedHashMap<K!, V!> */.() -> Unit) on LinkedHashMap<K!, V!> /* = LinkedHashMap<K!, V!> */: LinkedHashMap<K!, V!> /* = LinkedHashMap<K!, V!> */' type=kotlin.collections.LinkedHashMap<K!, V!> /* = java.util.LinkedHashMap<K!, V!> */ origin=null
+              <T>: LinkedHashMap<K!, V!> /* = LinkedHashMap<K!, V!> */
+              $receiver: CALL 'constructor LinkedHashMap((MutableMap<out K!, out V!>..Map<out K!, V!>?))' type=java.util.LinkedHashMap<K!, V!> origin=null
+                <K : Any!>: null
+                <V : Any!>: null
+                p0: GET_VAR 'this@plus: Map<out K, V>' type=kotlin.collections.Map<out K, V> origin=null
+              block: BLOCK type=kotlin.collections.LinkedHashMap<K!, V!> /* = java.util.LinkedHashMap<K!, V!> */.() -> kotlin.Unit origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun kotlin.collections.LinkedHashMap<K!, V!> /* = java.util.LinkedHashMap<K!, V!> */.<anonymous>(): kotlin.Unit
+                  $receiver: VALUE_PARAMETER this@<anonymous>: LinkedHashMap<(K..K?), (V..V?)>
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='<anonymous>() on LinkedHashMap<K!, V!> /* = LinkedHashMap<K!, V!> */: Unit'
+                      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                        CALL 'put(K!, V!): V?' type=V? origin=null
+                          $this: GET_VAR 'this@<anonymous>: LinkedHashMap<(K..K?), (V..V?)>' type=kotlin.collections.LinkedHashMap<K!, V!> /* = java.util.LinkedHashMap<K!, V!> */ origin=null
+                          key: CALL '<get-first>(): K' type=K origin=GET_PROPERTY
+                            $this: GET_VAR 'value-parameter pair: Pair<K, V>' type=kotlin.Pair<K, V> origin=null
+                          value: CALL '<get-second>(): V' type=V origin=GET_PROPERTY
+                            $this: GET_VAR 'value-parameter pair: Pair<K, V>' type=kotlin.Pair<K, V> origin=null
+                FUNCTION_REFERENCE '<anonymous>() on LinkedHashMap<K!, V!> /* = LinkedHashMap<K!, V!> */: Unit' type=kotlin.collections.LinkedHashMap<K!, V!> /* = java.util.LinkedHashMap<K!, V!> */.() -> kotlin.Unit origin=LAMBDA

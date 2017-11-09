@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 class A : Map<String, String> {
     override val size: Int get() = 56
 

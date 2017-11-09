@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1116
 package foo
 
 inline fun run(func: () -> Int): Int {

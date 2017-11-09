@@ -1,0 +1,17 @@
+package
+
+public final annotation class A : kotlin.Annotation {
+    public constructor A(/*0*/ a: kotlin.IntArray = ...)
+    public final val a: kotlin.IntArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class B : kotlin.Annotation {
+    public constructor B(/*0*/ a: kotlin.IntArray = ...)
+    public final val a: kotlin.IntArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

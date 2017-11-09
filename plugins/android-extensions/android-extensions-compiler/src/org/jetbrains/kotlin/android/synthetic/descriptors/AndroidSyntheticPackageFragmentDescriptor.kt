@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
 class AndroidSyntheticPackageData(
-        val layoutName: String,
         val moduleData: AndroidModuleData,
         val forView: Boolean,
         val isDeprecated: Boolean,
@@ -43,7 +42,8 @@ class AndroidSyntheticPackageFragmentDescriptor(
         fqName: FqName,
         val packageData: AndroidSyntheticPackageData,
         private val lazyContext: LazySyntheticElementResolveContext,
-        private val storageManager: StorageManager
+        private val storageManager: StorageManager,
+        private val isExperimental: Boolean
 ) : PackageFragmentDescriptorImpl(module, fqName) {
     private val scope = AndroidExtensionPropertiesScope()
     override fun getMemberScope(): MemberScope = scope
@@ -53,7 +53,7 @@ class AndroidSyntheticPackageFragmentDescriptor(
             val packageFragmentDescriptor = this@AndroidSyntheticPackageFragmentDescriptor
 
             val context = lazyContext()
-            val widgetReceivers = context.getWidgetReceivers(packageData.forView)
+            val widgetReceivers = context.getWidgetReceivers(packageData.forView, isExperimental)
             val fragmentTypes = context.fragmentTypes
 
             val properties = ArrayList<PropertyDescriptor>(0)
@@ -63,7 +63,7 @@ class AndroidSyntheticPackageFragmentDescriptor(
                         val resolvedWidget = resource.resolve(module)
                         if (resolvedWidget != null) {
                             for (receiver in widgetReceivers) {
-                                properties += genPropertyForWidget(packageFragmentDescriptor, receiver, resolvedWidget, context)
+                                properties += genPropertyForWidget(packageFragmentDescriptor, receiver.type, resolvedWidget, context)
                             }
                         }
                     }
@@ -84,7 +84,7 @@ class AndroidSyntheticPackageFragmentDescriptor(
         override fun getContributedVariables(name: Name, location: LookupLocation) = properties().filter { it.name == name }
 
         override fun printScopeStructure(p: Printer) {
-            p.println(javaClass.simpleName)
+            p.println(this::class.java.simpleName)
         }
     }
 }

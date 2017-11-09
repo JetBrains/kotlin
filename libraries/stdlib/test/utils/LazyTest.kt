@@ -2,11 +2,10 @@ package test.utils
 
 import kotlin.*
 import kotlin.test.*
-import org.junit.Test as test
 
 class LazyTest {
 
-    @test fun initializationCalledOnce() {
+    @Test fun initializationCalledOnce() {
         var callCount = 0
         val lazyInt = lazy { ++callCount }
 
@@ -20,7 +19,7 @@ class LazyTest {
         assertEquals(1, callCount)
     }
 
-    @test fun alreadyInitialized() {
+    @Test fun alreadyInitialized() {
         val lazyInt = lazyOf(1)
 
         assertTrue(lazyInt.isInitialized())
@@ -28,7 +27,7 @@ class LazyTest {
     }
 
 
-    @test fun lazyToString() {
+    @Test fun lazyToString() {
         var callCount = 0
         val lazyInt = lazy { ++callCount }
 

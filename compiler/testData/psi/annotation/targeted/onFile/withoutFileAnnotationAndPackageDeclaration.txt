@@ -1,4 +1,4 @@
-JetFile: withoutFileAnnotationAndPackageDeclaration.kt
+KtFile: withoutFileAnnotationAndPackageDeclaration.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

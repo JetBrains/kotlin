@@ -1,0 +1,25 @@
+// "Fix with 'asDynamic'" "true"
+// JS
+
+external class B {
+
+    fun dontTouch(): Nothing = definedExternally
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun B.foo(i: Int): B? = asDynamic()[i]
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun B.foo(i: Int, v: B) {
+    asDynamic()[i] = v
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun B.bar(a: B) {
+    asDynamic()(a)
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun<T> B.exp(t: T) {
+    asDynamic()(t)
+}

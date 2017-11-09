@@ -41,3 +41,5 @@ fun <T> List<List<T>>.mutations() : List<List<T>> {
 
     return result
 }
+
+fun mapEnumConstant(entry: String) = if (entry.isEmpty()) "EMPTY" else entry.toUpperCase().replace("-", "_")

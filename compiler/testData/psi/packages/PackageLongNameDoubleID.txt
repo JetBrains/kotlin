@@ -1,4 +1,4 @@
-JetFile: PackageLongNameDoubleID.kt
+KtFile: PackageLongNameDoubleID.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

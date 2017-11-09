@@ -5,7 +5,10 @@
         <sources path="s2"/>
         <!-- Java source roots -->
         <!-- Classpath -->
-        <classpath path="cp1"/>
+        <!-- Output directory, commented out -->
+        <!--
+            <classpath path="cp1"/>
+        -->
         <classpath path="cp2"/>
     </module>
     <!-- Module script for tests -->
@@ -14,7 +17,10 @@
         <sources path="s22"/>
         <!-- Java source roots -->
         <!-- Classpath -->
-        <classpath path="cp12"/>
+        <!-- Output directory, commented out -->
+        <!--
+            <classpath path="cp12"/>
+        -->
         <classpath path="cp22"/>
     </module>
 </modules>

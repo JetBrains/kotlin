@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,20 @@
 
 package org.jetbrains.kotlin.js.translate.expression;
 
-import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.operation.InOperationTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.mutator.CoercionMutator;
+import org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -33,7 +38,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.not;
 
 public final class WhenTranslator extends AbstractTranslator {
     @Nullable
@@ -47,6 +52,9 @@ public final class WhenTranslator extends AbstractTranslator {
     @Nullable
     private final JsExpression expressionToMatch;
 
+    @Nullable
+    private final KotlinType type;
+
     private WhenTranslator(@NotNull KtWhenExpression expression, @NotNull TranslationContext context) {
         super(context);
 
@@ -54,6 +62,8 @@ public final class WhenTranslator extends AbstractTranslator {
 
         KtExpression subject = expression.getSubjectExpression();
         expressionToMatch = subject != null ? context.defineTemporary(Translation.translateAsExpression(subject, context)) : null;
+
+        type = context().bindingContext().getType(expression);
     }
 
     private JsNode translate() {
@@ -71,6 +81,7 @@ public final class WhenTranslator extends AbstractTranslator {
 
             if (resultIf == null) {
                 currentIf = JsAstUtils.newJsIf(translateConditions(entry, context()), statement);
+                currentIf.setSource(entry);
                 resultIf = currentIf;
             }
             else {
@@ -80,22 +91,40 @@ public final class WhenTranslator extends AbstractTranslator {
                 }
                 JsBlock conditionsBlock = new JsBlock();
                 JsIf nextIf = JsAstUtils.newJsIf(translateConditions(entry, context().innerBlock(conditionsBlock)), statement);
+                nextIf.setSource(entry);
                 JsStatement statementToAdd = JsAstUtils.mergeStatementInBlockIfNeeded(nextIf, conditionsBlock);
                 currentIf.setElseStatement(statementToAdd);
                 currentIf = nextIf;
             }
         }
-        return resultIf != null ? resultIf : JsLiteral.NULL;
+
+        if (currentIf != null && currentIf.getElseStatement() == null && isExhaustive()) {
+            JsExpression noWhenMatchedInvocation = new JsInvocation(JsAstUtils.pureFqn("noWhenBranchMatched", Namer.kotlinObject()));
+            currentIf.setElseStatement(JsAstUtils.asSyntheticStatement(noWhenMatchedInvocation));
+        }
+
+        return resultIf != null ? resultIf : new JsNullLiteral();
+    }
+
+    private boolean isExhaustive() {
+        KotlinType type = bindingContext().getType(whenExpression);
+        boolean isStatement = type != null && KotlinBuiltIns.isUnit(type) && !type.isMarkedNullable();
+        return CodegenUtil.isExhaustive(bindingContext(), whenExpression, isStatement);
     }
 
     @NotNull
-    private static JsStatement translateEntryExpression(
+    private JsStatement translateEntryExpression(
             @NotNull KtWhenEntry entry,
             @NotNull TranslationContext context,
             @NotNull JsBlock block) {
         KtExpression expressionToExecute = entry.getExpression();
         assert expressionToExecute != null : "WhenEntry should have whenExpression to execute.";
-        return Translation.translateAsStatement(expressionToExecute, context, block);
+        JsStatement result = Translation.translateAsStatement(expressionToExecute, context, block);
+        if (type != null) {
+            return LastExpressionMutator.mutateLastExpression(result, new CoercionMutator(type, context));
+        }
+
+        return result;
     }
 
     @NotNull
@@ -130,8 +159,9 @@ public final class WhenTranslator extends AbstractTranslator {
         } else {
             assert rightExpression instanceof JsNameRef : "expected JsNameRef, but: " + rightExpression;
             JsNameRef result = (JsNameRef) rightExpression;
-            JsIf ifStatement = JsAstUtils.newJsIf(leftExpression, JsAstUtils.assignment(result, JsLiteral.TRUE).makeStmt(),
+            JsIf ifStatement = JsAstUtils.newJsIf(leftExpression, JsAstUtils.assignment(result, new JsBooleanLiteral(true)).makeStmt(),
                                                   rightContext.getCurrentBlock());
+            ifStatement.setSource(condition);
             context.addStatementToCurrentBlock(ifStatement);
             return result;
         }
@@ -141,7 +171,7 @@ public final class WhenTranslator extends AbstractTranslator {
     private JsExpression translateCondition(@NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
         JsExpression patternMatchExpression = translateWhenConditionToBooleanExpression(condition, context);
         if (isNegated(condition)) {
-            return negated(patternMatchExpression);
+            return not(patternMatchExpression);
         }
         return patternMatchExpression;
     }
@@ -174,10 +204,8 @@ public final class WhenTranslator extends AbstractTranslator {
         KtExpression expressionToMatchNonTranslated = whenExpression.getSubjectExpression();
         assert expressionToMatchNonTranslated != null : "expressionToMatch != null => expressionToMatchNonTranslated != null: " +
                                                         PsiUtilsKt.getTextWithLocation(conditionIsPattern);
-        KotlinType expressionToMatchType = BindingUtils.getTypeForExpression(bindingContext(), expressionToMatchNonTranslated);
-        JsExpression result = Translation.patternTranslator(context).translateIsCheck(expressionToMatch, expressionToMatchType,
-                                                                                      typeReference);
-        return result != null ? result : JsLiteral.TRUE;
+        JsExpression result = Translation.patternTranslator(context).translateIsCheck(expressionToMatch, typeReference);
+        return (result != null ? result : new JsBooleanLiteral(true)).source(conditionIsPattern);
     }
 
     @NotNull
@@ -208,12 +236,12 @@ public final class WhenTranslator extends AbstractTranslator {
         assert expressionToMatch != null : "Range pattern is only available for 'when (C) { in ... }'  expressions: " +
                                            PsiUtilsKt.getTextWithLocation(condition);
 
-        Map<KtExpression, JsExpression> subjectAliases = new HashMap<KtExpression, JsExpression>();
+        Map<KtExpression, JsExpression> subjectAliases = new HashMap<>();
         subjectAliases.put(whenExpression.getSubjectExpression(), expressionToMatch);
         TranslationContext callContext = context.innerContextWithAliasesForExpressions(subjectAliases);
         boolean negated = condition.getOperationReference().getReferencedNameElementType() == KtTokens.NOT_IN;
         return new InOperationTranslator(callContext, expressionToMatch, condition.getRangeExpression(), condition.getOperationReference(),
-                                         negated).translate();
+                                         negated).translate().source(condition);
     }
 
     @Nullable

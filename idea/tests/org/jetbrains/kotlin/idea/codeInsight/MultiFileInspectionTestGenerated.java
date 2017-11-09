@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,12 +33,24 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiFileInspectionTestGenerated extends AbstractMultiFileInspectionTest {
     public void testAllFilesPresentInMultiFileInspections() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileInspections"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileInspections"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
     @TestMetadata("invalidBundleOrProperty/invalidBundleOrProperty.test")
     public void testInvalidBundleOrProperty_InvalidBundleOrProperty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileInspections/invalidBundleOrProperty/invalidBundleOrProperty.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlinInternalInJava/kotlinInternalInJava.test")
+    public void testKotlinInternalInJava_KotlinInternalInJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileInspections/kotlinInternalInJava/kotlinInternalInJava.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("mainInTwoModules/mainInTwoModules.test")
+    public void testMainInTwoModules_MainInTwoModules() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileInspections/mainInTwoModules/mainInTwoModules.test");
         doTest(fileName);
     }
 

@@ -111,9 +111,9 @@ class ReplOutputProcessor(
         )
         val lastCommandStartOffset = lastUnprocessedHistoryEntry.rangeInHistoryDocument.startOffset
         val lastCommandStartLine = historyDocument.getLineNumber(lastCommandStartOffset)
-        val historyCommandRunIndicator = historyMarkup.allHighlighters.filter {
+        val historyCommandRunIndicator = historyMarkup.allHighlighters.first {
             historyDocument.getLineNumber(it.startOffset) == lastCommandStartLine && it.gutterIconRenderer != null
-        }.first()
+        }
 
         val highlighterAndMessagesByLine = compilerMessages.filter {
             it.severity == Severity.ERROR || it.severity == Severity.WARNING
@@ -148,16 +148,16 @@ class ReplOutputProcessor(
     fun printInternalErrorMessage(internalErrorText: String) = WriteCommandAction.runWriteCommandAction(project) {
         val promptText = "Internal error occurred. Please, send report to developers.\n"
         printOutput(promptText, ConsoleViewContentType.ERROR_OUTPUT, ReplIcons.RUNTIME_EXCEPTION)
-        logError(this.javaClass, internalErrorText)
+        logError(this::class.java, internalErrorText)
     }
 
-    private fun getAttributesForSeverity(start: Int, end: Int, severity: Severity): TextAttributes {
-        val attributes = when (severity) {
-            Severity.ERROR   -> getAttributesForSeverity(HighlightInfoType.ERROR, HighlightSeverity.ERROR, CodeInsightColors.ERRORS_ATTRIBUTES, start, end)
-            Severity.WARNING -> getAttributesForSeverity(HighlightInfoType.WARNING, HighlightSeverity.WARNING, CodeInsightColors.WARNINGS_ATTRIBUTES, start, end)
-            Severity.INFO    -> getAttributesForSeverity(HighlightInfoType.WEAK_WARNING, HighlightSeverity.WEAK_WARNING, CodeInsightColors.WEAK_WARNING_ATTRIBUTES, start, end)
-        }
-        return attributes
+    private fun getAttributesForSeverity(start: Int, end: Int, severity: Severity): TextAttributes = when (severity) {
+        Severity.ERROR   ->
+            getAttributesForSeverity(HighlightInfoType.ERROR, HighlightSeverity.ERROR, CodeInsightColors.ERRORS_ATTRIBUTES, start, end)
+        Severity.WARNING ->
+            getAttributesForSeverity(HighlightInfoType.WARNING, HighlightSeverity.WARNING, CodeInsightColors.WARNINGS_ATTRIBUTES, start, end)
+        Severity.INFO    ->
+            getAttributesForSeverity(HighlightInfoType.WEAK_WARNING, HighlightSeverity.WEAK_WARNING, CodeInsightColors.WEAK_WARNING_ATTRIBUTES, start, end)
     }
 
     private fun getAttributesForSeverity(

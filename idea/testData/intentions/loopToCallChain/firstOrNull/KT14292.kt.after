@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'firstOrNull{}'"
+// IS_APPLICABLE_2: false
+
+fun getFirstValue() = "value"
+
+fun foo(list: List<String?>): String? {
+    val value = getFirstValue()
+    val found: String? = list.firstOrNull { it != null && !it.startsWith("IMG:") && it.contains(value) }
+    return found
+}

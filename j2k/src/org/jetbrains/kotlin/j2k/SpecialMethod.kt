@@ -21,7 +21,6 @@ import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import com.intellij.psi.CommonClassNames.JAVA_LANG_STRING
 import com.intellij.psi.impl.PsiExpressionEvaluator
 import org.jetbrains.kotlin.j2k.ast.*
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.PrintStream
 import java.util.*
 
@@ -308,11 +307,11 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = super.matches(method, superMethodsSearcher) && method.parameterList.let { it.parametersCount == 2 && it.parameters.last().isVarArgs }
 
         override fun ConvertCallData.convertCall(): Expression? {
-            if (arguments.size == 2 && arguments.last().isAssignableToCharSequenceArray()) {
-                return STRING_JOIN.convertCall(this)
+            return if (arguments.size == 2 && arguments.last().isAssignableToCharSequenceArray()) {
+                STRING_JOIN.convertCall(this)
             }
             else {
-                return MethodCallExpression.buildNonNull(
+                MethodCallExpression.buildNonNull(
                         MethodCallExpression.buildNonNull(null, "arrayOf", ArgumentList.withNoPrototype(codeConverter.convertExpressionsInList(arguments.drop(1)))).assignNoPrototype(),
                         "joinToString",
                         ArgumentList.withNoPrototype(codeConverter.convertExpressionsInList(arguments.take(1)))
@@ -346,7 +345,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     STRING_GET_BYTES(JAVA_LANG_STRING, "getBytes", null) {
         override fun ConvertCallData.convertCall(): MethodCallExpression {
-            val charsetArg = arguments.lastOrNull()?.check { it.type?.canonicalText == JAVA_LANG_STRING }
+            val charsetArg = arguments.lastOrNull()?.takeIf { it.type?.canonicalText == JAVA_LANG_STRING }
             val convertedArguments = codeConverter.convertExpressionsInList(arguments).map {
                 if (charsetArg != null && it.prototypes?.singleOrNull()?.element == charsetArg)
                     MethodCallExpression.buildNonNull(null, "charset", ArgumentList.withNoPrototype(it)).assignNoPrototype()
@@ -477,7 +476,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     private fun castQualifierToType(codeConverter: CodeConverter, qualifier: PsiExpression, type: String): TypeCastExpression? {
         val convertedQualifier = codeConverter.convertExpression(qualifier)
         val qualifierType = codeConverter.typeConverter.convertType(qualifier.type)
-        val typeArgs = if (qualifierType is ClassType) qualifierType.referenceElement.typeArgs else emptyList()
+        val typeArgs = (qualifierType as? ClassType)?.referenceElement?.typeArgs ?: emptyList()
         val referenceElement = ReferenceElement(Identifier.withNoPrototype(type), typeArgs).assignNoPrototype()
         val newType = ClassType(referenceElement, Nullability.Default, codeConverter.settings).assignNoPrototype()
         return TypeCastExpression(newType, convertedQualifier).assignNoPrototype()
@@ -523,7 +522,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
             val candidates = valuesByName[method.name] ?: return null
             return candidates
                     .firstOrNull { it.matches(method, services.superMethodsSearcher) }
-                    ?.check { it.parameterCount == null || it.parameterCount == argumentCount } // if parameterCount is specified we should make sure that argument count is correct
+                    ?.takeIf { it.parameterCount == null || it.parameterCount == argumentCount } // if parameterCount is specified we should make sure that argument count is correct
         }
     }
 }

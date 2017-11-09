@@ -1,4 +1,4 @@
-JetFile: Import.kts
+KtFile: Import.kts
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST
@@ -23,9 +23,9 @@ JetFile: Import.kts
         PsiElement(IDENTIFIER)('ddd')
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
-  PsiWhiteSpace('\n\n')
   SCRIPT
     BLOCK
+      PsiWhiteSpace('\n\n')
       FUN
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')

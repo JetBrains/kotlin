@@ -1,0 +1,2 @@
+val x = "World"
+val y = <spot>"""Hello $x"""</spot>

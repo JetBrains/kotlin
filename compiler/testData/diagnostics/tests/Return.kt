@@ -6,10 +6,10 @@ class A {
             if (1 < 2)
                 return@inner
             else
-                <!RETURN_NOT_ALLOWED!>return@outer<!>
+            <!RETURN_NOT_ALLOWED!>return@outer<!>
         }
         if (1 < 2)
-            <!NOT_A_RETURN_LABEL!>return@A<!>
+            return<!UNRESOLVED_REFERENCE!>@A<!>
         else if (2 < 3)
             return<!UNRESOLVED_REFERENCE!>@inner<!>
         return@outer

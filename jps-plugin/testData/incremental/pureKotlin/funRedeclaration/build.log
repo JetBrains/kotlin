@@ -10,4 +10,4 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Conflicting overloads: public fun function(): Unit defined in test, public fun function(): Unit defined in test
+Conflicting overloads: public fun function(): Unit defined in test in file fun2.kt, public fun function(): Unit defined in test

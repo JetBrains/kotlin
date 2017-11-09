@@ -7,9 +7,4 @@ class A {
         val Int.extBar: Int get() = 1
     }
 
-    class B {
-        fun test() {
-            1.extFoo(1.extBar)
-        }
-    }
 }

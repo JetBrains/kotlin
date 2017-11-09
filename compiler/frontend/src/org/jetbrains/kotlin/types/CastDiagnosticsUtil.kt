@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,21 @@
 
 package org.jetbrains.kotlin.types
 
-import com.google.common.base.Predicates
 import com.google.common.collect.Maps
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 object CastDiagnosticsUtil {
 
@@ -38,6 +44,7 @@ object CastDiagnosticsUtil {
     ): Boolean {
         val rhsNullable = TypeUtils.isNullableType(rhsType)
         val lhsNullable = TypeUtils.isNullableType(lhsType)
+        if (KotlinBuiltIns.isNothing(lhsType)) return true
         if (KotlinBuiltIns.isNullableNothing(lhsType) && !rhsNullable) return false
         if (KotlinBuiltIns.isNothing(rhsType)) return false
         if (KotlinBuiltIns.isNullableNothing(rhsType)) return lhsNullable
@@ -63,13 +70,13 @@ object CastDiagnosticsUtil {
      * (i.e. java.lang.String -> kotlin.String) and ignore mappings that go the other way.
      */
     private fun isRelated(a: KotlinType, b: KotlinType, platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {
-        val aClasses = mapToPlatformClasses(a, platformToKotlinClassMap)
-        val bClasses = mapToPlatformClasses(b, platformToKotlinClassMap)
+        val aClasses = mapToPlatformIndependentClasses(a, platformToKotlinClassMap)
+        val bClasses = mapToPlatformIndependentClasses(b, platformToKotlinClassMap)
 
         return aClasses.any { DescriptorUtils.isSubtypeOfClass(b, it) } || bClasses.any { DescriptorUtils.isSubtypeOfClass(a, it) }
     }
 
-    private fun mapToPlatformClasses(
+    private fun mapToPlatformIndependentClasses(
             type: KotlinType,
             platformToKotlinClassMap: PlatformToKotlinClassMap
     ): List<ClassDescriptor> {
@@ -89,16 +96,28 @@ object CastDiagnosticsUtil {
      */
     @JvmStatic
     fun isCastErased(supertype: KotlinType, subtype: KotlinType, typeChecker: KotlinTypeChecker): Boolean {
+        val isNonReifiedTypeParameter = TypeUtils.isNonReifiedTypeParameter(subtype)
+        val isUpcast = typeChecker.isSubtypeOf(supertype, subtype)
+
+        // here we want to restrict cases such as `x is T` for x = T?, when T might have nullable upper bound
+        if (isNonReifiedTypeParameter && !isUpcast) {
+            // hack to save previous behavior in case when `x is T`, where T is not nullable, see IsErasedNullableTasT.kt
+            val nullableToDefinitelyNotNull = !TypeUtils.isNullableType(subtype) && supertype.makeNotNullable() == subtype
+            if (!nullableToDefinitelyNotNull) {
+                return true
+            }
+        }
+
         // cast between T and T? is always OK
         if (supertype.isMarkedNullable || subtype.isMarkedNullable) {
             return isCastErased(TypeUtils.makeNotNullable(supertype), TypeUtils.makeNotNullable(subtype), typeChecker)
         }
 
         // if it is a upcast, it's never erased
-        if (typeChecker.isSubtypeOf(supertype, subtype)) return false
+        if (isUpcast) return false
 
         // downcasting to a non-reified type parameter is always erased
-        if (TypeUtils.isNonReifiedTypeParameter(subtype)) return true
+        if (isNonReifiedTypeParameter) return true
 
         // Check that we are actually casting to a generic type
         // NOTE: this does not account for 'as Array<List<T>>'
@@ -146,18 +165,17 @@ object CastDiagnosticsUtil {
         val variables = subtypeWithVariables.constructor.parameters
         val variableConstructors = variables.map { descriptor -> descriptor.typeConstructor }.toSet()
 
-        val substitution: MutableMap<TypeConstructor, TypeProjection>
-        if (supertypeWithVariables != null) {
+        val substitution: MutableMap<TypeConstructor, TypeProjection> = if (supertypeWithVariables != null) {
             // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
             val solution = TypeUnifier.unify(
-                    TypeProjectionImpl(supertype), TypeProjectionImpl(supertypeWithVariables),
-                    Predicates.`in`(variableConstructors))
-            substitution = Maps.newHashMap(solution.substitution)
+                    TypeProjectionImpl(supertype), TypeProjectionImpl(supertypeWithVariables), variableConstructors::contains
+            )
+            Maps.newHashMap(solution.substitution)
         }
         else {
             // If there's no corresponding supertype, no variables are determined
             // This may be OK, e.g. in case 'Any as List<*>'
-            substitution = Maps.newHashMapWithExpectedSize<TypeConstructor, TypeProjection>(variables.size)
+            Maps.newHashMapWithExpectedSize<TypeConstructor, TypeProjection>(variables.size)
         }
 
         // If some of the parameters are not determined by unification, it means that these parameters are lost,
@@ -181,4 +199,84 @@ object CastDiagnosticsUtil {
     }
 
     private fun allParametersReified(subtype: KotlinType) = subtype.constructor.parameters.all { it.isReified }
+
+    fun castIsUseless(
+            expression: KtBinaryExpressionWithTypeRHS,
+            context: ExpressionTypingContext,
+            targetType: KotlinType,
+            actualType: KotlinType
+    ): Boolean {
+        // Here: x as? Type <=> x as Type?
+        val refinedTargetType = if (KtPsiUtil.isSafeCast(expression)) TypeUtils.makeNullable(targetType) else targetType
+        val possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(expression.left, actualType, context)
+        return isRefinementUseless(possibleTypes, refinedTargetType, shouldCheckForExactType(expression, context.expectedType))
+    }
+
+    // It is a warning "useless cast" for `as` and a warning "redundant is" for `is`
+    fun isRefinementUseless(
+            possibleTypes: Collection<KotlinType>,
+            targetType: KotlinType,
+            shouldCheckForExactType: Boolean
+    ): Boolean {
+        val intersectedType = TypeIntersector.intersectTypes(possibleTypes.map { it.upperIfFlexible() }) ?: return false
+
+        return if (shouldCheckForExactType)
+            isExactTypeCast(intersectedType, targetType)
+        else
+            isUpcast(intersectedType, targetType)
+    }
+
+    private fun shouldCheckForExactType(expression: KtBinaryExpressionWithTypeRHS, expectedType: KotlinType): Boolean {
+        if (TypeUtils.noExpectedType(expectedType)) {
+            return checkExactTypeForUselessCast(expression)
+        }
+
+        // If expected type is parameterized, then cast has an effect on inference, therefore it isn't a useless cast
+        // Otherwise, we are interested in situation like: `a: Any? = 1 as Int?`
+        return TypeUtils.isDontCarePlaceholder(expectedType)
+    }
+
+    private fun isExactTypeCast(candidateType: KotlinType, targetType: KotlinType): Boolean {
+        return candidateType == targetType && candidateType.isExtensionFunctionType == targetType.isExtensionFunctionType
+    }
+
+    private fun isUpcast(candidateType: KotlinType, targetType: KotlinType): Boolean {
+        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateType, targetType)) return false
+
+        if (candidateType.isFunctionType && targetType.isFunctionType) {
+            return candidateType.isExtensionFunctionType == targetType.isExtensionFunctionType
+        }
+
+        return true
+    }
+
+    // Casting an argument or a receiver to a supertype may be useful to select an exact overload of a method.
+    // Casting to a supertype in other contexts is unlikely to be useful.
+    private fun checkExactTypeForUselessCast(expression: KtBinaryExpressionWithTypeRHS): Boolean {
+        var parent = expression.parent
+        while (parent is KtParenthesizedExpression ||
+               parent is KtLabeledExpression ||
+               parent is KtAnnotatedExpression) {
+            parent = parent.parent
+        }
+
+        return when (parent) {
+            is KtValueArgument -> true
+
+            is KtQualifiedExpression -> {
+                val receiver = parent.receiverExpression
+                PsiTreeUtil.isAncestor(receiver, expression, false)
+            }
+
+            // in binary expression, left argument can be a receiver and right an argument
+            // in unary expression, left argument can be a receiver
+            is KtBinaryExpression, is KtUnaryExpression -> true
+
+            // Previously we've checked that there is no expected type, therefore cast in property or
+            // in function has an effect on inference and thus isn't useless
+            is KtProperty, is KtPropertyAccessor, is KtNamedFunction, is KtFunctionLiteral -> true
+
+            else -> false
+        }
+    }
 }

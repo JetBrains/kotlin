@@ -1,6 +1,6 @@
 // SUGGESTED_NAMES: i, getKm
 // PARAM_TYPES: kotlin.Int
-// PARAM_DESCRIPTOR: public val meters: kotlin.Int? defined in root package
+// PARAM_DESCRIPTOR: public val meters: kotlin.Int? defined in root package in file topLevelValUnderSmartCast.kt
 val meters: Int? = 1
 
 fun test() {

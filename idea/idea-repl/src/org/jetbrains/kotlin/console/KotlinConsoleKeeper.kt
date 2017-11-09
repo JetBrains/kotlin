@@ -24,7 +24,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkType
-import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderEnumerator
@@ -57,11 +56,10 @@ class KotlinConsoleKeeper(val project: Project) {
 
     private fun createCommandLine(module: Module): GeneralCommandLine? {
         val javaParameters = createJavaParametersWithSdk(module)
-        val sdk = javaParameters.jdk ?: return null
-        val sdkType = sdk.sdkType
-        val exePath = (sdkType as JavaSdkType).getVMExecutablePath(sdk)
 
-        val commandLine = JdkUtil.setupJVMCommandLine(exePath, javaParameters, true)
+        javaParameters.mainClass = "dummy"
+
+        val commandLine = javaParameters.toCommandLine()
 
         val paramList = commandLine.parametersList
         paramList.clearAll()
@@ -69,10 +67,9 @@ class KotlinConsoleKeeper(val project: Project) {
         // use to debug repl process
         //paramList.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
 
-        val kotlinPaths = PathUtil.getKotlinPathsForIdeaPlugin()
-        val replClassPath = listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
-                .map { it.absolutePath }
-                .joinToString(File.pathSeparator)
+        val kotlinPaths = PathUtil.kotlinPathsForIdeaPlugin
+        val replClassPath = listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
+                .joinToString(File.pathSeparator) { it.absolutePath }
 
         paramList.add("-cp")
         paramList.add(replClassPath)

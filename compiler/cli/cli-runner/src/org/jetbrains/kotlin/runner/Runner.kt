@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.runner
 
+import java.net.URL
+
 interface Runner {
-    fun run(classpath: Classpath, arguments: List<String>)
+    fun run(classpath: List<URL>, arguments: List<String>)
 }

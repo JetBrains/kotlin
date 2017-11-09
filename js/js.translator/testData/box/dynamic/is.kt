@@ -1,10 +1,10 @@
+// EXPECTED_REACHABLE_NODES: 1126
 // FILE: is.kt
 package foo
 
 class A
 
-@native
-class B
+external class B
 
 fun box(): String {
     val a: dynamic = A()

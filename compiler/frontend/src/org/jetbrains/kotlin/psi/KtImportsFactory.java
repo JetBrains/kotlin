@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.ImportPath;
 
 import java.util.Collection;
@@ -37,13 +35,13 @@ public class KtImportsFactory {
     }
 
     @NotNull
-    public KtImportDirective createImportDirective(@NotNull ImportPath importPath) {
+    private KtImportDirective createImportDirective(@NotNull ImportPath importPath) {
         KtImportDirective directive = importsCache.get(importPath);
         if (directive != null) {
             return directive;
         }
 
-        KtImportDirective createdDirective = KtPsiFactoryKt.KtPsiFactory(project).createImportDirective(importPath);
+        KtImportDirective createdDirective = KtPsiFactoryKt.KtPsiFactory(project, false).createImportDirective(importPath);
         importsCache.put(importPath, createdDirective);
 
         return createdDirective;
@@ -51,13 +49,6 @@ public class KtImportsFactory {
 
     @NotNull
     public Collection<KtImportDirective> createImportDirectives(@NotNull Collection<ImportPath> importPaths) {
-        return Collections2.transform(importPaths,
-                                      new Function<ImportPath, KtImportDirective>() {
-                                          @Override
-                                          public KtImportDirective apply(@Nullable ImportPath path) {
-                                              assert path != null;
-                                              return createImportDirective(path);
-                                          }
-                                      });
+        return CollectionsKt.map(importPaths, this::createImportDirective);
     }
 }

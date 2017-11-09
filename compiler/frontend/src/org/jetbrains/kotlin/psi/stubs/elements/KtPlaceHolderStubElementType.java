@@ -29,14 +29,13 @@ import java.io.IOException;
 
 public class KtPlaceHolderStubElementType<T extends KtElementImplStub<? extends StubElement<?>>> extends
                                                                                                  KtStubElementType<KotlinPlaceHolderStub<T>, T> {
-
     public KtPlaceHolderStubElementType(@NotNull @NonNls String debugName, @NotNull Class<T> psiClass) {
         super(debugName, psiClass, KotlinPlaceHolderStub.class);
     }
 
     @Override
     public KotlinPlaceHolderStub<T> createStub(@NotNull T psi, StubElement parentStub) {
-        return new KotlinPlaceHolderStubImpl<T>(parentStub, this);
+        return new KotlinPlaceHolderStubImpl<>(parentStub, this);
     }
 
     @Override
@@ -47,6 +46,6 @@ public class KtPlaceHolderStubElementType<T extends KtElementImplStub<? extends 
     @NotNull
     @Override
     public KotlinPlaceHolderStub<T> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new KotlinPlaceHolderStubImpl<T>(parentStub, this);
+        return new KotlinPlaceHolderStubImpl<>(parentStub, this);
     }
 }

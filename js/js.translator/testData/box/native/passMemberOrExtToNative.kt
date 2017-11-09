@@ -1,3 +1,6 @@
+// TODO: Unmute when extension functions are supported in external declarations.
+// IGNORE_BACKEND: JS
+
 package foo
 
 open class A(val v: String) {
@@ -8,8 +11,7 @@ class B(v: String): A(v) {
     override fun m(i:Int, s:String): String = "B.m ${this.v} $i $s"
 }
 
-@native
-fun bar(a: A, extLambda: A.(Int, String) -> String): String = noImpl
+external fun bar(a: A, extLambda: A.(Int, String) -> String): String = definedExternally
 
 fun A.topLevelExt(i:Int, s:String): String = "A::topLevelExt ${this.v} $i $s"
 

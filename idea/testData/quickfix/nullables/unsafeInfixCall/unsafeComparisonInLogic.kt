@@ -1,9 +1,10 @@
 // "Replace with safe (?.) call" "false"
 // ACTION: Add non-null asserted (!!) call
 // ACTION: Flip '>'
+// ACTION: Replace '&&' with '||'
 // ACTION: Replace overloaded operator with function call
 // ACTION: Simplify boolean expression
-// ERROR: Infix call corresponds to a dot-qualified call 'w?.x.compareTo(42)' which is not allowed on a nullable receiver 'w?.x'. Use '?.'-qualified call instead
+// ERROR: Operator call corresponds to a dot-qualified call 'w?.x.compareTo(42)' which is not allowed on a nullable receiver 'w?.x'.
 
 class Wrapper(val x: Int)
 

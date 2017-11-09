@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.JsNode
+import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import java.util.*
 

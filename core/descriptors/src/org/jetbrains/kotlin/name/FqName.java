@@ -98,6 +98,10 @@ public final class FqName {
         return fqName.pathSegments();
     }
 
+    public boolean startsWith(@NotNull Name segment) {
+        return fqName.startsWith(segment);
+    }
+
     @NotNull
     public static FqName topLevel(@NotNull Name shortName) {
         return new FqName(FqNameUnsafe.topLevel(shortName));

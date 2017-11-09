@@ -1,0 +1,8 @@
+package
+
+public fun initializationWithReceiver(/*0*/ y: kotlin.String): kotlin.Unit
+public fun initializationWithSafeCall(/*0*/ y: kotlin.String?): kotlin.Unit
+public fun sanityCheck(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String): kotlin.Int
+public fun </*0*/ T, /*1*/ R> T.myLet(/*0*/ block: (T) -> R): R
+    CallsInPlace(block, EXACTLY_ONCE)
+

@@ -16,23 +16,19 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
-import com.intellij.openapi.util.Condition;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
-import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.translate.context.Namer;
-import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
@@ -40,7 +36,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
-import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 
 public final class JsDescriptorUtils {
@@ -82,14 +77,11 @@ public final class JsDescriptorUtils {
     @NotNull
     public static List<KotlinType> getSupertypesWithoutFakes(ClassDescriptor descriptor) {
         Collection<KotlinType> supertypes = descriptor.getTypeConstructor().getSupertypes();
-        return ContainerUtil.filter(supertypes, new Condition<KotlinType>() {
-            @Override
-            public boolean value(KotlinType type) {
-                ClassDescriptor classDescriptor = getClassDescriptorForType(type);
+        return ContainerUtil.filter(supertypes, type -> {
+            ClassDescriptor classDescriptor = getClassDescriptorForType(type);
 
-                return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString()) &&
-                       !(classDescriptor.getKind() == ClassKind.INTERFACE && isNativeObject(classDescriptor));
-            }
+            return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString()) &&
+                   !(classDescriptor.getKind() == ClassKind.INTERFACE && isNativeObject(classDescriptor));
         });
     }
 
@@ -133,12 +125,13 @@ public final class JsDescriptorUtils {
     }
 
     private static boolean isDefaultAccessor(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
-        return accessorDescriptor == null || accessorDescriptor.isDefault();
+        return accessorDescriptor == null || accessorDescriptor.isDefault() &&
+               !(accessorDescriptor instanceof PropertySetterDescriptor && accessorDescriptor.getCorrespondingProperty().isLateInit());
     }
 
     public static boolean sideEffectsPossibleOnRead(@NotNull PropertyDescriptor property) {
-        return !isDefaultAccessor(property.getGetter()) || ModalityKt.isOverridableOrOverrides(property) ||
-                isStaticInitializationPossible(property);
+        return DynamicCallsKt.isDynamic(property) || !isDefaultAccessor(property.getGetter()) ||
+               ModalityKt.isOverridableOrOverrides(property) || isStaticInitializationPossible(property);
     }
 
     private static boolean isStaticInitializationPossible(PropertyDescriptor property) {
@@ -150,46 +143,54 @@ public final class JsDescriptorUtils {
         return !isExtension(propertyDescriptor) &&
                isDefaultAccessor(propertyDescriptor.getGetter()) &&
                isDefaultAccessor(propertyDescriptor.getSetter()) &&
-               !TranslationUtils.shouldGenerateAccessors(propertyDescriptor) &&
+               !TranslationUtils.shouldAccessViaFunctions(propertyDescriptor) &&
                !ModalityKt.isOverridableOrOverrides(propertyDescriptor);
-    }
-
-    public static boolean isBuiltin(@NotNull DeclarationDescriptor descriptor) {
-        PackageFragmentDescriptor containingPackageFragment = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor.class);
-        return org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns(descriptor).isBuiltInPackageFragment(containingPackageFragment);
-    }
-
-    @Nullable
-    public static Name getNameIfStandardType(@NotNull KtExpression expression, @NotNull TranslationContext context) {
-        KotlinType type = context.bindingContext().getType(expression);
-        return type != null ? DescriptorUtilsKt.getNameIfStandardType(type) : null;
     }
 
     @NotNull
     public static String getModuleName(@NotNull DeclarationDescriptor descriptor) {
-        String externalModuleName = getExternalModuleName(descriptor);
-        if (externalModuleName != null) return externalModuleName;
+        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(findRealInlineDeclaration(descriptor));
+        if (DescriptorUtils.getContainingModule(descriptor) == moduleDescriptor.getBuiltIns().getBuiltInsModule()) {
+            return Namer.KOTLIN_LOWER_NAME;
+        }
+        String moduleName = moduleDescriptor.getName().asString();
+        return moduleName.substring(1, moduleName.length() - 1);
+    }
 
-        return getModuleNameFromDescriptorName(descriptor);
+    @NotNull
+    public static DeclarationDescriptor findRealInlineDeclaration(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof FunctionDescriptor) {
+            FunctionDescriptor d = (FunctionDescriptor) descriptor;
+            if (d.getKind().isReal() || !d.isInline()) return descriptor;
+            CallableMemberDescriptor real = findRealDeclaration(d);
+            assert real != null : "Couldn't find definition of a fake inline descriptor " + descriptor;
+            return real;
+        }
+        return descriptor;
     }
 
     @Nullable
-    public static String getExternalModuleName(@NotNull DeclarationDescriptor descriptor) {
-        if (isBuiltin(descriptor)) return Namer.KOTLIN_LOWER_NAME;
+    public static CallableMemberDescriptor findRealDeclaration(@NotNull CallableMemberDescriptor descriptor) {
+        if (descriptor.getModality() == Modality.ABSTRACT) return null;
+        if (descriptor.getKind().isReal()) return descriptor;
 
-        PsiElement element = descriptorToDeclaration(descriptor);
-        if (element == null && descriptor instanceof PropertyAccessorDescriptor) {
-            element = descriptorToDeclaration(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
+        for (CallableMemberDescriptor o : descriptor.getOverriddenDescriptors()) {
+            CallableMemberDescriptor child = findRealDeclaration(o);
+            if (child != null) {
+                return child;
+            }
         }
-
-        if (element == null) return getModuleNameFromDescriptorName(descriptor);
-
-        return element.getContainingFile().getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME);
+        return null;
     }
 
-    private static String getModuleNameFromDescriptorName(DeclarationDescriptor descriptor) {
-        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(descriptor);
-        String moduleName = moduleDescriptor.getName().asString();
-        return moduleName.substring(1, moduleName.length() - 1);
+    public static boolean isImmediateSubtypeOfError(@NotNull ClassDescriptor descriptor) {
+        if (!isExceptionClass(descriptor)) return false;
+        ClassDescriptor superClass = DescriptorUtilsKt.getSuperClassOrAny(descriptor);
+        return TypeUtilsKt.isNotNullThrowable(superClass.getDefaultType()) || AnnotationsUtils.isNativeObject(superClass);
+    }
+
+    public static boolean isExceptionClass(@NotNull ClassDescriptor descriptor) {
+        ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
+        return TypeUtilsKt.isSubtypeOf(descriptor.getDefaultType(), module.getBuiltIns().getThrowable().getDefaultType());
     }
 }

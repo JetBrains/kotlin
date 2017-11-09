@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1379
 
 class ArrayWrapper<T>() {
     val contents = ArrayList<T>()

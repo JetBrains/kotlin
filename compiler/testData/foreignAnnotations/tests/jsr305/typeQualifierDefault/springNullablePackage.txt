@@ -1,0 +1,47 @@
+package test
+
+public open class A {
+    public constructor A()
+    public final var field: kotlin.String!
+    public open fun bar(): kotlin.String
+    @spr.Nullable public open fun baz(): kotlin.collections.(Mutable)List<kotlin.String!>?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ x: kotlin.String, /*1*/ @spr.Nullable y: kotlin.CharSequence?): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package
+
+public fun main(/*0*/ a: test.A): kotlin.Unit
+
+package spr {
+
+    @kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @javax.annotation.Nonnull @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.METHOD, ElementType.PARAMETER}) public final annotation class NonNullApi : kotlin.Annotation {
+        public constructor NonNullApi()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @javax.annotation.Nonnull(when = When.MAYBE) @javax.annotation.meta.TypeQualifierNickname public final annotation class Nullable : kotlin.Annotation {
+        public constructor Nullable()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package test {
+
+    public open class A {
+        public constructor A()
+        public final var field: kotlin.String!
+        public open fun bar(): kotlin.String
+        @spr.Nullable public open fun baz(): kotlin.collections.(Mutable)List<kotlin.String!>?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(/*0*/ x: kotlin.String, /*1*/ @spr.Nullable y: kotlin.CharSequence?): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

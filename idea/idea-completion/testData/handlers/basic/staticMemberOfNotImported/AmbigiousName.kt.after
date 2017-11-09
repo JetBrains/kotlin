@@ -1,0 +1,9 @@
+package buz
+
+import foo.FooBar
+
+fun foo() {
+    FooBar.inFoo()
+}
+
+// ELEMENT: inFoo

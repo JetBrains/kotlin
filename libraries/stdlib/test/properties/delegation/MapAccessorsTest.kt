@@ -1,9 +1,6 @@
 package test.properties.delegation.map
 
-import java.util.*
-import kotlin.properties.*
 import kotlin.test.*
-import org.junit.Test as test
 
 class ValByMapExtensionsTest {
     val map: Map<String, String> = hashMapOf("a" to "all", "b" to "bar", "c" to "code")
@@ -20,7 +17,7 @@ class ValByMapExtensionsTest {
     val x: Double by genericMap
 
 
-    @test fun doTest() {
+    @Test fun doTest() {
         assertEquals("all", a)
         assertEquals("bar", b)
         assertEquals("code", c)
@@ -31,7 +28,6 @@ class ValByMapExtensionsTest {
         assertFailsWith<NoSuchElementException> { d }
     }
 }
-
 
 
 class VarByMapExtensionsTest {
@@ -45,7 +41,7 @@ class VarByMapExtensionsTest {
     var a2: String by map2.withDefault { "empty" }
     //var x: Int by map2  // prohibited by type system
 
-    @test fun doTest() {
+    @Test fun doTest() {
         assertEquals("all", a)
         assertEquals(null, b)
         assertEquals(1, c)
@@ -56,12 +52,6 @@ class VarByMapExtensionsTest {
         assertEquals("all", a2)
         map2.remove("a2")
         assertEquals("empty", a2)
-
-        map["c"] = "string"
-        // fails { c }  // does not fail in JS due to KT-8135
-
-        map["a"] = null
-        a // fails { a } // does not fail due to KT-8135
 
         assertFailsWith<NoSuchElementException> { d }
         map["d"] = null

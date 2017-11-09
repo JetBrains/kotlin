@@ -9,8 +9,8 @@ package lol {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final operator fun minusAssign(/*0*/ other: lol.B): kotlin.String
-        public final operator fun modAssign(/*0*/ other: lol.B): kotlin.String
         public final operator fun plusAssign(/*0*/ other: lol.B): kotlin.String
+        public final operator fun remAssign(/*0*/ other: lol.B): kotlin.String
         public final operator fun timesAssign(/*0*/ other: lol.B): kotlin.String
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

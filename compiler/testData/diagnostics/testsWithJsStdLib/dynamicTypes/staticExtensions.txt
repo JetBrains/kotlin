@@ -1,0 +1,5 @@
+package
+
+public val kotlin.Any?.staticProperty: kotlin.Int
+public fun test(/*0*/ d: dynamic, /*1*/ staticParameter: kotlin.Any?.() -> kotlin.Unit): kotlin.Unit
+public fun kotlin.Any?.staticExtension(): kotlin.Int

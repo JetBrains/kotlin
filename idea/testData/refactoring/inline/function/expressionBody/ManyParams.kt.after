@@ -1,0 +1,14 @@
+fun sideEffect() {
+    println("qq")
+}
+
+fun effect(): String {
+    sideEffect()
+    return "effect"
+}
+
+fun callManySimple() {
+    effect()
+    effect()
+    println(effect())
+}

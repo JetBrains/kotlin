@@ -1,0 +1,64 @@
+FILE /kt16905.kt
+  CLASS CLASS Outer
+    $this: VALUE_PARAMETER this@Outer: Outer
+    CONSTRUCTOR public constructor Outer()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
+    CLASS CLASS Inner
+      $this: VALUE_PARAMETER this@Inner: Inner
+      CONSTRUCTOR public constructor Inner()
+        $outer: VALUE_PARAMETER this@Outer: Outer
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
+    CLASS CLASS InnerDerived0
+      $this: VALUE_PARAMETER this@InnerDerived0: InnerDerived0
+      CONSTRUCTOR public constructor InnerDerived0()
+        $outer: VALUE_PARAMETER this@Outer: Outer
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
+            $this: GET_VAR 'this@Outer: Outer' type=Outer origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='InnerDerived0'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
+    CLASS CLASS InnerDerived1
+      $this: VALUE_PARAMETER this@InnerDerived1: InnerDerived1
+      CONSTRUCTOR public constructor InnerDerived1()
+        $outer: VALUE_PARAMETER this@Outer: Outer
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
+            $this: GET_VAR 'this@Outer: Outer' type=Outer origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='InnerDerived1'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  TYPEALIAS typealias OI = Outer.Inner type=Outer.Inner
+  FUN public fun test(): OI /* = Outer.Inner */
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(): OI /* = Outer.Inner */'
+        CALL 'constructor Inner()' type=Outer.Inner origin=null
+          $this: CALL 'constructor Outer()' type=Outer origin=null

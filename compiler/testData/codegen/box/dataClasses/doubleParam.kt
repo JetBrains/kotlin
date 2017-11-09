@@ -1,6 +1,7 @@
-import java.util.HashSet
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
 
-val NAN = java.lang.Double.NaN
+val NAN = Double.NaN
 
 data class A(val x: Double)
 

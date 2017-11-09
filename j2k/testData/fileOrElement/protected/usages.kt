@@ -19,11 +19,12 @@ class BaseProtectedConstructor {
 }
 
 internal class DerivedSamePackage {
+
+    private val i = BaseProtectedConstructor().usageInPropertyInitializer()
+
     init {
         BaseProtectedConstructor().usageInConstructor()
     }
-
-    private val i = BaseProtectedConstructor().usageInPropertyInitializer()
 
     fun usage() {
         BaseProtectedConstructor().usageInMethod()

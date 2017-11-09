@@ -26,8 +26,8 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils;
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder;
+import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
@@ -50,13 +50,16 @@ public class StubClassBuilder extends AbstractClassBuilder {
         }
     };
     private final StubElement parent;
+    private final PsiJavaFileStub fileStub;
     private StubBuildingVisitor v;
     private final Stack<StubElement> parentStack;
     private boolean isPackageClass = false;
+    private int memberIndex = 0;
 
-    public StubClassBuilder(@NotNull Stack<StubElement> parentStack) {
+    public StubClassBuilder(@NotNull Stack<StubElement> parentStack, @NotNull PsiJavaFileStub fileStub) {
         this.parentStack = parentStack;
         this.parent = parentStack.peek();
+        this.fileStub = fileStub;
     }
 
     @NotNull
@@ -78,7 +81,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
     ) {
         assert v == null : "defineClass() called twice?";
 
-        v = new StubBuildingVisitor<Object>(null, EMPTY_STRATEGY, parent, access, calculateShortName(name));
+        v = new StubBuildingVisitor<>(null, EMPTY_STRATEGY, parent, access, calculateShortName(name));
 
         super.defineClass(origin, version, access, name, signature, superName, interfaces);
 
@@ -101,7 +104,8 @@ public class StubClassBuilder extends AbstractClassBuilder {
     @Nullable
     private String calculateShortName(@NotNull String internalName) {
         if (parent instanceof PsiJavaFileStub) {
-            String packagePrefix = getPackageInternalNamePrefix((PsiJavaFileStub) parent);
+            assert parent == fileStub;
+            String packagePrefix = getPackageInternalNamePrefix();
             assert internalName.startsWith(packagePrefix) : internalName + " : " + packagePrefix;
             return internalName.substring(packagePrefix.length());
         }
@@ -117,8 +121,6 @@ public class StubClassBuilder extends AbstractClassBuilder {
 
     @Nullable
     private String getClassInternalNamePrefix(@NotNull PsiClassStub classStub) {
-        PsiJavaFileStub fileStub = (PsiJavaFileStub) parentStack.get(0);
-
         String packageName = fileStub.getPackageName();
 
         String classStubQualifiedName = classStub.getQualifiedName();
@@ -134,7 +136,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
 
 
     @NotNull
-    private static String getPackageInternalNamePrefix(@NotNull PsiJavaFileStub fileStub) {
+    private String getPackageInternalNamePrefix() {
         String packageName = fileStub.getPackageName();
         if (packageName.isEmpty()) {
             return "";
@@ -196,6 +198,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
         }
 
         last.putUserData(ClsWrapperStubPsiFactory.ORIGIN, LightElementOriginKt.toLightMemberOrigin(origin));
+        last.putUserData(MemberIndex.KEY, new MemberIndex(memberIndex++));
     }
 
     @Override

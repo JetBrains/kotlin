@@ -1,0 +1,5 @@
+fun foo(n: Int, action: Int.(<caret>) -> Int) = n.action()
+
+fun test() {
+    foo(1) { this + 1 }
+}

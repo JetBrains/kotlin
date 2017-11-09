@@ -1,4 +1,4 @@
-JetFile: LineCommentForFirstDeclaration.kt
+KtFile: LineCommentForFirstDeclaration.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

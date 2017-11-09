@@ -84,10 +84,11 @@ public class SamWrapperCodegen {
                 Modality.FINAL,
                 ClassKind.CLASS,
                 Collections.singleton(samType.getType()),
-                SourceElement.NO_SOURCE
+                SourceElement.NO_SOURCE,
+                /* isExternal = */ false
         );
         // e.g. compare(T, T)
-        SimpleFunctionDescriptor erasedInterfaceFunction = samType.getAbstractMethod().getOriginal().copy(
+        SimpleFunctionDescriptor erasedInterfaceFunction = samType.getOriginalAbstractMethod().copy(
                 classDescriptor,
                 Modality.FINAL,
                 Visibilities.PUBLIC,
@@ -106,7 +107,7 @@ public class SamWrapperCodegen {
         );
         cv.visitSource(file.getName(), null);
 
-        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cv);
+        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cv, state);
 
         // e.g. ASM type for Function2
         Type functionAsmType = typeMapper.mapType(functionType);
@@ -144,7 +145,7 @@ public class SamWrapperCodegen {
             iv.putfield(ownerType.getInternalName(), FUNCTION_FIELD_NAME, functionType.getDescriptor());
 
             iv.visitInsn(RETURN);
-            FunctionCodegen.endVisit(iv, "constructor of SAM wrapper", null);
+            FunctionCodegen.endVisit(iv, "constructor of SAM wrapper");
         }
     }
 
@@ -166,7 +167,7 @@ public class SamWrapperCodegen {
 
         // generate sam bridges
         // TODO: erasedInterfaceFunction is actually not an interface function, but function in generated class
-        SimpleFunctionDescriptor originalInterfaceErased = samType.getAbstractMethod().getOriginal();
+        SimpleFunctionDescriptor originalInterfaceErased = samType.getOriginalAbstractMethod();
         SimpleFunctionDescriptorImpl descriptorForBridges = SimpleFunctionDescriptorImpl
                 .create(erasedInterfaceFunction.getContainingDeclaration(), erasedInterfaceFunction.getAnnotations(), originalInterfaceErased.getName(),
                         CallableMemberDescriptor.Kind.DECLARATION, erasedInterfaceFunction.getSource());

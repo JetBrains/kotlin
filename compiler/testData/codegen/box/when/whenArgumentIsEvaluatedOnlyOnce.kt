@@ -4,7 +4,7 @@ fun inc(): Int {
     return 0
 }
 fun box(): String {
-  val al = java.util.ArrayList<Int>()
+  val al = ArrayList<Int>()
   when (inc()) {
       in al -> return "fail 1"
       else -> {}

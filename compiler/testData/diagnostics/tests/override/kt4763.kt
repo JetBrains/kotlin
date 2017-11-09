@@ -6,6 +6,6 @@ open class B {
     open fun f(): CharSequence = "charSequence"
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class C<!> : B(), A
+<!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class C<!> : B(), A
 
-val d: A = <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object<!> : B(), A {}
+val d: A = <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>object<!> : B(), A {}

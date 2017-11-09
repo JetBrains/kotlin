@@ -26,13 +26,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 public class ProjectDescriptorWithStdlibSources extends KotlinWithJdkAndRuntimeLightProjectDescriptor {
+    @NotNull
     public static final ProjectDescriptorWithStdlibSources INSTANCE = new ProjectDescriptorWithStdlibSources();
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
         super.configureModule(module, model);
 
-        Library library = model.getModuleLibraryTable().getLibraryByName(LIBRARY_NAME);
+        Library library = model.getModuleLibraryTable().getLibraryByName(Companion.getLIBRARY_NAME());
         assert library != null;
         Library.ModifiableModel modifiableModel = library.getModifiableModel();
         modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("libraries/stdlib/src")), OrderRootType.SOURCES);

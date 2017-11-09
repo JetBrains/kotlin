@@ -7,4 +7,4 @@ fun View.a() {
     val button = this.login<caret>
 }
 
-// EXIST: login
+// EXIST: { lookupString:"login", tailText: " from layout.xml for View (Android Extensions)", typeText:"Button!" }

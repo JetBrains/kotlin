@@ -32,10 +32,16 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public class InlineUtil {
-    public static boolean isInlineLambdaParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {
+
+    public static boolean isInlineParameterExceptNullability(@NotNull ParameterDescriptor valueParameterOrReceiver) {
         return !(valueParameterOrReceiver instanceof ValueParameterDescriptor
                  && ((ValueParameterDescriptor) valueParameterOrReceiver).isNoinline()) &&
                FunctionTypesKt.isFunctionType(valueParameterOrReceiver.getOriginal().getType());
+    }
+
+    public static boolean isInlineParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {
+        return isInlineParameterExceptNullability(valueParameterOrReceiver) &&
+               !valueParameterOrReceiver.getOriginal().getType().isMarkedNullable();
     }
 
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {
@@ -87,12 +93,19 @@ public class InlineUtil {
             return false;
         }
 
-        DeclarationDescriptor containingFunctionDescriptor = context.trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, containingFunction);
-        if (containingFunctionDescriptor == null) {
-            return false;
-        }
+        return checkNonLocalReturnUsage(
+                fromFunction, context.trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, containingFunction), containingFunction,
+                context.trace.getBindingContext()
+        );
+    }
 
-        BindingContext bindingContext = context.trace.getBindingContext();
+    public static boolean checkNonLocalReturnUsage(
+            @NotNull DeclarationDescriptor fromFunction,
+            @Nullable DeclarationDescriptor containingFunctionDescriptor,
+            @Nullable PsiElement containingFunction,
+            @NotNull BindingContext bindingContext
+    ) {
+        if (containingFunctionDescriptor == null) return false;
 
         while (canBeInlineArgument(containingFunction) && fromFunction != containingFunctionDescriptor) {
             if (!isInlinedArgument((KtFunction) containingFunction, bindingContext, true)) {
@@ -145,7 +158,7 @@ public class InlineUtil {
         if (!(mapping instanceof ArgumentMatch)) return null;
 
         ValueParameterDescriptor parameter = ((ArgumentMatch) mapping).getValueParameter();
-        return isInlineLambdaParameter(parameter) ? parameter : null;
+        return isInlineParameter(parameter) ? parameter : null;
     }
 
     public static boolean canBeInlineArgument(@Nullable PsiElement functionalExpression) {
@@ -192,5 +205,11 @@ public class InlineUtil {
         }
 
         return false;
+    }
+
+    public static boolean isInlinableParameterExpression(@Nullable KtExpression deparenthesized) {
+        return deparenthesized instanceof KtLambdaExpression ||
+               deparenthesized instanceof KtNamedFunction ||
+               deparenthesized instanceof KtCallableReferenceExpression;
     }
 }

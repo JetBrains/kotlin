@@ -29,6 +29,10 @@ class CodeConformanceTest : TestCase() {
         private val EXCLUDED_FILES_AND_DIRS = listOf(
                 "android.tests.dependencies",
                 "core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections",
+                "libraries/kotlin.test/js/it/.gradle",
+                "libraries/kotlin.test/js/it/node_modules",
+                "libraries/stdlib/js/node_modules",
+                "libraries/tools/kotlin-reflect/build",
                 "libraries/tools/kotlin-reflect/target/copied-sources",
                 "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
                 "dependencies",
@@ -37,12 +41,29 @@ class CodeConformanceTest : TestCase() {
                 "out",
                 "dist",
                 "ideaSDK",
+                "ultimate/ideaSDK",
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
                 "libraries/tools/kotlin-maven-plugin/target",
                 "compiler/testData/psi/kdoc",
                 "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java"
         ).map(::File)
+
+        private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
+                "dependencies",
+                "out",
+                "dist",
+                "ideaSDK",
+                "ultimate/ideaSDK",
+                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+                "idea/src/org/jetbrains/kotlin/idea/copyright",
+                "libraries/stdlib/common/build",
+                "libraries/stdlib/common/target",
+                "libraries/stdlib/js/build",
+                "libraries/kotlin.test/js/it/.gradle",
+                "libraries/kotlin.test/js/it/node_modules",
+                "libraries/stdlib/js/node_modules"
+        )
     }
 
     fun testParserCode() {
@@ -68,7 +89,8 @@ class CodeConformanceTest : TestCase() {
                         "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s",
                         { source ->
                             // substring check is an optimization
-                            "@author" in source && atAuthorPattern.matcher(source).find()
+                            "@author" in source && atAuthorPattern.matcher(source).find() &&
+                                "ASM: a very small and fast Java bytecode manipulation framework" !in source
                         }
                 ),
                 TestData(
@@ -129,4 +151,40 @@ class CodeConformanceTest : TestCase() {
             })
         }
     }
+
+    fun testThirdPartyCopyrights() {
+        val filesWithUnlistedCopyrights = mutableListOf<String>()
+        val root = File(".").absoluteFile
+        val knownThirdPartyCode = loadKnownThirdPartyCodeList()
+        for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, root)) {
+            val relativePath = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
+            if (COPYRIGHT_EXCLUDED_FILES_AND_DIRS.any { relativePath.startsWith(it) } ||
+                    knownThirdPartyCode.any { relativePath.startsWith(it)}) continue
+
+            sourceFile.useLines { lineSequence ->
+                for (line in lineSequence) {
+                    if ("Copyright" in line && "JetBrains" !in line) {
+                        filesWithUnlistedCopyrights.add("$relativePath: $line")
+                    }
+                }
+            }
+        }
+        if (filesWithUnlistedCopyrights.isNotEmpty()) {
+            fail("The following files contain third-party copyrights and no license information. " +
+                 "Please update license/README.md accordingly:\n${filesWithUnlistedCopyrights.joinToString("\n")}")
+        }
+    }
+
+    private fun loadKnownThirdPartyCodeList(): List<String> {
+        File("license/README.md").useLines { lineSequence ->
+            return lineSequence
+                    .filter { it.startsWith(" - Path: ") }
+                    .map { it.removePrefix(" - Path: ").trim().ensureFileOrEndsWithSlash() }
+                    .toList()
+
+        }
+    }
 }
+
+private fun String.ensureFileOrEndsWithSlash() =
+        if (endsWith("/") || "." in substringAfterLast('/')) this else this + "/"

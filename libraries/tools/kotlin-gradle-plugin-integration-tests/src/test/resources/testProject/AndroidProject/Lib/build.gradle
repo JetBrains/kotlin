@@ -1,4 +1,3 @@
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
@@ -11,10 +10,22 @@ dependencies {
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 7
         targetSdkVersion 22
     }
+
+    flavorDimensions "myFlavor"
+    productFlavors {
+        flavor1 {
+            dimension "myFlavor"
+        }
+        flavor2 {
+            dimension "myFlavor"
+        }
+    }
+
+    publishNonDefault true
 }

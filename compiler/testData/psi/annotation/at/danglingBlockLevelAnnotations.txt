@@ -1,4 +1,4 @@
-JetFile: danglingBlockLevelAnnotations.kt
+KtFile: danglingBlockLevelAnnotations.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

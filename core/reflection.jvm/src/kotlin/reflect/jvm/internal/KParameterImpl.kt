@@ -48,15 +48,6 @@ internal class KParameterImpl(
     override val isVararg: Boolean
         get() = descriptor.let { it is ValueParameterDescriptor && it.varargElementType != null }
 
-    override val isNoinline: Boolean
-        get() = descriptor.let { it is ValueParameterDescriptor && it.isNoinline }
-
-    override val isCrossinline: Boolean
-        get() = descriptor.let { it is ValueParameterDescriptor && it.isCrossinline }
-
-    override val isCoroutine: Boolean
-        get() = descriptor.let { it is ValueParameterDescriptor && it.isCoroutine }
-
     override fun equals(other: Any?) =
             other is KParameterImpl && callable == other.callable && descriptor == other.descriptor
 

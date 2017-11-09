@@ -1,4 +1,4 @@
-JetFile: fragment.kt
+KtFile: fragment.kt
   BINARY_EXPRESSION
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('1')

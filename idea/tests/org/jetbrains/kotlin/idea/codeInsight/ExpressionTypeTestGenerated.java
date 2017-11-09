@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,13 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
     public void testAllFilesPresentInExpressionType() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/expressionType"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/expressionType"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+    }
+
+    @TestMetadata("AnonymousObject.kt")
+    public void testAnonymousObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/AnonymousObject.kt");
+        doTest(fileName);
     }
 
     @TestMetadata("BlockBodyFunction.kt")
@@ -62,6 +69,18 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
     @TestMetadata("Lambda.kt")
     public void testLambda() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/Lambda.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MethodName.kt")
+    public void testMethodName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MethodName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MethodReference.kt")
+    public void testMethodReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MethodReference.kt");
         doTest(fileName);
     }
 
@@ -104,6 +123,12 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
     @TestMetadata("SoftSmartCastMultipleTypes.kt")
     public void testSoftSmartCastMultipleTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/SoftSmartCastMultipleTypes.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ThisInLambda.kt")
+    public void testThisInLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/ThisInLambda.kt");
         doTest(fileName);
     }
 

@@ -29,7 +29,7 @@ class GenerateArrayIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println("private class Array${s}Iterator(private val array: ${s}Array) : ${s}Iterator() {")
             out.println("    private var index = 0")
             out.println("    override fun hasNext() = index < array.size")
-            out.println("    override fun next$s() = array[index++]")
+            out.println("    override fun next$s() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }")
             out.println("}")
             out.println()
         }

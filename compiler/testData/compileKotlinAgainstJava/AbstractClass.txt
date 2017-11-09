@@ -1,0 +1,11 @@
+package test
+
+public abstract class AbstractClass {
+    public constructor AbstractClass()
+    public abstract fun implementMe(): kotlin.Unit
+}
+
+public final class AbstractClassImpl : test.AbstractClass {
+    public constructor AbstractClassImpl()
+    public open fun implementMe(): kotlin.Unit
+}

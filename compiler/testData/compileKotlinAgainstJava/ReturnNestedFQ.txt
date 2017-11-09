@@ -1,0 +1,14 @@
+package test
+
+public fun getNested(): test.ReturnNestedFQ.Nested!
+
+public open class ReturnNestedFQ {
+    public constructor ReturnNestedFQ()
+
+    public open inner class Nested {
+        public constructor Nested()
+    }
+
+    // Static members
+    public open fun getNested(): test.ReturnNestedFQ.Nested!
+}

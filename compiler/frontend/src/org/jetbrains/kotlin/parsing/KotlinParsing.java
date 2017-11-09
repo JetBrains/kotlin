@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.*;
+import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.PRECEDING_ALL_BINDER;
+import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_BINDER;
 
 public class KotlinParsing extends AbstractKotlinParsing {
     private static final Logger LOG = Logger.getInstance(KotlinParsing.class);
@@ -64,7 +66,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private static KotlinParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder) {
-        final SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
+        SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
         KotlinParsing kotlinParsing = new KotlinParsing(builderForByClause);
         kotlinParsing.myExpressionParsing = new KotlinExpressionParsing(builderForByClause, kotlinParsing) {
             @Override
@@ -174,7 +176,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
         checkForUnexpectedSymbols();
 
         blockMarker.done(BLOCK);
+        blockMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER);
+
         scriptMarker.done(SCRIPT);
+        scriptMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER);
+
         fileMarker.done(KT_FILE);
     }
 
@@ -225,8 +231,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseFileAnnotationList(FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED);
             packageDirective = mark();
             packageDirective.done(PACKAGE_DIRECTIVE);
-            // this is necessary to allow comments at the start of the file to be bound to the first declaration
-            packageDirective.setCustomEdgeTokenBinders(DoNotBindAnything.INSTANCE, null);
+            // Need to skip everything but shebang comment to allow comments at the start of the file to be bound to the first declaration.
+            packageDirective.setCustomEdgeTokenBinders(BindFirstShebangWithWhitespaceOnly.INSTANCE, null);
         }
 
         parseImportDirectives();
@@ -292,7 +298,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker importDirective = mark();
         advance(); // IMPORT_KEYWORD
 
-        if (closeImportWithErrorIfNewline(importDirective, "Expecting qualified name")) {
+        if (closeImportWithErrorIfNewline(importDirective, null, "Expecting qualified name")) {
             return;
         }
 
@@ -313,7 +319,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         while (at(DOT) && lookahead(1) != MUL) {
             advance(); // DOT
 
-            if (closeImportWithErrorIfNewline(importDirective, "Import must be placed on a single line")) {
+            if (closeImportWithErrorIfNewline(importDirective, null, "Import must be placed on a single line")) {
                 qualifiedName.drop();
                 return;
             }
@@ -339,28 +345,37 @@ public class KotlinParsing extends AbstractKotlinParsing {
             if (at(AS_KEYWORD)) {
                 PsiBuilder.Marker as = mark();
                 advance(); // AS_KEYWORD
-                if (closeImportWithErrorIfNewline(importDirective, "Expecting identifier")) {
+                if (closeImportWithErrorIfNewline(importDirective, null, "Expecting identifier")) {
                     as.drop();
                     return;
                 }
                 consumeIf(IDENTIFIER);
-                as.error("Cannot rename all imported items to one identifier");
+                as.done(IMPORT_ALIAS);
+                as.precede().error("Cannot rename all imported items to one identifier");
             }
         }
         if (at(AS_KEYWORD)) {
+            PsiBuilder.Marker alias = mark();
             advance(); // AS_KEYWORD
-            if (closeImportWithErrorIfNewline(importDirective, "Expecting identifier")) {
+            if (closeImportWithErrorIfNewline(importDirective, alias, "Expecting identifier")) {
                 return;
             }
             expect(IDENTIFIER, "Expecting identifier", TokenSet.create(SEMICOLON));
+            alias.done(IMPORT_ALIAS);
         }
         consumeIf(SEMICOLON);
         importDirective.done(IMPORT_DIRECTIVE);
         importDirective.setCustomEdgeTokenBinders(null, TrailingCommentsBinder.INSTANCE);
     }
 
-    private boolean closeImportWithErrorIfNewline(PsiBuilder.Marker importDirective, String errorMessage) {
+    private boolean closeImportWithErrorIfNewline(
+            PsiBuilder.Marker importDirective,
+            @Nullable PsiBuilder.Marker importAlias,
+            String errorMessage) {
         if (myBuilder.newlineBeforeCurrentToken()) {
+            if (importAlias != null) {
+                importAlias.done(IMPORT_ALIAS);
+            }
             error(errorMessage);
             importDirective.done(IMPORT_DIRECTIVE);
             return true;
@@ -458,13 +473,34 @@ public class KotlinParsing extends AbstractKotlinParsing {
             @NotNull AnnotationParsingMode annotationParsingMode,
             @NotNull TokenSet noModifiersBefore
     ) {
+        return doParseModifierList(tokenConsumer, MODIFIER_KEYWORDS, annotationParsingMode, noModifiersBefore);
+    }
+
+    private boolean parseFunctionTypeValueParameterModifierList() {
+        return doParseModifierList(null, RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS, NO_ANNOTATIONS, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
+    }
+
+    private boolean parseTypeModifierList() {
+        return doParseModifierList(null, TYPE_MODIFIER_KEYWORDS, DEFAULT, TokenSet.EMPTY);
+    }
+
+    private boolean parseTypeArgumentModifierList() {
+        return doParseModifierList(null, TYPE_ARGUMENT_MODIFIER_KEYWORDS, NO_ANNOTATIONS, TokenSet.create(COMMA, COLON, GT));
+    }
+
+    private boolean doParseModifierList(
+            @Nullable Consumer<IElementType> tokenConsumer,
+            @NotNull TokenSet modifierKeywords,
+            @NotNull AnnotationParsingMode annotationParsingMode,
+            @NotNull TokenSet noModifiersBefore
+    ) {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
             if (at(AT) && annotationParsingMode.allowAnnotations) {
                 parseAnnotationOrList(annotationParsingMode);
             }
-            else if (tryParseModifier(tokenConsumer, noModifiersBefore)) {
+            else if (tryParseModifier(tokenConsumer, noModifiersBefore, modifierKeywords)) {
                 // modifier advanced
             }
             else {
@@ -481,10 +517,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return !empty;
     }
 
-    private boolean tryParseModifier(@Nullable Consumer<IElementType> tokenConsumer, @NotNull TokenSet noModifiersBefore) {
+    private boolean tryParseModifier(
+            @Nullable Consumer<IElementType> tokenConsumer,
+            @NotNull TokenSet noModifiersBefore,
+            @NotNull TokenSet modifierKeywords
+    ) {
         PsiBuilder.Marker marker = mark();
 
-        if (atSet(MODIFIER_KEYWORDS)) {
+        if (atSet(modifierKeywords)) {
             IElementType lookahead = lookahead(1);
             if (lookahead != null && !noModifiersBefore.contains(lookahead)) {
                 IElementType tt = tt();
@@ -545,7 +585,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "@" (annotationUseSiteTarget ":")? "[" unescapedAnnotation+ "]"
      *   ;
      *
-     *   annotationUseSiteTarget
+     * annotationUseSiteTarget
      *   : "file"
      *   : "field"
      *   : "property"
@@ -660,21 +700,16 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         if (targetKeyword == null && mode.isFileAnnotationParsingMode) {
-            parseAnnotationTarget(mode, FILE_KEYWORD);
+            parseAnnotationTarget(FILE_KEYWORD);
         }
         else if (targetKeyword != null) {
-            parseAnnotationTarget(mode, targetKeyword);
+            parseAnnotationTarget(targetKeyword);
         }
 
         return true;
     }
 
-    private void parseAnnotationTarget(AnnotationParsingMode mode, KtKeywordToken keyword) {
-        if (keyword == FILE_KEYWORD && !mode.isFileAnnotationParsingMode && at(keyword) && lookahead(1) == COLON) {
-            errorAndAdvance(AT.getValue() + keyword.getValue() + " annotations are only allowed before package declaration", 2);
-            return;
-        }
-
+    private void parseAnnotationTarget(KtKeywordToken keyword) {
         String message = "Expecting \"" + keyword.getValue() + COLON.getValue() + "\" prefix for " + keyword.getValue() + " annotations";
 
         PsiBuilder.Marker marker = mark();
@@ -798,9 +833,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
         }
 
-        OptionalMarker typeParamsMarker = new OptionalMarker(object);
         boolean typeParametersDeclared = parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
-        typeParamsMarker.error("Type parameters are not allowed for objects");
 
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         PsiBuilder.Marker primaryConstructorMarker = mark();
@@ -1209,7 +1242,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *
      * property
      *   : modifiers ("val" | "var")
-     *       typeParameters? (type "." | annotations)?
+     *       typeParameters?
+     *       (type ".")?
      *       ("(" variableDeclarationEntry{","} ")" | variableDeclarationEntry)
      *       typeConstraints
      *       ("by" | "=" expression SEMI?)?
@@ -1217,10 +1251,28 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   ;
      */
     private IElementType parseProperty() {
-        return parseProperty(false);
+        return parseProperty(PropertyParsingMode.MEMBER_OR_TOPLEVEL);
     }
 
-    public IElementType parseProperty(boolean local) {
+    public IElementType parseLocalProperty(boolean isScriptTopLevel) {
+        return parseProperty(isScriptTopLevel ? PropertyParsingMode.SCRIPT_TOPLEVEL : PropertyParsingMode.LOCAL);
+    }
+
+    enum PropertyParsingMode {
+        MEMBER_OR_TOPLEVEL(false, true),
+        LOCAL(true, false),
+        SCRIPT_TOPLEVEL(true, true);
+
+        public final boolean destructuringAllowed;
+        public final boolean accessorsAllowed;
+
+        PropertyParsingMode(boolean destructuringAllowed, boolean accessorsAllowed) {
+            this.destructuringAllowed = destructuringAllowed;
+            this.accessorsAllowed = accessorsAllowed;
+        }
+    }
+
+    public IElementType parseProperty(PropertyParsingMode mode) {
         assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
         advance();
 
@@ -1243,7 +1295,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (multiDeclaration) {
             PsiBuilder.Marker multiDecl = mark();
             parseMultiDeclarationName(propertyNameFollow);
-            errorIf(multiDecl, !local, "Destructuring declarations are only allowed for local variables/values");
+            errorIf(multiDecl, !mode.destructuringAllowed, "Destructuring declarations are only allowed for local variables/values");
         }
         else {
             parseFunctionOrPropertyName(receiverTypeDeclared, "property", propertyNameFollow, /*nameRequired = */ true);
@@ -1272,25 +1324,30 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         beforeName.drop();
 
-        if (!local) {
+        if (mode.accessorsAllowed) {
             // It's only needed for non-local properties, because in local ones:
             // "val a = 1; b" must not be an infix call of b on "val ...;"
-            consumeIf(SEMICOLON);
 
-            AccessorKind accessorKind = parsePropertyGetterOrSetter(null);
-            if (accessorKind != null) {
-                parsePropertyGetterOrSetter(accessorKind);
-            }
+            myBuilder.enableNewlines();
+            boolean hasNewLineWithSemicolon = consumeIf(SEMICOLON) && myBuilder.newlineBeforeCurrentToken();
+            myBuilder.restoreNewlinesState();
 
-            if (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
-                if (getLastToken() != SEMICOLON) {
-                    errorUntil(
-                            "Property getter or setter expected",
-                            TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE)));
+            if (!hasNewLineWithSemicolon) {
+                AccessorKind accessorKind = parsePropertyGetterOrSetter(null);
+                if (accessorKind != null) {
+                    parsePropertyGetterOrSetter(accessorKind);
                 }
-            }
-            else {
-                consumeIf(SEMICOLON);
+
+                if (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
+                    if (getLastToken() != SEMICOLON) {
+                        errorUntil(
+                                "Property getter or setter expected",
+                                TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE)));
+                    }
+                }
+                else {
+                    consumeIf(SEMICOLON);
+                }
             }
         }
 
@@ -1457,7 +1514,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      * function
      *   : modifiers "fun" typeParameters?
-     *       (type "." | annotations)?
+     *       (type ".")?
      *       SimpleName
      *       typeParameters? functionParameters (":" type)?
      *       typeConstraints
@@ -1839,10 +1896,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * type
-     *   : annotations typeDescriptor
+     *   : typeModifiers typeReference
+     *   ;
      *
-     * typeDescriptor
-     *   : selfType
+     * typeReference
      *   : functionType
      *   : userType
      *   : nullableType
@@ -1850,7 +1907,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   ;
      *
      * nullableType
-     *   : typeDescriptor "?"
+     *   : typeReference "?"
+     *   ;
      */
     void parseTypeRef() {
         parseTypeRef(TokenSet.EMPTY);
@@ -1865,7 +1923,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
     // on expression-indicating symbols or not
     private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet) {
         PsiBuilder.Marker typeRefMarker = mark();
-        parseAnnotations(DEFAULT);
+
+        parseTypeModifierList();
 
         PsiBuilder.Marker typeElementMarker = mark();
 
@@ -1930,9 +1989,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
             //  A.(B) -> C
             //   ^
 
-            PsiBuilder.Marker functionType = typeRefMarker.precede();
-            PsiBuilder.Marker receiverType = typeRefMarker.precede();
-            typeRefMarker.done(TYPE_REFERENCE);
+            PsiBuilder.Marker functionType = typeElementMarker.precede();
+
+            PsiBuilder.Marker receiverTypeRef = typeElementMarker.precede();
+            PsiBuilder.Marker receiverType = receiverTypeRef.precede();
+            receiverTypeRef.done(TYPE_REFERENCE);
             receiverType.done(FUNCTION_TYPE_RECEIVER);
 
             advance(); // DOT
@@ -1943,7 +2004,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
             else {
                 error("Expecting function type");
             }
-            typeRefMarker = functionType.precede();
 
             functionType.done(FUNCTION_TYPE);
         }
@@ -2089,7 +2149,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
             // Currently we do not allow annotations on star projections and probably we should not
             // Annotations on other kinds of type arguments should be parsed as common type annotations (within parseTypeRef call)
-            parseModifierList(NO_ANNOTATIONS, TokenSet.create(COMMA, COLON, GT));
+            parseTypeArgumentModifierList();
 
             if (at(MUL)) {
                 advance(); // MUL
@@ -2115,7 +2175,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * functionType
-     *   : "(" (parameter | modifiers type){","}? ")" "->" type?
+     *   : (type ".")? "(" parameter{","}? ")" "->" type?
      *   ;
      */
     private void parseFunctionType() {
@@ -2138,7 +2198,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * functionParameters
-     *   : "(" functionParameter{","}? ")" // default values
+     *   : "(" functionParameter{","}? ")"
      *   ;
      *
      * functionParameter
@@ -2169,7 +2229,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 if (isFunctionTypeContents) {
                     if (!tryParseValueParameter(typeRequired)) {
                         PsiBuilder.Marker valueParameter = mark();
-                        parseModifierList(DEFAULT, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER); // lazy, out, ref
+                        parseFunctionTypeValueParameterModifierList();
                         parseTypeRef();
                         closeDeclarationWithCommentBinders(valueParameter, VALUE_PARAMETER, false);
                     }

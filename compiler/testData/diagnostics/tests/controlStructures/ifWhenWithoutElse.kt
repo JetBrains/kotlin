@@ -10,13 +10,13 @@ val mlist = MList()
 
 fun work() {}
 
-val xx1 = <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
-val xx2: Unit = <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
-val xx3 = idAny(<!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>)
-val xx4 = id(<!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>)
-val xx5 = idUnit(<!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>)
-val xx6 = null ?: <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
-val xx7 = "" + <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
+val xx1 = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
+val xx2: Unit = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
+val xx3 = idAny(<!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42)
+val xx4 = id(<!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42)
+val xx5 = idUnit(<!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42)
+val xx6 = null ?: <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
+val xx7 = "" + <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
 
 val wxx1 = <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 val wxx2: Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }
@@ -40,12 +40,12 @@ val ufn4: () -> Unit = { when { true -> <!UNUSED_EXPRESSION!>42<!> } }
 val ufn5: () -> Unit = { when { true -> mlist.add() } }
 val ufn6: () -> Unit = { when { true -> work() } }
 
-fun f1() = <!INVALID_IF_AS_EXPRESSION!>if (true) work()<!>
-fun f2() = <!INVALID_IF_AS_EXPRESSION!>if (true) mlist.add()<!>
-fun f3() = <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
-fun f4(): Unit = <!INVALID_IF_AS_EXPRESSION!>if (true) work()<!>
-fun f5(): Unit = <!INVALID_IF_AS_EXPRESSION!>if (true) mlist.add()<!>
-fun f6(): Unit = <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
+fun f1() = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) work()
+fun f2() = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) mlist.add()
+fun f3() = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
+fun f4(): Unit = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) work()
+fun f5(): Unit = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) mlist.add()
+fun f6(): Unit = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
 fun g1() = <!NO_ELSE_IN_WHEN!>when<!> { true -> work() }
 fun g2() = <!NO_ELSE_IN_WHEN!>when<!> { true -> mlist.add() }
 fun g3() = <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
@@ -54,7 +54,7 @@ fun g5(): Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> <!TYPE_MISMATCH!>mlist.add
 fun g6(): Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }
 
 fun foo1(x: String?) {
-    "" + <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
+    "" + <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
     w@while (true) {
         x ?: if (true) break
         x ?: when { true -> break@w }

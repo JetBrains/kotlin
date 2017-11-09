@@ -1,5 +1,5 @@
 // ERROR: Unresolved reference: vfff
-// ERROR: No value passed for parameter text
+// ERROR: No value passed for parameter 'text'
 package p
 
 fun g() {

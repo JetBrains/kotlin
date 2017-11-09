@@ -75,7 +75,7 @@ val Class<*>.desc: String
     }
 
 fun Class<*>.createArrayType(): Class<*> =
-        Array.newInstance(this, 0).javaClass
+        Array.newInstance(this, 0)::class.java
 
 /**
  * @return all arguments of a parameterized type, including those of outer classes in case this type represents an inner generic.

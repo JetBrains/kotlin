@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.resolve.jvm.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 
@@ -31,13 +32,16 @@ enum class JvmDeclarationOriginKind {
     OTHER,
     PACKAGE_PART,
     INTERFACE_DEFAULT_IMPL,
-    DELEGATION_TO_DEFAULT_IMPLS,
+    CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL,
+    DEFAULT_IMPL_DELEGATION_TO_SUPERINTERFACE_DEFAULT_IMPL,
     DELEGATION,
     SAM_DELEGATION,
     BRIDGE,
     MULTIFILE_CLASS,
     MULTIFILE_CLASS_PART,
-    SYNTHETIC // this means that there's no proper descriptor for this jvm declaration
+    SYNTHETIC, // this means that there's no proper descriptor for this jvm declaration,
+    COLLECTION_STUB,
+    AUGMENTED_BUILTIN_API
 }
 
 class JvmDeclarationOrigin(
@@ -50,14 +54,18 @@ class JvmDeclarationOrigin(
     }
 }
 
-fun OtherOrigin(element: PsiElement?, descriptor: DeclarationDescriptor?): JvmDeclarationOrigin =
+@JvmOverloads
+fun OtherOrigin(element: PsiElement?, descriptor: DeclarationDescriptor? = null) =
         if (element == null && descriptor == null)
             JvmDeclarationOrigin.NO_ORIGIN
-        else JvmDeclarationOrigin(OTHER, element, descriptor)
+        else
+            JvmDeclarationOrigin(OTHER, element, descriptor)
 
-fun OtherOrigin(element: PsiElement): JvmDeclarationOrigin = OtherOrigin(element, null)
+@JvmOverloads
+fun OtherOriginFromPure(element: KtPureElement?, descriptor: DeclarationDescriptor? = null) =
+        OtherOrigin(element?.psiOrParent, descriptor)
 
-fun OtherOrigin(descriptor: DeclarationDescriptor): JvmDeclarationOrigin = OtherOrigin(null, descriptor)
+fun OtherOrigin(descriptor: DeclarationDescriptor) = JvmDeclarationOrigin(OTHER, null, descriptor)
 
 fun Bridge(descriptor: DeclarationDescriptor, element: PsiElement? = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)): JvmDeclarationOrigin =
         JvmDeclarationOrigin(BRIDGE, element, descriptor)
@@ -72,12 +80,14 @@ fun MultifileClass(representativeFile: KtFile?, descriptor: PackageFragmentDescr
 fun MultifileClassPart(file: KtFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin =
         JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor)
 
-fun DefaultImpls(element: KtClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(INTERFACE_DEFAULT_IMPL, element, descriptor)
-fun DelegationToDefaultImpls(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =
-        JvmDeclarationOrigin(DELEGATION_TO_DEFAULT_IMPLS, element, descriptor)
+fun DefaultImpls(element: PsiElement?, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(INTERFACE_DEFAULT_IMPL, element, descriptor)
 
 fun Delegation(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION, element, descriptor)
 
 fun SamDelegation(descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(SAM_DELEGATION, null, descriptor)
 
 fun Synthetic(element: PsiElement?, descriptor: CallableMemberDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(SYNTHETIC, element, descriptor)
+
+val CollectionStub = JvmDeclarationOrigin(COLLECTION_STUB, null, null)
+
+fun AugmentedBuiltInApi(descriptor: CallableDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(AUGMENTED_BUILTIN_API, null, descriptor)

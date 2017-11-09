@@ -1,0 +1,7 @@
+// "Add 'operator' modifier" "true"
+
+actual class Foo {
+    actual operator fun unaryMinus() {
+
+    }
+}

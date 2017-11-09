@@ -16,14 +16,16 @@
 
 package example
 
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.com.intellij.mock.MockProject
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
+import com.intellij.mock.MockProject
 
 public object ExampleConfigurationKeys {
     public val EXAMPLE_KEY: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("example argument")
@@ -47,9 +49,9 @@ public class ExampleCommandLineProcessor : CommandLineProcessor {
 }
 
 public class ExampleComponentRegistrar : ComponentRegistrar {
-
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val exampleValue = configuration.get(ExampleConfigurationKeys.EXAMPLE_KEY)
-        println("Project component registration: $exampleValue")
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        messageCollector.report(CompilerMessageSeverity.INFO, "Project component registration: $exampleValue")
     }
 }

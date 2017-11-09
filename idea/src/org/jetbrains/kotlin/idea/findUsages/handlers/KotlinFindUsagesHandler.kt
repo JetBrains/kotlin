@@ -40,8 +40,7 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
         return psiElement as T
     }
 
-    constructor(psiElement: T, factory: KotlinFindUsagesHandlerFactory) : this(psiElement, emptyList(), factory) {
-    }
+    constructor(psiElement: T, factory: KotlinFindUsagesHandlerFactory) : this(psiElement, emptyList(), factory)
 
     override fun getPrimaryElements(): Array<PsiElement> {
         return if (elementsToSearch.isEmpty())

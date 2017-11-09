@@ -73,10 +73,9 @@ object FileSystem {
         val base = File(runtimeStateFilesBasePath)
         // if base is not suitable, take home dir as a base and ensure the first name is prefixed with "." -
         //   this will work ok as a fallback solution on most systems
-        val dir = if (base.exists() && base.isDirectory) names.fold(base, { r, v -> File(r, v) })
+        val dir = if (base.exists() && base.isDirectory) names.fold(base, ::File)
                   else names.drop(1)
-                            .fold(File(userHomePath, names.first().let { if (it.startsWith(".")) it else ".$it" }),
-                                  { r, v -> File(r, v) })
+                            .fold(File(userHomePath, names.first().let { if (it.startsWith(".")) it else ".$it" }), ::File)
         return if ((dir.exists() && dir.isDirectory) || dir.mkdirs()) dir.absolutePath
                else tempPath
     }

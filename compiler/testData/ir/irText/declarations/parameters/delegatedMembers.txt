@@ -1,0 +1,70 @@
+FILE /delegatedMembers.kt
+  CLASS INTERFACE IBase
+    $this: VALUE_PARAMETER this@IBase: IBase<T>
+    TYPE_PARAMETER <T>
+    FUN public abstract fun foo(x: kotlin.Int): kotlin.Unit
+      $this: VALUE_PARAMETER this@IBase: IBase<T>
+      VALUE_PARAMETER value-parameter x: kotlin.Int
+    PROPERTY public abstract val bar: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-bar>(): kotlin.Int
+        $this: VALUE_PARAMETER this@IBase: IBase<T>
+    FUN public abstract fun <X> qux(t: T, x: X): kotlin.Unit
+      TYPE_PARAMETER <X>
+      $this: VALUE_PARAMETER this@IBase: IBase<T>
+      VALUE_PARAMETER value-parameter t: T
+      VALUE_PARAMETER value-parameter x: X
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS CLASS Test
+    $this: VALUE_PARAMETER this@Test: Test<TT>
+    TYPE_PARAMETER <TT>
+    CONSTRUCTOR public constructor Test<TT>(impl: IBase<TT>)
+      VALUE_PARAMETER value-parameter impl: IBase<TT>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test'
+    FIELD DELEGATE val `Test$IBase$delegate`: IBase<TT>
+      EXPRESSION_BODY
+        GET_VAR 'value-parameter impl: IBase<TT>' type=IBase<TT> origin=null
+    FUN DELEGATED_MEMBER public open override fun <X> qux(t: TT, x: X): kotlin.Unit
+      TYPE_PARAMETER <X>
+      $this: VALUE_PARAMETER this@Test: Test<TT>
+      VALUE_PARAMETER value-parameter t: TT
+      VALUE_PARAMETER value-parameter x: X
+      BLOCK_BODY
+        CALL 'qux(TT, X): Unit' type=kotlin.Unit origin=null
+          <X>: null
+          $this: GET_FIELD '`Test$IBase$delegate`: IBase<TT>' type=IBase<TT> origin=null
+            receiver: GET_VAR 'this@Test: Test<TT>' type=Test<TT> origin=null
+          t: GET_VAR 'value-parameter t: TT' type=TT origin=null
+          x: TYPE_OP type=X origin=IMPLICIT_CAST typeOperand=X
+            GET_VAR 'value-parameter x: X' type=X origin=null
+    FUN DELEGATED_MEMBER public open override fun foo(x: kotlin.Int): kotlin.Unit
+      $this: VALUE_PARAMETER this@Test: Test<TT>
+      VALUE_PARAMETER value-parameter x: kotlin.Int
+      BLOCK_BODY
+        CALL 'foo(Int): Unit' type=kotlin.Unit origin=null
+          $this: GET_FIELD '`Test$IBase$delegate`: IBase<TT>' type=IBase<TT> origin=null
+            receiver: GET_VAR 'this@Test: Test<TT>' type=Test<TT> origin=null
+          x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
+    PROPERTY DELEGATED_MEMBER public open override val bar: kotlin.Int
+      FUN DELEGATED_MEMBER public open override fun <get-bar>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Test: Test<TT>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
+            CALL '<get-bar>(): Int' type=kotlin.Int origin=null
+              $this: GET_FIELD '`Test$IBase$delegate`: IBase<TT>' type=IBase<TT> origin=null
+                receiver: GET_VAR 'this@Test: Test<TT>' type=Test<TT> origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

@@ -3,7 +3,7 @@ Buildfile: [TestData]/build.xml
 
 build:
 [kotlin2js] Compiling [[TestData]/root1] => [[Temp]/out.js]
-[kotlin2js] info: Kotlin Compiler version [KotlinVersion]
+[kotlin2js] info: kotlinc-js [KotlinVersion] (JRE [JREVersion])
 
 BUILD SUCCESSFUL
 Total time: [time]

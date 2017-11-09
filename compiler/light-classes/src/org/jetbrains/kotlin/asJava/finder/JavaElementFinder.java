@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.asJava.finder;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.extensions.Extensions;
@@ -34,10 +33,7 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNamesUtilKt;
-import org.jetbrains.kotlin.psi.KtClass;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtEnumEntry;
-import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker;
 
 import java.util.Collection;
@@ -86,14 +82,13 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
             return PsiClass.EMPTY_ARRAY;
         }
 
-        List<PsiClass> answer = new SmartList<PsiClass>();
+        List<PsiClass> answer = new SmartList<>();
 
         FqName qualifiedName = new FqName(qualifiedNameString);
 
         findClassesAndObjects(qualifiedName, scope, answer);
-
         answer.addAll(lightClassGenerationSupport.getFacadeClasses(qualifiedName, scope));
-        answer.addAll(lightClassGenerationSupport.getMultifilePartClasses(qualifiedName, scope));
+        answer.addAll(lightClassGenerationSupport.getKotlinInternalClasses(qualifiedName, scope));
 
         return sortByClasspath(answer, scope).toArray(new PsiClass[answer.size()]);
     }
@@ -174,17 +169,12 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
     @NotNull
     @Override
-    public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull final GlobalSearchScope scope) {
+    public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
         Collection<FqName> subpackages = lightClassGenerationSupport.getSubPackages(packageFQN, scope);
 
-        Collection<PsiPackage> answer = Collections2.transform(subpackages, new Function<FqName, PsiPackage>() {
-            @Override
-            public PsiPackage apply(@Nullable FqName input) {
-                return new KtLightPackage(psiManager, input, scope);
-            }
-        });
+        Collection<PsiPackage> answer = Collections2.transform(subpackages, input -> new KtLightPackage(psiManager, input, scope));
 
         return answer.toArray(new PsiPackage[answer.size()]);
     }
@@ -192,7 +182,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     @NotNull
     @Override
     public PsiClass[] getClasses(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        List<PsiClass> answer = new SmartList<PsiClass>();
+        List<PsiClass> answer = new SmartList<>();
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
         answer.addAll(lightClassGenerationSupport.getFacadeClassesInPackage(packageFQN, scope));
@@ -218,30 +208,24 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
     @Override
     @Nullable
-    public Condition<PsiFile> getPackageFilesFilter(@NotNull final PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        return new Condition<PsiFile>() {
-            @Override
-            public boolean value(PsiFile input) {
-                if (!(input instanceof KtFile)) {
-                    return true;
-                }
-                return psiPackage.getQualifiedName().equals(((KtFile) input).getPackageFqName().asString());
+    public Condition<PsiFile> getPackageFilesFilter(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+        return input -> {
+            if (!(input instanceof KtFile)) {
+                return true;
             }
+            return psiPackage.getQualifiedName().equals(((KtFile) input).getPackageFqName().asString());
         };
     }
 
     @NotNull
-    public static Comparator<PsiElement> byClasspathComparator(@NotNull final GlobalSearchScope searchScope) {
-        return new Comparator<PsiElement>() {
-            @Override
-            public int compare(@NotNull PsiElement o1, @NotNull PsiElement o2) {
-                VirtualFile f1 = PsiUtilCore.getVirtualFile(o1);
-                VirtualFile f2 = PsiUtilCore.getVirtualFile(o2);
-                if (f1 == f2) return 0;
-                if (f1 == null) return -1;
-                if (f2 == null) return 1;
-                return searchScope.compare(f2, f1);
-            }
+    public static Comparator<PsiElement> byClasspathComparator(@NotNull GlobalSearchScope searchScope) {
+        return (o1, o2) -> {
+            VirtualFile f1 = PsiUtilCore.getVirtualFile(o1);
+            VirtualFile f2 = PsiUtilCore.getVirtualFile(o2);
+            if (f1 == f2) return 0;
+            if (f1 == null) return -1;
+            if (f2 == null) return 1;
+            return searchScope.compare(f2, f1);
         };
     }
 

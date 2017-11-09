@@ -21,12 +21,12 @@ import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.ui.impl.watch.MethodsTracker
 import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.isFakeLocalVariableForInline
 
 class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDescriptorImpl(frame, MethodsTracker()), true) {
     override fun getVisibleVariables(): List<LocalVariableProxyImpl>? {
         return super.getVisibleVariables().filter {
-            !InlineCodegenUtil.isFakeLocalVariableForInline(it.name())
+            !isFakeLocalVariableForInline(it.name())
         }
     }
 }

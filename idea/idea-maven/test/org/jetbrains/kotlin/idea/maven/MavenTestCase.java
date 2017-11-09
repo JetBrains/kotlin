@@ -24,7 +24,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -42,21 +41,40 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.indices.MavenIndicesManager;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.server.MavenServerManager;
-import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public abstract class MavenTestCase extends UsefulTestCase {
-    protected static final MavenConsole NULL_MAVEN_CONSOLE = NullMavenConsole.INSTANCE;
-    // should not be static
-    protected static MavenProgressIndicator EMPTY_MAVEN_PROCESS = new MavenProgressIndicator(new EmptyProgressIndicator());
+
+    private static final String mavenMirrorUrl = System.getProperty("idea.maven.test.mirror",
+                                                                    // use JB maven proxy server for internal use by default, see details at
+                                                                    // https://confluence.jetbrains.com/display/JBINT/Maven+proxy+server
+                                                                    "http://maven.labs.intellij.net/repo1");
+    private static boolean mirrorDiscoverable = false;
+
+    static {
+        try {
+            URL url = new URL(mavenMirrorUrl);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(1000);
+            int responseCode = urlConnection.getResponseCode();
+            if(responseCode < 400) {
+                mirrorDiscoverable = true;
+            }
+        }
+        catch (Exception e) {
+            mirrorDiscoverable = false;
+        }
+    }
 
     private File ourTempDir;
 
@@ -325,16 +343,22 @@ public abstract class MavenTestCase extends UsefulTestCase {
     }
 
     private static String createSettingsXmlContent(String content) {
-        String mirror = System.getProperty("idea.maven.test.mirror",
-                                           // use JB maven proxy server for internal use by default, see details at
-                                           // https://confluence.jetbrains.com/display/JBINT/Maven+proxy+server
-                                           "http://maven.labs.intellij.net/repo1");
+
+        if (!mirrorDiscoverable) {
+            System.err.println("Maven mirror at " + mavenMirrorUrl + " not reachable, so not using it.");
+
+            return "<settings>" +
+                   content +
+                   "</settings>";
+        }
+
+        System.out.println("Using Maven mirror at " + mavenMirrorUrl);
         return "<settings>" +
                content +
                "<mirrors>" +
                "  <mirror>" +
                "    <id>jb-central-proxy</id>" +
-               "    <url>" + mirror + "</url>" +
+               "    <url>" + mavenMirrorUrl + "</url>" +
                "    <mirrorOf>external:*</mirrorOf>" +
                "  </mirror>" +
                "</mirrors>" +

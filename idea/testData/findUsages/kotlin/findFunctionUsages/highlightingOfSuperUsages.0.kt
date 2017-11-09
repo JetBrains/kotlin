@@ -1,4 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtNamedFunction
+// CHECK_SUPER_METHODS_YES_NO_DIALOG: no
 // OPTIONS: usages, skipImports
 // HIGHLIGHTING
 

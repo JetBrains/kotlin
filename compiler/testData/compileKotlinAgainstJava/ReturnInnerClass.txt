@@ -1,0 +1,22 @@
+package test
+
+internal fun getInnerClass(): test.AbstractReturnInnerClass.InnerClass!
+
+public/*package*/ abstract class AbstractReturnInnerClass {
+    public/*package*/ constructor AbstractReturnInnerClass()
+    public/*package*/ open fun getInnerClass(): test.AbstractReturnInnerClass.InnerClass!
+
+    public/*package*/ open inner class InnerClass {
+        public/*package*/ constructor InnerClass()
+    }
+}
+
+public/*package*/ open class ReturnInnerClass : test.ReturnInnerClassImpl {
+    public/*package*/ constructor ReturnInnerClass()
+    public/*package*/ open /*fake_override*/ fun getInnerClass(): test.AbstractReturnInnerClass.InnerClass!
+}
+
+public/*package*/ open class ReturnInnerClassImpl : test.AbstractReturnInnerClass {
+    public/*package*/ constructor ReturnInnerClassImpl()
+    public/*package*/ open /*fake_override*/ fun getInnerClass(): test.AbstractReturnInnerClass.InnerClass!
+}

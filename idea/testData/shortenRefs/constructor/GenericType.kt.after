@@ -1,7 +1,6 @@
 import java.io.File
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.TreeMap
 
 class A {
-    val x = HashMap<ArrayList<File>, String>()
+    val x = TreeMap<List<File>, String>()
 }

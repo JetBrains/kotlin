@@ -42,7 +42,7 @@ object ClassMapperLite {
             if (simpleName == KotlinBuiltIns.FQ_NAMES.unit.shortName().asString()) return "V"
         }
 
-        val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(classId.asSingleFqName().toUnsafe())
+        val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(classId.asSingleFqName().toUnsafe())
         if (javaClassId != null) {
             return "L" + javaClassId.asString().replace('.', '$') + ";"
         }

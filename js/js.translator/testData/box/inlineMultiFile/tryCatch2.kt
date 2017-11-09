@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1133
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/tryCatchFinally/tryCatch2.1.kt
@@ -136,10 +137,10 @@ inline fun <T, R> T.performWithFail2(job: (T)-> R, failJob: (e: RuntimeException
     }
 }
 
-@native object Number {
-    fun parseInt(str: String): Int = noImpl
+external object Number {
+    fun parseInt(str: String): Int = definedExternally
 }
 
-inline fun String.toInt2(): Int = parseInt(this)
+inline fun String.toInt2(): Int = this.toInt()
 
 class RuntimeExceptionWithValue(val value: String = "") : RuntimeException()

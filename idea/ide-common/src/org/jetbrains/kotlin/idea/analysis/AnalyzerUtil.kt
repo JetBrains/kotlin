@@ -17,11 +17,16 @@
 package org.jetbrains.kotlin.idea.analysis
 
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -38,11 +43,11 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
         isStatement: Boolean = false,
-        contextDependency: ContextDependency = ContextDependency.INDEPENDENT
+        contextDependency: ContextDependency = ContextDependency.INDEPENDENT,
+        expressionTypingServices: ExpressionTypingServices = contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
 ): KotlinTypeInfo {
-    PreliminaryDeclarationVisitor.createForExpression(this, trace)
-    return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
-            .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement, contextExpression, contextDependency)
+    PreliminaryDeclarationVisitor.createForExpression(this, trace, expressionTypingServices.languageVersionSettings)
+    return  expressionTypingServices.getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement, contextExpression, contextDependency)
 }
 
 @JvmOverloads fun KtExpression.analyzeInContext(
@@ -52,9 +57,10 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
         isStatement: Boolean = false,
-        contextDependency: ContextDependency = ContextDependency.INDEPENDENT
+        contextDependency: ContextDependency = ContextDependency.INDEPENDENT,
+        expressionTypingServices: ExpressionTypingServices = contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
 ): BindingContext {
-    computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType, isStatement, contextDependency)
+    computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType, isStatement, contextDependency, expressionTypingServices)
     return trace.bindingContext
 }
 
@@ -67,3 +73,31 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 ): KotlinType? {
     return computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType).type
 }
+
+@JvmOverloads fun KtExpression.analyzeAsReplacement(
+        expressionToBeReplaced: KtExpression,
+        bindingContext: BindingContext,
+        scope: LexicalScope,
+        trace: BindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for analyzeAsReplacement()"),
+        contextDependency: ContextDependency = ContextDependency.INDEPENDENT
+): BindingContext {
+    return analyzeInContext(scope,
+                            expressionToBeReplaced,
+                            dataFlowInfo = bindingContext.getDataFlowInfoBefore(expressionToBeReplaced),
+                            expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, expressionToBeReplaced] ?: TypeUtils.NO_EXPECTED_TYPE,
+                            isStatement = expressionToBeReplaced.isUsedAsStatement(bindingContext),
+                            trace = trace,
+                            contextDependency = contextDependency)
+}
+
+@JvmOverloads fun KtExpression.analyzeAsReplacement(
+        expressionToBeReplaced: KtExpression,
+        bindingContext: BindingContext,
+        resolutionFacade: ResolutionFacade = expressionToBeReplaced.getResolutionFacade(),
+        trace: BindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for analyzeAsReplacement()"),
+        contextDependency: ContextDependency = ContextDependency.INDEPENDENT
+): BindingContext {
+    val scope = expressionToBeReplaced.getResolutionScope(bindingContext, resolutionFacade)
+    return analyzeAsReplacement(expressionToBeReplaced, bindingContext, scope, trace, contextDependency)
+}
+

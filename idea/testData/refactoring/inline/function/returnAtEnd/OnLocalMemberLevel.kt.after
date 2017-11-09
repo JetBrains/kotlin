@@ -1,0 +1,7 @@
+fun outer() {
+    val s = "Hello"
+
+    class Container {
+        val v = s
+    }
+}

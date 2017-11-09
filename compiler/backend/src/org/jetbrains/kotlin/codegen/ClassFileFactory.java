@@ -18,31 +18,25 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.Function;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.io.DataOutputStream;
 import kotlin.collections.CollectionsKt;
-import kotlin.collections.MapsKt;
-import kotlin.jvm.functions.Function0;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
+import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -51,16 +45,20 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getMappingFileName;
 public class ClassFileFactory implements OutputFileCollection {
     private final GenerationState state;
     private final ClassBuilderFactory builderFactory;
-    private final Map<String, OutAndSourceFileList> generators = new LinkedHashMap<String, OutAndSourceFileList>();
+    private final Map<String, OutAndSourceFileList> generators = new LinkedHashMap<>();
 
     private boolean isDone = false;
 
-    private final Set<File> packagePartSourceFiles = new HashSet<File>();
-    private final Map<String, PackageParts> partsGroupedByPackage = new LinkedHashMap<String, PackageParts>();
+    private final Set<File> packagePartSourceFiles = new HashSet<>();
+    private final Map<String, PackageParts> partsGroupedByPackage = new LinkedHashMap<>();
 
     public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory) {
         this.state = state;
         this.builderFactory = builderFactory;
+    }
+
+    public GenerationState getGenerationState() {
+        return state;
     }
 
     @NotNull
@@ -85,7 +83,7 @@ public class ClassFileFactory implements OutputFileCollection {
         return answer;
     }
 
-    void done() {
+    public void done() {
         if (!isDone) {
             isDone = true;
             writeModuleMappings();
@@ -97,50 +95,31 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     private void writeModuleMappings() {
-        final JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
+        JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
 
-        List<PackageParts> parts = new SmartList<PackageParts>(partsGroupedByPackage.values());
-
-        for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(parts, state)) {
-            PackageParts.Companion.serialize(part, builder);
+        for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(partsGroupedByPackage.values(), state)) {
+            part.addTo(builder);
         }
 
-        if (builder.getPackagePartsCount() != 0) {
-            generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
-                @Override
-                public byte[] asBytes(ClassBuilderFactory factory) {
-                    try {
-                        ByteArrayOutputStream moduleMapping = new ByteArrayOutputStream(4096);
-                        DataOutputStream dataOutStream = new DataOutputStream(moduleMapping);
-                        int[] version = JvmMetadataVersion.INSTANCE.toArray();
-                        dataOutStream.writeInt(version.length);
-                        for (int number : version) {
-                            dataOutStream.writeInt(number);
-                        }
-                        builder.build().writeTo(dataOutStream);
-                        dataOutStream.flush();
-                        return moduleMapping.toByteArray();
-                    }
-                    catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
-                    catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+        if (builder.getPackagePartsCount() == 0) return;
 
-                @Override
-                public String asText(ClassBuilderFactory factory) {
-                    try {
-                        return new String(asBytes(factory), "UTF-8");
-                    }
-                    catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
+        generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
+            @Override
+            public byte[] asBytes(ClassBuilderFactory factory) {
+                return ClassFileUtilsKt.serializeToByteArray(builder);
+            }
+
+            @Override
+            public String asText(ClassBuilderFactory factory) {
+                try {
+                    return new String(asBytes(factory), "UTF-8");
                 }
-            });
-        }
+                catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     @NotNull
@@ -152,12 +131,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
     @NotNull
     public List<OutputFile> getCurrentOutput() {
-        return ContainerUtil.map(generators.keySet(), new Function<String, OutputFile>() {
-            @Override
-            public OutputFile fun(String relativeClassFilePath) {
-                return new OutputClassFile(relativeClassFilePath);
-            }
-        });
+        return CollectionsKt.map(generators.keySet(), OutputClassFile::new);
     }
 
     @Override
@@ -172,8 +146,26 @@ public class ClassFileFactory implements OutputFileCollection {
         StringBuilder answer = new StringBuilder();
 
         for (OutputFile file : asList()) {
-            answer.append("@").append(file.getRelativePath()).append('\n');
-            answer.append(file.asText());
+            File relativePath = new File(file.getRelativePath());
+            answer.append("@").append(relativePath).append('\n');
+            switch (FilesKt.getExtension(relativePath)) {
+                case "class":
+                    answer.append(file.asText());
+                    break;
+                case "kotlin_module": {
+                    ModuleMapping mapping = ModuleMapping.Companion.create(
+                            file.asByteArray(), relativePath.getPath(), CompilerDeserializationConfiguration.Default.INSTANCE
+                    );
+                    for (Map.Entry<String, PackageParts> entry : mapping.getPackageFqName2Parts().entrySet()) {
+                        FqName packageFqName = new FqName(entry.getKey());
+                        PackageParts packageParts = entry.getValue();
+                        answer.append("<package ").append(packageFqName).append(": ").append(packageParts.getParts()).append(">\n");
+                    }
+                    break;
+                }
+                default:
+                    throw new UnsupportedOperationException("Unknown OutputFile: " + file);
+            }
         }
 
         return answer.toString();
@@ -182,7 +174,7 @@ public class ClassFileFactory implements OutputFileCollection {
     @NotNull
     @TestOnly
     public Map<String, String> createTextForEachFile() {
-        Map<String, String> answer = new LinkedHashMap<String, String>();
+        Map<String, String> answer = new LinkedHashMap<>();
         for (OutputFile file : asList()) {
             answer.put(file.getRelativePath(), file.asText());
         }
@@ -193,38 +185,31 @@ public class ClassFileFactory implements OutputFileCollection {
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         registerPackagePartSourceFiles(files);
-        return new PackageCodegen(state, files, fqName, buildNewPackagePartRegistry(fqName));
+        return state.getCodegenFactory().createPackageCodegen(state, files, fqName, buildNewPackagePartRegistry(fqName));
     }
 
     @NotNull
     public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         registerPackagePartSourceFiles(files);
-        return new MultifileClassCodegen(state, files, facadeFqName, buildNewPackagePartRegistry(facadeFqName.parent()));
+        return state.getCodegenFactory().createMultifileClassCodegen(state, files, facadeFqName, buildNewPackagePartRegistry(facadeFqName.parent()));
     }
 
     private PackagePartRegistry buildNewPackagePartRegistry(@NotNull FqName packageFqName) {
-        final String packageFqNameAsString = packageFqName.asString();
-        return new PackagePartRegistry() {
-            @Override
-            public void addPart(@NotNull String partShortName) {
-                MapsKt.getOrPut(partsGroupedByPackage, packageFqNameAsString, new Function0<PackageParts>() {
-                    @Override
-                    public PackageParts invoke() {
-                        return new PackageParts(packageFqNameAsString);
-                    }
-                }).getParts().add(partShortName);
-            }
+        String packageFqNameAsString = packageFqName.asString();
+        return (partInternalName, facadeInternalName) -> {
+            PackageParts packageParts = partsGroupedByPackage.computeIfAbsent(packageFqNameAsString, PackageParts::new);
+            packageParts.addPart(partInternalName, facadeInternalName);
         };
     }
 
-    public void registerPackagePartSourceFiles(Collection<KtFile> files) {
+    private void registerPackagePartSourceFiles(Collection<KtFile> files) {
         packagePartSourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(files)));
     }
 
     @NotNull
     private static List<File> toIoFilesIgnoringNonPhysical(@NotNull Collection<? extends PsiFile> psiFiles) {
-        List<File> result = new ArrayList<File>(psiFiles.size());
+        List<File> result = new ArrayList<>(psiFiles.size());
         for (PsiFile psiFile : psiFiles) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
             // We ignore non-physical files here, because this code is needed to tell the make what inputs affect which outputs

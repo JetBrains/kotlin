@@ -39,14 +39,13 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.hierarchy.calls.CalleeReferenceProcessor
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallHierarchyNodeDescriptor
-import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallerMethodsTreeStructure
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.util.*
 
 class KotlinCallerChooser(
         declaration: PsiElement,
@@ -80,8 +79,8 @@ class KotlinMethodNode(
 
     override fun customizeRendererText(renderer: ColoredTreeCellRenderer) {
         val descriptor = when (myMethod) {
-            is KtFunction -> myMethod.resolveToDescriptor() as FunctionDescriptor
-            is KtClass -> (myMethod.resolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor ?: return
+            is KtFunction -> myMethod.unsafeResolveToDescriptor() as FunctionDescriptor
+            is KtClass -> (myMethod.unsafeResolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor ?: return
             is PsiMethod -> myMethod.getJavaMethodDescriptor() ?: return
             else -> throw AssertionError("Invalid declaration: ${myMethod.getElementTextWithContext()}")
         }
@@ -110,7 +109,7 @@ class KotlinMethodNode(
 
         val callers = LinkedHashSet<PsiElement>()
 
-        val processor = object: KotlinCallerMethodsTreeStructure.CalleeReferenceProcessor(false) {
+        val processor = object: CalleeReferenceProcessor(false) {
             override fun onAccept(ref: PsiReference, element: PsiElement) {
                 if ((element is KtFunction || element is KtClass || element is PsiMethod) && element !in myCalled) {
                     callers.add(element)

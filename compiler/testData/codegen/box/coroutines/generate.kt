@@ -1,5 +1,9 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
 // FULL_JDK
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 fun box(): String {
     val x = gen().joinToString()
@@ -24,31 +28,36 @@ fun gen() = generate<Int> {
 }
 
 // LIBRARY CODE
-fun <T> generate(coroutine c: GeneratorController<T>.() -> Continuation<Unit>): Sequence<T> = object : Sequence<T> {
-    override fun iterator(): Iterator<T> {
-        val iterator = GeneratorController<T>()
-        iterator.setNextStep(c(iterator))
-        return iterator
-    }
+interface Generator<in T> {
+    suspend fun yield(value: T)
 }
 
-class GeneratorController<T>() : AbstractIterator<T>() {
-    private lateinit var nextStep: Continuation<Unit>
+fun <T> generate(block: suspend Generator<T>.() -> Unit): Sequence<T> = GeneratedSequence(block)
+
+class GeneratedSequence<out T>(private val block: suspend Generator<T>.() -> Unit) : Sequence<T> {
+    override fun iterator(): Iterator<T> = GeneratedIterator(block)
+}
+
+class GeneratedIterator<T>(block: suspend Generator<T>.() -> Unit) : AbstractIterator<T>(), Generator<T> {
+    private var nextStep: Continuation<Unit> = block.createCoroutine(this, object : Continuation<Unit> {
+        override val context = EmptyCoroutineContext
+
+        override fun resume(data: Unit) {
+            done()
+        }
+
+        override fun resumeWithException(exception: Throwable) {
+            throw exception
+        }
+    })
 
     override fun computeNext() {
         nextStep.resume(Unit)
     }
-
-    fun setNextStep(step: Continuation<Unit>) {
-        this.nextStep = step
-    }
-
-    suspend fun yield(value: T, c: Continuation<Unit>) {
+    suspend override fun yield(value: T) = suspendCoroutineOrReturn<Unit> { c ->
         setNext(value)
-        setNextStep(c)
-    }
+        nextStep = c
 
-    operator fun handleResult(result: Unit, c: Continuation<Nothing>) {
-        done()
+        COROUTINE_SUSPENDED
     }
 }

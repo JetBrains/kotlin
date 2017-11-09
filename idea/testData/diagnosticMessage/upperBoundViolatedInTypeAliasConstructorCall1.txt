@@ -1,0 +1,3 @@
+<!-- upperBoundViolatedInTypeAliasConstructorCall1 -->
+Type parameter bound for Tn in type inferred from type alias expansion for fun <T> <init>(x: T): N<T> /* = Num<T> */
+ is not satisfied: inferred type String is not a subtype of Number

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -38,12 +39,24 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
     }
 
     public void testAllFilesPresentInScript() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("classLiteralInsideFunction.kts")
     public void testClassLiteralInsideFunction() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/classLiteralInsideFunction.kts");
+        doTest(fileName);
+    }
+
+    @TestMetadata("destructuringDeclaration.kts")
+    public void testDestructuringDeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/destructuringDeclaration.kts");
+        doTest(fileName);
+    }
+
+    @TestMetadata("destructuringDeclarationUnderscore.kts")
+    public void testDestructuringDeclarationUnderscore() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/destructuringDeclarationUnderscore.kts");
         doTest(fileName);
     }
 
@@ -62,6 +75,12 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
     @TestMetadata("inline.kts")
     public void testInline() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/inline.kts");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt20707.kts")
+    public void testKt20707() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/kt20707.kts");
         doTest(fileName);
     }
 
@@ -161,9 +180,27 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
         doTest(fileName);
     }
 
+    @TestMetadata("topLevelPropertiesWithGetSet.kts")
+    public void testTopLevelPropertiesWithGetSet() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelPropertiesWithGetSet.kts");
+        doTest(fileName);
+    }
+
     @TestMetadata("topLevelProperty.kts")
     public void testTopLevelProperty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelProperty.kts");
+        doTest(fileName);
+    }
+
+    @TestMetadata("topLevelPropertyWithProvideDelegate.kts")
+    public void testTopLevelPropertyWithProvideDelegate() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelPropertyWithProvideDelegate.kts");
+        doTest(fileName);
+    }
+
+    @TestMetadata("topLevelTypealias.kts")
+    public void testTopLevelTypealias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelTypealias.kts");
         doTest(fileName);
     }
 }

@@ -23,8 +23,7 @@ import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl
-import com.intellij.debugger.engine.events.DebuggerCommandImpl
-import com.intellij.debugger.impl.DebuggerContextImpl
+import com.intellij.debugger.engine.events.SuspendContextCommandImpl
 import com.intellij.debugger.settings.NodeRendererSettings
 import com.intellij.debugger.ui.impl.watch.*
 import com.intellij.debugger.ui.tree.*
@@ -55,6 +54,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerTestBase
 import org.jetbrains.kotlin.idea.debugger.KotlinFrameExtraVariablesProvider
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractKotlinEvaluateExpressionTest.PrinterConfig.DescriptorViewOptions
+import org.jetbrains.kotlin.idea.debugger.invokeInManagerThread
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.*
 import org.junit.Assert
@@ -197,7 +197,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         val session = myDebuggerSession.xDebugSession  as XDebugSessionImpl
         val watchesView = XWatchesViewImpl(session, false)
         Disposer.register(testRootDisposable, watchesView)
-        session.addSessionListener(XDebugViewSessionListener(watchesView), testRootDisposable)
+        XDebugViewSessionListener.attach(watchesView, session)
         return watchesView
     }
 
@@ -205,12 +205,12 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         val session = myDebuggerSession.xDebugSession as XDebugSessionImpl
         val variablesView = XVariablesView(session)
         Disposer.register(testRootDisposable, variablesView)
-        session.addSessionListener(XDebugViewSessionListener(variablesView), testRootDisposable)
+        XDebugViewSessionListener.attach(variablesView, session)
         return variablesView
     }
 
     private fun SuspendContextImpl.printFrame(variablesView: XVariablesView, watchesView: XWatchesViewImpl, config: PrinterConfig) {
-        val tree = variablesView.tree!!
+        val tree = variablesView.tree
         expandAll(
                 tree,
                 {
@@ -316,12 +316,14 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                 append(getPrefix(descriptor))
                 append(label)
                 if (config.shouldRenderSourcesPosition() && hasSourcePosition(descriptor)) {
-                    val sp = SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext)
+                    val sp = debugProcess.invokeInManagerThread {
+                        SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext)
+                    }
                     append(" (sp = ${render(sp)})")
                 }
 
                 if (config.shouldRenderExpression() && descriptor is ValueDescriptorImpl) {
-                    val expression = invokeInManagerThread {
+                    val expression = debugProcess.invokeInManagerThread {
                         descriptor.getTreeEvaluation((node as XValueNodeImpl).valueContainer as JavaValue, it) as? PsiExpression
                     }
 
@@ -336,7 +338,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                         val codeFragmentText = codeFragment.text
 
                         if (config.shouldComputeResultOfCreateExpression()) {
-                            invokeInManagerThread {
+                            debugProcess.invokeInManagerThread {
                                 it.suspendContext?.evaluate(
                                         TextWithImportsImpl(text.kind, codeFragmentText, codeFragment.importsToString(), text.fileType),
                                         null)
@@ -352,16 +354,6 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
             logDescriptor(descriptor, builder.toString())
 
             return false
-        }
-
-        private fun <T: Any> invokeInManagerThread(f: (DebuggerContextImpl) -> T?): T? {
-            var result: T? = null
-            debuggerContext.debugProcess!!.managerThread.invokeAndWait(object : DebuggerCommandImpl() {
-                override fun action() {
-                    result = runReadAction { f(debuggerContext) }
-                }
-            })
-            return result
         }
 
         private fun getPrefix(descriptor: NodeDescriptorImpl): String {
@@ -463,26 +455,39 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
             contextElement.putCopyableUserData(KotlinCodeFragmentFactory.DEBUG_CONTEXT_FOR_TESTS, this@AbstractKotlinEvaluateExpressionTest.debuggerContext)
 
-            try {
 
-                val evaluator =
-                        EvaluatorBuilderImpl.build(item,
-                                                   contextElement,
-                                                   sourcePosition,
-                                                   project)
+            runActionInSuspendCommand {
+                try {
+                    val evaluator = EvaluatorBuilderImpl.build(item, contextElement, sourcePosition, project)
+                                    ?: throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
 
-
-                if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
-
-                val value = evaluator.evaluate(this@AbstractKotlinEvaluateExpressionTest.evaluationContext)
-                val actualResult = value.asValue().asString()
-                if (expectedResult != null) {
-                    Assert.assertTrue("Evaluate expression returns wrong result for ${item.text}:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
+                    val value = evaluator.evaluate(this@AbstractKotlinEvaluateExpressionTest.evaluationContext)
+                    val actualResult = value.asValue().asString()
+                    if (expectedResult != null) {
+                        Assert.assertTrue("Evaluate expression returns wrong result for ${item.text}:" +
+                                          "\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
+                    }
+                }
+                catch (e: EvaluateException) {
+                    Assert.assertTrue("Evaluate expression throws wrong exception for ${item.text}:" +
+                                      "\nexpected = $expectedResult\nactual   = ${e.message}\n", expectedResult == e.message?.replaceFirst(ID_PART_REGEX, "id=ID"))
                 }
             }
-            catch (e: EvaluateException) {
-                Assert.assertTrue("Evaluate expression throws wrong exception for ${item.text}:\nexpected = $expectedResult\nactual   = ${e.message}\n", expectedResult == e.message?.replaceFirst(ID_PART_REGEX, "id=ID"))
+        }
+    }
+
+    private fun SuspendContextImpl.runActionInSuspendCommand(action: SuspendContextImpl.() -> Unit) {
+        if (myInProgress) {
+            action()
+        } else {
+            val command = object : SuspendContextCommandImpl(this) {
+                override fun contextAction(suspendContext: SuspendContextImpl) {
+                    action(suspendContext)
+                }
             }
+
+            // Try to execute the action inside a command if we aren't already inside it.
+            debuggerContext.debugProcess?.managerThread?.invoke(command) ?: command.contextAction(this)
         }
     }
 

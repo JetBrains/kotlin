@@ -17,11 +17,14 @@
 package com.android.tools.klint.checks;
 
 
+import com.android.annotations.NonNull;
+
 import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,14 +47,25 @@ public class Api {
      * @return a new ApiInfo
      */
     public static Api parseApi(File apiFile) {
-        FileInputStream fileInputStream = null;
+        InputStream inputStream = null;
         try {
-            fileInputStream = new FileInputStream(apiFile);
+            inputStream = new FileInputStream(apiFile);
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             SAXParser parser = parserFactory.newSAXParser();
             ApiParser apiParser = new ApiParser();
-            parser.parse(fileInputStream, apiParser);
-            return new Api(apiParser.getClasses());
+            parser.parse(inputStream, apiParser);
+            inputStream.close();
+
+            // Also read in API (unless regenerating the map for newer libraries)
+            //noinspection PointlessBooleanExpression,TestOnlyProblems
+            if (!ApiLookup.DEBUG_FORCE_REGENERATE_BINARY) {
+                inputStream = Api.class.getResourceAsStream("api-versions-support-library.xml");
+                if (inputStream != null) {
+                    parser.parse(inputStream, apiParser);
+                }
+            }
+
+            return new Api(apiParser.getClasses(), apiParser.getPackages());
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {
@@ -59,9 +73,9 @@ public class Api {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (fileInputStream != null) {
+            if (inputStream != null) {
                 try {
-                    fileInputStream.close();
+                    inputStream.close();
                 } catch (IOException e) {
                     // ignore
                 }
@@ -72,9 +86,13 @@ public class Api {
     }
 
     private final Map<String, ApiClass> mClasses;
+    private final Map<String, ApiPackage> mPackages;
 
-    private Api(Map<String, ApiClass> classes) {
+    private Api(
+            @NonNull Map<String, ApiClass> classes,
+            @NonNull Map<String, ApiPackage> packages) {
         mClasses = new HashMap<String, ApiClass>(classes);
+        mPackages = new HashMap<String, ApiPackage>(packages);
     }
 
     ApiClass getClass(String fqcn) {
@@ -83,5 +101,9 @@ public class Api {
 
     Map<String, ApiClass> getClasses() {
         return Collections.unmodifiableMap(mClasses);
+    }
+
+    Map<String, ApiPackage> getPackages() {
+        return Collections.unmodifiableMap(mPackages);
     }
 }

@@ -1,0 +1,4 @@
+package
+
+public fun foo(/*0*/ x: kotlin.Cloneable): kotlin.Cloneable
+public fun test(): kotlin.Unit

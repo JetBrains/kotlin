@@ -8,16 +8,16 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>idl2k</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
 
     <properties>
         <kotlin.version>${project.version}</kotlin.version>
-        <antlr.version>4.5</antlr.version>
+        <antlr.version>4.5.3</antlr.version>
     </properties>
 
     <dependencies>
@@ -50,6 +50,7 @@
                 <version>${antlr.version}</version>
                 <executions>
                     <execution>
+                        <id>antlr</id>
                         <goals>
                             <goal>antlr4</goal>
                         </goals>
@@ -87,6 +88,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
                 <executions>
                     <execution>
                         <id>download-idl</id>

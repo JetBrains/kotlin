@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompileKotlinAgainstInlineKotlinTest {
     public void testAllFilesPresentInBoxInline() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject")
@@ -40,7 +41,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AnonymousObject extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInAnonymousObject() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("anonymousObjectOnCallSite.kt")
@@ -139,6 +140,96 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("kt14011.kt")
+        public void testKt14011() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt14011.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14011_2.kt")
+        public void testKt14011_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt14011_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14011_3.kt")
+        public void testKt14011_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt14011_3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt16193.kt")
+        public void testKt16193() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt16193.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972.kt")
+        public void testKt17972() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_2.kt")
+        public void testKt17972_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_3.kt")
+        public void testKt17972_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_4.kt")
+        public void testKt17972_4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_5.kt")
+        public void testKt17972_5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_super.kt")
+        public void testKt17972_super() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_super.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_super2.kt")
+        public void testKt17972_super2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_super2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_super3.kt")
+        public void testKt17972_super3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_super3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt19434.kt")
+        public void testKt19434() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt19434.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt19434_2.kt")
+        public void testKt19434_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt19434_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt19723.kt")
+        public void testKt19723() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt19723.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt6552.kt")
         public void testKt6552() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt6552.kt");
@@ -181,6 +272,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("objectInLambdaCapturesAnotherObject.kt")
+        public void testObjectInLambdaCapturesAnotherObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/objectInLambdaCapturesAnotherObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("safeCall.kt")
         public void testSafeCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/safeCall.kt");
@@ -204,7 +301,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class EnumWhen extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInEnumWhen() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumWhen"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumWhen"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("callSite.kt")
@@ -237,7 +334,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ProperRecapturing extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInProperRecapturing() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("inlineChain.kt")
@@ -282,7 +379,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ProperRecapturingInClass extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInProperRecapturingInClass() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("inlineChain.kt")
@@ -363,7 +460,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TwoCapturedReceivers extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInTwoCapturedReceivers() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("kt8668.kt")
@@ -403,7 +500,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ArgumentOrder extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInArgumentOrder() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("boundFunctionReference.kt")
@@ -427,6 +524,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("capturedInExtension.kt")
         public void testCapturedInExtension() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/capturedInExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultParametersAndLastVararg.kt")
+        public void testDefaultParametersAndLastVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/defaultParametersAndLastVararg.kt");
             doTest(fileName);
         }
 
@@ -465,6 +568,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/simpleInClass.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("varargAndDefaultParameters.kt")
+        public void testVarargAndDefaultParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/varargAndDefaultParameters.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/arrayConvention")
@@ -472,7 +581,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ArrayConvention extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInArrayConvention() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/arrayConvention"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/arrayConvention"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("simpleAccess.kt")
@@ -517,7 +626,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Builders extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInBuilders() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/builders"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/builders"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("builders.kt")
@@ -533,12 +642,27 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/bytecodePreprocessing")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class BytecodePreprocessing extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public void testAllFilesPresentInBytecodePreprocessing() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/bytecodePreprocessing"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("apiVersionAtLeast1.kt")
+        public void testApiVersionAtLeast1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/bytecodePreprocessing/apiVersionAtLeast1.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInCallableReference() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classLevel.kt")
@@ -562,6 +686,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("intrinsic.kt")
         public void testIntrinsic() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/intrinsic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt15449.kt")
+        public void testKt15449() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/kt15449.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt16411.kt")
+        public void testKt16411() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/kt16411.kt");
             doTest(fileName);
         }
 
@@ -600,7 +736,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Bound extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInBound() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("classProperty.kt")
@@ -633,9 +769,39 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 doTest(fileName);
             }
 
+            @TestMetadata("kt18728.kt")
+            public void testKt18728() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt18728_2.kt")
+            public void testKt18728_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt18728_3.kt")
+            public void testKt18728_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt18728_4.kt")
+            public void testKt18728_4() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_4.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("map.kt")
             public void testMap() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/map.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mixed.kt")
+            public void testMixed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/mixed.kt");
                 doTest(fileName);
             }
 
@@ -670,7 +836,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Capture extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInCapture() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/capture"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/capture"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("captureInlinable.kt")
@@ -715,7 +881,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Complex extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInComplex() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/complex"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/complex"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("closureChain.kt")
@@ -766,7 +932,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ComplexStack extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInComplexStack() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/complexStack"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/complexStack"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("asCheck.kt")
@@ -816,8 +982,20 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DefaultValues extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        @TestMetadata("33Parameters.kt")
+        public void test33Parameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/33Parameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("33ParametersInConstructor.kt")
+        public void test33ParametersInConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/33ParametersInConstructor.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInDefaultValues() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("defaultInExtension.kt")
@@ -850,6 +1028,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("inlineLambdaInNoInlineDefault.kt")
+        public void testInlineLambdaInNoInlineDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/inlineLambdaInNoInlineDefault.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt11479.kt")
         public void testKt11479() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt11479.kt");
@@ -859,6 +1043,42 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("kt11479InlinedDefaultParameter.kt")
         public void testKt11479InlinedDefaultParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt11479InlinedDefaultParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14564.kt")
+        public void testKt14564() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt14564.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14564_2.kt")
+        public void testKt14564_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt14564_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18689.kt")
+        public void testKt18689() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt18689.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18689_2.kt")
+        public void testKt18689_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt18689_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18689_3.kt")
+        public void testKt18689_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt18689_3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18689_4.kt")
+        public void testKt18689_4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt18689_4.kt");
             doTest(fileName);
         }
 
@@ -873,6 +1093,297 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/simpleDefaultMethod.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("varArgNoInline.kt")
+        public void testVarArgNoInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/varArgNoInline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LambdaInlining extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInLambdaInlining() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("defaultLambdaInNoInline.kt")
+            public void testDefaultLambdaInNoInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultLambdaInNoInline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("instanceCapuredInClass.kt")
+            public void testInstanceCapuredInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapuredInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("instanceCapuredInInterface.kt")
+            public void testInstanceCapuredInInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapuredInInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmStaticDefault.kt")
+            public void testJvmStaticDefault() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/jvmStaticDefault.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noInline.kt")
+            public void testNoInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/noInline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nonDefaultInlineInNoInline.kt")
+            public void testNonDefaultInlineInNoInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/nonDefaultInlineInNoInline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("receiverClash.kt")
+            public void testReceiverClash() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/receiverClash.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("receiverClash2.kt")
+            public void testReceiverClash2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/receiverClash2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("receiverClashInClass.kt")
+            public void testReceiverClashInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/receiverClashInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("receiverClashInClass2.kt")
+            public void testReceiverClashInClass2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/receiverClashInClass2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleErased.kt")
+            public void testSimpleErased() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleErased.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleErasedStaticInstance.kt")
+            public void testSimpleErasedStaticInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleErasedStaticInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleExtension.kt")
+            public void testSimpleExtension() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleExtension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleGeneric.kt")
+            public void testSimpleGeneric() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleGeneric.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleStaticInstance.kt")
+            public void testSimpleStaticInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleStaticInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("thisClash.kt")
+            public void testThisClash() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/thisClash.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("thisClashInClass.kt")
+            public void testThisClashInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/thisClashInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CallableReferences extends AbstractCompileKotlinAgainstInlineKotlinTest {
+                public void testAllFilesPresentInCallableReferences() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("boundFunctionReference.kt")
+                public void testBoundFunctionReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundFunctionReferenceOnInt.kt")
+                public void testBoundFunctionReferenceOnInt() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReferenceOnInt.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundFunctionReferenceOnLong.kt")
+                public void testBoundFunctionReferenceOnLong() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReferenceOnLong.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundPropertyReference.kt")
+                public void testBoundPropertyReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundPropertyReferenceOnInt.kt")
+                public void testBoundPropertyReferenceOnInt() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReferenceOnInt.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundPropertyReferenceOnLong.kt")
+                public void testBoundPropertyReferenceOnLong() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReferenceOnLong.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("constuctorReference.kt")
+                public void testConstuctorReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/constuctorReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionImportedFromObject.kt")
+                public void testFunctionImportedFromObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionImportedFromObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionReference.kt")
+                public void testFunctionReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionReferenceFromClass.kt")
+                public void testFunctionReferenceFromClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionReferenceFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionReferenceFromObject.kt")
+                public void testFunctionReferenceFromObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionReferenceFromObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerClassConstuctorReference.kt")
+                public void testInnerClassConstuctorReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/innerClassConstuctorReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("privateFunctionReference.kt")
+                public void testPrivateFunctionReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/privateFunctionReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("privatePropertyReference.kt")
+                public void testPrivatePropertyReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/privatePropertyReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyImportedFromObject.kt")
+                public void testPropertyImportedFromObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyImportedFromObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyReference.kt")
+                public void testPropertyReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyReferenceFromClass.kt")
+                public void testPropertyReferenceFromClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyReferenceFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyReferenceFromObject.kt")
+                public void testPropertyReferenceFromObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyReferenceFromObject.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class MaskElimination extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            @TestMetadata("32Parameters.kt")
+            public void test32Parameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination/32Parameters.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("33Parameters.kt")
+            public void test33Parameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination/33Parameters.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInMaskElimination() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/maskElimination"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("kt18792.kt")
+            public void testKt18792() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination/kt18792.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt19679.kt")
+            public void testKt19679() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination/kt19679.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt19679_2.kt")
+            public void testKt19679_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination/kt19679_2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt19679_3.kt")
+            public void testKt19679_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination/kt19679_3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination/simple.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/delegatedProperty")
@@ -880,12 +1391,30 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DelegatedProperty extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInDelegatedProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("kt16864.kt")
+        public void testKt16864() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/delegatedProperty/kt16864.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("local.kt")
         public void testLocal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/delegatedProperty/local.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localInAnonymousObject.kt")
+        public void testLocalInAnonymousObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/delegatedProperty/localInAnonymousObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localInLambda.kt")
+        public void testLocalInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/delegatedProperty/localInLambda.kt");
             doTest(fileName);
         }
     }
@@ -895,7 +1424,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class EnclosingInfo extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInEnclosingInfo() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("anonymousInLambda.kt")
@@ -941,12 +1470,99 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/enum")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Enum extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public void testAllFilesPresentInEnum() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("kt10569.kt")
+        public void testKt10569() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/kt10569.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt18254.kt")
+        public void testKt18254() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/kt18254.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueOf.kt")
+        public void testValueOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueOfCapturedType.kt")
+        public void testValueOfCapturedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfCapturedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueOfChain.kt")
+        public void testValueOfChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfChain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueOfChainCapturedType.kt")
+        public void testValueOfChainCapturedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfChainCapturedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueOfNonReified.kt")
+        public void testValueOfNonReified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfNonReified.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("values.kt")
+        public void testValues() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/values.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesAsArray.kt")
+        public void testValuesAsArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesAsArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesCapturedType.kt")
+        public void testValuesCapturedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesCapturedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesChain.kt")
+        public void testValuesChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesChain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesChainCapturedType.kt")
+        public void testValuesChainCapturedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesChainCapturedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesNonReified.kt")
+        public void testValuesNonReified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesNonReified.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/functionExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FunctionExpression extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInFunctionExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/functionExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/functionExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("extension.kt")
@@ -961,7 +1577,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InnerClasses extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInInnerClasses() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/innerClasses"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/innerClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("innerLambda.kt")
@@ -977,12 +1593,27 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/jvmPackageName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmPackageName extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public void testAllFilesPresentInJvmPackageName() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/jvmPackageName/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/lambdaClassClash")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LambdaClassClash extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInLambdaClassClash() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaClassClash"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaClassClash"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("lambdaClassClash.kt")
@@ -1003,7 +1634,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LambdaTransformation extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInLambdaTransformation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaTransformation"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaTransformation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("lambdaCloning.kt")
@@ -1042,12 +1673,24 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LocalFunInLambda extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInLocalFunInLambda() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("lambdaInLambdaCapturesAnotherFun.kt")
+        public void testLambdaInLambdaCapturesAnotherFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/localFunInLambda/lambdaInLambdaCapturesAnotherFun.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("localFunInLambda.kt")
         public void testLocalFunInLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localFunInLambdaCapturesAnotherFun.kt")
+        public void testLocalFunInLambdaCapturesAnotherFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesAnotherFun.kt");
             doTest(fileName);
         }
     }
@@ -1057,7 +1700,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultifileClasses extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInMultifileClasses() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("inlineFromOptimizedMultifileClass.kt")
@@ -1078,7 +1721,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NoInline extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInNoInline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("extensionReceiver.kt")
@@ -1129,7 +1772,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NonLocalReturns extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInNonLocalReturns() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("explicitLocalReturn.kt")
@@ -1215,7 +1858,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Deparenthesize extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInDeparenthesize() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("bracket.kt")
@@ -1236,7 +1879,31 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TryFinally extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInTryFinally() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("kt20433.kt")
+            public void testKt20433() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt20433_2.kt")
+            public void testKt20433_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt20433_2_void.kt")
+            public void testKt20433_2_void() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2_void.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt20433_void.kt")
+            public void testKt20433_void() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_void.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("kt6956.kt")
@@ -1251,9 +1918,21 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 doTest(fileName);
             }
 
+            @TestMetadata("nonLocalReturnFromCatchBlock.kt")
+            public void testNonLocalReturnFromCatchBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnFromCatchBlock.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nonLocalReturnFromOuterLambda.kt")
             public void testNonLocalReturnFromOuterLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnFromOuterLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nonLocalReturnToCatchBlock.kt")
+            public void testNonLocalReturnToCatchBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnToCatchBlock.kt");
                 doTest(fileName);
             }
 
@@ -1262,7 +1941,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @RunWith(JUnit3RunnerWithInners.class)
             public static class CallSite extends AbstractCompileKotlinAgainstInlineKotlinTest {
                 public void testAllFilesPresentInCallSite() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("callSite.kt")
@@ -1307,7 +1986,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Chained extends AbstractCompileKotlinAgainstInlineKotlinTest {
                 public void testAllFilesPresentInChained() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("finallyInFinally.kt")
@@ -1364,7 +2043,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @RunWith(JUnit3RunnerWithInners.class)
             public static class DeclSite extends AbstractCompileKotlinAgainstInlineKotlinTest {
                 public void testAllFilesPresentInDeclSite() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("complex.kt")
@@ -1445,7 +2124,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @RunWith(JUnit3RunnerWithInners.class)
             public static class ExceptionTable extends AbstractCompileKotlinAgainstInlineKotlinTest {
                 public void testAllFilesPresentInExceptionTable() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("break.kt")
@@ -1550,7 +2229,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Variables extends AbstractCompileKotlinAgainstInlineKotlinTest {
                 public void testAllFilesPresentInVariables() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("kt7792.kt")
@@ -1585,7 +2264,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
 
         public void testAllFilesPresentInPrivate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("effectivePrivate.kt")
@@ -1648,7 +2327,49 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Property extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/property"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/property"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("augAssignmentAndInc.kt")
+        public void testAugAssignmentAndInc() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndInc.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augAssignmentAndIncInClass.kt")
+        public void testAugAssignmentAndIncInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augAssignmentAndIncInClassViaConvention.kt")
+        public void testAugAssignmentAndIncInClassViaConvention() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncInClassViaConvention.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augAssignmentAndIncOnExtension.kt")
+        public void testAugAssignmentAndIncOnExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncOnExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augAssignmentAndIncOnExtensionInClass.kt")
+        public void testAugAssignmentAndIncOnExtensionInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncOnExtensionInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augAssignmentAndIncViaConvention.kt")
+        public void testAugAssignmentAndIncViaConvention() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncViaConvention.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("property.kt")
+        public void testProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/property.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("reifiedVal.kt")
@@ -1681,7 +2402,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Reified extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInReified() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("capturedLambda.kt")
@@ -1705,6 +2426,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("kt11677.kt")
         public void testKt11677() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt11677.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt15997.kt")
+        public void testKt15997() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt15997.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt15997_2.kt")
+        public void testKt15997_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt15997_2.kt");
             doTest(fileName);
         }
 
@@ -1761,7 +2494,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CheckCast extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInCheckCast() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/checkCast"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/checkCast"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("chain.kt")
@@ -1801,12 +2534,69 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DefaultLambda extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInDefaultLambda() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("chain.kt")
+            public void testChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/chain.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nested.kt")
+            public void testNested() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/nested.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nested2.kt")
+            public void testNested2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/nested2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nested2Static.kt")
+            public void testNested2Static() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/nested2Static.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedStatic.kt")
+            public void testNestedStatic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/nestedStatic.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("transitiveChain.kt")
+            public void testTransitiveChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/transitiveChain.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("transitiveChainStatic.kt")
+            public void testTransitiveChainStatic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/transitiveChainStatic.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/reified/isCheck")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class IsCheck extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInIsCheck() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/isCheck"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/isCheck"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("chain.kt")
@@ -1834,7 +2624,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Signature extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/signature"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/signature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("inProjectionSubstitution.kt")
@@ -1897,12 +2687,24 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Simple extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInSimple() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/classObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("destructuring.kt")
+        public void testDestructuring() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/destructuring.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("destructuringIndexClash.kt")
+        public void testDestructuringIndexClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/destructuringIndexClash.kt");
             doTest(fileName);
         }
 
@@ -2008,7 +2810,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Smap extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInSmap() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("assertion.kt")
@@ -2020,6 +2822,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("classFromDefaultPackage.kt")
         public void testClassFromDefaultPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/classFromDefaultPackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultFunction.kt")
+        public void testDefaultFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultFunction.kt");
             doTest(fileName);
         }
 
@@ -2040,7 +2848,13 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Anonymous extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInAnonymous() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("kt19175.kt")
+            public void testKt19175() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/kt19175.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("lambda.kt")
@@ -2098,12 +2912,33 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DefaultLambda extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInDefaultLambda() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("nested.kt")
+            public void testNested() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda/nested.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda/simple.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InlineOnly extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInInlineOnly() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/inlineOnly"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/inlineOnly"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("noSmap.kt")
@@ -2112,9 +2947,21 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 doTest(fileName);
             }
 
+            @TestMetadata("noSmapWithProperty.kt")
+            public void testNoSmapWithProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly/noSmapWithProperty.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("reified.kt")
             public void testReified() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly/reified.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("reifiedProperty.kt")
+            public void testReifiedProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly/reifiedProperty.kt");
                 doTest(fileName);
             }
         }
@@ -2124,7 +2971,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Newsmap extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInNewsmap() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/newsmap"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/newsmap"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("differentMapping.kt")
@@ -2157,7 +3004,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Resolve extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInResolve() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/resolve"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("inlineComponent.kt")
@@ -2179,7 +3026,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Special extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInSpecial() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("identityCheck.kt")
@@ -2206,6 +3053,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("loopInStoreLoadChains.kt")
+        public void testLoopInStoreLoadChains() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/special/loopInStoreLoadChains.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("loopInStoreLoadChains2.kt")
+        public void testLoopInStoreLoadChains2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/special/loopInStoreLoadChains2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("plusAssign.kt")
         public void testPlusAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/special/plusAssign.kt");
@@ -2224,7 +3083,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StackOnReturn extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInStackOnReturn() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/stackOnReturn"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/stackOnReturn"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("elvis.kt")
@@ -2242,6 +3101,24 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("kt11499.kt")
         public void testKt11499() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/kt11499.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17591.kt")
+        public void testKt17591() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/kt17591.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17591a.kt")
+        public void testKt17591a() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/kt17591a.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17591b.kt")
+        public void testKt17591b() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/kt17591b.kt");
             doTest(fileName);
         }
 
@@ -2299,7 +3176,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SyntheticAccessors extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInSyntheticAccessors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("constField.kt")
@@ -2349,7 +3226,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WithinInlineLambda extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInWithinInlineLambda() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("directFieldAccess.kt")
@@ -2395,7 +3272,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Trait extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInTrait() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/trait"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/trait"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("trait.kt")
@@ -2410,7 +3287,7 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TryCatchFinally extends AbstractCompileKotlinAgainstInlineKotlinTest {
         public void testAllFilesPresentInTryCatchFinally() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("kt5863.kt")
@@ -2434,6 +3311,33 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("tryCatchFinally.kt")
         public void testTryCatchFinally() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/tryCatchFinally/tryCatchFinally.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxInline/varargs")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Varargs extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public void testAllFilesPresentInVarargs() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/varargs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("kt17653.kt")
+        public void testKt17653() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/varargs/kt17653.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargAndDefaultParameters.kt")
+        public void testVarargAndDefaultParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/varargs/varargAndDefaultParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargAndDefaultParameters2.kt")
+        public void testVarargAndDefaultParameters2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/varargs/varargAndDefaultParameters2.kt");
             doTest(fileName);
         }
     }

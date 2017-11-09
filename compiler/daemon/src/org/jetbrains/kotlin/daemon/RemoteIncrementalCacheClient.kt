@@ -35,10 +35,6 @@ class RemoteIncrementalCacheClient(val facade: CompilerCallbackServicesFacade, v
 
     override fun getModuleMappingData(): ByteArray? = profiler.withMeasure(this) { facade.incrementalCache_getModuleMappingData(target) }
 
-    override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
-        profiler.withMeasure(this) { facade.incrementalCache_registerInline(target, fromPath, jvmSignature, toPath) }
-    }
-
     override fun getClassFilePath(internalClassName: String): String = profiler.withMeasure(this) { facade.incrementalCache_getClassFilePath(target,internalClassName) }
 
     override fun close(): Unit = profiler.withMeasure(this) { facade.incrementalCache_close(target) }

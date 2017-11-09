@@ -1,0 +1,23 @@
+import java.lang.ref.*
+
+fun notNull(r: SoftReference<String>) {
+    r.get()
+        // SUCCESS
+        // ORIGINAL:    fun get(): T? defined in java.lang.ref.SoftReference
+        // SUBSTITUTED: fun get(): String? defined in java.lang.ref.SoftReference
+}
+
+fun nullable(r: SoftReference<String?>) {
+    r.get()
+        // SUCCESS
+        // ORIGINAL:    fun get(): T? defined in java.lang.ref.SoftReference
+        // SUBSTITUTED: fun get(): String? defined in java.lang.ref.SoftReference
+}
+
+fun platform() {
+    val r = SoftReference("x")
+    r.get()
+        // SUCCESS
+        // ORIGINAL:    fun get(): T? defined in java.lang.ref.SoftReference
+        // SUBSTITUTED: fun get(): String? defined in java.lang.ref.SoftReference
+}

@@ -1,8 +1,9 @@
+// EXPECTED_REACHABLE_NODES: 1121
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: doNothing1_0
-// CHECK_CONTAINS_NO_CALLS: doNothing2_0
-// CHECK_CONTAINS_NO_CALLS: doNothing3_0
+// CHECK_CONTAINS_NO_CALLS: doNothing1
+// CHECK_CONTAINS_NO_CALLS: doNothing2
+// CHECK_CONTAINS_NO_CALLS: doNothing3
 
 internal class Inline {
     public inline fun <T> identity1 (x: T): T {

@@ -16,22 +16,32 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.*
 import com.intellij.psi.impl.PsiVariableEx
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiNamedElement {
+interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiElement {
     val kotlinOrigin: T?
 
     val clsDelegate: D
 }
 
-interface KtLightDeclaration<out T: KtDeclaration, out D: PsiElement>: KtLightElement<T, D>
+interface KtLightDeclaration<out T : KtDeclaration, out D : PsiElement> : KtLightElement<T, D>, PsiNamedElement
 
-interface KtLightField : PsiField, KtLightDeclaration<KtDeclaration, PsiField>, PsiVariableEx {
+interface KtLightMember<out D : PsiMember> : PsiMember, KtLightDeclaration<KtDeclaration, D>, PsiNameIdentifierOwner, PsiDocCommentOwner {
     val lightMemberOrigin: LightMemberOrigin?
+
+    override fun getContainingClass(): KtLightClass
+}
+
+interface KtLightField : PsiField, KtLightMember<PsiField>, PsiVariableEx
+
+interface KtLightMethod : PsiAnnotationMethod, KtLightMember<PsiMethod> {
+    val isDelegated: Boolean
+        get() = lightMemberOrigin?.originKind == JvmDeclarationOriginKind.DELEGATION
+                || lightMemberOrigin?.originKind == JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL
 }

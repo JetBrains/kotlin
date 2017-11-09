@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.idea.caches
 
 import com.intellij.openapi.vfs.VirtualFile
+import java.io.DataInput
+import java.io.DataOutput
 
 data class CachedAttributeData<out T>(val value: T, val timeStamp: Long)
 
 interface FileAttributeService {
-    fun register(id: String, version: Int) {}
+    fun register(id: String, version: Int, fixedSize: Boolean = true) {}
 
     fun <T: Enum<T>> writeEnumAttribute(id: String, file: VirtualFile, value: T): CachedAttributeData<T> =
             CachedAttributeData(value, timeStamp = file.timeStamp)
@@ -32,4 +34,8 @@ interface FileAttributeService {
             CachedAttributeData(value, timeStamp = file.timeStamp)
 
     fun readBooleanAttribute(id: String, file: VirtualFile): CachedAttributeData<Boolean>? = null
+
+    fun <T> write(file: VirtualFile, id: String, value: T, writeValueFun: (DataOutput, T) -> Unit): CachedAttributeData<T>
+
+    fun <T> read(file: VirtualFile, id: String, readValueFun: (DataInput) -> T): CachedAttributeData<T>?
 }

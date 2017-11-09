@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,25 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.util.AstUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation;
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator;
+import org.jetbrains.kotlin.js.backend.ast.JsBlock;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.AccessTranslator;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtUnaryExpression;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+
+import java.util.Arrays;
 
 import static org.jetbrains.kotlin.js.translate.reference.AccessTranslationUtils.getAccessTranslator;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
@@ -49,8 +53,11 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     @NotNull
     public static JsExpression translate(@NotNull KtUnaryExpression expression,
                                          @NotNull TranslationContext context) {
-        if (hasCorrespondingFunctionIntrinsic(context, expression) || isDynamic(context, expression)) {
-            return IntrinsicIncrementTranslator.doTranslate(expression, context);
+        if (isDynamic(context, expression)) {
+            return DynamicIncrementTranslator.doTranslate(expression, context);
+        }
+        if (hasCorrespondingFunctionIntrinsic(context, expression)) {
+            return new IntrinsicIncrementTranslator(expression, context).translateIncrementExpression();
         }
         return (new OverloadedIncrementTranslator(expression, context)).translateIncrementExpression();
     }
@@ -60,12 +67,15 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     @NotNull
     protected final AccessTranslator accessTranslator;
 
+    @NotNull
+    private final JsBlock accessBlock = new JsBlock();
+
     protected IncrementTranslator(@NotNull KtUnaryExpression expression,
                                   @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
         KtExpression baseExpression = getBaseExpression(expression);
-        this.accessTranslator = getAccessTranslator(baseExpression, context()).getCached();
+        this.accessTranslator = getAccessTranslator(baseExpression, context().innerBlock(accessBlock)).getCached();
     }
 
     @NotNull
@@ -81,10 +91,22 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     private JsExpression asPrefix() {
         // code fragment: expr(a++)
         // generate: expr(a = a.inc(), a)
-        JsExpression getExpression = accessTranslator.translateAsGet();
-        JsExpression reassignment = variableReassignment(getExpression);
-        JsExpression getNewValue = accessTranslator.translateAsGet();
-        return new JsBinaryOperation(JsBinaryOperator.COMMA, reassignment, getNewValue);
+        JsExpression getExpression = accessTranslator.translateAsGet().source(expression);
+        JsExpression reassignment = variableReassignment(context().innerBlock(accessBlock), getExpression)
+                .source(expression);
+        accessBlock.getStatements().add(JsAstUtils.asSyntheticStatement(reassignment));
+        JsExpression getNewValue = accessTranslator.translateAsGet().source(expression);
+
+        JsExpression result;
+        if (accessBlock.getStatements().size() == 1) {
+            result = new JsBinaryOperation(JsBinaryOperator.COMMA, reassignment, getNewValue);
+        }
+        else {
+            context().getCurrentBlock().getStatements().addAll(accessBlock.getStatements());
+            result = getNewValue;
+        }
+        MetadataProperties.setSynthetic(result, true);
+        return result;
     }
 
     //TODO: decide if this expression can be optimised in case of direct access (not property)
@@ -92,24 +114,37 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     private JsExpression asPostfix() {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
-        TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
-        TemporaryVariable t2 = context().declareTemporary(t1.reference());
-        JsExpression variableReassignment = variableReassignment(t1.reference());
-        return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(),
-                                   variableReassignment, t2.reference());
+        TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet().source(expression), expression);
+        accessBlock.getStatements().add(t1.assignmentStatement());
+        JsExpression variableReassignment = variableReassignment(context().innerBlock(accessBlock), t1.reference())
+                .source(expression);
+        accessBlock.getStatements().add(JsAstUtils.asSyntheticStatement(variableReassignment.source(expression)));
+
+        JsExpression result;
+        if (accessBlock.getStatements().size() == 2) {
+            result = JsAstUtils.newSequence(Arrays.asList(t1.assignmentExpression(), variableReassignment, t1.reference()));
+        }
+        else {
+            context().getCurrentBlock().getStatements().addAll(accessBlock.getStatements());
+            result = t1.reference();
+        }
+
+        MetadataProperties.setSynthetic(result, true);
+        return result;
     }
 
     @NotNull
-    private JsExpression variableReassignment(@NotNull JsExpression toCallMethodUpon) {
-        JsExpression overloadedMethodCallOnPropertyGetter = operationExpression(toCallMethodUpon);
+    private JsExpression variableReassignment(@NotNull TranslationContext context, @NotNull JsExpression toCallMethodUpon) {
+        JsExpression overloadedMethodCallOnPropertyGetter = operationExpression(context, toCallMethodUpon);
         return accessTranslator.translateAsSet(overloadedMethodCallOnPropertyGetter);
     }
 
     @NotNull
-    abstract JsExpression operationExpression(@NotNull JsExpression receiver);
+    abstract JsExpression operationExpression(@NotNull TranslationContext context, @NotNull JsExpression receiver);
 
     private static boolean isDynamic(TranslationContext context, KtUnaryExpression expression) {
         CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
+        assert  operationDescriptor != null;
         return DynamicCallsKt.isDynamic(operationDescriptor);
     }
 }

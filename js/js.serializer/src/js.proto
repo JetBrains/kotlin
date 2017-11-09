@@ -21,8 +21,36 @@ import "core/deserialization/src/descriptors.proto";
 option java_outer_classname = "JsProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
+message Header {
+  /*
+    preRelease
+  */
+  optional int32 flags = 1;
+
+  // (patch << 16) + (minor << 8) + major
+  optional int32 js_code_binary_version = 2 [default = 1];
+
+  optional string package_fq_name = 3;
+}
+
+message File {
+  // If absent, id is the index of the file in the Files.file list
+  optional int32 id = 1;
+
+  repeated Annotation annotation = 2;
+}
+
+message Files {
+  repeated File file = 1;
+}
+
+extend Package {
+  optional int32 package_fq_name = 131;
+}
+
 extend Class {
   repeated Annotation class_annotation = 130;
+  optional int32 class_containing_file_id = 135;
 }
 
 extend Constructor {
@@ -31,11 +59,13 @@ extend Constructor {
 
 extend Function {
   repeated Annotation function_annotation = 130;
+  optional int32 function_containing_file_id = 135;
 }
 
 extend Property {
   repeated Annotation property_annotation = 130;
   optional Annotation.Argument.Value compile_time_value = 131;
+  optional int32 property_containing_file_id = 135;
 }
 
 extend EnumEntry {
@@ -54,17 +84,16 @@ extend TypeParameter {
   repeated Annotation type_parameter_annotation = 130;
 }
 
+extend PackageFragment {
+  optional Files package_fragment_files = 130;
+}
+
 message Classes {
   // id in StringTable
   repeated int32 class_name = 1 [packed = true];
 }
 
 message Library {
-  message FileEntry {
-    required string path = 1;
-    required bytes content = 2;
-  }
-
   enum Kind {
     PLAIN = 1;
     AMD = 2;
@@ -72,7 +101,9 @@ message Library {
     UMD = 4;
   }
 
-  repeated FileEntry entry = 1;
-  optional Kind kind = 2 [default = PLAIN];
+  optional Kind kind = 1 [default = PLAIN];
+
+  repeated PackageFragment package_fragment = 2;
+
   repeated string imported_module = 3;
 }

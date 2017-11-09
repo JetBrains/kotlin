@@ -27,7 +27,7 @@ fun main(
     // Lists
     a.foo(<!JAVA_TYPE_MISMATCH!>ml<!>)
     a.foo(l)
-    a.foo(<!UNCHECKED_CAST!>ml as MutableList<Any><!>)
+    a.foo(ml <!UNCHECKED_CAST!>as MutableList<Any><!>)
     a.foo(l as List<Any>)
 
     // Iterables
@@ -43,25 +43,25 @@ fun main(
     // Sets
     a.foo(<!JAVA_TYPE_MISMATCH!>ms<!>)
     a.foo(s)
-    a.foo(<!UNCHECKED_CAST!>ms as MutableSet<Any><!>)
+    a.foo(ms <!UNCHECKED_CAST!>as MutableSet<Any><!>)
     a.foo(s as Set<Any>)
 
     // Maps
     a.foo(<!JAVA_TYPE_MISMATCH!>mm<!>)
     a.foo(m)
-    a.foo(<!UNCHECKED_CAST!>mm as MutableMap<Any, Any><!>)
+    a.foo(mm <!UNCHECKED_CAST!>as MutableMap<Any, Any><!>)
     a.foo(m as Map<Any, Any>)
 
     // Map entries
     a.foo(<!JAVA_TYPE_MISMATCH!>mme<!>)
     a.foo(me)
-    a.foo(<!UNCHECKED_CAST!>mme as MutableMap.MutableEntry<Any, Any><!>)
+    a.foo(mme <!UNCHECKED_CAST!>as MutableMap.MutableEntry<Any, Any><!>)
     a.foo(me as Map.Entry<Any, Any>)
 
     // Lists of lists
     a.foo(<!JAVA_TYPE_MISMATCH!>mll<!>)
     a.foo(ll)
-    a.foo(<!UNCHECKED_CAST!>mll as MutableList<MutableList<Any>><!>)
+    a.foo(mll <!UNCHECKED_CAST!>as MutableList<MutableList<Any>><!>)
     a.foo(ll as List<List<Any>>)
 
 }

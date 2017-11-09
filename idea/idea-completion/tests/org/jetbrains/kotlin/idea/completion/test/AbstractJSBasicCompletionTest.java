@@ -27,7 +27,7 @@ public abstract class AbstractJSBasicCompletionTest extends KotlinFixtureComplet
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return KotlinStdJSProjectDescriptor.Companion.getInstance();
+        return KotlinStdJSProjectDescriptor.INSTANCE;
     }
 
     @NotNull

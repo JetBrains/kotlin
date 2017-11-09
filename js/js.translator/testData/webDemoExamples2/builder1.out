@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <title>
+      XML encoding with Kotlin
+    </title>
+  </head>
+  <body>
+    <h1>
+      XML encoding with Kotlin
+    </h1>
+    <p>
+      this format can be used as an alternative markup to XML
+    </p>
+    <a href="http://jetbrains.com/kotlin">
+      Kotlin
+    </a>
+    <p>
+      This is some
+      <b>
+        mixed
+      </b>
+      text. For more see the
+      <a href="http://jetbrains.com/kotlin">
+        Kotlin
+      </a>
+      project
+    </p>
+    <p>
+      some text
+    </p>
+    <p>
+      Command line arguments were:
+      <ul>
+        <li>
+          over9000
+        </li>
+      </ul>
+    </p>
+  </body>
+</html>
+

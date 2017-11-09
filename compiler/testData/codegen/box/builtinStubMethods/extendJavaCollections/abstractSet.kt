@@ -1,5 +1,4 @@
-import java.util.HashSet
-
+// IGNORE_BACKEND: NATIVE
 class A : HashSet<Long>()
 
 fun box(): String {

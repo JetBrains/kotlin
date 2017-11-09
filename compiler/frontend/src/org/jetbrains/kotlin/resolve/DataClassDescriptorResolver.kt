@@ -137,7 +137,7 @@ object DataClassDescriptorResolver {
             val declaresDefaultValue = propertyDescriptor != null
             val parameterDescriptor = ValueParameterDescriptorImpl(
                     functionDescriptor, null, parameter.index, parameter.annotations, parameter.name, parameter.type, declaresDefaultValue,
-                    parameter.isCrossinline, parameter.isNoinline, parameter.isCoroutine, parameter.varargElementType, parameter.source
+                    parameter.isCrossinline, parameter.isNoinline, parameter.varargElementType, parameter.source
             )
             parameterDescriptors.add(parameterDescriptor)
             if (declaresDefaultValue) {

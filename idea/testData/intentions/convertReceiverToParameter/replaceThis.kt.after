@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+class A(val s: String) {}
+
+fun <caret>extend(a: A) = println(a.s)

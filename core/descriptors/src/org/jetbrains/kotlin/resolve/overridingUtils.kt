@@ -61,7 +61,7 @@ fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
         val overridableGroup =
                 OverridingUtil.extractMembersOverridableInBothWays(nextHandle, queue, descriptorByHandle) { conflictedHandles.add(it) }
 
-        if (overridableGroup.size == 1 && overridableGroup.isEmpty()) {
+        if (overridableGroup.size == 1 && conflictedHandles.isEmpty()) {
             result.add(overridableGroup.single())
             continue
         }
@@ -80,4 +80,10 @@ fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
         result.add(mostSpecific)
     }
     return result
+}
+
+fun <D : CallableDescriptor> MutableCollection<D>.retainMostSpecificInEachOverridableGroup() {
+    val newResult = selectMostSpecificInEachOverridableGroup { this }
+    if (size == newResult.size) return
+    retainAll(newResult)
 }

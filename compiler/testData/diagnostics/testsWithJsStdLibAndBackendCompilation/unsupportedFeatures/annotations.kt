@@ -30,9 +30,9 @@ class TestBinary {
     }
 }
 
-@AnnotationWithRuntimeRetention
+<!RUNTIME_ANNOTATION_NOT_SUPPORTED!>@AnnotationWithRuntimeRetention<!>
 class TestRuntime {
-    @AnnotationWithRuntimeRetention
+    <!RUNTIME_ANNOTATION_NOT_SUPPORTED!>@AnnotationWithRuntimeRetention<!>
     fun baz(@AnnotationWithRuntimeRetention foo : Int) : Int {
         return (<!NOT_SUPPORTED!>@AnnotationWithRuntimeRetention 1<!>)
     }

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER -REIFIED_TYPE_PARAMETER_NO_INLINE
 
 fun <reified T> foo(t: T) {}
 class C<reified T>(t: T)

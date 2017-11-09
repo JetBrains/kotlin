@@ -1,0 +1,12 @@
+package
+
+public val [ERROR : G].bar: kotlin.Int
+public fun [ERROR : G].foo(): kotlin.Unit
+
+public interface G</*0*/ T> {
+    public abstract val bar: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

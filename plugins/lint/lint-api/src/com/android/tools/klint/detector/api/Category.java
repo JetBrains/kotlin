@@ -22,7 +22,7 @@ import com.google.common.annotations.Beta;
 
 /**
  * A category is a container for related issues.
- * <p/>
+ * <p>
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */
@@ -107,7 +107,36 @@ public final class Category implements Comparable<Category> {
     }
 
     @Override
-    public int compareTo(Category other) {
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Category category = (Category) o;
+
+        //noinspection SimplifiableIfStatement
+        if (!mName.equals(category.mName)) {
+            return false;
+        }
+        return mParent != null ? mParent.equals(category.mParent) : category.mParent == null;
+
+    }
+
+    @Override
+    public String toString() {
+        return getFullName();
+    }
+
+    @Override
+    public int hashCode() {
+        return mName.hashCode();
+    }
+
+    @Override
+    public int compareTo(@NonNull Category other) {
         if (other.mPriority == mPriority) {
             if (mParent == other) {
                 return 1;
@@ -115,7 +144,13 @@ public final class Category implements Comparable<Category> {
                 return -1;
             }
         }
-        return other.mPriority - mPriority;
+
+        int delta = other.mPriority - mPriority;
+        if (delta != 0) {
+            return delta;
+        }
+
+        return mName.compareTo(other.mName);
     }
 
     /** Issues related to running lint itself */
@@ -139,9 +174,6 @@ public final class Category implements Comparable<Category> {
     /** Issues related to internationalization */
     public static final Category I18N = create("Internationalization", 50);
 
-    /** Issues related to right to left and bi-directional text support */
-    public static final Category RTL = create("Bi-directional Text", 40);
-
     // Sub categories
 
     /** Issues related to icons */
@@ -152,4 +184,7 @@ public final class Category implements Comparable<Category> {
 
     /** Issues related to messages/strings */
     public static final Category MESSAGES = create(CORRECTNESS, "Messages", 95);
+
+    /** Issues related to right to left and bidirectional text support */
+    public static final Category RTL = create(I18N, "Bidirectional Text", 40);
 }

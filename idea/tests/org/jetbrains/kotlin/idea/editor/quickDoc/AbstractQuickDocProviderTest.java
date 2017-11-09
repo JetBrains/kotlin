@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.editor.quickDoc;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
-import com.intellij.codeInsight.navigation.CtrlMouseHandler;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -34,15 +33,16 @@ import java.util.List;
 
 public abstract class AbstractQuickDocProviderTest extends KotlinLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String path) throws Exception {
-        IdeaTestUtilsKt.configureWithExtraFileAbs(myFixture, path, "_Data");
+        IdeaTestUtilsKt.configureWithExtraFile(myFixture, path, "_Data");
 
         PsiElement element = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         assertNotNull("Can't find element at caret in file: " + path, element);
 
         DocumentationManager documentationManager = DocumentationManager.getInstance(myFixture.getProject());
         PsiElement targetElement = documentationManager.findTargetElement(myFixture.getEditor(), myFixture.getFile());
+        PsiElement originalElement = DocumentationManager.getOriginalElement(targetElement);
 
-        String info = CtrlMouseHandler.getInfo(targetElement, element);
+        String info = DocumentationManager.getProviderFromElement(targetElement).generateDoc(targetElement, originalElement);
         if (info != null) {
             info = StringUtil.convertLineSeparators(info);
         }
@@ -79,7 +79,7 @@ public abstract class AbstractQuickDocProviderTest extends KotlinLightCodeInsigh
         }
     }
 
-    private static void wrapToFileComparisonFailure(String info, String filePath, String fileData) {
+    public static void wrapToFileComparisonFailure(String info, String filePath, String fileData) {
         List<String> infoLines = StringUtil.split(info, "\n");
         StringBuilder infoBuilder = new StringBuilder();
         for (String line : infoLines) {

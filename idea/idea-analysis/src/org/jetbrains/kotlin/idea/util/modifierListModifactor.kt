@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-
 
 fun KtModifierListOwner.addAnnotation(
         annotationFqName: FqName,
@@ -74,17 +72,10 @@ fun KtAnnotated.findAnnotation(annotationFqName: FqName): KtAnnotationEntry? {
     if (annotationEntries.isEmpty()) return null
 
     val context = analyze(bodyResolveMode = BodyResolveMode.PARTIAL)
+    val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] ?: return null
 
-    for (entry in annotationEntries) {
-        val annotationDescriptor = context.get(BindingContext.ANNOTATION, entry)
-        if (annotationDescriptor != null) {
-            val fqName = annotationDescriptor.type.getJetTypeFqName(false)
-            if (fqName == annotationFqName.asString()) {
-                return entry
-            }
-        }
-    }
+    // Make sure all annotations are resolved
+    descriptor.annotations.toList()
 
-    return null
+    return annotationEntries.firstOrNull { entry -> context.get(BindingContext.ANNOTATION, entry)?.fqName == annotationFqName }
 }
-

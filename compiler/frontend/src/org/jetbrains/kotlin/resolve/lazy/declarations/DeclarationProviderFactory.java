@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import java.util.Collections;
 
 public interface DeclarationProviderFactory {
-    DeclarationProviderFactory EMPTY =
-            new FileBasedDeclarationProviderFactory(LockBasedStorageManager.NO_LOCKS, Collections.<KtFile>emptyList());
+    DeclarationProviderFactory EMPTY = new FileBasedDeclarationProviderFactory(LockBasedStorageManager.NO_LOCKS, Collections.emptyList());
 
     @NotNull
     ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull KtClassLikeInfo classLikeInfo);
@@ -35,5 +34,5 @@ public interface DeclarationProviderFactory {
     @Nullable
     PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName);
 
-    void diagnoseMissingPackageFragment(KtFile file);
+    void diagnoseMissingPackageFragment(@NotNull FqName fqName, @Nullable KtFile file);
 }

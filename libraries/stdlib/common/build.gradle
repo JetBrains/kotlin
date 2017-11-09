@@ -1,0 +1,63 @@
+description = 'Kotlin Common Standard Library'
+
+apply plugin: 'kotlin-platform-common'
+
+configurePublishing(project)
+
+ext.commonSrcDir = "${buildDir}/common-sources"
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir 'src'
+            srcDir commonSrcDir
+        }
+    }
+}
+
+createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
+
+compileKotlinCommon {
+    dependsOn preprocessSourcesMain
+//    dependsOn ":prepare:compiler:prepare-compiler-with-bootstrap-runtime"
+//    compilerJarFile = compilerJarWithBootstrapRuntime
+}
+
+/*
+// TODO: currently unsupported
+compileKotlinCommon {
+    kotlinOptions {
+        freeCompilerArgs = [
+                "-module-name", "${project.name}".toString()
+        ]
+    }
+}
+*/
+
+kotlin.experimental.coroutines 'enable'
+
+jar {
+    manifestAttributes(manifest, project, 'Main')
+}
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.kotlin
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+// TODO: call the "dist" task instead, once we need to publish kotlin-stdlib-common.jar with the compiler distribution
+task distCommon(type: Copy) {
+    from(jar)
+    into "$distDir/common"
+    rename "-${java.util.regex.Pattern.quote(version)}", ''
+}
+
+dist.dependsOn distCommon
+
+classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })

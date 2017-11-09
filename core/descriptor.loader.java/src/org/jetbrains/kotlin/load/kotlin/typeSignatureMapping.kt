@@ -16,12 +16,17 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.builtins.FAKE_CONTINUATION_CLASS_DESCRIPTOR
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -42,12 +47,23 @@ private fun <T : Any> JvmTypeFactory<T>.boxTypeIfNeeded(possiblyPrimitiveType: T
         if (needBoxedType) boxType(possiblyPrimitiveType) else possiblyPrimitiveType
 
 interface TypeMappingConfiguration<out T : Any> {
+    private companion object {
+        private val DEFAULT_INNER_CLASS_NAME_FACTORY = fun(outer: String, inner: String) = outer + "$" + inner
+    }
+
+    val innerClassNameFactory: (outer: String, inner: String) -> String
+        get() = DEFAULT_INNER_CLASS_NAME_FACTORY
+
     fun commonSupertype(types: Collection<@JvmSuppressWildcards KotlinType>): KotlinType
     fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): T?
+    fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String?
     fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor)
 }
 
 const val NON_EXISTENT_CLASS_NAME = "error/NonExistentClass"
+
+private val CONTINUATION_INTERNAL_NAME =
+        JvmClassName.byClassId(ClassId.topLevel(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)).internalName
 
 fun <T : Any> mapType(
         kotlinType: KotlinType,
@@ -57,7 +73,15 @@ fun <T : Any> mapType(
         descriptorTypeWriter: JvmDescriptorTypeWriter<T>?,
         writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3
 ): T {
-    mapBuiltInType(kotlinType, factory)?.let { builtInType ->
+    if (kotlinType.isSuspendFunctionType) {
+        return mapType(
+                transformSuspendFunctionToRuntimeFunctionType(kotlinType),
+                factory, mode, typeMappingConfiguration, descriptorTypeWriter,
+                writeGenericType
+        )
+    }
+
+    mapBuiltInType(kotlinType, factory, mode, typeMappingConfiguration)?.let { builtInType ->
         val jvmType = factory.boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing)
         writeGenericType(kotlinType, jvmType, mode)
         return jvmType
@@ -122,11 +146,19 @@ fun <T : Any> mapType(
 
         descriptor is ClassDescriptor -> {
             val jvmType =
-                    if (mode.isForAnnotationParameter && KotlinBuiltIns.isKClass(descriptor))
+                    if (mode.isForAnnotationParameter && KotlinBuiltIns.isKClass(descriptor)) {
                         factory.javaLangClassType
-                    else
+                    }
+                    else {
                         typeMappingConfiguration.getPredefinedTypeForClass(descriptor.original)
-                        ?: factory.createObjectType(computeInternalName(descriptor.original))
+                        ?: run {
+                            // refer to enum entries by enum type in bytecode unless ASM_TYPE is written
+                            val enumClassIfEnumEntry = if (descriptor.kind == ClassKind.ENUM_ENTRY)
+                                descriptor.containingDeclaration as ClassDescriptor
+                            else descriptor
+                            factory.createObjectType(computeInternalName(enumClassIfEnumEntry.original, typeMappingConfiguration))
+                        }
+                    }
 
             writeGenericType(kotlinType, jvmType, mode)
 
@@ -153,33 +185,46 @@ fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
 
 private fun <T : Any> mapBuiltInType(
         type: KotlinType,
-        typeFactory: JvmTypeFactory<T>
+        typeFactory: JvmTypeFactory<T>,
+        mode: TypeMappingMode,
+        typeMappingConfiguration: TypeMappingConfiguration<T>
 ): T? {
     val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
-    val fqName = descriptor.fqNameUnsafe
+    if (descriptor === FAKE_CONTINUATION_CLASS_DESCRIPTOR) {
 
-    val primitiveType = KotlinBuiltIns.getPrimitiveTypeByFqName(fqName)
+        return typeFactory.createObjectType(CONTINUATION_INTERNAL_NAME)
+    }
+
+    val primitiveType = KotlinBuiltIns.getPrimitiveType(descriptor)
     if (primitiveType != null) {
         val jvmType = typeFactory.createFromString(JvmPrimitiveType.get(primitiveType).desc)
         val isNullableInJava = TypeUtils.isNullableType(type) || type.hasEnhancedNullability()
         return typeFactory.boxTypeIfNeeded(jvmType, isNullableInJava)
     }
 
-    val arrayElementType = KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(fqName)
+    val arrayElementType = KotlinBuiltIns.getPrimitiveArrayType(descriptor)
     if (arrayElementType != null) {
         return typeFactory.createFromString("[" + JvmPrimitiveType.get(arrayElementType).desc)
     }
 
-    val classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName)
-    if (classId != null) {
-        return typeFactory.createObjectType(JvmClassName.byClassId(classId).internalName)
+    if (KotlinBuiltIns.isUnderKotlinPackage(descriptor)) {
+        val classId = JavaToKotlinClassMap.mapKotlinToJava(descriptor.fqNameUnsafe)
+        if (classId != null) {
+            if (!mode.kotlinCollectionsToJavaCollections &&
+                JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }) return null
+
+            return typeFactory.createObjectType(JvmClassName.byClassId(classId, typeMappingConfiguration).internalName)
+        }
     }
 
     return null
 }
 
-internal fun computeInternalName(klass: ClassDescriptor): String {
+fun computeInternalName(
+        klass: ClassDescriptor,
+        typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl
+): String {
     val container = klass.containingDeclaration
 
     val name = SpecialNames.safeIdentifier(klass.name).identifier
@@ -188,10 +233,13 @@ internal fun computeInternalName(klass: ClassDescriptor): String {
         return if (fqName.isRoot) name else fqName.asString().replace('.', '/') + '/' + name
     }
 
-    assert(container is ClassDescriptor) { "Unexpected container: $container for $klass" }
+    val containerClass = container as? ClassDescriptor ?:
+        throw IllegalArgumentException("Unexpected container: $container for $klass")
 
-    val containerInternalName = computeInternalName(container as ClassDescriptor)
-    return if (klass.kind == ClassKind.ENUM_ENTRY) containerInternalName else containerInternalName + "$" + name
+    val containerInternalName =
+            typeMappingConfiguration.getPredefinedInternalNameForClass(containerClass) ?:
+            computeInternalName(containerClass, typeMappingConfiguration)
+    return typeMappingConfiguration.innerClassNameFactory(containerInternalName, name)
 }
 
 private fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight.postfix;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplateProviderTest {
     public void testAllFilesPresentInPostfix() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/postfix"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/postfix"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("assert.kt")
@@ -62,6 +63,18 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
     @TestMetadata("for.kt")
     public void testFor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/for.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("forOnMap.kt")
+    public void testForOnMap() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/forOnMap.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("forOnString.kt")
+    public void testForOnString() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/forOnString.kt");
         doTest(fileName);
     }
 
@@ -167,9 +180,21 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("tryInLocalClass.kt")
+    public void testTryInLocalClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryInLocalClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("tryOnFor.kt")
     public void testTryOnFor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryOnFor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("tryOnImportStatement.kt")
+    public void testTryOnImportStatement() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryOnImportStatement.kt");
         doTest(fileName);
     }
 

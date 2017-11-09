@@ -14,7 +14,13 @@ fun foo(pFoo: Boolean, s: String) {
 // ORDER: "pFoo, s"
 // ORDER: true
 // ORDER: false
+// ORDER: "pFoo = true"
+// ORDER: "pFoo = false"
 // ORDER: local
 // ORDER: nonNullable
+// ORDER: maxOf
+// ORDER: maxOf
+// ORDER: minOf
+// ORDER: minOf
 // ORDER: nullableX
 // ORDER: nullableX

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,22 +32,22 @@ object EditCommaSeparatedListHelper {
     fun <TItem: KtElement> addItemAfter(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?, prefix: KtToken = KtTokens.LPAR): TItem {
         assert(anchor == null || anchor.parent == list)
         if (allItems.isEmpty()) {
-            if (list.firstChild.node.elementType == prefix) {
-                return list.addAfter(item, list.firstChild) as TItem
+            return if (list.firstChild?.node?.elementType == prefix) {
+                list.addAfter(item, list.firstChild) as TItem
             }
             else {
-                return list.add(item) as TItem
+                list.add(item) as TItem
             }
         }
         else {
             var comma = KtPsiFactory(list).createComma()
-            if (anchor != null) {
+            return if (anchor != null) {
                 comma = list.addAfter(comma, anchor)
-                return list.addAfter(item, comma) as TItem
+                list.addAfter(item, comma) as TItem
             }
             else {
                 comma = list.addBefore(comma, allItems.first())
-                return list.addBefore(item, comma) as TItem
+                list.addBefore(item, comma) as TItem
             }
         }
     }
@@ -55,18 +55,18 @@ object EditCommaSeparatedListHelper {
     @JvmOverloads
     fun <TItem: KtElement> addItemBefore(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?, prefix: KtToken = KtTokens.LPAR): TItem {
         val anchorAfter: TItem?
-        if (allItems.isEmpty()) {
+        anchorAfter = if (allItems.isEmpty()) {
             assert(anchor == null)
-            anchorAfter = null
+            null
         }
         else {
             if (anchor != null) {
                 val index = allItems.indexOf(anchor)
                 assert(index >= 0)
-                anchorAfter = if (index > 0) allItems.get(index - 1) else null
+                if (index > 0) allItems[index - 1] else null
             }
             else {
-                anchorAfter = allItems.get(allItems.size - 1)
+                allItems[allItems.size - 1]
             }
         }
         return addItemAfter(list, allItems, item, anchorAfter, prefix)
@@ -74,9 +74,9 @@ object EditCommaSeparatedListHelper {
 
     fun <TItem: KtElement> removeItem(item: TItem) {
         var comma = item.siblings(withItself = false).firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }
-        if (comma?.getNode()?.getElementType() != KtTokens.COMMA) {
+        if (comma?.node?.elementType != KtTokens.COMMA) {
             comma = item.siblings(forward = false, withItself = false).firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }
-            if (comma?.getNode()?.getElementType() != KtTokens.COMMA) {
+            if (comma?.node?.elementType != KtTokens.COMMA) {
                 comma = null
             }
         }

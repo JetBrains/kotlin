@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1122
 package foo
 
 interface A {
@@ -9,7 +10,7 @@ class B : A {
 }
 
 fun test() = js("""
-var module = Kotlin.modules.JS_TESTS.foo;
+var module = JS_TESTS.foo;
 return new (module.B)().js_f(23);
 """)
 

@@ -43,7 +43,7 @@ public class StringSwitchCodegen extends SwitchCodegen {
             boolean isExhaustive,
             @NotNull ExpressionCodegen codegen
     ) {
-        super(expression, isStatement, isExhaustive, codegen);
+        super(expression, isStatement, isExhaustive, codegen, null);
     }
 
     @Override
@@ -55,12 +55,10 @@ public class StringSwitchCodegen extends SwitchCodegen {
 
         if (!transitionsTable.containsKey(hashCode)) {
             transitionsTable.put(hashCode, new Label());
-            hashCodesToStringAndEntryLabel.put(hashCode, new ArrayList<Pair<String, Label>>());
+            hashCodesToStringAndEntryLabel.put(hashCode, new ArrayList<>());
         }
 
-        hashCodesToStringAndEntryLabel.get(hashCode).add(
-                new Pair<String, Label>(((StringValue) constant).getValue(), entryLabel)
-        );
+        hashCodesToStringAndEntryLabel.get(hashCode).add(new Pair<>(((StringValue) constant).getValue(), entryLabel));
     }
 
     @Override

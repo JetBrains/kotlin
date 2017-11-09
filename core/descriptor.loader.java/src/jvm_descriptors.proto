@@ -112,8 +112,12 @@ extend TypeParameter {
 extend Class {
   // If absent, assumed to be JvmAbi.DEFAULT_MODULE_NAME
   optional int32 class_module_name = 101 [(string_id_in_table) = true];
+
+  repeated Property class_local_variable = 102;
 }
 
 extend Package {
   optional int32 package_module_name = 101 [(string_id_in_table) = true];
+
+  repeated Property package_local_variable = 102;
 }

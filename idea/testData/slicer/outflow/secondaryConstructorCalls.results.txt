@@ -1,0 +1,6 @@
+4 <bold>constructor(n: Int)</bold>
+9 	class B : <bold>A(1)</bold>
+16 	val x = <bold>A(1)</bold>
+16 		val <bold>x = A(1)</bold>
+6 	constructor() : <bold>this(1)</bold>
+12 	constructor() : <bold>super(1)</bold>

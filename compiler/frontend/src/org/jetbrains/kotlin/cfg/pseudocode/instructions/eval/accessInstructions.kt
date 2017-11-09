@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValueFactory
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -38,6 +39,13 @@ sealed class AccessTarget {
     }
     object BlackBox: AccessTarget()
 }
+
+val AccessTarget.accessedDescriptor: CallableDescriptor?
+    get() = when (this) {
+        is AccessTarget.Declaration -> descriptor
+        is AccessTarget.Call -> resolvedCall.resultingDescriptor
+        is AccessTarget.BlackBox -> null
+    }
 
 abstract class AccessValueInstruction protected constructor(
         element: KtElement,
@@ -73,9 +81,7 @@ class ReadValueInstruction private constructor(
         visitor.visitReadValue(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitReadValue(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitReadValue(this)
 
     override fun toString(): String {
         val inVal = if (receiverValues.isEmpty()) "" else "|${receiverValues.keys.joinToString()}"
@@ -100,7 +106,7 @@ class WriteValueInstruction(
         target: AccessTarget,
         receiverValues: Map<PseudoValue, ReceiverValue>,
         val lValue: KtElement,
-        val rValue: PseudoValue
+        private val rValue: PseudoValue
 ) : AccessValueInstruction(assignment, blockScope, target, receiverValues) {
     override val inputValues: List<PseudoValue>
         get() = (receiverValues.keys as Collection<PseudoValue>) + rValue
@@ -109,9 +115,7 @@ class WriteValueInstruction(
         visitor.visitWriteValue(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitWriteValue(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitWriteValue(this)
 
     override fun toString(): String {
         val lhs = (lValue as? KtNamedDeclaration)?.name ?: render(lValue)

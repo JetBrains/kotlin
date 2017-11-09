@@ -1,0 +1,10 @@
+// "Create member function 'A.foo'" "true"
+// JS
+
+external object A {
+    fun foo()
+}
+
+fun test() {
+    A.foo()
+}

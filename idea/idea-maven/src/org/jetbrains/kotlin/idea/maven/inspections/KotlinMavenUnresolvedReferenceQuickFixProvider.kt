@@ -64,7 +64,7 @@ class KotlinMavenUnresolvedReferenceQuickFixProvider : UnresolvedReferenceQuickF
             val typeReference = expression.getParentOfType<KtTypeReference>(true)
             val referenced = typeReference?.text ?: expression.getReferencedName()
 
-            expression.getContainingKtFile()
+            expression.containingKtFile
                     .importDirectives
                     .firstOrNull { !it.isAllUnder && it.aliasName == referenced || it.importedFqName?.shortName()?.asString() == referenced }
                     ?.let { it.importedFqName?.asString() }
@@ -100,10 +100,10 @@ class AddMavenDependencyQuickFix(val className: String, val smartPsiElementPoint
             val isTestSource = ProjectRootManager.getInstance(project).fileIndex.isInTestSourceContent(virtualFile)
             val scope = if (isTestSource) MavenArtifactScope.TEST else null
 
-            val pom = PomFile(xmlFile)
-
-            ids.forEach {
-                pom.addDependency(it, scope)
+            PomFile.forFileOrNull(xmlFile)?.let { pom ->
+                ids.forEach {
+                    pom.addDependency(it, scope)
+                }
             }
         }
     }

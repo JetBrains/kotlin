@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation;
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.lexer.KtToken;
@@ -70,6 +71,6 @@ public final class CompareToTranslator extends AbstractTranslator {
     private JsExpression translate() {
         JsBinaryOperator correspondingOperator = OperatorTable.getBinaryOperator(getOperationToken(expression));
         JsExpression methodCall = BinaryOperationTranslator.translateAsOverloadedCall(expression, context());
-        return new JsBinaryOperation(correspondingOperator, methodCall, context().program().getNumberLiteral(0));
+        return new JsBinaryOperation(correspondingOperator, methodCall, new JsIntLiteral(0));
     }
 }

@@ -34,9 +34,12 @@ inline fun <reified T : Any> ComponentProvider.get(): T {
 }
 
 @Suppress("UNCHECKED_CAST")
+fun <T : Any> ComponentProvider.tryGetService(request: Class<T>): T? {
+    return resolve(request)?.getValue() as T?
+}
+
 fun <T : Any> ComponentProvider.getService(request: Class<T>): T {
-    val valueDescriptor = resolve(request) ?: throw IllegalArgumentException("Unresolved service: $request")
-    return valueDescriptor.getValue() as T
+    return tryGetService(request) ?: throw IllegalArgumentException("Unresolved service: $request")
 }
 
 fun StorageComponentContainer.useInstance(instance: Any) {

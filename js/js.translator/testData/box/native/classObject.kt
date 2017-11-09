@@ -1,11 +1,12 @@
+// EXPECTED_REACHABLE_NODES: 1111
 package foo
 
-@native
-class A(val c: Int) {
-    @native
+external class A(c: Int) {
+    val c: Int
+
     companion object {
-        val g: Int = noImpl
-        val c: String = noImpl
+        val g: Int
+        val c: String = definedExternally
     }
 }
 

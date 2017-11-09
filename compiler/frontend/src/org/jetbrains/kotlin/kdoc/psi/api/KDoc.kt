@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 
 // Don't implement JetElement (or it will be treated as statement)
-interface KDoc : PsiComment {
+interface KDoc : PsiComment, KDocElement {
     fun getOwner(): KtDeclaration?
     fun getDefaultSection(): KDocSection
     fun findSectionByName(name: String): KDocSection?

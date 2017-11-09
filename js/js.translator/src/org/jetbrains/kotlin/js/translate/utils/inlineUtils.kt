@@ -18,11 +18,9 @@
 
 package org.jetbrains.kotlin.js.translate.utils
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.descriptor
-import com.google.dart.compiler.backend.js.ast.metadata.inlineStrategy
-import com.google.dart.compiler.backend.js.ast.metadata.psiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
@@ -44,21 +42,20 @@ import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 fun setInlineCallMetadata(
         expression: JsExpression,
         psiElement: KtExpression,
-        resolvedCall: ResolvedCall<*>,
+        descriptor: CallableDescriptor,
         context: TranslationContext
 ) {
-    val descriptor = PsiUtils.getFunctionDescriptor(resolvedCall)
     assert(CallExpressionTranslator.shouldBeInlined(descriptor)) {
         "Expected descriptor of callable, that should be inlined, but got: $descriptor"
     }
 
-    val name = context.aliasedName(descriptor)
+    val candidateNames = setOf(context.aliasedName(descriptor), context.getInnerNameForDescriptor(descriptor))
 
     val visitor = object : RecursiveJsVisitor() {
         override fun visitInvocation(invocation: JsInvocation) {
             super.visitInvocation(invocation)
 
-            if (name == invocation.name) {
+            if (invocation.name in candidateNames || invocation.name?.descriptor?.original == descriptor.original) {
                 invocation.descriptor = descriptor
                 invocation.inlineStrategy = InlineStrategy.IN_PLACE
                 invocation.psiElement = psiElement
@@ -67,6 +64,29 @@ fun setInlineCallMetadata(
     }
 
     visitor.accept(expression)
+
+    context.addInlineCall(descriptor)
+}
+
+fun setInlineCallMetadata(
+        expression: JsExpression,
+        psiElement: KtExpression,
+        resolvedCall: ResolvedCall<*>,
+        context: TranslationContext
+) = setInlineCallMetadata(expression, psiElement, PsiUtils.getFunctionDescriptor(resolvedCall), context)
+
+fun setInlineCallMetadata(
+        nameRef: JsNameRef,
+        psiElement: KtExpression,
+        descriptor: CallableDescriptor,
+        context: TranslationContext
+) {
+    if (nameRef.inlineStrategy != null) return
+    nameRef.descriptor = descriptor
+    nameRef.inlineStrategy = InlineStrategy.IN_PLACE
+    nameRef.psiElement = psiElement
+
+    context.addInlineCall(descriptor)
 }
 
 fun TranslationContext.aliasedName(descriptor: CallableDescriptor): JsName {

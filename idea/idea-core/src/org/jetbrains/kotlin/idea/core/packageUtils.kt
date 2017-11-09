@@ -27,7 +27,7 @@ fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!
 
 fun PsiFile.getFqNameByDirectory(): FqName {
     val qualifiedNameByDirectory = parent?.getPackage()?.qualifiedName
-    return qualifiedNameByDirectory?.let { FqName(it) } ?: FqName.ROOT
+    return qualifiedNameByDirectory?.let(::FqName) ?: FqName.ROOT
 }
 
 fun KtFile.packageMatchesDirectory(): Boolean = packageFqName == getFqNameByDirectory()

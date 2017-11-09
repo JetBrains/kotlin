@@ -1,0 +1,3 @@
+class Person(val name: String)
+
+val reader = { person: Person -> person.name }

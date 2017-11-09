@@ -17,10 +17,4 @@ public interface InheritedSameAdaptersWithSubstitution {
     public interface Super2Substituted : test.InheritedSameAdaptersWithSubstitution.Super2<kotlin.String!> {
         public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.util.Comparator<kotlin.String!>!): kotlin.Unit
     }
-
-    // Static members
-    public final /*synthesized*/ fun Sub(/*0*/ function: (java.util.Comparator<kotlin.String!>!) -> kotlin.Unit): test.InheritedSameAdaptersWithSubstitution.Sub
-    public final /*synthesized*/ fun Super1(/*0*/ function: (java.util.Comparator<kotlin.String!>!) -> kotlin.Unit): test.InheritedSameAdaptersWithSubstitution.Super1
-    public final /*synthesized*/ fun </*0*/ T : kotlin.Any!> Super2(/*0*/ function: (java.util.Comparator<T!>!) -> kotlin.Unit): test.InheritedSameAdaptersWithSubstitution.Super2<T>
-    public final /*synthesized*/ fun Super2Substituted(/*0*/ function: (java.util.Comparator<kotlin.String!>!) -> kotlin.Unit): test.InheritedSameAdaptersWithSubstitution.Super2Substituted
 }

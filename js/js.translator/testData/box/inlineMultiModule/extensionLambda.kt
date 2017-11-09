@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1121
 // MODULE: lib
 // FILE: lib.kt
 
@@ -13,7 +14,7 @@ public fun <T, R> apply(x: T, fn: T.()->R): R =
 
 import utils.*
 
-// CHECK_CONTAINS_NO_CALLS: test_0
+// CHECK_CONTAINS_NO_CALLS: test except=imul
 
 internal class A(val n: Int)
 

@@ -16,19 +16,24 @@
 
 package org.jetbrains.kotlin.js.facade
 
-import com.google.dart.compiler.backend.js.ast.JsProgram
-import com.google.dart.compiler.util.TextOutput
-import com.google.dart.compiler.util.TextOutputImpl
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.backend.common.output.*
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
+import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
+import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
+import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
-import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder
+import org.jetbrains.kotlin.js.util.TextOutput
+import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -45,19 +50,40 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             val program: JsProgram,
             diagnostics: Diagnostics,
             private val importedModules: List<String>,
-            private val moduleDescriptor: ModuleDescriptor
+            val moduleDescriptor: ModuleDescriptor,
+            val bindingContext: BindingContext
     ) : TranslationResult(diagnostics) {
         @Suppress("unused") // Used in kotlin-web-demo in WebDemoTranslatorFacade
-        fun getCode(): String = getCode(TextOutputImpl(), sourceMapBuilder = null)
+        fun getCode(): String {
+            val output = TextOutputImpl()
+            getCode(output, sourceLocationConsumer = null)
+            return output.toString()
+        }
 
         fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
             val output = TextOutputImpl()
-            val sourceMapBuilder =
-                    if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP))
-                        SourceMap3Builder(outputFile, output, SourceMapBuilderConsumer())
-                    else null
 
-            val code = getCode(output, sourceMapBuilder)
+            val sourceMapBuilder = SourceMap3Builder(outputFile, output, config.sourceMapPrefix)
+            val sourceMapBuilderConsumer =
+                    if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
+                        val sourceMapContentEmbedding = config.sourceMapContentEmbedding
+                        val pathResolver = SourceFilePathResolver.create(config)
+                        SourceMapBuilderConsumer(
+                                sourceMapBuilder,
+                                pathResolver,
+                                sourceMapContentEmbedding == SourceMapSourceEmbedding.ALWAYS,
+                                sourceMapContentEmbedding != SourceMapSourceEmbedding.NEVER)
+                    }
+                    else {
+                        null
+                    }
+
+            getCode(output, sourceMapBuilderConsumer)
+            if (sourceMapBuilderConsumer != null) {
+                sourceMapBuilder.addLink()
+            }
+            val code = output.toString()
+
             val prefix = outputPrefixFile?.readText() ?: ""
             val postfix = outputPostfixFile?.readText() ?: ""
             val sourceFiles = files.map {
@@ -80,31 +106,30 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                     kind = config.moduleKind,
                     imported = importedModules
                 )
-                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(moduleDescription)
+                val settings = config.configuration.languageVersionSettings
+                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(bindingContext, moduleDescription, settings)
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
                 outputFiles.add(jsMetaFile)
-            }
 
-            if (config.configuration.getBoolean(JSConfigurationKeys.KJSM)) {
-                KotlinJavascriptSerializationUtil.toContentMap(moduleDescriptor).forEach {
+                KotlinJavascriptSerializationUtil.toContentMap(bindingContext, moduleDescriptor, settings).forEach {
                     // TODO Add correct source files
                     outputFiles.add(SimpleOutputBinaryFile(emptyList(), config.moduleId + VfsUtilCore.VFS_SEPARATOR_CHAR + it.key, it.value))
                 }
             }
 
-            if (sourceMapBuilder != null) {
+            if (sourceMapBuilderConsumer != null) {
                 sourceMapBuilder.skipLinesAtBeginning(StringUtil.getLineBreakCount(prefix))
                 val sourceMapFile = SimpleOutputFile(sourceFiles, sourceMapBuilder.outFile.name, sourceMapBuilder.build())
                 outputFiles.add(sourceMapFile)
+                sourceMapBuilder.addLink()
             }
 
             return SimpleOutputFileCollection(outputFiles)
         }
 
-        private fun getCode(output: TextOutput, sourceMapBuilder: SourceMapBuilder?): String {
-            program.accept(JsSourceGenerationVisitor(output, sourceMapBuilder))
-            return output.toString()
+        private fun getCode(output: TextOutput, sourceLocationConsumer: SourceLocationConsumer?) {
+            program.accept(JsToStringGenerationVisitor(output, sourceLocationConsumer ?: NoOpSourceLocationConsumer))
         }
     }
 }

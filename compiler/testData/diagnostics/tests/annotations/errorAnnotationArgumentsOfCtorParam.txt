@@ -1,0 +1,24 @@
+package
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FIELD}) public final annotation class Anno : kotlin.Annotation {
+    public constructor Anno()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestAnn {
+    public constructor TestAnn(/*0*/ s: kotlin.Int)
+    @Anno public final val s: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestDeprecatedWithoutArguments {
+    public constructor TestDeprecatedWithoutArguments(/*0*/ s: kotlin.Int)
+    @kotlin.Deprecated public final val s: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

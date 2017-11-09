@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.js.inline.util.collectors
 
-import com.google.dart.compiler.backend.js.ast.JsFunction
-import com.google.dart.compiler.backend.js.ast.JsNode
-import com.google.dart.compiler.backend.js.ast.JsObjectLiteral
-import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
+import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsNode
+import org.jetbrains.kotlin.js.backend.ast.JsObjectLiteral
+import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
 import java.util.ArrayList
 
 class InstanceCollector<T : JsNode>(val klass: Class<T>, val visitNestedDeclarations: Boolean) : RecursiveJsVisitor() {

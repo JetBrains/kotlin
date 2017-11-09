@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,18 +40,19 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
     FILE("file", false),
     TYPEALIAS("typealias", false),
 
+    RECEIVER("receiver", true),
+
     TYPE_PROJECTION("type projection", false),
     STAR_PROJECTION("star projection", false),
     PROPERTY_PARAMETER("property constructor parameter", false),
 
-    CLASS_ONLY("class", false),  // includes only top level classes and nested classes (but not enums, objects, interfaces, inner or local classes)
+    CLASS_ONLY("class", false),  // includes only top level classes and nested/inner classes (but not enums, objects, interfaces and local classes)
     OBJECT("object", false),     // does not include OBJECT_LITERAL but DOES include COMPANION_OBJECT
     COMPANION_OBJECT("companion object", false),
     INTERFACE("interface", false),
     ENUM_CLASS("enum class", false),
     ENUM_ENTRY("enum entry", false),
 
-    INNER_CLASS("inner class", false),
     LOCAL_CLASS("local class", false),
 
     LOCAL_FUNCTION("local function", false),
@@ -93,10 +94,8 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
         fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
             ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASS)
             ClassKind.CLASS ->
-                if (descriptor.isInner) {
-                    listOf(INNER_CLASS, CLASS)
-                }
-                else if (DescriptorUtils.isLocal(descriptor)) {
+                // inner local classes should be CLASS_ONLY, not LOCAL_CLASS
+                if (!descriptor.isInner && DescriptorUtils.isLocal(descriptor)) {
                     listOf(LOCAL_CLASS, CLASS)
                 }
                 else {
@@ -127,7 +126,7 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
                 AnnotationUseSiteTarget.FILE to FILE,
                 AnnotationUseSiteTarget.PROPERTY_GETTER to PROPERTY_GETTER,
                 AnnotationUseSiteTarget.PROPERTY_SETTER to PROPERTY_SETTER,
-                AnnotationUseSiteTarget.RECEIVER to VALUE_PARAMETER,
+                AnnotationUseSiteTarget.RECEIVER to RECEIVER,
                 AnnotationUseSiteTarget.SETTER_PARAMETER to VALUE_PARAMETER,
                 AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD to FIELD)
 

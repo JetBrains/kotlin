@@ -121,8 +121,8 @@ public final class PatternBuilder {
     @NotNull
     private static DescriptorPredicate pattern(@NotNull List<NamePredicate> checkers, @Nullable List<NamePredicate> arguments) {
         assert !checkers.isEmpty();
-        final List<NamePredicate> checkersWithPrefixChecker = Lists.newArrayList();
-        if (!checkers.get(0).apply(KOTLIN_NAME)) {
+        List<NamePredicate> checkersWithPrefixChecker = Lists.newArrayList();
+        if (!checkers.get(0).test(KOTLIN_NAME)) {
             checkersWithPrefixChecker.add(KOTLIN_NAME_PREDICATE);
         }
 
@@ -130,12 +130,11 @@ public final class PatternBuilder {
 
         assert checkersWithPrefixChecker.size() > 1;
 
-        final List<NamePredicate> argumentCheckers = arguments != null ? Lists.newArrayList(arguments) : null;
+        List<NamePredicate> argumentCheckers = arguments != null ? Lists.newArrayList(arguments) : null;
 
         return new DescriptorPredicate() {
             @Override
-            public boolean apply(@Nullable FunctionDescriptor descriptor) {
-                assert descriptor != null : "argument for DescriptorPredicate.apply should not be null, checkers=" + checkersWithPrefixChecker;
+            public boolean test(FunctionDescriptor descriptor) {
                 //TODO: no need to wrap if we check beforehand
                 try {
                     return doApply(descriptor);
@@ -162,7 +161,7 @@ public final class PatternBuilder {
                         ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
                         Name name = DescriptorUtilsKt.getNameIfStandardType(valueParameterDescriptor.getType());
                         NamePredicate namePredicate = argumentCheckers.get(i);
-                        if (!namePredicate.apply(name)) return false;
+                        if (!namePredicate.test(name)) return false;
                     }
                 }
                 return true;
@@ -172,7 +171,7 @@ public final class PatternBuilder {
                 for (int i = 0; i < nameParts.size(); ++i) {
                     Name namePart = nameParts.get(i);
                     NamePredicate correspondingPredicate = checkersWithPrefixChecker.get(i);
-                    if (!correspondingPredicate.apply(namePart)) {
+                    if (!correspondingPredicate.test(namePart)) {
                         return false;
                     }
                 }
@@ -233,9 +232,7 @@ public final class PatternBuilder {
         }
 
         @Override
-        public boolean apply(@Nullable FunctionDescriptor functionDescriptor) {
-            assert functionDescriptor != null :
-                    "argument for DescriptorPredicate.apply should not be null, receiverFqName=" + receiverFqName + " names=" + Arrays.asList(names);
+        public boolean test(FunctionDescriptor functionDescriptor) {
             ReceiverParameterDescriptor actualReceiver = functionDescriptor.getExtensionReceiverParameter();
             if (actualReceiver != null) {
                 if (receiverFqName == null) return false;

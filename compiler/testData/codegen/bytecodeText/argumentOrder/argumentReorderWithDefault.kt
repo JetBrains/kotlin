@@ -8,6 +8,7 @@ class A {
         return "OK"
     }
 }
-// Test argument reordering when call site argument order differs from declaration one: 18 + 1 for super call check
-// 13 LOAD
+
+// Test argument reordering when call site argument order differs from declaration one
+// 12 LOAD
 // 5 STORE

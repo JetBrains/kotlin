@@ -42,6 +42,10 @@ open class DialogWithEditor(
         setTitle(title)
     }
 
+    override final fun init() {
+        super.init()
+    }
+
     private fun createEditor(): Editor {
         val editorFactory = EditorFactory.getInstance()!!
         val virtualFile = LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, initialText)

@@ -1,0 +1,4 @@
+<caret>
+fun other() {
+
+}

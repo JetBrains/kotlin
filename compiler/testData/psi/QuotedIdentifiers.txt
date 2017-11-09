@@ -1,4 +1,4 @@
-JetFile: QuotedIdentifiers.kt
+KtFile: QuotedIdentifiers.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

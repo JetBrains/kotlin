@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotlinAgainstKotlinTest {
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("annotationInInterface.kt")
@@ -137,6 +138,24 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("jvmPackageName.kt")
+    public void testJvmPackageName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmPackageName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("jvmPackageNameInRootPackage.kt")
+    public void testJvmPackageNameInRootPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameInRootPackage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("jvmPackageNameWithJvmName.kt")
+    public void testJvmPackageNameWithJvmName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameWithJvmName.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jvmStaticInObject.kt")
     public void testJvmStaticInObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmStaticInObject.kt");
@@ -149,9 +168,27 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("kt14012.kt")
+    public void testKt14012() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/kt14012.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt14012_multi.kt")
+    public void testKt14012_multi() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/kt14012_multi.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("multifileClassInlineFunctionAccessingProperty.kt")
     public void testMultifileClassInlineFunctionAccessingProperty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/multifileClassInlineFunctionAccessingProperty.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("multifileClassWithTypealias.kt")
+    public void testMultifileClassWithTypealias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/multifileClassWithTypealias.kt");
         doTest(fileName);
     }
 
@@ -191,6 +228,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("sealedClass.kt")
+    public void testSealedClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/sealedClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("secondaryConstructors.kt")
     public void testSecondaryConstructors() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/secondaryConstructors.kt");
@@ -212,6 +255,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("starImportEnum.kt")
     public void testStarImportEnum() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/starImportEnum.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("targetedJvmName.kt")
+    public void testTargetedJvmName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/targetedJvmName.kt");
         doTest(fileName);
     }
 

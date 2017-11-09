@@ -21,7 +21,8 @@ class Identifier<T> {
 }
 
 object User {
-    @JvmStatic fun main(args: Array<String>) {
+    @JvmStatic
+    fun main(args: Array<String>) {
         val i1 = Identifier("name", false, true)
         val i2 = Identifier("name", false)
         val i3 = Identifier("name")

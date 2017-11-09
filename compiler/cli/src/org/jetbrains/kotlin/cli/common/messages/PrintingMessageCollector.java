@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.common.messages;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
 
@@ -41,7 +42,7 @@ public class PrintingMessageCollector implements MessageCollector {
     public void report(
             @NotNull CompilerMessageSeverity severity,
             @NotNull String message,
-            @NotNull CompilerMessageLocation location
+            @Nullable CompilerMessageLocation location
     ) {
         if (!verbose && CompilerMessageSeverity.VERBOSE.contains(severity)) return;
 

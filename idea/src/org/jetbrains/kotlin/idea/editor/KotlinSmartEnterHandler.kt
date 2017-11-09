@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,9 @@ class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 
                 KotlinLastLambdaParameterFixer(),
 
-                KotlinClassInitializerFixer()
+                KotlinClassInitializerFixer(),
+
+                KotlinClassBodyFixer()
         )
 
         addEnterProcessors(KotlinPlainEnterProcessor())
@@ -71,13 +73,13 @@ class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 
         while (atCaret != null) {
             when {
-                atCaret.isKotlinStatement() == true -> return atCaret
+                atCaret.isKotlinStatement() -> return atCaret
                 atCaret.parent is KtFunctionLiteral -> return atCaret
                 atCaret is KtDeclaration -> {
                     val declaration = atCaret
                     when {
                         declaration is KtParameter && !declaration.isInLambdaExpression() -> {/* proceed to function declaration */}
-                        declaration.getParent() is KtForExpression -> {/* skip variable declaration in 'for' expression */}
+                        declaration.parent is KtForExpression -> {/* skip variable declaration in 'for' expression */}
                         else -> return atCaret
                     }
                 }
@@ -161,4 +163,4 @@ class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 
 private val BRANCH_CONTAINERS = TokenSet.create(KtNodeTypes.THEN, KtNodeTypes.ELSE, KtNodeTypes.BODY)
 private val BRACES = TokenSet.create(KtTokens.RBRACE, KtTokens.LBRACE)
-private fun KtParameter.isInLambdaExpression() = this.parent?.parent is KtFunctionLiteral
+private fun KtParameter.isInLambdaExpression() = this.parent.parent is KtFunctionLiteral

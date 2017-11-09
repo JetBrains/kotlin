@@ -1,0 +1,16 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+    [mkdir] Created dir: [Temp]/classes
+    [javac] Compiling 1 source file to [Temp]/classes
+
+ERR:
+    [javac] <withKotlin> task does not yet support the fork mode
+
+BUILD FAILED
+[TestData]/build.xml:6: Compile failed; see the compiler error output for details.
+
+Total time: [time]
+
+Return code: 1

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.common.messages;
 
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class XmlMessageRenderer implements MessageRenderer {
     @Override
@@ -26,10 +27,11 @@ public class XmlMessageRenderer implements MessageRenderer {
     }
 
     @Override
-    public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
+    public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location) {
         StringBuilder out = new StringBuilder();
-        out.append("<").append(severity.toString());
-        if (location.getPath() != null) {
+        String tagName = severity.getPresentableName();
+        out.append("<").append(tagName);
+        if (location != null) {
             out.append(" path=\"").append(e(location.getPath())).append("\"");
             out.append(" line=\"").append(location.getLine()).append("\"");
             out.append(" column=\"").append(location.getColumn()).append("\"");
@@ -38,12 +40,17 @@ public class XmlMessageRenderer implements MessageRenderer {
 
         out.append(e(message));
 
-        out.append("</").append(severity.toString()).append(">\n");
+        out.append("</").append(tagName).append(">\n");
         return out.toString();
     }
 
-    private String e(String str) {
+    private static String e(String str) {
         return StringUtil.escapeXml(str);
+    }
+
+    @Override
+    public String renderUsage(@NotNull String usage) {
+        return render(CompilerMessageSeverity.STRONG_WARNING, usage, null);
     }
 
     @Override

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 class KotlinUsageToPsiElementProvider : UsageToPsiElementProvider() {
     override fun getAppropriateParentFrom(element: PsiElement): PsiElement? {
         if (element.language == KotlinLanguage.INSTANCE) {
-            return element.parentsWithSelf.first { it is KtNamedDeclaration || it is KtImportDirective }
+            return element.parentsWithSelf.firstOrNull { it is KtNamedDeclaration || it is KtImportDirective }
         }
         return null
     }

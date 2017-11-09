@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,19 @@
 
 package org.jetbrains.kotlin.config
 
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement
+import org.jetbrains.kotlin.utils.DescriptionAware
+
 class ApiVersion private constructor(
-        private val version: MavenComparableVersion,
+        val version: MavenComparableVersion,
         val versionString: String
-) : Comparable<ApiVersion> {
+) : Comparable<ApiVersion>, DescriptionAware {
+    val isStable: Boolean
+        get() = this <= ApiVersion.LATEST_STABLE
+
+    override val description: String
+        get() = if (isStable) versionString else "$versionString (EXPERIMENTAL)"
+
     override fun compareTo(other: ApiVersion): Int =
             version.compareTo(other.version)
 
@@ -33,10 +42,26 @@ class ApiVersion private constructor(
 
     companion object {
         @JvmField
-        val LATEST: ApiVersion = createByLanguageVersion(LanguageVersion.Companion.LATEST)
+        val KOTLIN_1_0 = createByLanguageVersion(LanguageVersion.KOTLIN_1_0)
+
+        @JvmField
+        val KOTLIN_1_1 = createByLanguageVersion(LanguageVersion.KOTLIN_1_1)
+
+        @JvmField
+        val KOTLIN_1_2 = createByLanguageVersion(LanguageVersion.KOTLIN_1_2)
+
+        @JvmField
+        val KOTLIN_1_3 = createByLanguageVersion(LanguageVersion.KOTLIN_1_3)
+
+        @JvmField
+        val LATEST_STABLE: ApiVersion = createByLanguageVersion(LanguageVersion.LATEST_STABLE)
 
         @JvmStatic
         fun createByLanguageVersion(version: LanguageVersion): ApiVersion = parse(version.versionString)!!
+
+        @JvmStatic
+        fun createByVersionRequirement(versionRequirement: VersionRequirement): ApiVersion =
+                versionRequirement.version.let { version -> parse(version.asString()) ?: error("Could not parse version: $version") }
 
         fun parse(versionString: String): ApiVersion? = try {
             ApiVersion(MavenComparableVersion(versionString), versionString)

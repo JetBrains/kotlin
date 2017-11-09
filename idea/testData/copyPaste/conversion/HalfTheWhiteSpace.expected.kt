@@ -1,11 +1,9 @@
 class A {
 
 
-    fun foo() {
-    }
+    fun foo() {}
 
-    fun bar() {
-    }
+    fun bar() {}
 
 
     fun f() {}

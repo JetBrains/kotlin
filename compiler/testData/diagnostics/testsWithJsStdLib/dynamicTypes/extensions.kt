@@ -13,19 +13,19 @@ fun test(d: dynamic) {
     d.<!DEBUG_INFO_DYNAMIC!>onNullableAny<!>()
     d.<!DEBUG_INFO_DYNAMIC!>onString<!>()
 
-    d.onDynamic()
-    d?.onDynamic()
+    d.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
+    d?.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
 
     (d as String).onString()
     (d as Any).onAny()
     (d as Any?).onNullableAny()
-    (d as Any).onDynamic()
+    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamic<!>()
 }
 
 fun Any.onAny() {}
 fun Any?.onNullableAny() {}
 fun String.onString() {}
-fun dynamic.onDynamic() {}
+fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.onDynamic() {}
 
 class C {
     fun test(d: dynamic) {

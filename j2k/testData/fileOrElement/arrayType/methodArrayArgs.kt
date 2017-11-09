@@ -1,2 +1,1 @@
-fun fromArrayToCollection(a: Array<Foo>) {
-}
+fun fromArrayToCollection(a: Array<Foo>) {}

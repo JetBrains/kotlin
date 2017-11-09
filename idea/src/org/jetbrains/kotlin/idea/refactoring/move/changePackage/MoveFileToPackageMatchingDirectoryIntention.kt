@@ -29,6 +29,7 @@ import com.intellij.refactoring.util.RefactoringMessageUtil
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.refactoring.isInsideInjectedFragment
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtPackageDirective
 
 class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
@@ -36,7 +37,7 @@ class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndepende
 ) {
     override fun isApplicableTo(element: KtPackageDirective): Boolean {
         if (element.isInsideInjectedFragment) return false
-        if (element.getContainingKtFile().packageMatchesDirectory()) return false
+        if (element.containingKtFile.packageMatchesDirectory()) return false
 
         val qualifiedName = element.qualifiedName
         val dirName = if (qualifiedName.isEmpty()) "source root" else "'${qualifiedName.replace('.', '/')}'"
@@ -44,8 +45,10 @@ class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndepende
         return true
     }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: KtPackageDirective, editor: Editor?) {
-        val file = element.getContainingKtFile()
+        val file = element.containingKtFile
         val project = file.project
 
         val sourceRoots = JavaProjectRootsUtil.getSuitableDestinationSourceRoots(project)
@@ -60,13 +63,17 @@ class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndepende
             Messages.showMessageDialog(project, it, CommonBundle.getErrorTitle(), Messages.getErrorIcon())
             return
         }
-        val targetDirectory = targetDirFactory.getTargetDirectory(fileToMove) ?: return
+        val targetDirectory = runWriteAction {
+            targetDirFactory.getTargetDirectory(fileToMove)
+        } ?: return
 
         RefactoringMessageUtil.checkCanCreateFile(targetDirectory, file.name)?.let {
             Messages.showMessageDialog(project, it, CommonBundle.getErrorTitle(), Messages.getErrorIcon())
             return
         }
 
-        MoveFilesOrDirectoriesUtil.doMoveFile(file, targetDirectory)
+        runWriteAction {
+            MoveFilesOrDirectoriesUtil.doMoveFile(file, targetDirectory)
+        }
     }
 }

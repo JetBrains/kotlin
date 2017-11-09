@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,22 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.intellij.psi.tree.IElementType;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.KotlinResolutionConfigurationKt;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Iterator;
 import java.util.List;
@@ -63,6 +67,11 @@ public class ExpressionTypingServices {
         this.annotationChecker = annotationChecker;
         this.statementFilter = statementFilter;
         this.expressionTypingFacade = facade;
+    }
+
+    @NotNull
+    public LanguageVersionSettings getLanguageVersionSettings() {
+        return expressionTypingComponents.languageVersionSettings;
     }
 
     @NotNull public StatementFilter getStatementFilter() {
@@ -97,24 +106,19 @@ public class ExpressionTypingServices {
     @NotNull
     public KotlinTypeInfo getTypeInfo(
             @NotNull LexicalScope scope,
-            @NotNull final KtExpression expression,
+            @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace,
             boolean isStatement,
-            @NotNull final KtExpression contextExpression,
+            @NotNull KtExpression contextExpression,
             @NotNull ContextDependency contextDependency
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scope, dataFlowInfo, expectedType, contextDependency
+                trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter, getLanguageVersionSettings()
         );
         if (contextExpression != expression) {
-            context = context.replaceExpressionContextProvider(new Function1<KtExpression, KtExpression>() {
-                @Override
-                public KtExpression invoke(KtExpression arg) {
-                    return arg == expression ? contextExpression : null;
-                }
-            });
+            context = context.replaceExpressionContextProvider(arg -> arg == expression ? contextExpression : null);
         }
         return expressionTypingFacade.getTypeInfo(expression, context, isStatement);
     }
@@ -153,7 +157,7 @@ public class ExpressionTypingServices {
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
                 trace,
-                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE
+                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, getLanguageVersionSettings()
         ));
     }
 
@@ -186,7 +190,7 @@ public class ExpressionTypingServices {
         DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
         TraceBasedLocalRedeclarationChecker redeclarationChecker
                 = new TraceBasedLocalRedeclarationChecker(context.trace, expressionTypingComponents.overloadChecker);
-        LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null, redeclarationChecker,
+        LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, redeclarationChecker,
                                                               LexicalScopeKind.CODE_BLOCK);
 
         KotlinTypeInfo r;
@@ -221,7 +225,7 @@ public class ExpressionTypingServices {
                                                                                        expressionTypingComponents.overloadChecker);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE
+                trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, getLanguageVersionSettings()
         );
         KotlinTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
@@ -257,7 +261,20 @@ public class ExpressionTypingServices {
         // Jump point data flow info
         DataFlowInfo beforeJumpInfo = newContext.dataFlowInfo;
         boolean jumpOutPossible = false;
+
+        boolean isFirstStatement = true;
         for (Iterator<? extends KtElement> iterator = block.iterator(); iterator.hasNext(); ) {
+            // Use filtering trace to keep effect system cache only for one statement
+            AbstractFilteringTrace traceForSingleStatement = new AbstractFilteringTrace(context.trace, "trace for single statement") {
+                @Override
+                protected <K, V> boolean shouldBeHiddenFromParent(@NotNull WritableSlice<K, V> slice, K key) {
+                    return slice == BindingContext.EXPRESSION_EFFECTS;
+                }
+            };
+
+            newContext = newContext.replaceBindingTrace(traceForSingleStatement);
+
+
             KtElement statement = iterator.next();
             if (!(statement instanceof KtExpression)) {
                 continue;
@@ -267,6 +284,14 @@ public class ExpressionTypingServices {
                 result = getTypeOfLastExpressionInBlock(
                         statementExpression, newContext.replaceExpectedType(context.expectedType), coercionStrategyForLastExpression,
                         blockLevelVisitor);
+                if (result.getType() != null && statementExpression.getParent() instanceof KtBlockExpression) {
+                    DataFlowValue lastExpressionValue = DataFlowValueFactory.createDataFlowValue(
+                            statementExpression, result.getType(), context);
+                    DataFlowValue blockExpressionValue = DataFlowValueFactory.createDataFlowValue(
+                            (KtBlockExpression) statementExpression.getParent(), result.getType(), context);
+                    result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(blockExpressionValue, lastExpressionValue,
+                                                                                        expressionTypingComponents.languageVersionSettings));
+                }
             }
             else {
                 result = blockLevelVisitor
@@ -284,6 +309,12 @@ public class ExpressionTypingServices {
                 // We take current data flow info if jump there is not possible
             }
             blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, annotationChecker, scope);
+
+            expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope, isFirstStatement);
+
+            if (isFirstStatement) {
+                isFirstStatement = false;
+            }
         }
         return result.replaceJumpOutPossible(jumpOutPossible).replaceJumpFlowInfo(beforeJumpInfo);
     }
@@ -304,7 +335,12 @@ public class ExpressionTypingServices {
                 expectedType = context.expectedType;
             }
 
-            return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType), true);
+            ContextDependency dependency = context.contextDependency;
+            if (KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE()) {
+                dependency = ContextDependency.INDEPENDENT;
+            }
+
+            return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType).replaceContextDependency(dependency), true);
         }
         KotlinTypeInfo result = blockLevelVisitor.getTypeInfo(statementExpression, context, true);
         if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {

@@ -2,6 +2,6 @@
 import java.util.ArrayList
 
 fun f() {
-    val p0 = ArrayList<List<List<Int>>>(listOf())
-    val list: List<List<List<Int>>> = ArrayList(p0)
+    val c = ArrayList<List<List<Int>>>(listOf())
+    val list: List<List<List<Int>>> = ArrayList(c)
 }

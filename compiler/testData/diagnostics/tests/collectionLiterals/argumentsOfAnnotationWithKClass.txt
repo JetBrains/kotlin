@@ -1,0 +1,32 @@
+package
+
+@Foo(a = {}) public fun test1(): kotlin.Unit
+@Foo(a = {kotlin.Int::class, kotlin.String::class}) public fun test2(): kotlin.Unit
+@Foo(a = {kotlin.Array<*>::class}) public fun test3(): kotlin.Unit
+@Foo(a = {Gen<kotlin.Int>::class}) public fun test4(): kotlin.Unit
+@Foo(a = {""}) public fun test5(): kotlin.Unit
+@Foo(a = {kotlin.Int::class, 1}) public fun test6(): kotlin.Unit
+@Bar public fun test7(): kotlin.Unit
+
+public final annotation class Bar : kotlin.Annotation {
+    public constructor Bar(/*0*/ a: kotlin.Array<kotlin.reflect.KClass<*>> = ...)
+    public final val a: kotlin.Array<kotlin.reflect.KClass<*>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Foo : kotlin.Annotation {
+    public constructor Foo(/*0*/ a: kotlin.Array<kotlin.reflect.KClass<*>> = ...)
+    public final val a: kotlin.Array<kotlin.reflect.KClass<*>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Gen</*0*/ T> {
+    public constructor Gen</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -30,8 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public abstract class AbstractClassTypeConstructor extends AbstractTypeConstructor implements TypeConstructor {
-    private boolean hashCodeComputed;
-    private int hashCode;
+    private int hashCode = 0;
 
     public AbstractClassTypeConstructor(@NotNull StorageManager storageManager) {
         super(storageManager);
@@ -39,22 +35,29 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
 
     @Override
     public final int hashCode() {
-        if (!hashCodeComputed) {
-            hashCodeComputed = true;
-            ClassifierDescriptor descriptor = getDeclarationDescriptor();
-            if (descriptor instanceof ClassDescriptor && hasMeaningfulFqName(descriptor)) {
-                hashCode = DescriptorUtils.getFqName(descriptor).hashCode();
-            }
-            else {
-                hashCode = System.identityHashCode(this);
-            }
+        int currentHashCode = hashCode;
+        if (currentHashCode != 0) return currentHashCode;
+
+        ClassifierDescriptor descriptor = getDeclarationDescriptor();
+        if (hasMeaningfulFqName(descriptor)) {
+            currentHashCode = DescriptorUtils.getFqName(descriptor).hashCode();
         }
-        return hashCode;
+        else {
+            currentHashCode = System.identityHashCode(this);
+        }
+        hashCode = currentHashCode;
+        return currentHashCode;
     }
 
     @NotNull
     @Override
-    public abstract ClassifierDescriptor getDeclarationDescriptor();
+    public abstract ClassDescriptor getDeclarationDescriptor();
+
+    @Override
+    public final boolean isFinal() {
+        ClassDescriptor descriptor = getDeclarationDescriptor();
+        return ModalityKt.isFinalClass(descriptor) && !descriptor.isExpect();
+    }
 
     @NotNull
     @Override
@@ -63,7 +66,8 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
     }
 
     @Override
-    public boolean equals(Object other) {
+    public final boolean equals(Object other) {
+        if (this == other) return true;
         if (!(other instanceof TypeConstructor)) return false;
 
         // performance optimization: getFqName is slow method
@@ -76,22 +80,41 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
         ClassifierDescriptor myDescriptor = getDeclarationDescriptor();
         ClassifierDescriptor otherDescriptor = ((TypeConstructor) other).getDeclarationDescriptor();
 
-        // descriptor for type is created once per module
-        if (myDescriptor == otherDescriptor) return true;
-
-        // All error types have the same descriptor
         if (!hasMeaningfulFqName(myDescriptor) ||
             otherDescriptor != null && !hasMeaningfulFqName(otherDescriptor)) {
-            return this == other;
+            // All error types and local classes have the same descriptor,
+            // but we've already checked identity equality in the beginning of the method
+            return false;
         }
 
-        if (myDescriptor instanceof ClassDescriptor && otherDescriptor instanceof ClassDescriptor) {
-            FqNameUnsafe otherFqName = DescriptorUtils.getFqName(otherDescriptor);
-            FqNameUnsafe myFqName = DescriptorUtils.getFqName(myDescriptor);
-            return myFqName.equals(otherFqName);
+        if (otherDescriptor instanceof ClassDescriptor) {
+            return areFqNamesEqual(((ClassDescriptor) myDescriptor), ((ClassDescriptor) otherDescriptor));
         }
 
         return false;
+    }
+
+    private static boolean areFqNamesEqual(ClassDescriptor first, ClassDescriptor second) {
+        if (!first.getName().equals(second.getName())) return false;
+
+        DeclarationDescriptor a = first.getContainingDeclaration();
+        DeclarationDescriptor b = second.getContainingDeclaration();
+        while (a != null && b != null) {
+            if (a instanceof ModuleDescriptor) return b instanceof ModuleDescriptor;
+            if (b instanceof ModuleDescriptor) return false;
+
+            if (a instanceof PackageFragmentDescriptor) {
+                return b instanceof PackageFragmentDescriptor &&
+                       ((PackageFragmentDescriptor) a).getFqName().equals(((PackageFragmentDescriptor) b).getFqName());
+            }
+            if (b instanceof PackageFragmentDescriptor) return false;
+
+            if (!a.getName().equals(b.getName())) return false;
+
+            a = a.getContainingDeclaration();
+            b = b.getContainingDeclaration();
+        }
+        return true;
     }
 
     private static boolean hasMeaningfulFqName(@NotNull ClassifierDescriptor descriptor) {

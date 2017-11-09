@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -65,7 +66,6 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.DFS.*
@@ -513,7 +513,7 @@ internal class MutableParameter(
     private val defaultType: KotlinType by lazy {
         writable = false
         if (defaultTypes.isNotEmpty()) {
-            TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, defaultTypes)!!
+            TypeIntersector.intersectTypes(defaultTypes)!!
         }
         else originalType
     }
@@ -608,7 +608,7 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
 
 fun ExtractionData.isVisibilityApplicable(): Boolean {
     val parent = targetSibling.parent
-    return parent is KtClassBody || (parent is KtFile && !parent.isScript)
+    return parent is KtClassBody || (parent is KtFile && !parent.isScript())
 }
 
 fun ExtractionData.getDefaultVisibility(): String {
@@ -637,8 +637,17 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val modifiedVarDescriptorsWithExpressions = localInstructions.getModifiedVarDescriptors(bindingContext)
 
+    val virtualBlock = createTemporaryCodeBlock()
+
     val targetScope = targetSibling.getResolutionScope(bindingContext, commonParent.getResolutionFacade())
-    val paramsInfo = inferParametersInfo(commonParent, pseudocode, bindingContext, targetScope, modifiedVarDescriptorsWithExpressions.keys)
+    val paramsInfo = inferParametersInfo(
+            virtualBlock,
+            commonParent,
+            pseudocode,
+            bindingContext,
+            targetScope,
+            modifiedVarDescriptorsWithExpressions.keys
+    )
     if (paramsInfo.errorMessage != null) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(paramsInfo.errorMessage!!))
     }
@@ -682,25 +691,38 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                 }
             }
     )
-    val adjustedParameters = paramsInfo.parameters.filterTo(HashSet<Parameter>()) { it.refCount > 0 }
+    val adjustedParameters = paramsInfo.parameters.filterTo(LinkedHashSet<Parameter>()) { it.refCount > 0 }
 
     val receiverCandidates = adjustedParameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }
     val receiverParameter = if (receiverCandidates.size == 1 && !options.canWrapInWith) receiverCandidates.first() else null
     receiverParameter?.let { adjustedParameters.remove(it) }
 
+    var descriptor = ExtractableCodeDescriptor(
+            this,
+            bindingContext,
+            suggestFunctionNames(returnType),
+            getDefaultVisibility(),
+            adjustedParameters.toList(),
+            receiverParameter,
+            paramsInfo.typeParameters.sortedBy { it.originalDeclaration.name!! },
+            paramsInfo.replacementMap,
+            if (messages.isEmpty()) controlFlow else controlFlow.toDefault(),
+            returnType,
+            emptyList()
+    )
+
+    val body = ExtractionGeneratorConfiguration(
+            descriptor,
+            ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false)
+    ).generateDeclaration().declaration.getGeneratedBody()
+    val virtualContext = body.analyzeFully()
+    if (virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL || it.factory == Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS }) {
+        descriptor = descriptor.copy(modifiers = listOf(KtTokens.SUSPEND_KEYWORD))
+    }
+
+
     return AnalysisResult(
-            ExtractableCodeDescriptor(
-                    this,
-                    bindingContext,
-                    suggestFunctionNames(returnType),
-                    getDefaultVisibility(),
-                    adjustedParameters.sortedBy { it.name },
-                    receiverParameter,
-                    paramsInfo.typeParameters.sortedBy { it.originalDeclaration.name!! },
-                    paramsInfo.replacementMap,
-                    if (messages.isEmpty()) controlFlow else controlFlow.toDefault(),
-                    returnType
-            ),
+            descriptor,
             if (messages.isEmpty()) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
             messages
     )
@@ -747,8 +769,9 @@ internal fun KtNamedDeclaration.getGeneratedBody() =
 
 @JvmOverloads
 fun ExtractableCodeDescriptor.validate(target: ExtractionTarget = ExtractionTarget.FUNCTION): ExtractableCodeDescriptorWithConflicts {
-    fun getDeclarationMessage(declaration: PsiNamedElement, messageKey: String, capitalize: Boolean = true): String {
-        val message = KotlinRefactoringBundle.message(messageKey, RefactoringUIUtil.getDescription(declaration, true))
+    fun getDeclarationMessage(declaration: PsiElement, messageKey: String, capitalize: Boolean = true): String {
+        val declarationStr = RefactoringUIUtil.getDescription(declaration, true)
+        val message = KotlinRefactoringBundle.message(messageKey, declarationStr)
         return if (capitalize) message.capitalize() else message
     }
 
@@ -804,9 +827,9 @@ fun ExtractableCodeDescriptor.validate(target: ExtractionTarget = ExtractionTarg
             object : KtTreeVisitorVoid() {
                 override fun visitUserType(userType: KtUserType) {
                     val refExpr = userType.referenceExpression ?: return
-                    val declaration = refExpr.mainReference.resolve() as? PsiNamedElement ?: return
                     val diagnostics = bindingContext.diagnostics.forElement(refExpr)
                     diagnostics.firstOrNull { it.factory == Errors.INVISIBLE_REFERENCE }?.let {
+                        val declaration = refExpr.mainReference.resolve() as? PsiNamedElement ?: return
                         conflicts.putValue(declaration, getDeclarationMessage(declaration, "0.will.become.invisible.after.extraction"))
                     }
                 }

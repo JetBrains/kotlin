@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1119
 package foo
 
 // CHECK_NOT_CALLED: component2

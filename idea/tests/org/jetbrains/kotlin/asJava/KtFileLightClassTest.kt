@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 
 class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -53,7 +55,21 @@ class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
         assertEquals(0, aClass.getMethods().size)
     }
 
-    override fun getTestDataPath(): String? {
+    fun testNoFacadeForScript() {
+        val file = myFixture.configureByText("foo.kts", "package foo") as KtFile
+        assertEquals(0, file.classes.size)
+        val facadeFiles = LightClassGenerationSupport.getInstance(project).findFilesForFacade(FqName("foo.FooKt"), GlobalSearchScope.allScope(project))
+        assertEquals(0, facadeFiles.size)
+    }
+
+    fun testNoFacadeForHeaderClass() {
+        val file = myFixture.configureByText("foo.kt", "header fun foo(): Int") as KtFile
+        assertEquals(0, file.classes.size)
+        val facadeFiles = LightClassGenerationSupport.getInstance(project).findFilesForFacade(FqName("foo.FooKt"), GlobalSearchScope.allScope(project))
+        assertEquals(0, facadeFiles.size)
+    }
+
+    override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/asJava/fileLightClass/"
     }
 }

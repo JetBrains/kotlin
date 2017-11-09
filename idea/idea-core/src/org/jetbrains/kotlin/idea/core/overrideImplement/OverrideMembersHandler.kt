@@ -27,8 +27,7 @@ class OverrideMembersHandler(private val preferConstructorParameters: Boolean = 
     override fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
         val result = ArrayList<OverrideMemberChooserObject>()
         for (member in descriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
-            if (member is CallableMemberDescriptor
-                && (member.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE || member.kind == CallableMemberDescriptor.Kind.DELEGATION)) {
+            if (member is CallableMemberDescriptor && (member.kind != CallableMemberDescriptor.Kind.DECLARATION)) {
                 val overridden = member.overriddenDescriptors
                 if (overridden.any { it.modality == Modality.FINAL || Visibilities.isPrivate(it.visibility.normalize()) }) continue
 
@@ -46,13 +45,13 @@ class OverrideMembersHandler(private val preferConstructorParameters: Boolean = 
                     }
                 }
 
-                val realSupers = byOriginalRealSupers.values.map { it.realSuper }
+                val realSupers = byOriginalRealSupers.values.map(Data::realSuper)
                 val nonAbstractRealSupers = realSupers.filter { it.modality != Modality.ABSTRACT }
                 val realSupersToUse = if (nonAbstractRealSupers.isNotEmpty()) {
                     nonAbstractRealSupers
                 }
                 else {
-                    listOf(realSupers.first())
+                    listOf(realSupers.firstOrNull() ?: continue)
                 }
 
                 for (realSuper in realSupersToUse) {

@@ -1,0 +1,20 @@
+package
+
+public fun foo(/*0*/ x: kotlin.collections.Map<kotlin.Int, kotlin.String>, /*1*/ a: A, /*2*/ b: java.util.HashMap<kotlin.Int, kotlin.String>): kotlin.Unit
+
+public abstract class A : kotlin.collections.Map<kotlin.Int, kotlin.String> {
+    public constructor A()
+    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.Int, kotlin.String>>
+    public abstract override /*1*/ /*fake_override*/ val keys: kotlin.collections.Set<kotlin.Int>
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ val values: kotlin.collections.Collection<kotlin.String>
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.Int): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.Int, in kotlin.String>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.Int): kotlin.String?
+    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.Int, /*1*/ defaultValue: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

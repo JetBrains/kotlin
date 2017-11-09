@@ -1,4 +1,4 @@
-changes in test/ClassWithGetterForPrivateValChanged: NONE
-changes in test/ClassWithPrivateValAdded: NONE
-changes in test/ClassWithPrivateValRemoved: NONE
-changes in test/ClassWithPrivateValSignatureChanged: NONE
+PROTO DIFFERENCE in test/ClassWithGetterForPrivateValChanged: PROPERTY_LIST
+PROTO DIFFERENCE in test/ClassWithPrivateValAdded: PROPERTY_LIST
+PROTO DIFFERENCE in test/ClassWithPrivateValRemoved: PROPERTY_LIST
+PROTO DIFFERENCE in test/ClassWithPrivateValSignatureChanged: PROPERTY_LIST

@@ -1,0 +1,69 @@
+package
+
+public fun foo(/*0*/ x: kotlin.collections.MutableMap<kotlin.String, kotlin.Int>, /*1*/ y: java.util.HashMap<kotlin.String, kotlin.Int>, /*2*/ z: java.util.AbstractMap<kotlin.String, kotlin.Int>): kotlin.Unit
+
+public final class KotlinMap1</*0*/ K, /*1*/ V> : java.util.AbstractMap<K, V> {
+    public constructor KotlinMap1</*0*/ K, /*1*/ V>()
+    public open override /*1*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
+    invisible_fake final override /*1*/ /*fake_override*/ var keySet: kotlin.collections.(Mutable)Set<K!>!
+    public open override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<K!>
+    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var values: kotlin.collections.(Mutable)Collection<V!>!
+    public open override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<V!>
+    public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun compute(/*0*/ p0: K!, /*1*/ p1: java.util.function.BiFunction<in K!, in V?, out V?>): V?
+    public open override /*1*/ /*fake_override*/ fun computeIfAbsent(/*0*/ p0: K!, /*1*/ p1: java.util.function.Function<in K!, out V!>): V!
+    public open override /*1*/ /*fake_override*/ fun computeIfPresent(/*0*/ p0: K!, /*1*/ p1: java.util.function.BiFunction<in K!, in V, out V?>): V?
+    public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: K!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: V!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in K!, in V!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: K!): V?
+    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: K!, /*1*/ defaultValue: V!): V!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: K!, /*1*/ p1: V, /*2*/ p2: java.util.function.BiFunction<in V, in V, out V?>): V?
+    public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: K!, /*1*/ value: V!): V?
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out K!, V!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: K!, /*1*/ p1: V!): V?
+    public open override /*1*/ fun remove(/*0*/ x: K, /*1*/ y: V): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: K!): V?
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: K!, /*1*/ p1: V!): V?
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: K!, /*1*/ p1: V!, /*2*/ p2: V!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in K!, in V!, out V!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class KotlinMap2 : java.util.AbstractMap<kotlin.String, kotlin.Int> {
+    public constructor KotlinMap2()
+    public open override /*1*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.String, kotlin.Int>>
+    invisible_fake final override /*1*/ /*fake_override*/ var keySet: kotlin.collections.(Mutable)Set<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<kotlin.String!>
+    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var values: kotlin.collections.(Mutable)Collection<kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<kotlin.Int!>
+    public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun compute(/*0*/ p0: kotlin.String!, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int?, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun computeIfAbsent(/*0*/ p0: kotlin.String!, /*1*/ p1: java.util.function.Function<in kotlin.String!, out kotlin.Int!>): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun computeIfPresent(/*0*/ p0: kotlin.String!, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Int!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.String!, in kotlin.Int!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String!): kotlin.Int?
+    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String!, /*1*/ defaultValue: kotlin.Int!): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int, /*2*/ p2: java.util.function.BiFunction<in kotlin.Int, in kotlin.Int, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.String!, kotlin.Int!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!): kotlin.Int?
+    public open override /*1*/ fun remove(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Int!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out kotlin.Int!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

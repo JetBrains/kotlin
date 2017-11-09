@@ -3,9 +3,6 @@
 
 package kotlin.collections
 
-import java.io.Serializable
-import java.util.*
-
 
 internal object EmptySet : Set<Nothing>, Serializable {
     private const val serialVersionUID: Long = 3406603774387020532
@@ -39,13 +36,32 @@ public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elemen
 public inline fun <T> setOf(): Set<T> = emptySet()
 
 /**
+ * Returns an empty new [MutableSet].
+ *
+ * The returned set preserves the element iteration order.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> mutableSetOf(): MutableSet<T> = LinkedHashSet()
+
+/**
  * Returns a new [MutableSet] with the given elements.
  * Elements of the set are iterated in the order they were specified.
  */
 public fun <T> mutableSetOf(vararg elements: T): MutableSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 
+/** Returns an empty new [HashSet]. */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> hashSetOf(): HashSet<T> = HashSet()
+
 /** Returns a new [HashSet] with the given elements. */
 public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection(HashSet(mapCapacity(elements.size)))
+
+/** Returns an empty new [LinkedHashSet]. */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> linkedSetOf(): LinkedHashSet<T> = LinkedHashSet()
 
 /**
  * Returns a new [LinkedHashSet] with the given elements.
@@ -62,7 +78,7 @@ public inline fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
  * The returned set is serializable.
  */
 @JvmVersion
-public fun <T> setOf(element: T): Set<T> = Collections.singleton(element)
+public fun <T> setOf(element: T): Set<T> = java.util.Collections.singleton(element)
 
 
 /**

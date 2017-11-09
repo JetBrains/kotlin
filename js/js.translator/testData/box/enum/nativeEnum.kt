@@ -1,7 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1115
 package foo
 
-@native
-enum class JsEnum {
+external enum class JsEnum {
     Foo,
     Bar,
     Baz

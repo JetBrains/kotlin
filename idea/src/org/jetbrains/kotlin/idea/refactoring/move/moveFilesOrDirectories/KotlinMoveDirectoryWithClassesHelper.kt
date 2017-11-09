@@ -25,25 +25,28 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveDirectoryWithClas
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Function
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.refactoring.invokeOnceOnCommandFinish
-import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessor
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.invokeOnceOnCommandFinish
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinDirectoryMoveTarget
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessor
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.analyzeConflictsInFile
+import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
-    private class FileUsagesWrapper(
-            val psiFile: PsiFile,
+    private data class FileUsagesWrapper(
+            val psiFile: KtFile,
             val usages: List<UsageInfo>,
             val moveDeclarationsProcessor: MoveKotlinDeclarationsProcessor?
     ) : UsageInfo(psiFile)
 
     private class MoveContext(
             val newParent: PsiDirectory,
-            val internalUsages: MoveKotlinFileHandler.InternalUsagesWrapper,
             val moveDeclarationsProcessor: MoveKotlinDeclarationsProcessor?
     )
 
@@ -52,11 +55,10 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
     private var fileToMoveContext: MutableMap<PsiFile, MoveContext>? = null
 
     private fun getOrCreateMoveContextMap(): MutableMap<PsiFile, MoveContext> {
-        return fileToMoveContext
-               ?: HashMap<PsiFile, MoveContext>().apply {
-                   fileToMoveContext = this
+        return fileToMoveContext ?: HashMap<PsiFile, MoveContext>().apply {
+            fileToMoveContext = this
             invokeOnceOnCommandFinish { fileToMoveContext = null }
-               }
+        }
     }
 
     override fun findUsages(
@@ -68,7 +70,29 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
             project: Project) {
         filesToMove
                 .filterIsInstance<KtFile>()
-                .mapTo(result) { FileUsagesWrapper(it, fileHandler.findUsages(it, null, searchInComments, searchInNonJavaFiles), null) }
+                .mapTo(result) { FileUsagesWrapper(it, fileHandler.findUsages(it, null, false), null) }
+    }
+
+    override fun preprocessUsages(
+            project: Project,
+            files: MutableSet<PsiFile>,
+            infos: Array<UsageInfo>,
+            directory: PsiDirectory?,
+            conflicts: MultiMap<PsiElement, String>
+    ) {
+        val psiPackage = directory?.getPackage() ?: return
+        val moveTarget = KotlinDirectoryMoveTarget(FqName(psiPackage.qualifiedName), directory)
+        for ((index, usageInfo) in infos.withIndex()) {
+            if (usageInfo !is FileUsagesWrapper) continue
+
+            project.runSynchronouslyWithProgress("Analyzing conflicts in ${usageInfo.psiFile.name}", false) {
+                runReadAction {
+                    analyzeConflictsInFile(usageInfo.psiFile, usageInfo.usages, moveTarget, files, conflicts) {
+                        infos[index] = usageInfo.copy(usages = it)
+                    }
+                }
+            }
+        }
     }
 
     override fun beforeMove(psiFile: PsiFile) {
@@ -85,12 +109,14 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
     ): Boolean {
         if (file !is KtFile) return false
 
-        val moveDeclarationsProcessor = fileHandler.initMoveProcessor(file, moveDestination)
+        val moveDeclarationsProcessor = fileHandler.initMoveProcessor(file, moveDestination, false)
         val moveContextMap = getOrCreateMoveContextMap()
-        moveContextMap[file] = MoveContext(moveDestination,
-                                           fileHandler.findInternalUsages(file, moveDestination),
-                                           moveDeclarationsProcessor)
-        moveDestination.getPackage()?.let { newPackage -> file.packageDirective?.fqName = FqName(newPackage.qualifiedName).quoteIfNeeded() }
+        moveContextMap[file] = MoveContext(moveDestination, moveDeclarationsProcessor)
+        if (moveDeclarationsProcessor != null) {
+            moveDestination.getPackage()?.let { newPackage ->
+                file.packageDirective?.fqName = FqName(newPackage.qualifiedName).quoteIfNeeded()
+            }
+        }
         return true
     }
 
@@ -101,7 +127,7 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
     override fun postProcessUsages(usages: Array<out UsageInfo>, newDirMapper: Function<PsiDirectory, PsiDirectory>) {
         val fileToMoveContext = fileToMoveContext ?: return
         try {
-            val usagesToProcessAfterMove = ArrayList<FileUsagesWrapper>()
+            val usagesToProcess = ArrayList<FileUsagesWrapper>()
             usages
                 .filterIsInstance<FileUsagesWrapper>()
                 .forEach body@ {
@@ -109,12 +135,13 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
                     val moveContext = fileToMoveContext[file] ?: return@body
 
                     MoveFilesOrDirectoriesUtil.doMoveFile(file, moveContext.newParent)
+
+                    val moveDeclarationsProcessor = moveContext.moveDeclarationsProcessor ?: return@body
                     val movedFile = moveContext.newParent.findFile(file.name) ?: return@body
 
-                    usagesToProcessAfterMove +=
-                            FileUsagesWrapper(movedFile, it.usages + moveContext.internalUsages, moveContext.moveDeclarationsProcessor)
+                    usagesToProcess += FileUsagesWrapper(movedFile as KtFile, it.usages, moveDeclarationsProcessor)
                 }
-            usagesToProcessAfterMove.forEach { fileHandler.retargetUsages(it.usages, it.moveDeclarationsProcessor!!) }
+            usagesToProcess.forEach { fileHandler.retargetUsages(it.usages, it.moveDeclarationsProcessor!!) }
         }
         finally {
             this.fileToMoveContext = null

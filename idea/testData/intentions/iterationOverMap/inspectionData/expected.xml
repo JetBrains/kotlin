@@ -136,14 +136,6 @@
         <description>Use destructuring declaration</description>
     </problem>
     <problem>
-        <file>ValueOnly.kt</file>
-        <line>5</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="temp:///src/ValueOnly.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
-        <description>Use destructuring declaration</description>
-    </problem>
-    <problem>
         <file>KeyOnly.kt</file>
         <line>5</line>
         <module>light_idea_test_case</module>
@@ -156,14 +148,6 @@
         <line>5</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/DataClassNotAllPropertiesUsed.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
-        <description>Use destructuring declaration</description>
-    </problem>
-    <problem>
-        <file>DataClassLast.kt</file>
-        <line>6</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="temp:///src/DataClassLast.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
         <description>Use destructuring declaration</description>
     </problem>

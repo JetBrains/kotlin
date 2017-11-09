@@ -8,13 +8,13 @@
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK"/>
   <component name="libraryTable">
-    <library name="KotlinJavaScript">
+    <library name="KotlinJavaScript" type="kotlin.js">
       <CLASSES>
-        <root url="jar://$TEMP_TEST_DIR$/kotlin-jslib.jar!/" />
+        <root url="jar://$TEMP_TEST_DIR$/kotlin-stdlib-js.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$TEMP_TEST_DIR$/kotlin-jslib.jar!/src" />
+        <root url="jar://$TEMP_TEST_DIR$/kotlin-stdlib-js-sources.jar!/" />
       </SOURCES>
     </library>
   </component>

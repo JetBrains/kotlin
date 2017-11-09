@@ -1,4 +1,4 @@
-JetFile: Markdown.kt
+KtFile: Markdown.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

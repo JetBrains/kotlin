@@ -22,25 +22,27 @@ import static com.android.tools.klint.client.api.JavaParser.TYPE_STRING;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.List;
-
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.visitor.UastVisitor;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Ensures that addJavascriptInterface is not called for API levels below 17.
  */
-public class AddJavascriptInterfaceDetector extends Detector implements UastScanner {
+public class AddJavascriptInterfaceDetector extends Detector implements Detector.UastScanner {
     public static final Issue ISSUE = Issue.create(
             "AddJavascriptInterface", //$NON-NLS-1$
             "addJavascriptInterface Called",
@@ -53,49 +55,40 @@ public class AddJavascriptInterfaceDetector extends Detector implements UastScan
             Severity.WARNING,
             new Implementation(
                     AddJavascriptInterfaceDetector.class,
-                    Scope.SOURCE_FILE_SCOPE)).
+                    Scope.JAVA_FILE_SCOPE)).
             addMoreInfo(
                     "https://labs.mwrinfosecurity.com/blog/2013/09/24/webview-addjavascriptinterface-remote-code-execution/");
 
     private static final String WEB_VIEW = "android.webkit.WebView"; //$NON-NLS-1$
     private static final String ADD_JAVASCRIPT_INTERFACE = "addJavascriptInterface"; //$NON-NLS-1$
 
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
     // ---- Implements UastScanner ----
 
     @Nullable
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList(ADD_JAVASCRIPT_INTERFACE);
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression call, @NonNull UMethod method) {
         // Ignore the issue if we never build for any API less than 17.
-        if (context.getLintContext().getMainProject().getMinSdk() >= 17) {
+        if (context.getMainProject().getMinSdk() >= 17) {
             return;
         }
 
-        // Ignore if the method doesn't fit our description.
-        UFunction resolvedFunction = node.resolveOrEmpty(context);
-        UClass containingClass = UastUtils.getContainingClassOrEmpty(resolvedFunction);
-        if (!containingClass.isSubclassOf(WEB_VIEW)) {
-            return;
-        }
-        List<UVariable> valueParameters = resolvedFunction.getValueParameters();
-        if (node.getValueArgumentCount() != 2
-            || !valueParameters.get(0).getType().matchesFqName(TYPE_OBJECT)
-            || !valueParameters.get(1).getType().matchesFqName(TYPE_STRING)) {
+        JavaEvaluator evaluator = context.getEvaluator();
+        if (!evaluator.methodMatches(method, WEB_VIEW, true, TYPE_OBJECT, TYPE_STRING)) {
             return;
         }
 
         String message = "`WebView.addJavascriptInterface` should not be called with minSdkVersion < 17 for security reasons: " +
-                         "JavaScript can use reflection to manipulate application";
-        context.report(ISSUE, node, context.getLocation(node), message);
+                "JavaScript can use reflection to manipulate application";
+        UElement reportElement = call.getMethodIdentifier();
+        if (reportElement == null) {
+            reportElement = call;
+        }
+        context.reportUast(ISSUE, reportElement, context.getUastNameLocation(reportElement), message);
     }
 }

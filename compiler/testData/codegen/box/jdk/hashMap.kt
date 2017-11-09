@@ -1,4 +1,3 @@
-import java.util.*
 
 fun box(): String {
     val map: MutableMap<String, Int> = HashMap<String, Int>()

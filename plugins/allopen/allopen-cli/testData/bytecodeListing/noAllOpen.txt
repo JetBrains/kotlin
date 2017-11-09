@@ -1,0 +1,7 @@
+@kotlin.Metadata
+public final class Test {
+    private final @org.jetbrains.annotations.NotNull field prop: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public final method method(): void
+}

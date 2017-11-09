@@ -1,0 +1,38 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AllOpen
+
+@kotlin.Metadata
+public final class Test$a$1 {
+    inner class Test$a$1
+    method <init>(): void
+    public method run(): void
+}
+
+@kotlin.Metadata
+public final class Test$b$1 {
+    inner class Test$b$1
+    method <init>(): void
+    public method run(): void
+}
+
+@kotlin.Metadata
+final class Test$b$2 {
+    public final static field INSTANCE: Test$b$2
+    inner class Test$b$2
+    static method <clinit>(): void
+    method <init>(): void
+    public final method run(): void
+}
+
+@AllOpen
+@kotlin.Metadata
+public class Test {
+    private final @org.jetbrains.annotations.NotNull field a: java.lang.Runnable
+    inner class Test$a$1
+    inner class Test$b$1
+    inner class Test$b$2
+    public method <init>(): void
+    public method b(): void
+    public @org.jetbrains.annotations.NotNull method getA(): java.lang.Runnable
+}

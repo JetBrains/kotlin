@@ -23,5 +23,5 @@ fun main() {
     B().foo(<!TYPE_MISMATCH!>{ println() }<!>, B.bar())
     // So you should use SAM constructors when you want to use mix lambdas and Java objects
     B().foo(Runnable { println() }, B.bar())
-    B().foo({ println() }, { it: Any? -> true } )
+    B().foo({ println() }, { it: Any? -> it == null } )
 }

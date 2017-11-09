@@ -41,7 +41,7 @@ class KDocSection(node: ASTNode) : KDocTag(node) {
             (firstChild as? KDocTag)?.getContent() ?: super.getContent()
 
     fun findTagsByName(name: String): List<KDocTag> {
-        return getChildrenOfType<KDocTag>().filter { it.getName() == name }
+        return getChildrenOfType<KDocTag>().filter { it.name == name }
     }
 
     fun findTagByName(name: String): KDocTag?

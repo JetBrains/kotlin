@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1113
 package foo
 
 fun testSwitch(number: Int): String = js("""

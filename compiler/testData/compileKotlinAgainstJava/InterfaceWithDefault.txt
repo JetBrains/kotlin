@@ -1,0 +1,10 @@
+package test
+
+public interface InterfaceWithDefault {
+    public open fun defaultMethod(): kotlin.String!
+}
+
+public final class InterfaceWithDefaultImpl : test.InterfaceWithDefault {
+    public constructor InterfaceWithDefaultImpl()
+    public open /*fake_override*/ fun defaultMethod(): kotlin.String!
+}

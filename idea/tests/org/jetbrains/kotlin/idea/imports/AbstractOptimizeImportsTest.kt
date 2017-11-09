@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.imports
 
 import org.jetbrains.kotlin.AbstractImportsTest
-import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 
 abstract class AbstractOptimizeImportsTest() : AbstractImportsTest() {
     override fun doTest(file: KtFile): String {
@@ -39,5 +39,5 @@ abstract class AbstractOptimizeImportsTest() : AbstractImportsTest() {
 abstract class AbstractJvmOptimizeImportsTest : AbstractOptimizeImportsTest()
 
 abstract class AbstractJsOptimizeImportsTest : AbstractOptimizeImportsTest() {
-    override fun getProjectDescriptor() = KotlinStdJSProjectDescriptor.instance
+    override fun getProjectDescriptor() = KotlinStdJSProjectDescriptor
 }

@@ -56,6 +56,13 @@ class MoveLambdaOutsideParenthesesIntention : SelfTargetingIntention<KtCallExpre
 
             return true
         }
+
+        fun moveFunctionLiteralOutsideParenthesesIfPossible(expression: KtLambdaExpression) {
+            val call = ((expression.parent as? KtValueArgument)?.parent as? KtValueArgumentList)?.parent as? KtCallExpression ?: return
+            if (canMove(call)) {
+                call.moveFunctionLiteralOutsideParentheses()
+            }
+        }
     }
 
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {

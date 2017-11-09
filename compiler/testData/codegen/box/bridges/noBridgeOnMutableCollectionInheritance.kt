@@ -1,5 +1,4 @@
-import java.util.ArrayList
-import java.util.Arrays
+// WITH_RUNTIME
 
 interface A {
     fun foo(): Collection<String>
@@ -10,7 +9,7 @@ interface B : A {
 }
 
 class C : B {
-    override fun foo(): MutableList<String> = ArrayList(Arrays.asList("C"))
+    override fun foo(): MutableList<String> = ArrayList(listOf("C"))
 }
 
 fun box(): String {

@@ -1,0 +1,6 @@
+Run Java
+Connected to the target VM
+Disconnected from the target VM
+
+Process finished with exit code 1
+Error: Could not find or load main class severalInlineFunctionsInOneFileDex.SeveralInlineFunctionsInOneFileDexKt

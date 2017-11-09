@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,21 +34,20 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.java.decompiler.IdeaLogger;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
+import org.jetbrains.kotlin.codegen.DefaultCodegenFactory;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils;
+import org.jetbrains.kotlin.idea.project.PlatformKt;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask;
@@ -132,6 +131,12 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8);
             }
 
+            if (ir.isSelected()) {
+                configuration.put(JVMConfigurationKeys.IR, true);
+            }
+
+            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, PlatformKt.getLanguageVersionSettings(ktFile));
+
             return getBytecodeForFile(ktFile, configuration);
         }
 
@@ -181,6 +186,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private final JCheckBox enableAssertions;
     private final JButton decompile;
     private final JCheckBox jvm8Target;
+    private final JCheckBox ir;
 
     public KotlinBytecodeToolWindow(Project project, ToolWindow toolWindow) {
         super(new BorderLayout());
@@ -206,7 +212,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                         try {
                             KotlinDecompilerAdapterKt.showDecompiledCode(file);
                         }
-                        catch (IdeaLogger.InternalException ex) {
+                        catch (DecompileFailedException ex) {
                             LOG.info(ex);
                             Messages.showErrorDialog(myProject, "Failed to decompile " + file.getName() + ": " + ex, "Kotlin Bytecode Decompiler");
                         }
@@ -220,9 +226,11 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         enableOptimization = new JCheckBox("Optimization", true);
         enableAssertions = new JCheckBox("Assertions", true);
         jvm8Target = new JCheckBox("JVM 8 target", false);
+        ir = new JCheckBox("IR", false);
         optionPanel.add(enableInline);
         optionPanel.add(enableOptimization);
         optionPanel.add(enableAssertions);
+        optionPanel.add(ir);
         optionPanel.add(jvm8Target);
 
         new InfinitePeriodicalTask(UPDATE_DELAY, Alarm.ThreadToUse.SWING_THREAD, this, new Computable<LongRunningReadTask>() {
@@ -278,13 +286,17 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     }
 
     @NotNull
-    public static GenerationState compileSingleFile(@NotNull final KtFile ktFile, @NotNull CompilerConfiguration configuration) {
+    public static GenerationState compileSingleFile(
+            @NotNull final KtFile ktFile,
+            @NotNull CompilerConfiguration configuration
+    ) {
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(ktFile);
 
         BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(ktFile)).getBindingContext();
 
         kotlin.Pair<BindingContext, List<KtFile>> result = DebuggerUtils.INSTANCE.analyzeInlinedFunctions(
-                resolutionFacade, bindingContextForFile, ktFile, configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
+                resolutionFacade, ktFile, configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE),
+                bindingContextForFile
         );
 
         BindingContext bindingContext = result.getFirst();
@@ -314,9 +326,12 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
         GenerationState state = new GenerationState(
                 ktFile.getProject(), ClassBuilderFactories.TEST, resolutionFacade.getModuleDescriptor(), bindingContext, toProcess,
-                configuration, generateClassFilter
+                configuration, generateClassFilter,
+                configuration.getBoolean(JVMConfigurationKeys.IR) ? JvmIrCodegenFactory.INSTANCE : DefaultCodegenFactory.INSTANCE
         );
+
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+
         return state;
     }
 
@@ -378,13 +393,9 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
     private static String printStackTraceToString(Throwable e) {
         StringWriter out = new StringWriter(1024);
-        PrintWriter printWriter = new PrintWriter(out);
-        try {
+        try (PrintWriter printWriter = new PrintWriter(out)) {
             e.printStackTrace(printWriter);
             return out.toString().replace("\r", "");
-        }
-        finally {
-            printWriter.close();
         }
     }
 

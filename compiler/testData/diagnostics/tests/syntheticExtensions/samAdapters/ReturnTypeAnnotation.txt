@@ -1,6 +1,5 @@
 package
 
-public /*synthesized*/ fun </*0*/ T : kotlin.Any!> Provider(/*0*/ function: () -> T!): Provider<T>
 public fun foo(/*0*/ javaInterface: JavaInterface): kotlin.Unit
 
 public interface JavaInterface {

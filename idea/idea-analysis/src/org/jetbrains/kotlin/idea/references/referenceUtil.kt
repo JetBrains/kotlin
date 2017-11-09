@@ -18,8 +18,12 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
@@ -28,18 +32,19 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.util.*
 
 // Navigation element of the resolved reference
@@ -56,7 +61,7 @@ val PsiReference.unwrappedTargets: Set<PsiElement>
 
         return when (this) {
             is PsiPolyVariantReference -> multiResolve(false).mapNotNullTo(HashSet<PsiElement>()) { it.element?.adjust() }
-            else -> emptyOrSingletonList(resolve()?.adjust()).toSet()
+            else -> listOfNotNull(resolve()?.adjust()).toSet()
         }
     }
 
@@ -76,16 +81,56 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     when (this) {
         is KtInvokeFunctionReference -> {
             if (candidateTarget !is KtNamedFunction && candidateTarget !is PsiMethod) return false
+            if ((candidateTarget as PsiNamedElement).name != OperatorNameConventions.INVOKE.asString()) {
+                return false
+            }
         }
         is KtDestructuringDeclarationReference -> {
             if (candidateTarget !is KtNamedFunction && candidateTarget !is KtParameter && candidateTarget !is PsiMethod) return false
         }
+        is KtSimpleNameReference -> {
+            if (unwrappedCandidate is PsiMethod && !canBePsiMethodReference()) return false
+        }
+    }
+
+    val element = element
+
+    if (candidateTarget is KtImportAlias && element is KtSimpleNameExpression && element.getReferencedName() == candidateTarget.name) {
+        val importDirective = candidateTarget.importDirective ?: return false
+        val importedFqName = importDirective.importedFqName ?: return false
+        val importedDescriptors = importDirective.containingKtFile.resolveImportReference(importedFqName)
+        val importableTargets = unwrappedTargets.mapNotNull {
+            if (it is KtConstructor<*>) it.containingClassOrObject else it
+        }
+        return importedDescriptors.any { (it as? DeclarationDescriptorWithSource)?.source?.getPsi() in importableTargets }
+    }
+
+    if (element is KtLabelReferenceExpression) {
+        val labelParent = (element.parent as? KtContainerNode)?.parent
+        when (labelParent) {
+            is KtReturnExpression -> unwrappedTargets.forEach {
+                if (it !is KtFunctionLiteral && !(it is KtNamedFunction && it.name.isNullOrEmpty())) return@forEach
+                it as KtFunction
+
+                val labeledExpression = it.getLabeledParent(element.getReferencedName())
+                if (labeledExpression != null) {
+                    if (candidateTarget == labeledExpression) return true else return@forEach
+                }
+                val calleeReference = it.getCalleeByLambdaArgument()?.mainReference ?: return@forEach
+                if (calleeReference.matchesTarget(candidateTarget)) return true
+            }
+            is KtBreakExpression, is KtContinueExpression -> unwrappedTargets.forEach {
+                val labeledExpression = (it as? KtExpression)?.getLabeledParent(element.getReferencedName()) ?: return@forEach
+                if (candidateTarget == labeledExpression) return true
+            }
+        }
     }
 
     val targets = unwrappedTargets
-    if (unwrappedCandidate in targets) return true
-    // TODO: Investigate why PsiCompiledElement identity changes
-    if (unwrappedCandidate is PsiCompiledElement && targets.any { it.isEquivalentTo(unwrappedCandidate) }) return true
+    val manager = candidateTarget.manager
+    if (targets.any { manager.areElementsEquivalent(unwrappedCandidate, it) }) {
+        return true
+    }
 
     if (this is KtReference) {
         return targets.any {
@@ -103,7 +148,7 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     }
     if (this is PsiJavaCodeReferenceElement && candidateTarget is KtObjectDeclaration && unwrappedTargets.size == 1) {
         val referredClass = unwrappedTargets.first()
-        if (referredClass is KtClass && candidateTarget in referredClass.getCompanionObjects()) {
+        if (referredClass is KtClass && candidateTarget in referredClass.companionObjects) {
             if (parent is PsiImportStaticStatement) return true
 
             return parent.reference?.unwrappedTargets?.any {
@@ -111,6 +156,24 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
             } ?: false
         }
     }
+    return false
+}
+
+fun KtSimpleNameReference.canBePsiMethodReference(): Boolean {
+    // NOTE: Accessor references are handled separately, see SyntheticPropertyAccessorReference
+    if (element == (element.parent as? KtCallExpression)?.calleeExpression) return true
+
+    val callableReference = element.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference }
+    if (callableReference != null) return true
+
+    val binaryOperator = element.getParentOfTypeAndBranch<KtBinaryExpression> { operationReference }
+    if (binaryOperator != null) return true
+
+    val unaryOperator = element.getParentOfTypeAndBranch<KtUnaryExpression> { operationReference }
+    if (unaryOperator != null) return true
+
+    if (element.getNonStrictParentOfType<KtImportDirective>() != null) return true
+
     return false
 }
 
@@ -145,6 +208,11 @@ val KtElement.mainReference: KtReference?
             else -> references.firstIsInstanceOrNull<KtReference>()
         }
     }
+
+fun KtElement.resolveMainReferenceToDescriptors(): Collection<DeclarationDescriptor> {
+    val bindingContext = analyze(BodyResolveMode.PARTIAL)
+    return mainReference?.resolveToDescriptors(bindingContext) ?: emptyList()
+}
 
 // ----------- Read/write access -----------------------------------------------------------------------------------------------------------------------
 
@@ -187,7 +255,7 @@ fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAcce
         ReferenceAccess.READ
 }
 
-fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor): Boolean {
+fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor, bindingContext: BindingContext): Boolean {
     if (!target.canBeReferencedViaImport()) return false
 
     if (this is KDocReference) return element.getQualifiedName().size == 1
@@ -195,7 +263,27 @@ fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor): Boolean {
     if (target.isExtension) return true // assume that any type of reference can use imports when resolved to extension
 
     val referenceExpression = this.element as? KtNameReferenceExpression ?: return false
-    if (CallTypeAndReceiver.detect(referenceExpression).receiver != null) return false
+    val callTypeAndReceiver = CallTypeAndReceiver.detect(referenceExpression)
+
+    if (callTypeAndReceiver.receiver != null) {
+        if (target !is PropertyDescriptor || !target.type.isExtensionFunctionType) return false
+        if (callTypeAndReceiver !is CallTypeAndReceiver.DOT && callTypeAndReceiver !is CallTypeAndReceiver.SAFE) return false
+
+        val resolvedCall = bindingContext[BindingContext.CALL, referenceExpression].getResolvedCall(bindingContext)
+                                   as? VariableAsFunctionResolvedCall ?: return false
+        if (resolvedCall.variableCall.explicitReceiverKind.isDispatchReceiver) return false
+    }
+
     if (element.parent is KtThisExpression || element.parent is KtSuperExpression) return false // TODO: it's a bad design of PSI tree, we should change it
+
     return true
+}
+
+fun KtFunction.getCalleeByLambdaArgument(): KtSimpleNameExpression? {
+    val argument = getParentOfTypeAndBranch<KtValueArgument> { getArgumentExpression() } ?: return null
+    val callExpression = when (argument) {
+                             is KtLambdaArgument -> argument.parent as? KtCallExpression
+                             else -> (argument.parent as? KtValueArgumentList)?.parent as? KtCallExpression
+                         } ?: return null
+    return callExpression.calleeExpression as? KtSimpleNameExpression
 }

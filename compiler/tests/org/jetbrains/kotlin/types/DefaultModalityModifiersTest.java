@@ -17,22 +17,20 @@
 package org.jetbrains.kotlin.types;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.context.ContextKt;
-import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorResolver;
+import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -91,27 +89,22 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             KtDeclaration aClass = file.getDeclarations().get(0);
             assert aClass instanceof KtClass;
             AnalysisResult bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(file, getEnvironment());
-            final DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
-            return new LexicalScopeImpl(ScopeUtilsKt.memberScopeAsImportingScope(libraryScope), root, false, null,
-                                        LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
-                                        new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
-                                            @Override
-                                            public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                                                handler.addClassifierDescriptor((ClassifierDescriptor) classDescriptor);
-                                                return Unit.INSTANCE;
-                                            }
-                                        });
+            DeclarationDescriptor classDescriptor =
+                    bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
+            return new LexicalScopeImpl(
+                    ScopeUtilsKt.memberScopeAsImportingScope(libraryScope), root, false, null,
+                    LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
+                    handler -> {
+                        handler.addClassifierDescriptor((ClassifierDescriptor) classDescriptor);
+                        return Unit.INSTANCE;
+                    }
+            );
         }
 
         private ClassDescriptorWithResolutionScopes createClassDescriptor(ClassKind kind, KtClass aClass) {
-            ModuleContext moduleContext = ContextKt.ModuleContext(root, getProject());
             ResolveSession resolveSession = createLazyResolveSession(
-                    moduleContext,
-                    new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(),
-                                                            Collections.singleton(aClass.getContainingKtFile())),
-                    new BindingTraceContext(),
-                    TargetPlatform.Default.INSTANCE,
-                    LanguageVersionSettingsImpl.DEFAULT
+                    ContextKt.ModuleContext(root, getProject()),
+                    Collections.singleton(aClass.getContainingKtFile())
             );
 
             return (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(aClass, NoLookupLocation.FROM_TEST);
@@ -145,7 +138,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                    classDescriptor, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
+                    classDescriptor, scope, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
 
             assertEquals(expectedPropertyModality, propertyDescriptor.getModality());
         }
@@ -158,7 +151,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                    classDescriptor, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
+                    classDescriptor, scope, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
             PropertyAccessorDescriptor propertyAccessor = isGetter
                                                           ? propertyDescriptor.getGetter()
                                                           : propertyDescriptor.getSetter();

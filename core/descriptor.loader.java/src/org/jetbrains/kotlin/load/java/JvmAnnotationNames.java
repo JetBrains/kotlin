@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 
+@SuppressWarnings("PointlessBitwiseExpression")
 public final class JvmAnnotationNames {
     public static final FqName METADATA_FQ_NAME = new FqName("kotlin.Metadata");
     public static final String METADATA_DESC = "L" + JvmClassName.byFqNameWithoutInnerClasses(METADATA_FQ_NAME).getInternalName() + ";";
@@ -30,9 +31,13 @@ public final class JvmAnnotationNames {
     public static final String METADATA_DATA_FIELD_NAME = "d1";
     public static final String METADATA_STRINGS_FIELD_NAME = "d2";
     public static final String METADATA_EXTRA_STRING_FIELD_NAME = "xs";
+    public static final String METADATA_PACKAGE_NAME_FIELD_NAME = "pn";
     public static final String METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME = METADATA_EXTRA_STRING_FIELD_NAME;
     public static final String METADATA_EXTRA_INT_FIELD_NAME = "xi";
-    public static final String METADATA_MULTIFILE_CLASS_KIND_FIELD_NAME = METADATA_EXTRA_INT_FIELD_NAME;
+
+    public static final int METADATA_MULTIFILE_PARTS_INHERIT_FLAG = 1 << 0;
+    public static final int METADATA_PRE_RELEASE_FLAG = 1 << 1;
+    public static final int METADATA_SCRIPT_FLAG = 1 << 2;
 
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
 
@@ -46,6 +51,10 @@ public final class JvmAnnotationNames {
     // Just for internal use: there is no such real classes in bytecode
     public static final FqName ENHANCED_NULLABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedNullability");
     public static final FqName ENHANCED_MUTABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedMutability");
+
+    public static final FqName PARAMETER_NAME_FQ_NAME = new FqName("kotlin.annotations.jvm.internal.ParameterName");
+    public static final FqName DEFAULT_VALUE_FQ_NAME = new FqName("kotlin.annotations.jvm.internal.DefaultValue");
+    public static final FqName DEFAULT_NULL_FQ_NAME = new FqName("kotlin.annotations.jvm.internal.DefaultNull");
 
     private JvmAnnotationNames() {
     }

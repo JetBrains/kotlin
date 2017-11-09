@@ -1,4 +1,3 @@
-import java.util.ArrayList
 
 interface Tr {
    fun extra() : String = "_"

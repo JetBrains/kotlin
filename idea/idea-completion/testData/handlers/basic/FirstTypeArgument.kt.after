@@ -1,5 +1,6 @@
 class Foo<T, V>
 
-class Bar: Foo<StringBuilder<caret>
+class Bar: Foo<StringBuilder
 
 // ELEMENT: StringBuilder
+// TAIL_TEXT: " (kotlin.text)"

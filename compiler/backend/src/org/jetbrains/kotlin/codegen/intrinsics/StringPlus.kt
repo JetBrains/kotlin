@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 class StringPlus : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
             createIntrinsicCallable(method) {
-                it.invokestatic("kotlin/jvm/internal/Intrinsics", "stringPlus",
+                it.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "stringPlus",
                                 "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;", false)
             }
 }

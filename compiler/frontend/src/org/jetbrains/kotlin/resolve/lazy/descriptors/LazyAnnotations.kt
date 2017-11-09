@@ -20,20 +20,19 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.AnnotationResolver
+import org.jetbrains.kotlin.resolve.AnnotationResolverImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.storage.getValue
 
 abstract class LazyAnnotationsContext(
         val annotationResolver: AnnotationResolver,
@@ -63,25 +62,6 @@ class LazyAnnotations(
         val target = entry.useSiteTarget?.getAnnotationUseSiteTarget()
         AnnotationWithTarget(descriptor, target)
     }
-
-    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? {
-        // We can not efficiently check short names here:
-        // an annotation class may be renamed on import
-        for (annotationDescriptor in iterator()) {
-            val annotationType = annotationDescriptor.type
-            if (annotationType.isError) continue
-
-            val descriptor = annotationType.constructor.declarationDescriptor ?: continue
-
-            if (DescriptorUtils.getFqNameSafe(descriptor) == fqName) {
-                return annotationDescriptor
-            }
-        }
-
-        return null
-    }
-
-    override fun findExternalAnnotation(fqName: FqName) = null
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
         return annotationEntries
@@ -117,50 +97,35 @@ class LazyAnnotationDescriptor(
         c.trace.record(BindingContext.ANNOTATION, annotationEntry, this)
     }
 
-    private val type = c.storageManager.createLazyValue {
-        c.annotationResolver.resolveAnnotationType(
-                scope,
-                annotationEntry,
-                c.trace
-        )
+    override val type by c.storageManager.createLazyValue {
+        c.annotationResolver.resolveAnnotationType(scope, annotationEntry, c.trace)
     }
 
-    private val valueArguments = c.storageManager.createLazyValue {
-        computeValueArguments()
-    }
+    override val source = annotationEntry.toSourceElement()
 
-    private val source = annotationEntry.toSourceElement()
-
-    val scope = if (c.scope.ownerDescriptor is PackageFragmentDescriptor) {
-        LexicalScope.Empty(c.scope, FileDescriptorForVisibilityChecks(source, c.scope.ownerDescriptor))
+    private val scope = if (c.scope.ownerDescriptor is PackageFragmentDescriptor) {
+        LexicalScope.Base(c.scope, FileDescriptorForVisibilityChecks(source, c.scope.ownerDescriptor))
     }
     else {
         c.scope
     }
 
-    override fun getType() = type()
-
-    override fun getAllValueArguments() = valueArguments()
-
-    private fun computeValueArguments(): Map<ValueParameterDescriptor, ConstantValue<*>> {
+    override val allValueArguments by c.storageManager.createLazyValue {
         val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, scope, c.trace)
-        AnnotationResolver.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
+        AnnotationResolverImpl.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
 
-        if (!resolutionResults.isSingleResult) return mapOf()
+        if (!resolutionResults.isSingleResult) return@createLazyValue emptyMap<Name, ConstantValue<*>>()
 
-        @Suppress("UNCHECKED_CAST")
-        return resolutionResults.resultingCall.valueArguments
-                .mapValues { val (valueParameter, resolvedArgument) = it
-                    if (resolvedArgument == null) null
-                    else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)
-                }
-                .filterValues { it != null } as Map<ValueParameterDescriptor, ConstantValue<*>>
+        resolutionResults.resultingCall.valueArguments.mapNotNull { (valueParameter, resolvedArgument) ->
+            if (resolvedArgument == null) null
+            else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)?.let { value ->
+                valueParameter.name to value
+            }
+        }.toMap()
     }
 
-    override fun getSource() = source
-
     override fun forceResolveAllContents() {
-        ForceResolveUtil.forceResolveAllContents(getType())
+        ForceResolveUtil.forceResolveAllContents(type)
         allValueArguments
     }
 
@@ -175,7 +140,6 @@ class LazyAnnotationDescriptor(
         override fun getName() = Name.special("< file descriptor for annotation resolution >")
 
         private fun error(): Nothing = error("This method should not be called")
-        override fun substitute(substitutor: TypeSubstitutor): DeclarationDescriptor? = error()
         override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R = error()
         override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = error()
 

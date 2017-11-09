@@ -67,6 +67,8 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
     private fun ProtoContainer.Class.toBinaryClass(): KotlinJvmBinaryClass? =
             (source as? KotlinJvmBinarySourceElement)?.binaryClass
 
+    protected open fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? = null
+
     override fun loadClassAnnotations(container: ProtoContainer.Class): List<A> {
         val kotlinClass = container.toBinaryClass() ?: error("Class for loading annotations is not found: ${container.debugFqName()}")
 
@@ -79,7 +81,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
 
             override fun visitEnd() {
             }
-        })
+        }, getCachedFileContent(kotlinClass))
 
         return result
     }
@@ -165,7 +167,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
                 container.isInner -> 1
                 else -> 0
             }
-            else -> throw UnsupportedOperationException("Unsupported message: ${message.javaClass}")
+            else -> throw UnsupportedOperationException("Unsupported message: ${message::class.java}")
         }
     }
 
@@ -240,7 +242,10 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
             }
         }
         if (container is ProtoContainer.Package && container.source is JvmPackagePartSource) {
-            return kotlinClassFinder.findKotlinClass((container.source as JvmPackagePartSource).classId)
+            val jvmPackagePartSource = container.source as JvmPackagePartSource
+
+            return jvmPackagePartSource.knownJvmBinaryClass
+                   ?: kotlinClassFinder.findKotlinClass(jvmPackagePartSource.classId)
         }
         return null
     }
@@ -294,7 +299,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
                     }
                 }
             }
-        })
+        }, getCachedFileContent(kotlinClass))
 
         return Storage(memberAnnotations, propertyConstants)
     }

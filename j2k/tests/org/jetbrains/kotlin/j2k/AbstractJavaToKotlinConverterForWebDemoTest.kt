@@ -22,6 +22,7 @@ import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
+import com.intellij.lang.MetaLanguage
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
@@ -74,15 +75,16 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
             }
         }
 
-        javaCoreEnvironment.project.registerService(NullableNotNullManager::class.java, object : NullableNotNullManager() {
+        javaCoreEnvironment.project.registerService(NullableNotNullManager::class.java, object : NullableNotNullManager(javaCoreEnvironment.project) {
             override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
             override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
             override fun hasHardcodedContracts(element: PsiElement): Boolean = false
+            override fun getPredefinedNotNulls() = emptyList<String>()
         })
 
         applicationEnvironment.application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
 
-        for (root in PathUtil.getJdkClassesRoots()) {
+        for (root in PathUtil.getJdkClassesRootsFromCurrentJre()) {
             javaCoreEnvironment.addJarToClassPath(root)
         }
         val annotations: File? = findAnnotations()
@@ -105,6 +107,7 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
         CoreApplicationEnvironment.registerExtensionPoint(area, ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java)
 
         CoreApplicationEnvironment.registerExtensionPoint(area, TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)
+        CoreApplicationEnvironment.registerExtensionPoint(area, MetaLanguage.EP_NAME, MetaLanguage::class.java)
     }
 
     fun findAnnotations(): File? {

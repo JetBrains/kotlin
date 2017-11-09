@@ -1,4 +1,5 @@
 // "Remove '.java'" "true"
+// WITH_RUNTIME
 fun foo() {
     bar(Foo::class.java<caret>)
 }

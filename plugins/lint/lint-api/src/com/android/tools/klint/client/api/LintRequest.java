@@ -172,6 +172,7 @@ public class LintRequest {
      * @param project the project to look up the main project for
      * @return the main project
      */
+    @SuppressWarnings("MethodMayBeStatic")
     @NonNull
     public Project getMainProject(@NonNull Project project) {
         return project;

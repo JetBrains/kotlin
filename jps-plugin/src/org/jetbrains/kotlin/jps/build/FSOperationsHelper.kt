@@ -17,17 +17,25 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jps.ModuleChunk
+import org.jetbrains.jps.builders.BuildRootIndex
+import org.jetbrains.jps.builders.BuildTarget
+import org.jetbrains.jps.builders.BuildTargetIndex
+import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.FSOperations
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import java.io.File
+import java.util.HashMap
 
 class FSOperationsHelper(
         private val compileContext: CompileContext,
         private val chunk: ModuleChunk,
         private val log: Logger
 ) {
+    private val moduleBasedFilter = ModulesBasedFileFilter(compileContext, chunk)
+
     internal var hasMarkedDirty = false
         private set
 
@@ -51,19 +59,50 @@ class FSOperationsHelper(
         }
     }
 
-    fun markFiles(files: Iterable<File>, excludeFiles: Set<File> = setOf()) {
-        val filesToMark = files.toMutableSet()
-        filesToMark.removeAll(excludeFiles)
+    fun markFiles(files: Iterable<File>) {
+        markFilesImpl(files) { it.exists() }
+    }
+
+    fun markInChunkOrDependents(files: Iterable<File>, excludeFiles: Set<File>) {
+        markFilesImpl(files) { it !in excludeFiles && it.exists() && moduleBasedFilter.accept(it) }
+    }
+
+    private inline fun markFilesImpl(files: Iterable<File>, shouldMark: (File)->Boolean) {
+        val filesToMark = files.filterTo(HashSet(), shouldMark)
+
+        if (filesToMark.isEmpty()) return
+
+        for (fileToMark in filesToMark) {
+            FSOperations.markDirty(compileContext, CompilationRound.NEXT, fileToMark)
+        }
 
         log.debug("Mark dirty: $filesToMark")
         buildLogger?.markedAsDirty(filesToMark)
+        hasMarkedDirty = true
+    }
 
-        for (file in filesToMark) {
-            if (!file.exists()) continue
+    // Based on `JavaBuilderUtil#ModulesBasedFileFilter` from Intellij
+    private class ModulesBasedFileFilter(
+            private val context: CompileContext,
+            chunk: ModuleChunk
+    ): Mappings.DependentFilesFilter {
+        private val chunkTargets = chunk.targets
+        private val buildRootIndex = context.projectDescriptor.buildRootIndex
+        private val buildTargetIndex = context.projectDescriptor.buildTargetIndex
+        private val cache = HashMap<BuildTarget<*>, Set<BuildTarget<*>>>()
 
-            FSOperations.markDirty(compileContext, CompilationRound.NEXT, file)
+        override fun accept(file: File): Boolean {
+            val rd = buildRootIndex.findJavaRootDescriptor(context, file) ?: return true
+            val target = rd.target
+            if (target in chunkTargets) return true
+
+            val targetOfFileWithDependencies = cache.getOrPut(target) { buildTargetIndex.getDependenciesRecursively(target, context) }
+            return ContainerUtil.intersects(targetOfFileWithDependencies, chunkTargets)
         }
 
-        hasMarkedDirty = hasMarkedDirty || filesToMark.isNotEmpty()
+        override fun belongsToCurrentTargetChunk(file: File): Boolean {
+            val rd = buildRootIndex.findJavaRootDescriptor(context, file)
+            return rd != null && chunkTargets.contains(rd.target)
+        }
     }
 }

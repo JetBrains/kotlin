@@ -1,0 +1,8 @@
+LineBreakpoint created at stopInInlineCallInFieldInClassWithNonDefaultPrimary.kt:9
+Run Java
+Connected to the target VM
+stopInInlineCallInFieldInClassWithNonDefaultPrimary.kt:9
+stopInInlineCallInFieldInClassWithNonDefaultPrimary.kt:10
+Disconnected from the target VM
+
+Process finished with exit code 0

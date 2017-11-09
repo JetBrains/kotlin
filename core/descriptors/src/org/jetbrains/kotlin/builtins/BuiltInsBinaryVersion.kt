@@ -29,7 +29,10 @@ class BuiltInsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
     companion object {
         @JvmField
-        val INSTANCE = BuiltInsBinaryVersion(1, 0, 0)
+        val INSTANCE = BuiltInsBinaryVersion(1, 0, 1)
+
+        @JvmField
+        val INVALID_VERSION = BuiltInsBinaryVersion()
 
         fun readFrom(stream: InputStream): BuiltInsBinaryVersion {
             val dataInput = DataInputStream(stream)

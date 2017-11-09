@@ -32,9 +32,11 @@ open class IntroduceTypeAliasParameterTablePanel : AbstractParameterTablePanel<T
     }
 
     fun init(parameters: List<TypeParameter>) {
-        parameterInfos = parameters.mapTo(ArrayList()) { TypeParameterInfo(it) }
+        parameterInfos = parameters.mapTo(ArrayList(), ::TypeParameterInfo)
         super.init()
     }
+
+    override fun isCheckMarkColumnEditable() = false
 
     val selectedTypeParameterInfos: List<TypeParameterInfo>
         get() = parameterInfos.filter { it.isEnabled }

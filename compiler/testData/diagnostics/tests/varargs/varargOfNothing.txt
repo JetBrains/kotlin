@@ -1,0 +1,6 @@
+package
+
+public fun outer(): kotlin.Unit
+public fun testVarargOfNNothing(/*0*/ vararg v: kotlin.Nothing? /*kotlin.Array<out kotlin.Nothing?>*/): kotlin.Unit
+public fun testVarargOfNothing(/*0*/ vararg v: kotlin.Nothing /*kotlin.Array<out kotlin.Nothing>*/): kotlin.Unit
+public fun </*0*/ T : kotlin.Nothing?> testVarargOfT(/*0*/ vararg v: T /*kotlin.Array<out T>*/): kotlin.Unit

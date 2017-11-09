@@ -16,21 +16,20 @@
 
 package org.jetbrains.kotlin.codegen.extensions
 
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 interface ExpressionCodegenExtension {
     companion object : ProjectExtensionDescriptor<ExpressionCodegenExtension>(
             "org.jetbrains.kotlin.expressionCodegenExtension", ExpressionCodegenExtension::class.java)
 
     class Context(
+            val codegen: ExpressionCodegen,
             val typeMapper: KotlinTypeMapper,
             val v: InstructionAdapter
     )
@@ -47,10 +46,5 @@ interface ExpressionCodegenExtension {
      */
     fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue? = null
 
-    fun generateClassSyntheticParts(
-            classBuilder: ClassBuilder,
-            state: GenerationState,
-            classOrObject: KtClassOrObject,
-            descriptor: ClassDescriptor
-    ) {}
+    fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {}
 }

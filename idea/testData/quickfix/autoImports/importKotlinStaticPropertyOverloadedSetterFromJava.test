@@ -1,5 +1,5 @@
 // FILE: bar/Foo.before.java
-// "Static import method 'foo.Bar.setVariable'" "true"
+// "/(Static import|Import static) method 'foo.Bar.setVariable'/" "true"
 // ERROR: Unresolved reference: setVariable
 // ACTION: Create method 'foobar'
 // WITH_RUNTIME
@@ -17,14 +17,14 @@ public class Foo {
 package foo
 
 object Bar {
-    var variable: String;
+    var variable: String
         @JvmStatic set(value) {
             field = value
         }
 }
 
 // FILE: bar/Foo.after.java
-// "Static import method 'foo.Bar.setVariable'" "true"
+// "/(Static import|Import static) method 'foo.Bar.setVariable'/" "true"
 // ERROR: Unresolved reference: setVariable
 // ACTION: Create method 'foobar'
 // WITH_RUNTIME

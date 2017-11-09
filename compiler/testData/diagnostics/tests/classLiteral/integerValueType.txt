@@ -1,4 +1,4 @@
 package
 
-public fun f(/*0*/ x: kotlin.reflect.KClass<kotlin.Int>): kotlin.Unit
+public fun f(/*0*/ x: kotlin.reflect.KClass<out kotlin.Int>): kotlin.Unit
 public fun test(): kotlin.Unit

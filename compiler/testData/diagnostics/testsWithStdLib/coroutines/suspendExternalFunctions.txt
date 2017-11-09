@@ -1,0 +1,11 @@
+package
+
+public suspend fun </*0*/ V> await(/*0*/ f: () -> V): V
+public suspend fun </*0*/ V> await(/*0*/ f: kotlin.Int): V
+public fun builder(/*0*/ c: suspend () -> kotlin.Unit): kotlin.Unit
+public suspend fun noParams(): kotlin.Unit
+public suspend fun severalParams(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Int): kotlin.Double
+public fun test(): kotlin.Unit
+public suspend fun yieldString(/*0*/ value: kotlin.String): kotlin.Unit
+public suspend fun kotlin.Any.anyReceiver(/*0*/ y: kotlin.Int): kotlin.Double
+public suspend fun kotlin.String.stringReceiver(/*0*/ y: kotlin.Int): kotlin.Double

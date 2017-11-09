@@ -22,13 +22,15 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeProjectionImpl;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JavaResolverUtils {
     private JavaResolverUtils() {
@@ -39,8 +41,7 @@ public class JavaResolverUtils {
             @Nullable DeclarationDescriptor newOwner
     ) {
         // LinkedHashMap to save the order of type parameters
-        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> result =
-                new LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>();
+        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> result = new LinkedHashMap<>();
         for (TypeParameterDescriptor typeParameter : originalParameters) {
             result.put(typeParameter,
                        TypeParameterDescriptorImpl.createForFurtherModification(
@@ -61,7 +62,7 @@ public class JavaResolverUtils {
     public static TypeSubstitutor createSubstitutorForTypeParameters(
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters
     ) {
-        Map<TypeConstructor, TypeProjection> typeSubstitutionContext = new HashMap<TypeConstructor, TypeProjection>();
+        Map<TypeConstructor, TypeProjection> typeSubstitutionContext = new HashMap<>();
         for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameter : originalToAltTypeParameters.entrySet()) {
             typeSubstitutionContext.put(originalToAltTypeParameter.getKey().getTypeConstructor(),
                                         new TypeProjectionImpl(originalToAltTypeParameter.getValue().getDefaultType()));

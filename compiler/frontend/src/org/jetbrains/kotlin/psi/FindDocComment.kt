@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,19 @@
 
 package org.jetbrains.kotlin.psi.findDocComment
 
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
-import org.jetbrains.kotlin.psi.psiUtil.siblings
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.PsiComment
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationModifierList
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 
 fun findDocComment(declaration: KtDeclaration): KDoc? {
     return declaration.allChildren
-            .dropWhile { it !is KDoc && (it is PsiWhiteSpace || it is PsiComment) }
-            .first() as? KDoc
+            .flatMap {
+                if (it is KtDeclarationModifierList) {
+                    return@flatMap it.children.asSequence()
+                }
+                sequenceOf(it)
+            }
+            .dropWhile { it !is KDoc }
+            .firstOrNull() as? KDoc
 }

@@ -1,6 +1,6 @@
+// EXPECTED_REACHABLE_NODES: 1109
 package foo
 
-@native
-fun returnFalse(): Boolean = noImpl
+external fun returnFalse(): Boolean = definedExternally
 
 fun box() = if (!returnFalse()) "OK" else "fail"

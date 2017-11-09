@@ -1,13 +1,13 @@
+// !DIAGNOSTICS: -DEPRECATION
 @nativeGetter
 fun String.foo(n: Int): Int?
 @nativeGetter
-fun String.bar(n: Int): Int? = noImpl
+fun String.bar(n: Int): Int? = definedExternally
 
 
-@native
-interface T {
+external interface T {
     @nativeGetter
     fun foo(d: Double): String?
     @nativeGetter
-    fun bar(d: Double): String? = noImpl
+    fun bar(d: Double): String?
 }

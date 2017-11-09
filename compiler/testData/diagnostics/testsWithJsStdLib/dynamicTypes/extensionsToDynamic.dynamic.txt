@@ -1,0 +1,54 @@
+public final fun onDynamic(): dynamic
+public final fun onNullableDynamic(): dynamic
+public final var valOnDynamic: dynamic
+    public final fun <get-valOnDynamic>(): dynamic
+    public final fun <set-valOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var valOnDynamic: dynamic
+    public final fun <get-valOnDynamic>(): dynamic
+    public final fun <set-valOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var varOnDynamic: dynamic
+    public final fun <get-varOnDynamic>(): dynamic
+    public final fun <set-varOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var varOnDynamic: dynamic
+    public final fun <get-varOnDynamic>(): dynamic
+    public final fun <set-varOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final fun onDynamic(): dynamic
+public final fun onNullableDynamic(): dynamic
+public final var valOnDynamic: dynamic
+    public final fun <get-valOnDynamic>(): dynamic
+    public final fun <set-valOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var valOnDynamic: dynamic
+    public final fun <get-valOnDynamic>(): dynamic
+    public final fun <set-valOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var varOnDynamic: dynamic
+    public final fun <get-varOnDynamic>(): dynamic
+    public final fun <set-varOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var varOnDynamic: dynamic
+    public final fun <get-varOnDynamic>(): dynamic
+    public final fun <set-varOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final fun onDynamic(): dynamic
+public final fun onNullableDynamic(): dynamic
+public final var valOnDynamic: dynamic
+    public final fun <get-valOnDynamic>(): dynamic
+    public final fun <set-valOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var valOnDynamic: dynamic
+    public final fun <get-valOnDynamic>(): dynamic
+    public final fun <set-valOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var varOnDynamic: dynamic
+    public final fun <get-varOnDynamic>(): dynamic
+    public final fun <set-varOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var varOnDynamic: dynamic
+    public final fun <get-varOnDynamic>(): dynamic
+    public final fun <set-varOnDynamic>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var memberExtensionVar: dynamic
+    public final fun <get-memberExtensionVar>(): dynamic
+    public final fun <set-memberExtensionVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var memberExtensionVar: dynamic
+    public final fun <get-memberExtensionVar>(): dynamic
+    public final fun <set-memberExtensionVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var memberExtensionVal: dynamic
+    public final fun <get-memberExtensionVal>(): dynamic
+    public final fun <set-memberExtensionVal>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var memberExtensionVal: dynamic
+    public final fun <get-memberExtensionVal>(): dynamic
+    public final fun <set-memberExtensionVal>(/*0*/ <set-?>: dynamic): kotlin.Unit

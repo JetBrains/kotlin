@@ -29,6 +29,7 @@ class AddNewLineAfterAnnotationsFix(element: KtAnnotatedExpression) : KotlinQuic
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val baseExpression = element.baseExpression ?: return
         val annotationsText = element.text.substring(0, baseExpression.startOffsetInParent)
         val newExpression = KtPsiFactory(project).createBlock(annotationsText + "\n" + baseExpression.text).statements[0]

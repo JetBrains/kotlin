@@ -29,6 +29,7 @@ class MoveTypeParameterConstraintFix(element: KtTypeParameter) : KotlinQuickFixA
     override fun getFamilyName(): String = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val typeParameterName = element.nameAsName ?: return
         val psiFactory = KtPsiFactory(file)
         val templateClass = psiFactory.buildDeclaration {

@@ -1,7 +1,5 @@
 package
 
-public /*synthesized*/ fun A(/*0*/ function: (r: java.lang.Runnable!) -> kotlin.Unit): A
-
 public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(/*0*/ r: java.lang.Runnable!): kotlin.Unit

@@ -1,0 +1,10 @@
+package test
+
+public fun func(): kotlin.Int!
+
+public/*package*/ open class MethodWithSeveralTypeParameters {
+    public/*package*/ constructor MethodWithSeveralTypeParameters()
+
+    // Static members
+    public open fun </*0*/ T : kotlin.CharSequence!, /*1*/ N : kotlin.Number!> method(/*0*/ T!, /*1*/ N!): N!
+}

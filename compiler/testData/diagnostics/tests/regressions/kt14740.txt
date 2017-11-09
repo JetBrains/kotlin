@@ -1,0 +1,31 @@
+package
+
+public fun </*0*/ T> Foo.Observable<T>.bindTo(/*0*/ a: Foo): Foo.Observable<T>
+
+public abstract class Foo {
+    public constructor Foo()
+    public final fun </*0*/ T : kotlin.Any!> bindToLifecycle(): Foo.LifecycleTransformer<T!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface LifecycleTransformer</*0*/ T : kotlin.Any!> : Foo.Transformer<T!, T!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open inner class Observable</*0*/ T : kotlin.Any!> {
+        public constructor Observable</*0*/ T : kotlin.Any!>()
+        public open fun </*0*/ R : kotlin.Any!> compose(/*0*/ transformer: Foo.Transformer<in T!, out R!>!): Foo.Observable<R!>!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Transformer</*0*/ T : kotlin.Any!, /*1*/ R : kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

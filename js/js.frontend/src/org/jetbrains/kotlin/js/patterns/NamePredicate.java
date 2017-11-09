@@ -16,13 +16,10 @@
 
 package org.jetbrains.kotlin.js.patterns;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.name.Name;
 
@@ -30,28 +27,21 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public final class NamePredicate implements Predicate<Name> {
 
     @NotNull
     public static final NamePredicate PRIMITIVE_NUMBERS = new NamePredicate(
-            ContainerUtil.map(PrimitiveType.NUMBER_TYPES,
-                              new Function<PrimitiveType, String>() {
-                                  @Override
-                                  public String fun(PrimitiveType type) {
-                                      return type.getTypeName().asString();
-                                  }
-                              }));
+            CollectionsKt.map(PrimitiveType.NUMBER_TYPES, (PrimitiveType type) -> type.getTypeName().asString())
+    );
 
     @NotNull
     public static final NamePredicate PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS = new NamePredicate(
-            ContainerUtil.mapNotNull(PrimitiveType.NUMBER_TYPES,
-                              new Function<PrimitiveType, String>() {
-                                  @Override
-                                  public String fun(PrimitiveType type) {
-                                      return type != PrimitiveType.LONG ? type.getTypeName().asString() : null;
-                                  }
-                              }));
+            CollectionsKt.mapNotNull(PrimitiveType.NUMBER_TYPES, (PrimitiveType type) ->
+                    type != PrimitiveType.LONG ? type.getTypeName().asString() : null
+            )
+    );
 
     @NotNull
     public static final NamePredicate STRING = new NamePredicate("String");
@@ -75,7 +65,7 @@ public final class NamePredicate implements Predicate<Name> {
         this(Arrays.asList(validNames));
     }
 
-    public NamePredicate(@NotNull List<String> validNames) {
+    private NamePredicate(@NotNull List<String> validNames) {
         for (String validName : validNames) {
             this.validNames.add(Name.guessByFirstCharacter(validName));
         }
@@ -90,7 +80,7 @@ public final class NamePredicate implements Predicate<Name> {
     }
 
     @Override
-    public boolean apply(@Nullable Name name) {
-        return name != null && validNames.contains(name);
+    public boolean test(Name name) {
+        return validNames.contains(name);
     }
 }

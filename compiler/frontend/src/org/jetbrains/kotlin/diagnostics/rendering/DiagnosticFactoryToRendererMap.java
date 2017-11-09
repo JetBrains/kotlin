@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class DiagnosticFactoryToRendererMap {
-    private final Map<DiagnosticFactory<?>, DiagnosticRenderer<?>> map = new HashMap<DiagnosticFactory<?>, DiagnosticRenderer<?>>();
+    private final Map<DiagnosticFactory<?>, DiagnosticRenderer<?>> map = new HashMap<>();
     private boolean immutable = false;
 
     // TO catch EA-75872

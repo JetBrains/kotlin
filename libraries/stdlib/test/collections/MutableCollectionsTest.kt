@@ -2,9 +2,6 @@ package test.collections
 
 import kotlin.test.*
 
-import java.util.*
-
-import org.junit.Test as test
 
 class MutableCollectionTest {
     fun <T, C: MutableCollection<T>> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean, toMutableCollection: (List<T>) -> C)
@@ -18,7 +15,7 @@ class MutableCollectionTest {
             = testOperation(before, after, expectedModified, { it.toMutableList() })
 
 
-    @test fun addAll() {
+    @Test fun addAll() {
         val data = listOf("foo", "bar")
 
         testOperation(emptyList(), data, true).let { assertAdd ->
@@ -36,7 +33,7 @@ class MutableCollectionTest {
         }
     }
 
-    @test fun removeAll() {
+    @Test fun removeAll() {
         val content = listOf("foo", "bar", "bar")
         val data = listOf("bar")
         val expected = listOf("foo")
@@ -61,7 +58,7 @@ class MutableCollectionTest {
         }
     }
 
-    @test fun retainAll() {
+    @Test fun retainAll() {
         val content = listOf("foo", "bar", "bar")
         val expected = listOf("bar", "bar")
 
@@ -97,4 +94,35 @@ class MutableCollectionTest {
         }
     }
 
+    @Test fun listFill() {
+        val list = MutableList(3) { it }
+        list.fill(42)
+        assertEquals(listOf(42, 42, 42), list)
+    }
+
+    @Test fun shuffled() {
+        val list = MutableList(100) { it }
+        val shuffled = list.shuffled()
+
+        assertNotEquals(list, shuffled)
+        assertEquals(list.toSet(), shuffled.toSet())
+        assertEquals(list.size, shuffled.distinct().size)
+    }
+
+    @JvmVersion
+    @Test fun shuffledRnd() {
+        val rnd1 = java.util.Random(42L)
+        val rnd2 = java.util.Random(42L)
+
+        val list = MutableList(100) { it }
+        val shuffled1 = list.shuffled(rnd1)
+        val shuffled2 = list.shuffled(rnd2)
+
+
+        assertNotEquals(list, shuffled1)
+        assertEquals(list.toSet(), shuffled1.toSet())
+        assertEquals(list.size, shuffled1.distinct().size)
+
+        assertEquals(shuffled1, shuffled2)
+    }
 }

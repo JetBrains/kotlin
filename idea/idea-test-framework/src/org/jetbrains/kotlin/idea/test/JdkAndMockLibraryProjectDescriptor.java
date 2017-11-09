@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.test.MockLibraryUtil;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
     public static final String LIBRARY_NAME = "myKotlinLib";
@@ -36,28 +38,41 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     private final boolean withRuntime;
     private final boolean isJsLibrary;
     private final boolean allowKotlinPackage;
+    private final List<String> classpath;
 
     public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources) {
         this(sourcesPath, withSources, false, false, false);
     }
 
-    public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage) {
+    public JdkAndMockLibraryProjectDescriptor(
+            String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage) {
+        this(sourcesPath, withSources, withRuntime, isJsLibrary, allowKotlinPackage, Collections.emptyList());
+    }
+
+    public JdkAndMockLibraryProjectDescriptor(
+            String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage, List<String> classpath
+    ) {
         this.sourcesPath = sourcesPath;
         this.withSources = withSources;
         this.withRuntime = withRuntime;
         this.isJsLibrary = isJsLibrary;
         this.allowKotlinPackage = allowKotlinPackage;
+        this.classpath = classpath;
     }
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
-        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, isJsLibrary, allowKotlinPackage);
+        List<String> extraOptions = allowKotlinPackage ? Collections.singletonList("-Xallow-kotlin-package") : Collections.emptyList();
+        File libraryJar =
+                isJsLibrary
+                ? MockLibraryUtil.compileJsLibraryToJar(sourcesPath, LIBRARY_NAME, withSources)
+                : MockLibraryUtil.compileJvmLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, true, extraOptions, classpath);
         String jarUrl = getJarUrl(libraryJar);
 
         Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();
         libraryModel.addRoot(jarUrl, OrderRootType.CLASSES);
         if (withRuntime) {
-            libraryModel.addRoot(getJarUrl(PathUtil.getKotlinPathsForDistDirectory().getRuntimePath()), OrderRootType.CLASSES);
+            libraryModel.addRoot(getJarUrl(PathUtil.getKotlinPathsForDistDirectory().getStdlibPath()), OrderRootType.CLASSES);
         }
         if (withSources) {
             libraryModel.addRoot(jarUrl + "src/", OrderRootType.SOURCES);

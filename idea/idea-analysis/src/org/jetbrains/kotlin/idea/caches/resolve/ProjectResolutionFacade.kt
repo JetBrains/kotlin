@@ -22,6 +22,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtElement
@@ -29,23 +30,48 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 
 internal class ProjectResolutionFacade(
-        val debugString: String,
+        private val debugString: String,
+        private val resolverDebugName: String,
         val project: Project,
         val globalContext: GlobalContextImpl,
-        computeModuleResolverProvider: (GlobalContextImpl, Project) -> ModuleResolverProvider
+        val settings: PlatformAnalysisSettings,
+        val reuseDataFrom: ProjectResolutionFacade?,
+        val moduleFilter: (IdeaModuleInfo) -> Boolean,
+        val dependencies: List<Any>,
+        private val invalidateOnOOCB: Boolean = true,
+        val syntheticFiles: Collection<KtFile> = listOf(),
+        val allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
 ) {
     private val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
             {
-                val resolverProvider = computeModuleResolverProvider(globalContext, project)
+                val resolverProvider = computeModuleResolverProvider()
                 CachedValueProvider.Result.create(resolverProvider, resolverProvider.cacheDependencies)
             },
             /* trackValue = */ false
     )
 
-    val moduleResolverProvider: ModuleResolverProvider
+    private fun computeModuleResolverProvider(): ModuleResolverProvider {
+        val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider
+        val delegateResolverForProject = delegateResolverProvider?.resolverForProject ?: EmptyResolverForProject()
+        return createModuleResolverProvider(
+                resolverDebugName,
+                project,
+                globalContext,
+                settings,
+                syntheticFiles = syntheticFiles,
+                delegateResolver = delegateResolverForProject, moduleFilter = moduleFilter,
+                allModules = allModules,
+                providedBuiltIns = delegateResolverProvider?.builtIns,
+                dependencies = dependencies,
+                invalidateOnOOCB = invalidateOnOOCB
+        )
+    }
+
+    private val moduleResolverProvider: ModuleResolverProvider
         get() = globalContext.storageManager.compute { cachedValue.value }
 
     fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = moduleResolverProvider.resolverForProject.resolverForModule(moduleInfo)
+    fun tryGetResolverForModuleInfo(moduleInfo: IdeaModuleInfo) = moduleResolverProvider.resolverForProject.tryGetResolverForModule(moduleInfo)
     fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = moduleResolverProvider.resolverForProject.resolverForModuleDescriptor(moduleDescriptor)
 
     fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
@@ -72,7 +98,7 @@ internal class ProjectResolutionFacade(
         }
         val results = elements.map {
             val perFileCache = synchronized(slruCache) {
-                slruCache[it.getContainingKtFile()]
+                slruCache[it.containingKtFile]
             }
             perFileCache.getAnalysisResults(it)
         }

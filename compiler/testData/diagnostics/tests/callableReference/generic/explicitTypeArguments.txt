@@ -1,0 +1,17 @@
+package
+
+public fun </*0*/ T, /*1*/ R> callFun(/*0*/ f: (T) -> R): R
+public fun </*0*/ T, /*1*/ R : Wrapper<in T>> createWrapper(/*0*/ s: T): R
+public fun </*0*/ T> foo(/*0*/ s: T): kotlin.Unit
+public fun </*0*/ T : kotlin.Int> fooInt(/*0*/ s: T): kotlin.Unit
+public fun </*0*/ T> takeFun(/*0*/ f: (T) -> kotlin.Unit): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun </*0*/ T> Wrapper<T>.baz(/*0*/ transform: (T) -> kotlin.Unit): T
+
+public open class Wrapper</*0*/ T> {
+    public constructor Wrapper</*0*/ T>(/*0*/ value: T)
+    public final val value: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

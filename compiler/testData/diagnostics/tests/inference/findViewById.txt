@@ -1,0 +1,53 @@
+package
+
+package a {
+    public val xCast: a.X
+    public val xCastExplicitType: a.X
+    public val xExplicit: a.X
+    public val xSafeCastExplicitType: a.X?
+    public val yCast: a.Y<kotlin.String>
+    public val yExplicit: a.Y<kotlin.String>
+    public fun test(/*0*/ t: a.Test): kotlin.Unit
+    public fun test2(/*0*/ t: a.Test?): kotlin.Unit
+
+    public open class Test {
+        public constructor Test()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun </*0*/ T : a.View!> findViewById(/*0*/ id: kotlin.Int): T!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class TestChild : a.Test {
+        public constructor TestChild()
+        public final val xCast: a.X
+        public final val xExplicit: a.X
+        public final val yCast: a.Y<kotlin.String>
+        public final val yExplicit: a.Y<kotlin.String>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun </*0*/ T : a.View!> findViewById(/*0*/ id: kotlin.Int): T!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class View {
+        public constructor View()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class X : a.View {
+        public constructor X()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class Y</*0*/ T> : a.View {
+        public constructor Y</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

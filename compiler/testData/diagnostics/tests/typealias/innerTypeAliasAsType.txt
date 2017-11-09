@@ -1,0 +1,61 @@
+package
+
+public fun test1(/*0*/ x: [ERROR : NestedAlias]<kotlin.Int>): [ERROR : NestedAlias]<kotlin.Int>
+public fun test10(/*0*/ x: Outer<kotlin.Int>.InnerAlias /* = Outer<kotlin.Int>.Inner */): Outer<kotlin.Int>.InnerAlias /* = Outer<kotlin.Int>.Inner */
+public fun </*0*/ T> test11(/*0*/ x: Outer<T>.InnerAlias /* = Outer<T>.Inner */): Outer<T>.InnerAlias /* = Outer<T>.Inner */
+public fun test12(/*0*/ x: [ERROR : GenericInnerAlias]<kotlin.Int>): [ERROR : GenericInnerAlias]<kotlin.Int>
+public fun test13(/*0*/ x: Outer<kotlin.Int>.GenericInnerAlias<kotlin.Int> /* = Outer<kotlin.Int>.GenericInner<kotlin.Int> */): Outer<kotlin.Int>.GenericInnerAlias<kotlin.Int> /* = Outer<kotlin.Int>.GenericInner<kotlin.Int> */
+public fun </*0*/ T> test14(/*0*/ x: Outer<T>.GenericInnerAlias<kotlin.Int> /* = Outer<T>.GenericInner<kotlin.Int> */): Outer<T>.GenericInnerAlias<kotlin.Int> /* = Outer<T>.GenericInner<kotlin.Int> */
+public fun </*0*/ T> test2(/*0*/ x: [ERROR : NestedAlias]<T>): [ERROR : NestedAlias]<T>
+public fun test3(/*0*/ x: Outer.NestedAlias /* = Outer.Nested */): Outer.NestedAlias /* = Outer.Nested */
+public fun test4(/*0*/ x: [ERROR : GenericNestedAlias]<kotlin.Int, kotlin.Int>): [ERROR : GenericNestedAlias]<kotlin.Int, kotlin.Int>
+public fun </*0*/ T> test5(/*0*/ x: [ERROR : GenericNestedAlias]<T, kotlin.Int>): [ERROR : GenericNestedAlias]<T, kotlin.Int>
+public fun </*0*/ T> test6(/*0*/ x: [ERROR : GenericNestedAlias]<kotlin.Int, T>): [ERROR : GenericNestedAlias]<kotlin.Int, T>
+public fun test7(/*0*/ x: Outer.GenericNestedAlias<kotlin.Int> /* = Outer.GenericNested<kotlin.Int> */): Outer.GenericNestedAlias<kotlin.Int> /* = Outer.GenericNested<kotlin.Int> */
+public fun </*0*/ T> test8(/*0*/ x: Outer.GenericNestedAlias<T> /* = Outer.GenericNested<T> */): Outer.GenericNestedAlias<T> /* = Outer.GenericNested<T> */
+public fun test9(/*0*/ x: [ERROR : InnerAlias]): [ERROR : InnerAlias]
+
+public final class Outer</*0*/ T> {
+    public constructor Outer</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test1(/*0*/ x: Outer.NestedAlias /* = Outer.Nested */): Outer.NestedAlias /* = Outer.Nested */
+    public final fun test2(/*0*/ x: Outer.GenericNestedAlias<kotlin.Int> /* = Outer.GenericNested<kotlin.Int> */): Outer.GenericNestedAlias<kotlin.Int> /* = Outer.GenericNested<kotlin.Int> */
+    public final fun </*0*/ T> test3(/*0*/ x: Outer.GenericNestedAlias<T> /* = Outer.GenericNested<T> */): Outer.GenericNestedAlias<T> /* = Outer.GenericNested<T> */
+    public final fun test4(/*0*/ x: Outer<T>.InnerAlias /* = Outer<T>.Inner */): Outer<T>.InnerAlias /* = Outer<T>.Inner */
+    public final fun test5(/*0*/ x: Outer<T>.GenericInnerAlias<kotlin.Int> /* = Outer<T>.GenericInner<kotlin.Int> */): Outer<T>.GenericInnerAlias<kotlin.Int> /* = Outer<T>.GenericInner<kotlin.Int> */
+    public final fun </*0*/ T> test6(/*0*/ x: Outer<T>.GenericInnerAlias<T> /* = Outer<T>.GenericInner<T> */): Outer<T>.GenericInnerAlias<T> /* = Outer<T>.GenericInner<T> */
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class GenericInner</*0*/ TT> /*captured type parameters: /*1*/ T*/ {
+        public constructor GenericInner</*0*/ TT>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class GenericNested</*0*/ TT> {
+        public constructor GenericNested</*0*/ TT>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final inner class Inner /*captured type parameters: /*0*/ T*/ {
+        public constructor Inner()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class Nested {
+        public constructor Nested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+    public typealias GenericInnerAlias</*0*/ TT>  /*captured type parameters: /*1*/ T*/ = Outer<T>.GenericInner<TT>
+    public typealias GenericNestedAlias</*0*/ TT>  = Outer.GenericNested<TT>
+    public typealias InnerAlias /*captured type parameters: /*0*/ T*/ = Outer<T>.Inner
+    public typealias NestedAlias = Outer.Nested
+}

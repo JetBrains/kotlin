@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 // FILE: A.kt
 
 open class A {

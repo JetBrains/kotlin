@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 fun KotlinType.approximateFlexibleTypes(
         preferNotNull: Boolean = false,
@@ -49,7 +49,7 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
     if (isFlexible()) {
         val flexible = asFlexibleType()
         val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?
-        val isCollection = lowerClass != null && JavaToKotlinClassMap.INSTANCE.isMutable(lowerClass)
+        val isCollection = lowerClass != null && JavaToKotlinClassMap.isMutable(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
         // Foo! -> Foo?
@@ -64,7 +64,7 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
 
         approximation = approximation.approximateNonDynamicFlexibleTypes()
 
-        approximation = if (isAnnotatedNotNull()) approximation.makeNullableAsSpecified(false) else approximation
+        approximation = if (nullability() == TypeNullability.NOT_NULL) approximation.makeNullableAsSpecified(false) else approximation
 
         if (approximation.isMarkedNullable && !flexible.lowerBound.isMarkedNullable && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(approximation)) {
             approximation = approximation.makeNullableAsSpecified(false)
@@ -76,11 +76,11 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
     (unwrap() as? AbbreviatedType)?.let {
         return AbbreviatedType(it.expandedType, it.abbreviation.approximateNonDynamicFlexibleTypes(preferNotNull))
     }
-    return KotlinTypeFactory.simpleType(annotations,
-                                        constructor,
-                                        arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },
-                                        isMarkedNullable,
-                                        ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
+    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations,
+                                                                 constructor,
+                                                                 arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },
+                                                                 isMarkedNullable,
+                                                                 ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
     )
 }
 
@@ -92,7 +92,12 @@ private fun KotlinType.hasAnnotationMaybeExternal(fqName: FqName) = with (annota
     findAnnotation(fqName) ?: findExternalAnnotation(fqName)
 } != null
 
-fun KotlinType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Boolean): Boolean {
+fun KotlinType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Boolean, allowIntersections: Boolean = false): Boolean {
+    if (constructor is IntersectionTypeConstructor) {
+        if (!allowIntersections) return false
+        return constructor.supertypes.all { it.isResolvableInScope(scope, checkTypeParameters, allowIntersections) }
+    }
+
     if (canBeReferencedViaImport()) return true
 
     val descriptor = constructor.declarationDescriptor
@@ -116,10 +121,14 @@ fun KotlinType.anonymousObjectSuperTypeOrNull(): KotlinType? {
     return null
 }
 
-fun KotlinType.getResolvableApproximations(scope: LexicalScope?, checkTypeParameters: Boolean): Sequence<KotlinType> {
-    return (singletonList() + TypeUtils.getAllSupertypes(this))
+fun KotlinType.getResolvableApproximations(
+        scope: LexicalScope?,
+        checkTypeParameters: Boolean,
+        allowIntersections: Boolean = false
+): Sequence<KotlinType> {
+    return (listOf(this) + TypeUtils.getAllSupertypes(this))
             .asSequence()
-            .filter { it.isResolvableInScope(scope, checkTypeParameters) }
+            .filter { it.isResolvableInScope(scope, checkTypeParameters, allowIntersections) }
             .mapNotNull mapArgs@ {
                 val resolvableArgs = it.arguments.filterTo(SmartSet.create()) { it.type.isResolvableInScope(scope, checkTypeParameters) }
                 if (resolvableArgs.containsAll(it.arguments)) return@mapArgs it
@@ -141,4 +150,9 @@ fun KotlinType.getResolvableApproximations(scope: LexicalScope?, checkTypeParame
 
                 it.replace(newArguments)
             }
+}
+
+fun KotlinType.isAbstract(): Boolean {
+    val modality = (constructor.declarationDescriptor as? ClassDescriptor)?.modality
+    return modality == Modality.ABSTRACT || modality == Modality.SEALED
 }

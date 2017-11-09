@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentAdapter;
@@ -26,10 +27,10 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.searches.IndexPatternSearch;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
 import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
-import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTodoSearcher;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -55,10 +56,8 @@ public class PluginStartupComponent implements ApplicationComponent {
         registerPathVariable();
 
         if (ApplicationManager.getApplication().isUnitTestMode()) {
-            ForkJoinPoolPatcherForTeamCityTesting.INSTANCE.patchThreadTracker();
+            ThreadTrackerPatcherForTeamCityTesting.INSTANCE.patchThreadTracker();
         }
-
-        JarUserDataManager.INSTANCE.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE);
 
         DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
 
@@ -75,10 +74,12 @@ public class PluginStartupComponent implements ApplicationComponent {
             public void documentChanged(DocumentEvent e) {
                 VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(e.getDocument());
                 if (virtualFile != null && virtualFile.getFileType() == KotlinFileType.INSTANCE) {
-                    KotlinPluginUpdater.Companion.getInstance().kotlinFileEdited();
+                    KotlinPluginUpdater.Companion.getInstance().kotlinFileEdited(virtualFile);
                 }
             }
         });
+
+        ServiceManager.getService(IndexPatternSearch.class).registerExecutor(new KotlinTodoSearcher());
     }
 
     private static void registerPathVariable() {

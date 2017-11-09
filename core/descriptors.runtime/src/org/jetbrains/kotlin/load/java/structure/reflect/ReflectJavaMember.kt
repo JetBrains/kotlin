@@ -59,7 +59,7 @@ abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOw
 
     override fun hashCode() = member.hashCode()
 
-    override fun toString() = javaClass.name + ": " + member
+    override fun toString() = this::class.java.name + ": " + member
 }
 
 private object Java8ParameterNamesLoader {
@@ -69,7 +69,7 @@ private object Java8ParameterNamesLoader {
 
     fun buildCache(member: Member): Cache {
         // This should be either j.l.reflect.Method or j.l.reflect.Constructor
-        val methodOrConstructorClass = member.javaClass
+        val methodOrConstructorClass = member::class.java
 
         val getParameters = try {
             methodOrConstructorClass.getMethod("getParameters")

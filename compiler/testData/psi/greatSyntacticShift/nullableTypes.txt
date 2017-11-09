@@ -1,4 +1,4 @@
-JetFile: nullableTypes.kt
+KtFile: nullableTypes.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

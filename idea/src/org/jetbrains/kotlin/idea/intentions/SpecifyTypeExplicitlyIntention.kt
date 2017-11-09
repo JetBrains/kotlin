@@ -23,11 +23,13 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -37,11 +39,8 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class SpecifyTypeExplicitlyIntention :
@@ -75,10 +74,6 @@ class SpecifyTypeExplicitlyIntention :
     }
 
     companion object {
-
-        private val PropertyDescriptor.getterType: KotlinType?
-            get() = getter?.returnType?.let { if (it.isError) null else it }
-
         private val PropertyDescriptor.setterType: KotlinType?
             get() = setter?.valueParameters?.firstOrNull()?.type?.let { if (it.isError) null else it }
 
@@ -91,7 +86,7 @@ class SpecifyTypeExplicitlyIntention :
                 else -> return null
             }
 
-            if (declaration.containingClassOrObject?.isLocal() ?: false) return null
+            if (declaration.containingClassOrObject?.isLocal == true) return null
 
             val callable = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return null
             if (publicAPIOnly && !callable.visibility.isPublicAPI) return null
@@ -106,10 +101,10 @@ class SpecifyTypeExplicitlyIntention :
         }
 
         fun getTypeForDeclaration(declaration: KtCallableDeclaration): KotlinType {
-            val descriptor = declaration.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+            val descriptor = declaration.resolveToDescriptorIfAny()
             val type = (descriptor as? CallableDescriptor)?.returnType
             if (type != null && type.isError && descriptor is PropertyDescriptor) {
-                return descriptor.getterType ?: descriptor.setterType ?: ErrorUtils.createErrorType("null type")
+                return descriptor.setterType ?: ErrorUtils.createErrorType("null type")
             }
             return type ?: ErrorUtils.createErrorType("null type")
         }
@@ -118,11 +113,33 @@ class SpecifyTypeExplicitlyIntention :
             val resolutionFacade = contextElement.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-            val types = exprType.getResolvableApproximations(scope, true).toList().ifEmpty { return null }
-            return object : ChooseValueExpression<KotlinType>(types, types.first()) {
-                override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
-                override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
+
+            var checkTypeParameters = true
+            val descriptor = exprType.constructor.declarationDescriptor
+            if (descriptor != null && descriptor is TypeParameterDescriptor) {
+                val owner = descriptor.containingDeclaration
+                if (owner is FunctionDescriptor && owner.typeParameters.contains(descriptor)) {
+                    checkTypeParameters = false
+                }
             }
+
+            val types = with (exprType.getResolvableApproximations(scope, checkTypeParameters).toList()) {
+                when {
+                    exprType.isNullabilityFlexible() -> flatMap {
+                        listOf(TypeUtils.makeNotNullable(it), TypeUtils.makeNullable(it))
+                    }
+                    else -> this
+                }
+            }.ifEmpty { return null }
+
+            return TypeChooseValueExpression(types, types.first())
+        }
+
+        // Explicit class is used because of KT-20460
+        private class TypeChooseValueExpression(items: List<KotlinType>, defaultItem: KotlinType) :
+                ChooseValueExpression<KotlinType>(items, defaultItem) {
+            override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
+            override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
         }
 
         fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {

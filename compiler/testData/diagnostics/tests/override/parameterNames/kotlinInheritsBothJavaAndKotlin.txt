@@ -1,7 +1,5 @@
 package
 
-public/*package*/ /*synthesized*/ fun JavaInterface(/*0*/ function: (javaName: kotlin.Int) -> kotlin.Unit): JavaInterface
-
 public final class BothTraitsSubclass : JavaInterface, KotlinTrait {
     public constructor BothTraitsSubclass()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

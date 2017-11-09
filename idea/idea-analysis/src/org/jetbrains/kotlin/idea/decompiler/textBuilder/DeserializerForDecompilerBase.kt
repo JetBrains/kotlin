@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -32,10 +31,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.SimpleType
 
-abstract class DeserializerForDecompilerBase(
-        val packageDirectory: VirtualFile,
-        val directoryPackageFqName: FqName
-) : ResolverForDecompiler {
+abstract class DeserializerForDecompilerBase(val directoryPackageFqName: FqName) : ResolverForDecompiler {
     protected abstract val deserializationComponents: DeserializationComponents
 
     protected abstract val targetPlatform: TargetPlatform
@@ -60,7 +56,7 @@ abstract class DeserializerForDecompilerBase(
     protected fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor =
             MutablePackageFragmentDescriptor(moduleDescriptor, fqName)
 
-    private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), storageManager, emptyList(), builtIns)
+    private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), storageManager, builtIns)
 
     init {
         moduleDescriptor.initialize(packageFragmentProvider)

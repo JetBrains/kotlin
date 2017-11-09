@@ -1,6 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1113
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: squareMultipliedByTwo_0
+// CHECK_CONTAINS_NO_CALLS: squareMultipliedByTwo except=imul
 
 internal inline fun inline1(a: Int): Int {
     return a

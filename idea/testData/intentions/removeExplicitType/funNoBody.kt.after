@@ -1,0 +1,4 @@
+fun foo() = bar()
+
+fun bar() {
+}

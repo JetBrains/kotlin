@@ -36,7 +36,7 @@ public class KotlinStructureViewFactory implements PsiStructureViewFactory {
                 @NotNull
                 @Override
                 public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-                    return new KotlinStructureViewModel(file);
+                    return new KotlinStructureViewModel(file, editor);
                 }
             };
         }

@@ -94,5 +94,6 @@ internal fun findDir(packageFqName: String, project: Project): VirtualFile {
         it.startsWith(packageFqName + ".") && "." !in it.substringAfter(packageFqName + ".")
     }
     val classes = classNameIndex.get(randomClassInPackage, project, GlobalSearchScope.allScope(project))
-    return classes.first().containingFile.virtualFile.parent
+    val firstClass = classes.firstOrNull() ?: error("No classes with this name found: $randomClassInPackage (package name $packageFqName)")
+    return firstClass.containingFile.virtualFile.parent
 }

@@ -1,12 +1,25 @@
 <idea-plugin>
-    <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
-    </extensions>
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJSFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPCommonFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPJavaFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPJSFrameworkSupportProvider"/>
         <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
+        <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectResolverExtension" order="first"/>
+        <projectResolve implementation="org.jetbrains.kotlin.kapt.idea.KaptProjectResolverExtension" order="last"/>
     </extensions>
+
+    <extensionPoints>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleProjectImportHandler" area="IDEA_PROJECT"
+                        interface="org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler"/>
+    </extensionPoints>
+
     <extensions defaultExtensionNs="com.intellij">
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleSourceSetDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleLibraryDataService"/>
+
         <localInspection
             implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection"
             displayName="Kotlin Gradle and IDE plugins versions are different"
@@ -15,9 +28,7 @@
             language="Groovy"
             hasStaticDescription="true"
             level="WARNING"/>
-    </extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
         <localInspection
             implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection"
             displayName="Kotlin library and Gradle plugin versions are different"
@@ -26,5 +37,33 @@
             language="Groovy"
             hasStaticDescription="true"
             level="WARNING"/>
+
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestClassGradleConfigurationProducer"/>
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestMethodGradleConfigurationProducer"/>
+
+        <projectTaskRunner implementation="org.jetbrains.kotlin.idea.run.MultiplatformGradleProjectTaskRunner" order="first"/>
+        <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.run.MultiplatformGradleOrderEnumeratorHandler$FactoryImpl" order="first"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.allopen.ide.AllOpenGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.noarg.ide.NoArgGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverGradleProjectImportHandler"/>
+        <defaultScriptDependenciesProvider implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptDefaultDependenciesProvider"/>
+
+        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
+        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsGradleModuleConfigurator"/>
+        <gradleModelFacade implementation="org.jetbrains.kotlin.idea.inspections.gradle.DefaultGradleModelFacade"/>
+
+        <scriptTemplatesProvider
+            implementation="org.jetbrains.kotlin.idea.core.script.GradleSettingsKotlinDSLTemplateProvider"/>
+
+        <scriptTemplatesProvider
+            implementation="org.jetbrains.kotlin.idea.core.script.GradleKotlinDSLTemplateProvider"/>
+
+        <scriptTemplatesProvider
+            implementation="org.jetbrains.kotlin.idea.core.script.LegacyGradleScriptKotlinTemplateProvider"/>
+
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMultiplatformModuleBuilder"/>
     </extensions>
 </idea-plugin>

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.renderer
 
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.IllegalStateException
@@ -38,7 +39,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
         val copy = DescriptorRendererOptionsImpl()
 
         //TODO: use Kotlin reflection
-        for (field in this.javaClass.declaredFields) {
+        for (field in this::class.java.declaredFields) {
             if (field.modifiers.and(Modifier.STATIC) != 0) continue
             field.isAccessible = true
             val property = field.get(this) as? ObservableProperty<*> ?: continue
@@ -47,14 +48,14 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
                     this,
                     PropertyReference1Impl(DescriptorRendererOptionsImpl::class, field.name, "get" + field.name.capitalize())
             )
-            field.set(copy, copy.property(value as Any))
+            field.set(copy, copy.property(value))
         }
 
         return copy
     }
 
     private fun <T> property(initialValue: T): ReadWriteProperty<DescriptorRendererOptionsImpl, T> {
-        return Delegates.vetoable(initialValue) { property, oldValue, newValue ->
+        return Delegates.vetoable(initialValue) { _, _, _ ->
             if (isLocked) {
                 throw IllegalStateException("Cannot modify readonly DescriptorRendererOptions")
             }
@@ -66,21 +67,23 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
 
     override var classifierNamePolicy: ClassifierNamePolicy by property(ClassifierNamePolicy.SOURCE_CODE_QUALIFIED)
     override var withDefinedIn by property(true)
+    override var withSourceFileForTopLevel by property(true)
     override var modifiers: Set<DescriptorRendererModifier> by property(DescriptorRendererModifier.DEFAULTS)
     override var startFromName by property(false)
+    override var startFromDeclarationKeyword by property(false)
     override var debugMode by property(false)
     override var classWithPrimaryConstructor by property(false)
     override var verbose by property(false)
     override var unitReturnType by property(true)
     override var withoutReturnType by property(false)
     override var normalizedVisibilities by property(false)
-    override var showInternalKeyword by property(true)
+    override var renderDefaultVisibility by property(true)
     override var uninferredTypeParameterAsName by property(false)
     override var includePropertyConstant by property(false)
     override var withoutTypeParameters by property(false)
     override var withoutSuperTypes by property(false)
     override var typeNormalizer by property<(KotlinType) -> KotlinType>({ it })
-    override var renderDefaultValues by property(true)
+    override var defaultParameterValueRenderer by property<((ValueParameterDescriptor) -> String)?>({ "..." })
     override var secondaryConstructorsAsPrimary by property(true)
     override var overrideRenderingPolicy by property(OverrideRenderingPolicy.RENDER_OPEN)
     override var valueParametersHandler: DescriptorRenderer.ValueParametersHandler by property(DescriptorRenderer.ValueParametersHandler.DEFAULT)
@@ -93,11 +96,9 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
 
     override var excludedAnnotationClasses by property(emptySet<FqName>())
 
-    override var excludedTypeAnnotationClasses by property(
-            ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
-                    + ExcludedTypeAnnotations.internalAnnotationsForResolve)
+    override var excludedTypeAnnotationClasses by property(ExcludedTypeAnnotations.internalAnnotationsForResolve)
 
-    override var includeAnnotationArguments: Boolean by property(false)
+    override var annotationArgumentsRenderingPolicy by property(AnnotationArgumentsRenderingPolicy.NO_ARGUMENTS)
 
     override var alwaysRenderModifiers by property(false)
 
@@ -108,4 +109,6 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var includeAdditionalModifiers: Boolean by property(true)
 
     override var parameterNamesInFunctionalTypes: Boolean by property(true)
+
+    override var renderFunctionContracts: Boolean by property(false)
 }

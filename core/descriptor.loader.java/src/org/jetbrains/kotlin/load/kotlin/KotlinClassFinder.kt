@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 
-interface KotlinClassFinder {
+interface KotlinClassFinder : KotlinMetadataFinder {
     fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass?
 
     fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass?

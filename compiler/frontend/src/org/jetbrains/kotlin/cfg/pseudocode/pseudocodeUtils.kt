@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind.*
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.AbstractJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInstruction
@@ -54,17 +53,17 @@ import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
-    val callableDescriptor = resolvedCall.getResultingDescriptor() ?: return null
+    val callableDescriptor = resolvedCall.resultingDescriptor ?: return null
 
     when (receiverValue) {
-        resolvedCall.getExtensionReceiver() -> {
-            val receiverParameter = callableDescriptor.getExtensionReceiverParameter()
-            if (receiverParameter != null) return receiverParameter.getType().getSubtypesPredicate()
+        resolvedCall.extensionReceiver -> {
+            val receiverParameter = callableDescriptor.extensionReceiverParameter
+            if (receiverParameter != null) return receiverParameter.type.getSubtypesPredicate()
         }
-        resolvedCall.getDispatchReceiver() -> {
+        resolvedCall.dispatchReceiver -> {
             val rootCallableDescriptors = callableDescriptor.findTopMostOverriddenDescriptors()
             return or(rootCallableDescriptors.mapNotNull {
-                it.getDispatchReceiverParameter()?.getType()?.let { TypeUtils.makeNullableIfNeeded(it, resolvedCall.call.isSafeCall()) }?.getSubtypesPredicate()
+                it.dispatchReceiverParameter?.type?.let { TypeUtils.makeNullableIfNeeded(it, resolvedCall.call.isSafeCall()) }?.getSubtypesPredicate()
             })
         }
     }
@@ -90,14 +89,14 @@ fun getExpectedTypePredicate(
     fun getTypePredicateForUnresolvedCallArgument(to: KtElement, inputValueIndex: Int): TypePredicate? {
         if (inputValueIndex < 0) return null
         val call = to.getCall(bindingContext) ?: return null
-        val callee = call.getCalleeExpression() ?: return null
+        val callee = call.calleeExpression ?: return null
 
         val candidates = callee.getReferenceTargets(bindingContext)
                 .filterIsInstance<FunctionDescriptor>()
                 .sortedBy { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }
         if (candidates.isEmpty()) return null
 
-        val explicitReceiver = call.getExplicitReceiver()
+        val explicitReceiver = call.explicitReceiver
         val argValueOffset = if (explicitReceiver != null) 1 else 0
 
         val predicates = ArrayList<TypePredicate>()
@@ -116,26 +115,22 @@ fun getExpectedTypePredicate(
                     TracingStrategy.EMPTY,
                     DataFlowInfoForArgumentsImpl(DataFlowInfo.EMPTY, call)
             )
-            val status = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(call,
-                                                                                        TracingStrategy.EMPTY,
-                                                                                        candidateCall,
-                                                                                        LinkedHashSet())
-            if (!status.isSuccess()) continue
+            val status = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(call, TracingStrategy.EMPTY, candidateCall)
+            if (!status.isSuccess) continue
 
-            val candidateArgumentMap = candidateCall.getValueArguments()
-            val callArguments = call.getValueArguments()
+            val candidateArgumentMap = candidateCall.valueArguments
+            val callArguments = call.valueArguments
             val i = inputValueIndex - argValueOffset
             if (i < 0 || i >= callArguments.size) continue
 
-            val mapping = candidateCall.getArgumentMapping(callArguments.get(i))
-            if (mapping !is ArgumentMatch) continue
+            val mapping = candidateCall.getArgumentMapping(callArguments[i]) as? ArgumentMatch ?: continue
 
             val candidateParameter = mapping.valueParameter
-            val resolvedArgument = candidateArgumentMap.get(candidateParameter)
+            val resolvedArgument = candidateArgumentMap[candidateParameter]
             val expectedType = if (resolvedArgument is VarargValueArgument)
                 candidateParameter.varargElementType
             else
-                candidateParameter.getType()
+                candidateParameter.type
 
             predicates.add(if (expectedType != null) AllSubtypes(expectedType) else AllTypes)
         }
@@ -152,14 +147,14 @@ fun getExpectedTypePredicate(
                         is KtReturnExpression -> returnElement.getTargetFunctionDescriptor(bindingContext)
                         else -> bindingContext[DECLARATION_TO_DESCRIPTOR, pseudocode.correspondingElement]
                     }
-                    addSubtypesOf((functionDescriptor as? CallableDescriptor)?.getReturnType())
+                    addSubtypesOf((functionDescriptor as? CallableDescriptor)?.returnType)
                 }
 
                 is ConditionalJumpInstruction ->
-                    addSubtypesOf(builtIns.getBooleanType())
+                    addSubtypesOf(builtIns.booleanType)
 
                 is ThrowExceptionInstruction ->
-                    addSubtypesOf(builtIns.getThrowable().getDefaultType())
+                    addSubtypesOf(builtIns.throwable.defaultType)
 
                 is MergeInstruction ->
                     addTypePredicates(it.outputValue)
@@ -190,11 +185,11 @@ fun getExpectedTypePredicate(
                     }
                     else {
                         it.arguments[value]?.let { parameter ->
-                            val expectedType = when (it.resolvedCall.getValueArguments()[parameter]) {
+                            val expectedType = when (it.resolvedCall.valueArguments[parameter]) {
                                 is VarargValueArgument ->
                                     parameter.varargElementType
                                 else ->
-                                    parameter.getType()
+                                    parameter.type
                             }
                             addSubtypesOf(expectedType)
                         }
@@ -203,26 +198,22 @@ fun getExpectedTypePredicate(
 
                 is MagicInstruction -> @Suppress("NON_EXHAUSTIVE_WHEN") when (it.kind) {
                     AND, OR ->
-                        addSubtypesOf(builtIns.getBooleanType())
+                        addSubtypesOf(builtIns.booleanType)
 
                     LOOP_RANGE_ITERATION ->
                         addByExplicitReceiver(bindingContext[LOOP_RANGE_ITERATOR_RESOLVED_CALL, value.element as? KtExpression])
 
                     VALUE_CONSUMER -> {
                         val element = it.element
-                        when {
-                            element.getStrictParentOfType<KtWhileExpression>()?.getCondition() == element ->
-                                addSubtypesOf(builtIns.getBooleanType())
-
-                            element is KtProperty -> {
+                        when (element) {
+                            element.getStrictParentOfType<KtWhileExpression>()?.condition -> addSubtypesOf(builtIns.booleanType)
+                            is KtProperty -> {
                                 val propertyDescriptor = bindingContext[DECLARATION_TO_DESCRIPTOR, element] as? PropertyDescriptor
-                                propertyDescriptor?.getAccessors()?.map {
+                                propertyDescriptor?.accessors?.map {
                                     addByExplicitReceiver(bindingContext[DELEGATED_PROPERTY_RESOLVED_CALL, it])
                                 }
                             }
-
-                            element is KtDelegatedSuperTypeEntry ->
-                                addSubtypesOf(bindingContext[TYPE, element.getTypeReference()])
+                            is KtDelegatedSuperTypeEntry -> addSubtypesOf(bindingContext[TYPE, element.typeReference])
                         }
                     }
 
@@ -251,12 +242,12 @@ val Instruction.sideEffectFree: Boolean
 
 fun Instruction.calcSideEffectFree(): Boolean {
     if (this !is InstructionWithValue) return false
-    if (!inputValues.all { it.createdAt?.sideEffectFree ?: false }) return false
+    if (!inputValues.all { it.createdAt?.sideEffectFree == true }) return false
 
     return when (this) {
         is ReadValueInstruction -> target.let {
             when (it) {
-                is AccessTarget.Call -> when (it.resolvedCall.getResultingDescriptor()) {
+                is AccessTarget.Call -> when (it.resolvedCall.resultingDescriptor) {
                     is LocalVariableDescriptor, is ValueParameterDescriptor, is ReceiverParameterDescriptor -> true
                     else -> false
                 }

@@ -5,6 +5,5 @@ internal open class Base {
 }
 
 internal class Derived : Base() {
-    fun foo() {
-    }
+    fun foo() {}
 }

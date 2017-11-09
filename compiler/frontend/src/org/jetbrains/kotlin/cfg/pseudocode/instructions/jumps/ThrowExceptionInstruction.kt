@@ -28,7 +28,7 @@ class ThrowExceptionInstruction(
         expression: KtThrowExpression,
         blockScope: BlockScope,
         errorLabel: Label,
-        val thrownValue: PseudoValue
+        private val thrownValue: PseudoValue
 ) : AbstractJumpInstruction(expression, errorLabel, blockScope) {
     override val inputValues: List<PseudoValue> get() = Collections.singletonList(thrownValue)
 
@@ -36,15 +36,10 @@ class ThrowExceptionInstruction(
         visitor.visitThrowExceptionInstruction(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitThrowExceptionInstruction(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitThrowExceptionInstruction(this)
 
-    override fun toString(): String {
-        return "throw (${element.text}|$thrownValue)"
-    }
+    override fun toString(): String = "throw (${element.text}|$thrownValue)"
 
-    override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction {
-        return ThrowExceptionInstruction((element as KtThrowExpression), blockScope, newLabel, thrownValue)
-    }
+    override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction =
+            ThrowExceptionInstruction((element as KtThrowExpression), blockScope, newLabel, thrownValue)
 }

@@ -1,0 +1,211 @@
+== myRun ==
+inline fun <T> myRun(block: () -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+L0:
+  1 <START>                                                                                       INIT: in: {} out: {}
+    v(block: () -> T)                                                                             INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](block: () -> T) -> <v0>                                               INIT: in: {} out: {}
+    w(block|<v0>)                                                                                 INIT: in: {} out: {}
+  2 mark({ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() })        INIT: in: {} out: {}
+    mark({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    jmp?(L2)
+    d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+L2 [after local declaration]:
+    r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+    mark(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+    r(block) -> <v3>
+    mark(block())
+    call(block(), invoke|<v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+  1 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+L3:
+  3 <START>                                                                                          INIT: in: {} out: {}
+  4 mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+    r(block) -> <v1>
+    mark(InvocationKind.EXACTLY_ONCE)
+    r(EXACTLY_ONCE) -> <v2>
+    mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+L4:
+  3 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                   USE: in: {} out: {}
+=====================
+== innerComputation ==
+fun innerComputation(): Int = 42
+---------------------
+L0:
+  1 <START>           INIT: in: {} out: {}
+    r(42) -> <v0>
+    ret(*|<v0>) L1
+L1:
+    <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                    USE: in: {} out: {}
+=====================
+== outerComputation ==
+fun outerComputation(): Int = 52
+---------------------
+L0:
+  1 <START>           INIT: in: {} out: {}
+    r(52) -> <v0>
+    ret(*|<v0>) L1
+L1:
+    <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                    USE: in: {} out: {}
+=====================
+== innerTryCatchInitializes ==
+fun innerTryCatchInitializes() {
+    val x: Int
+
+    try {
+        myRun {
+            try {
+                x = innerComputation()
+                x.inc()
+            }
+            catch (e: java.lang.Exception) {
+                /** Potential reassignment because x.inc() could threw */
+                x = 42
+                x.inc()
+            }
+        }
+        // Can get here only when inlined lambda exited properly, i.e. x is initialized
+        x.inc()
+        outerComputation()
+
+    } catch (e: java.lang.Exception) {
+        // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized)
+        // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok)
+        // So, x=I? here
+        x.inc()
+
+        // Potential reasignment
+        x = 42
+    }
+    // Here x=I because outer try-catch either exited normally (x=I) or catched exception (x=I, with reassingment, though)
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    INIT: in: {} out: {}              USE: in: {} out: {}
+  2 mark({ val x: Int try { myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } } // Can get here only when inlined lambda exited properly, i.e. x is initialized x.inc() outerComputation() } catch (e: java.lang.Exception) { // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized) // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok) // So, x=I? here x.inc() // Potential reasignment x = 42 } // Here x=I because outer try-catch either exited normally (x=I) or catched exception (x=I, with reassingment, though) x.inc() })
+    v(val x: Int)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              INIT: in: {} out: {x=D}
+    mark(try { myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } } // Can get here only when inlined lambda exited properly, i.e. x is initialized x.inc() outerComputation() } catch (e: java.lang.Exception) { // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized) // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok) // So, x=I? here x.inc() // Potential reasignment x = 42 })                                                                                                                                                  INIT: in: {x=D} out: {x=D}
+    jmp?(L2)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     USE: in: {x=READ} out: {x=READ}
+  3 mark({ myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } } // Can get here only when inlined lambda exited properly, i.e. x is initialized x.inc() outerComputation() })
+    mark({ try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } })
+    r({ try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } }) -> <v0>
+    mark(myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } })
+    call(myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } }, myRun|<v0>) -> <v1>
+L3 [before inlined declaration]:
+    inlined({ try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            INIT: in: {x=ID} out: {x=ID}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L4 [after inlined declaration]:
+    mark(x.inc())
+    r(x) -> <v2>
+    mark(inc())
+    call(inc(), inc|<v2>) -> <v3>
+    mark(outerComputation())
+    call(outerComputation(), outerComputation) -> <v4>
+  2 jmp?(L2)
+    jmp(L9)
+L2 [onException]:
+  3 v(e: java.lang.Exception)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  INIT: in: {x=I?D} out: {x=I?D}
+    magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v5>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    INIT: in: {x=I?D} out: {x=I?D}
+    w(e|<v5>)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  INIT: in: {x=I?D} out: {x=I?D}
+  4 mark({ // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized) // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok) // So, x=I? here x.inc() // Potential reasignment x = 42 })                                                                                                                                                                                                                                                                                                                                                                                                                                                                 INIT: in: {x=I?D} out: {x=I?D}
+    mark(x.inc())                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v6>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 USE: in: {x=WRITTEN_AFTER_READ} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v6>) -> <v7>
+    r(42) -> <v8>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v8>)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  INIT: in: {x=I?D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+  3 jmp(L9)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    INIT: in: {x=ID} out: {x=ID}
+L9 [afterCatches]:
+  2 merge(try { myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } } // Can get here only when inlined lambda exited properly, i.e. x is initialized x.inc() outerComputation() } catch (e: java.lang.Exception) { // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized) // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok) // So, x=I? here x.inc() // Potential reasignment x = 42 }|<v4>, !<v9>) -> <v10>
+    mark(x.inc())                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v11>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v11>) -> <v12>
+L1:
+  1 <END>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       USE: in: {} out: {}
+=====================
+== inlined anonymous_1 ==
+{
+            try {
+                x = innerComputation()
+                x.inc()
+            }
+            catch (e: java.lang.Exception) {
+                /** Potential reassignment because x.inc() could threw */
+                x = 42
+                x.inc()
+            }
+        }
+---------------------
+L5:
+  4 <START>                                                                                                                                                                         INIT: in: {x=D} out: {x=D}
+  5 mark(try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() })
+    mark(try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() })
+    jmp?(L7)
+  6 mark({ x = innerComputation() x.inc() })
+    mark(innerComputation())
+    call(innerComputation(), innerComputation) -> <v0>                                                                                                                                                                USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)                                                                                                                                                                       INIT: in: {x=D} out: {x=ID}       USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+    mark(x.inc())                                                                                                                                                                   INIT: in: {x=ID} out: {x=ID}
+    r(x) -> <v1>
+    mark(inc())
+    call(inc(), inc|<v1>) -> <v2>
+  5 jmp?(L7)
+    jmp(L8)                                                                                                                                                                                                           USE: in: {x=READ} out: {x=READ}
+L7 [onException]:
+  6 v(e: java.lang.Exception)                                                                                                                                                       INIT: in: {x=I?D} out: {x=I?D}
+    magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v3>                                                                                                                         INIT: in: {x=I?D} out: {x=I?D}
+    w(e|<v3>)                                                                                                                                                                       INIT: in: {x=I?D} out: {x=I?D}
+  7 mark({ /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() })                                                                                              INIT: in: {x=I?D} out: {x=I?D}
+    r(42) -> <v4>                                                                                                                                                                                                     USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v4>)                                                                                                                                                                       INIT: in: {x=I?D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+    mark(x.inc())                                                                                                                                                                   INIT: in: {x=ID} out: {x=ID}
+    r(x) -> <v5>
+    mark(inc())
+    call(inc(), inc|<v5>) -> <v6>
+  6 jmp(L8)
+L8 [afterCatches]:
+  5 merge(try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() }|<v2>, <v6>) -> <v7>
+  4 ret(*|<v7>) L6
+L6:
+    <END>                                                                                                                                                                                                             USE: in: {x=READ} out: {x=READ}
+error:
+-   <ERROR>
+sink:
+    <SINK>                                                                                                                                                                          INIT: in: {x=ID} out: {x=ID}      USE: in: {x=READ} out: {x=READ}
+=====================

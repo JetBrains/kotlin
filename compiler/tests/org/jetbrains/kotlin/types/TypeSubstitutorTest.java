@@ -20,9 +20,7 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -31,7 +29,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
@@ -88,7 +85,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         ModuleDescriptor module = analysisResult.getModuleDescriptor();
 
         LexicalScope topLevelScope = analysisResult.getBindingContext().get(BindingContext.LEXICAL_SCOPE, ktFile);
-        final ClassifierDescriptor contextClass =
+        ClassifierDescriptor contextClass =
                 ScopeUtilsKt.findClassifier(topLevelScope, Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
         assert contextClass instanceof ClassDescriptor;
         LocalRedeclarationChecker redeclarationChecker =
@@ -96,14 +93,11 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         LexicalScope typeParameters = new LexicalScopeImpl(
                 topLevelScope, module, false, null, LexicalScopeKind.SYNTHETIC,
                 redeclarationChecker,
-                new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
-                    @Override
-                    public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                        for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
-                            handler.addClassifierDescriptor(parameterDescriptor);
-                        }
-                        return Unit.INSTANCE;
+                handler -> {
+                    for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
+                        handler.addClassifierDescriptor(parameterDescriptor);
                     }
+                    return Unit.INSTANCE;
                 }
         );
         return new LexicalChainedScope(
@@ -157,15 +151,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         BindingTrace trace = new BindingTraceContext();
         KotlinType type = container.getTypeResolver().resolveType(scope, jetTypeReference, trace, true);
         if (!trace.getBindingContext().getDiagnostics().isEmpty()) {
-            fail("Errors:\n" + StringUtil.join(
-                    trace.getBindingContext().getDiagnostics(),
-                    new Function<Diagnostic, String>() {
-                        @Override
-                        public String fun(Diagnostic diagnostic) {
-                            return DefaultErrorMessages.render(diagnostic);
-                        }
-                    },
-                    "\n"));
+            fail("Errors:\n" + StringUtil.join(trace.getBindingContext().getDiagnostics(), DefaultErrorMessages::render, "\n"));
         }
         return type;
     }

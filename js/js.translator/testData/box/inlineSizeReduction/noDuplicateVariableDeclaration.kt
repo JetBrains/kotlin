@@ -1,6 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1111
 package foo
 
-// CHECK_VARS_COUNT: function=test_za3lpa$ count=2
+// CHECK_VARS_COUNT: function=test count=3
 
 inline fun if1(f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
     val result = f(a)

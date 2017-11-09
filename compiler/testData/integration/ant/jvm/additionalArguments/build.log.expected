@@ -5,7 +5,7 @@ build:
   [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
     [javac] Compiling 1 source file to [Temp]
     [javac] Compiling [[TestData]] => [[Temp]]
-    [javac] info: Kotlin Compiler version [KotlinVersion]
+    [javac] info: kotlinc-jvm [KotlinVersion] (JRE [JREVersion])
     [javac] Running javac...
 
 BUILD SUCCESSFUL

@@ -1,4 +1,4 @@
-JetFile: secondInSecondaryConstructor.kt
+KtFile: secondInSecondaryConstructor.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

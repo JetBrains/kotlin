@@ -3,7 +3,7 @@
 data class My(val first: String, val second: Int)
 
 fun foo(list: List<My>) {
-    for ((first, second) in list) {
+    for ((_, second) in list) {
         println(second)
     }
 }

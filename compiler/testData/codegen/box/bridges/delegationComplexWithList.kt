@@ -1,4 +1,4 @@
-import java.util.*
+// WITH_RUNTIME
 
 open class Content() {
     override fun toString() = "OK"

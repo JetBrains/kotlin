@@ -16,14 +16,18 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeAlias
 
+import com.intellij.psi.PsiPackage
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.getTypeConstraintInfo
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.types.typeUtil.containsError
@@ -33,17 +37,19 @@ object CreateTypeAliasFromTypeReferenceActionFactory : KotlinSingleIntentionActi
 
     override fun extractFixData(element: KtUserType, diagnostic: Diagnostic): TypeAliasInfo? {
         if (element.getParentOfTypeAndBranch<KtUserType>(true) { qualifier } != null) return null
+        if (!element.languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) return null
 
         val classInfo = CreateClassFromTypeReferenceActionFactory.extractFixData(element, diagnostic) ?: return null
+        val targetParent = classInfo.applicableParents.singleOrNull { it !is KtDeclaration && it !is PsiPackage } ?: return null
 
         val expectedType = getTypeConstraintInfo(element)?.upperBound
         if (expectedType != null && expectedType.containsError()) return null
 
         val validator = CollectingNameValidator(
-                filter = NewDeclarationNameValidator(classInfo.targetParent, null, NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES)
+                filter = NewDeclarationNameValidator(targetParent, null, NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES)
         )
         val typeParameterNames = KotlinNameSuggester.suggestNamesForTypeParameters(classInfo.typeArguments.size, validator)
-        return TypeAliasInfo(classInfo.name, classInfo.targetParent, typeParameterNames, expectedType)
+        return TypeAliasInfo(classInfo.name, targetParent, typeParameterNames, expectedType)
     }
 
     override fun createFix(originalElement: KtUserType, data: TypeAliasInfo) = CreateTypeAliasFromUsageFix(originalElement, data)

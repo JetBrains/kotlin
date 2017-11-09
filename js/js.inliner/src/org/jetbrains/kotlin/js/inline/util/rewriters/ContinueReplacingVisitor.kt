@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.util.rewriters
 
-import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.backend.ast.*
 
 class ContinueReplacingVisitor(val loopLabelName: JsName?, val guardLabelName: JsName) : JsVisitorWithContextImpl() {
     var loopNestingLevel = 0

@@ -21,8 +21,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
 
-public abstract class KDocElementImpl extends ASTWrapperPsiElement {
+public abstract class KDocElementImpl extends ASTWrapperPsiElement implements KDocElement {
     @NotNull
     @Override
     public Language getLanguage() {

@@ -1,0 +1,4 @@
+package
+
+public fun test1(/*0*/ sfn: suspend () -> kotlin.Unit): kotlin.Unit
+public fun test2(/*0*/ sfn: suspend () -> kotlin.Unit): kotlin.Unit

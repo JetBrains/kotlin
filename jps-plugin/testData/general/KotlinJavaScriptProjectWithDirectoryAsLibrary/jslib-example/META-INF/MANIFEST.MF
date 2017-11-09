@@ -5,5 +5,4 @@ Built-By: JetBrains
 Implementation-Vendor: JetBrains
 Implementation-Version: snapshot
 Specification-Title: Kotlin JavaScript Lib
-Kotlin-JS-Module-Name: jslib-example
 

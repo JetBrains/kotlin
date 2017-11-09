@@ -1,4 +1,4 @@
-JetFile: IncompleteFunTypeParameters.kt
+KtFile: IncompleteFunTypeParameters.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

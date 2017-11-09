@@ -1,0 +1,20 @@
+package
+
+public fun </*0*/ T, /*1*/ R> bar(/*0*/ x: T, /*1*/ y: R, /*2*/ f: (T) -> R): Pair<T, R>
+public fun </*0*/ T, /*1*/ R> baz(/*0*/ f: (T) -> R, /*1*/ g: (T) -> R): Pair<T, R>
+public fun </*0*/ T, /*1*/ R> foo(/*0*/ x: T): R
+public fun </*0*/ T> fooReturnInt(/*0*/ x: T): kotlin.Int
+public fun </*0*/ T> fooTakeString(/*0*/ x: kotlin.String): T
+public fun </*0*/ T> listOf(): kotlin.collections.List<T>
+public fun </*0*/ T> setOf(): kotlin.collections.Set<T>
+public fun test1(): kotlin.Unit
+public fun </*0*/ T> test2(/*0*/ x: T): kotlin.Unit
+
+public final class Pair</*0*/ A, /*1*/ B> {
+    public constructor Pair</*0*/ A, /*1*/ B>(/*0*/ a: A, /*1*/ b: B)
+    public final val a: A
+    public final val b: B
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

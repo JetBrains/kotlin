@@ -12,12 +12,14 @@ import javaApi.*
 @Anon7(String::class, StringBuilder::class)
 @Anon8(classes = arrayOf(String::class, StringBuilder::class))
 internal class C {
-    @Anon5(1) @Deprecated("") private val field1 = 0
+    @Anon5(1)
+    @Deprecated("") private val field1 = 0
 
     @Anon5(1)
     private val field2 = 0
 
-    @Anon5(1) var field3 = 0
+    @Anon5(1)
+    var field3 = 0
 
     @Anon5(1)
     var field4 = 0
@@ -27,6 +29,7 @@ internal class C {
         @Deprecated("") @Anon5(3) val c = 'a'
     }
 
-    @Anon5(1) fun bar() {
+    @Anon5(1)
+    fun bar() {
     }
 }

@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.idea
 import com.intellij.openapi.fileTypes.FileTypeConsumer
 import com.intellij.openapi.fileTypes.FileTypeFactory
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 
 class KotlinBuiltInFileTypeFactory : FileTypeFactory() {
     override fun createFileTypes(consumer: FileTypeConsumer) {
         consumer.consume(KotlinBuiltInFileType, KotlinBuiltInFileType.defaultExtension)
+        consumer.consume(KotlinBuiltInFileType, MetadataPackageFragment.METADATA_FILE_EXTENSION)
     }
 }

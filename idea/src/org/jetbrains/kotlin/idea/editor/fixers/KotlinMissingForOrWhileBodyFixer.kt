@@ -44,6 +44,6 @@ class KotlinMissingForOrWhileBodyFixer : SmartEnterProcessorWithFixers.Fixer<Kot
         doc.insertString(rParen.range.end, "{}")
     }
 
-    fun KtLoopExpression.isValidLoopCondition() = leftParenthesis != null && rightParenthesis != null
+    private fun KtLoopExpression.isValidLoopCondition() = leftParenthesis != null && rightParenthesis != null
 }
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.javaType
 
 internal abstract class KCallableImpl<out R> : KCallable<R> {
@@ -35,6 +36,8 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
 
     abstract val container: KDeclarationContainerImpl
 
+    abstract val isBound: Boolean
+
     private val annotations_ = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
     override val annotations: List<Annotation> get() = annotations_()
@@ -44,11 +47,11 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         val result = ArrayList<KParameter>()
         var index = 0
 
-        if (descriptor.dispatchReceiverParameter != null) {
+        if (descriptor.dispatchReceiverParameter != null && !isBound) {
             result.add(KParameterImpl(this, index++, KParameter.Kind.INSTANCE) { descriptor.dispatchReceiverParameter!! })
         }
 
-        if (descriptor.extensionReceiverParameter != null) {
+        if (descriptor.extensionReceiverParameter != null && !isBound) {
             result.add(KParameterImpl(this, index++, KParameter.Kind.EXTENSION_RECEIVER) { descriptor.extensionReceiverParameter!! })
         }
 
@@ -115,6 +118,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         var mask = 0
         val masks = ArrayList<Int>(1)
         var index = 0
+        var anyOptional = false
 
         for (parameter in parameters) {
             if (index != 0 && index % Integer.SIZE == 0) {
@@ -129,6 +133,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
                 parameter.isOptional -> {
                     arguments.add(defaultPrimitiveValue(parameter.type.javaType))
                     mask = mask or (1 shl (index % Integer.SIZE))
+                    anyOptional = true
                 }
                 else -> {
                     throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
@@ -140,7 +145,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
             }
         }
 
-        if (mask == 0 && masks.isEmpty()) {
+        if (!anyOptional) {
             return call(*arguments.toTypedArray())
         }
 

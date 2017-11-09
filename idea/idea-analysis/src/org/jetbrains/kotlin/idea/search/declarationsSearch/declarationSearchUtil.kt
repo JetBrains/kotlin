@@ -17,16 +17,13 @@
 package org.jetbrains.kotlin.idea.search.declarationsSearch
 
 import com.intellij.psi.search.SearchScope
-import com.intellij.util.Query
-import com.intellij.util.QueryFactory
-import com.intellij.util.Processor
 import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
-import com.intellij.util.EmptyQuery
 import java.util.Stack
 import java.util.HashSet
 import com.intellij.openapi.progress.ProgressIndicatorProvider
+import com.intellij.util.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
 interface DeclarationSearchRequest<in T> {
@@ -48,6 +45,10 @@ abstract class DeclarationsSearch<T: PsiElement, R: DeclarationSearchRequest<T>>
                     }
                 }
         )
+    }
+
+    override final fun registerExecutor(executor: QueryExecutor<T, R>) {
+        super.registerExecutor(executor)
     }
 
     protected abstract fun doSearch(request: R, consumer: Processor<T>)

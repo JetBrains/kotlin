@@ -1,4 +1,4 @@
-JetFile: ParenthesizedNotPlatform.kt
+KtFile: ParenthesizedNotPlatform.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,0 +1,1 @@
+fun box(): String = "OK"

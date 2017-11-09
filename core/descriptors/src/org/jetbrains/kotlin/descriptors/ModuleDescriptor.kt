@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.types.TypeSubstitutor
 
 interface ModuleDescriptor : DeclarationDescriptor {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
@@ -28,10 +26,6 @@ interface ModuleDescriptor : DeclarationDescriptor {
     val builtIns: KotlinBuiltIns
 
     fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
-
-    override fun substitute(substitutor: TypeSubstitutor): ModuleDescriptor {
-        return this
-    }
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
         return visitor.visitModuleDeclaration(this, data)
@@ -41,11 +35,18 @@ interface ModuleDescriptor : DeclarationDescriptor {
 
     fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
-    val defaultImports: List<ImportPath>
-
-    val effectivelyExcludedImports: List<FqName>
+    /**
+     * @return dependency modules in the same order in which this module depends on them. Does not include `this`
+     */
+    val allDependencyModules: List<ModuleDescriptor>
 
     fun <T> getCapability(capability: Capability<T>): T?
 
-    class Capability<T>(val name: String)
+    class Capability<T>(val name: String) {
+        override fun toString() = name
+    }
+
+    val isValid: Boolean
+
+    fun assertValid()
 }

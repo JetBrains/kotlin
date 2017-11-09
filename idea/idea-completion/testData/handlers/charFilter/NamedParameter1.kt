@@ -4,5 +4,5 @@ fun test() {
     foo(xxx = 10, <caret>)
 }
 
-// ELEMENT: yyy
+// ELEMENT: "yyy ="
 // CHAR: =

@@ -1,7 +1,10 @@
 package
 
+public fun </*0*/ T> bar(/*0*/ a: kotlin.Any): T
 public fun create(): kotlin.Array<Color.RED>?
+public fun </*0*/ T> foo(): kotlin.Unit
 public fun </*0*/ T : Color.RED> otherCreate(): kotlin.Array<T>?
+public fun kotlin.Array<Color.RED>.foo(/*0*/ entries: kotlin.Array<Color.RED>): kotlin.Array<Color.RED>
 
 public final enum class Color : kotlin.Enum<Color> {
     enum entry RED
@@ -43,6 +46,7 @@ public final class MyColor : Color.RED {
     public final fun foo(/*0*/ arg: Color.RED): Color.RED
     public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<Color!>!
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun </*0*/ T : Color.RED> simpleName(): Color.RED
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -51,3 +55,6 @@ public interface Your</*0*/ T : Color.RED> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias ArrayOfEnumEntry = kotlin.Array<Color.RED>
+public typealias ArrayOfEnumEntryAlias = kotlin.Array<RedAlias>
+public typealias RedAlias = Color.RED

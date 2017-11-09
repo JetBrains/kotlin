@@ -1,0 +1,8 @@
+info:
+info: <unknown>
+info:   global
+info:     bar (reachable)
+info:     foo (reachable)
+info:   include
+info:     baz (reachable from include.js:14)
+OK

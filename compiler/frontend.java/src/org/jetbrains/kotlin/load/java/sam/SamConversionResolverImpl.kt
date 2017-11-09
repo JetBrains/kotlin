@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,22 @@
 
 package org.jetbrains.kotlin.load.java.sam
 
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.java.components.SamConversionResolver
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.SimpleType
 
-object SamConversionResolverImpl : SamConversionResolver {
-    override fun resolveSamConstructor(constructorOwner: DeclarationDescriptor, classifier: () -> ClassifierDescriptor?): SamConstructorDescriptor? {
-        val classifierDescriptor = classifier()
-        if (classifierDescriptor !is LazyJavaClassDescriptor || classifierDescriptor.functionTypeForSamInterface == null) return null
-        return SingleAbstractMethodUtils.createSamConstructorFunction(constructorOwner, classifierDescriptor)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <D : FunctionDescriptor> resolveSamAdapter(original: D): D? {
-        return when {
-            !SingleAbstractMethodUtils.isSamAdapterNecessary(original) -> null
-            original is JavaClassConstructorDescriptor -> SingleAbstractMethodUtils.createSamAdapterConstructor(original) as D
-            original is JavaMethodDescriptor -> SingleAbstractMethodUtils.createSamAdapterFunction(original) as D
-            else -> null
-        }
-    }
+class SamConversionResolverImpl(
+        storageManager: StorageManager,
+        private val samWithReceiverResolvers: Iterable<SamWithReceiverResolver>
+): SamConversionResolver {
+    private val functionTypesForSamInterfaces = storageManager.createCacheWithNullableValues<JavaClassDescriptor, SimpleType>()
 
     override fun resolveFunctionTypeIfSamInterface(classDescriptor: JavaClassDescriptor): SimpleType? {
-        val abstractMethod = SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) ?: return null
-        return SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod)
+        return functionTypesForSamInterfaces.computeIfAbsent(classDescriptor) {
+            val abstractMethod = SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) ?: return@computeIfAbsent null
+            val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
+            SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod, shouldConvertFirstParameterToDescriptor)
+        }
     }
 }

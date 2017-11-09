@@ -29,7 +29,7 @@ public class NameGenerator {
     private int nextLambdaIndex = 1;
     private int nextWhenIndex = 1;
 
-    private final Map<String, NameGenerator> subGenerators = new HashMap<String, NameGenerator>();
+    private final Map<String, NameGenerator> subGenerators = new HashMap<>();
 
     public NameGenerator(String generatorClass) {
         this.generatorClass = generatorClass;
@@ -48,12 +48,7 @@ public class NameGenerator {
     }
 
     public NameGenerator subGenerator(String inliningMethod) {
-        NameGenerator generator = subGenerators.get(inliningMethod);
-        if (generator == null) {
-            generator = new NameGenerator(generatorClass + "$" + inliningMethod);
-            subGenerators.put(inliningMethod, generator);
-        }
-        return generator;
+        return subGenerators.computeIfAbsent(inliningMethod, method -> new NameGenerator(generatorClass + "$" + method));
     }
 
     @NotNull

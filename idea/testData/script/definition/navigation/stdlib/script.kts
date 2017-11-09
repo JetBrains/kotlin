@@ -1,4 +1,6 @@
 val g = lis<caret>tOf("a", "b", "c")
 
-// REF: (kotlin.collections).listOf(T)
+// DEPENDENCIES: classpath:runtime-classes
+
+// REF: (kotlin.collections).listOf(vararg T)
 // FILE: collections/CollectionsKt.class

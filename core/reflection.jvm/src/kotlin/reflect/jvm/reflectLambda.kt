@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER") // kotlin.Metadata
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 
 package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.EmptyContainerForLocal
 import kotlin.reflect.jvm.internal.KFunctionImpl
-import kotlin.reflect.jvm.internal.getOrCreateModule
+import kotlin.reflect.jvm.internal.deserializeToDescriptor
 
 /**
  * This is an experimental API. Given a class for a compiled Kotlin lambda or a function expression,
@@ -38,17 +37,15 @@ import kotlin.reflect.jvm.internal.getOrCreateModule
  */
 fun <R> Function<R>.reflect(): KFunction<R>? {
     val annotation = javaClass.getAnnotation(Metadata::class.java) ?: return null
-    val input = BitEncoding.decodeBytes(annotation.d1).inputStream()
-    val nameResolver = JvmNameResolver(
-            JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY), annotation.d2
-    )
+    val data = annotation.d1.takeUnless(Array<String>::isEmpty) ?: return null
+    val input = BitEncoding.decodeBytes(data).inputStream()
+    val stringTableTypes = JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
+    val nameResolver = JvmNameResolver(stringTableTypes, annotation.d2)
     val proto = ProtoBuf.Function.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
-    val moduleData = javaClass.getOrCreateModule()
-    val context = DeserializationContext(
-            moduleData.deserialization, nameResolver, moduleData.module, TypeTable(proto.typeTable),
-            containerSource = null, parentTypeDeserializer = null, typeParameters = proto.typeParameterList
-    )
-    val descriptor = MemberDeserializer(context).loadFunction(proto)
+
+    val descriptor = deserializeToDescriptor(javaClass, proto, nameResolver, TypeTable(proto.typeTable), MemberDeserializer::loadFunction)
+                     ?: return null
+
     @Suppress("UNCHECKED_CAST")
     return KFunctionImpl(EmptyContainerForLocal, descriptor) as KFunction<R>
 }

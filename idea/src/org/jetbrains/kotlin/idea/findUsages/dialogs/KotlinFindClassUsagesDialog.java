@@ -32,12 +32,11 @@ import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.kotlin.idea.refactoring.RenderingUtilsKt;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
-
 import javax.swing.*;
 
 import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
@@ -91,7 +90,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         //noinspection ConstantConditions
         javaClass.getModifierList().setModifierProperty(
                 PsiModifier.FINAL,
-                !(classOrObject instanceof KtClass && KtPsiUtilKt.isInheritable((KtClass) classOrObject))
+                !(classOrObject instanceof KtClass && PsiModificationUtilsKt.isInheritable((KtClass) classOrObject))
         );
 
         javaClass.putUserData(ORIGINAL_CLASS, classOrObject);

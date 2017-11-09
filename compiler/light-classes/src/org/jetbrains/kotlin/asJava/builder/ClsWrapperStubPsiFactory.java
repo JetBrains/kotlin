@@ -37,24 +37,9 @@ public class ClsWrapperStubPsiFactory extends StubPsiFactory {
 
     private ClsWrapperStubPsiFactory() { }
 
-    @Nullable
-    public static LightMemberOriginForDeclaration getMemberOrigin(@NotNull PsiMember member) {
-        if (member instanceof ClsRepositoryPsiElement<?>) {
-            StubElement stubElement = ((ClsRepositoryPsiElement<?>) member).getStub();
-            if (stubElement instanceof UserDataHolder) {
-                LightElementOrigin origin = ((UserDataHolder) stubElement).getUserData(ORIGIN);
-                if (origin instanceof LightMemberOriginForDeclaration) {
-                    return (LightMemberOriginForDeclaration) origin;
-                }
-            }
-        }
-
-        return null;
-    }
-
     @Override
     public PsiClass createClass(@NotNull PsiClassStub stub) {
-        final PsiElement origin = getOriginalElement(stub);
+        PsiElement origin = getOriginalElement(stub);
         return new ClsClassImpl(stub) {
             @NotNull
             @Override
@@ -95,7 +80,7 @@ public class ClsWrapperStubPsiFactory extends StubPsiFactory {
 
     @Override
     public PsiField createField(PsiFieldStub stub) {
-        final PsiElement origin = getOriginalElement(stub);
+        PsiElement origin = getOriginalElement(stub);
         if (origin == null) return delegate.createField(stub);
         if (stub.isEnumConstant()) {
             return new ClsEnumConstantImpl(stub) {

@@ -1,0 +1,60 @@
+KtFile: lambdaExpressionInString_1.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('some1')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      LAMBDA_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          BLOCK
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"""')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('dM')
+                PsiErrorElement:Expecting '}'
+                  <empty list>
+                PsiElement(BAD_CHARACTER)('$')
+                PsiWhiteSpace(' ')
+                LAMBDA_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace(' ')
+                    BLOCK
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        SHORT_STRING_TEMPLATE_ENTRY
+                          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
+                        LITERAL_STRING_TEMPLATE_ENTRY
+                          PsiElement(REGULAR_STRING_PART)(' -> ')
+                        LITERAL_STRING_TEMPLATE_ENTRY
+                          PsiElement(REGULAR_STRING_PART)('$')
+                        PsiElement(CLOSING_QUOTE)('"')
+                    PsiWhiteSpace('  ')
+                    PsiElement(RBRACE)('}')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              LITERAL_STRING_TEMPLATE_ENTRY
+                PsiElement(REGULAR_STRING_PART)('\n')
+              LITERAL_STRING_TEMPLATE_ENTRY
+                PsiElement(REGULAR_STRING_PART)('\n')
+              LITERAL_STRING_TEMPLATE_ENTRY
+                PsiElement(REGULAR_STRING_PART)('           ')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

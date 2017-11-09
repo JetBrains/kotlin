@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 class MyListIterator<T> : ListIterator<T> {
     override fun next(): T = null!!
     override fun hasNext(): Boolean = null!!

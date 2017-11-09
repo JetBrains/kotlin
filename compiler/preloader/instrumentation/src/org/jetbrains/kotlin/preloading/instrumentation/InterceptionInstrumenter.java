@@ -37,15 +37,15 @@ public class InterceptionInstrumenter {
     private static final Pattern ANYTHING = Pattern.compile(".*");
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
 
-    private final Map<String, ClassMatcher> classPatterns = new LinkedHashMap<String, ClassMatcher>();
+    private final Map<String, ClassMatcher> classPatterns = new LinkedHashMap<>();
 
-    private final Set<String> neverMatchedClassPatterns = new LinkedHashSet<String>();
-    private final Set<MethodInstrumenter> neverMatchedInstrumenters = new LinkedHashSet<MethodInstrumenter>();
+    private final Set<String> neverMatchedClassPatterns = new LinkedHashSet<>();
+    private final Set<MethodInstrumenter> neverMatchedInstrumenters = new LinkedHashSet<>();
 
     interface DumpAction {
         void dump(PrintStream out);
     }
-    private final List<DumpAction> dumpTasks = new ArrayList<DumpAction>();
+    private final List<DumpAction> dumpTasks = new ArrayList<>();
 
     public InterceptionInstrumenter(List<Class<?>> handlerClasses) {
         for (Class<?> handlerClass : handlerClasses) {
@@ -54,7 +54,7 @@ public class InterceptionInstrumenter {
     }
 
     private void addHandlerClass(Class<?> handlerClass) {
-        for (final Field field : handlerClass.getFields()) {
+        for (Field field : handlerClass.getFields()) {
             MethodInterceptor annotation = field.getAnnotation(MethodInterceptor.class);
             if (annotation == null) continue;
 
@@ -71,14 +71,14 @@ public class InterceptionInstrumenter {
                     throw new IllegalArgumentException("Interceptor is null: " + field);
                 }
 
-                final Class<?> interceptorClass = interceptor.getClass();
+                Class<?> interceptorClass = interceptor.getClass();
 
                 FieldData fieldData = getFieldData(field, interceptorClass);
 
-                List<MethodData> enterData = new ArrayList<MethodData>();
-                List<MethodData> normalReturnData = new ArrayList<MethodData>();
-                List<MethodData> exceptionData = new ArrayList<MethodData>();
-                List<Method> dumpMethods = new ArrayList<Method>();
+                List<MethodData> enterData = new ArrayList<>();
+                List<MethodData> normalReturnData = new ArrayList<>();
+                List<MethodData> exceptionData = new ArrayList<>();
+                List<Method> dumpMethods = new ArrayList<>();
                 for (Method method : interceptorClass.getMethods()) {
                     String name = method.getName();
                     MethodData methodData = getMethodData(fieldData, method);
@@ -107,12 +107,8 @@ public class InterceptionInstrumenter {
                 }
 
                 if (enterData.isEmpty() && normalReturnData.isEmpty() && exceptionData.isEmpty()) {
-                    dumpTasks.add(new DumpAction() {
-                        @Override
-                        public void dump(PrintStream out) {
-                            out.println("WARNING: No relevant methods found in " + field + " of type " + interceptorClass.getCanonicalName());
-                        }
-                    });
+                    dumpTasks.add(out -> out.println("WARNING: No relevant methods found in " + field +
+                                                     " of type " + interceptorClass.getCanonicalName()));
                 }
 
                 String nameFromAnnotation = annotation.methodName();
@@ -214,28 +210,22 @@ public class InterceptionInstrumenter {
             allArgsParameterIndex);
     }
 
-    private void addDumpTask(final Object interceptor, final Method method, final MethodInstrumenter instrumenter) {
-        dumpTasks.add(new DumpAction() {
-            @Override
-            public void dump(PrintStream out) {
-                out.println("<<< " + instrumenter + ": " + interceptor.getClass().getName() + " says:");
-                try {
-                    if (method.getParameterTypes().length == 0) {
-                        method.invoke(interceptor);
-                    }
-                    else {
-                        method.invoke(interceptor, out);
-                    }
+    private void addDumpTask(Object interceptor, Method method, MethodInstrumenter instrumenter) {
+        dumpTasks.add(out -> {
+            out.println("<<< " + instrumenter + ": " + interceptor.getClass().getName() + " says:");
+            try {
+                if (method.getParameterTypes().length == 0) {
+                    method.invoke(interceptor);
                 }
-                catch (IllegalAccessException e) {
-                    throw new IllegalStateException(e);
+                else {
+                    method.invoke(interceptor, out);
                 }
-                catch (InvocationTargetException e) {
-                    throw new IllegalStateException(e);
-                }
-                out.println(">>>");
-                out.println();
             }
+            catch (IllegalAccessException | InvocationTargetException e) {
+                throw new IllegalStateException(e);
+            }
+            out.println(">>>");
+            out.println();
         });
     }
 
@@ -247,7 +237,7 @@ public class InterceptionInstrumenter {
                 return data;
             }
 
-            List<MethodInstrumenter> applicableInstrumenters = new ArrayList<MethodInstrumenter>();
+            List<MethodInstrumenter> applicableInstrumenters = new ArrayList<>();
             for (Map.Entry<String, ClassMatcher> classPatternEntry : classPatterns.entrySet()) {
                 String classPattern = classPatternEntry.getKey();
                 ClassMatcher classMatcher = classPatternEntry.getValue();
@@ -272,17 +262,17 @@ public class InterceptionInstrumenter {
         return name.substring(0, name.length() - suffix.length());
     }
 
-    private byte[] instrument(byte[] classData, final List<MethodInstrumenter> instrumenters) {
-        final ClassReader cr = new ClassReader(classData);
+    private byte[] instrument(byte[] classData, List<MethodInstrumenter> instrumenters) {
+        ClassReader cr = new ClassReader(classData);
         ClassWriter cw = new ClassWriter(cr, 0);
         cr.accept(new ClassVisitor(ASM5, cw) {
-            private final Map<MethodInstrumenter, String> matchedMethods = new HashMap<MethodInstrumenter, String>();
+            private final Map<MethodInstrumenter, String> matchedMethods = new HashMap<>();
 
             @Override
             public MethodVisitor visitMethod(
-                    final int access,
-                    final String name,
-                    final String desc,
+                    int access,
+                    String name,
+                    String desc,
                     String signature,
                     String[] exceptions
             ) {
@@ -290,7 +280,7 @@ public class InterceptionInstrumenter {
                 // Do not instrument synthetic methods
                 if ((access & (ACC_BRIDGE | ACC_SYNTHETIC)) != 0) return mv;
 
-                List<MethodInstrumenter> applicableInstrumenters = new ArrayList<MethodInstrumenter>();
+                List<MethodInstrumenter> applicableInstrumenters = new ArrayList<>();
                 for (MethodInstrumenter instrumenter : instrumenters) {
                     if (instrumenter.isApplicable(name, desc)) {
                         applicableInstrumenters.add(instrumenter);
@@ -304,9 +294,9 @@ public class InterceptionInstrumenter {
                 if (applicableInstrumenters.isEmpty()) return mv;
 
                 boolean dumpByteCode = false;
-                final List<MethodData> normalReturnData = new ArrayList<MethodData>();
-                final List<MethodData> enterData = new ArrayList<MethodData>();
-                final List<MethodData> exceptionData = new ArrayList<MethodData>();
+                List<MethodData> normalReturnData = new ArrayList<>();
+                List<MethodData> enterData = new ArrayList<>();
+                List<MethodData> exceptionData = new ArrayList<>();
                 for (MethodInstrumenter instrumenter : applicableInstrumenters) {
                     enterData.addAll(instrumenter.getEnterData());
 
@@ -323,8 +313,8 @@ public class InterceptionInstrumenter {
                     mv = getDumpingVisitorWrapper(mv, name, desc);
                 }
 
-                final int maxStackDepth = getMaxStackDepth(name, desc, normalReturnData, enterData, exceptionData);
-                final boolean isConstructor = "<init>".equals(name);
+                int maxStackDepth = getMaxStackDepth(name, desc, normalReturnData, enterData, exceptionData);
+                boolean isConstructor = "<init>".equals(name);
 
                 return new MethodVisitor(ASM5, mv) {
 
@@ -386,7 +376,7 @@ public class InterceptionInstrumenter {
             ) {
                 org.jetbrains.org.objectweb.asm.commons.Method methodBeingInstrumented = new org.jetbrains.org.objectweb.asm.commons.Method(name, desc);
 
-                List<MethodData> allData = new ArrayList<MethodData>();
+                List<MethodData> allData = new ArrayList<>();
                 allData.addAll(enterData);
                 allData.addAll(exceptionData);
                 allData.addAll(normalReturnData);
@@ -430,7 +420,7 @@ public class InterceptionInstrumenter {
                 }
             }
 
-            private TraceMethodVisitor getDumpingVisitorWrapper(MethodVisitor mv, final String methodName, final String methodDesc) {
+            private TraceMethodVisitor getDumpingVisitorWrapper(MethodVisitor mv, String methodName, String methodDesc) {
                 return new TraceMethodVisitor(mv, new Textifier(ASM5) {
                     @Override
                     public void visitMethodEnd() {
@@ -611,7 +601,7 @@ public class InterceptionInstrumenter {
 
     private static class ClassMatcher {
         private final Pattern classPattern;
-        private final List<MethodInstrumenter> instrumenters = new ArrayList<MethodInstrumenter>();
+        private final List<MethodInstrumenter> instrumenters = new ArrayList<>();
 
         private ClassMatcher(Pattern classPattern) {
             this.classPattern = classPattern;

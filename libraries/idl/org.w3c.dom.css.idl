@@ -1,8 +1,9 @@
 namespace org.w3c.dom.css;
 
 
-// Downloaded from http://dev.w3.org/csswg/cssom/
-[ArrayClass]interface MediaList {
+// Downloaded from https://drafts.csswg.org/cssom/
+[ArrayClass]
+interface MediaList {
   [TreatNullAs=EmptyString] stringifier attribute DOMString mediaText;
   readonly attribute unsigned long length;
   getter DOMString? item(unsigned long index);
@@ -24,26 +25,26 @@ interface CSSStyleSheet : StyleSheet {
   unsigned long insertRule(DOMString rule, unsigned long index);
   void deleteRule(unsigned long index);
 };
-[ArrayClass]interface StyleSheetList {
+[ArrayClass]
+interface StyleSheetList {
   getter StyleSheet? item(unsigned long index);
   readonly attribute unsigned long length;
 };
-partial interface Document {  [SameObject] readonly attribute StyleSheetList styleSheets;
-  attribute DOMString? selectedStyleSheetSet;
-  readonly attribute DOMString? lastStyleSheetSet;
-  readonly attribute DOMString? preferredStyleSheetSet;
-  readonly attribute DOMString[] styleSheetSets;
-  void enableStyleSheetsForSet(DOMString? name);
+partial interface Document {
+  [SameObject] readonly attribute StyleSheetList styleSheets;
 };
-[NoInterfaceObject]interface LinkStyle {
+[NoInterfaceObject]
+interface LinkStyle {
   readonly attribute StyleSheet? sheet;
 };
 ProcessingInstruction implements LinkStyle;
-[ArrayClass]interface CSSRuleList {
+[ArrayClass]
+interface CSSRuleList {
   getter CSSRule? item(unsigned long index);
   readonly attribute unsigned long length;
 };
-interface CSSRule {  const unsigned short STYLE_RULE = 1;
+interface CSSRule {
+  const unsigned short STYLE_RULE = 1;
   const unsigned short CHARSET_RULE = 2; // historical
   const unsigned short IMPORT_RULE = 3;
   const unsigned short MEDIA_RULE = 4;
@@ -56,72 +57,72 @@ interface CSSRule {  const unsigned short STYLE_RULE = 1;
   readonly attribute CSSRule? parentRule;
   readonly attribute CSSStyleSheet? parentStyleSheet;
 };
-interface CSSStyleRule : CSSRule {  attribute DOMString selectorText;
+interface CSSStyleRule : CSSRule {
+  attribute DOMString selectorText;
   [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };
-interface CSSImportRule : CSSRule {  readonly attribute DOMString href;
+interface CSSImportRule : CSSRule {
+  readonly attribute DOMString href;
   [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
   [SameObject] readonly attribute CSSStyleSheet styleSheet;
 };
-interface CSSGroupingRule : CSSRule {  [SameObject] readonly attribute CSSRuleList cssRules;
+interface CSSGroupingRule : CSSRule {
+  [SameObject] readonly attribute CSSRuleList cssRules;
   unsigned long insertRule(DOMString rule, unsigned long index);
   void deleteRule(unsigned long index);
 };
-interface CSSMediaRule : CSSGroupingRule {  [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
+interface CSSMediaRule : CSSGroupingRule {
+  [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
 };
-interface CSSPageRule : CSSGroupingRule {           attribute DOMString selectorText;
+interface CSSPageRule : CSSGroupingRule {
+           attribute DOMString selectorText;
   [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };
-interface CSSMarginRule : CSSRule {  readonly attribute DOMString name;
+interface CSSMarginRule : CSSRule {
+  readonly attribute DOMString name;
   [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };
-interface CSSNamespaceRule : CSSRule {  [TreatNullAs=EmptyString] attribute DOMString namespaceURI;
-  [TreatNullAs=EmptyString] attribute DOMString prefix;
+interface CSSNamespaceRule : CSSRule {
+  readonly attribute DOMString namespaceURI;
+  readonly attribute DOMString prefix;
 };
-interface CSSStyleDeclaration {  attribute DOMString cssText;
+interface CSSStyleDeclaration {
+  [CEReactions] attribute DOMString cssText;
   readonly attribute unsigned long length;
   getter DOMString item(unsigned long index);
   DOMString getPropertyValue(DOMString property);
   DOMString getPropertyPriority(DOMString property);
-  void setProperty(DOMString property, [TreatNullAs=EmptyString] DOMString value, [TreatNullAs=EmptyString] optional DOMString priority = "");
-  void setPropertyValue(DOMString property, [TreatNullAs=EmptyString] DOMString value);
-  void setPropertyPriority(DOMString property, [TreatNullAs=EmptyString] DOMString priority);
-  DOMString removeProperty(DOMString property);
+  [CEReactions] void setProperty(DOMString property, [TreatNullAs=EmptyString] DOMString value, [TreatNullAs=EmptyString] optional DOMString priority = "");
+  [CEReactions] void setPropertyValue(DOMString property, [TreatNullAs=EmptyString] DOMString value);
+  [CEReactions] void setPropertyPriority(DOMString property, [TreatNullAs=EmptyString] DOMString priority);
+  [CEReactions] DOMString removeProperty(DOMString property);
   readonly attribute CSSRule? parentRule;
-  [TreatNullAs=EmptyString] attribute DOMString cssFloat;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString cssFloat;
 };
-partial interface CSSStyleDeclaration {  [TreatNullAs=EmptyString] attribute DOMString _dashed_attribute;
+partial interface CSSStyleDeclaration {
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString _dashed_attribute;
 };
-[NoInterfaceObject]interface ElementCSSInlineStyle {
+[NoInterfaceObject]
+interface ElementCSSInlineStyle {
   [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };
 HTMLElement implements ElementCSSInlineStyle;
 SVGElement implements ElementCSSInlineStyle;
-partial interface Window {  [NewObject] CSSStyleDeclaration getComputedStyle(Element elt, optional DOMString? pseudoElt);
+partial interface Window {
+  [NewObject] CSSStyleDeclaration getComputedStyle(Element elt, optional DOMString? pseudoElt);
 };
-[NoInterfaceObject]interface GetStyleUtils {
-  [SameObject] readonly attribute CSSStyleDeclaration cascadedStyle;
-  [SameObject] readonly attribute CSSStyleDeclaration defaultStyle;
-  [SameObject] readonly attribute CSSStyleDeclaration rawComputedStyle;
-  [SameObject] readonly attribute CSSStyleDeclaration usedStyle;
+interface CSS {
+  static DOMString escape(DOMString ident);
 };
-partial interface Element {  PseudoElement? pseudo(DOMString pseudoElt);
-};
-
-Element implements GetStyleUtils;
-interface PseudoElement {
-};
-
-PseudoElement implements GetStyleUtils;
-interface CSS {  static DOMString escape(DOMString ident);
-};
-[ArrayClass]interface MediaList {
+[ArrayClass]
+interface MediaList {
   [TreatNullAs=EmptyString] stringifier attribute DOMString mediaText;
   readonly attribute unsigned long length;
   getter DOMString? item(unsigned long index);
   void appendMedium(DOMString medium);
   void deleteMedium(DOMString medium);
 };
+
 interface StyleSheet {
   readonly attribute DOMString type;
   readonly attribute DOMString? href;
@@ -139,26 +140,30 @@ interface CSSStyleSheet : StyleSheet {
   void deleteRule(unsigned long index);
 };
 
-[ArrayClass]interface StyleSheetList {
+[ArrayClass]
+interface StyleSheetList {
   getter StyleSheet? item(unsigned long index);
   readonly attribute unsigned long length;
 };
-partial interface Document {  [SameObject] readonly attribute StyleSheetList styleSheets;
-  attribute DOMString? selectedStyleSheetSet;
-  readonly attribute DOMString? lastStyleSheetSet;
-  readonly attribute DOMString? preferredStyleSheetSet;
-  readonly attribute DOMString[] styleSheetSets;
-  void enableStyleSheetsForSet(DOMString? name);
+
+partial interface Document {
+  [SameObject] readonly attribute StyleSheetList styleSheets;
 };
-[NoInterfaceObject]interface LinkStyle {
+
+[NoInterfaceObject]
+interface LinkStyle {
   readonly attribute StyleSheet? sheet;
 };
+
 ProcessingInstruction implements LinkStyle;
-[ArrayClass]interface CSSRuleList {
+[ArrayClass]
+interface CSSRuleList {
   getter CSSRule? item(unsigned long index);
   readonly attribute unsigned long length;
 };
-interface CSSRule {  const unsigned short STYLE_RULE = 1;
+
+interface CSSRule {
+  const unsigned short STYLE_RULE = 1;
   const unsigned short CHARSET_RULE = 2; // historical
   const unsigned short IMPORT_RULE = 3;
   const unsigned short MEDIA_RULE = 4;
@@ -171,65 +176,83 @@ interface CSSRule {  const unsigned short STYLE_RULE = 1;
   readonly attribute CSSRule? parentRule;
   readonly attribute CSSStyleSheet? parentStyleSheet;
 };
-interface CSSStyleRule : CSSRule {  attribute DOMString selectorText;
+
+interface CSSStyleRule : CSSRule {
+  attribute DOMString selectorText;
   [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };
-interface CSSImportRule : CSSRule {  readonly attribute DOMString href;
+
+interface CSSImportRule : CSSRule {
+  readonly attribute DOMString href;
   [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
   [SameObject] readonly attribute CSSStyleSheet styleSheet;
 };
-interface CSSGroupingRule : CSSRule {  [SameObject] readonly attribute CSSRuleList cssRules;
+
+interface CSSGroupingRule : CSSRule {
+  [SameObject] readonly attribute CSSRuleList cssRules;
   unsigned long insertRule(DOMString rule, unsigned long index);
   void deleteRule(unsigned long index);
 };
-interface CSSMediaRule : CSSGroupingRule {  [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
+
+interface CSSMediaRule : CSSGroupingRule {
+  [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
 };
-interface CSSPageRule : CSSGroupingRule {           attribute DOMString selectorText;
+
+interface CSSPageRule : CSSGroupingRule {
+           attribute DOMString selectorText;
   [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };
-interface CSSMarginRule : CSSRule {  readonly attribute DOMString name;
+
+interface CSSMarginRule : CSSRule {
+  readonly attribute DOMString name;
   [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };
-interface CSSNamespaceRule : CSSRule {  [TreatNullAs=EmptyString] attribute DOMString namespaceURI;
-  [TreatNullAs=EmptyString] attribute DOMString prefix;
+
+interface CSSNamespaceRule : CSSRule {
+  readonly attribute DOMString namespaceURI;
+  readonly attribute DOMString prefix;
 };
-interface CSSStyleDeclaration {  attribute DOMString cssText;
+
+interface CSSStyleDeclaration {
+  [CEReactions] attribute DOMString cssText;
   readonly attribute unsigned long length;
   getter DOMString item(unsigned long index);
   DOMString getPropertyValue(DOMString property);
   DOMString getPropertyPriority(DOMString property);
-  void setProperty(DOMString property, [TreatNullAs=EmptyString] DOMString value, [TreatNullAs=EmptyString] optional DOMString priority = "");
-  void setPropertyValue(DOMString property, [TreatNullAs=EmptyString] DOMString value);
-  void setPropertyPriority(DOMString property, [TreatNullAs=EmptyString] DOMString priority);
-  DOMString removeProperty(DOMString property);
+  [CEReactions] void setProperty(DOMString property, [TreatNullAs=EmptyString] DOMString value, [TreatNullAs=EmptyString] optional DOMString priority = "");
+  [CEReactions] void setPropertyValue(DOMString property, [TreatNullAs=EmptyString] DOMString value);
+  [CEReactions] void setPropertyPriority(DOMString property, [TreatNullAs=EmptyString] DOMString priority);
+  [CEReactions] DOMString removeProperty(DOMString property);
   readonly attribute CSSRule? parentRule;
-  [TreatNullAs=EmptyString] attribute DOMString cssFloat;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString cssFloat;
 };
-partial interface CSSStyleDeclaration {  [TreatNullAs=EmptyString] attribute DOMString _camel_cased_attribute;
+
+partial interface CSSStyleDeclaration {
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString _camel_cased_attribute;
 };
-partial interface CSSStyleDeclaration {  [TreatNullAs=EmptyString] attribute DOMString _dashed_attribute;
+
+partial interface CSSStyleDeclaration {
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString _webkit_cased_attribute;
 };
-[NoInterfaceObject]interface ElementCSSInlineStyle {
+
+partial interface CSSStyleDeclaration {
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString _dashed_attribute;
+};
+
+[NoInterfaceObject]
+interface ElementCSSInlineStyle {
   [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };
+
 HTMLElement implements ElementCSSInlineStyle;
+
 SVGElement implements ElementCSSInlineStyle;
-partial interface Window {  [NewObject] CSSStyleDeclaration getComputedStyle(Element elt, optional DOMString? pseudoElt);
-};
-[NoInterfaceObject]interface GetStyleUtils {
-  [SameObject] readonly attribute CSSStyleDeclaration cascadedStyle;
-  [SameObject] readonly attribute CSSStyleDeclaration defaultStyle;
-  [SameObject] readonly attribute CSSStyleDeclaration rawComputedStyle;
-  [SameObject] readonly attribute CSSStyleDeclaration usedStyle;
-};
-partial interface Element {  PseudoElement? pseudo(DOMString pseudoElt);
+
+partial interface Window {
+  [NewObject] CSSStyleDeclaration getComputedStyle(Element elt, optional DOMString? pseudoElt);
 };
 
-Element implements GetStyleUtils;
-interface PseudoElement {
-};
-
-PseudoElement implements GetStyleUtils;
-interface CSS {  static DOMString escape(DOMString ident);
+interface CSS {
+  static DOMString escape(DOMString ident);
 };
 

@@ -47,9 +47,7 @@ abstract class PerformanceCounter protected constructor(val name: String) {
 
         fun resetAllCounters() {
             synchronized(allCounters) {
-                allCounters.forEach {
-                    it.reset()
-                }
+                allCounters.forEach(PerformanceCounter::reset)
             }
         }
 

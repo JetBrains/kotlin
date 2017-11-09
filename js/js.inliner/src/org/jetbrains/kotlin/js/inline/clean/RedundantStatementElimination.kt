@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
-import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
-import com.google.dart.compiler.backend.js.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.isSuspend
+import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -35,13 +36,41 @@ class RedundantStatementElimination(private val root: JsFunction) {
     private fun process() {
         object : JsVisitorWithContextImpl() {
             override fun visit(x: JsExpressionStatement, ctx: JsContext<JsNode>): Boolean {
-                if (x.synthetic) {
-                    val replacement = replace(x.expression)
-                    if (replacement.size != 1 || replacement[0] != x.expression) {
-                        hasChanges = true
-                        ctx.addPrevious(replacement.map { JsExpressionStatement(it).apply { synthetic = true } })
-                        ctx.removeMe()
+                if (!x.expression.isSuspend) {
+                    val expression = x.expression
+                    if (x.synthetic || expression.synthetic) {
+                        val replacement = replace(x.expression)
+                        if (replacement.size != 1 || replacement[0] != x.expression) {
+                            hasChanges = true
+                            ctx.addPrevious(replacement.map { JsExpressionStatement(it).apply { synthetic = true } })
+                            ctx.removeMe()
+                        }
                     }
+                    else if (expression is JsBinaryOperation && expression.operator == JsBinaryOperator.COMMA) {
+                        var currentExpression = expression
+                        while (currentExpression is JsBinaryOperation && currentExpression.operator == JsBinaryOperator.COMMA) {
+                            val replacement = replace(currentExpression.arg2)
+                            if (replacement.isNotEmpty()) break
+                            currentExpression = currentExpression.arg1
+                        }
+                        if (currentExpression != expression) {
+                            ctx.replaceMe(JsExpressionStatement(currentExpression).apply { copyMetadataFrom(x) })
+                        }
+                    }
+                }
+                return super.visit(x, ctx)
+            }
+
+            override fun visit(x: JsBinaryOperation, ctx: JsContext<JsNode>): Boolean {
+                if (!x.isSuspend && x.operator == JsBinaryOperator.COMMA) {
+                    val expressions = replace(x.arg1)
+                    val replacement = if (expressions.isEmpty()) {
+                        x.arg2
+                    }
+                    else {
+                        JsAstUtils.newSequence(expressions + x.arg2)
+                    }
+                    ctx.replaceMe(replacement)
                 }
                 return super.visit(x, ctx)
             }
@@ -51,15 +80,17 @@ class RedundantStatementElimination(private val root: JsFunction) {
     private fun replace(expression: JsExpression): List<JsExpression> {
         return when (expression) {
             is JsNameRef -> {
-                if (expression.name in localVars) {
-                    listOf()
-                }
-                else if (expression.sideEffects != SideEffectKind.AFFECTS_STATE) {
-                    val qualifier = expression.qualifier
-                    if (qualifier != null) replace(qualifier) else listOf()
-                }
-                else {
-                    listOf(expression)
+                when {
+                    expression.name in localVars -> {
+                        listOf()
+                    }
+                    expression.sideEffects != SideEffectKind.AFFECTS_STATE -> {
+                        val qualifier = expression.qualifier
+                        if (qualifier != null) replace(qualifier) else listOf()
+                    }
+                    else -> {
+                        listOf(expression)
+                    }
                 }
             }
 
@@ -175,6 +206,8 @@ class RedundantStatementElimination(private val root: JsFunction) {
             is JsArrayLiteral -> replaceMany(expression.expressions)
 
             is JsObjectLiteral -> expression.propertyInitializers.flatMap { replace(it.labelExpr) + replace(it.valueExpr) }
+
+            is JsFunction -> if (expression.name == null) listOf() else listOf(expression)
 
             else -> listOf(expression)
         }

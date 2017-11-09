@@ -25,8 +25,8 @@ import static com.android.SdkConstants.ATTR_LAYOUT_WIDTH;
 import static com.android.SdkConstants.ATTR_NAME;
 import static com.android.SdkConstants.ATTR_PARENT;
 import static com.android.SdkConstants.ATTR_STYLE;
+import static com.android.SdkConstants.AUTO_URI;
 import static com.android.SdkConstants.FD_RES_LAYOUT;
-import static com.android.SdkConstants.FN_RESOURCE_BASE;
 import static com.android.SdkConstants.FQCN_GRID_LAYOUT_V7;
 import static com.android.SdkConstants.GRID_LAYOUT;
 import static com.android.SdkConstants.LAYOUT_RESOURCE_PREFIX;
@@ -34,33 +34,49 @@ import static com.android.SdkConstants.REQUEST_FOCUS;
 import static com.android.SdkConstants.STYLE_RESOURCE_PREFIX;
 import static com.android.SdkConstants.TABLE_LAYOUT;
 import static com.android.SdkConstants.TABLE_ROW;
+import static com.android.SdkConstants.TAG_DATA;
+import static com.android.SdkConstants.TAG_IMPORT;
 import static com.android.SdkConstants.TAG_ITEM;
+import static com.android.SdkConstants.TAG_LAYOUT;
 import static com.android.SdkConstants.TAG_STYLE;
+import static com.android.SdkConstants.TAG_VARIABLE;
 import static com.android.SdkConstants.VIEW_INCLUDE;
 import static com.android.SdkConstants.VIEW_MERGE;
 import static com.android.resources.ResourceFolderType.LAYOUT;
 import static com.android.resources.ResourceFolderType.VALUES;
 import static com.android.tools.klint.detector.api.LintUtils.getLayoutName;
+import static com.android.tools.klint.detector.api.LintUtils.isNullLiteral;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
+import com.android.ide.common.resources.ResourceUrl;
 import com.android.resources.ResourceFolderType;
+import com.android.resources.ResourceType;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.JavaPsiScanner;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.LayoutDetector;
+import com.android.tools.klint.detector.api.ResourceEvaluator;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.psi.JavaElementVisitor;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
 
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.UastLiteralUtils;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -68,7 +84,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -76,7 +91,7 @@ import java.util.Set;
 /**
  * Ensures that layout width and height attributes are specified
  */
-public class RequiredAttributeDetector extends LayoutDetector implements UastScanner {
+public class RequiredAttributeDetector extends LayoutDetector implements Detector.UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "RequiredSize", //$NON-NLS-1$
@@ -93,7 +108,12 @@ public class RequiredAttributeDetector extends LayoutDetector implements UastSca
             Severity.ERROR,
             new Implementation(
                     RequiredAttributeDetector.class,
-                    EnumSet.of(Scope.SOURCE_FILE, Scope.ALL_RESOURCE_FILES)));
+                    EnumSet.of(Scope.JAVA_FILE, Scope.ALL_RESOURCE_FILES)));
+
+    public static final String PERCENT_RELATIVE_LAYOUT
+            = "android.support.percent.PercentRelativeLayout";
+    public static final String ATTR_LAYOUT_WIDTH_PERCENT = "layout_widthPercent";
+    public static final String ATTR_LAYOUT_HEIGHT_PERCENT = "layout_heightPercent";
 
     /** Map from each style name to parent style */
     @Nullable private Map<String, String> mStyleParents;
@@ -128,12 +148,6 @@ public class RequiredAttributeDetector extends LayoutDetector implements UastSca
 
     /** Constructs a new {@link RequiredAttributeDetector} */
     public RequiredAttributeDetector() {
-    }
-
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
     }
 
     @Override
@@ -416,6 +430,14 @@ public class RequiredAttributeDetector extends LayoutDetector implements UastSca
                     return;
                 }
 
+                // Data binding: these tags shouldn't specify width/height
+                if (tag.equals(TAG_LAYOUT)
+                        || tag.equals(TAG_VARIABLE)
+                        || tag.equals(TAG_DATA)
+                        || tag.equals(TAG_IMPORT)) {
+                    return;
+                }
+
                 String parentTag = element.getParentNode() != null
                         ?  element.getParentNode().getNodeName() : "";
                 if (TABLE_LAYOUT.equals(parentTag)
@@ -423,6 +445,16 @@ public class RequiredAttributeDetector extends LayoutDetector implements UastSca
                         || GRID_LAYOUT.equals(parentTag)
                         || FQCN_GRID_LAYOUT_V7.equals(parentTag)) {
                     return;
+                }
+
+                // PercentRelativeLayout or PercentFrameLayout?
+                boolean isPercent = parentTag.startsWith("android.support.percent.Percent");
+                if (isPercent) {
+                    hasWidth |= element.hasAttributeNS(AUTO_URI, ATTR_LAYOUT_WIDTH_PERCENT);
+                    hasHeight |= element.hasAttributeNS(AUTO_URI, ATTR_LAYOUT_HEIGHT_PERCENT);
+                    if (hasWidth && hasHeight) {
+                        return;
+                    }
                 }
 
                 if (!context.getProject().getReportIssues()) {
@@ -495,6 +527,15 @@ public class RequiredAttributeDetector extends LayoutDetector implements UastSca
                                 attribute);
                     }
                 }
+                if (isPercent) {
+                    String escapedLayoutWidth = '`' + ATTR_LAYOUT_WIDTH + '`';
+                    String escapedLayoutHeight = '`' + ATTR_LAYOUT_HEIGHT + '`';
+                    String escapedLayoutWidthPercent = '`' + ATTR_LAYOUT_WIDTH_PERCENT + '`';
+                    String escapedLayoutHeightPercent = '`' + ATTR_LAYOUT_HEIGHT_PERCENT + '`';
+                    message = message.replace(escapedLayoutWidth, escapedLayoutWidth + " or "
+                            + escapedLayoutWidthPercent).replace(escapedLayoutHeight,
+                            escapedLayoutHeight + " or " + escapedLayoutHeightPercent);
+                }
                 context.report(ISSUE, element, context.getLocation(element),
                         message);
             }
@@ -529,92 +570,51 @@ public class RequiredAttributeDetector extends LayoutDetector implements UastSca
         }
     }
 
-    // ---- Implements JavaScanner ----
-
+    // ---- Implements UastScanner ----
 
     @Override
-    public List<String> getApplicableFunctionNames() {
+    @Nullable
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList("inflate"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression call, @NonNull UMethod method) {
         // Handle
         //    View#inflate(Context context, int resource, ViewGroup root)
         //    LayoutInflater#inflate(int resource, ViewGroup root)
         //    LayoutInflater#inflate(int resource, ViewGroup root, boolean attachToRoot)
-        List<UExpression> args = node.getValueArguments();
+        List<UExpression> args = call.getValueArguments();
 
         String layout = null;
         int index = 0;
-        for (Iterator<UExpression> iterator = args.iterator(); iterator.hasNext(); index++) {
-            UExpression expression = iterator.next();
-            if (expression instanceof UQualifiedExpression) {
-                UQualifiedExpression outer = (UQualifiedExpression) expression;
-                UExpression operand = outer.getReceiver();
-                if (operand instanceof UQualifiedExpression) {
-                    UQualifiedExpression inner = (UQualifiedExpression) operand;
-                    if (inner.getReceiver() instanceof USimpleReferenceExpression) {
-                        USimpleReferenceExpression reference = (USimpleReferenceExpression) inner.getReceiver();
-                        if (FN_RESOURCE_BASE.equals(reference.getIdentifier())
-                            // TODO: constant
-                            && inner.selectorMatches("layout")) {
-                            layout = LAYOUT_RESOURCE_PREFIX + outer.getSelector().renderString();
-                            break;
-                        }
-                    } else if (inner.getReceiver() instanceof UQualifiedExpression) {
-                        UQualifiedExpression reference = (UQualifiedExpression) inner.getReceiver();
-                        if (reference.selectorMatches(FN_RESOURCE_BASE)
-                            // TODO: constant
-                            && inner.selectorMatches("layout")) {
-                            layout = LAYOUT_RESOURCE_PREFIX + outer.getSelector().renderString();
-                            break;
-                        }
-                    }
-                }
+        ResourceEvaluator evaluator = new ResourceEvaluator(context);
+        for (UExpression expression : args) {
+            ResourceUrl url = evaluator.getResource(expression);
+            if (url != null && url.type == ResourceType.LAYOUT) {
+                layout = url.toString();
+                break;
             }
+            index++;
         }
 
         if (layout == null) {
-            UFunction containingFunction = UastUtils.getContainingFunction(node);
-            if (containingFunction != null) {
-                // Must track local types
-                index = 0;
-                String name = StringFormatDetector.getResourceArg(containingFunction, node, index);
-                if (name == null) {
-                    index = 1;
-                    name = StringFormatDetector.getResourceArg(containingFunction, node, index);
-                }
-                if (name != null) {
-                    layout = LAYOUT_RESOURCE_PREFIX + name;
-                }
-            }
-            if (layout == null) {
-                // Flow analysis didn't succeed
-                return;
-            }
+            // Flow analysis didn't succeed
+            return;
         }
 
         // In all the applicable signatures, the view root argument is immediately after
         // the layout resource id.
         int viewRootPos = index + 1;
         if (viewRootPos < args.size()) {
-            int i = 0;
-            Iterator<UExpression> iterator = args.iterator();
-            while (iterator.hasNext() && i < viewRootPos) {
-                iterator.next();
-                i++;
-            }
-            if (iterator.hasNext()) {
-                UExpression viewRoot = iterator.next();
-                if (viewRoot instanceof ULiteralExpression &&
-                        ((ULiteralExpression)viewRoot).isNull()) {
-                    // Yep, this one inflates the given view with a null parent:
-                    // Tag it as such. For now just use the include data structure since
-                    // it has the same net effect
-                    recordIncludeWidth(layout, true);
-                    recordIncludeHeight(layout, true);
-                }
+            UExpression viewRoot = args.get(viewRootPos);
+            if (UastLiteralUtils.isNullLiteral(viewRoot)) {
+                // Yep, this one inflates the given view with a null parent:
+                // Tag it as such. For now just use the include data structure since
+                // it has the same net effect
+                recordIncludeWidth(layout, true);
+                recordIncludeHeight(layout, true);
             }
         }
     }

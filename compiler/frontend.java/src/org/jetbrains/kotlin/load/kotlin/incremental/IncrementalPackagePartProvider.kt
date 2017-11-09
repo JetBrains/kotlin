@@ -19,18 +19,19 @@ package org.jetbrains.kotlin.load.kotlin.incremental
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 
-internal class IncrementalPackagePartProvider private constructor(
+class IncrementalPackagePartProvider(
         private val parent: PackagePartProvider,
         incrementalCaches: List<IncrementalCache>,
         storageManager: StorageManager
 ) : PackagePartProvider {
+    lateinit var deserializationConfiguration: DeserializationConfiguration
+
     private val moduleMappings = storageManager.createLazyValue {
         incrementalCaches.map { cache ->
-            ModuleMapping.create(cache.getModuleMappingData(), "<incremental>")
+            ModuleMapping.create(cache.getModuleMappingData(), "<incremental>", deserializationConfiguration)
         }
     }
 
@@ -39,18 +40,6 @@ internal class IncrementalPackagePartProvider private constructor(
                 parent.findPackageParts(packageFqName)).distinct()
     }
 
-    companion object {
-        @JvmStatic
-        fun create(
-                parent: PackagePartProvider,
-                targets: List<TargetId>?,
-                incrementalCompilationComponents: IncrementalCompilationComponents?,
-                storageManager: StorageManager
-        ): PackagePartProvider {
-            if (targets == null || incrementalCompilationComponents == null) return parent
-
-            val incrementalCaches = targets.map { incrementalCompilationComponents.getIncrementalCache(it) }
-            return IncrementalPackagePartProvider(parent, incrementalCaches, storageManager)
-        }
-    }
+    // TODO
+    override fun findMetadataPackageParts(packageFqName: String): List<String> = TODO()
 }

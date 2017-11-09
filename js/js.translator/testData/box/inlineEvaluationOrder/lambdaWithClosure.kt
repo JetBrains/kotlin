@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1116
 package foo
 
 /* This tests checks, that lambda fabric invocation is not extracted.

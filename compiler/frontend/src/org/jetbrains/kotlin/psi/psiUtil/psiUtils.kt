@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,18 @@
 
 package org.jetbrains.kotlin.psi.psiUtil
 
+import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import java.util.*
 
 // NOTE: in this file we collect only LANGUAGE INDEPENDENT methods working with PSI and not modifying it
@@ -48,10 +52,7 @@ fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Se
                 override fun hasNext(): Boolean = next != null
                 override fun next(): PsiElement {
                     val result = next ?: throw NoSuchElementException()
-                    if (forward)
-                        next = result.nextSibling
-                    else
-                        next = result.prevSibling
+                    next = if (forward) result.nextSibling else result.prevSibling
                     return result
                 }
             }
@@ -128,6 +129,10 @@ inline fun <reified T : PsiElement> PsiElement.getNonStrictParentOfType(): T? {
     return PsiTreeUtil.getParentOfType(this, T::class.java, false)
 }
 
+inline fun <reified T : PsiElement> PsiElement.getTopmostParentOfType(): T? {
+    return PsiTreeUtil.getTopmostParentOfType(this, T::class.java)
+}
+
 inline fun <reified T : PsiElement> PsiElement.getChildOfType(): T? {
     return PsiTreeUtil.getChildOfType(this, T::class.java)
 }
@@ -138,6 +143,10 @@ inline fun <reified T : PsiElement> PsiElement.getChildrenOfType(): Array<T> {
 
 fun PsiElement.getNextSiblingIgnoringWhitespaceAndComments(withItself: Boolean = false): PsiElement? {
     return siblings(withItself = withItself).filter { it !is PsiWhiteSpace && it !is PsiComment }.firstOrNull()
+}
+
+fun PsiElement.getNextSiblingIgnoringWhitespace(withItself: Boolean = false): PsiElement? {
+    return siblings(withItself = withItself).filter { it !is PsiWhiteSpace }.firstOrNull()
 }
 
 fun PsiElement.getPrevSiblingIgnoringWhitespaceAndComments(withItself: Boolean = false): PsiElement? {
@@ -183,7 +192,7 @@ fun PsiChildRange.trimWhiteSpaces(): PsiChildRange {
 // -------------------- Recursive tree visiting --------------------------------------------------------------------------------------------
 
 inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline action: (T) -> Unit) {
-    forEachDescendantOfType<T>({ true }, action)
+    forEachDescendantOfType({ true }, action)
 }
 
 inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(crossinline canGoInside: (PsiElement) -> Boolean, noinline action: (T) -> Unit) {
@@ -201,15 +210,15 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(crossinli
 }
 
 inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean = { true }): Boolean {
-    return findDescendantOfType<T>(predicate) != null
+    return findDescendantOfType(predicate) != null
 }
 
 inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(crossinline canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): Boolean {
-    return findDescendantOfType<T>(canGoInside, predicate) != null
+    return findDescendantOfType(canGoInside, predicate) != null
 }
 
 inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinline predicate: (T) -> Boolean = { true }): T? {
-    return findDescendantOfType<T>({ true }, predicate)
+    return findDescendantOfType({ true }, predicate)
 }
 
 inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(crossinline canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): T? {
@@ -231,7 +240,7 @@ inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(crossinline 
 }
 
 inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
-    return collectDescendantsOfType<T>({ true }, predicate)
+    return collectDescendantsOfType({ true }, predicate)
 }
 
 inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(crossinline canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): List<T> {
@@ -306,10 +315,16 @@ private fun findFirstLeafWhollyInRange(file: PsiFile, range: TextRange): PsiElem
     return if (elementRange.endOffset <= range.endOffset) element else null
 }
 
+val PsiElement.textRangeWithoutComments: TextRange
+    get() {
+        val firstNonCommentChild = children.firstOrNull { it !is PsiWhiteSpace && it !is PsiComment } ?: return textRange
+        return TextRange(firstNonCommentChild.startOffset, endOffset)
+    }
+
 // ---------------------------------- Debug/logging ----------------------------------------------------------------------------------------
 
 fun PsiElement.getElementTextWithContext(): String {
-    assert(isValid) { "Invalid element $this" }
+    if (!isValid) return "<invalid element $this>"
 
     if (this is PsiFile) {
         return containingFile.text
@@ -325,9 +340,10 @@ fun PsiElement.getElementTextWithContext(): String {
     val inFileParentOffset = elementContextOffset - startContextOffset
 
 
+    val isInjected = containingFile is VirtualFileWindow
     return StringBuilder(topLevelElement.text)
             .insert(inFileParentOffset, "<caret>")
-            .insert(0, "File name: ${containingFile.name} Physical: ${containingFile.isPhysical}\n")
+            .insert(0, "File name: ${containingFile.name} Physical: ${containingFile.isPhysical} Injected: $isInjected\n")
             .toString()
 }
 
@@ -366,4 +382,10 @@ fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
 fun PsiElement.before(element: PsiElement) = textRange.endOffset <= element.textRange.startOffset
 
 inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRow() = parents.takeWhile { it is T }.lastOrNull() as? T
+
+fun KtModifierListOwner.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD) || hasModifier(KtTokens.EXPECT_KEYWORD)
+fun KtModifierList.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD) || hasModifier(KtTokens.EXPECT_KEYWORD)
+
+fun KtModifierListOwner.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD) || hasModifier(KtTokens.ACTUAL_KEYWORD)
+fun KtModifierList.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD) || hasModifier(KtTokens.ACTUAL_KEYWORD)
 

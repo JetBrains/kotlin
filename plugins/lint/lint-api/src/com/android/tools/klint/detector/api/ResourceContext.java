@@ -28,7 +28,7 @@ import java.io.File;
  * A {@link com.android.tools.lint.detector.api.Context} used when checking resource files
  * (both bitmaps and XML files; for XML files a subclass of this context is used:
  * {@link com.android.tools.lint.detector.api.XmlContext}.)
- * <p/>
+ * <p>
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */

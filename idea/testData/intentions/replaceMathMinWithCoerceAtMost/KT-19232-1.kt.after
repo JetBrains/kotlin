@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+import java.lang.Math.min
+
+fun foo() {
+    Pair(<caret>1.coerceAtMost(3), min(2, 4)).let { println(it) }
+}

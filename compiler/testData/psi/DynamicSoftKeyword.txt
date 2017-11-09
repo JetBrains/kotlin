@@ -1,4 +1,4 @@
-JetFile: DynamicSoftKeyword.kt
+KtFile: DynamicSoftKeyword.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

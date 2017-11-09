@@ -78,7 +78,7 @@ abstract class AbstractSmartStepIntoTest : KotlinLightCodeInsightFixtureTestCase
         return sb.toString()
     }
 
-    override fun getTestDataPath(): String? {
+    override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/debugger/smartStepInto"
     }
 

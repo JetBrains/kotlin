@@ -7,16 +7,14 @@ data class FooClass2
 
 //-----------------------
 
-public fun fooFun1() {
-}
+public fun fooFun1() {}
 
 public
 fun fooFun2() {
 }
 
 //-----------------------
-public fun Int.extFun1() {
-}
+public fun Int.extFun1() {}
 
 public
 fun Int.extFun2() {
@@ -69,7 +67,12 @@ annotation class A1
 
 annotation class A2
 
-private @[A1 A2 A1] @A1 @A2 @[A1 A2 A2] @[A1] val fooProp1 = 1
+private @[A1 A2 A1]
+@A1
+@A2
+@[A1 A2 A2]
+@[A1]
+val fooProp1 = 1
 
 private @[
 
@@ -77,17 +80,23 @@ private @[
 A1
 
 
-A2 A1] @A1 @A2 @[A1
+A2 A1]
+@A1
+@A2
+@[A1
 A2
 
 
 A2
 
-] @[A1] val fooProp1 = 1
+]
+@[A1]
+val fooProp1 = 1
 
 private @A1
 
-@A2 val
+@A2
+val
         fooProp2 = 1
 
 
@@ -102,11 +111,8 @@ object FooObject2 {
 
 }
 
-fun <T> foo_1() {
-}
-
-fun <T> foo_2() {
-}
+fun <T> foo_1() {}
+fun <T> foo_2() {}
 
 fun
         <T>

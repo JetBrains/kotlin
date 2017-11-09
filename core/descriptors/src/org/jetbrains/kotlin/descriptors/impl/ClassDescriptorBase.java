@@ -26,16 +26,24 @@ public abstract class ClassDescriptorBase extends AbstractClassDescriptor {
 
     private final DeclarationDescriptor containingDeclaration;
     private final SourceElement source;
+    private final boolean isExternal;
 
     protected ClassDescriptorBase(
             @NotNull StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            boolean isExternal
     ) {
         super(storageManager, name);
         this.containingDeclaration = containingDeclaration;
         this.source = source;
+        this.isExternal = isExternal;
+    }
+
+    @Override
+    public boolean isExternal() {
+        return isExternal;
     }
 
     @NotNull

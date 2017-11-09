@@ -9,15 +9,13 @@ enum class E3 {
 class C1 {}
 
 class C2 {
-    fun test() {
-    }
+    fun test() {}
 }
 
 object O1 {}
 
 object O2 {
-    fun test() {
-    }
+    fun test() {}
 }
 
 interface T1 {}
@@ -32,3 +30,19 @@ enum class E1 {
         val some = 1
     }
 }
+
+fun e = fun(a: Int,
+            b: String) {
+}
+
+/**
+ *
+ */
+fun commented1() {}
+
+/*
+ */
+fun commented2() {}
+
+// Comment
+fun commented3() {}

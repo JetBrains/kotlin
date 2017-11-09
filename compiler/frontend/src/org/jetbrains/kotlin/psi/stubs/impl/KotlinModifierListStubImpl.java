@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.psi.stubs.impl;
 
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtModifierList;
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
+import org.jetbrains.kotlin.psi.KtDeclarationModifierList;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtModifierListElementType;
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 
-public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtModifierList> implements KotlinModifierListStub {
+public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtDeclarationModifierList> implements KotlinModifierListStub {
 
     private final int mask;
 

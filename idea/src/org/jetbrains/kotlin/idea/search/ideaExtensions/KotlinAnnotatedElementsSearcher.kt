@@ -28,9 +28,12 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.Processor
 import com.intellij.util.QueryExecutor
 import com.intellij.util.indexing.FileBasedIndex
+import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.NO_MATCH
+import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.search.PsiBasedClassResolver
 import org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -38,7 +41,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, AnnotatedElementsSearch.Parameters> {
@@ -55,9 +57,12 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
                     consumer.process(wrappedMethod)
                 }
                 is KtProperty -> {
-                    with (LightClassUtil.getLightClassPropertyMethods(declaration)) {
-                        if (backingField != null) consumer.process(backingField) else all { consumer.process(it) }
+                    val backingField = LightClassUtil.getLightClassBackingField(declaration)
+                    if (backingField != null) {
+                        return@processAnnotatedMembers consumer.process(backingField)
                     }
+
+                    LightClassUtil.getLightClassPropertyMethods(declaration).all { consumer.process(it) }
                 }
                 else -> true
             }
@@ -68,13 +73,13 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
         private val LOG = Logger.getInstance("#com.intellij.psi.impl.search.AnnotatedMembersSearcher")
 
         fun processAnnotatedMembers(annClass: PsiClass,
-                                           useScope: SearchScope,
-                                           preFilter: (KtAnnotationEntry) -> Boolean = { true },
-                                           consumer: (KtDeclaration) -> Boolean): Boolean {
+                                    useScope: SearchScope,
+                                    preFilter: (KtAnnotationEntry) -> Boolean = { true },
+                                    consumer: (KtDeclaration) -> Boolean): Boolean {
             assert(annClass.isAnnotationType) { "Annotation type should be passed to annotated members search" }
 
-            val annotationFQN = annClass.qualifiedName
-            assert(annotationFQN != null)
+            val psiBasedClassResolver = PsiBasedClassResolver(annClass)
+            val annotationFQN = annClass.qualifiedName!!
 
             val candidates = getKotlinAnnotationCandidates(annClass, useScope)
             for (elt in candidates) {
@@ -86,11 +91,18 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
 
                     val declaration = elt.getStrictParentOfType<KtDeclaration>() ?: return true
 
-                    val context = elt.analyze(BodyResolveMode.PARTIAL)
-                    val annotationDescriptor = context.get(BindingContext.ANNOTATION, elt) ?: return true
+                    val psiBasedResolveResult = elt.calleeExpression?.constructorReferenceExpression?.let { ref ->
+                        psiBasedClassResolver.canBeTargetReference(ref)
+                    }
 
-                    val descriptor = annotationDescriptor.type.constructor.declarationDescriptor ?: return true
-                    if (!(DescriptorUtils.getFqName(descriptor).asString() == annotationFQN)) return true
+                    if (psiBasedResolveResult == NO_MATCH) return true
+                    if (psiBasedResolveResult == UNSURE) {
+                        val context = elt.analyze(BodyResolveMode.PARTIAL)
+                        val annotationDescriptor = context.get(BindingContext.ANNOTATION, elt) ?: return true
+
+                        val fqName = annotationDescriptor.fqName ?: return true
+                        if (fqName.asString() != annotationFQN) return true
+                    }
 
                     if (!consumer(declaration)) return false
 

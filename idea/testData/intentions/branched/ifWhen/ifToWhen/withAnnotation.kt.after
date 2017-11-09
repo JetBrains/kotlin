@@ -1,0 +1,13 @@
+var b = true
+
+@Target(AnnotationTarget.EXPRESSION)
+annotation class Ann
+
+fun println(s: String) {}
+
+fun foo() {
+    when {
+        @Ann b -> println("!")
+        else -> println("")
+    }
+}

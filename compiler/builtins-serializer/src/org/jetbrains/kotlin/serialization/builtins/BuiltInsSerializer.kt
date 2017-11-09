@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,39 +16,32 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analyzer.ModuleContent
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
+import org.jetbrains.kotlin.builtins.JvmBuiltInClassDescriptorFactory
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.metadata.MetadataSerializer
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
-import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
-import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
+import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 
-class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
-    private var totalSize = 0
-    private var totalFiles = 0
-
+class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(dependOnOldBuiltIns) {
     fun serialize(
             destDir: File,
             srcDirs: List<File>,
@@ -56,116 +49,70 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
             onComplete: (totalSize: Int, totalFiles: Int) -> Unit
     ) {
         val rootDisposable = Disposer.newDisposable()
+        val messageCollector = createMessageCollector()
         try {
-            serialize(rootDisposable, destDir, srcDirs, extraClassPath)
+            val configuration = CompilerConfiguration().apply {
+                put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+
+                addKotlinSourceRoots(srcDirs.map { it.path })
+                addJvmClasspathRoots(extraClassPath)
+
+                put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, destDir)
+                put(CommonConfigurationKeys.MODULE_NAME, "module for built-ins serialization")
+            }
+
+            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+
+            serialize(environment)
+
             onComplete(totalSize, totalFiles)
         }
         finally {
+            messageCollector.flush()
             Disposer.dispose(rootDisposable)
         }
     }
 
-    private inner class BuiltInsSourcesModule : ModuleInfo {
-        override val name = Name.special("<module for resolving builtin source files>")
-        override fun dependencies() = listOf(this)
-        override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-                if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltIns.LAST else ModuleInfo.DependenciesOnBuiltIns.NONE
+    private fun createMessageCollector() = object : GroupingMessageCollector(
+            PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false),
+            false
+    ) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+            // Only report diagnostics without a particular location because there's plenty of errors in built-in sources
+            // (functions without bodies, incorrect combination of modifiers, etc.)
+            if (location == null) {
+                super.report(severity, message, location)
+            }
+        }
     }
 
-    private fun serialize(disposable: Disposable, destDir: File, srcDirs: List<File>, extraClassPath: List<File>) {
-        val configuration = CompilerConfiguration()
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-
-        configuration.addKotlinSourceRoots(srcDirs.map { it.path })
-        configuration.addJvmClasspathRoots(extraClassPath)
-
-        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
-        val files = environment.getSourceFiles()
-
-        val builtInModule = BuiltInsSourcesModule()
-        val resolver = JvmAnalyzerFacade.setupResolverForProject(
-                "builtIns source",
-                ProjectContext(environment.project), listOf(builtInModule),
-                { ModuleContent(files, GlobalSearchScope.EMPTY_SCOPE) },
-                JvmPlatformParameters { throw IllegalStateException() }
-        )
-
-        val moduleDescriptor = resolver.descriptorForModule(builtInModule)
-
+    override fun performSerialization(files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File) {
         destDir.deleteRecursively()
-
         if (!destDir.mkdirs()) {
-            System.err.println("Could not make directories: " + destDir)
+            throw AssertionError("Could not make directories: " + destDir)
         }
 
         files.map { it.packageFqName }.toSet().forEach {
             fqName ->
-            PackageSerializer(moduleDescriptor.getPackage(fqName), destDir, { bytesWritten ->
-                totalSize += bytesWritten
-                totalFiles++
-            }).run()
+            val packageView = module.getPackage(fqName)
+            PackageSerializer(
+                    packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS) + createCloneable(module),
+                    packageView.fragments.flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) },
+                    packageView.fqName,
+                    File(destDir, BuiltInSerializerProtocol.getBuiltInsFilePath(packageView.fqName))
+            ).run()
         }
     }
 
-    private class PackageSerializer(
-            private val packageView: PackageViewDescriptor,
-            private val destDir: File,
-            private val onFileWrite: (bytesWritten: Int) -> Unit
-    ) {
-        private val fqName = packageView.fqName
-        private val fragments = packageView.fragments
-        private val proto = BuiltInsProtoBuf.BuiltIns.newBuilder()
-        private val extension = BuiltInsSerializerExtension(fragments)
+    override fun createSerializerExtension(): KotlinSerializerExtensionBase = BuiltInsSerializerExtension()
 
-        fun run() {
-            serializeClasses(packageView.memberScope)
-            serializePackageFragments(fragments)
-            serializeStringTable()
-            serializeBuiltInsFile()
+    // Serialize metadata for kotlin.Cloneable manually for compatibility with kotlin-reflect 1.0 which expects this metadata to be there.
+    // Since Kotlin 1.1, we always discard this class during deserialization (see ClassDeserializer.kt).
+    private fun createCloneable(module: ModuleDescriptor): ClassDescriptor {
+        val factory = JvmBuiltInClassDescriptorFactory(LockBasedStorageManager.NO_LOCKS, module) {
+            EmptyPackageFragmentDescriptor(module, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
         }
-
-        private fun serializeClass(classDescriptor: ClassDescriptor) {
-            val classProto = DescriptorSerializer.createTopLevel(extension).classProto(classDescriptor).build()
-            proto.addClass_(classProto)
-
-            serializeClasses(classDescriptor.unsubstitutedInnerClassesScope)
-        }
-
-        private fun serializeClasses(scope: MemberScope) {
-            for (descriptor in DescriptorSerializer.sort(scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))) {
-                if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ENUM_ENTRY) {
-                    serializeClass(descriptor)
-                }
-            }
-        }
-
-        private fun serializePackageFragments(fragments: List<PackageFragmentDescriptor>) {
-            proto.`package` = DescriptorSerializer.createTopLevel(extension).packageProto(fragments).build()
-        }
-
-        private fun serializeStringTable() {
-            val (strings, qualifiedNames) = extension.stringTable.buildProto()
-            proto.strings = strings
-            proto.qualifiedNames = qualifiedNames
-        }
-
-        private fun serializeBuiltInsFile() {
-            val stream = ByteArrayOutputStream()
-            with(DataOutputStream(stream)) {
-                val version = BuiltInsBinaryVersion.INSTANCE.toArray()
-                writeInt(version.size)
-                version.forEach { writeInt(it) }
-            }
-            proto.build().writeTo(stream)
-            write(BuiltInSerializerProtocol.getBuiltInsFilePath(fqName), stream)
-        }
-
-        private fun write(fileName: String, stream: ByteArrayOutputStream) {
-            onFileWrite(stream.size())
-            val file = File(destDir, fileName)
-            file.parentFile.mkdirs()
-            file.writeBytes(stream.toByteArray())
-        }
+        return factory.createClass(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.cloneable.toSafe()))
+               ?: error("Could not create kotlin.Cloneable in $module")
     }
 }

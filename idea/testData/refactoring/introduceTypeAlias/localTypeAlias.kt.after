@@ -1,9 +1,0 @@
-// NAME: B
-class A<X, Y>
-
-fun foo() {
-    // SIBLING:
-    typealias B = A<Int, String>
-
-    val a: B
-}

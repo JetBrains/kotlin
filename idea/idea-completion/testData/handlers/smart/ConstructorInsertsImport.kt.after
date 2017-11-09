@@ -1,11 +1,11 @@
-import java.util.HashMap
+import java.util.TreeMap
 
 class X<T> {
-    fun foo(p: java.util.HashMap<java.io.File, T>){}
+    fun foo(p: java.util.TreeMap<java.io.File, T>){}
 
     fun f(){
-        foo(HashMap(<caret>))
+        foo(TreeMap())
     }
 }
 
-// ELEMENT: HashMap
+// ELEMENT: TreeMap

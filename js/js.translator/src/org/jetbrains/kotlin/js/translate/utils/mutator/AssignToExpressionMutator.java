@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.translate.utils.mutator;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNode;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
 
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment;
@@ -37,6 +37,8 @@ public final class AssignToExpressionMutator implements Mutator {
         if (!(node instanceof JsExpression)) {
             return node;
         }
-        return assignment(toAssign, (JsExpression) node);
+        JsExpression result = assignment(toAssign, (JsExpression) node);
+        result.setSource(node.getSource());
+        return result;
     }
 }

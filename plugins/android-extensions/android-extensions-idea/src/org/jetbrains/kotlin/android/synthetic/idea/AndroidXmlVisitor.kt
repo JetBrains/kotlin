@@ -43,15 +43,16 @@ class AndroidXmlVisitor(val elementCallback: (ResourceIdentifier, String, XmlAtt
             return
         }
 
-        val idAttribute = tag?.getAttribute(AndroidConst.ID_ATTRIBUTE)
+        val idAttribute = tag?.getAttribute(AndroidConst.ID_ATTRIBUTE_NO_NAMESPACE, AndroidConst.ANDROID_NAMESPACE)
         if (idAttribute != null) {
             val idAttributeValue = idAttribute.value
             if (idAttributeValue != null) {
-                val xmlType = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.value ?: localName
+                val xmlType = tag.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.value ?: localName
                 val name = androidIdToName(idAttributeValue)
                 if (name != null) elementCallback(name, xmlType, idAttribute)
             }
         }
+
         tag?.acceptChildren(this)
     }
 }

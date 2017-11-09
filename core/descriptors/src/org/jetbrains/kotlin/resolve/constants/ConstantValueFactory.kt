@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -58,10 +59,7 @@ class ConstantValueFactory(
 
     fun createKClassValue(type: KotlinType) = KClassValue(type)
 
-    fun createConstantValue(
-            value: Any?
-    ): ConstantValue<*>? {
-        // TODO: primitive arrays
+    fun createConstantValue(value: Any?): ConstantValue<*>? {
         return when (value) {
             is Byte -> createByteValue(value)
             is Short -> createShortValue(value)
@@ -72,10 +70,24 @@ class ConstantValueFactory(
             is Double -> createDoubleValue(value)
             is Boolean -> createBooleanValue(value)
             is String -> createStringValue(value)
+            is ByteArray -> createArrayValue(value.toList().arrayToList(), PrimitiveType.BYTE.arrayType())
+            is ShortArray -> createArrayValue(value.toList().arrayToList(), PrimitiveType.SHORT.arrayType())
+            is IntArray -> createArrayValue(value.toList().arrayToList(), PrimitiveType.INT.arrayType())
+            is LongArray -> createArrayValue(value.toList().arrayToList(), PrimitiveType.LONG.arrayType())
+            is CharArray -> createArrayValue(value.toList().arrayToList(), PrimitiveType.CHAR.arrayType())
+            is FloatArray -> createArrayValue(value.toList().arrayToList(), PrimitiveType.FLOAT.arrayType())
+            is DoubleArray -> createArrayValue(value.toList().arrayToList(), PrimitiveType.DOUBLE.arrayType())
+            is BooleanArray -> createArrayValue(value.toList().arrayToList(), PrimitiveType.BOOLEAN.arrayType())
             null -> createNullValue()
             else -> null
         }
     }
+
+    private fun List<*>.arrayToList(): List<ConstantValue<*>> =
+            this.toList().mapNotNull { createConstantValue(it) }
+
+    private fun PrimitiveType.arrayType(): KotlinType =
+            builtins.getPrimitiveArrayKotlinType(this)
 
     fun createIntegerConstantValue(
             value: Long,

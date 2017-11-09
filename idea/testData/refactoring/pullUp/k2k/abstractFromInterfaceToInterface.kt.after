@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+interface T {
+    // INFO: {"checked": "true"}
+    val x: Int
+
+    // INFO: {"checked": "true"}
+    fun foo(n: Int): Boolean
+}
+
+interface U: T {
+}

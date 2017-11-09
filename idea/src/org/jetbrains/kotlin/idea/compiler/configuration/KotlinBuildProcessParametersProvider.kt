@@ -25,7 +25,7 @@ class KotlinBuildProcessParametersProvider(private val compilerWorkspaceSettings
     override fun getVMArguments(): MutableList<String> {
         val res = arrayListOf<String>()
         if (compilerWorkspaceSettings.preciseIncrementalEnabled) {
-            res.add("-Dkotlin.incremental.compilation.experimental=true")
+            res.add("-Dkotlin.incremental.compilation=true")
         }
         if (compilerWorkspaceSettings.enableDaemon) {
             res.add("-Dkotlin.daemon.enabled")

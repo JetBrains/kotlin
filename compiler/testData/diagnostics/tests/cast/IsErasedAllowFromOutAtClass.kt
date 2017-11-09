@@ -1,1 +1,1 @@
-fun f(a: List<Number>) = a is List<Any>
+fun f(a: List<Number>) = <!USELESS_IS_CHECK!>a is List<Any><!>

@@ -9,7 +9,7 @@ fun main(args: Array<String>) {
     }
 
     // inline in while condition (false)
-    while (id { false }) {                                          // 5
+    while (id { false }) {                                         // 5
         bar()
     }
 }                                                                  // 6

@@ -25,9 +25,11 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.idea.completion.LambdaSignatureTemplates
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.types.KotlinType
@@ -157,7 +159,9 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             }
 
             if (insertLambda && lambdaInfo!!.explicitParameters) {
-                insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset!! + 1), lambdaInfo.lambdaType)
+                val placeholderRange = TextRange(openingBracketOffset, closeBracketOffset!! + 1)
+                val explicitParameterTypes = LambdaSignatureTemplates.explicitParameterTypesRequired(context.file as KtFile, placeholderRange, lambdaInfo.lambdaType)
+                LambdaSignatureTemplates.insertTemplate(context, placeholderRange, lambdaInfo.lambdaType, explicitParameterTypes, signatureOnly = false)
                 return
             }
 

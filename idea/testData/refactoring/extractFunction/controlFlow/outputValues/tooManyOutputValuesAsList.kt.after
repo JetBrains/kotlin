@@ -5,8 +5,8 @@
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
-// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var b: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var c: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var d: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var e: kotlin.Int defined in foo
@@ -17,7 +17,7 @@ fun foo(a: Int): Int {
     var d: Int = 1
     var e: Int = 1
 
-    val list = list(a, b, c, d, e)
+    val list = list(b, a, c, d, e)
     b = list[0]
     c = list[1]
     d = list[2]
@@ -26,7 +26,7 @@ fun foo(a: Int): Int {
     return b + c + d + e
 }
 
-private fun list(a: Int, b: Int, c: Int, d: Int, e: Int): List<Int> {
+private fun list(b: Int, a: Int, c: Int, d: Int, e: Int): List<Int> {
     var b1 = b
     var c1 = c
     var d1 = d

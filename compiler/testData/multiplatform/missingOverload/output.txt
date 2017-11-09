@@ -1,0 +1,22 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/missingOverload/common.kt:7:13: error: expected function 'g' has no actual declaration in module
+The following declaration is incompatible because parameter types are different:
+    public actual fun g(a: Any): Unit
+
+expect fun g(s: String)
+            ^
+compiler/testData/multiplatform/missingOverload/jvm.kt:1:14: error: actual class 'Foo' has no corresponding members for expected class members:
+
+    public final expect fun f(a: Any): Unit
+
+    The following declaration is incompatible because parameter types are different:
+        public final actual fun f(s: String): Unit
+
+actual class Foo {
+             ^

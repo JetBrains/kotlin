@@ -29,9 +29,9 @@ interface KotlinJvmBinaryClass {
      */
     val location: String
 
-    fun loadClassAnnotations(visitor: AnnotationVisitor)
+    fun loadClassAnnotations(visitor: AnnotationVisitor, cachedContents: ByteArray?)
 
-    fun visitMembers(visitor: MemberVisitor)
+    fun visitMembers(visitor: MemberVisitor, cachedContents: ByteArray?)
 
     val classHeader: KotlinClassHeader
 

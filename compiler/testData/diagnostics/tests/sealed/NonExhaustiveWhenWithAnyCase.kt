@@ -9,7 +9,7 @@ sealed class Sealed {
 fun foo(s: Sealed): Int {
     return <!NO_ELSE_IN_WHEN!>when<!>(s) {
         is Sealed.First -> 1
-        !is Any -> 0
+        <!USELESS_IS_CHECK!>!is Any<!> -> 0
     }
 }
 

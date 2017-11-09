@@ -1,4 +1,4 @@
-// "Create abstract property 'foo'" "true"
+// "Create abstract property 'A.foo'" "true"
 abstract class A {
     fun bar(b: Boolean) {}
 

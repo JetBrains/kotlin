@@ -44,6 +44,9 @@ open class StubIndexService protected constructor() {
     open fun indexProperty(stub: KotlinPropertyStub, sink: IndexSink) {
     }
 
+    open fun indexParameter(stub: KotlinParameterStub, sink: IndexSink) {
+    }
+
     open fun indexAnnotation(stub: KotlinAnnotationEntryStub, sink: IndexSink) {
     }
 

@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.container
 
 import com.intellij.util.containers.ContainerUtil
 import java.lang.reflect.*
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import java.util.*
 
 private object ClassTraversalCache {
     private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<Class<*>, ClassInfo>()
@@ -42,7 +41,8 @@ fun Class<*>.getInfo(): ClassInfo {
 data class ClassInfo(
         val constructorInfo: ConstructorInfo?,
         val setterInfos: List<SetterInfo>,
-        val registrations: List<Type>
+        val registrations: List<Type>,
+        val defaultImplementation: Class<*>?
 )
 
 data class ConstructorInfo(
@@ -56,7 +56,7 @@ data class SetterInfo(
 )
 
 private fun traverseClass(c: Class<*>): ClassInfo {
-    return ClassInfo(getConstructorInfo(c), getSetterInfos(c), getRegistrations(c))
+    return ClassInfo(getConstructorInfo(c), getSetterInfos(c), getRegistrations(c), getDefaultImplementation(c))
 }
 
 private fun getSetterInfos(c: Class<*>): List<SetterInfo> {
@@ -81,7 +81,11 @@ private fun getConstructorInfo(c: Class<*>): ConstructorInfo? {
         return null
 
     val constructor = constructors.single()
-    return ConstructorInfo(constructor, constructor.genericParameterTypes.toList())
+    val parameterTypes =
+            if (c.declaringClass != null && !Modifier.isStatic(c.modifiers))
+                listOf(c.declaringClass, *constructor.genericParameterTypes)
+            else constructor.genericParameterTypes.toList()
+    return ConstructorInfo(constructor, parameterTypes)
 }
 
 
@@ -97,6 +101,10 @@ private fun collectInterfacesRecursive(type: Type, result: MutableSet<Type>) {
             collectInterfacesRecursive(it, result)
         }
     }
+}
+
+private fun getDefaultImplementation(klass: Class<*>): Class<*>? {
+    return klass.getAnnotation(DefaultImplementation::class.java)?.impl?.java
 }
 
 private fun getRegistrations(klass: Class<*>): List<Type> {

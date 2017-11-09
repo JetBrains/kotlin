@@ -1,0 +1,48 @@
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
+configurePublishing(project)
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'http://repository.jetbrains.com/utils' }
+}
+
+dependencies {
+    compile project(':kotlin-gradle-plugin-api')
+
+    compile project(':kotlin-stdlib')
+    compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+    compileOnly project(':kotlin-allopen-compiler-plugin')
+
+    compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
+}
+
+evaluationDependsOn(":kotlin-allopen-compiler-plugin")
+
+jar {
+    from(project(":kotlin-allopen-compiler-plugin").sourceSets.main.output.classesDirs)
+    from(project(":kotlin-allopen-compiler-plugin").sourceSets.main.output.resourcesDir)
+    manifestAttributes(manifest, project)
+}
+
+ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+pluginBundle {
+    plugins {
+        kotlinAllopenPlugin {
+            id = 'org.jetbrains.kotlin.plugin.allopen'
+            description = displayName = 'Kotlin All Open compiler plugin'
+        }
+        kotlinSpringPlugin {
+            id = 'org.jetbrains.kotlin.plugin.spring'
+            description = displayName = 'Kotlin Spring compiler plugin'
+        }
+    }
+}

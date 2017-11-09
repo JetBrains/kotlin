@@ -1,7 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1110
 package foo
 
-@native
-fun nativeFun(i:Int, s:String): String = noImpl
+external fun nativeFun(i:Int, s:String): String = definedExternally
 
 fun bar(funRef: (Int, String) -> String): String = funRef(4, "boo")
 

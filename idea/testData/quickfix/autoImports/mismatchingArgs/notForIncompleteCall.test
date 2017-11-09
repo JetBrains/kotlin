@@ -3,7 +3,6 @@
 // ERROR: Type mismatch: inferred type is Int but String was expected
 // ACTION: Add 'toString()' call
 // ACTION: Change parameter 'p' type of function 'main.X.foo' to 'Int'
-// ACTION: Convert to expression body
 // ACTION: Create function 'foo'
 
 package main

@@ -1,4 +1,4 @@
-JetFile: PackageLongNameBetweenDots.kt
+KtFile: PackageLongNameBetweenDots.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

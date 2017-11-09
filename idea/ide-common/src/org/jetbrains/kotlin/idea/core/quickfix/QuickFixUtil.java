@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -60,7 +62,7 @@ public class QuickFixUtil {
     public static KotlinType getDeclarationReturnType(KtNamedDeclaration declaration) {
         PsiFile file = declaration.getContainingFile();
         if (!(file instanceof KtFile)) return null;
-        DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(declaration);
+        DeclarationDescriptor descriptor = ResolutionUtils.unsafeResolveToDescriptor(declaration, BodyResolveMode.FULL);
         if (!(descriptor instanceof CallableDescriptor)) return null;
         KotlinType type = ((CallableDescriptor) descriptor).getReturnType();
         if (type instanceof DeferredType) {
@@ -120,13 +122,23 @@ public class QuickFixUtil {
         return null;
     }
 
+    // Returns true iff parent's value always or sometimes is evaluable to child's value, e.g.
+    // parent = (x), child = x;
+    // parent = if (...) x else y, child = x;
+    // parent = y.x, child = x
     public static boolean canEvaluateTo(KtExpression parent, KtExpression child) {
         if (parent == null || child == null) {
             return false;
         }
         while (parent != child) {
-            if (child.getParent() instanceof KtParenthesizedExpression) {
-                child = (KtExpression) child.getParent();
+            PsiElement childParent = child.getParent();
+            if (childParent instanceof KtParenthesizedExpression) {
+                child = (KtExpression) childParent;
+                continue;
+            }
+            if (childParent instanceof KtDotQualifiedExpression &&
+                (child instanceof KtCallExpression || child instanceof KtDotQualifiedExpression)) {
+                child = (KtExpression) childParent;
                 continue;
             }
             child = getParentIfForBranch(child);
@@ -151,8 +163,9 @@ public class QuickFixUtil {
     }
 
     public static String renderTypeWithFqNameOnClash(KotlinType type, String nameToCheckAgainst) {
-        FqName typeFqName = DescriptorUtils.getFqNameSafe(DescriptorUtils.getClassDescriptorForType(type));
         FqName fqNameToCheckAgainst = new FqName(nameToCheckAgainst);
+        ClassifierDescriptor typeClassifierDescriptor = type.getConstructor().getDeclarationDescriptor();
+        FqName typeFqName = typeClassifierDescriptor != null ? DescriptorUtils.getFqNameSafe(typeClassifierDescriptor) : fqNameToCheckAgainst;
         DescriptorRenderer renderer = typeFqName.shortName().equals(fqNameToCheckAgainst.shortName())
                ? IdeDescriptorRenderers.SOURCE_CODE
                : IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES;

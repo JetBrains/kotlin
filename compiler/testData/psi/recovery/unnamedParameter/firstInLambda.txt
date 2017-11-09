@@ -1,4 +1,4 @@
-JetFile: firstInLambda.kt
+KtFile: firstInLambda.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

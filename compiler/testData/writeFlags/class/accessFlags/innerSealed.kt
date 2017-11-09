@@ -1,0 +1,11 @@
+class Foo {
+    sealed class Bar
+}
+
+// TESTED_OBJECT_KIND: class
+// TESTED_OBJECTS: Foo$Bar
+// FLAGS: ACC_PUBLIC, ACC_ABSTRACT, ACC_SUPER
+
+// TESTED_OBJECT_KIND: innerClass
+// TESTED_OBJECTS: Foo, Bar
+// FLAGS: ACC_PUBLIC, ACC_ABSTRACT, ACC_STATIC

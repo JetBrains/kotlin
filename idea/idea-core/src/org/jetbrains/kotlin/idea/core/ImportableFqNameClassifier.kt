@@ -34,16 +34,15 @@ class ImportableFqNameClassifier(private val file: KtFile) {
     init {
         for (import in file.importDirectives) {
             val importPath = import.importPath ?: continue
-            val fqName = importPath.fqnPart()
-            if (importPath.isAllUnder) {
-                allUnderImports.add(fqName)
-            }
-            else if (!importPath.hasAlias()) {
-                preciseImports.add(fqName)
-                preciseImportPackages.add(fqName.parent())
-            } else {
-                excludedImports.add(fqName)
-                // TODO: support aliased imports in completion
+            val fqName = importPath.fqName
+            when {
+                importPath.isAllUnder -> allUnderImports.add(fqName)
+                !importPath.hasAlias() -> {
+                    preciseImports.add(fqName)
+                    preciseImportPackages.add(fqName.parent())
+                }
+                else -> excludedImports.add(fqName)
+            // TODO: support aliased imports in completion
             }
         }
     }
@@ -93,4 +92,4 @@ class ImportableFqNameClassifier(private val file: KtFile) {
 }
 
 fun isJavaClassNotToBeUsedInKotlin(fqName: FqName): Boolean
-        = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName, DefaultBuiltIns.Instance).isNotEmpty() || JavaAnnotationMapper.javaToKotlinNameMap[fqName] != null
+        = JavaToKotlinClassMap.isJavaPlatformClass(fqName) || JavaAnnotationMapper.javaToKotlinNameMap[fqName] != null

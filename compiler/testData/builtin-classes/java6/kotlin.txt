@@ -7,6 +7,8 @@ public fun byteArrayOf(/*0*/ vararg elements: kotlin.Byte /*kotlin.ByteArray*/):
 public fun charArrayOf(/*0*/ vararg elements: kotlin.Char /*kotlin.CharArray*/): kotlin.CharArray
 public fun doubleArrayOf(/*0*/ vararg elements: kotlin.Double /*kotlin.DoubleArray*/): kotlin.DoubleArray
 public inline fun </*0*/ reified @kotlin.internal.PureReifiable T> emptyArray(): kotlin.Array<T>
+@kotlin.SinceKotlin(version = "1.1") public inline fun </*0*/ reified T : kotlin.Enum<T>> enumValueOf(/*0*/ name: kotlin.String): T
+@kotlin.SinceKotlin(version = "1.1") public inline fun </*0*/ reified T : kotlin.Enum<T>> enumValues(): kotlin.Array<T>
 public fun floatArrayOf(/*0*/ vararg elements: kotlin.Float /*kotlin.FloatArray*/): kotlin.FloatArray
 public fun intArrayOf(/*0*/ vararg elements: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
 public fun longArrayOf(/*0*/ vararg elements: kotlin.Long /*kotlin.LongArray*/): kotlin.LongArray
@@ -21,7 +23,7 @@ public open class Any {
     /*primary*/ public constructor Any()
 }
 
-public final class Array</*0*/ T> : kotlin.Cloneable, java.io.Serializable {
+public final class Array</*0*/ T> : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     public constructor Array</*0*/ T>(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> T)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
@@ -40,7 +42,7 @@ public final class Boolean : kotlin.Comparable<kotlin.Boolean>, java.io.Serializ
     public final infix fun xor(/*0*/ other: kotlin.Boolean): kotlin.Boolean
 }
 
-public final class BooleanArray : kotlin.Cloneable, java.io.Serializable {
+public final class BooleanArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor BooleanArray(/*0*/ size: kotlin.Int)
     public constructor BooleanArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Boolean)
     public final val size: kotlin.Int
@@ -73,12 +75,12 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte>, java.io
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -89,6 +91,12 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte>, java.io
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.ranges.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Byte): kotlin.Int
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Int): kotlin.Int
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
@@ -114,7 +122,7 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte>, java.io
     }
 }
 
-public final class ByteArray : kotlin.Cloneable, java.io.Serializable {
+public final class ByteArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor ByteArray(/*0*/ size: kotlin.Int)
     public constructor ByteArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Byte)
     public final val size: kotlin.Int
@@ -134,13 +142,13 @@ public final class Char : kotlin.Comparable<kotlin.Char>, java.io.Serializable {
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Char
     public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Char
     public final operator fun rangeTo(/*0*/ other: kotlin.Char): kotlin.ranges.CharRange
-    public open fun toByte(): kotlin.Byte
-    public open fun toChar(): kotlin.Char
-    public open fun toDouble(): kotlin.Double
-    public open fun toFloat(): kotlin.Float
-    public open fun toInt(): kotlin.Int
-    public open fun toLong(): kotlin.Long
-    public open fun toShort(): kotlin.Short
+    public final fun toByte(): kotlin.Byte
+    public final fun toChar(): kotlin.Char
+    public final fun toDouble(): kotlin.Double
+    public final fun toFloat(): kotlin.Float
+    public final fun toInt(): kotlin.Int
+    public final fun toLong(): kotlin.Long
+    public final fun toShort(): kotlin.Short
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -159,7 +167,7 @@ public final class Char : kotlin.Comparable<kotlin.Char>, java.io.Serializable {
     }
 }
 
-public final class CharArray : kotlin.Cloneable, java.io.Serializable {
+public final class CharArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor CharArray(/*0*/ size: kotlin.Int)
     public constructor CharArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Char)
     public final val size: kotlin.Int
@@ -239,18 +247,24 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double>, jav
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Byte): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Float): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Int): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Long): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Short): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Double
@@ -282,7 +296,7 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double>, jav
     }
 }
 
-public final class DoubleArray : kotlin.Cloneable, java.io.Serializable {
+public final class DoubleArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor DoubleArray(/*0*/ size: kotlin.Int)
     public constructor DoubleArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Double)
     public final val size: kotlin.Int
@@ -291,6 +305,10 @@ public final class DoubleArray : kotlin.Cloneable, java.io.Serializable {
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Double
     public final operator fun iterator(): kotlin.collections.DoubleIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Double): kotlin.Unit
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.1") public final annotation class DslMarker : kotlin.Annotation {
+    /*primary*/ public constructor DslMarker()
 }
 
 public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E>, java.io.Serializable {
@@ -335,18 +353,24 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float>, java.
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Float
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Float
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Float
-    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Float
-    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Float
-    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Float
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Byte): kotlin.Float
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Int): kotlin.Float
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Long): kotlin.Float
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Short): kotlin.Float
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Float
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
@@ -378,7 +402,7 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float>, java.
     }
 }
 
-public final class FloatArray : kotlin.Cloneable, java.io.Serializable {
+public final class FloatArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor FloatArray(/*0*/ size: kotlin.Int)
     public constructor FloatArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Float)
     public final val size: kotlin.Int
@@ -416,12 +440,12 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int>, java.io.S
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final infix fun or(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
@@ -433,6 +457,12 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int>, java.io.S
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.ranges.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Byte): kotlin.Int
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Int): kotlin.Int
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Short): kotlin.Int
     public final infix fun shl(/*0*/ bitCount: kotlin.Int): kotlin.Int
     public final infix fun shr(/*0*/ bitCount: kotlin.Int): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Int
@@ -462,7 +492,7 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int>, java.io.S
     }
 }
 
-public final class IntArray : kotlin.Cloneable, java.io.Serializable {
+public final class IntArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor IntArray(/*0*/ size: kotlin.Int)
     public constructor IntArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Int)
     public final val size: kotlin.Int
@@ -497,12 +527,12 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long>, java.io
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Long
-    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Long
-    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Long
     public final infix fun or(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
@@ -514,6 +544,12 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long>, java.io
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.ranges.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ranges.LongRange
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Byte): kotlin.Long
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Int): kotlin.Long
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Short): kotlin.Long
     public final infix fun shl(/*0*/ bitCount: kotlin.Int): kotlin.Long
     public final infix fun shr(/*0*/ bitCount: kotlin.Int): kotlin.Long
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Long
@@ -543,7 +579,7 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long>, java.io
     }
 }
 
-public final class LongArray : kotlin.Cloneable, java.io.Serializable {
+public final class LongArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor LongArray(/*0*/ size: kotlin.Int)
     public constructor LongArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Long)
     public final val size: kotlin.Int
@@ -573,6 +609,10 @@ public abstract class Number : kotlin.Any, java.io.Serializable {
     /*primary*/ public constructor ParameterName(/*0*/ name: kotlin.String)
     public final val name: kotlin.String
         public final fun <get-name>(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.1") public final annotation class PublishedApi : kotlin.Annotation {
+    /*primary*/ public constructor PublishedApi()
 }
 
 @kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented public final annotation class ReplaceWith : kotlin.Annotation {
@@ -605,12 +645,12 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short>, java.
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -621,6 +661,12 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short>, java.
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.ranges.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Byte): kotlin.Int
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Int): kotlin.Int
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.SinceKotlin(version = "1.1") public final operator fun rem(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
@@ -646,7 +692,7 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short>, java.
     }
 }
 
-public final class ShortArray : kotlin.Cloneable, java.io.Serializable {
+public final class ShortArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor ShortArray(/*0*/ size: kotlin.Int)
     public constructor ShortArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Short)
     public final val size: kotlin.Int
@@ -657,7 +703,7 @@ public final class ShortArray : kotlin.Cloneable, java.io.Serializable {
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Short): kotlin.Unit
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented public final annotation class SinceKotlin : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented public final annotation class SinceKotlin : kotlin.Annotation {
     /*primary*/ public constructor SinceKotlin(/*0*/ version: kotlin.String)
     public final val version: kotlin.String
         public final fun <get-version>(): kotlin.String

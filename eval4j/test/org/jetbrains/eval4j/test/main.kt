@@ -160,7 +160,7 @@ object REFLECTION_EVAL : Eval {
                 Type.OBJECT,
                 Type.ARRAY -> {
                     val value = JArray.get(arr, ind)
-                    if (value == null) NULL_VALUE else ObjectValue(value, Type.getType(value.javaClass))
+                    if (value == null) NULL_VALUE else ObjectValue(value, Type.getType(value::class.java))
                 }
                 else -> throw UnsupportedOperationException("Unsupported array element type: $elementType")
             }
@@ -204,7 +204,7 @@ object REFLECTION_EVAL : Eval {
             }
         }
         catch (e: Throwable) {
-            throw ThrownFromEvaluatedCodeException(ObjectValue(e, Type.getType(e.javaClass)))
+            throw ThrownFromEvaluatedCodeException(ObjectValue(e, Type.getType(e::class.java)))
         }
     }
 
@@ -262,7 +262,7 @@ object REFLECTION_EVAL : Eval {
     }
 
     fun findInstanceField(obj: Any, fieldDesc: FieldDescription): Field {
-        val _class = obj.javaClass
+        val _class = obj::class.java
         val field = _class.findField(fieldDesc)
         assertNotNull("Field not found: $fieldDesc", field)
         return field!!
@@ -287,7 +287,7 @@ object REFLECTION_EVAL : Eval {
             }
         }
         val obj = instance.obj().checkNull()
-        val method = obj.javaClass.findMethod(methodDesc)
+        val method = obj::class.java.findMethod(methodDesc)
         assertNotNull("Method not found: $methodDesc", method)
         val args = mapArguments(arguments, methodDesc.parameterTypes).toTypedArray()
         val result = mayThrow {method!!.invoke(obj, *args)}
@@ -322,7 +322,7 @@ class ReflectionLookup(val classLoader: ClassLoader) {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun Class<Any>.findMethod(methodDesc: MethodDescription): Method? {
+fun Class<out Any>.findMethod(methodDesc: MethodDescription): Method? {
     for (declared in declaredMethods) {
         if (methodDesc.matches(declared)) return declared
     }
@@ -369,7 +369,7 @@ fun MethodDescription.matches(method: Method): Boolean {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun Class<Any>.findField(fieldDesc: FieldDescription): Field? {
+fun Class<out Any>.findField(fieldDesc: FieldDescription): Field? {
     for (declared in declaredFields) {
         if (fieldDesc.matches(declared)) return declared
     }

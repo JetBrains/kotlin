@@ -11,4 +11,3 @@ fun fn(value: Any) {
 }
 
 // TYPE: value -> <html>A & B (smart cast from Any)</html>
-// TYPE: println(value) -> <html>Unit</html>

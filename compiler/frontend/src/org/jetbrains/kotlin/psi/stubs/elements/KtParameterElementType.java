@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
@@ -62,5 +63,10 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         StringRef fqName = dataStream.readName();
 
          return new KotlinParameterStubImpl(parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue);
+    }
+
+    @Override
+    public void indexStub(@NotNull KotlinParameterStub stub, @NotNull IndexSink sink) {
+        StubIndexService.getInstance().indexParameter(stub, sink);
     }
 }

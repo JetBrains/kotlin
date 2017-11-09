@@ -37,7 +37,7 @@ public final annotation class AnnSA : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class MyClass {
+@AnnSA(sa = {}) public final class MyClass {
     public constructor MyClass()
     public final val i: kotlin.Int = 1
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,12 +33,18 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ConcatenatedStringGeneratorTestGenerated extends AbstractConcatenatedStringGeneratorTest {
     public void testAllFilesPresentInConcatenatedStringGenerator() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/concatenatedStringGenerator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/concatenatedStringGenerator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("constants.kt")
     public void testConstants() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/concatenatedStringGenerator/constants.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("constants2.kt")
+    public void testConstants2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/concatenatedStringGenerator/constants2.kt");
         doTest(fileName);
     }
 
@@ -50,6 +57,12 @@ public class ConcatenatedStringGeneratorTestGenerated extends AbstractConcatenat
     @TestMetadata("stringtemplate.kt")
     public void testStringtemplate() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/concatenatedStringGenerator/stringtemplate.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("stringtemplateWithConstant.kt")
+    public void testStringtemplateWithConstant() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/concatenatedStringGenerator/stringtemplateWithConstant.kt");
         doTest(fileName);
     }
 

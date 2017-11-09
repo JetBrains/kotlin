@@ -29,14 +29,11 @@ import java.io.File
 import java.util.*
 
 
-open class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
+open class LookupStorage(targetDataDir: File) : BasicMapsOwner(targetDataDir) {
     companion object {
         private val DELETED_TO_SIZE_TRESHOLD = 0.5
         private val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000
     }
-
-    private val String.storageFile: File
-        get() = File(targetDataDir, this + "." + CACHE_EXTENSION)
 
     private val countersFile = "counters".storageFile
     private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile))
@@ -197,7 +194,7 @@ open class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
 }
 
 class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
-    val lookups = MultiMap<LookupSymbol, String>()
+    val lookups = MultiMap.createSet<LookupSymbol, String>()
     val pathInterner = StringInterner()
     private val interner = StringInterner()
 

@@ -1,5 +1,0 @@
-package test
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.LOCAL_VARIABLE}) public final annotation class local : kotlin.Annotation {
-    public constructor local()
-}

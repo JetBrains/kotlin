@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_RUNTIME
 // FULL_JDK
 
@@ -8,11 +11,6 @@ import java.lang.Class
 @Target(TYPEALIAS)
 @Retention(RUNTIME)
 annotation class Ann(val x: Int)
-
-class C {
-    @Ann(1)
-    typealias TA = Any
-}
 
 @Ann(2)
 typealias TA = Any
@@ -25,7 +23,6 @@ fun Class<*>.assertHasDeclaredMethodWithAnn() {
 
 fun box(): String {
     Class.forName("AnnotationsOnTypeAliasesKt").assertHasDeclaredMethodWithAnn()
-    Class.forName("C").assertHasDeclaredMethodWithAnn()
 
     return "OK"
 }

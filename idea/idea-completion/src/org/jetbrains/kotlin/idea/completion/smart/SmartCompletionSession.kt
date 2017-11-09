@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
+import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.LambdaArgument
 import org.jetbrains.kotlin.psi.ValueArgumentName
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -46,8 +46,6 @@ class SmartCompletionSession(
     override val descriptorKindFilter: DescriptorKindFilter by lazy {
         // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
         var filter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
-
-        filter = filter exclude TopLevelExtensionsExclude // handled via indices
 
         if (smartCompletion?.expectedInfos?.filterFunctionExpected()?.isNotEmpty() ?: false) {
             // if function type is expected we need classes to obtain their constructors
@@ -88,9 +86,12 @@ class SmartCompletionSession(
         val filter = smartCompletion!!.descriptorFilter
         val contextVariableTypesForReferenceVariants = filter?.let {
             withCollectRequiredContextVariableTypes { lookupElementFactory ->
-                val (imported, notImported) = referenceVariantsWithNonInitializedVarExcluded ?: return@withCollectRequiredContextVariableTypes
-                imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
-                notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+                if (referenceVariantsCollector != null) {
+                    val (imported, notImported) = referenceVariantsCollector.collectReferenceVariants(descriptorKindFilter).excludeNonInitializedVariable()
+                    imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
+                    notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+                    referenceVariantsCollector.collectingFinished()
+                }
             }
         }
 
@@ -122,7 +123,8 @@ class SmartCompletionSession(
             if (filter != null) {
                 val staticMembersCompletion: StaticMembersCompletion?
                 if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-                    staticMembersCompletion = StaticMembersCompletion(prefixMatcher, resolutionFacade, lookupElementFactory, referenceVariants!!.imported, isJvmModule)
+                    val alreadyCollected = referenceVariantsCollector!!.allCollected.imported
+                    staticMembersCompletion = StaticMembersCompletion(prefixMatcher, resolutionFacade, lookupElementFactory, alreadyCollected, isJvmModule)
                     val decoratedFactory = staticMembersCompletion.decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER_FROM_IMPORTS)
                     staticMembersCompletion.membersFromImports(file)
                             .flatMap { filter(it, decoratedFactory) }

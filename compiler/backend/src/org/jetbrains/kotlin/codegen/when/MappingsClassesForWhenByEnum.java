@@ -28,7 +28,7 @@ import java.util.Set;
 
 public class MappingsClassesForWhenByEnum {
     private final GenerationState state;
-    private final Set<String> generatedMappingClasses = new HashSet<String>();
+    private final Set<String> generatedMappingClasses = new HashSet<>();
     private final MappingClassesForWhenByEnumCodegen mappingsCodegen;
 
     public MappingsClassesForWhenByEnum(@NotNull GenerationState state) {

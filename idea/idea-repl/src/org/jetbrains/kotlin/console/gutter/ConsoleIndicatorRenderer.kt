@@ -26,5 +26,5 @@ class ConsoleIndicatorRenderer(iconWithTooltip: IconWithTooltip) : GutterIconRen
     override fun getTooltipText() = tooltip
 
     override fun hashCode() = icon.hashCode()
-    override fun equals(other: Any?) = icon == (other as? ConsoleIndicatorRenderer)?.icon ?: null
+    override fun equals(other: Any?) = icon == (other as? ConsoleIndicatorRenderer)?.icon
 }

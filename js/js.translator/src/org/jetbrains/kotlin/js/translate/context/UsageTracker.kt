@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.js.translate.context
 
 import org.jetbrains.kotlin.descriptors.*
-import com.google.dart.compiler.backend.js.ast.JsName
-import com.google.dart.compiler.backend.js.ast.JsScope
+import org.jetbrains.kotlin.js.backend.ast.JsName
+import org.jetbrains.kotlin.js.backend.ast.JsScope
+import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
+import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
@@ -28,11 +30,11 @@ private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
 
 class UsageTracker(
         private val parent: UsageTracker?,
-        val containingDescriptor: MemberDescriptor,
-        private val scope: JsScope
+        val containingDescriptor: MemberDescriptor
 ) {
 
     private val captured = linkedMapOf<DeclarationDescriptor, JsName>()
+    private val capturedTypesImpl = mutableMapOf<TypeParameterDescriptor, JsName>()
 
     // For readonly access from external places.
     val capturedDescriptorToJsName: Map<DeclarationDescriptor, JsName>
@@ -41,6 +43,9 @@ class UsageTracker(
     val capturedDescriptors: Set<DeclarationDescriptor>
         get() = captured.keys
 
+    val capturedTypes: Map<TypeParameterDescriptor, JsName>
+        get() = capturedTypesImpl
+
     fun used(descriptor: DeclarationDescriptor) {
         if (isCaptured(descriptor)) return
 
@@ -48,7 +53,6 @@ class UsageTracker(
 
         // local named function
         if (descriptor is FunctionDescriptor && descriptor.visibility == Visibilities.LOCAL) {
-            assert(!descriptor.getName().isSpecial) { "Function with special name can not be captured, descriptor: $descriptor" }
             captureIfNeed(descriptor)
         }
         // local variable
@@ -65,7 +69,6 @@ class UsageTracker(
     }
 
     private fun captureIfNeed(descriptor: DeclarationDescriptor?) {
-
         if (descriptor == null || isCaptured(descriptor) || !isInLocalDeclaration() ||
             isAncestor(containingDescriptor, descriptor, /* strict = */ true) ||
             isReceiverAncestor(descriptor) || isSingletonReceiver(descriptor)
@@ -73,9 +76,16 @@ class UsageTracker(
             return
         }
 
+        if (descriptor.isCoroutineLambda && descriptor == containingDescriptor) return
+
         parent?.captureIfNeed(descriptor)
 
         captured[descriptor] = descriptor.getJsNameForCapturedDescriptor()
+
+        if (descriptor is TypeParameterDescriptor && descriptor.containingDeclaration.original != containingDescriptor.original) {
+            val name = "typeClosure\$" + NameSuggestion.sanitizeName(descriptor.name.asString())
+            capturedTypesImpl[descriptor] = JsScope.declareTemporaryName(name)
+        }
     }
 
     private fun isInLocalDeclaration(): Boolean {
@@ -111,13 +121,8 @@ class UsageTracker(
         // Class which instance we are trying to capture
         val currentClass = descriptor.containingDeclaration as? ClassDescriptor ?: return false
 
-        // We always capture enclosing class if it's not outer (i.e. we are capturing members of enclosing class to a local class)
-        if (containingClass != currentClass && containingClass.containingDeclaration !is ClassDescriptor) {
-            return false
-        }
-
         for (outerDeclaration in generateSequence(containingClass) { it.containingDeclaration as? ClassDescriptor }) {
-            if (DescriptorUtils.isSubclass(outerDeclaration, currentClass)) return true
+            if (outerDeclaration == currentClass) return true
         }
 
         return false
@@ -170,12 +175,12 @@ class UsageTracker(
 
             // Append 'closure$' prefix to avoid name clash between closure and member fields in case of local classes
             else -> {
-                val mangled = NameSuggestion().suggest(this)!!.names.last()
+                val mangled = NameSuggestion.sanitizeName(NameSuggestion().suggest(this)!!.names.last())
                 "closure\$$mangled"
             }
         }
 
-        return scope.declareFreshName(suggestedName)
+        return JsScope.declareTemporaryName(suggestedName).apply { descriptor = this@getJsNameForCapturedDescriptor }
     }
 }
 
@@ -204,8 +209,8 @@ private fun ReceiverParameterDescriptor.getNameForCapturedReceiver(): String {
     val containingDeclaration = this.containingDeclaration
 
     assert(containingDeclaration is MemberDescriptor) {
-        "Unsupported descriptor type: ${containingDeclaration.javaClass}, " +
-        "receiverDescriptor = $this, " +"containingDeclaration = $containingDeclaration"
+        "Unsupported descriptor type: ${containingDeclaration::class.java}, " +
+        "receiverDescriptor = $this, " + "containingDeclaration = $containingDeclaration"
     }
 
     if (DescriptorUtils.isCompanionObject(containingDeclaration)) {

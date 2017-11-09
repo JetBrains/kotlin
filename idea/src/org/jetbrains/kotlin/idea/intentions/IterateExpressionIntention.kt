@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.*
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Iterate over collection"), HighPriorityAction {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
@@ -77,7 +76,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                     componentFunctions.map { suggestNamesForComponent(it, project, collectingValidator) }
                 }
                 else {
-                    KotlinNameSuggester.suggestIterationVariableNames(element, elementType, bindingContext, nameValidator, "e").singletonList()
+                    listOf(KotlinNameSuggester.suggestIterationVariableNames(element, elementType, bindingContext, nameValidator, "e"))
                 }
 
                 val paramPattern = (names.singleOrNull()?.first()
@@ -85,19 +84,19 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                 var forExpression = psiFactory.createExpressionByPattern("for($0 in $1) {\nx\n}", paramPattern, element) as KtForExpression
                 forExpression = element.replaced(forExpression)
 
-                PsiDocumentManager.getInstance(forExpression.project).doPostponedOperationsAndUnblockDocument(editor.document)
+                CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(forExpression)?.let { forExpression ->
+                    val bodyPlaceholder = (forExpression.body as KtBlockExpression).statements.single()
+                    val parameters = forExpression.destructuringDeclaration?.entries ?: listOf(forExpression.loopParameter!!)
 
-                val bodyPlaceholder = (forExpression.body as KtBlockExpression).statements.single()
-                val parameters = forExpression.destructuringDeclaration?.entries ?: forExpression.loopParameter!!.singletonList()
+                    val templateBuilder = TemplateBuilderImpl(forExpression)
+                    for ((parameter, parameterNames) in (parameters zip names)) {
+                        templateBuilder.replaceElement(parameter, ChooseStringExpression(parameterNames))
+                    }
+                    templateBuilder.replaceElement(bodyPlaceholder, ConstantNode(""), false)
+                    templateBuilder.setEndVariableAfter(bodyPlaceholder)
 
-                val templateBuilder = TemplateBuilderImpl(forExpression)
-                for ((parameter, parameterNames) in (parameters zip names)) {
-                    templateBuilder.replaceElement(parameter, ChooseStringExpression(parameterNames))
+                    templateBuilder.run(editor, true)
                 }
-                templateBuilder.replaceElement(bodyPlaceholder, ConstantNode(""), false)
-                templateBuilder.setEndVariableAfter(bodyPlaceholder)
-
-                templateBuilder.run(editor, true)
             }
         }
     }

@@ -29,10 +29,11 @@ import kotlin.reflect.KClass
 @MustBeDocumented
 public annotation class JvmOverloads
 
-
 /**
- * Specifies that a static method or field needs to be generated from this element.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#static-methods-and-fields)
+ * Specifies that an additional static method needs to be generated from this element if it's a function.
+ * If this element is a property, additional static getter/setter methods should be generated.
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#static-methods)
  * for more information.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
@@ -42,7 +43,8 @@ public annotation class JvmStatic
 
 /**
  * Specifies the name for the Java class or method which is generated from this element.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-jvmname)
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#handling-signature-clashes-with-jvmname)
  * for more information.
  * @property name the name of the element.
  */
@@ -59,6 +61,18 @@ public annotation class JvmName(val name: String)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class JvmMultifileClass
+
+/**
+ * Changes the fully qualified name of the JVM package of the .class file generated from this file.
+ * This does not affect the way Kotlin clients will see the declarations in this file, but Java clients and other JVM language clients
+ * will see the class file as if it was declared in the specified package.
+ * If a file is annotated with this annotation, it can only have function, property and typealias declarations, but no classes.
+ */
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@SinceKotlin("1.2")
+internal annotation class JvmPackageName(val name: String)
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
@@ -89,6 +103,9 @@ public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable
 
 /**
  * Instructs the Kotlin compiler not to generate getters/setters for this property and expose it as a field.
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#instance-fields)
+ * for more information.
  */
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.BINARY)

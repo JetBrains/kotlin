@@ -17,28 +17,34 @@
 package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
 import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 
-import java.io.File;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UComment;
+import org.jetbrains.uast.UFile;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
+import org.jetbrains.uast.visitor.UastVisitor;
 
-import org.jetbrains.uast.check.UastScanner;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Looks for issues in Java comments
  */
-public class CommentDetector extends Detector implements UastScanner {
+public class CommentDetector extends Detector implements Detector.UastScanner {
     private static final String STOPSHIP_COMMENT = "STOPSHIP"; //$NON-NLS-1$
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             CommentDetector.class,
-            Scope.SOURCE_FILE_SCOPE);
+            Scope.JAVA_FILE_SCOPE);
 
     /** Looks for hidden code */
     public static final Issue EASTER_EGG = Issue.create(
@@ -69,8 +75,8 @@ public class CommentDetector extends Detector implements UastScanner {
 
     private static final String ESCAPE_STRING = "\\u002a\\u002f"; //$NON-NLS-1$
 
-    /** Lombok's AST only passes comment nodes for Javadoc so I need to do manual token scanning
-         instead */
+    /** The current AST only passes comment nodes for Javadoc so I need to do manual token scanning
+     instead */
     private static final boolean USE_AST = false;
 
 
@@ -78,30 +84,20 @@ public class CommentDetector extends Detector implements UastScanner {
     public CommentDetector() {
     }
 
+    @Nullable
     @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return true;
-    }
-
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.NORMAL;
-    }
-
-    /*@Override
-    public List<Class<? extends Node>> getApplicableNodeTypes() {
+    public List<Class<? extends UElement>> getApplicableUastTypes() {
         if (USE_AST) {
-            return Collections.<Class<? extends Node>>singletonList(Comment.class);
+            return Collections.<Class<? extends UElement>>singletonList(
+                    UFile.class);
         } else {
             return null;
         }
     }
 
+    @Nullable
     @Override
-    public AstVisitor createJavaVisitor(@NonNull JavaContext context) {
-        // Lombok does not generate comment nodes for block and line comments, only for
-        // javadoc comments!
+    public UastVisitor createUastVisitor(@NonNull JavaContext context) {
         if (USE_AST) {
             return new CommentChecker(context);
         } else {
@@ -124,15 +120,15 @@ public class CommentDetector extends Detector implements UastScanner {
                         if (end == -1) {
                             end = n;
                         }
-                        checkComment(context, source, 0, start, end);
+                        checkComment(context, null, source, 0, start, end);
                     } else if (next == '*') {
                         // Block comment
                         int start = i + 2;
-                        int end = source.indexOf("*//*", start);
+                        int end = source.indexOf("*/", start);
                         if (end == -1) {
                             end = n;
                         }
-                        checkComment(context, source, 0, start, end);
+                        checkComment(context, null, source, 0, start, end);
                     }
                 }
             }
@@ -140,7 +136,7 @@ public class CommentDetector extends Detector implements UastScanner {
         }
     }
 
-    private static class CommentChecker extends ForwardingAstVisitor {
+    private static class CommentChecker extends AbstractUastVisitor {
         private final JavaContext mContext;
 
         public CommentChecker(JavaContext context) {
@@ -148,15 +144,19 @@ public class CommentDetector extends Detector implements UastScanner {
         }
 
         @Override
-        public boolean visitComment(Comment node) {
-            String contents = node.astContent();
-            checkComment(mContext, contents, node.getPosition().getStart(), 0, contents.length());
-            return super.visitComment(node);
+        public boolean visitFile(UFile node) {
+            for (UComment comment : node.getAllCommentsInFile()) {
+                String contents = comment.getText();
+                checkComment(mContext, comment, contents,
+                             comment.getPsi().getTextRange().getStartOffset(), 0, contents.length());
+            }
+            return super.visitFile(node);
         }
     }
 
     private static void checkComment(
-            @NonNull Context context,
+            @NonNull JavaContext context,
+            @Nullable UComment node,
             @NonNull String source,
             int offset,
             int start,
@@ -168,25 +168,32 @@ public class CommentDetector extends Detector implements UastScanner {
             if (prev == '\\') {
                 if (c == 'u' || c == 'U') {
                     if (source.regionMatches(true, i - 1, ESCAPE_STRING,
-                            0, ESCAPE_STRING.length())) {
+                                             0, ESCAPE_STRING.length())) {
                         Location location = Location.create(context.file, source,
-                                offset + i - 1, offset + i - 1 + ESCAPE_STRING.length());
-                        context.report(EASTER_EGG, location,
-                                "Code might be hidden here; found unicode escape sequence " +
-                                "which is interpreted as comment end, compiled code follows");
+                                                            offset + i - 1, offset + i - 1 + ESCAPE_STRING.length());
+                        context.report(EASTER_EGG, node, location,
+                                       "Code might be hidden here; found unicode escape sequence " +
+                                       "which is interpreted as comment end, compiled code follows");
                     }
                 } else {
                     i++;
                 }
             } else if (prev == 'S' && c == 'T' &&
-                    source.regionMatches(i - 1, STOPSHIP_COMMENT, 0, STOPSHIP_COMMENT.length())) {
+                       source.regionMatches(i - 1, STOPSHIP_COMMENT, 0, STOPSHIP_COMMENT.length())) {
+
                 // TODO: Only flag this issue in release mode??
-                Location location = Location.create(context.file, source,
-                        offset + i - 1, offset + i - 1 + STOPSHIP_COMMENT.length());
-                context.report(STOP_SHIP, location,
-                        "`STOPSHIP` comment found; points to code which must be fixed prior " +
-                        "to release");
+                Location location;
+                if (node != null) {
+                    location = context.getUastLocation(node);
+                } else {
+                    location = Location.create(context.file, source,
+                                               offset + i - 1, offset + i - 1 + STOPSHIP_COMMENT.length());
+                }
+
+                context.report(STOP_SHIP, node, location,
+                               "`STOPSHIP` comment found; points to code which must be fixed prior " +
+                               "to release");
             }
         }
-    }*/
+    }
 }

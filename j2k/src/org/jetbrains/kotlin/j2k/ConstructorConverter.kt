@@ -77,7 +77,7 @@ class ConstructorConverter(
                                   modifiers: Modifiers,
                                   fieldsToDrop: MutableSet<PsiField>,
                                   postProcessBody: (Block) -> Block): Constructor? {
-        val result = if (constructor == primaryConstructor) {
+        return if (constructor == primaryConstructor) {
             convertPrimaryConstructor(annotations, modifiers, fieldsToDrop, postProcessBody)
         }
         else {
@@ -104,7 +104,6 @@ class ConstructorConverter(
 
             SecondaryConstructor(annotations, modifiers, params, converter.deferredElement(::convertBody), thisOrSuperDeferred)
         }
-        return result
     }
 
     private fun findThisOrSuperCall(constructor: PsiMethod): PsiExpressionStatement? {
@@ -123,15 +122,14 @@ class ConstructorConverter(
         val body = primaryConstructor.body
 
         val parameterUsageReplacementMap = HashMap<String, String>()
-        val correctedTypeConverter = converter.withSpecialContext(psiClass).typeConverter /* to correct nested class references */
 
         val bodyGenerator: (CodeConverter) -> Block = if (body != null) {
             val statementsToRemove = HashSet<PsiStatement>()
             for (parameter in params) {
                 val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, primaryConstructor) ?: continue
 
-                val fieldType = correctedTypeConverter.convertVariableType(field)
-                val parameterType = correctedTypeConverter.convertVariableType(parameter)
+                val fieldType = converter.typeConverter.convertVariableType(field)
+                val parameterType = converter.typeConverter.convertVariableType(parameter)
                 // types can be different only in nullability
                 val type = if (fieldType == parameterType) {
                     fieldType
@@ -170,46 +168,54 @@ class ConstructorConverter(
             }
         }
         else {
-            { it -> Block.Empty }
+            { Block.Empty }
         }
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values
-
-        val correctedConverter = converter.withSpecialContext(psiClass) /* to correct nested class references */
 
         fun CodeConverter.correct() = withSpecialExpressionConverter(ReplacingExpressionConverter(parameterUsageReplacementMap))
 
         val statement = primaryConstructor.body?.statements?.firstOrNull()
         val methodCall = (statement as? PsiExpressionStatement)?.expression as? PsiMethodCallExpression
-        if (methodCall != null && methodCall.isSuperConstructorCall()) {
-            baseClassParams = methodCall.argumentList.expressions.map {
-                correctedConverter.deferredElement { codeConverter -> codeConverter.correct().convertExpression(it) }
+        baseClassParams = if (methodCall != null && methodCall.isSuperConstructorCall()) {
+            methodCall.argumentList.expressions.map {
+                converter.deferredElement { codeConverter -> codeConverter.correct().convertExpression(it) }
             }
         }
         else {
-            baseClassParams = emptyList()
+            emptyList()
         }
 
-        val parameterList = correctedConverter.convertParameterList(
+        val parameterList = converter.convertParameterList(
                 primaryConstructor,
                 overloadReducer,
                 { parameter, default ->
                     if (!parameterToField.containsKey(parameter)) {
-                        correctedConverter.convertParameter(parameter, defaultValue = default)
+                        converter.convertParameter(parameter, defaultValue = default)
                     }
                     else {
                         val (field, type) = parameterToField[parameter]!!
                         val propertyInfo = fieldToPropertyInfo(field)
-                        FunctionParameter(propertyInfo.identifier,
-                                          type,
-                                          if (propertyInfo.isVar) FunctionParameter.VarValModifier.Var else FunctionParameter.VarValModifier.Val,
-                                          converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
-                                          propertyInfo.modifiers,
-                                          default)
-                                .assignPrototypes(
-                                        PrototypeInfo(parameter, CommentsAndSpacesInheritance.LINE_BREAKS),
-                                        PrototypeInfo(field, CommentsAndSpacesInheritance.NO_SPACES)
-                                )
+
+                        var paramAnnotations = converter.convertAnnotations(parameter, AnnotationUseTarget.Param) +
+                                               converter.convertAnnotations(field, AnnotationUseTarget.Field)
+                        if (propertyInfo.getMethod != null) {
+                            paramAnnotations += converter.convertAnnotations(propertyInfo.getMethod, AnnotationUseTarget.Get)
+                        }
+                        if (propertyInfo.setMethod != null) {
+                            paramAnnotations += converter.convertAnnotations(propertyInfo.setMethod, AnnotationUseTarget.Set)
+                        }
+                        FunctionParameter(
+                                propertyInfo.identifier,
+                                type,
+                                if (propertyInfo.isVar) FunctionParameter.VarValModifier.Var else FunctionParameter.VarValModifier.Val,
+                                paramAnnotations,
+                                propertyInfo.modifiers,
+                                default
+                        ).assignPrototypes(
+                                PrototypeInfo(parameter, CommentsAndSpacesInheritance.LINE_BREAKS),
+                                PrototypeInfo(field, CommentsAndSpacesInheritance.NO_SPACES)
+                        )
                     }
                 },
                 correctCodeConverter = { correct() })

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,19 +22,23 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
 
+import java.io.File;
 import java.util.List;
 
+// Note!
+// Please change {@link KaptTestJvmCompilerMojo} because it was mostly copied from this file.
 /**
  * Compiles Kotlin test sources
- *
- * @noinspection UnusedDeclaration
  */
 @Mojo(name = "test-compile",
         defaultPhase = LifecyclePhase.TEST_COMPILE,
-        requiresDependencyResolution = ResolutionScope.TEST
+        requiresDependencyResolution = ResolutionScope.TEST,
+        threadSafe = true
 )
 public class KotlinTestCompileMojo extends K2JVMCompileMojo {
     /**
@@ -82,11 +86,20 @@ public class KotlinTestCompileMojo extends K2JVMCompileMojo {
     }
 
     @Override
-    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments) throws MojoExecutionException {
-        module = testModule;
+    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         classpath = testClasspath;
-        arguments.friendPaths = new String[] { output };
+        arguments.setFriendPaths(new String[] { output });
         output = testOutput;
-        super.configureSpecificCompilerArguments(arguments);
+        super.configureSpecificCompilerArguments(arguments, sourceRoots);
+    }
+
+    @Override
+    protected List<String> getRelatedSourceRoots(MavenProject project) {
+        return project.getTestCompileSourceRoots();
+    }
+
+    @NotNull
+    protected String getSourceSetName() {
+        return AnnotationProcessingManager.TEST_SOURCE_SET_NAME;
     }
 }

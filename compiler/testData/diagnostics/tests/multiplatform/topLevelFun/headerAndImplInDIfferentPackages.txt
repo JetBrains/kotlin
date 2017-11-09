@@ -1,0 +1,28 @@
+// -- Module: <m1-common> --
+package
+
+package common {
+    public expect fun foo(): kotlin.Unit
+}
+
+
+// -- Module: <m2-jvm> --
+package
+
+package common {
+}
+
+package jvm {
+    public actual fun foo(): kotlin.Unit
+}
+
+
+// -- Module: <m3-js> --
+package
+
+package common {
+}
+
+package js {
+    public actual fun foo(): kotlin.Unit
+}

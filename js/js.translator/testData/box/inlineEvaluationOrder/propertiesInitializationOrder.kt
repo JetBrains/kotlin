@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1118
 package foo
 
 class A(val x: Int = fizz(1) + 1) {

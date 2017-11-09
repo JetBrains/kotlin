@@ -36,7 +36,7 @@ class LexicalScopeImpl @JvmOverloads constructor(
     override fun toString(): String = kind.toString()
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
+        p.println(this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
                   " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
         p.pushIndent()
 

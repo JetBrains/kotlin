@@ -2,8 +2,6 @@
     <id>org.jetbrains.kotlin</id>
 
     <extensionPoints>
-        <extensionPoint name="defaultErrorMessages"
-                        interface="org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages$Extension"/>
         <extensionPoint name="suppressStringProvider"
                         interface="org.jetbrains.kotlin.resolve.diagnostics.SuppressStringProvider"/>
         <extensionPoint name="diagnosticSuppressor"
@@ -11,8 +9,11 @@
         <extensionPoint name="expressionCodegenExtension"
                         interface="org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension"
                         area="IDEA_PROJECT"/>
-        <extensionPoint name="findUsagesHandlerDecorator"
-                        interface="org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator"
+        <extensionPoint name="syntheticResolveExtension"
+                        interface="org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension"
+                        area="IDEA_PROJECT"/>
+        <extensionPoint name="jsSyntheticTranslateExtension"
+                        interface="org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension"
                         area="IDEA_PROJECT"/>
         <extensionPoint name="simpleNameReferenceExtension"
                         interface="org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension"
@@ -33,6 +34,23 @@
                         area="IDEA_PROJECT"/>
         <extensionPoint name="scriptTemplatesProvider"
                         interface="org.jetbrains.kotlin.script.ScriptTemplatesProvider"
+                        area="IDEA_PROJECT"/>
+        <extensionPoint name="facetConfigurationExtension"
+                        interface="org.jetbrains.kotlin.idea.facet.KotlinFacetConfigurationExtension"/>
+        <extensionPoint name="versionInfoProvider"
+                        interface="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider"/>
+        <extensionPoint name="gradleModelFacade"
+                        interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade"/>
+        <extensionPoint name="scriptHelper"
+                        interface="org.jetbrains.kotlin.script.ScriptHelper"/>
+        <extensionPoint name="completionInformationProvider"
+                        interface="org.jetbrains.kotlin.idea.completion.CompletionInformationProvider" />
+        <extensionPoint name="moduleBuilder"
+                        interface="com.intellij.ide.util.projectWizard.ModuleBuilder"/>
+        <extensionPoint name="gradleFrameworkSupport"
+                        interface="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleFrameworkSupportProvider"/>
+        <extensionPoint name="defaultScriptDependenciesProvider"
+                        interface="org.jetbrains.kotlin.idea.core.script.DefaultScriptDependenciesProvider"
                         area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>

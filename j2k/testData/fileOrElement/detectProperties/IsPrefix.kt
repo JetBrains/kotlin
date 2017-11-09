@@ -18,8 +18,7 @@ internal interface I {
 internal abstract class C : I {
     override var isSomething1: Boolean
         get() = true
-        set(b) {
-        }
+        set(b) {}
 
     override var isSomething4: Boolean
         get() = false
@@ -27,11 +26,9 @@ internal abstract class C : I {
 
     override var isSomething5: Boolean
         get
-        set(value) {
-        }
+        set(value) {}
 
     override var something6: Boolean
         get
-        set(value) {
-        }
+        set(value) {}
 }

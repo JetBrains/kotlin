@@ -1,4 +1,5 @@
-@<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!> package illegal_modifiers
+@<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!>
+package illegal_modifiers
 
 abstract class A() {
     <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>final<!> fun f()
@@ -156,3 +157,7 @@ class IllegalModifiers10
 <!INCOMPATIBLE_MODIFIERS!>const<!> constructor()
 
 class IllegalModifiers11 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> constructor()
+
+class Outer {
+    <!INCOMPATIBLE_MODIFIERS!>inner<!> <!INCOMPATIBLE_MODIFIERS!>sealed<!> class Inner
+}

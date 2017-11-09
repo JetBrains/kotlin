@@ -17,15 +17,10 @@
 package org.jetbrains.kotlin.resolve;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.*;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
@@ -67,44 +62,32 @@ public class FunctionDescriptorUtil {
     @NotNull
     public static LexicalScope getFunctionInnerScope(
             @NotNull LexicalScope outerScope,
-            @NotNull final FunctionDescriptor descriptor,
+            @NotNull FunctionDescriptor descriptor,
             @NotNull LocalRedeclarationChecker redeclarationChecker
     ) {
-        ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
-
-        if (descriptor instanceof AnonymousFunctionDescriptor
-                && (((AnonymousFunctionDescriptor) descriptor).isCoroutine())
-                && receiver != null && receiver.getValue() instanceof ExtensionReceiver) {
-            receiver =
-                    new ReceiverParameterDescriptorImpl(
-                            descriptor,
-                            new CoroutineReceiverValue(
-                                    ((ExtensionReceiver) receiver.getValue()).getDeclarationDescriptor(), receiver.getValue().getType()));
-        }
-
-        return new LexicalScopeImpl(outerScope, descriptor, true, receiver, LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationChecker,
-                                    new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
-                                        @Override
-                                        public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                                            for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
-                                                handler.addClassifierDescriptor(typeParameter);
-                                            }
-                                            for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
-                                                if (valueParameterDescriptor instanceof ValueParameterDescriptorImpl.WithDestructuringDeclaration) {
-                                                    List<VariableDescriptor> entries =
-                                                            ((ValueParameterDescriptorImpl.WithDestructuringDeclaration) valueParameterDescriptor)
-                                                                    .getDestructuringVariables();
-                                                    for (VariableDescriptor entry : entries) {
-                                                        handler.addVariableDescriptor(entry);
-                                                    }
-                                                }
-                                                else {
-                                                    handler.addVariableDescriptor(valueParameterDescriptor);
-                                                }
-                                            }
-                                            return Unit.INSTANCE;
-                                        }
-                                    });
+        return new LexicalScopeImpl(
+                outerScope, descriptor, true, descriptor.getExtensionReceiverParameter(),
+                LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationChecker,
+                handler -> {
+                    for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
+                        handler.addClassifierDescriptor(typeParameter);
+                    }
+                    for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
+                        if (valueParameterDescriptor instanceof ValueParameterDescriptorImpl.WithDestructuringDeclaration) {
+                            List<VariableDescriptor> entries =
+                                    ((ValueParameterDescriptorImpl.WithDestructuringDeclaration) valueParameterDescriptor)
+                                            .getDestructuringVariables();
+                            for (VariableDescriptor entry : entries) {
+                                handler.addVariableDescriptor(entry);
+                            }
+                        }
+                        else {
+                            handler.addVariableDescriptor(valueParameterDescriptor);
+                        }
+                    }
+                    return Unit.INSTANCE;
+                }
+        );
     }
 
     @SuppressWarnings("unchecked")

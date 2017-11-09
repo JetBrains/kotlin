@@ -25,11 +25,11 @@ import org.antlr.webidl.WebIDLBaseVisitor
 import org.antlr.webidl.WebIDLLexer
 import org.antlr.webidl.WebIDLParser
 import org.antlr.webidl.WebIDLParser.*
-import java.util.ArrayList
+import java.util.*
 
 data class ExtendedAttribute(val name: String?, val call: String, val arguments: List<Attribute>)
 data class Operation(val name: String, val returnType: Type, val parameters: List<Attribute>, val attributes: List<ExtendedAttribute>, val static: Boolean)
-data class Attribute(val name: String, val type: Type, val readOnly: Boolean = true, val defaultValue: String? = null, val vararg: Boolean, val static: Boolean)
+data class Attribute(val name: String, val type: Type, val readOnly: Boolean = true, val defaultValue: String? = null, val vararg: Boolean, val static: Boolean, val required: Boolean)
 data class Constant(val name: String, val type: Type, val value: String?)
 
 enum class DefinitionKind {
@@ -56,7 +56,7 @@ data class InterfaceDefinition(
 ) : Definition
 
 data class ExtensionInterfaceDefinition(val namespace: String, val name: String, val implements: String) : Definition
-data class EnumDefinition(val namespace: String, val name: String) : Definition
+data class EnumDefinition(val namespace: String, val name: String, val entries: List<String>) : Definition
 
 class ExtendedAttributeArgumentsParser(private val namespace: String) : WebIDLBaseVisitor<List<Attribute>>() {
     private val arguments = ArrayList<Attribute>()
@@ -102,7 +102,7 @@ class ExtendedAttributeParser(private val namespace: String) : WebIDLBaseVisitor
         object : WebIDLBaseVisitor<Unit>() {
             override fun visitTerminal(node: TerminalNode) {
                 if (node.symbol.type == WebIDLLexer.IDENTIFIER_WEBIDL) {
-                    arguments.add(Attribute(node.text, AnyType(), true, vararg = false, static = false))
+                    arguments.add(Attribute(node.text, AnyType(), true, vararg = false, static = false, required = false))
                 }
             }
         }.visitChildren(ctx)
@@ -130,11 +130,24 @@ class UnionTypeVisitor(val namespace: String) : WebIDLBaseVisitor<List<Type>>() 
 
 class TypeVisitor(val namespace: String) : WebIDLBaseVisitor<Type>() {
     private var type: Type = AnyType()
+    private var awaitingSimpleType = false
 
     override fun defaultResult() = type
 
+    override fun visitType(ctx: TypeContext?): Type {
+        type = super.visitType(ctx)
+        return type
+    }
+
+    override fun visitReturnType(ctx: ReturnTypeContext?): Type {
+        awaitingSimpleType = true
+        type = super.visitReturnType(ctx)
+        return type
+    }
+
     override fun visitNonAnyType(ctx: WebIDLParser.NonAnyTypeContext): Type {
-        type = SimpleType(ctx.text, false)
+        awaitingSimpleType = true
+        type = super.visitNonAnyType(ctx)
         return type
     }
 
@@ -143,19 +156,62 @@ class TypeVisitor(val namespace: String) : WebIDLBaseVisitor<Type>() {
         return type
     }
 
+    override fun visitPromiseType(ctx: PromiseTypeContext): Type {
+        type = PromiseType(TypeVisitor(namespace).visitChildren(ctx), false)
+        return type
+    }
+
+    override fun visitSequenceType(ctx: SequenceTypeContext): Type {
+        val mutable = ctx.getChild(0).text == "sequence"
+        type = ArrayType(TypeVisitor(namespace).visitChildren(ctx), mutable = mutable, nullable = false)
+        return type
+    }
+
     override fun visitTypeSuffix(ctx: TypeSuffixContext): Type {
         when (ctx.text?.trim()) {
             "?" -> type = type.toNullable()
-            "[]" -> type = ArrayType(type, false)
-            "[]?" -> type = ArrayType(type, true)
-            "?[]" -> type = ArrayType(type.toNullable(), false)
+            "[]" -> type = ArrayType(type, mutable = true, nullable = false)
+            "[]?" -> type = ArrayType(type, mutable = true, nullable = false)
+            "?[]" -> type = ArrayType(type.toNullable(), mutable = true, nullable = false)
         }
 
         return type
     }
 
+    override fun visitNull_(ctx: Null_Context): Type {
+        if (ctx.text?.trim() == "?") {
+            type = type.toNullable()
+        }
+        return type
+    }
+
     override fun visitTerminal(node: TerminalNode): Type {
-        type = SimpleType(node.text, false)
+        if (awaitingSimpleType) {
+            type = SimpleType(node.text, false)
+            awaitingSimpleType = false
+        }
+        return type
+    }
+
+    override fun visitUnsignedIntegerType(ctx: UnsignedIntegerTypeContext): Type {
+        awaitingSimpleType = false
+        type = super.visitUnsignedIntegerType(ctx)
+        return type
+    }
+
+    override fun visitUnrestrictedFloatType(ctx: UnrestrictedFloatTypeContext): Type {
+        awaitingSimpleType = false
+        type = super.visitUnrestrictedFloatType(ctx)
+        return type
+    }
+
+    override fun visitFloatType(ctx: FloatTypeContext): Type {
+        type = SimpleType(ctx.text, false)
+        return type
+    }
+
+    override fun visitIntegerType(ctx: IntegerTypeContext): Type {
+        type = SimpleType(ctx.text, false)
         return type
     }
 }
@@ -202,8 +258,9 @@ class AttributeVisitor(private val readOnly: Boolean = false, private val static
     private var name: String = ""
     private var defaultValue: String? = null
     private var vararg: Boolean = false
+    private var required: Boolean = false
 
-    override fun defaultResult(): Attribute = Attribute(name, type, readOnly, defaultValue, vararg, static)
+    override fun defaultResult(): Attribute = Attribute(name, type, readOnly, defaultValue, vararg, static, required)
 
     override fun visitType(ctx: WebIDLParser.TypeContext): Attribute {
         type = TypeVisitor(namespace).visit(ctx)
@@ -212,7 +269,10 @@ class AttributeVisitor(private val readOnly: Boolean = false, private val static
 
     override fun visitOptionalOrRequiredArgument(ctx: WebIDLParser.OptionalOrRequiredArgumentContext): Attribute {
         if (ctx.children?.any { it is TerminalNode && it.text == "optional" } ?: false) {
-            defaultValue = "noImpl"
+            defaultValue = "definedExternally"
+        }
+        if (ctx.children?.any { it is TerminalNode && it.text == "required" } ?: false) {
+            required = true
         }
         return visitChildren(ctx)
     }
@@ -276,13 +336,15 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
     private val constants = ArrayList<Constant>()
     private var partial = false
     private var callback = false
+    private val enumEntries = mutableListOf<String>()
+    private var enumEntryExpected = false
 
     override fun defaultResult(): Definition = when (kind) {
         DefinitionKind.INTERFACE -> InterfaceDefinition(name, namespace, extendedAttributes, operations, attributes, inherited, constants, false, partial, callback)
-        DefinitionKind.DICTIONARY -> InterfaceDefinition(name, namespace, extendedAttributes, operations, attributes, inherited, constants, true, partial, callback)
+        DefinitionKind.DICTIONARY -> InterfaceDefinition(name, namespace, extendedAttributes, operations, attributes, inherited, constants, /* dictionary = */ true, partial, callback)
         DefinitionKind.EXTENSION_INTERFACE -> ExtensionInterfaceDefinition(namespace, name, implements ?: "")
         DefinitionKind.TYPEDEF -> TypedefDefinition(typedefType ?: AnyType(true), namespace, name)
-        DefinitionKind.ENUM -> EnumDefinition(namespace, name)
+        DefinitionKind.ENUM -> EnumDefinition(namespace, name, enumEntries)
     }
 
     override fun visitCallbackRestOrInterface(ctx: WebIDLParser.CallbackRestOrInterfaceContext): Definition {
@@ -347,10 +409,21 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
     }
 
     override fun visitEnum_(ctx: Enum_Context): Definition {
+        enumEntryExpected = true
         kind = DefinitionKind.ENUM
         name = getName(ctx)
 
+        super.visitEnum_(ctx)
+
+        enumEntryExpected = false
         return defaultResult()
+    }
+
+    override fun visitTerminal(node: TerminalNode): Definition {
+        if (enumEntryExpected && node.symbol.type == WebIDLParser.STRING_WEBIDL) {
+            enumEntries += node.symbol.text.removeSurrounding("\"", "\"")
+        }
+        return super.visitTerminal(node)
     }
 
     override fun visitDictionary(ctx: DictionaryContext): Definition {
@@ -367,6 +440,7 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
                 ?.text
 
         val type = TypeVisitor(namespace).visit(ctx.children.first { it is TypeContext })
+        var required = false
         val defaultValue = object : WebIDLBaseVisitor<String?>() {
             private var value: String? = null
 
@@ -376,9 +450,16 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
                 value = ctx2.text
                 return value
             }
+
+            override fun visitRequired(ctx: RequiredContext?): String? {
+                if (ctx?.children?.any { it is TerminalNode && it.text == "required" } ?: false) {
+                    required = true
+                }
+                return super.visitRequired(ctx)
+            }
         }.visit(ctx)
 
-        attributes.add(Attribute(name ?: "", type, false, defaultValue, false, static))
+        attributes.add(Attribute(name ?: "", type, false, defaultValue, false, static, required))
 
         return defaultResult()
     }

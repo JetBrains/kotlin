@@ -1,3 +1,0 @@
-// WITH_RUNTIME
-
-fun foo(): List<String> = emptyList()<caret>

@@ -1,6 +1,6 @@
+@file:kotlin.jvm.JvmVersion
 package test.io
 
-import org.junit.Test
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -228,10 +228,10 @@ class FileTreeWalkTest {
         val basedir = createTestFiles()
         try {
             var i = 0
-            basedir.walkTopDown().forEach { it -> i++ }
+            basedir.walkTopDown().forEach { _ -> i++ }
             assertEquals(10, i);
             i = 0
-            basedir.walkBottomUp().forEach { it -> i++ }
+            basedir.walkBottomUp().forEach { _ -> i++ }
             assertEquals(10, i);
         } finally {
             basedir.deleteRecursively()
@@ -281,7 +281,7 @@ class FileTreeWalkTest {
                 files.add(file.relativeToOrSelf(basedir))
             }
 
-            fun visitDirectoryFailed(dir: File, e: IOException) {
+            fun visitDirectoryFailed(dir: File, @Suppress("UNUSED_PARAMETER") e: IOException) {
                 assertEquals(stack.last(), dir)
                 //stack.removeAt(stack.lastIndex)
                 failed.add(dir.name)
@@ -404,7 +404,7 @@ class FileTreeWalkTest {
         try {
             File(basedir, "8/4.txt").createNewFile()
             var count = 0
-            basedir.walkTopDown().takeWhile { it -> count == 0 }.forEach {
+            basedir.walkTopDown().takeWhile { _ -> count == 0 }.forEach {
                 if (it.name == "4.txt") {
                     count++
                 }

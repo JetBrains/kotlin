@@ -23,22 +23,32 @@ import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
+import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptorKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
-public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
-    protected final KtClassOrObject myClass;
-    protected final OwnerKind kind;
-    protected final ClassDescriptor descriptor;
+public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject> {
+    @NotNull
+    public final KtPureClassOrObject myClass;
+
+    @NotNull
+    public final OwnerKind kind;
+
+    @NotNull
+    public final ClassDescriptor descriptor;
 
     protected ClassBodyCodegen(
-            @NotNull KtClassOrObject myClass,
+            @NotNull KtPureClassOrObject myClass,
             @NotNull ClassContext context,
             @NotNull ClassBuilder v,
             @NotNull GenerationState state,
@@ -47,12 +57,12 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
         super(state, parentCodegen, context, myClass, v);
         this.myClass = myClass;
         this.kind = context.getContextKind();
-        this.descriptor = bindingContext.get(BindingContext.CLASS, myClass);
+        this.descriptor = SyntheticClassOrObjectDescriptorKt.findClassDescriptor(myClass, bindingContext);
     }
 
     @Override
     protected void generateBody() {
-        List<KtObjectDeclaration> companions = new ArrayList<KtObjectDeclaration>();
+        List<KtObjectDeclaration> companions = new ArrayList<>();
         if (kind != OwnerKind.DEFAULT_IMPLS) {
             //generate nested classes first and only then generate class body. It necessary to access to nested CodegenContexts
             for (KtDeclaration declaration : myClass.getDeclarations()) {
@@ -75,36 +85,69 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
             }
         }
 
-        generatePrimaryConstructorProperties();
-        generateConstructors();
-        generateDefaultImplsIfNeeded();
+        boolean generateNonClassMembers = shouldGenerateNonClassMembers();
 
-        for (KtObjectDeclaration companion : companions) {
-            generateDeclaration(companion);
+        if (generateNonClassMembers) {
+            generatePrimaryConstructorProperties();
+            generateConstructors();
+            generateDefaultImplsIfNeeded();
         }
 
-        if (!DescriptorUtils.isInterface(descriptor)) {
-            for (DeclarationDescriptor memberDescriptor : DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
-                if (memberDescriptor instanceof CallableMemberDescriptor) {
-                    CallableMemberDescriptor member = (CallableMemberDescriptor) memberDescriptor;
-                    if (!member.getKind().isReal() && ImplKt.findInterfaceImplementation(member) == null) {
-                        if (member instanceof FunctionDescriptor) {
-                            functionCodegen.generateBridges((FunctionDescriptor) member);
+        // Generate _declared_ companions
+        for (KtObjectDeclaration companion : companions) {
+            genClassOrObject(companion);
+        }
+
+        // Generate synthetic (non-declared) companion if needed
+        ClassDescriptor companionObjectDescriptor = descriptor.getCompanionObjectDescriptor();
+        if (companionObjectDescriptor instanceof SyntheticClassOrObjectDescriptor) {
+            genSyntheticClassOrObject((SyntheticClassOrObjectDescriptor) companionObjectDescriptor);
+        }
+
+        // Generate synthetic nested classes
+        Collection<DeclarationDescriptor> classifiers = descriptor
+                .getUnsubstitutedMemberScope()
+                .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.Companion.getALL_NAME_FILTER());
+        for (DeclarationDescriptor memberDescriptor : classifiers) {
+            if (memberDescriptor instanceof SyntheticClassOrObjectDescriptor) {
+                genSyntheticClassOrObject((SyntheticClassOrObjectDescriptor) memberDescriptor);
+            }
+        }
+
+        if (generateNonClassMembers) {
+            generateBridges();
+        }
+    }
+
+    private void generateBridges() {
+        if (DescriptorUtils.isInterface(descriptor)) {
+            return;
+        }
+        for (DeclarationDescriptor memberDescriptor : DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
+            if (memberDescriptor instanceof CallableMemberDescriptor) {
+                CallableMemberDescriptor member = (CallableMemberDescriptor) memberDescriptor;
+                if (!member.getKind().isReal() && ImplKt.findInterfaceImplementation(member) == null) {
+                    if (member instanceof FunctionDescriptor) {
+                        functionCodegen.generateBridges((FunctionDescriptor) member);
+                    }
+                    else if (member instanceof PropertyDescriptor) {
+                        PropertyGetterDescriptor getter = ((PropertyDescriptor) member).getGetter();
+                        if (getter != null) {
+                            functionCodegen.generateBridges(getter);
                         }
-                        else if (member instanceof PropertyDescriptor) {
-                            PropertyGetterDescriptor getter = ((PropertyDescriptor) member).getGetter();
-                            if (getter != null) {
-                                functionCodegen.generateBridges(getter);
-                            }
-                            PropertySetterDescriptor setter = ((PropertyDescriptor) member).getSetter();
-                            if (setter != null) {
-                                functionCodegen.generateBridges(setter);
-                            }
+                        PropertySetterDescriptor setter = ((PropertyDescriptor) member).getSetter();
+                        if (setter != null) {
+                            functionCodegen.generateBridges(setter);
                         }
                     }
                 }
             }
         }
+    }
+
+    private boolean shouldGenerateNonClassMembers() {
+        return !(myClass instanceof KtClassOrObject) ||
+               state.getGenerateDeclaredClassFilter().shouldGenerateClassMembers((KtClassOrObject) myClass);
     }
 
     protected void generateConstructors() {
@@ -121,7 +164,9 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
 
     protected void generateDeclaration(KtDeclaration declaration) {
         if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
-            genSimpleMember(declaration);
+            if (shouldGenerateNonClassMembers()) {
+                genSimpleMember(declaration);
+            }
         }
         else if (declaration instanceof KtClassOrObject) {
             if (declaration instanceof KtEnumEntry && !enumEntryNeedSubclass(bindingContext, (KtEnumEntry) declaration)) {
@@ -150,9 +195,9 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
     }
 
     @NotNull
-    protected List<KtParameter> getPrimaryConstructorParameters() {
+    public List<KtParameter> getPrimaryConstructorParameters() {
         if (myClass instanceof KtClass) {
-            return ((KtClass) myClass).getPrimaryConstructorParameters();
+            return myClass.getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
     }
@@ -160,6 +205,6 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
     @Nullable
     @Override
     protected ClassDescriptor classForInnerClassRecord() {
-        return DescriptorUtils.isTopLevelDeclaration(descriptor) ? null : descriptor;
+        return InnerClassConsumer.Companion.classForInnerClassRecord(descriptor, false);
     }
 }

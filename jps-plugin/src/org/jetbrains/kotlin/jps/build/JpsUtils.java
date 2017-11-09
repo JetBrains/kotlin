@@ -26,6 +26,8 @@ import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.JpsLibraryRoot;
 import org.jetbrains.jps.model.library.JpsOrderRootType;
 import org.jetbrains.jps.util.JpsPathUtil;
+import org.jetbrains.kotlin.config.TargetPlatformKind;
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettingsKt;
 import org.jetbrains.kotlin.utils.LibraryUtils;
 
 import java.util.Map;
@@ -33,10 +35,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 class JpsUtils {
-    private JpsUtils() {}
-
     private static final Map<ModuleBuildTarget, Boolean> IS_KOTLIN_JS_MODULE_CACHE = new ConcurrentHashMap<ModuleBuildTarget, Boolean>();
     private static final Map<String, Boolean> IS_KOTLIN_JS_STDLIB_JAR_CACHE = new ConcurrentHashMap<String, Boolean>();
+    private JpsUtils() {}
 
     @NotNull
     static JpsJavaDependenciesEnumerator getAllDependencies(@NotNull ModuleBuildTarget target) {
@@ -55,6 +56,9 @@ class JpsUtils {
     }
 
     private static boolean isJsKotlinModuleImpl(@NotNull ModuleBuildTarget target) {
+        TargetPlatformKind<?> targetPlatform = JpsKotlinCompilerSettingsKt.getTargetPlatform(target.getModule());
+        if (targetPlatform != null) return targetPlatform == TargetPlatformKind.JavaScript.INSTANCE;
+
         Set<JpsLibrary> libraries = getAllDependencies(target).getLibraries();
         for (JpsLibrary library : libraries) {
             for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {

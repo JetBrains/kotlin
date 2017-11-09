@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 // FILE: Test.java
 
 import java.lang.*;

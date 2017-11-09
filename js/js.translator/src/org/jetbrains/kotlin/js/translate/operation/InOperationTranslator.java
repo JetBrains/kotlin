@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -57,7 +57,7 @@ public class InOperationTranslator extends AbstractTranslator {
     @NotNull
     public JsExpression translate() {
         ResolvedCall<? extends FunctionDescriptor> call = CallUtilKt.getFunctionResolvedCallWithAssert(operation, bindingContext());
-        if (INT_SPECIALIZATION_TEST.apply(call.getResultingDescriptor())) {
+        if (INT_SPECIALIZATION_TEST.test(call.getResultingDescriptor())) {
             JsExpression candidate = translateInt();
             if (candidate != null) {
                 return candidate;
@@ -71,7 +71,7 @@ public class InOperationTranslator extends AbstractTranslator {
     private JsExpression translateGeneral(@NotNull ResolvedCall<? extends FunctionDescriptor> call, @NotNull JsExpression rightTranslated) {
         JsExpression result = CallTranslator.translate(context(), call, rightTranslated);
         if (negated) {
-            result = JsAstUtils.negated(result);
+            result = JsAstUtils.not(result);
         }
         return result;
     }
@@ -83,7 +83,7 @@ public class InOperationTranslator extends AbstractTranslator {
             return null;
         }
         FunctionDescriptor callDescriptor = (FunctionDescriptor) rightCall.getResultingDescriptor();
-        if (!INT_RANGE_TEST.apply(callDescriptor)) {
+        if (!INT_RANGE_TEST.test(callDescriptor)) {
             return null;
         }
         if (!(rightCall.getDispatchReceiver() instanceof ExpressionReceiver)) {

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
@@ -42,12 +41,12 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
 
     @IfNotParsed
     fun getTypeReference(): KtTypeReference? {
-        if (stub != null) {
+        return if (stub != null) {
             val typeReferences = getStubOrPsiChildrenAsList<KtTypeReference, KotlinPlaceHolderStub<KtTypeReference>>(KtStubElementTypes.TYPE_REFERENCE)
-            return typeReferences[0]
+            typeReferences[0]
         }
         else {
-            return findChildByType(KtNodeTypes.TYPE_REFERENCE)
+            findChildByType(KtNodeTypes.TYPE_REFERENCE)
         }
     }
 

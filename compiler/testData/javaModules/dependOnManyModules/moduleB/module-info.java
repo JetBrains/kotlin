@@ -1,0 +1,3 @@
+module moduleB {
+    exports b;
+}

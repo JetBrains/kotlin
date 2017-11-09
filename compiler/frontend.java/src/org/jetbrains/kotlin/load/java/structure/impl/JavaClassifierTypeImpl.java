@@ -71,8 +71,8 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
 
     @Override
     @NotNull
-    public String getCanonicalText() {
-        return getPsi().getCanonicalText();
+    public String getClassifierQualifiedName() {
+        return ClassNamesUtilKt.convertCanonicalNameToQName(getPsi().getCanonicalText());
     }
 
     @Override
@@ -98,7 +98,7 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
 
         PsiSubstitutor substitutor = getSubstitutor();
 
-        List<JavaType> result = new ArrayList<JavaType>(parameters.size());
+        List<JavaType> result = new ArrayList<>(parameters.size());
         for (PsiTypeParameter typeParameter : parameters) {
             PsiType substitutedType = substitutor.substitute(typeParameter);
             result.add(substitutedType == null ? null : JavaTypeImpl.create(substitutedType));
@@ -124,7 +124,7 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
         while (currentOwner != null) {
             PsiTypeParameter[] typeParameters = currentOwner.getTypeParameters();
             if (typeParameters.length > 0) {
-                if (result == null) result = new ArrayList<PsiTypeParameter>(typeParameters.length);
+                if (result == null) result = new ArrayList<>(typeParameters.length);
                 Collections.addAll(result, typeParameters);
             }
 

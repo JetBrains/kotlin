@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+fun foo(a: Any) {
+    when (a) {
+        "" -> println(a)
+        is String -> println(a)
+        is List<*> -> @Suppress("UNCHECKED_CAST")
+        println(a as List<String>)
+    }
+}

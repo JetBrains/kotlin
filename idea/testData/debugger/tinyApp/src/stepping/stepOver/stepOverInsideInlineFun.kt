@@ -16,4 +16,4 @@ inline fun bar(f: (Int) -> Unit) {
 
 fun foo() {}
 
-// STEP_OVER: 4
+// STEP_OVER: 5

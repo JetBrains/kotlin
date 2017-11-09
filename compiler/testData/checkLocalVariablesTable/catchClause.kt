@@ -5,7 +5,7 @@ class A {
             a++
         }
         catch(e : Throwable) {
-
+            e.printStackTrace()
         }
     }
 }

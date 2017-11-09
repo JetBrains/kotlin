@@ -8,11 +8,8 @@ internal class A {
     private val l7: Long = +1
     private val l8 = +1L
 
-    fun foo1(l: Long) {
-    }
-
-    fun foo2(l: Long?) {
-    }
+    fun foo1(l: Long) {}
+    fun foo2(l: Long?) {}
 
     fun bar() {
         foo1(1)
@@ -22,5 +19,10 @@ internal class A {
         l1 = 10
         l2 = 10L
         l4 = 10
+    }
+
+    fun foo(z: Long) {
+        val b1 = z == 1L
+        val b2 = z != 1L
     }
 }

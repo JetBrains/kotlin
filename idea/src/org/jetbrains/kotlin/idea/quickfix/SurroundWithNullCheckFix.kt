@@ -16,32 +16,36 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
-import org.jetbrains.kotlin.resolve.calls.callUtil.getType
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 
 class SurroundWithNullCheckFix(
         expression: KtExpression,
-        val nullableExpression: KtExpression
-) : KotlinQuickFixAction<KtExpression>(expression) {
+        nullableExpression: KtExpression
+) : KotlinQuickFixAction<KtExpression>(expression), HighPriorityAction {
+    private val nullableExpressionPointer = nullableExpression.createSmartPointer()
 
     override fun getFamilyName() = text
 
     override fun getText() = "Surround with null check"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
+        val nullableExpression = nullableExpressionPointer.element ?: return
         val factory = KtPsiFactory(element)
         val surrounded = factory.createExpressionByPattern("if ($0 != null) { $1 }", nullableExpression, element)
         element.replace(surrounded)
@@ -49,28 +53,34 @@ class SurroundWithNullCheckFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
 
+        private fun KtExpression.hasAcceptableParent() = with (parent) {
+            this is KtBlockExpression || this.parent is KtIfExpression ||
+            this is KtWhenEntry || this.parent is KtLoopExpression
+        }
+
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = diagnostic.psiElement
-            val expression = element.getParentOfTypesAndPredicate(false, KtExpression::class.java) {
-                it is KtDeclaration ||
-                it.parent is KtBlockExpression ||
-                it.parent?.parent is KtIfExpression ||
-                it.parent?.parent is KtWhenExpression ||
-                it.parent?.parent is KtLoopExpression
-            } ?: return null
-            if (expression is KtDeclaration) return null
+            val expressionParent = element.getParentOfType<KtExpression>(strict = element is KtOperationReferenceExpression) ?: return null
+            val context = expressionParent.analyze(BodyResolveMode.PARTIAL)
 
             val parent = element.parent
-            val nullableExpression = when (parent) {
-                is KtDotQualifiedExpression -> parent.receiverExpression
-                is KtBinaryExpression -> parent.left
-                is KtCallExpression -> parent.calleeExpression
-                else -> return null
-            } as? KtReferenceExpression ?: return null
+            val nullableExpression =
+                    when (parent) {
+                        is KtDotQualifiedExpression -> parent.receiverExpression
+                        is KtBinaryExpression -> parent.left
+                        is KtCallExpression -> parent.calleeExpression
+                        else -> return null
+                    } as? KtReferenceExpression ?: return null
 
-            if (!nullableExpression.isStable()) return null
+            if (!nullableExpression.isStable(context)) return null
 
-            return SurroundWithNullCheckFix(expression, nullableExpression)
+            val expressionTarget = expressionParent.getParentOfTypesAndPredicate(strict = false, parentClasses = KtExpression::class.java) {
+                !it.isUsedAsExpression(context) && it.hasAcceptableParent()
+            } ?: return null
+            // Surround declaration (even of local variable) with null check is generally a bad idea
+            if (expressionTarget is KtDeclaration) return null
+
+            return SurroundWithNullCheckFix(expressionTarget, nullableExpression)
         }
     }
 
@@ -78,7 +88,7 @@ class SurroundWithNullCheckFix(
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val nullableExpression = diagnostic.psiElement as? KtReferenceExpression ?: return null
-            val forExpression = nullableExpression.parent?.parent as? KtForExpression ?: return null
+            val forExpression = nullableExpression.parent.parent as? KtForExpression ?: return null
             if (forExpression.parent !is KtBlockExpression) return null
 
             if (!nullableExpression.isStable()) return null
@@ -105,11 +115,4 @@ class SurroundWithNullCheckFix(
             return SurroundWithNullCheckFix(rootCall, nullableExpression)
         }
     }
-}
-
-private fun KtExpression.isStable(): Boolean {
-    val context = this.analyze()
-    val nullableType = this.getType(context) ?: return false
-    val containingDescriptor = this.getResolutionScope(context, this.getResolutionFacade()).ownerDescriptor
-    return DataFlowValueFactory.createDataFlowValue(this, nullableType, context, containingDescriptor).isStable
 }

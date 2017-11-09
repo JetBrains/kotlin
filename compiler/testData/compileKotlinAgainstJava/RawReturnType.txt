@@ -1,0 +1,10 @@
+package test
+
+public fun useRawReturnType(): kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!
+
+public open class RawReturnType {
+    public constructor RawReturnType()
+
+    // Static members
+    public open fun getRawList(/*0*/ kotlin.collections.(Mutable)List<kotlin.String!>!): kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!
+}

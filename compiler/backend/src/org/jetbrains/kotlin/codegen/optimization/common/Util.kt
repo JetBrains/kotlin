@@ -16,10 +16,16 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.kotlin.codegen.inline.MaxStackFrameSizeAndLocalsCalculator
+import org.jetbrains.kotlin.codegen.inline.insnText
+import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
+import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 val AbstractInsnNode.isMeaningful: Boolean get() =
     when (this.type) {
@@ -46,13 +52,13 @@ class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequ
 fun InsnList.asSequence() = InsnSequence(this)
 
 fun MethodNode.prepareForEmitting() {
+    stripOptimizationMarkers()
+
     removeEmptyCatchBlocks()
 
     // local variables with live ranges starting after last meaningful instruction lead to VerifyError
     localVariables = localVariables.filter { lv ->
-        InsnSequence(lv.start, lv.end).any { insn ->
-            insn.isMeaningful
-        }
+        InsnSequence(lv.start, lv.end).any(AbstractInsnNode::isMeaningful)
     }
 
     // We should remove linenumbers after last meaningful instruction
@@ -67,21 +73,90 @@ fun MethodNode.prepareForEmitting() {
 
         current = prev
     }
+    maxStack = -1
+    accept(MaxStackFrameSizeAndLocalsCalculator(
+            Opcodes.ASM5, access, desc,
+            object : MethodVisitor(Opcodes.ASM5) {
+                override fun visitMaxs(maxStack: Int, maxLocals: Int) {
+                    this@prepareForEmitting.maxStack = maxStack
+                }
+            }))
 }
 
-fun MethodNode.removeEmptyCatchBlocks() {
-    tryCatchBlocks = tryCatchBlocks.filter { tcb ->
-        InsnSequence(tcb.start, tcb.end).any { insn ->
-            insn.isMeaningful
+fun MethodNode.stripOptimizationMarkers() {
+    var insn = instructions.first
+    while (insn != null) {
+        if (isOptimizationMarker(insn)) {
+            insn = instructions.removeNodeGetNext(insn)
+        }
+        else {
+            insn = insn.next
         }
     }
 }
 
-abstract class BasicValueWrapper(val wrappedValue: BasicValue?) : BasicValue(wrappedValue?.type) {
-    val basicValue: BasicValue? get() = (wrappedValue as? BasicValueWrapper)?.basicValue ?: wrappedValue
+private fun isOptimizationMarker(insn: AbstractInsnNode) =
+        PseudoInsn.STORE_NOT_NULL.isa(insn)
 
-    override fun equals(other: Any?): Boolean {
-        return super.equals(other) && this.javaClass == other?.javaClass
+fun MethodNode.removeEmptyCatchBlocks() {
+    tryCatchBlocks = tryCatchBlocks.filter { tcb ->
+        InsnSequence(tcb.start, tcb.end).any(AbstractInsnNode::isMeaningful)
+    }
+}
+
+fun MethodNode.removeUnusedLocalVariables() {
+    val used = BooleanArray(maxLocals) { false }
+    for (insn in instructions) {
+        when (insn) {
+            is VarInsnNode -> {
+                val varIndex = insn.`var`
+                used[varIndex] = true
+                if (insn.isSize2LoadStoreOperation()) {
+                    used[varIndex + 1] = true
+                }
+            }
+            is IincInsnNode ->
+                used[insn.`var`] = true
+        }
+    }
+    for (localVar in localVariables) {
+        val varIndex = localVar.index
+        used[varIndex] = true
+        val type = Type.getType(localVar.desc)
+        if (type.size == 2) {
+            used[varIndex + 1] = true
+        }
+    }
+
+    if (used.all { it }) return
+
+    val remapping = IntArray(maxLocals) { 0 }
+    var lastUnused = 0
+    for (i in remapping.indices) {
+        remapping[i] = lastUnused
+        if (used[i]) {
+            lastUnused++
+        }
+    }
+
+    remapLocalVariables(remapping)
+}
+
+private fun VarInsnNode.isSize2LoadStoreOperation() =
+        opcode == LLOAD || opcode == DLOAD || opcode == LSTORE || opcode == DSTORE
+
+fun MethodNode.remapLocalVariables(remapping: IntArray) {
+    for (insn in instructions.toArray()) {
+        when (insn) {
+            is VarInsnNode ->
+                insn.`var` = remapping[insn.`var`]
+            is IincInsnNode ->
+                insn.`var` = remapping[insn.`var`]
+        }
+    }
+
+    for (localVariableNode in localVariables) {
+        localVariableNode.index = remapping[localVariableNode.index]
     }
 }
 
@@ -127,5 +202,18 @@ val AbstractInsnNode.intConstant: Int? get() =
 
 fun insnListOf(vararg insns: AbstractInsnNode) = InsnList().apply { insns.forEach { add(it) } }
 
-fun AbstractInsnNode.isStoreOperation(): Boolean = getOpcode() in Opcodes.ISTORE..Opcodes.ASTORE
-fun AbstractInsnNode.isLoadOperation(): Boolean = getOpcode() in Opcodes.ILOAD..Opcodes.ALOAD
+fun AbstractInsnNode.isStoreOperation(): Boolean = opcode in Opcodes.ISTORE..Opcodes.ASTORE
+fun AbstractInsnNode.isLoadOperation(): Boolean = opcode in Opcodes.ILOAD..Opcodes.ALOAD
+
+val AbstractInsnNode?.debugText get() =
+        if (this == null) "<null>" else "${this::class.java.simpleName}: $insnText"
+
+internal inline fun <reified T : AbstractInsnNode> AbstractInsnNode.isInsn(opcode: Int, condition: T.() -> Boolean): Boolean =
+        takeInsnIf(opcode, condition) != null
+
+internal inline fun <reified T : AbstractInsnNode> AbstractInsnNode.takeInsnIf(opcode: Int, condition: T.() -> Boolean): T? =
+        takeIf { it.opcode == opcode }?.safeAs<T>()?.takeIf { it.condition() }
+
+fun InsnList.removeAll(nodes: Collection<AbstractInsnNode>) {
+    for (node in nodes) remove(node)
+}

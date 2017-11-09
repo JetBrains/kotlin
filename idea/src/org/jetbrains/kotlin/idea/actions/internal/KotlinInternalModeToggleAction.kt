@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.actions.internal
 
-import com.intellij.openapi.actionSystem.ToggleAction
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ToggleAction
 
 class KotlinInternalModeToggleAction: ToggleAction("Kotlin Internal Mode", "Show debug highlighting", null) {
     override fun isSelected(e: AnActionEvent?): Boolean {

@@ -1,0 +1,5 @@
+SKIPPED test/Utils
+PROTO DIFFERENCE in test/Utils__Main1Kt: FUNCTION_LIST, PROPERTY_LIST
+CHANGES in test/Utils__Main1Kt: MEMBERS
+    [publicAddedFun1]
+PROTO DIFFERENCE in test/Utils__Main2Kt: FUNCTION_LIST, PROPERTY_LIST

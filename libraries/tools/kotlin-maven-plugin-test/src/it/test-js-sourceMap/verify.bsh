@@ -1,0 +1,3 @@
+source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+
+assertFileContains("target/js/test-js-sourceMap.js.map", "\"prefixprefix/org/jetbrains/HelloWorld.kt\"")

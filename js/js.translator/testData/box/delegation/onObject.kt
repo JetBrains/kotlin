@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1130
 package foo
 
 interface T {

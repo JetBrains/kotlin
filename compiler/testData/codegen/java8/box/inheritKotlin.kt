@@ -15,6 +15,7 @@ interface KInterface {
 }
 
 class Test : Simple {
+    @kotlin.Suppress("DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET")
     fun bar(): String {
         return super.test()
     }

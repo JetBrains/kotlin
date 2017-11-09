@@ -3,5 +3,5 @@ abstract class Owner {
 }
 
 fun Owner.f() {
-    <caret><selection>TODO("not implemented")</selection> //To change body of created functions use File | Settings | File Templates.
+    <caret><selection>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
 }

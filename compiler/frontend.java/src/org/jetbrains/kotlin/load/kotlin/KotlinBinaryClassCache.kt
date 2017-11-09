@@ -22,6 +22,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiJavaModule
 
 class KotlinBinaryClassCache : Disposable {
     private class RequestCache {
@@ -55,6 +56,8 @@ class KotlinBinaryClassCache : Disposable {
         fun getKotlinBinaryClass(file: VirtualFile, fileContent: ByteArray? = null): KotlinJvmBinaryClass? {
             if (file.fileType !== JavaClassFileType.INSTANCE) return null
 
+            if (file.name == PsiJavaModule.MODULE_INFO_CLS_FILE) return null
+
             val service = ServiceManager.getService(KotlinBinaryClassCache::class.java)
             val requestCache = service.cache.get()
 
@@ -63,7 +66,7 @@ class KotlinBinaryClassCache : Disposable {
             }
 
             val aClass = ApplicationManager.getApplication().runReadAction(Computable {
-                //noinspection deprecation
+                @Suppress("DEPRECATION")
                 VirtualFileKotlinClass.create(file, fileContent)
             })
 

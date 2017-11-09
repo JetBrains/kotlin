@@ -1,4 +1,4 @@
-JetFile: DocCommentAtBeginningOfFile3.kt
+KtFile: DocCommentAtBeginningOfFile3.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

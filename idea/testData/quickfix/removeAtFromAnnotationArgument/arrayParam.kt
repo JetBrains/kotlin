@@ -1,0 +1,9 @@
+// "Remove @ from annotation argument" "true"
+// DISABLE-ERRORS
+
+annotation class Y()
+annotation class X(val value: Array<Y>)
+
+@X(arrayOf(Y(), @Y()<caret>))
+fun foo() {
+}

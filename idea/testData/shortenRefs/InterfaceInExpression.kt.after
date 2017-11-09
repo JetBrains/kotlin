@@ -1,5 +1,7 @@
-import java.util.List
+package fq
+
+interface Iface
 
 fun foo() {
-    List
+    Iface
 }

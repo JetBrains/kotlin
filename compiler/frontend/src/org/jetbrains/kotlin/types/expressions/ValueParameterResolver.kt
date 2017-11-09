@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtParameter
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 class ValueParameterResolver(
         private val expressionTypingServices: ExpressionTypingServices,
-        private val constantExpressionEvaluator: ConstantExpressionEvaluator
+        private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     fun resolveValueParameters(
@@ -44,7 +46,8 @@ class ValueParameterResolver(
     ) {
         val scopeForDefaultValue = LexicalScopeImpl(declaringScope, declaringScope.ownerDescriptor, false, null, LexicalScopeKind.DEFAULT_VALUE)
 
-        val contextForDefaultValue = ExpressionTypingContext.newContext(trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE)
+        val contextForDefaultValue = ExpressionTypingContext.newContext(trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
+                                                                        languageVersionSettings)
 
         for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {
             ForceResolveUtil.forceResolveAllContents(descriptor.annotations)
@@ -58,11 +61,13 @@ class ValueParameterResolver(
             context: ExpressionTypingContext
     ) {
         if (!valueParameterDescriptor.declaresDefaultValue()) return
-        val defaultValue = jetParameter.getDefaultValue() ?: return
+        val defaultValue = jetParameter.defaultValue ?: return
         expressionTypingServices.getTypeInfo(defaultValue, context.replaceExpectedType(valueParameterDescriptor.type))
         if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(context.scope))) {
-            constantExpressionEvaluator.evaluateExpression(defaultValue, context.trace, valueParameterDescriptor.type)
-            ?: context.trace.report(Errors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT.on(defaultValue))
+            val constant = constantExpressionEvaluator.evaluateExpression(defaultValue, context.trace, valueParameterDescriptor.type)
+            if (constant == null || constant.usesNonConstValAsConstant) {
+                context.trace.report(Errors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT.on(defaultValue))
+            }
         }
     }
 }

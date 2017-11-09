@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,32 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
-import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.expression.LocalFunctionCollector;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
-import org.jetbrains.kotlin.js.translate.utils.mutator.Mutator;
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
+import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDefaultArgument;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
@@ -43,9 +50,27 @@ import static org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMuta
 public final class FunctionBodyTranslator extends AbstractTranslator {
 
     @NotNull
-    public static JsBlock translateFunctionBody(@NotNull FunctionDescriptor descriptor,
-                                                @NotNull KtDeclarationWithBody declarationWithBody,
-                                                @NotNull TranslationContext functionBodyContext) {
+    public static JsBlock translateFunctionBody(
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull KtDeclarationWithBody declarationWithBody,
+            @NotNull TranslationContext functionBodyContext
+    ) {
+        Map<DeclarationDescriptor, JsExpression> aliases = new HashMap<>();
+        LocalFunctionCollector functionCollector = new LocalFunctionCollector(functionBodyContext.bindingContext());
+        declarationWithBody.acceptChildren(functionCollector, null);
+
+        for (FunctionDescriptor localFunction : functionCollector.getFunctions()) {
+            String localIdent = localFunction.getName().isSpecial() ? "lambda" : localFunction.getName().asString();
+            JsName localName = JsScope.declareTemporaryName(NameSuggestion.sanitizeName(localIdent));
+            MetadataProperties.setDescriptor(localName, localFunction);
+            JsExpression alias = JsAstUtils.pureFqn(localName, null);
+            aliases.put(localFunction, alias);
+        }
+
+        if (!aliases.isEmpty()) {
+            functionBodyContext = functionBodyContext.innerContextWithDescriptorsAliased(aliases);
+        }
+
         return (new FunctionBodyTranslator(descriptor, declarationWithBody, functionBodyContext)).translate();
     }
 
@@ -54,18 +79,21 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             @NotNull TranslationContext functionBodyContext) {
         List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
 
-        List<JsStatement> result = new ArrayList<JsStatement>(valueParameters.size());
+        List<JsStatement> result = new ArrayList<>(valueParameters.size());
         for (ValueParameterDescriptor valueParameter : valueParameters) {
-            if (!DescriptorUtilsKt.hasDefaultValue(valueParameter)) continue;
+            if (!valueParameter.declaresDefaultValue()) continue;
 
-            JsNameRef jsNameRef = functionBodyContext.getNameForDescriptor(valueParameter).makeRef();
+            JsExpression jsNameRef = ReferenceTranslator.translateAsValueReference(valueParameter, functionBodyContext);
             KtExpression defaultArgument = getDefaultArgument(valueParameter);
             JsBlock defaultArgBlock = new JsBlock();
             JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
-            JsStatement assignStatement = assignment(jsNameRef, defaultValue).makeStmt();
+            PsiElement psi = KotlinSourceElementKt.getPsi(valueParameter.getSource());
+            JsStatement assignStatement = assignment(jsNameRef, defaultValue).source(psi).makeStmt();
             JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
             JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, Namer.getUndefinedExpression());
+            checkArgIsUndefined.source(KotlinSourceElementKt.getPsi(valueParameter.getSource()));
             JsIf jsIf = JsAstUtils.newJsIf(checkArgIsUndefined, thenStatement);
+            jsIf.setSource(checkArgIsUndefined.getSource());
             result.add(jsIf);
         }
 
@@ -90,11 +118,20 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
         KtExpression jetBodyExpression = declaration.getBodyExpression();
         assert jetBodyExpression != null : "Cannot translate a body of an abstract function.";
         JsBlock jsBlock = new JsBlock();
-        if (!(descriptor instanceof ConstructorDescriptor) || ((ConstructorDescriptor) descriptor).isPrimary()) {
-            jsBlock.getStatements().addAll(setDefaultValueForArguments(descriptor, context()));
+
+
+        JsNode jsBody = Translation.translateExpression(jetBodyExpression, context(), jsBlock);
+        jsBlock.getStatements().addAll(mayBeWrapWithReturn(jsBody).getStatements());
+
+        if (jetBodyExpression instanceof KtBlockExpression &&
+            descriptor.getReturnType() != null && KotlinBuiltIns.isUnit(descriptor.getReturnType()) &&
+            !KotlinBuiltIns.isUnit(TranslationUtils.getReturnTypeForCoercion(descriptor))) {
+            ClassDescriptor unit = context().getCurrentModule().getBuiltIns().getUnit();
+            JsReturn jsReturn = new JsReturn(ReferenceTranslator.translateAsValueReference(unit, context()));
+            jsReturn.setSource(UtilsKt.getFinalElement(declaration));
+            jsBlock.getStatements().add(jsReturn);
         }
 
-        jsBlock.getStatements().addAll(mayBeWrapWithReturn(Translation.translateExpression(jetBodyExpression, context(), jsBlock)).getStatements());
         return jsBlock;
     }
 
@@ -109,22 +146,24 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     private boolean mustAddReturnToGeneratedFunctionBody() {
         KotlinType functionReturnType = descriptor.getReturnType();
         assert functionReturnType != null : "Function return typed type must be resolved.";
-        return (!declaration.hasBlockBody()) && (!KotlinBuiltIns.isUnit(functionReturnType));
+        return (!declaration.hasBlockBody()) && !(KotlinBuiltIns.isUnit(functionReturnType) && !descriptor.isSuspend());
     }
 
     @NotNull
     private JsNode lastExpressionReturned(@NotNull JsNode body) {
-        return mutateLastExpression(body, new Mutator() {
-            @Override
-            @NotNull
-            public JsNode mutate(@NotNull JsNode node) {
-                if (!(node instanceof JsExpression)) {
-                    return node;
-                }
-                JsReturn jsReturn = new JsReturn((JsExpression)node);
-                MetadataProperties.setReturnTarget(jsReturn, descriptor);
-                return jsReturn;
+        return mutateLastExpression(body, node -> {
+            if (!(node instanceof JsExpression)) {
+                return node;
             }
+
+            assert declaration.getBodyExpression() != null;
+            KotlinType returnType = TranslationUtils.getReturnTypeForCoercion(descriptor);
+            node = TranslationUtils.coerce(context(), (JsExpression) node, returnType);
+
+            JsReturn jsReturn = new JsReturn((JsExpression) node);
+            jsReturn.setSource(declaration.getBodyExpression());
+            MetadataProperties.setReturnTarget(jsReturn, descriptor);
+            return jsReturn;
         });
     }
 }

@@ -1,4 +1,4 @@
-JetFile: CallWithManyClosures.kt
+KtFile: CallWithManyClosures.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

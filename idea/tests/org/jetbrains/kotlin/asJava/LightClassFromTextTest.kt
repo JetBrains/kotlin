@@ -23,7 +23,9 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 // see KtFileLightClassTest
@@ -94,13 +96,21 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
         assertEquals(exampleClass, (f.returnType as PsiClassType).resolve())
     }
 
+    fun testHeaderDeclarations() {
+        val contextFile = myFixture.configureByText("Header.kt", "header class Foo\n\nheader fun foo()\n") as KtFile
+        val headerClass = contextFile.declarations.single { it is KtClassOrObject }
+        assertEquals(0, headerClass.toLightElements().size)
+        val headerFunction = contextFile.declarations.single { it is KtNamedFunction }
+        assertEquals(0, headerFunction.toLightElements().size)
+    }
+
     private fun classesFromText(text: String, fileName: String = "A.kt"): Array<out PsiClass> {
         val file = KtPsiFactory(project).createFileWithLightClassSupport(fileName, text, myFixture.file)
         val classes = file.classes
         return classes
     }
 
-    override fun getTestDataPath(): String? {
+    override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/asJava/fileLightClass/"
     }
 }

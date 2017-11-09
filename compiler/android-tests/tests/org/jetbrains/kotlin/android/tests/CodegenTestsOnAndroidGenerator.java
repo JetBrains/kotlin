@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.android.tests;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,26 +30,26 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.NameUtils;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
+import org.junit.Ignore;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Ignore
 public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
 
     private final PathManager pathManager;
@@ -58,6 +60,7 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
     private static final String generatorName = "CodegenTestsOnAndroidGenerator";
 
     private static int MODULE_INDEX = 1;
+    private int WRITED_FILES_COUNT = 0;
 
     private final List<String> generatedTestNames = Lists.newArrayList();
 
@@ -145,16 +148,18 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
         private final boolean isFullJdkAndRuntime;
         private final boolean inheritMultifileParts;
 
-        public List<KtFile> files = new ArrayList<KtFile>();
+        public List<KtFile> files = new ArrayList<>();
         private KotlinCoreEnvironment environment;
+        private Disposable disposable;
 
         private FilesWriter(boolean isFullJdkAndRuntime, boolean inheritMultifileParts) {
             this.isFullJdkAndRuntime = isFullJdkAndRuntime;
             this.inheritMultifileParts = inheritMultifileParts;
-            this.environment = createEnvironment(isFullJdkAndRuntime);
+            this.disposable = new TestDisposable();
+            this.environment = createEnvironment(isFullJdkAndRuntime, disposable);
         }
 
-        private KotlinCoreEnvironment createEnvironment(boolean isFullJdkAndRuntime) {
+        private KotlinCoreEnvironment createEnvironment(boolean isFullJdkAndRuntime, @NotNull Disposable disposable) {
             ConfigurationKind configurationKind = isFullJdkAndRuntime ? ConfigurationKind.ALL : ConfigurationKind.NO_KOTLIN_REFLECT;
             TestJdkKind testJdkKind = isFullJdkAndRuntime ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
             CompilerConfiguration configuration =
@@ -163,7 +168,7 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
             if (inheritMultifileParts) {
                 configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, true);
             }
-            return KotlinCoreEnvironment.createForTests(myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+            return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         }
 
         public boolean shouldWriteFilesOnDisk() {
@@ -178,8 +183,12 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
 
         public void writeFilesOnDisk() {
             writeFiles(files);
-            files = new ArrayList<KtFile>();
-            environment = createEnvironment(isFullJdkAndRuntime);
+            files = new ArrayList<>();
+            if (disposable != null) {
+                Disposer.dispose(disposable);
+                disposable = new TestDisposable();
+            }
+            environment = createEnvironment(isFullJdkAndRuntime, disposable);
         }
 
         public void addFile(String name, String content) {
@@ -194,19 +203,30 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
         private void writeFiles(List<KtFile> filesToCompile) {
             if (filesToCompile.isEmpty()) return;
 
+            //1000 files per folder, each folder would be jared by build.gradle script
+            // We can't create one big jar with all test cause dex has problem with memory on teamcity
+            WRITED_FILES_COUNT += filesToCompile.size();
+            File outputDir = new File(pathManager.getOutputForCompiledFiles(WRITED_FILES_COUNT / 1000));
+
             System.out.println("Generating " + filesToCompile.size() + " files" +
                                (inheritMultifileParts
                                 ? " (JVM.INHERIT_MULTIFILE_PARTS)"
-                                : isFullJdkAndRuntime ? " (full jdk and runtime)" : "") + "...");
+                                : isFullJdkAndRuntime ? " (full jdk and runtime)" : "") + " into " + outputDir.getName() + "...");
             OutputFileCollection outputFiles;
+            GenerationState state = null;
             try {
-                outputFiles = GenerationUtils.compileFiles(filesToCompile, environment).getFactory();
+                state = GenerationUtils.compileFiles(filesToCompile, environment);
+                outputFiles = state.getFactory();
             }
             catch (Throwable e) {
                 throw new RuntimeException(e);
             }
+            finally {
+                if (state != null) {
+                    state.destroy();
+                }
+            }
 
-            File outputDir = new File(pathManager.getOutputForCompiledFiles());
             if (!outputDir.exists()) {
                 outputDir.mkdirs();
             }
@@ -243,6 +263,15 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
             else {
                 String fullFileText = FileUtil.loadFile(file, true);
 
+                if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM, file)) {
+                    continue;
+                }
+
+                //TODO: support LANGUAGE_VERSION
+                if (InTextDirectivesUtils.isDirectiveDefined(fullFileText, "LANGUAGE_VERSION:")) {
+                    continue;
+                }
+
                 //TODO: support multifile facades
                 //TODO: support multifile facades hierarchies
                 if (hasBoxMethod(fullFileText)) {
@@ -278,7 +307,7 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
     }
 
     private String generateTestName(String fileName) {
-        String result = JvmAbi.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)));
+        String result = NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)));
 
         int i = 0;
         while (generatedTestNames.contains(result)) {

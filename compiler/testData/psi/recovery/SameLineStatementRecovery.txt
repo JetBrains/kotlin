@@ -1,4 +1,4 @@
-JetFile: SameLineStatementRecovery.kt
+KtFile: SameLineStatementRecovery.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

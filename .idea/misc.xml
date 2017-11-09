@@ -6,7 +6,6 @@
     </properties>
   </component>
   <component name="EntryPointsManager">
-    <entry_points version="2.0" />
     <list size="1">
       <item index="0" class="java.lang.String" itemvalue="javax.inject.Inject" />
     </list>
@@ -49,11 +48,17 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" default="false" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="SuppressABINotification">
-    <option name="isSuppressed" value="true" />
+    <option name="modulesWithSuppressedNotConfigured">
+      <set>
+        <option value="kotlin-stdlib-common" />
+        <option value="kotlin-stdlib-js" />
+        <option value="kotlin-test-common" />
+      </set>
+    </option>
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="com.sixrr.metrics.MetricsReloaded">

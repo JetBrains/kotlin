@@ -7,6 +7,7 @@
 [LibraryClassUsages.1.java] Local variable declaration 12 A aa = new A(1);
 [LibraryClassUsages.1.java] New instance creation 11 A a = new A();
 [LibraryClassUsages.1.java] New instance creation 12 A aa = new A(1);
+[LibraryClassUsages.1.java] Unclassified usage 7 super(n);
 [LibraryClassUsages.1.java] Usage in extends/implements clause 5 class J extends A {
 [library.kt] Nested class/object 63 val t = A.T(1)
 [library.kt] Nested class/object 64 val tt = A.T()

@@ -61,7 +61,7 @@ class CheckComponentsUsageSearchAction : AnAction() {
             progressIndicator?.text = "Checking data class ${i + 1} of ${dataClasses.size}..."
             progressIndicator?.text2 = dataClass.fqName?.asString() ?: ""
 
-            val parameter = dataClass.getPrimaryConstructor()?.valueParameters?.firstOrNull()
+            val parameter = dataClass.primaryConstructor?.valueParameters?.firstOrNull()
             if (parameter != null) {
                 try {
                     var smartRefsCount = 0

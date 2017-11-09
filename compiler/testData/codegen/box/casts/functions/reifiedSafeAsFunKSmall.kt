@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 fun fn0() {}
 fun fn1(x: Any) {}
 

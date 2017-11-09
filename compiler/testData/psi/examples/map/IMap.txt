@@ -1,4 +1,4 @@
-JetFile: IMap.kt
+KtFile: IMap.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

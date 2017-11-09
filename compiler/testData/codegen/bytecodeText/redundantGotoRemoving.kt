@@ -1,7 +1,9 @@
+val nonConstFlag = true
 
 inline fun <T, R> calc(value : T, fn: (T) -> R) : R = fn(value)
+
 inline fun <T> identity(value : T) : T = calc(value) {
-    if (1 == 1) return it
+    if (nonConstFlag) return it
     it
 }
 

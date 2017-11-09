@@ -1,4 +1,4 @@
-JetFile: IfKeywordRBrace.kt
+KtFile: IfKeywordRBrace.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

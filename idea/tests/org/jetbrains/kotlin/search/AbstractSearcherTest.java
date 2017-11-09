@@ -22,11 +22,11 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.Query;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
@@ -59,23 +59,18 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
         return GlobalSearchScope.projectScope(getProject());
     }
 
-    protected void checkResult(Query<?> actual) throws IOException {
-        String text = FileUtil.loadFile(new File(getPathToFile()), true);
+    protected static void checkResult(@NotNull String path, Query<?> actual) throws IOException {
+        String text = FileUtil.loadFile(new File(path), true);
 
         List<String> classFqnFilters = InTextDirectivesUtils.findListWithPrefixes(text, "// IGNORE_CLASSES: ");
 
-        List<String> actualModified = new ArrayList<String>();
+        List<String> actualModified = new ArrayList<>();
         for (Object member : actual) {
             if (member instanceof PsiClass) {
-                final String qualifiedName = ((PsiClass) member).getQualifiedName();
+                String qualifiedName = ((PsiClass) member).getQualifiedName();
                 assert qualifiedName != null;
 
-                boolean filterOut = CollectionsKt.any(classFqnFilters, new Function1<String, Boolean>() {
-                    @Override
-                    public Boolean invoke(String s) {
-                        return qualifiedName.startsWith(s);
-                    }
-                });
+                boolean filterOut = CollectionsKt.any(classFqnFilters, qualifiedName::startsWith);
 
                 if (filterOut) {
                     continue;
@@ -90,6 +85,16 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
         Collections.sort(expected);
 
         assertOrderedEquals(actualModified, expected);
+    }
+
+    protected void checkClassWithDirectives(@NotNull String path) throws IOException {
+        myFixture.configureByFile(path);
+        List<String> directives = InTextDirectivesUtils.findListWithPrefixes(
+                FileUtil.loadFile(new File(path), true), "// CLASS: ");
+        assertFalse("Specify CLASS directive in test file", directives.isEmpty());
+        String superClassName = directives.get(0);
+        PsiClass psiClass = getPsiClass(superClassName);
+        checkResult(path, ClassInheritorsSearch.search(psiClass, getProjectScope(), false));
     }
 
     private static String stringRepresentation(Object member) {

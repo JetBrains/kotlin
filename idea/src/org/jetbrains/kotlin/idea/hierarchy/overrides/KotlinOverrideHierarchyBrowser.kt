@@ -16,23 +16,42 @@
 
 package org.jetbrains.kotlin.idea.hierarchy.overrides
 
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.HierarchyTreeStructure
+import com.intellij.ide.hierarchy.JavaHierarchyUtil
 import com.intellij.ide.hierarchy.MethodHierarchyBrowserBase
-import com.intellij.ide.hierarchy.method.MethodHierarchyBrowser
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
+import com.intellij.ui.PopupHandler
 import com.intellij.usageView.UsageViewLongNameLocation
-import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import javax.swing.JPanel
+import javax.swing.JTree
 
 class KotlinOverrideHierarchyBrowser(
         project: Project, baseElement: PsiElement
-) : MethodHierarchyBrowser(project, baseElement.getRepresentativeLightMethod()) {
+) : MethodHierarchyBrowserBase(project, baseElement) {
+    override fun createTrees(trees: MutableMap<String, JTree>) {
+        val actionManager = ActionManager.getInstance()
+
+        val tree = createTree(false)
+
+        val group = actionManager.getAction(IdeActions.GROUP_METHOD_HIERARCHY_POPUP) as ActionGroup
+        PopupHandler.installPopupHandler(tree, group, ActionPlaces.METHOD_HIERARCHY_VIEW_POPUP, actionManager)
+
+        BaseOnThisMethodAction().registerCustomShortcutSet(actionManager.getAction(IdeActions.ACTION_METHOD_HIERARCHY).shortcutSet, tree)
+
+        trees.put(MethodHierarchyBrowserBase.METHOD_TYPE, tree)
+    }
+
     override fun createLegendPanel(): JPanel? =
             MethodHierarchyBrowserBase.createStandardLegendPanel(
                     KotlinBundle.message("hierarchy.legend.member.is.defined.in.class"),
@@ -40,18 +59,15 @@ class KotlinOverrideHierarchyBrowser(
                     KotlinBundle.message("hierarchy.legend.member.should.be.defined")
             )
 
+    override fun getElementFromDescriptor(descriptor: HierarchyNodeDescriptor) = descriptor.psiElement
+
     override fun isApplicableElement(psiElement: PsiElement): Boolean =
             psiElement.isOverrideHierarchyElement()
 
     override fun createHierarchyTreeStructure(typeName: String, psiElement: PsiElement): HierarchyTreeStructure? =
-            if (typeName == MethodHierarchyBrowserBase.METHOD_TYPE) KotlinOverrideTreeStructure(myProject, psiElement) else null
+            if (typeName == MethodHierarchyBrowserBase.METHOD_TYPE) KotlinOverrideTreeStructure(myProject, psiElement as KtCallableDeclaration) else null
 
-    override fun getBaseMethod(): PsiMethod? {
-        val builder = myBuilders.get(myCurrentViewType)
-        if (builder == null) return null
-
-        return (builder.treeStructure as KotlinOverrideTreeStructure).javaTreeStructures.get(0).baseMethod
-    }
+    override fun getComparator() = JavaHierarchyUtil.getComparator(myProject)!!
 
     override fun getContentDisplayName(typeName: String, element: PsiElement): String? {
         val targetElement = element.unwrapped

@@ -1,0 +1,16 @@
+package test
+
+private fun getInner(): test.ReturnInnerInInner.Inner!
+private fun getInner2(): test.ReturnInnerInInner.Inner!
+private fun getInner3(): test.ReturnInnerInInner.Inner!
+
+public/*package*/ open class ReturnInnerInInner {
+    public/*package*/ constructor ReturnInnerInInner()
+
+    public/*package*/ open class Inner {
+        public/*package*/ constructor Inner()
+        public/*package*/ open fun getInner(): test.ReturnInnerInInner.Inner!
+        public/*package*/ open fun getInner2(): test.ReturnInnerInInner.Inner!
+        public/*package*/ open fun getInner3(): test.ReturnInnerInInner.Inner!
+    }
+}

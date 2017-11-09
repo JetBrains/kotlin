@@ -49,6 +49,10 @@ object DirectiveBasedActionUtils {
         UsefulTestCase.assertEmpty("Irrelevant actions should not be specified in ACTION directive for they are not checked anyway",
                                    expectedActions.filter { isIrrelevantAction(it) })
 
+        if (InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, "// IGNORE_IRRELEVANT_ACTIONS").isNotEmpty()) {
+            return
+        }
+
         val actualActions = availableActions.map { it.text }.sorted()
 
         UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position. Use // ACTION: directive",
@@ -76,6 +80,11 @@ object DirectiveBasedActionUtils {
             "Suppress all ",
             "Edit cleanup profile settings",
             "Fix all '",
-            "Cleanup code"
+            "Cleanup code",
+            "Show local variable type hints",
+            "Show function return type hints",
+            "Show property type hints",
+            "Show parameter type hints",
+            "Show argument name hints"
     )
 }

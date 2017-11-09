@@ -20,7 +20,8 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -29,15 +30,22 @@ import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.util.*
 
 fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassGenerationSupport.getInstance(project).getLightClass(this)
+
+fun KtClassOrObject.toLightClassWithBuiltinMapping(): PsiClass? {
+    toLightClass()?.let { return it }
+
+    val fqName = fqName ?: return null
+    val javaClassFqName = JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName() ?: return null
+    val searchScope = useScope as? GlobalSearchScope ?: return null
+    return JavaPsiFacade.getInstance(project).findClass(javaClassFqName.asString(), searchScope)
+}
 
 fun KtFile.findFacadeClass(): KtLightClass? {
     return LightClassGenerationSupport.getInstance(project)
@@ -45,22 +53,22 @@ fun KtFile.findFacadeClass(): KtLightClass? {
             .firstOrNull { it is KtLightClassForFacade && this in it.files } as? KtLightClass
 }
 
+fun KtScript.toLightClass(): KtLightClassForScript? = LightClassGenerationSupport.getInstance(project).getLightClassForScript(this)
+
 fun KtElement.toLightElements(): List<PsiNamedElement> =
         when (this) {
-            is KtClassOrObject -> toLightClass().singletonOrEmptyList()
+            is KtClassOrObject -> listOfNotNull(toLightClass())
             is KtNamedFunction,
             is KtSecondaryConstructor -> LightClassUtil.getLightClassMethods(this as KtFunction)
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).allDeclarations
-            is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
-            is KtParameter -> ArrayList<PsiNamedElement>().let { elements ->
+            is KtPropertyAccessor -> listOfNotNull(LightClassUtil.getLightClassAccessorMethod(this))
+            is KtParameter -> mutableListOf<PsiNamedElement>().also { elements ->
                 toPsiParameters().toCollection(elements)
                 LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
-                toAnnotationLightMethod()?.let { elements.add(it) }
-
-                elements
+                toAnnotationLightMethod()?.let(elements::add)
             }
             is KtTypeParameter -> toPsiTypeParameters()
-            is KtFile -> findFacadeClass().singletonOrEmptyList()
+            is KtFile -> listOfNotNull(findFacadeClass())
             else -> listOf()
         }
 
@@ -70,8 +78,8 @@ fun PsiElement.toLightMethods(): List<PsiMethod> =
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(this)
-            is KtClass -> toLightClass()?.getConstructors()?.first().singletonOrEmptyList()
-            is PsiMethod -> this.singletonList()
+            is KtClass -> listOfNotNull(toLightClass()?.constructors?.firstOrNull())
+            is PsiMethod -> listOf(this)
             else -> listOf()
         }
 
@@ -88,8 +96,9 @@ fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
 fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     val paramList = getNonStrictParentOfType<KtParameterList>() ?: return emptyList()
 
-    val paramIndex = paramList.getParameters().indexOf(this)
-    val owner = paramList.getParent()
+    val paramIndex = paramList.parameters.indexOf(this)
+    if (paramIndex < 0) return emptyList()
+    val owner = paramList.parent
     val lightParamIndex = if (owner is KtDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
 
     val methods: Collection<PsiMethod> =
@@ -99,9 +108,7 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
                 else -> null
             } ?: return emptyList()
 
-    return methods.mapNotNull {
-        if (it.parameterList.parametersCount > lightParamIndex) it.parameterList.parameters[lightParamIndex] else null
-    }
+    return methods.mapNotNull { it.parameterList.parameters.getOrNull(lightParamIndex) }
 }
 
 private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
@@ -112,15 +119,20 @@ private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
     return LightClassUtil.getLightClassMethod(this)
 }
 
+fun KtParameter.toLightGetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).getter
+
+fun KtParameter.toLightSetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).setter
+
 fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
-    val paramList = getNonStrictParentOfType<KtTypeParameterList>()
-    if (paramList == null) return listOf()
+    val paramList = getNonStrictParentOfType<KtTypeParameterList>() ?: return listOf()
 
-    val paramIndex = paramList.getParameters().indexOf(this)
-    val jetDeclaration = paramList.getNonStrictParentOfType<KtDeclaration>() ?: return listOf()
-    val lightOwners = jetDeclaration.toLightElements()
+    val paramIndex = paramList.parameters.indexOf(this)
+    val ktDeclaration = paramList.getNonStrictParentOfType<KtDeclaration>() ?: return listOf()
+    val lightOwners = ktDeclaration.toLightElements()
 
-    return lightOwners.mapNotNull { lightOwner -> (lightOwner as? PsiTypeParameterListOwner)?.typeParameters?.get(paramIndex) }
+    return lightOwners.mapNotNull { lightOwner ->
+        (lightOwner as? PsiTypeParameterListOwner)?.typeParameters?.getOrNull(paramIndex)
+    }
 }
 
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
@@ -128,7 +140,7 @@ val PsiElement.unwrapped: PsiElement?
     get() = when {
         this is KtLightElement<*, *> -> kotlinOrigin
         this is KtLightIdentifier -> origin
-        this is KtLightAnnotation.LightExpressionValue<*> -> originalExpression
+        this is KtLightAnnotationForSourceEntry.LightExpressionValue<*> -> originalExpression
         else -> this
     }
 
@@ -140,9 +152,7 @@ val KtClassOrObject.hasInterfaceDefaultImpls: Boolean
     get() = this is KtClass && isInterface() && hasNonAbstractMembers(this)
 
 private fun hasNonAbstractMembers(ktInterface: KtClass): Boolean {
-    return ktInterface.declarations.any {
-        isNonAbstractMember(it)
-    }
+    return ktInterface.declarations.any(::isNonAbstractMember)
 }
 
 private fun isNonAbstractMember(member: KtDeclaration?): Boolean {
@@ -158,7 +168,7 @@ fun KtAnnotationEntry.toLightAnnotation(): PsiAnnotation? {
     val ktDeclaration = getStrictParentOfType<KtModifierList>()?.parent as? KtDeclaration ?: return null
     for (lightElement in ktDeclaration.toLightElements()) {
         if (lightElement !is PsiModifierListOwner) continue
-        lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotation && it.kotlinOrigin == this }?.let { return it }
+        lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotationForSourceEntry && it.kotlinOrigin == this }?.let { return it }
     }
     return null
 }

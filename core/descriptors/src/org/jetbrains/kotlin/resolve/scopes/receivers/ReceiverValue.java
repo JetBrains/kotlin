@@ -23,4 +23,7 @@ public interface ReceiverValue extends Receiver {
 
     @NotNull
     KotlinType getType();
+
+    @NotNull
+    ReceiverValue replaceType(@NotNull KotlinType newType);
 }

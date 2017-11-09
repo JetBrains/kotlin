@@ -1,0 +1,32 @@
+fun valuesNotNull(map: MutableMap<Int, String>) {
+    map.replace(1, "x")
+        // SUCCESS
+        // ORIGINAL:    fun replace(K, V): V? defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun replace(Int, String): String? defined in kotlin.collections.MutableMap
+    map.replace(1, "x", "y")
+        // SUCCESS
+        // ORIGINAL:    fun replace(K, V, V): Boolean defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun replace(Int, String, String): Boolean defined in kotlin.collections.MutableMap
+
+    map.replaceAll { k, v -> "$k to ${v.length}" }
+        // SUCCESS
+        // ORIGINAL:    fun replaceAll((K, V) -> V): Unit defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun replaceAll((Int, String) -> String): Unit defined in kotlin.collections.MutableMap
+}
+
+fun valuesNullable(map: MutableMap<Int, String?>) {
+    map.replace(1, null)
+        // SUCCESS
+        // ORIGINAL:    fun replace(K, V): V? defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun replace(Int, String?): String? defined in kotlin.collections.MutableMap
+    map.replace(1, null, "x")
+        // SUCCESS
+        // ORIGINAL:    fun replace(K, V, V): Boolean defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun replace(Int, String?, String?): Boolean defined in kotlin.collections.MutableMap
+
+    map.replaceAll { k, v -> "$k to $v" }
+        // SUCCESS
+        // ORIGINAL:    fun replaceAll((K, V) -> V): Unit defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun replaceAll((Int, String?) -> String?): Unit defined in kotlin.collections.MutableMap
+}
+

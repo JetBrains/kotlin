@@ -1,4 +1,4 @@
-JetFile: BinaryHeap.kt
+KtFile: BinaryHeap.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

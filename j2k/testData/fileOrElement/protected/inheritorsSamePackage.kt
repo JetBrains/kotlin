@@ -1,6 +1,9 @@
 package test
 
 open class BaseInheritorSamePackage {
+
+    var i = 1
+
     constructor() {
 
     }
@@ -12,8 +15,6 @@ open class BaseInheritorSamePackage {
     fun foo() {
         BaseInheritorSamePackage(1)
     }
-
-    var i = 1
 }
 
 internal class DerivedInheritorSamePackage : BaseInheritorSamePackage() {

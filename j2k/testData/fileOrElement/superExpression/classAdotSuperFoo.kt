@@ -1,8 +1,7 @@
 package a.b
 
 internal open class Base {
-    fun foo() {
-    }
+    fun foo() {}
 }
 
 internal class A : Base() {

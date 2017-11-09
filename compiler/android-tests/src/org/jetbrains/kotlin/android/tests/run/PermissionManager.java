@@ -29,11 +29,11 @@ public class PermissionManager {
 
     public static void setPermissions(PathManager pathManager) {
         if (!SystemInfo.isWindows) {
-            RunUtils.execute(generateChmodCmd(pathManager.getAntBinDirectory() + "/ant"));
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getToolsFolderInAndroidSdk()));
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getToolsFolderInAndroidSdk() + "/bin64"));
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getBuildToolsFolderInAndroidSdk() + "/" + SDKDownloader.BUILD_TOOLS));
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getPlatformToolsFolderInAndroidSdk()));
+            setExecPermissionForSimpleNamedFiles(new File(pathManager.getToolsFolderInAndroidSdk() +"/qemu/linux-x86_64"));
             RunUtils.execute(generateChmodCmd(pathManager.getGradleBinFolder() + "/gradle"));
         }
     }

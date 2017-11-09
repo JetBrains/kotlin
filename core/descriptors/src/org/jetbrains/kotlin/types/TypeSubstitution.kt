@@ -117,7 +117,7 @@ fun KotlinType.replace(
         newArguments: List<TypeProjection> = arguments,
         newAnnotations: Annotations = annotations
 ): KotlinType {
-    if (newArguments.isEmpty() && newAnnotations === annotations) return this
+    if ((newArguments.isEmpty() || newArguments === arguments) && newAnnotations === annotations) return this
 
     val unwrapped = unwrap()
     return when(unwrapped) {
@@ -135,13 +135,7 @@ fun SimpleType.replace(
     if (newArguments.isEmpty() && newAnnotations === annotations) return this
 
     if (newArguments.isEmpty()) {
-        return KotlinTypeFactory.simpleType(
-                newAnnotations,
-                constructor,
-                arguments,
-                isMarkedNullable,
-                memberScope
-        )
+        return replaceAnnotations(newAnnotations)
     }
 
     return KotlinTypeFactory.simpleType(

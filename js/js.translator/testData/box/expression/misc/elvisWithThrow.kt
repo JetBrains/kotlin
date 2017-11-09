@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1116
 package foo
 
 var i = 0
@@ -5,9 +6,6 @@ fun bar(): Any? {
     i++
     return null
 }
-
-@native
-val Exception.message: String get() = noImpl
 
 fun box(): String {
     val a: String? = null

@@ -1,0 +1,14 @@
+package
+
+public suspend fun foo(): kotlin.Unit
+public fun test1(/*0*/ a: A): kotlin.Unit
+public suspend fun test2(/*0*/ a: A): kotlin.Unit
+public suspend fun A.ext(): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final suspend fun member(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

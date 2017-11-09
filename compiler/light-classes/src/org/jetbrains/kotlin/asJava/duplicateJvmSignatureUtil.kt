@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.asJava.builder.OutermostKotlinClassLightClassData
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.cast
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
@@ -37,17 +37,21 @@ fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostic
     fun getDiagnosticsForFileFacade(file: KtFile): Diagnostics? {
         val project = file.project
         val cache = KtLightClassForFacade.FacadeStubCache.getInstance(project)
-        val facadeFqName = NoResolveFileClassesProvider.getFileClassInfo(file).facadeClassFqName
+        val facadeFqName = JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
         return cache[facadeFqName, moduleScope].value?.extraDiagnostics
     }
 
     fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
-        return (KtLightClassForSourceDeclaration.getLightClassData(ktClassOrObject) as? OutermostKotlinClassLightClassData)?.extraDiagnostics ?: Diagnostics.EMPTY
+        val lightClassDataHolder = KtLightClassForSourceDeclaration.getLightClassDataHolder(ktClassOrObject)
+        if (lightClassDataHolder is InvalidLightClassDataHolder) {
+            return Diagnostics.EMPTY
+        }
+        return lightClassDataHolder.extraDiagnostics
     }
 
     fun doGetDiagnostics(): Diagnostics? {
         //TODO: enable this diagnostic when light classes for scripts are ready
-        if ((element.containingFile as? KtFile)?.isScript ?: false) return null
+        if ((element.containingFile as? KtFile)?.isScript() ?: false) return null
 
         var parent = element.parent
         if (element is KtPropertyAccessor) {
@@ -91,12 +95,12 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
         val higherPriority = setOf<DiagnosticFactory<*>>(
                 CONFLICTING_OVERLOADS, REDECLARATION, NOTHING_TO_OVERRIDE, MANY_IMPL_MEMBER_NOT_IMPLEMENTED)
         return otherDiagnostics.forElement(psiElement).any { it.factory in higherPriority }
-                || psiElement is KtPropertyAccessor && alreadyReported(psiElement.getParent()!!)
+                || psiElement is KtPropertyAccessor && alreadyReported(psiElement.parent)
     }
 
     override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {
         val jvmDiagnosticFactories = setOf(CONFLICTING_JVM_DECLARATIONS, ACCIDENTAL_OVERRIDE, CONFLICTING_INHERITED_JVM_DECLARATIONS)
-        fun Diagnostic.data() = cast(this, jvmDiagnosticFactories).getA()
+        fun Diagnostic.data() = cast(this, jvmDiagnosticFactories).a
         val (conflicting, other) = jvmDiagnostics.forElement(psiElement).partition { it.factory in jvmDiagnosticFactories }
         if (alreadyReported(psiElement)) {
             // CONFLICTING_OVERLOADS already reported, no need to duplicate it

@@ -1,7 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1118
 package foo
 
-@native
-class A {
+external class A {
     constructor()
     constructor(s: String)
     constructor(i: Int)

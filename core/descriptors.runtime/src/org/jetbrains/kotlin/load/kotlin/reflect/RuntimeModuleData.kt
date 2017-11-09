@@ -18,14 +18,17 @@ package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.JavaResolverComponents
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.java.reflect.ReflectJavaClassFinder
+import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
 import org.jetbrains.kotlin.load.kotlin.BinaryClassAnnotationAndConstantLoaderImpl
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
@@ -33,30 +36,39 @@ import org.jetbrains.kotlin.load.kotlin.JavaClassDataFinder
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
+import org.jetbrains.kotlin.serialization.deserialization.ContractDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.utils.Jsr305State
 
-class RuntimeModuleData private constructor(val deserialization: DeserializationComponents, val packageFacadeProvider: RuntimePackagePartProvider) {
+class RuntimeModuleData private constructor(
+        val deserialization: DeserializationComponents,
+        val packagePartProvider: RuntimePackagePartProvider
+) {
     val module: ModuleDescriptor get() = deserialization.moduleDescriptor
 
     companion object {
         fun create(classLoader: ClassLoader): RuntimeModuleData {
             val storageManager = LockBasedStorageManager()
             val builtIns = JvmBuiltIns(storageManager)
-            val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager, emptyList(), builtIns)
+            val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager, builtIns)
 
             val reflectKotlinClassFinder = ReflectKotlinClassFinder(classLoader)
-            val deserializedDescriptorResolver = DeserializedDescriptorResolver(RuntimeErrorReporter)
+            val deserializedDescriptorResolver = DeserializedDescriptorResolver()
             val singleModuleClassResolver = SingleModuleClassResolver()
-            val runtimePackageFacadeProvider = RuntimePackagePartProvider(classLoader)
+            val runtimePackagePartProvider = RuntimePackagePartProvider(classLoader)
             val javaResolverCache = JavaResolverCache.EMPTY
+            val notFoundClasses = NotFoundClasses(storageManager, module)
+            val annotationTypeQualifierResolver = AnnotationTypeQualifierResolver(storageManager, Jsr305State.DISABLED)
             val globalJavaResolverContext = JavaResolverComponents(
                     storageManager, ReflectJavaClassFinder(classLoader), reflectKotlinClassFinder, deserializedDescriptorResolver,
                     ExternalAnnotationResolver.EMPTY, SignaturePropagator.DO_NOTHING, RuntimeErrorReporter, javaResolverCache,
-                    JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolver, RuntimeSourceElementFactory, singleModuleClassResolver,
-                    runtimePackageFacadeProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module, ReflectionTypes(module)
+                    JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolver.Empty, RuntimeSourceElementFactory, singleModuleClassResolver,
+                    runtimePackagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
+                    ReflectionTypes(module, notFoundClasses),
+                    annotationTypeQualifierResolver,
+                    SignatureEnhancement(annotationTypeQualifierResolver)
             )
 
             val lazyJavaPackageFragmentProvider = LazyJavaPackageFragmentProvider(globalJavaResolverContext)
@@ -65,14 +77,13 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
 
             val javaDescriptorResolver = JavaDescriptorResolver(lazyJavaPackageFragmentProvider, javaResolverCache)
             val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
-            val notFoundClasses = NotFoundClasses(storageManager, module)
             val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(
                     module, notFoundClasses, storageManager, reflectKotlinClassFinder
             )
             val deserializationComponentsForJava = DeserializationComponentsForJava(
                     storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,
                     binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider, notFoundClasses,
-                    RuntimeErrorReporter, LookupTracker.DO_NOTHING
+                    RuntimeErrorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT
             )
 
             singleModuleClassResolver.resolver = javaDescriptorResolver
@@ -81,7 +92,7 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
             module.setDependencies(module, builtIns.builtInsModule)
             module.initialize(javaDescriptorResolver.packageFragmentProvider)
 
-            return RuntimeModuleData(deserializationComponentsForJava.components, runtimePackageFacadeProvider)
+            return RuntimeModuleData(deserializationComponentsForJava.components, runtimePackagePartProvider)
         }
     }
 }

@@ -20,16 +20,12 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
-import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.intentions.isFlexibleRecursive
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.TypeUtils
 import javax.swing.JComponent
 
@@ -45,9 +41,8 @@ class HasPlatformTypeInspection(
         }
 ) {
 
-    override val problemHighlightType = ProblemHighlightType.WEAK_WARNING
-
-    override val problemText = "Declaration has platform type. Make the type explicit to prevent subtle bugs."
+    override val problemText = "Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. " +
+                               "Specify type explicitly as nullable or non-nullable."
 
     override fun additionalFixes(element: KtCallableDeclaration): List<LocalQuickFix>? {
         val type = SpecifyTypeExplicitlyIntention.dangerousFlexibleTypeOrNull(element, publicAPIOnly, reportPlatformArguments) ?: return null

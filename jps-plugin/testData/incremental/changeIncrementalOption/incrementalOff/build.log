@@ -1,13 +1,19 @@
 ================ Step #1 =================
 
 Building module1
-Actions after cache changed: [CLEAN_NORMAL_CACHES, DO_NOTHING]
+Actions after cache changed: [CLEAN_NORMAL_CACHES, CLEAN_DATA_CONTAINER]
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building module2
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/AKt.class
+End of files
+Exit code: CHUNK_REBUILD_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module2/foo/BKt.class
+  out/production/module2/foo/CKt.class
 End of files
 Compiling files:
   module2/src/a.kt
@@ -32,6 +38,12 @@ Building module2
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/AKt.class
+End of files
+Exit code: CHUNK_REBUILD_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module2/foo/BKt.class
+  out/production/module2/foo/CKt.class
 End of files
 Compiling files:
   module2/src/a.kt

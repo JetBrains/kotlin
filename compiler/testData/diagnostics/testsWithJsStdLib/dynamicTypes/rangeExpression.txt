@@ -1,0 +1,11 @@
+package
+
+public fun foo(): kotlin.Unit
+
+public final class C {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun rangeTo(/*0*/ other: dynamic): kotlin.ranges.ClosedRange<dynamic>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

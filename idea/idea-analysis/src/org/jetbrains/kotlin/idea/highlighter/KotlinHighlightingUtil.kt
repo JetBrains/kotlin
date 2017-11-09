@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.caches.resolve.NotUnderContentRootModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -24,11 +26,13 @@ import org.jetbrains.kotlin.psi.KtFile
 object KotlinHighlightingUtil {
     fun shouldHighlight(psiElement: PsiElement): Boolean {
         val ktFile = psiElement.containingFile as? KtFile ?: return false
-        return ktFile is KtCodeFragment || ktFile.isScript || ProjectRootsUtil.isInProjectOrLibraryContent(ktFile)
+        return ktFile is KtCodeFragment && ktFile.context != null ||
+               ktFile.isScript() ||
+               ProjectRootsUtil.isInProjectOrLibraryContent(ktFile) && ktFile.getModuleInfo() !is NotUnderContentRootModuleInfo
     }
 
     fun shouldHighlightErrors(psiElement: PsiElement): Boolean {
         val ktFile = psiElement.containingFile as? KtFile ?: return false
-        return ktFile is KtCodeFragment || ktFile.isScript || ProjectRootsUtil.isInProjectSource(ktFile)
+        return (ktFile is KtCodeFragment && ktFile.context != null) || ktFile.isScript() || ProjectRootsUtil.isInProjectSource(ktFile)
     }
 }

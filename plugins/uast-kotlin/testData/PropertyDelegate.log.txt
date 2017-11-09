@@ -1,0 +1,21 @@
+UFile (package = )
+    UClass (name = PropertyDelegateKt)
+        UField (name = sdCardPath$delegate)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                UIdentifier (Identifier (lazy))
+                USimpleNameReferenceExpression (identifier = lazy)
+                ULambdaExpression
+                    UBlockExpression
+                        ULiteralExpression (value = "/sdcard")
+        UAnnotationMethod (name = getSdCardPath)
+        UAnnotationMethod (name = localPropertyTest)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = sdCardPathLocal)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                            UIdentifier (Identifier (lazy))
+                            USimpleNameReferenceExpression (identifier = lazy)
+                            ULambdaExpression
+                                UBlockExpression
+                                    ULiteralExpression (value = "/sdcard")

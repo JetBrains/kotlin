@@ -6,6 +6,8 @@ End of files
 Compiling files:
   src/class.kt
 End of files
+Marked as dirty by Kotlin:
+  src/usage.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:

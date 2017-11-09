@@ -18,4 +18,5 @@
 [kotlinDeeplyNestedClassAllUsages.1.kt] Usage in cast target type 41 return if (this is Inner.A) this as Inner.A else null
 [kotlinDeeplyNestedClassAllUsages.2.java] Field declaration 6 Inner.A next = new Inner.A();
 [kotlinDeeplyNestedClassAllUsages.2.java] New instance creation 6 Inner.A next = new Inner.A();
+[kotlinDeeplyNestedClassAllUsages.2.java] Unclassified usage 5 public class X extends Inner.A {
 [kotlinDeeplyNestedClassAllUsages.2.java] Usage in extends/implements clause 5 public class X extends Inner.A {

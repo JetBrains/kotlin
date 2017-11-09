@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,36 @@
 
 package org.jetbrains.kotlin.js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.*;
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter;
+import com.google.gwt.dev.js.rhino.CodePosition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
+import org.jetbrains.kotlin.js.inline.util.RewriteUtilsKt;
 import org.jetbrains.kotlin.js.parser.ParserUtilsKt;
+import org.jetbrains.kotlin.js.resolve.BindingContextSlicesJsKt;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.utils.PsiUtils;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtCallExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
+import org.jetbrains.kotlin.resolve.FunctionImportedFromObject;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 import static org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker.isJsCall;
-import static org.jetbrains.kotlin.js.translate.utils.InlineUtils.setInlineCallMetadata;
-import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getFunctionDescriptor;
 import static org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator.getConstant;
 
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
@@ -55,30 +63,27 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             return (new CallExpressionTranslator(expression, receiver, context)).translateJsCode();
         }
 
-        JsExpression callExpression = (new CallExpressionTranslator(expression, receiver, context)).translate();
-
-        if (shouldBeInlined(expression, context)) {
-            setInlineCallMetadata(callExpression, expression, resolvedCall, context);
-        }
-
-        return callExpression;
+        return (new CallExpressionTranslator(expression, receiver, context)).translate();
     }
 
-    public static boolean shouldBeInlined(@NotNull KtCallExpression expression, @NotNull TranslationContext context) {
+    public static boolean shouldBeInlined(@NotNull CallableDescriptor descriptor, @NotNull TranslationContext context) {
         if (context.getConfig().getConfiguration().getBoolean(CommonConfigurationKeys.DISABLE_INLINE)) return false;
 
-        CallableDescriptor descriptor = getFunctionDescriptor(expression, context);
         return shouldBeInlined(descriptor);
     }
 
     public static boolean shouldBeInlined(@NotNull CallableDescriptor descriptor) {
-        if (descriptor instanceof SimpleFunctionDescriptor) {
+        if (descriptor instanceof SimpleFunctionDescriptor ||
+            descriptor instanceof PropertyAccessorDescriptor ||
+            descriptor instanceof FunctionImportedFromObject
+        ) {
             return InlineUtil.isInline(descriptor);
         }
 
         if (descriptor instanceof ValueParameterDescriptor) {
             return InlineUtil.isInline(descriptor.getContainingDeclaration()) &&
-                   InlineUtil.isInlineLambdaParameter((ParameterDescriptor) descriptor);
+                   InlineUtil.isInlineParameter((ParameterDescriptor) descriptor) &&
+                   !((ValueParameterDescriptor) descriptor).isCrossinline();
         }
 
         return false;
@@ -106,18 +111,58 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         List<JsStatement> statements = parseJsCode(argumentExpression);
         int size = statements.size();
 
+        JsNode node;
         if (size == 0) {
-            return JsLiteral.NULL;
-        } else if (size > 1) {
-            return new JsBlock(statements);
-        } else {
+            node = new JsNullLiteral();
+        }
+        else if (size > 1) {
+            node = new JsBlock(statements);
+        }
+        else {
             JsStatement resultStatement = statements.get(0);
             if (resultStatement instanceof JsExpressionStatement) {
-                return ((JsExpressionStatement) resultStatement).getExpression();
+                node = ((JsExpressionStatement) resultStatement).getExpression();
+            }
+            else {
+                node = resultStatement;
+            }
+        }
+
+        LexicalScope lexicalScope = context().bindingContext().get(BindingContextSlicesJsKt.LEXICAL_SCOPE_FOR_JS, resolvedCall);
+        Map<JsName, JsExpression> replacements = new HashMap<>();
+        if (lexicalScope != null) {
+            Set<JsName> references = CollectUtilsKt.collectUsedNames(node);
+            references.removeAll(CollectUtilsKt.collectDefinedNames(node));
+
+            for (JsName name : references) {
+                VariableDescriptor variable = getVariableByName(lexicalScope, Name.identifier(name.getIdent()));
+                if (variable != null) {
+                    replacements.put(name, ReferenceTranslator.translateAsValueReference(variable, context()));
+                }
             }
 
-            return resultStatement;
+            if (!replacements.isEmpty()) {
+                node = RewriteUtilsKt.replaceNames(node, replacements);
+            }
         }
+
+        return node;
+    }
+
+    @Nullable
+    private static VariableDescriptor getVariableByName(@NotNull LexicalScope scope, @NotNull Name name) {
+        while (true) {
+            Collection<VariableDescriptor> variables = scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND);
+            if (!variables.isEmpty()) {
+                return variables.size() == 1 ? variables.iterator().next() : null;
+            }
+
+            if (!(scope.getParent() instanceof LexicalScope)) break;
+            LexicalScope parentScope = (LexicalScope) scope.getParent();
+            if (scope.getOwnerDescriptor() != parentScope.getOwnerDescriptor()) break;
+            scope = parentScope;
+        }
+        return null;
     }
 
     @NotNull
@@ -131,8 +176,20 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         // but no new global ones.
         JsScope currentScope = context().scope();
         assert currentScope instanceof JsFunctionScope : "Usage of js outside of function is unexpected";
-        JsScope temporaryRootScope = new JsRootScope(new JsProgram("<js code>"));
+        JsScope temporaryRootScope = new JsRootScope(new JsProgram());
         JsScope scope = new DelegatingJsFunctionScopeWithTemporaryParent((JsFunctionScope) currentScope, temporaryRootScope);
-        return ParserUtilsKt.parse(jsCode, ThrowExceptionOnErrorReporter.INSTANCE, scope);
+
+        JsLocation location;
+        try {
+            location = PsiUtils.extractLocationFromPsi(jsCodeExpression, context().getSourceFilePathResolver());
+        }
+        catch (IOException e) {
+            location = new JsLocation(jsCodeExpression.getContainingKtFile().getName(), 0, 0);
+        }
+
+        List<JsStatement> statements = ParserUtilsKt.parseExpressionOrStatement(
+                jsCode, ThrowExceptionOnErrorReporter.INSTANCE, scope,
+                new CodePosition(location.getStartLine(), location.getStartChar()), location.getFile());
+        return statements != null ? statements : Collections.emptyList();
     }
 }

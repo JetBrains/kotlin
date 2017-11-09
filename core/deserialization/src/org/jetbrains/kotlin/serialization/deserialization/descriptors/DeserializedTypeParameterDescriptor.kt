@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -36,10 +35,8 @@ class DeserializedTypeParameterDescriptor(
         c.storageManager, c.containingDeclaration, c.nameResolver.getName(proto.name),
         Deserialization.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE, SupertypeLoopChecker.EMPTY
 ) {
-    override val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
-        c.components.annotationAndConstantLoader
-                .loadTypeParameterAnnotations(proto, c.nameResolver)
-                .map { AnnotationWithTarget(it, null) }
+    override val annotations = DeserializedAnnotations(c.storageManager) {
+        c.components.annotationAndConstantLoader.loadTypeParameterAnnotations(proto, c.nameResolver).toList()
     }
 
     override fun resolveUpperBounds(): List<KotlinType> {

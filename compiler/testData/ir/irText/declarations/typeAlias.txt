@@ -1,0 +1,20 @@
+FILE /typeAlias.kt
+  TYPEALIAS typealias Test1 = String type=kotlin.String
+  FUN public fun foo(): kotlin.Unit
+    BLOCK_BODY
+      TYPEALIAS typealias TestLocal = String type=kotlin.String
+  CLASS CLASS C
+    $this: VALUE_PARAMETER this@C: C
+    CONSTRUCTOR public constructor C()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='C'
+    TYPEALIAS typealias TestNested = String type=kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

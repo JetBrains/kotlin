@@ -1,0 +1,13 @@
+package
+
+public fun test(/*0*/ j: J, /*1*/ nullStr: kotlin.String?, /*2*/ nullByte: kotlin.Byte?, /*3*/ nullDouble: kotlin.Double?): kotlin.Unit
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open fun foo(/*0*/ @org.jetbrains.annotations.Nullable x: kotlin.Byte?): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ @org.jetbrains.annotations.NotNull x: kotlin.Double): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,4 +1,4 @@
-JetFile: BabySteps.kt
+KtFile: BabySteps.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

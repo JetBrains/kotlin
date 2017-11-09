@@ -1,0 +1,48 @@
+package
+
+package test {
+    public fun kotlin.Int.foo(): kotlin.Unit
+
+    public object ClassMemberMarker {
+        private constructor ClassMemberMarker()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class Test {
+        public constructor Test()
+        public final val </*0*/ T> kotlin.collections.List<T>.a: kotlin.Int
+        public final val </*0*/ T> kotlin.collections.List<T>.b: kotlin.Int?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun </*0*/ T> kotlin.collections.List<T>.testCallable1(): () -> kotlin.Unit
+        public final fun </*0*/ T> kotlin.collections.List<T>.testCallable2(): () -> kotlin.Unit
+        public final fun </*0*/ T> kotlin.collections.List<T>.testCallable3(): () -> kotlin.Unit
+        public final fun </*0*/ T> kotlin.collections.List<T>.testCallable4(): () -> kotlin.Unit
+        public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral1(): kotlin.reflect.KClass<out kotlin.Int>
+        public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral2(): kotlin.reflect.KClass<out kotlin.Int?>
+        public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral3(): kotlin.reflect.KClass<out kotlin.Int?>
+        public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved1(): [ERROR : Error function type]
+        public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved2(): kotlin.reflect.KFunction0<kotlin.Unit>
+        public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved3(): kotlin.reflect.KFunction0<kotlin.Unit>
+        public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved4(): [ERROR : Error function type]
+    }
+
+    public final class a</*0*/ T> {
+        public constructor a</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): test.ClassMemberMarker
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class b</*0*/ T1, /*1*/ T2> {
+        public constructor b</*0*/ T1, /*1*/ T2>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): test.ClassMemberMarker
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

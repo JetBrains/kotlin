@@ -65,7 +65,7 @@ class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun assertInContexts(vararg expectedContexts: java.lang.Class<out KotlinTemplateContextType>) {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val allContexts = TemplateContextType.EP_NAME.extensions.filter { it is KotlinTemplateContextType }
-        val enabledContexts = allContexts.filter { it.isInContext(myFixture.file, myFixture.caretOffset) }.map { it.javaClass }
+        val enabledContexts = allContexts.filter { it.isInContext(myFixture.file, myFixture.caretOffset) }.map { it::class.java }
         UsefulTestCase.assertSameElements(enabledContexts, *expectedContexts)
     }
 }

@@ -144,22 +144,20 @@ internal fun performRefinedTypeAnalysis(methodNode: MethodNode, thisName: String
         }
     })
 
-    val refinedFrames = Array(basicFrames.size) {
+    return Array(basicFrames.size) {
         insnIndex ->
         val current = Frame(basicFrames[insnIndex] ?: return@Array null)
 
         refinedVarFrames[insnIndex].expectedTypeByVarIndex.withIndex().filter { it.value != null }.forEach {
-            assert(current.getLocal(it.index)?.type == Type.INT_TYPE) {
+            assert(current.getLocal(it.index)?.type?.sort in ALL_INT_SORTS) {
                 "int type expected, but ${current.getLocal(it.index)?.type} was found in basic frames"
             }
 
-            current.setLocal(it.index, BasicValue(it.value))
+            current.setLocal(it.index, StrictBasicValue(it.value))
         }
 
         current
     }
-
-    return refinedFrames
 }
 
 private fun AbstractInsnNode.isIntLoad() = opcode == Opcodes.ILOAD
@@ -181,6 +179,7 @@ private class MySourceInterpreter : SourceInterpreter() {
 }
 
 private val REFINED_INT_SORTS = setOf(Type.BOOLEAN, Type.CHAR, Type.BYTE, Type.SHORT)
+private val ALL_INT_SORTS = REFINED_INT_SORTS + Type.INT
 
 private fun MethodNode.findContainingVariableFromTable(insn: AbstractInsnNode, varIndex: Int): LocalVariableNode? {
     val insnIndex = instructions.indexOf(insn)
@@ -217,7 +216,7 @@ private class VarExpectedTypeFrame(maxLocals: Int) : VarFrame<VarExpectedTypeFra
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other?.javaClass != javaClass) return false
+        if (other == null || other::class.java != this::class.java) return false
 
         other as VarExpectedTypeFrame
 

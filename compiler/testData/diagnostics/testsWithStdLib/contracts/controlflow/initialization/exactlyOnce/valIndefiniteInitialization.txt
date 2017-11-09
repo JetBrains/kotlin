@@ -1,0 +1,22 @@
+package
+
+public fun branchingIndetermineFlow(/*0*/ a: kotlin.Any?): kotlin.Unit
+public fun funWithUnknownInvocations(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public fun multipleAssignments(): kotlin.Unit
+public fun myRepeat(/*0*/ n: kotlin.Int, /*1*/ action: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(action, UNKNOWN)
+
+public fun </*0*/ T> myRun(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun nestedIndefiniteAssignment(): kotlin.Unit
+public fun nonAnonymousLambdas(): kotlin.Unit
+
+public final class InitializationForbiddenInNonInitSection {
+    public constructor InitializationForbiddenInNonInitSection()
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setup(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

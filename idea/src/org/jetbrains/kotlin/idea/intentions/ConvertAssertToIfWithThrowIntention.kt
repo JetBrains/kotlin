@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpression>(KtCallExpression::class.java, "Replace 'assert' with 'if' statement"), LowPriorityAction {
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
@@ -72,10 +71,8 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
         ifCondition.baseExpression!!.replace(psiFactory.createExpression(conditionText))
 
         val thrownExpression = ((ifExpression.then as KtBlockExpression).statements.single() as KtThrowExpression).thrownExpression
-        val assertionErrorCall = if (thrownExpression is KtCallExpression)
-            thrownExpression
-        else
-            (thrownExpression as KtDotQualifiedExpression).selectorExpression as KtCallExpression
+        val assertionErrorCall = thrownExpression as? KtCallExpression
+                                 ?: (thrownExpression as KtDotQualifiedExpression).selectorExpression as KtCallExpression
 
         val message = psiFactory.createExpression(
                 if (messageIsFunction && messageExpr is KtCallableReferenceExpression) {
@@ -95,7 +92,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
 
     private fun extractMessageSingleExpression(functionLiteral: KtLambdaExpression, bindingContext: BindingContext): KtExpression? {
         return functionLiteral.bodyExpression?.statements?.singleOrNull()?.let { singleStatement ->
-            singleStatement.check { it.isUsedAsExpression(bindingContext) }
+            singleStatement.takeIf { it.isUsedAsExpression(bindingContext) }
         }
     }
 
@@ -116,9 +113,6 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
     private fun replaceWithIfThenThrowExpression(original: KtCallExpression): KtIfExpression {
         val replacement = KtPsiFactory(original).createExpression("if (!true) { throw kotlin.AssertionError(\"\") }") as KtIfExpression
         val parent = original.parent
-        return if (parent is KtDotQualifiedExpression)
-            parent.replaced(replacement)
-        else
-            original.replaced(replacement)
+        return (parent as? KtDotQualifiedExpression)?.replaced(replacement) ?: original.replaced(replacement)
     }
 }

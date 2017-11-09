@@ -21,13 +21,15 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecatedByOverriddenMessage
-import org.jetbrains.kotlin.resolve.getDeprecation
 
 class OverridingDeprecatedMemberInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -41,9 +43,13 @@ class OverridingDeprecatedMemberInspection : AbstractKotlinInspection() {
             }
 
             private fun registerProblemIfNeeded(declaration: KtDeclaration, targetForProblem: PsiElement) {
-                val accessorDescriptor = declaration.resolveToDescriptor() as? CallableMemberDescriptor ?: return
+                val accessorDescriptor = declaration.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return
 
-                val message = accessorDescriptor.getDeprecation()?.deprecatedByOverriddenMessage() ?: return
+                val deprecationProvider = declaration.getResolutionFacade().frontendService<DeprecationResolver>()
+
+                val message = deprecationProvider.getDeprecations(accessorDescriptor)
+                                      .firstOrNull()
+                                      ?.deprecatedByOverriddenMessage() ?: return
                 val problem = holder.manager.createProblemDescriptor(
                         targetForProblem,
                         message,

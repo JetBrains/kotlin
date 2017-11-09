@@ -28,7 +28,7 @@ val KOTLIN_DEBUG_STRATA_NAME = "KotlinDebug"
 class SMAPBuilder(
         val source: String,
         val path: String,
-        val fileMappings: List<FileMapping>
+        private val fileMappings: List<FileMapping>
 ) {
     private val header = "SMAP\n$source\nKotlin"
 
@@ -57,7 +57,7 @@ class SMAPBuilder(
     private fun generateDebugStrata(realMappings: List<FileMapping>): String {
         val combinedMapping = FileMapping(source, path)
         realMappings.forEach { fileMapping ->
-            fileMapping.lineMappings.filter { it.callSiteMarker != null }.forEach { (source, dest, range, callSiteMarker) ->
+            fileMapping.lineMappings.filter { it.callSiteMarker != null }.forEach { (_, dest, range, callSiteMarker) ->
                 combinedMapping.addRangeMapping(RangeMapping(
                         callSiteMarker!!.lineNumber, dest, range
                 ))
@@ -91,15 +91,15 @@ open class NestedSourceMapper(
         override val parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo
 ) : DefaultSourceMapper(sourceInfo) {
 
-    val visitedLines = TIntIntHashMap()
+    private val visitedLines = TIntIntHashMap()
 
-    var lastVisitedRange: RangeMapping? = null
+    private var lastVisitedRange: RangeMapping? = null
 
     override fun mapLineNumber(lineNumber: Int): Int {
         val mappedLineNumber = visitedLines.get(lineNumber)
 
-        if (mappedLineNumber > 0) {
-            return mappedLineNumber
+        return if (mappedLineNumber > 0) {
+            mappedLineNumber
         }
         else {
             val rangeForMapping =
@@ -111,11 +111,11 @@ open class NestedSourceMapper(
                 visitedLines.put(lineNumber, newLineNumber)
             }
             lastVisitedRange = rangeForMapping
-            return newLineNumber
+            newLineNumber
         }
     }
 
-    fun findMappingIfExists(lineNumber: Int): RangeMapping? {
+    private fun findMappingIfExists(lineNumber: Int): RangeMapping? {
         val index = ranges.binarySearch(RangeMapping(lineNumber, lineNumber, 1), Comparator {
             value, key ->
             if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)

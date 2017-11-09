@@ -18,14 +18,13 @@ package kotlin.collections
 
 internal interface EqualityComparator {
     /**
-     * Subclasses must override to return a whether or not two keys or values are
-     * equal.
+     * Subclasses must override to return a value indicating
+     * whether or not two keys or values are equal.
      */
     abstract fun equals(value1: Any?, value2: Any?): Boolean
 
     /**
-     * Subclasses must override to return a hash code for a given key. The key is
-     * guaranteed to be non-null and not a String.
+     * Subclasses must override to return the hash code of a given key.
      */
     abstract fun getHashCode(value: Any?): Int
 

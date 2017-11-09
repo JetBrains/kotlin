@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,11 @@
 
 package kotlin.collections
 
+/**
+ * Provides a skeletal implementation of the [MutableList] interface.
+ *
+ * @param E the type of elements contained in the list. The list is invariant on its element type.
+ */
 public abstract class AbstractMutableList<E> protected constructor() : AbstractMutableCollection<E>(), MutableList<E> {
     protected var modCount: Int = 0
 
@@ -79,6 +84,9 @@ public abstract class AbstractMutableList<E> protected constructor() : AbstractM
 
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = SubList(this, fromIndex, toIndex)
 
+    /**
+     * Removes the range of elements from this list starting from [fromIndex] and ending with but not including [toIndex].
+     */
     protected open fun removeRange(fromIndex: Int, toIndex: Int) {
         val iterator = listIterator(fromIndex)
         repeat(toIndex - fromIndex) {
@@ -87,6 +95,11 @@ public abstract class AbstractMutableList<E> protected constructor() : AbstractM
         }
     }
 
+    /**
+     * Compares this list with another list instance with the ordered structural equality.
+     *
+     * @return true, if [other] instance is a [List] of the same size, which contains the same elements in the same order.
+     */
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is List<*>) return false
@@ -94,6 +107,9 @@ public abstract class AbstractMutableList<E> protected constructor() : AbstractM
         return AbstractList.orderedEquals(this, other)
     }
 
+    /**
+     * Returns the hash code value for this list.
+     */
     override fun hashCode(): Int = AbstractList.orderedHashCode(this)
 
 
@@ -158,7 +174,7 @@ public abstract class AbstractMutableList<E> protected constructor() : AbstractM
         }
     }
 
-    private class SubList<E>(private val list: AbstractMutableList<E>, private val fromIndex: Int, toIndex: Int) : AbstractMutableList<E>() {
+    private class SubList<E>(private val list: AbstractMutableList<E>, private val fromIndex: Int, toIndex: Int) : AbstractMutableList<E>(), RandomAccess {
         private var _size: Int = 0
 
         init {

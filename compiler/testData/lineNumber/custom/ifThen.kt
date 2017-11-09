@@ -1,7 +1,9 @@
 fun foo() {
-    if (0 < 1) {
+    if (flag) {
         return
     }
 }
 
-// 2 3 5
+val flag = true
+
+// 2 3 5 7 7

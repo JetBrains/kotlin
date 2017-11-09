@@ -1,0 +1,5 @@
+fun foo(vararg x: Char) {}
+
+fun bar() {
+    foo('a', 'b')
+}

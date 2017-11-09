@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.integration;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker;
-import org.jetbrains.kotlin.js.test.rhino.RhinoUtils;
+import org.jetbrains.kotlin.js.test.NashornJsTestChecker;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -49,19 +47,18 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
     }
 
     private void doJsAntTest(String... jsFiles) throws Exception {
+        doJsAntTest(false, jsFiles);
+    }
+
+    private void doJsAntTest(boolean withModuleSystem, String... jsFiles) throws Exception {
         doTest();
 
-        List<String> fileNames = new ArrayList<String>(Arrays.asList(jsFiles));
+        List<String> fileNames = new ArrayList<>(Arrays.asList(jsFiles));
         fileNames.add(JS_OUT_FILE);
 
-        List<String> filePaths = ContainerUtil.map(fileNames, new Function<String, String>() {
-            @Override
-            public String fun(String s) {
-                return getOutputFileByName(s).getAbsolutePath();
-            }
-        });
+        List<String> filePaths = CollectionsKt.map(fileNames, s -> getOutputFileByName(s).getAbsolutePath());
 
-        RhinoUtils.runRhinoTest(filePaths, new RhinoFunctionResultChecker("out", "foo", "box", "OK"));
+        NashornJsTestChecker.INSTANCE.check(filePaths, "out", "foo", "box", "OK", withModuleSystem);
     }
 
     private void doJsAntTestForPostfixPrefix(@Nullable String prefix, @Nullable String postfix) throws Exception {
@@ -100,14 +97,6 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
         doJsAntTest();
     }
 
-    public void testSimpleWithStdlibAndAnotherLib() throws Exception {
-        doJsAntTest("jslib-example.js");
-    }
-
-    public void testSimpleWithStdlibAndFolderAsAnotherLib() throws Exception {
-        doJsAntTest("jslib-example.js");
-    }
-
     public void testSimpleWithoutStdlibAndFolderAsAnotherLib() throws Exception {
         doJsAntTest("jslib-example.js");
     }
@@ -121,7 +110,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
     }
 
     public void testSimpleWithStdlibAndJsFileAsAnotherLibModuleKind() throws Exception {
-        doJsAntTest("amd.js", "jslib-example.js");
+        doJsAntTest(true, "amd.js", "jslib-example.js");
     }
 
     public void testSimpleWithStdlibAndTwoJsFilesAsLibraries() throws Exception {

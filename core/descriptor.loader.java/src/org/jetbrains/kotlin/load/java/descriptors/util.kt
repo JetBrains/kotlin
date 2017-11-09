@@ -19,17 +19,23 @@ package org.jetbrains.kotlin.load.java.descriptors
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaStaticClassScope
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+class ValueParameterData(val type: KotlinType, val hasDefaultValue: Boolean)
 
 fun copyValueParameters(
-        newValueParametersTypes: Collection<KotlinType>,
+        newValueParametersTypes: Collection<ValueParameterData>,
         oldValueParameters: Collection<ValueParameterDescriptor>,
         newOwner: CallableDescriptor
 ): List<ValueParameterDescriptor> {
@@ -37,21 +43,18 @@ fun copyValueParameters(
         "Different value parameters sizes: Enhanced = ${newValueParametersTypes.size}, Old = ${oldValueParameters.size}"
     }
 
-    return newValueParametersTypes.zip(oldValueParameters).map {
-        pair ->
-        val (newType, oldParameter) = pair
+    return newValueParametersTypes.zip(oldValueParameters).map { (newParameter, oldParameter) ->
         ValueParameterDescriptorImpl(
                 newOwner,
-                oldParameter,
+                null,
                 oldParameter.index,
                 oldParameter.annotations,
                 oldParameter.name,
-                newType,
-                oldParameter.declaresDefaultValue(),
+                newParameter.type,
+                newParameter.hasDefaultValue,
                 oldParameter.isCrossinline,
                 oldParameter.isNoinline,
-                oldParameter.isCoroutine,
-                if (oldParameter.varargElementType != null) newOwner.module.builtIns.getArrayElementType(newType) else null,
+                if (oldParameter.varargElementType != null) newOwner.module.builtIns.getArrayElementType(newParameter.type) else null,
                 oldParameter.source
         )
     }
@@ -67,6 +70,34 @@ fun ClassDescriptor.getParentJavaStaticClassScope(): LazyJavaStaticClassScope? {
     return staticScope
 }
 
-fun DeserializedCallableMemberDescriptor.getImplClassNameForDeserialized(): Name? {
-    return (containerSource as? JvmPackagePartSource)?.simpleName
+fun DeserializedMemberDescriptor.getImplClassNameForDeserialized(): JvmClassName? =
+        (containerSource as? JvmPackagePartSource)?.className
+
+fun DeserializedMemberDescriptor.isFromJvmPackagePart(): Boolean =
+        containerSource is JvmPackagePartSource
+
+fun ValueParameterDescriptor.getParameterNameAnnotation(): AnnotationDescriptor? {
+    val annotation = annotations.findAnnotation(JvmAnnotationNames.PARAMETER_NAME_FQ_NAME) ?: return null
+    if (annotation.firstArgumentValue()?.safeAs<String>()?.isEmpty() != false) {
+        return null
+    }
+
+    return annotation
+}
+
+sealed class AnnotationDefaultValue
+class StringDefaultValue(val value: String) : AnnotationDefaultValue()
+object NullDefaultValue : AnnotationDefaultValue()
+
+fun ValueParameterDescriptor.getDefaultValueFromAnnotation(): AnnotationDefaultValue? {
+    annotations.findAnnotation(JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME)
+            ?.firstArgumentValue()
+            ?.safeAs<String>()
+            ?.let { return StringDefaultValue(it) }
+
+    if (annotations.hasAnnotation(JvmAnnotationNames.DEFAULT_NULL_FQ_NAME)) {
+        return NullDefaultValue
+    }
+
+    return null
 }

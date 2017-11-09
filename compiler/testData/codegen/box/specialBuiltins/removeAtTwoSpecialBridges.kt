@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 open class A0<E> : MutableList<E> {
     override fun add(element: E): Boolean {
         throw UnsupportedOperationException()

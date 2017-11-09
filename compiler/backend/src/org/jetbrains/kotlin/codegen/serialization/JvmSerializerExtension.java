@@ -20,18 +20,23 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClassBuilderMode;
+import org.jetbrains.kotlin.codegen.FakeDescriptorsForReferencesKt;
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl;
 import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer;
 import org.jetbrains.kotlin.load.kotlin.TypeSignatureMappingKt;
 import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.serialization.AnnotationSerializer;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.SerializerExtension;
-import org.jetbrains.kotlin.serialization.StringTable;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.protobuf.GeneratedMessageLite;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.serialization.*;
 import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.kotlin.types.FlexibleType;
@@ -39,10 +44,14 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
+import java.util.List;
+
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 
 public class JvmSerializerExtension extends SerializerExtension {
     private final JvmSerializationBindings bindings;
+    private final BindingContext codegenBinding;
+    private final KotlinTypeMapper typeMapper;
     private final StringTable stringTable;
     private final AnnotationSerializer annotationSerializer;
     private final boolean useTypeTable;
@@ -51,7 +60,9 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull GenerationState state) {
         this.bindings = bindings;
-        this.stringTable = new JvmStringTable(state.getTypeMapper());
+        this.codegenBinding = state.getBindingContext();
+        this.typeMapper = state.getTypeMapper();
+        this.stringTable = new JvmStringTable(typeMapper);
         this.annotationSerializer = new AnnotationSerializer(stringTable);
         this.useTypeTable = state.getUseTypeTableInSerializer();
         this.moduleName = state.getModuleName();
@@ -74,12 +85,39 @@ public class JvmSerializerExtension extends SerializerExtension {
         if (!moduleName.equals(JvmAbi.DEFAULT_MODULE_NAME)) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName));
         }
+
+        Type containerAsmType =
+                DescriptorUtils.isInterface(descriptor) ? typeMapper.mapDefaultImpls(descriptor) : typeMapper.mapClass(descriptor);
+        writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable);
     }
 
     @Override
-    public void serializePackage(@NotNull ProtoBuf.Package.Builder proto) {
+    public void serializePackage(@NotNull FqName packageFqName, @NotNull ProtoBuf.Package.Builder proto) {
         if (!moduleName.equals(JvmAbi.DEFAULT_MODULE_NAME)) {
             proto.setExtension(JvmProtoBuf.packageModuleName, stringTable.getStringIndex(moduleName));
+        }
+    }
+
+    public void serializeJvmPackage(@NotNull ProtoBuf.Package.Builder proto, @NotNull Type partAsmType) {
+        writeLocalProperties(proto, partAsmType, JvmProtoBuf.packageLocalVariable);
+    }
+
+    private <MessageType extends GeneratedMessageLite.ExtendableMessage<MessageType>,
+            BuilderType extends GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>> void writeLocalProperties(
+            @NotNull BuilderType proto,
+            @NotNull Type classAsmType,
+            @NotNull GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>> extension
+    ) {
+        List<VariableDescriptorWithAccessors> localVariables = codegenBinding.get(CodegenBinding.DELEGATED_PROPERTIES, classAsmType);
+        if (localVariables == null) return;
+
+        for (VariableDescriptorWithAccessors localVariable : localVariables) {
+            if (localVariable instanceof LocalVariableDescriptor) {
+                PropertyDescriptor propertyDescriptor =
+                        FakeDescriptorsForReferencesKt.createFreeFakeLocalPropertyDescriptor((LocalVariableDescriptor) localVariable);
+                DescriptorSerializer serializer = DescriptorSerializer.createForLambda(this);
+                proto.addExtension(extension, serializer.propertyProto(propertyDescriptor).build());
+            }
         }
     }
 
@@ -164,7 +202,7 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     @Override
     public void serializeErrorType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder builder) {
-        if (classBuilderMode == ClassBuilderMode.KAPT) {
+        if (classBuilderMode == ClassBuilderMode.KAPT || classBuilderMode == ClassBuilderMode.KAPT3) {
             builder.setClassName(stringTable.getStringIndex(TypeSignatureMappingKt.NON_EXISTENT_CLASS_NAME));
             return;
         }

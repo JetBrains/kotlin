@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,49 +21,49 @@ package kotlin.jvm.internal
 private class ArrayByteIterator(private val array: ByteArray) : ByteIterator() {
     private var index = 0
     override fun hasNext() = index < array.size
-    override fun nextByte() = array[index++]
+    override fun nextByte() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
 private class ArrayCharIterator(private val array: CharArray) : CharIterator() {
     private var index = 0
     override fun hasNext() = index < array.size
-    override fun nextChar() = array[index++]
+    override fun nextChar() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
 private class ArrayShortIterator(private val array: ShortArray) : ShortIterator() {
     private var index = 0
     override fun hasNext() = index < array.size
-    override fun nextShort() = array[index++]
+    override fun nextShort() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
 private class ArrayIntIterator(private val array: IntArray) : IntIterator() {
     private var index = 0
     override fun hasNext() = index < array.size
-    override fun nextInt() = array[index++]
+    override fun nextInt() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
 private class ArrayLongIterator(private val array: LongArray) : LongIterator() {
     private var index = 0
     override fun hasNext() = index < array.size
-    override fun nextLong() = array[index++]
+    override fun nextLong() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
 private class ArrayFloatIterator(private val array: FloatArray) : FloatIterator() {
     private var index = 0
     override fun hasNext() = index < array.size
-    override fun nextFloat() = array[index++]
+    override fun nextFloat() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
 private class ArrayDoubleIterator(private val array: DoubleArray) : DoubleIterator() {
     private var index = 0
     override fun hasNext() = index < array.size
-    override fun nextDouble() = array[index++]
+    override fun nextDouble() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
 private class ArrayBooleanIterator(private val array: BooleanArray) : BooleanIterator() {
     private var index = 0
     override fun hasNext() = index < array.size
-    override fun nextBoolean() = array[index++]
+    override fun nextBoolean() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
 public fun iterator(array: ByteArray): ByteIterator = ArrayByteIterator(array)

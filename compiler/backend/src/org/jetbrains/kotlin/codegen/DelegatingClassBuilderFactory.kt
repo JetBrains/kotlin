@@ -33,10 +33,10 @@ abstract class DelegatingClassBuilderFactory(
     abstract override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder
 
     override fun asBytes(builder: ClassBuilder?): ByteArray? {
-        return delegate.asBytes((builder as DelegatingClassBuilder).getDelegate())
+        return delegate.asBytes((builder as DelegatingClassBuilder).delegate)
     }
 
     override fun asText(builder: ClassBuilder?): String? {
-        return delegate.asText((builder as DelegatingClassBuilder).getDelegate())
+        return delegate.asText((builder as DelegatingClassBuilder).delegate)
     }
 }

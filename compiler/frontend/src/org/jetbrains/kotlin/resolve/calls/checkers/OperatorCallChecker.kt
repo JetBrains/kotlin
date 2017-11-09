@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,10 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -31,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class OperatorCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -58,6 +63,11 @@ class OperatorCallChecker : CallChecker {
         }
 
         val isConventionOperator = element is KtOperationReferenceExpression && element.isConventionOperator()
+
+        if (isConventionOperator) {
+            checkModConvention(functionDescriptor, context.languageVersionSettings, context.trace, reportOn)
+        }
+
         if (isConventionOperator || element is KtArrayAccessExpression) {
             if (!functionDescriptor.isOperator) {
                 report(reportOn, functionDescriptor, context.trace)
@@ -87,4 +97,35 @@ class OperatorCallChecker : CallChecker {
             return passedTypeArgumentsToInvoke && resolvedCall.variableCall.candidateDescriptor.typeParameters.isNotEmpty()
         }
     }
+}
+
+fun FunctionDescriptor.isOperatorMod(): Boolean {
+    return this.isOperator && name in OperatorConventions.REM_TO_MOD_OPERATION_NAMES.values
+}
+
+fun shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings: LanguageVersionSettings): Boolean {
+    return languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem) && languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_1
+}
+
+private fun checkModConvention(
+        descriptor: FunctionDescriptor, languageVersionSettings: LanguageVersionSettings,
+        diagnosticHolder: DiagnosticSink, modifier: PsiElement
+) {
+    if (!descriptor.isOperatorMod()) return
+
+    if (KotlinBuiltIns.isUnderKotlinPackage(descriptor)) {
+        if (shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
+            addWarningAboutDeprecatedMod(descriptor, diagnosticHolder, modifier)
+        }
+    }
+    else {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)) {
+            addWarningAboutDeprecatedMod(descriptor, diagnosticHolder, modifier)
+        }
+    }
+}
+
+private fun addWarningAboutDeprecatedMod(descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
+    val newNameConvention = OperatorConventions.REM_TO_MOD_OPERATION_NAMES.inverse()[descriptor.name]
+    diagnosticHolder.report(Errors.DEPRECATED_BINARY_MOD_AS_REM.on(reportOn, descriptor, newNameConvention!!.asString()))
 }

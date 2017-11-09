@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.resolve.lazy.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassKind;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtObjectDeclaration;
+import org.jetbrains.kotlin.psi.KtStubbedPsiUtil;
 import org.jetbrains.kotlin.psi.KtTypeParameterList;
-import org.jetbrains.kotlin.resolve.ModifiersChecker;
 
 public class KtObjectInfo extends KtClassOrObjectInfo<KtObjectDeclaration> {
     @NotNull
@@ -35,7 +36,7 @@ public class KtObjectInfo extends KtClassOrObjectInfo<KtObjectDeclaration> {
     @Nullable
     @Override
     public KtTypeParameterList getTypeParameterList() {
-        return null;
+        return element.getTypeParameterList();
     }
 
     @NotNull
@@ -45,6 +46,7 @@ public class KtObjectInfo extends KtClassOrObjectInfo<KtObjectDeclaration> {
     }
 
     public boolean isCompanionObject() {
-        return element.isCompanion() && ModifiersChecker.isCompanionModifierAllowed(element);
+        return element.isCompanion() &&
+               KtStubbedPsiUtil.getContainingDeclaration(element) instanceof KtClassOrObject;
     }
 }

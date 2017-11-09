@@ -1,10 +1,10 @@
-package java.ut<caret>il.
+package kotlin.prop<caret>erties.
 
-import java.util.AbstractList
+import kotlin.properties.Delegates
 
 class Test {
 
 }
 
-// EXIST: util
+// EXIST: properties
 // NOTHING_ELSE

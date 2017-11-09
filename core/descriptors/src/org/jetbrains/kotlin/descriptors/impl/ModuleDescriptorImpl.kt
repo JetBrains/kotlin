@@ -20,27 +20,21 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.isChildOf
-import org.jetbrains.kotlin.name.isSubpackageOf
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.sure
 import java.lang.IllegalArgumentException
 
 class ModuleDescriptorImpl @JvmOverloads constructor(
         moduleName: Name,
         private val storageManager: StorageManager,
-        override val defaultImports: List<ImportPath>,
         override val builtIns: KotlinBuiltIns,
-        private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
+        // May be null in compiler context, should be not-null in IDE context
+        multiTargetPlatform: MultiTargetPlatform? = null,
+        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     init {
         if (!moduleName.isSpecial) {
@@ -48,39 +42,36 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         }
     }
 
+    private val capabilities = capabilities + (multiTargetPlatform?.let { mapOf(MultiTargetPlatform.CAPABILITY to it) } ?: emptyMap())
+
     private var dependencies: ModuleDependencies? = null
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
+
+    override var isValid: Boolean = true
+
+    override fun assertValid() {
+        if (!isValid) {
+            throw IllegalStateException("Accessing invalid module descriptor $this")
+        }
+    }
 
     private val packages = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> {
         fqName: FqName -> LazyPackageViewDescriptorImpl(this, fqName, storageManager)
     }
 
-    override val effectivelyExcludedImports: List<FqName> by storageManager.createLazyValue {
-        val packagesWithAliases = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME)
-        val dependencies = this.dependencies.sure { "Dependencies of module $id were not set" }
-        val builtinTypeAliases = dependencies.allDependencies.filter { it != this }.flatMap {
-            packagesWithAliases.map(it::getPackage).flatMap {
-                it.memberScope.getContributedDescriptors(DescriptorKindFilter.TYPE_ALIASES).filterIsInstance<TypeAliasDescriptor>()
-            }
-        }
+    @Deprecated("This method is not going to be supported. Please do not use it")
+    val testOnly_AllDependentModules: List<ModuleDescriptorImpl> get() = this.dependencies!!.allDependencies
 
-        val nonKotlinDefaultImportedPackages =
-                defaultImports
-                    .filter { it.isAllUnder }
-                    .mapNotNull {
-                        it.fqnPart().check { !it.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) }
-                    }
-        val nonKotlinAliasedTypeFqNames =
-                builtinTypeAliases
-                    .mapNotNull { it.expandedType.constructor.declarationDescriptor?.fqNameSafe }
-                    .filter { nonKotlinDefaultImportedPackages.any(it::isChildOf) }
+    override val allDependencyModules: List<ModuleDescriptor>
+        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
 
-        nonKotlinAliasedTypeFqNames
+    override fun getPackage(fqName: FqName): PackageViewDescriptor {
+        assertValid()
+        return packages(fqName)
     }
 
-    override fun getPackage(fqName: FqName): PackageViewDescriptor = packages(fqName)
-
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
+        assertValid()
         return packageFragmentProvider.getSubPackagesOf(fqName, nameFilter)
     }
 
@@ -115,6 +106,10 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         setDependencies(ModuleDependenciesImpl(descriptors, emptySet()))
     }
 
+    fun setDependencies(descriptors: List<ModuleDescriptorImpl>, friends: Set<ModuleDescriptorImpl>) {
+        setDependencies(ModuleDependenciesImpl(descriptors, friends))
+    }
+
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
         return this == targetModule || targetModule in dependencies!!.modulesWhoseInternalsAreVisible
     }
@@ -131,7 +126,10 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     }
 
     val packageFragmentProvider: PackageFragmentProvider
-        get() = packageFragmentProviderForWholeModuleWithDependencies
+        get() {
+            assertValid()
+            return packageFragmentProviderForWholeModuleWithDependencies
+        }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
@@ -146,15 +144,3 @@ class ModuleDependenciesImpl(
         override val allDependencies: List<ModuleDescriptorImpl>,
         override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
 ) : ModuleDependencies
-
-class LazyModuleDependencies(
-        storageManager: StorageManager,
-        computeDependencies: () -> List<ModuleDescriptorImpl>,
-        computeModulesWhoseInternalsAreVisible: () -> Set<ModuleDescriptorImpl>
-) : ModuleDependencies {
-    private val dependencies = storageManager.createLazyValue(computeDependencies)
-    private val visibleInternals = storageManager.createLazyValue(computeModulesWhoseInternalsAreVisible)
-
-    override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
-    override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl> get() = visibleInternals()
-}

@@ -1,0 +1,19 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+dependencies {
+    compile files('libs/android-support-v4.jar')
+    // unused but needed for IncrementalCompilationMultiProjectIT.testAndroid to check if non-local dependency affects IC
+    compile 'io.reactivex:rxjava:1.1.9'
+    compile 'com.loopj.android:android-async-http:1.4.9'
+}
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "25.0.1"
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 22
+    }
+}

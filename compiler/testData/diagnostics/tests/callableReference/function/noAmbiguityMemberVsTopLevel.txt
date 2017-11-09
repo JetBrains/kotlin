@@ -1,8 +1,10 @@
 package
 
-public fun explicitlyExpectFunction0(/*0*/ f: () -> kotlin.Unit): () -> kotlin.Unit
-public fun explicitlyExpectFunction1(/*0*/ f: (A) -> kotlin.Unit): (A) -> kotlin.Unit
-public fun foo(): kotlin.Unit
+public fun expectFunction0String(/*0*/ f: () -> kotlin.String): () -> kotlin.String
+public fun expectFunction0Unit(/*0*/ f: () -> kotlin.Unit): () -> kotlin.Unit
+public fun expectFunction1String(/*0*/ f: (A) -> kotlin.String): (A) -> kotlin.String
+public fun expectFunction1Unit(/*0*/ f: (A) -> kotlin.Unit): (A) -> kotlin.Unit
+public fun foo(): kotlin.String
 
 public final class A {
     public constructor A()

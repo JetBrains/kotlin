@@ -16,33 +16,47 @@
 
 package org.jetbrains.kotlin.js.test.utils;
 
-import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.backend.ast.*;
 
 import java.util.*;
 
 public class CallCounter extends RecursiveJsVisitor {
 
-    private final List<JsNameRef> callsNameRefs = new ArrayList<JsNameRef>();
+    private final List<JsNameRef> callsNameRefs = new ArrayList<>();
 
     @NotNull
     private final Set<String> exceptFunctionNames;
 
     @NotNull
+    private final Set<String> exceptScopes;
+
+    private int excludedScopeOccurrenceCount;
+
+    @NotNull
     public static CallCounter countCalls(@NotNull JsNode node) {
-        return countCalls(node, Collections.<String>emptySet());
+        return countCalls(node, Collections.emptySet());
     }
 
     @NotNull
     public static CallCounter countCalls(@NotNull JsNode node, @NotNull Set<String> exceptFunctionNames) {
-        CallCounter visitor = new CallCounter(new HashSet<String>(exceptFunctionNames));
+        CallCounter visitor = new CallCounter(new HashSet<>(exceptFunctionNames), Collections.emptySet());
         node.accept(visitor);
 
         return visitor;
     }
 
-    private CallCounter(@NotNull Set<String> exceptFunctionNames) {
+    @NotNull
+    public static CallCounter countCallsWithExcludedScopes(@NotNull JsNode node, @NotNull Set<String> exceptScopes) {
+        CallCounter visitor = new CallCounter(Collections.emptySet(), new HashSet<>(exceptScopes));
+        node.accept(visitor);
+
+        return visitor;
+    }
+
+    private CallCounter(@NotNull Set<String> exceptFunctionNames, @NotNull Set<String> exceptScopes) {
         this.exceptFunctionNames = exceptFunctionNames;
+        this.exceptScopes = exceptScopes;
     }
 
     public int getTotalCallsCount() {
@@ -51,7 +65,7 @@ public class CallCounter extends RecursiveJsVisitor {
 
     public int getQualifiedCallsCount(String... qualifiers) {
         int count = 0;
-        List<String> expectedQualifierChain = new ArrayList<String>();
+        List<String> expectedQualifierChain = new ArrayList<>();
         Collections.addAll(expectedQualifierChain, qualifiers);
 
         for (JsNameRef callNameRef : callsNameRefs) {
@@ -67,8 +81,8 @@ public class CallCounter extends RecursiveJsVisitor {
         int count = 0;
 
         for (JsNameRef callNameRef : callsNameRefs) {
-            JsName name = callNameRef.getName();
-            if (name != null && name.getIdent().equals(expectedName)) {
+            String name = callNameRef.getIdent();
+            if (name.equals(expectedName)) {
                 count++;
             }
         }
@@ -89,6 +103,28 @@ public class CallCounter extends RecursiveJsVisitor {
         }
     }
 
+    @Override
+    public void visitFunction(@NotNull JsFunction x) {
+        if (x.getName() != null && exceptScopes.contains(x.getName().getIdent())) {
+            excludedScopeOccurrenceCount++;
+            return;
+        }
+        super.visitFunction(x);
+    }
+
+    @Override
+    public void visitVars(@NotNull JsVars x) {
+        for (JsVars.JsVar jsVar : x.getVars()) {
+            if (jsVar.getInitExpression() == null) continue;
+            if (!exceptScopes.contains(jsVar.getName().getIdent())) {
+                accept(jsVar.getInitExpression());
+            }
+            else {
+                excludedScopeOccurrenceCount++;
+            }
+        }
+    }
+
     private static boolean matchesQualifiers(JsNameRef nameRef, List<String> expectedQualifierChain) {
         JsExpression currentQualifier = nameRef;
 
@@ -98,8 +134,8 @@ public class CallCounter extends RecursiveJsVisitor {
             }
 
             JsNameRef currentNameRef = (JsNameRef) currentQualifier;
-            JsName name = currentNameRef.getName();
-            if (name == null || !name.getIdent().equals(expectedQualifier)) {
+            String name = currentNameRef.getIdent();
+            if (!name.equals(expectedQualifier)) {
                 return false;
             }
 
@@ -107,5 +143,9 @@ public class CallCounter extends RecursiveJsVisitor {
         }
 
         return true;
+    }
+
+    public int getExcludedScopeOccurrenceCount() {
+        return excludedScopeOccurrenceCount;
     }
 }

@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.core.implicitVisibility
+import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -26,7 +29,6 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isInheritable
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 
 class ProtectedInFinalInspection  : AbstractKotlinInspection() {
@@ -37,10 +39,11 @@ class ProtectedInFinalInspection  : AbstractKotlinInspection() {
                 val modifierType = visibilityModifier.node?.elementType
                 if (modifierType == KtTokens.PROTECTED_KEYWORD) {
                     val parentClass = declaration.getParentOfType<KtClass>(true) ?: return
-                    if (!parentClass.isInheritable() && !parentClass.isEnum()) {
+                    if (!parentClass.isInheritable() && !parentClass.isEnum() &&
+                        declaration.implicitVisibility() != KtTokens.PROTECTED_KEYWORD) {
                         holder.registerProblem(visibilityModifier,
                                                "'protected' visibility is effectively 'private' in a final class",
-                                               ProblemHighlightType.WEAK_WARNING,
+                                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                                MakePrivateFix(),
                                                MakeOpenFix()
                         )
@@ -56,6 +59,7 @@ class ProtectedInFinalInspection  : AbstractKotlinInspection() {
         override fun getFamilyName(): String = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
             val modifierListOwner = descriptor.psiElement.getParentOfType<KtModifierListOwner>(true)
                                     ?: throw IllegalStateException("Can't find modifier list owner for modifier")
             addModifier(modifierListOwner, KtTokens.PRIVATE_KEYWORD)
@@ -68,6 +72,7 @@ class ProtectedInFinalInspection  : AbstractKotlinInspection() {
         override fun getFamilyName(): String = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
             val modifierListOwner = descriptor.psiElement.getParentOfType<KtModifierListOwner>(true)
                                     ?: throw IllegalStateException("Can't find modifier list owner for modifier")
             val parentClass = modifierListOwner.getParentOfType<KtClass>(true) ?: return

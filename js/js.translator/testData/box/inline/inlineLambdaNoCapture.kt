@@ -1,6 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1113
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: sumEven_0
+// CHECK_CONTAINS_NO_CALLS: sumEven
 
 internal inline fun filteredReduce(a: Array<Int>, predicate: (Int) -> Boolean, reduceFun: (Int, Int) -> Int): Int {
     var result = 0

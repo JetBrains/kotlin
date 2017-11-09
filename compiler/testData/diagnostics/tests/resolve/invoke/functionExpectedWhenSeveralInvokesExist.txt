@@ -1,0 +1,12 @@
+package
+
+public fun test(/*0*/ identifier: SomeClass, /*1*/ fn: kotlin.String.() -> kotlin.Unit): kotlin.Unit
+public fun kotlin.Int.invoke(/*0*/ a: kotlin.Int): kotlin.Unit
+public fun kotlin.Int.invoke(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Unit
+
+public final class SomeClass {
+    public constructor SomeClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

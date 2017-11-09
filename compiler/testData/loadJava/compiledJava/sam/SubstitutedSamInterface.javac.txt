@@ -1,0 +1,12 @@
+package test
+
+public interface SubstitutedSamInterface : java.util.Comparator<kotlin.String!> {
+    public abstract override /*1*/ /*fake_override*/ fun compare(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reversed(): java.util.Comparator<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun thenComparing(/*0*/ p0: java.util.Comparator<in kotlin.String!>!): java.util.Comparator<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Comparable<U!>!> thenComparing(/*0*/ p0: java.util.function.Function<in kotlin.String!, out U!>!): java.util.Comparator<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> thenComparing(/*0*/ p0: java.util.function.Function<in kotlin.String!, out U!>!, /*1*/ p1: java.util.Comparator<in U!>!): java.util.Comparator<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun thenComparingDouble(/*0*/ p0: java.util.function.ToDoubleFunction<in kotlin.String!>!): java.util.Comparator<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun thenComparingInt(/*0*/ p0: java.util.function.ToIntFunction<in kotlin.String!>!): java.util.Comparator<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun thenComparingLong(/*0*/ p0: java.util.function.ToLongFunction<in kotlin.String!>!): java.util.Comparator<kotlin.String!>!
+}

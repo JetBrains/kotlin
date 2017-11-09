@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.progress.*
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.DummyHolder
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -64,15 +66,19 @@ class JavaToKotlinConverter(
 
     fun filesToKotlin(files: List<PsiJavaFile>, postProcessor: PostProcessor, progress: ProgressIndicator = EmptyProgressIndicator()): FilesResult {
         val withProgressProcessor = WithProgressProcessor(progress, files)
+        val (results, externalCodeProcessing) = ApplicationManager.getApplication().runReadAction(Computable {
+            elementsToKotlin(files, withProgressProcessor)
+        })
 
-        val (results, externalCodeProcessing) = elementsToKotlin(files, withProgressProcessor)
 
         val texts = withProgressProcessor.processItems(0.5, results.withIndex()) { pair ->
             val (i, result) = pair
             try {
-                val kotlinFile = KtPsiFactory(project).createAnalyzableFile("dummy.kt", result!!.text, files[i])
+                val kotlinFile = ApplicationManager.getApplication().runReadAction(Computable {
+                    KtPsiFactory(project).createAnalyzableFile("dummy.kt", result!!.text, files[i])
+                })
 
-                result.importsToAdd.forEach { postProcessor.insertImport(kotlinFile, it) }
+                result!!.importsToAdd.forEach { postProcessor.insertImport(kotlinFile, it) }
 
                 AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
 
@@ -189,7 +195,7 @@ class JavaToKotlinConverter(
     private fun processUsages(refs: Collection<ReferenceInfo>) {
         for (fileRefs in refs.groupBy { it.file }.values) { // group by file for faster sorting
             ReferenceLoop@
-            for ((reference, target, file, processings) in fileRefs.sortedWith(ReferenceComparator)) {
+            for ((reference, _, _, processings) in fileRefs.sortedWith(ReferenceComparator)) {
                 val processors = when (reference.element.language) {
                     JavaLanguage.INSTANCE -> processings.flatMap { it.javaCodeProcessors }
                     KotlinLanguage.INSTANCE -> processings.flatMap { it.kotlinCodeProcessors }

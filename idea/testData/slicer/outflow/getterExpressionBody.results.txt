@@ -1,0 +1,3 @@
+4 get() = <bold>0</bold>
+4 	<bold>get() = 0</bold>
+7 		val <bold>x = foo</bold>

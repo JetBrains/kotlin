@@ -1,0 +1,4 @@
+package
+
+public fun basicTypes(): kotlin.Unit
+public fun basicTypesWithErrors(): kotlin.Unit

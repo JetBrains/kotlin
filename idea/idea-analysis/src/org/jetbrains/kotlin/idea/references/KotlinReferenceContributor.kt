@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,11 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceRegistrar
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtPackageDirective
+import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
@@ -29,6 +33,9 @@ class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
 
             registerMultiProvider<KtNameReferenceExpression> {
                 if (it.getReferencedNameElementType() != KtTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
+                if (it.parents.any { it is KtImportDirective || it is KtPackageDirective || it is KtUserType }) {
+                    return@registerMultiProvider emptyArray()
+                }
 
                 when (it.readWriteAccess(useResolveForReadWrite = false)) {
                     ReferenceAccess.READ ->
@@ -45,6 +52,8 @@ class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
             registerProvider(factory = ::KtInvokeFunctionReference)
 
             registerProvider(factory = ::KtArrayAccessReference)
+
+            registerProvider(factory = ::KtCollectionLiteralReference)
 
             registerProvider(factory = ::KtForLoopInReference)
 

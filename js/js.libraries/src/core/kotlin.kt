@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-package kotlin
+@file:Suppress("UNUSED_PARAMETER", "NOTHING_TO_INLINE")
 
-import java.util.*
+package kotlin
 
 /**
  * Returns an empty array of the specified type [T].
  */
-public inline fun <reified T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
+public inline fun <T> emptyArray(): Array<T> = js("[]")
 
 @library
-public fun <T> arrayOf(vararg elements: T): Array<T> = noImpl
+public fun <T> arrayOf(vararg elements: T): Array<T> = definedExternally
 
 @library
-public fun doubleArrayOf(vararg elements: Double): DoubleArray = noImpl
+public fun doubleArrayOf(vararg elements: Double): DoubleArray = definedExternally
 
 @library
-public fun floatArrayOf(vararg elements: Float): FloatArray = noImpl
+public fun floatArrayOf(vararg elements: Float): FloatArray = definedExternally
 
 @library
-public fun longArrayOf(vararg elements: Long): LongArray = noImpl
+public fun longArrayOf(vararg elements: Long): LongArray = definedExternally
 
 @library
-public fun intArrayOf(vararg elements: Int): IntArray = noImpl
+public fun intArrayOf(vararg elements: Int): IntArray = definedExternally
 
 @library
-public fun charArrayOf(vararg elements: Char): CharArray = noImpl
+public fun charArrayOf(vararg elements: Char): CharArray = definedExternally
 
 @library
-public fun shortArrayOf(vararg elements: Short): ShortArray = noImpl
+public fun shortArrayOf(vararg elements: Short): ShortArray = definedExternally
 
 @library
-public fun byteArrayOf(vararg elements: Byte): ByteArray = noImpl
+public fun byteArrayOf(vararg elements: Byte): ByteArray = definedExternally
 
 @library
-public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = noImpl
+public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = definedExternally
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
@@ -70,11 +70,21 @@ public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(
 
 
 internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
-    return arrayOfNulls<Any>(size) as Array<T>
+    return arrayOfNulls<Any>(size).unsafeCast<Array<T>>()
 }
+
+internal fun fillFrom(src: dynamic, dst: dynamic): dynamic {
+    val srcLen: Int = src.length
+    val dstLen: Int = dst.length
+    var index: Int = 0
+    while (index < srcLen && index < dstLen) dst[index] = src[index++]
+    return dst
+}
+
 
 internal fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?): dynamic {
     val result = source.slice(0, newSize)
+    copyArrayType(source, result)
     var index: Int = source.length
     if (newSize > index) {
         result.length = newSize
@@ -86,9 +96,22 @@ internal fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?):
 internal fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>): dynamic {
     val result = array.slice()
     result.length += collection.size
+    copyArrayType(array, result)
     var index: Int = array.length
     for (element in collection) result[index++] = element
     return result
+}
+
+internal fun <T> fillFromCollection(dst: dynamic, startIndex: Int, collection: Collection<T>): dynamic {
+    var index = startIndex
+    for (element in collection) dst[index++] = element
+    return dst
+}
+
+internal inline fun copyArrayType(from: dynamic, to: dynamic) {
+    if (from.`$type$` !== undefined) {
+        to.`$type$` = from.`$type$`
+    }
 }
 
 // no singleton map implementation in js, return map as is
@@ -102,3 +125,6 @@ internal inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array
             this
         else
             this.copyOf()
+
+// temporary for shared code, until we have an annotation like JvmSerializable
+internal interface Serializable

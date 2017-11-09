@@ -1,0 +1,15 @@
+Closure for constructor <no name provided>:
+
+Closure for function test1:
+  'this' for C
+
+Closure for function <anonymous>:
+  'this' for C
+  'this' for <no name provided>
+
+Closure for function test2:
+  'this' for C
+
+Closure for class <no name provided>:
+  'this' for C
+

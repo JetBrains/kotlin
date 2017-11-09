@@ -1,3 +1,5 @@
+// LANGUAGE_VERSION: 1.0
+
 const val one = 1
 const val two = 2
 

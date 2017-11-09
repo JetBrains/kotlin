@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.resolve.diagnostics
 
 import com.google.common.collect.ImmutableSet
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
-import com.intellij.util.containers.ConcurrentWeakValueHashMap
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -38,7 +37,8 @@ interface SuppressStringProvider {
     operator fun get(annotationDescriptor: AnnotationDescriptor): List<String>
 
     companion object {
-        val EP_NAME = ExtensionPointName.create<SuppressStringProvider>("org.jetbrains.kotlin.suppressStringProvider")
+        val EP_NAME: ExtensionPointName<SuppressStringProvider> =
+                ExtensionPointName.create<SuppressStringProvider>("org.jetbrains.kotlin.suppressStringProvider")
     }
 }
 
@@ -46,18 +46,17 @@ interface DiagnosticSuppressor {
     fun isSuppressed(diagnostic: Diagnostic): Boolean
 
     companion object {
-        val EP_NAME = ExtensionPointName.create<DiagnosticSuppressor>("org.jetbrains.kotlin.diagnosticSuppressor")
+        val EP_NAME: ExtensionPointName<DiagnosticSuppressor> =
+                ExtensionPointName.create<DiagnosticSuppressor>("org.jetbrains.kotlin.diagnosticSuppressor")
     }
 }
 
 abstract class KotlinSuppressCache {
-    private val LOG = Logger.getInstance(DiagnosticsWithSuppression::class.java)
-
     private val ADDITIONAL_SUPPRESS_STRING_PROVIDERS = ExtensionProvider.create(SuppressStringProvider.EP_NAME)
     private val DIAGNOSTIC_SUPPRESSORS = ExtensionProvider.create(DiagnosticSuppressor.EP_NAME)
 
     // The cache is weak: we're OK with losing it
-    private val suppressors = ConcurrentWeakValueHashMap<KtAnnotated, Suppressor>()
+    private val suppressors =  ContainerUtil.createConcurrentWeakValueMap<KtAnnotated, Suppressor>()
 
     val filter: (Diagnostic) -> Boolean = { diagnostic: Diagnostic -> !isSuppressed(diagnostic) }
 
@@ -119,12 +118,6 @@ abstract class KotlinSuppressCache {
        This way we need no more lookups than the number of suppress() annotations from here to the root.
      */
     protected fun isSuppressedByAnnotated(suppressionKey: String, severity: Severity, annotated: KtAnnotated, debugDepth: Int): Boolean {
-        if (LOG.isDebugEnabled) {
-            LOG.debug("Annotated: ", annotated.name)
-            LOG.debug("Depth: ", debugDepth)
-            LOG.debug("Cache size: ", suppressors.size, "\n")
-        }
-
         val suppressor = getOrCreateSuppressor(annotated)
         if (suppressor.isSuppressed(suppressionKey, severity)) return true
 
@@ -143,14 +136,10 @@ abstract class KotlinSuppressCache {
         var suppressor: Suppressor? = suppressors[annotated]
         if (suppressor == null) {
             val strings = getSuppressingStrings(annotated)
-            if (strings.isEmpty()) {
-                suppressor = EmptySuppressor(annotated)
-            }
-            else if (strings.size == 1) {
-                suppressor = SingularSuppressor(annotated, strings.iterator().next())
-            }
-            else {
-                suppressor = MultiSuppressor(annotated, strings)
+            suppressor = when {
+                strings.isEmpty() -> EmptySuppressor(annotated)
+                strings.size == 1 -> SingularSuppressor(annotated, strings.iterator().next())
+                else -> MultiSuppressor(annotated, strings)
             }
             suppressors.put(annotated, suppressor)
         }
@@ -173,14 +162,14 @@ abstract class KotlinSuppressCache {
             builder.addAll(suppressStringProvider[annotationDescriptor])
         }
 
-        if (!KotlinBuiltIns.isSuppressAnnotation(annotationDescriptor)) return
+        if (annotationDescriptor.fqName != KotlinBuiltIns.FQ_NAMES.suppress) return
 
         // We only add strings and skip other values to facilitate recovery in presence of erroneous code
         for (arrayValue in annotationDescriptor.allValueArguments.values) {
             if ((arrayValue is ArrayValue)) {
                 for (value in arrayValue.value) {
                     if (value is StringValue) {
-                        builder.add(value.value.toString().toLowerCase())
+                        builder.add(value.value.toLowerCase())
                     }
                 }
             }
@@ -264,11 +253,11 @@ class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressC
     override fun getSuppressionAnnotations(annotated: KtAnnotated): List<AnnotationDescriptor> {
         val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
 
-        if (descriptor != null) {
-            return descriptor.annotations.toList()
+        return if (descriptor != null) {
+            descriptor.annotations.toList()
         }
         else {
-            return annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
+            annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
         }
     }
 }

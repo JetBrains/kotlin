@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import com.google.dart.compiler.backend.js.ast.JsFunctionScope
-import com.google.dart.compiler.backend.js.ast.JsProgram
-import com.google.dart.compiler.backend.js.ast.JsRootScope
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
@@ -26,11 +23,16 @@ import com.google.gwt.dev.js.rhino.Utils.isEndOfLine
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
-import org.jetbrains.kotlin.js.parser.parse
+import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.JsRootScope
+import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate
 import org.jetbrains.kotlin.js.patterns.PatternBuilder
+import org.jetbrains.kotlin.js.resolve.LEXICAL_SCOPE_FOR_JS
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
@@ -55,7 +57,7 @@ class JsCallChecker(
 
         @JvmStatic fun <F : CallableDescriptor?> ResolvedCall<F>.isJsCall(): Boolean {
             val descriptor = resultingDescriptor
-            return descriptor is SimpleFunctionDescriptor && JS_PATTERN.apply(descriptor)
+            return descriptor is SimpleFunctionDescriptor && JS_PATTERN.test(descriptor)
         }
 
         @JvmStatic fun extractStringValue(compileTimeConstant: CompileTimeConstant<*>?): String? {
@@ -87,15 +89,19 @@ class JsCallChecker(
         val errorReporter = JsCodeErrorReporter(argument, code, context.trace)
 
         try {
-            val parserScope = JsFunctionScope(JsRootScope(JsProgram("<js checker>")), "<js fun>")
-            val statements = parse(code, errorReporter, parserScope)
+            val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
+            val statements = parseExpressionOrStatement(
+                    code, errorReporter, parserScope, CodePosition(0, 0), reportOn.containingFile?.name ?: "<unknown file>")
 
-            if (statements.size == 0) {
+            if (statements == null || statements.isEmpty()) {
                 context.trace.report(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED.on(argument))
             }
         } catch (e: AbortParsingException) {
             // ignore
         }
+
+        @Suppress("UNCHECKED_CAST")
+        context.trace.record(LEXICAL_SCOPE_FOR_JS, resolvedCall as ResolvedCall<FunctionDescriptor>, context.scope)
     }
 }
 

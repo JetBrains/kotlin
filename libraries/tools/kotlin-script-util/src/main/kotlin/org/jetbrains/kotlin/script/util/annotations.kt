@@ -20,11 +20,11 @@ package org.jetbrains.kotlin.script.util
 // in case of maven resolver the maven coordinates string is accepted (resolved with com.jcabi.aether library)
 @Target(AnnotationTarget.FILE, AnnotationTarget.EXPRESSION, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class DependsOn(val value: String)
+annotation class DependsOn(val value: String = "", val groupId: String = "", val artifactId: String = "", val version: String = "")
 
 // only flat directory repositories are supported now, so value should be a path to a directory with jars
 // TODO: support other types of repos
 @Target(AnnotationTarget.FILE, AnnotationTarget.EXPRESSION, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Repository(val value: String)
+annotation class Repository(val value: String = "", val id: String = "", val url: String = "")
 

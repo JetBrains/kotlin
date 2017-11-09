@@ -1,13 +1,13 @@
+@file:kotlin.jvm.JvmVersion
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 @file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 
 package kotlin.text
 
-import java.io.StringReader
-import java.util.regex.Pattern
 import java.nio.charset.Charset
 import java.util.*
+import java.util.regex.Pattern
 
 
 /**
@@ -123,22 +123,22 @@ public inline fun String.toCharArray(destination: CharArray, destinationOffset: 
 public inline fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
 
 /**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
+ * Uses the provided [format] as a format string and returns a string obtained by substituting the specified arguments,
  * using the default locale.
  */
 @kotlin.internal.InlineOnly
 public inline fun String.Companion.format(format: String, vararg args: Any?): String = java.lang.String.format(format, *args)
 
 /**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments, using
- * the specified locale.
+ * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
+ * using the specified locale.
  */
 @kotlin.internal.InlineOnly
 public inline fun String.format(locale: Locale, vararg args : Any?) : String = java.lang.String.format(locale, this, *args)
 
 /**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
- * using the default locale.
+ * Uses the provided [format] as a format string and returns a string obtained by substituting the specified arguments,
+ * using the specified locale.
  */
 @kotlin.internal.InlineOnly
 public inline fun String.Companion.format(locale: Locale, format: String, vararg args: Any?): String = java.lang.String.format(locale, format, *args)
@@ -366,60 +366,11 @@ public inline fun String.toLowerCase(locale: java.util.Locale): String = (this a
 public inline fun String.toUpperCase(locale: java.util.Locale): String = (this as java.lang.String).toUpperCase(locale)
 
 /**
- * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
- */
-@kotlin.internal.InlineOnly
-public inline fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
-
-/**
- * Parses the string as a signed [Byte] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-@kotlin.internal.InlineOnly
-public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
-
-/**
- * Parses the string as a [Short] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-@kotlin.internal.InlineOnly
-public inline fun String.toShort(): Short = java.lang.Short.parseShort(this)
-
-/**
- * Parses the string as an [Int] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-@kotlin.internal.InlineOnly
-public inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
-
-/**
- * Parses the string as a [Long] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-@kotlin.internal.InlineOnly
-public inline fun String.toLong(): Long = java.lang.Long.parseLong(this)
-
-/**
- * Parses the string as a [Float] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-@kotlin.internal.InlineOnly
-public inline fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
-
-/**
- * Parses the string as a [Double] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-@kotlin.internal.InlineOnly
-public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
-
-/**
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.
+ * @sample samples.text.Strings.stringToByteArray
  */
 @kotlin.internal.InlineOnly
 public inline fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
-
-
 
 /**
  * Converts the string into a regular expression [Pattern] optionally
@@ -435,7 +386,7 @@ public inline fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
  * Returns a copy of this string having its first letter uppercased, or the original string,
  * if it's empty or already starts with an upper case letter.
  *
- * @sample test.text.StringTest.capitalize
+ * @sample samples.text.Strings.capitalize
  */
 public fun String.capitalize(): String {
     return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
@@ -445,7 +396,7 @@ public fun String.capitalize(): String {
  * Returns a copy of this string having its first letter lowercased, or the original string,
  * if it's empty or already starts with a lower case letter.
  *
- * @sample test.text.StringTest.decapitalize
+ * @sample samples.text.Strings.decapitalize
  */
 public fun String.decapitalize(): String {
     return if (isNotEmpty() && this[0].isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
@@ -454,7 +405,7 @@ public fun String.decapitalize(): String {
 /**
  * Returns a string containing this char sequence repeated [n] times.
  * @throws [IllegalArgumentException] when n < 0.
- * @sample test.text.StringJVMTest.repeat
+ * @sample samples.text.Strings.repeat
  */
 public fun CharSequence.repeat(n: Int): String {
     require (n >= 0) { "Count 'n' must be non-negative, but was $n." }

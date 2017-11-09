@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,7 @@ abstract class KtDoubleColonExpression(node: ASTNode) : KtExpressionImpl(node) {
 
     fun setReceiverExpression(newReceiverExpression: KtExpression) {
         val oldReceiverExpression = this.receiverExpression
-        if (oldReceiverExpression != null) {
-            oldReceiverExpression.replace(newReceiverExpression)
-        }
-        else {
-            addBefore(newReceiverExpression, doubleColonTokenReference)
-        }
+        oldReceiverExpression?.replace(newReceiverExpression) ?: addBefore(newReceiverExpression, doubleColonTokenReference)
     }
 
     val isEmptyLHS: Boolean

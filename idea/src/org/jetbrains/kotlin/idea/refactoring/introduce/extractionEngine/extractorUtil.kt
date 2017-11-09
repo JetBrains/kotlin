@@ -25,7 +25,7 @@ import com.intellij.refactoring.BaseRefactoringProcessor
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
+import org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection
 import org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.StronglyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
@@ -65,7 +65,8 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
         else -> CallableBuilder.Target.READ_ONLY_PROPERTY
     }
     return CallableBuilder(builderTarget).apply {
-        modifier(config.descriptor.visibility)
+        val modifiers = listOf(config.descriptor.visibility) + config.descriptor.modifiers.map { it.value }
+        modifier(modifiers.joinToString(separator = " "))
 
         typeParams(
                 config.descriptor.typeParameters.map {
@@ -93,7 +94,7 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
 
         config.descriptor.parameters.forEach { parameter ->
             param(parameter.name,
-                       parameter.getParameterType(config.descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
+                  parameter.getParameterType(config.descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
         }
 
         with(config.descriptor.returnType) {
@@ -352,16 +353,12 @@ private fun makeCall(
                 )
 
             is Jump -> {
-                if (outputValue.elementToInsertAfterCall == null) {
-                    Collections.singletonList(psiFactory.createExpression(callText))
-                }
-                else if (outputValue.conditional) {
-                    Collections.singletonList(
+                when {
+                    outputValue.elementToInsertAfterCall == null -> Collections.singletonList(psiFactory.createExpression(callText))
+                    outputValue.conditional -> Collections.singletonList(
                             psiFactory.createExpression("if ($callText) ${outputValue.elementToInsertAfterCall.text}")
                     )
-                }
-                else {
-                    listOf(
+                    else -> listOf(
                             psiFactory.createExpression(callText),
                             newLine,
                             psiFactory.createExpression(outputValue.elementToInsertAfterCall.text!!)
@@ -371,7 +368,7 @@ private fun makeCall(
 
             is Initializer -> {
                 val newProperty = copiedDeclarations[outputValue.initializedDeclaration] as KtProperty
-                newProperty.setInitializer(psiFactory.createExpression(callText))
+                newProperty.initializer = psiFactory.createExpression(callText)
                 Collections.emptyList()
             }
 
@@ -551,11 +548,11 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
 
         if (generatorOptions.allowExpressionBody) {
-            val convertToExpressionBody = ConvertToExpressionBodyIntention()
             val bodyExpression = body.statements.singleOrNull()
             val bodyOwner = body.parent as KtDeclarationWithBody
-            if (bodyExpression != null && !bodyExpression.isMultiLine() && convertToExpressionBody.isApplicableTo(bodyOwner)) {
-                convertToExpressionBody.applyTo(bodyOwner, !descriptor.returnType.isFlexible())
+            val useExpressionBodyInspection = UseExpressionBodyInspection()
+            if (bodyExpression != null && !bodyExpression.isMultiLine() && useExpressionBodyInspection.isActiveFor(bodyOwner)) {
+                useExpressionBodyInspection.simplify(bodyOwner, !descriptor.returnType.isFlexible())
             }
         }
     }

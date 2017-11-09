@@ -4,10 +4,7 @@ public open class TypeParameterOfMethod {
     public constructor TypeParameterOfMethod()
 
     // Static members
-    public final /*synthesized*/ fun </*0*/ T : kotlin.Any!> max(/*0*/ p0: ((T!, T!) -> kotlin.Int)!, /*1*/ p1: T!, /*2*/ p2: T!): T!
     public open fun </*0*/ T : kotlin.Any!> max(/*0*/ p0: java.util.Comparator<T!>!, /*1*/ p1: T!, /*2*/ p2: T!): T!
-    public final /*synthesized*/ fun </*0*/ T : kotlin.CharSequence!> max2(/*0*/ p0: ((T!, T!) -> kotlin.Int)!, /*1*/ p1: T!, /*2*/ p2: T!): T!
     public open fun </*0*/ T : kotlin.CharSequence!> max2(/*0*/ p0: java.util.Comparator<T!>!, /*1*/ p1: T!, /*2*/ p2: T!): T!
-    public final /*synthesized*/ fun </*0*/ A : kotlin.CharSequence!, /*1*/ B : kotlin.collections.(Mutable)List<A!>!> method(/*0*/ p0: ((A!, A!) -> kotlin.Int)!, /*1*/ p1: B!): kotlin.Unit
     public open fun </*0*/ A : kotlin.CharSequence!, /*1*/ B : kotlin.collections.(Mutable)List<A!>!> method(/*0*/ p0: java.util.Comparator<A!>!, /*1*/ p1: B!): kotlin.Unit
 }

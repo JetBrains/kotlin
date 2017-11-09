@@ -1,0 +1,5 @@
+package test;
+
+interface Interface {
+
+}

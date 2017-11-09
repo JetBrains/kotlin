@@ -6,7 +6,7 @@ tailrec fun sum(x: Long, sum: Long): Long {
 ---------------------
                                                                  <v0>: Long          NEW: magic[FAKE_INITIALIZER](x: Long) -> <v0>
                                                                  <v1>: Long          NEW: magic[FAKE_INITIALIZER](sum: Long) -> <v1>
-x                                                                <v2>: OR{*, *}      NEW: r(x) -> <v2>
+x                                                                <v2>: *             NEW: r(x) -> <v2>
 0                                                                <v3>: {<: Number}   NEW: r(0) -> <v3>
 toLong()                                                         <v4>: *             NEW: call(toLong(), toLong|<v3>) -> <v4>
 0.toLong()                                                       <v4>: *             COPY

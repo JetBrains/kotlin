@@ -1,4 +1,4 @@
-JetFile: Enums.kt
+KtFile: Enums.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

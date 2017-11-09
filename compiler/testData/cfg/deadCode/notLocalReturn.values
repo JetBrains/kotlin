@@ -26,9 +26,9 @@ return "NON_LOCAL_FAILED $localResult"                                          
         return nonLocal  //unreachable
     }
 ---------------------
-nonLocal          <v0>: String   NEW: r(nonLocal) -> <v0>
-return nonLocal   !<v1>: *
-return nonLocal   !<v1>: *       COPY
+nonLocal                        <v0>: String   NEW: r(nonLocal) -> <v0>
+return nonLocal                 !<v1>: *
+return nonLocal //unreachable   !<v1>: *       COPY
 =====================
 == doSomething ==
 fun doSomething() {}

@@ -1,0 +1,6 @@
+3 fun foo(<bold>n: Int</bold>, s: String = "???") {
+8 	foo(<bold>1</bold>)
+9 	foo(<bold>1</bold>, "2")
+10 	foo(<bold>1</bold>, s = "2")
+11 	foo(n = <bold>1</bold>, s = "2")
+12 	foo(s = "2", n = <bold>1</bold>)

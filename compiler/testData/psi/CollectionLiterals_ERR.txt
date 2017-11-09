@@ -1,0 +1,79 @@
+KtFile: CollectionLiterals_ERR.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        PsiErrorElement:Expecting an element
+          PsiElement(COMMA)(',')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiErrorElement:Expecting an element
+          <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        PsiErrorElement:Expecting an element
+          PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+        PsiErrorElement:Expecting ']'
+          <empty list>
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(INTEGER_LITERAL)('3')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+        PsiErrorElement:Expecting ']'
+          <empty list>
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(INTEGER_LITERAL)('3')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        PsiErrorElement:Expecting an expression
+          <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

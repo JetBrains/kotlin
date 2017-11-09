@@ -1,0 +1,2 @@
+4 val <bold>x: Int</bold>
+7 	x = <bold>1</bold>

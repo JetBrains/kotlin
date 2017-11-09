@@ -1,0 +1,24 @@
+package test
+
+public fun returnsAndCalls(/*0*/ b: kotlin.Boolean, /*1*/ block: () -> kotlin.Unit): kotlin.Unit
+    Returns(FALSE) -> !b
+    CallsInPlace(block, UNKNOWN)
+    Returns(TRUE) -> b
+
+public fun returnsAndFinished(/*0*/ b: kotlin.Boolean): kotlin.Unit
+    Returns(TRUE) -> b
+    Returns(WILDCARD) -> b != null
+    Returns(FALSE) -> !b
+
+public fun severalCalls(/*0*/ x: () -> kotlin.Unit, /*1*/ y: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(x, AT_MOST_ONCE)
+    CallsInPlace(y, AT_LEAST_ONCE)
+
+public fun threeReturnsValue(/*0*/ b: kotlin.Boolean): kotlin.Unit
+    Returns(NOT_NULL) -> b != null
+    Returns(TRUE) -> b
+    Returns(FALSE) -> !b
+
+public fun twoReturnsValue(/*0*/ b: kotlin.Boolean): kotlin.Unit
+    Returns(TRUE) -> b
+    Returns(FALSE) -> !b

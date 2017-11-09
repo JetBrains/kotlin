@@ -6,4 +6,4 @@ fun foo() {
 infix fun Int.foo(i: Int) {
 }
 
-// 2 4 7
+// 2 3 2 4 7

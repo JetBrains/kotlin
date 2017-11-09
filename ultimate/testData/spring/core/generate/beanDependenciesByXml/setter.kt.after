@@ -4,8 +4,7 @@
 package a
 
 open class FooBean {
-    fun setBarBean(barBean: BarBean) {
-    }
+    fun setBarBean(barBean: BarBean) {}
 }
 
 open class BarBean

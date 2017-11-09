@@ -1,0 +1,18 @@
+// "Replace with generated @PublishedApi bridge call '`access$test`(...)'" "true"
+annotation class Z
+
+open class ABase {
+    @Z
+    protected fun test(p: Int) {
+    }
+
+
+    inline fun test() {
+        {
+            `access$test`(1)
+        }()
+    }
+
+    @PublishedApi
+    internal fun `access$test`(p: Int) = test(p)
+}

@@ -2,7 +2,7 @@ namespace org.w3c.xhr;
 
 
 // Downloaded from https://raw.githubusercontent.com/whatwg/xhr/master/Overview.src.html
-[Exposed=(Window,Worker)]
+[Exposed=(Window,DedicatedWorker,SharedWorker)]
 interface XMLHttpRequestEventTarget : EventTarget {
   // event handlers
   attribute EventHandler onloadstart;
@@ -14,7 +14,7 @@ interface XMLHttpRequestEventTarget : EventTarget {
   attribute EventHandler onloadend;
 };
 
-[Exposed=(Window,Worker)]
+[Exposed=(Window,DedicatedWorker,SharedWorker)]
 interface XMLHttpRequestUpload : XMLHttpRequestEventTarget {
 };
 
@@ -28,7 +28,7 @@ enum XMLHttpRequestResponseType {
 };
 
 [Constructor,
- Exposed=(Window,Worker)]
+ Exposed=(Window,DedicatedWorker,SharedWorker)]
 interface XMLHttpRequest : XMLHttpRequestEventTarget {
   // event handler
   attribute EventHandler onreadystatechange;
@@ -63,21 +63,23 @@ interface XMLHttpRequest : XMLHttpRequestEventTarget {
   readonly attribute USVString responseText;
   [Exposed=Window] readonly attribute Document? responseXML;
 };
-typedef (Blob or USVString) FormDataEntryValue;
+typedef (File or USVString) FormDataEntryValue;
 
 [Constructor(optional HTMLFormElement form),
  Exposed=(Window,Worker)]
 interface FormData {
-  void append(USVString name, FormDataEntryValue value);
+  void append(USVString name, USVString value);
+  void append(USVString name, Blob value, optional USVString filename);
   void delete(USVString name);
   FormDataEntryValue? get(USVString name);
   sequence<FormDataEntryValue> getAll(USVString name);
   boolean has(USVString name);
-  void set(USVString name, FormDataEntryValue value);
+  void set(USVString name, USVString value);
+  void set(USVString name, Blob value, optional USVString filename);
   iterable<USVString, FormDataEntryValue>;
 };
 [Constructor(DOMString type, optional ProgressEventInit eventInitDict),
- Exposed=(Window,Worker)]
+ Exposed=(Window,DedicatedWorker,SharedWorker)]
 interface ProgressEvent : Event {
   readonly attribute boolean lengthComputable;
   readonly attribute unsigned long long loaded;

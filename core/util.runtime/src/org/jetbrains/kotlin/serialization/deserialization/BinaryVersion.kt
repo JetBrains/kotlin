@@ -46,13 +46,24 @@ abstract class BinaryVersion(vararg val numbers: Int) {
         else major == ourVersion.major && minor <= ourVersion.minor
     }
 
+    fun isAtLeast(major: Int, minor: Int, patch: Int): Boolean {
+        if (this.major > major) return true
+        if (this.major < major) return false
+
+        if (this.minor > minor) return true
+        if (this.minor < minor) return false
+
+        return this.patch >= patch
+    }
+
     override fun toString(): String {
         val versions = toArray().takeWhile { it != UNKNOWN }
         return if (versions.isEmpty()) "unknown" else versions.joinToString(".")
     }
 
     override fun equals(other: Any?) =
-            this.javaClass == other?.javaClass &&
+            other != null &&
+            this::class.java == other::class.java &&
             major == (other as BinaryVersion).major && minor == other.minor && patch == other.patch && rest == other.rest
 
     override fun hashCode(): Int{

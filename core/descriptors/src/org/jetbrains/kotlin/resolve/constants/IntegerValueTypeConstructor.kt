@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import java.util.*
@@ -55,13 +54,11 @@ class IntegerValueTypeConstructor(
 
     override fun getDeclarationDescriptor() = null
 
-    override val annotations: Annotations get() = Annotations.EMPTY
-
     fun getValue(): Long = value
 
     override fun getBuiltIns(): KotlinBuiltIns {
         return builtIns
     }
 
-    override fun toString() = "IntegerValueType(" + value + ")"
+    override fun toString() = "IntegerValueType($value)"
 }

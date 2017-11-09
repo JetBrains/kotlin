@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 
-operator fun <K, V: Any> BindingContext.get(slice: ReadOnlySlice<K, V>, key: K): V? = get(slice, key)
-
 fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
     val targetLabel = getTargetLabel()
     if (targetLabel != null) return context[LABEL_TARGET, targetLabel]?.let { context[FUNCTION, it] }
@@ -80,7 +78,7 @@ fun BindingTrace.recordScope(scope: LexicalScope, element: KtElement?) {
     }
 }
 
-fun BindingContext.getDataFlowInfo(position: PsiElement): DataFlowInfo {
+fun BindingContext.getDataFlowInfoAfter(position: PsiElement): DataFlowInfo {
     for (element in position.parentsWithSelf) {
         (element as? KtExpression)?.let {
             val parent = it.parent
@@ -88,6 +86,15 @@ fun BindingContext.getDataFlowInfo(position: PsiElement): DataFlowInfo {
             if (parent is KtQualifiedExpression && it == parent.selectorExpression) return@let null
             this[BindingContext.EXPRESSION_TYPE_INFO, it]
         }?.let { return it.dataFlowInfo }
+    }
+    return DataFlowInfo.EMPTY
+}
+
+fun BindingContext.getDataFlowInfoBefore(position: PsiElement): DataFlowInfo {
+    for (element in position.parentsWithSelf) {
+        (element as? KtExpression)
+                ?.let { this[BindingContext.DATA_FLOW_INFO_BEFORE, it] }
+                ?.let { return it }
     }
     return DataFlowInfo.EMPTY
 }

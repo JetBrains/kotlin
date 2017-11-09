@@ -59,7 +59,7 @@ class LazyClasspathWatcher(classpath: Iterable<String>,
         thread(isDaemon = true, start = true) {
             try {
                 fileIds = classpath
-                        .map { File(it) }
+                        .map(::File)
                         .asSequence()
                         .flatMap { it.walk().filter(::isClasspathFile) }
                         .map { FileId(it, it.lastModified(), it.md5Digest()) }

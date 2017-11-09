@@ -17,29 +17,20 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import java.util.*
 
 object CompanionObjectMapping {
-    private val classesFqNames = linkedSetOf<FqName>()
+    private val classIds =
+            (PrimitiveType.NUMBER_TYPES.map(KotlinBuiltIns::getPrimitiveFqName) +
+             KotlinBuiltIns.FQ_NAMES.string.toSafe() +
+             KotlinBuiltIns.FQ_NAMES._enum.toSafe()).mapTo(linkedSetOf<ClassId>(), ClassId::topLevel)
 
-    init {
-        for (type in PrimitiveType.NUMBER_TYPES) {
-            classesFqNames.add(KotlinBuiltIns.getPrimitiveFqName(type))
-        }
-        classesFqNames.add(KotlinBuiltIns.FQ_NAMES.string.toSafe())
-        classesFqNames.add(KotlinBuiltIns.FQ_NAMES._enum.toSafe())
-    }
+    fun allClassesWithIntrinsicCompanions(): Set<ClassId> =
+            Collections.unmodifiableSet(classIds)
 
-    fun allClassesWithIntrinsicCompanions(): Set<FqName> =
-            Collections.unmodifiableSet(classesFqNames)
-
-    fun isMappedIntrinsicCompanionObject(classDescriptor: ClassDescriptor): Boolean {
-        if (!DescriptorUtils.isCompanionObject(classDescriptor)) return false
-        val fqName = DescriptorUtils.getFqName(classDescriptor.containingDeclaration)
-        if (!fqName.isSafe) return false
-
-        return fqName.toSafe() in classesFqNames
-    }
+    fun isMappedIntrinsicCompanionObject(classDescriptor: ClassDescriptor): Boolean =
+            DescriptorUtils.isCompanionObject(classDescriptor) && classDescriptor.classId?.outerClassId in classIds
 }

@@ -1,0 +1,5 @@
+fun foo(x: Int) {}
+
+fun bar() {
+    foo(2)
+}

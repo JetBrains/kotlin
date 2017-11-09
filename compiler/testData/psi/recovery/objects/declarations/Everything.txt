@@ -1,4 +1,4 @@
-JetFile: Everything.kt
+KtFile: Everything.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST
@@ -7,16 +7,15 @@ JetFile: Everything.kt
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
-    PsiErrorElement:Type parameters are not allowed for objects
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('R')
-        PsiElement(GT)('>')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('R')
+      PsiElement(GT)('>')
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST

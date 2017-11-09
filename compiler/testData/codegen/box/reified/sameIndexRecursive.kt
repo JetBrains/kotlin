@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 // WITH_RUNTIME
 
 inline fun<reified T1, reified T2> createArray(n: Int, crossinline block: () -> Pair<T1, T2>): Pair<Array<T1>, Array<T2>> {

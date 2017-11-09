@@ -1,0 +1,15 @@
+enum class TestEnum{
+    A, B, C
+}
+
+fun test(e: TestEnum): Int {
+    var res: Int = 0
+
+    <caret>res = when (e) {
+        TestEnum.A -> 1
+        TestEnum.B -> 2
+        else -> 3
+    }
+
+    return res
+}

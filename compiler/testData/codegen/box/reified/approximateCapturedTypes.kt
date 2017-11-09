@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_RUNTIME
 // Basically this test checks that no captured type used as argument for signature mapping
 class SwOperator<T>: Operator<List<T>, T>
@@ -16,7 +19,7 @@ fun box(): String {
     val inv = o.lift(SwOperator())
     val signature = inv.javaClass.genericSuperclass.toString()
 
-    if (signature != "Inv<java.util.List<?>>") return "fail 1: $signature"
+    if (signature != "Inv<java.util.List<? extends java.lang.CharSequence>>") return "fail 1: $signature"
 
     return "OK"
 }

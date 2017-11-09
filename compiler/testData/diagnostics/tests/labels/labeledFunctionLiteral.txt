@@ -1,0 +1,5 @@
+package
+
+public val funLit: kotlin.String.() -> kotlin.Unit
+public fun lambda(): kotlin.Unit
+public fun test(): kotlin.Unit

@@ -35,11 +35,11 @@ interface MemberBinarySignature {
     val name: String
     val desc: String
     val access: AccessFlags
-    val isInlineExposed: Boolean
+    val isPublishedApi: Boolean
 
     fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
             = access.isPublic && !(access.isProtected && classAccess.isFinal)
-            && (findMemberVisibility(classVisibility)?.isPublic(isInlineExposed) ?: true)
+            && (findMemberVisibility(classVisibility)?.isPublic(isPublishedApi) ?: true)
 
     fun findMemberVisibility(classVisibility: ClassVisibility?)
             = classVisibility?.members?.get(MemberSignature(name, desc))
@@ -50,22 +50,22 @@ interface MemberBinarySignature {
 data class MethodBinarySignature(
         override val name: String,
         override val desc: String,
-        override val isInlineExposed: Boolean,
+        override val isPublishedApi: Boolean,
         override val access: AccessFlags) : MemberBinarySignature {
     override val signature: String
         get() = "${access.getModifierString()} fun $name $desc"
 
     override fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
             = super.isEffectivelyPublic(classAccess, classVisibility)
-            && !isAccessMethod()
+            && !isAccessOrAnnotationsMethod()
 
-    private fun isAccessMethod() = access.isSynthetic && name.startsWith("access\$")
+    private fun isAccessOrAnnotationsMethod() = access.isSynthetic && (name.startsWith("access\$") || name.endsWith("\$annotations"))
 }
 
 data class FieldBinarySignature(
         override val name: String,
         override val desc: String,
-        override val isInlineExposed: Boolean,
+        override val isPublishedApi: Boolean,
         override val access: AccessFlags) : MemberBinarySignature {
     override val signature: String
         get() = "${access.getModifierString()} field $name $desc"
@@ -116,7 +116,7 @@ fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
         isPublic(access)
                 && !isLocal()
                 && !isWhenMappings()
-                && (classVisibility?.isPublic(isInlineExposed()) ?: true)
+                && (classVisibility?.isPublic(isPublishedApi()) ?: true)
 
 
 val ClassNode.innerClassNode: InnerClassNode? get() = innerClasses.singleOrNull { it.name == name }
@@ -128,10 +128,11 @@ val ClassNode.effectiveAccess: Int get() = innerClassNode?.access ?: access
 val ClassNode.outerClassName: String? get() = innerClassNode?.outerName
 
 
-const val inlineExposedAnnotationName = "kotlin/internal/InlineExposed"
-fun ClassNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, includeInvisible = true)
-fun MethodNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, includeInvisible = true)
-fun FieldNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, includeInvisible = true)
+const val publishedApiAnnotationName = "kotlin/PublishedApi"
+fun ClassNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
+fun MethodNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
+fun FieldNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
+
 
 private object KotlinClassKind {
     const val FILE = 2
@@ -146,20 +147,13 @@ fun ClassNode.isDefaultImpls() = isInner() && name.endsWith("\$DefaultImpls") &&
 
 
 val ClassNode.kotlinClassKind: Int?
-    get() = visibleAnnotations
-            ?.filter { it.desc == "Lkotlin/Metadata;" }
-            ?.map { (it.values.annotationValue("k") as? Int) }
-            ?.firstOrNull()
+    get() = findAnnotation("kotlin/Metadata", false)?.get("k") as Int?
 
-fun ClassNode.hasAnnotation(annotationName: String, includeInvisible: Boolean = false) = hasAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
-fun MethodNode.hasAnnotation(annotationName: String, includeInvisible: Boolean = false) = hasAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
-fun FieldNode.hasAnnotation(annotationName: String, includeInvisible: Boolean = false) = hasAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
+fun ClassNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) = findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
+fun MethodNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) = findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
+fun FieldNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) = findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
 
-private fun hasAnnotation(annotationName: String, visibleAnnotations: List<AnnotationNode>?, invisibleAnnotations: List<AnnotationNode>?, includeInvisible: Boolean)
-        = "L$annotationName;".let { desc ->
-            (visibleAnnotations?.any { it.desc == desc } ?: false)
-            || (includeInvisible && (invisibleAnnotations?.any { it.desc == desc } ?: false))
-        }
+operator fun AnnotationNode.get(key: String): Any? = values.annotationValue(key)
 
 private fun List<Any>.annotationValue(key: String): Any? {
     for (index in (0 .. size / 2 - 1)) {
@@ -168,3 +162,9 @@ private fun List<Any>.annotationValue(key: String): Any? {
     }
     return null
 }
+
+private fun findAnnotation(annotationName: String, visibleAnnotations: List<AnnotationNode>?, invisibleAnnotations: List<AnnotationNode>?, includeInvisible: Boolean): AnnotationNode? =
+        visibleAnnotations?.firstOrNull { it.refersToName(annotationName) } ?:
+        if (includeInvisible) invisibleAnnotations?.firstOrNull { it.refersToName(annotationName) } else null
+
+fun AnnotationNode.refersToName(name: String) = desc.startsWith('L') && desc.endsWith(';') && desc.regionMatches(1, name, 0, name.length)

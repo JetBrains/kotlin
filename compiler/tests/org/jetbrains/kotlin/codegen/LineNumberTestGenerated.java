@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LineNumber extends AbstractLineNumberTest {
         public void testAllFilesPresentInLineNumber() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber"), Pattern.compile("^(.+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("anonymousFunction.kt")
@@ -145,7 +146,7 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Custom extends AbstractLineNumberTest {
         public void testAllFilesPresentInCustom() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber/custom"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber/custom"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("beforeGotoToWhileStart.kt")
@@ -205,6 +206,12 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
         @TestMetadata("ifThenElse.kt")
         public void testIfThenElse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/ifThenElse.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("inTheEndOfLambdaArgumentOfInlineCall.kt")
+        public void testInTheEndOfLambdaArgumentOfInlineCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/inTheEndOfLambdaArgumentOfInlineCall.kt");
             doTestCustom(fileName);
         }
 

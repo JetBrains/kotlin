@@ -16,21 +16,14 @@
 
 package org.jetbrains.kotlin.js.inline.context
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.synthetic
-
-import java.util.ArrayList
-import java.util.IdentityHashMap
-
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.replaceNames
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-class NamingContext(
-        private val scope: JsScope,
-        private val statementContext: JsContext<JsStatement>
-) {
-    private val renamings = IdentityHashMap<JsName, JsExpression>()
-    private val declarations = ArrayList<JsVars>()
+class NamingContext(private val statementContext: JsContext<JsStatement>) {
+    private val renamings = mutableMapOf<JsName, JsExpression>()
+    private val declarations = mutableListOf<JsVars>()
     private var addedDeclarations = false
 
     fun applyRenameTo(target: JsNode): JsNode {
@@ -48,13 +41,10 @@ class NamingContext(
         renamings.put(name, replacement)
     }
 
-    fun getFreshName(candidate: String): JsName = scope.declareFreshName(candidate)
-
-    fun getFreshName(candidate: JsName): JsName = getFreshName(candidate.ident)
-
-    fun newVar(name: JsName, value: JsExpression? = null) {
+    fun newVar(name: JsName, value: JsExpression? = null, source: Any?) {
         val vars = JsAstUtils.newVar(name, value)
         vars.synthetic = true
+        vars.source = source
         declarations.add(vars)
     }
 }

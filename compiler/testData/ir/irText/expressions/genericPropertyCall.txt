@@ -1,0 +1,17 @@
+FILE /genericPropertyCall.kt
+  PROPERTY public val <T> T.id: T
+    FUN public fun T.<get-id>(): T
+      $receiver: VALUE_PARAMETER this@id: T
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-id>() on T: T'
+          GET_VAR 'this@id: T' type=T origin=null
+  PROPERTY public val test: kotlin.String
+    FIELD PROPERTY_BACKING_FIELD public val test: kotlin.String
+      EXPRESSION_BODY
+        CALL '<get-id>() on String: String' type=kotlin.String origin=GET_PROPERTY
+          $receiver: CONST String type=kotlin.String value='abc'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test>(): String'
+          GET_FIELD 'test: String' type=kotlin.String origin=null
+

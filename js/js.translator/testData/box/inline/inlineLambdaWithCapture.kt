@@ -1,6 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1122
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: maxBySquare_0
+// CHECK_CONTAINS_NO_CALLS: maxBySquare except=imul
 
 internal data class Result(var value: Int = 0, var invocationCount: Int = 0)
 

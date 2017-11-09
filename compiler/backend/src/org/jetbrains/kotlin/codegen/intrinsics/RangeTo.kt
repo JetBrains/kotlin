@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.FrameMap
+import org.jetbrains.kotlin.codegen.generateNewInstanceDupAndPlaceBeforeStackTop
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -47,19 +48,8 @@ class RangeTo : IntrinsicMethod() {
                 nullOr(method.dispatchReceiverType, argType),
                 nullOr(method.extensionReceiverType, argType)
         ) {
-            override fun afterReceiverGeneration(v: InstructionAdapter) {
-                v.anew(returnType)
-                when (argType.size) {
-                    1 -> {
-                        v.dupX1()
-                        v.swap()
-                    }
-                    2 -> {
-                        v.dup()
-                        v.dup2X2()
-                        v.pop2()
-                    }
-                }
+            override fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap) {
+                v.generateNewInstanceDupAndPlaceBeforeStackTop(frameMap, argType, returnType.internalName)
             }
 
             override fun invokeIntrinsic(v: InstructionAdapter) {

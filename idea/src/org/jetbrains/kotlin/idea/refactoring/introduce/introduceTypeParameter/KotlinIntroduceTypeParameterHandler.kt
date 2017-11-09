@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterByRefActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterByUnresolvedRefActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterFromUsageFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.getPossibleTypeParameterContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractIntroduceAction
@@ -74,7 +74,7 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
                 file,
                 "Introduce type parameter to declaration",
                 listOf(CodeInsightUtils.ElementKind.TYPE_ELEMENT),
-                { elements, parent -> getPossibleTypeParameterContainers(parent) },
+                { _, parent -> getPossibleTypeParameterContainers(parent) },
                 continuation
         )
     }
@@ -99,12 +99,12 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
         val originalType = typeElementToExtract.getAbbreviatedTypeOrType(context)
 
         val createTypeParameterData =
-                CreateTypeParameterByRefActionFactory.extractFixData(typeElementToExtract, defaultName)
-                        ?.copy(upperBoundType = originalType, declaration = targetOwner)
-                ?: return showErrorHint(project, editor, "Refactoring is not applicable in the current context", REFACTORING_NAME)
+                CreateTypeParameterByUnresolvedRefActionFactory.extractFixData(typeElementToExtract, defaultName)?.let {
+                    it.copy(typeParameters = listOf(it.typeParameters.single().copy(upperBoundType = originalType)), declaration = targetOwner)
+                } ?: return showErrorHint(project, editor, "Refactoring is not applicable in the current context", REFACTORING_NAME)
 
         project.executeCommand(REFACTORING_NAME) {
-            val newTypeParameter = CreateTypeParameterFromUsageFix(typeElementToExtract, createTypeParameterData).doInvoke()
+            val newTypeParameter = CreateTypeParameterFromUsageFix(typeElementToExtract, createTypeParameterData, false).doInvoke().singleOrNull()
                                    ?: return@executeCommand
             val newTypeParameterPointer = newTypeParameter.createSmartPointer()
 
@@ -113,38 +113,38 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
                 val restoredOwner = restoredTypeParameter.getStrictParentOfType<KtTypeParameterListOwner>() ?: return@postRename
                 val restoredOriginalTypeElement = typeElementToExtractPointer.element ?: return@postRename
 
+                val parameterRefElement = KtPsiFactory(project).createType(restoredTypeParameter.name ?: "_").typeElement!!
+
+                val duplicateRanges = restoredOriginalTypeElement
+                        .toRange()
+                        .match(restoredOwner, KotlinPsiUnifier.DEFAULT)
+                        .filterNot {
+                            val textRange = it.range.getTextRange()
+                            restoredOriginalTypeElement.textRange.intersects(textRange)
+                            || restoredOwner.typeParameterList?.textRange?.intersects(textRange) ?: false
+                        }
+                        .map { it.range.elements.toRange() }
+
                 runWriteAction {
-                    val parameterRefElement = KtPsiFactory(project).createType(restoredTypeParameter.name ?: "_").typeElement!!
-
-                    val duplicateRanges = restoredOriginalTypeElement
-                            .toRange()
-                            .match(restoredOwner, KotlinPsiUnifier.DEFAULT)
-                            .filterNot {
-                                val textRange = it.range.getTextRange()
-                                restoredOriginalTypeElement.textRange.intersects(textRange)
-                                || restoredOwner.typeParameterList?.textRange?.intersects(textRange) ?: false
-                            }
-                            .mapNotNull { it.range.elements.toRange() }
-
                     restoredOriginalTypeElement.replace(parameterRefElement)
+                }
 
-                    processDuplicates(
-                            duplicateRanges.keysToMap {
-                                {
-                                    it.elements.singleOrNull()?.replace(parameterRefElement)
-                                    Unit
-                                }
-                            },
-                            project,
-                            editor,
-                            ElementDescriptionUtil.getElementDescription(restoredOwner, UsageViewTypeLocation.INSTANCE) + " '${restoredOwner.name}'",
-                            "a reference to extracted type parameter"
-                    )
+                processDuplicates(
+                        duplicateRanges.keysToMap {
+                            {
+                                it.elements.singleOrNull()?.replace(parameterRefElement)
+                                Unit
+                            }
+                        },
+                        project,
+                        editor,
+                        ElementDescriptionUtil.getElementDescription(restoredOwner, UsageViewTypeLocation.INSTANCE) + " '${restoredOwner.name}'",
+                        "a reference to extracted type parameter"
+                )
 
-                    restoredTypeParameter.extendsBound?.let {
-                        editor.selectionModel.setSelection(it.startOffset, it.endOffset)
-                        editor.caretModel.moveToOffset(it.startOffset)
-                    }
+                restoredTypeParameter.extendsBound?.let {
+                    editor.selectionModel.setSelection(it.startOffset, it.endOffset)
+                    editor.caretModel.moveToOffset(it.startOffset)
                 }
             }
 

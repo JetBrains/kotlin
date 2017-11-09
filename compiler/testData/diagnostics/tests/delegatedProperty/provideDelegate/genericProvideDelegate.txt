@@ -1,0 +1,23 @@
+package
+
+public val test1: Cell<kotlin.String>
+public val test2: Cell<kotlin.Any>
+public val test3: Cell<kotlin.String>
+public operator fun </*0*/ W> GenericDelegate<W>.getValue(/*0*/ a: kotlin.Any?, /*1*/ p: kotlin.Any?): Cell<W>
+public operator fun </*0*/ T> T.provideDelegate(/*0*/ a: kotlin.Any?, /*1*/ p: kotlin.Any?): GenericDelegate<T>
+
+public final class Cell</*0*/ out V> {
+    public constructor Cell</*0*/ out V>(/*0*/ value: V)
+    public final val value: V
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class GenericDelegate</*0*/ V> {
+    public constructor GenericDelegate</*0*/ V>(/*0*/ value: V)
+    public final val value: V
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

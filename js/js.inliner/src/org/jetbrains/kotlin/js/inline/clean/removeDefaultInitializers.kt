@@ -16,20 +16,18 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.hasDefaultValue
-
-import org.jetbrains.kotlin.js.inline.util.toIdentitySet
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.hasDefaultValue
+import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.inline.util.zipWithDefault
 import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.context.Namer.isUndefined
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.decomposeAssignmentToVariable
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatement
 
 /**
  * Removes initializers for default parameters with defined arguments given
  * Expands initializers for default parameters with undefined arguments given
- *
- * @see isInitializer
  */
 fun removeDefaultInitializers(arguments: List<JsExpression>, parameters: List<JsParameter>, body: JsBlock) {
     val toRemove = getDefaultParamsNames(arguments, parameters, initialized = true)
@@ -45,8 +43,11 @@ fun removeDefaultInitializers(arguments: List<JsExpression>, parameters: List<Js
         when {
             name != null && name in toRemove ->
                 listOf<JsStatement>()
-            name != null && name in toExpand ->
-                flattenStatement((it as JsIf).thenStatement!!)
+            name != null && name in toExpand -> {
+                val thenStatement = (it as JsIf).thenStatement
+                markAssignmentAsStaticRef(name, thenStatement)
+                flattenStatement(thenStatement)
+            }
             else ->
                 listOf(it)
         }
@@ -54,6 +55,19 @@ fun removeDefaultInitializers(arguments: List<JsExpression>, parameters: List<Js
 
     statements.clear()
     statements.addAll(newStatements)
+}
+
+private fun markAssignmentAsStaticRef(name: JsName, node: JsNode) {
+    node.accept(object : RecursiveJsVisitor() {
+        override fun visitBinaryExpression(x: JsBinaryOperation) {
+            decomposeAssignmentToVariable(x)?.let { (assignmentTarget, assignmentExpr) ->
+                if (assignmentTarget == name) {
+                    assignmentTarget.staticRef = assignmentExpr
+                }
+            }
+            super.visitBinaryExpression(x)
+        }
+    })
 }
 
 private fun getNameFromInitializer(statement: JsStatement): JsName? {
@@ -72,11 +86,11 @@ private fun getNameFromInitializer(isInitializedExpr: JsBinaryOperation): JsName
     val arg2 = isInitializedExpr.arg2
     val op = isInitializedExpr.operator
 
-    if (arg1 == null || arg2 == null || op == null) {
+    if (arg1 == null || arg2 == null) {
         return null
     }
 
-    if (op == JsBinaryOperator.REF_EQ && isUndefined(arg2)) {
+    if (op == JsBinaryOperator.REF_EQ && JsAstUtils.isUndefinedExpression(arg2)) {
         return (arg1 as? JsNameRef)?.name
     }
 
@@ -91,7 +105,7 @@ private fun isNameInitialized(
     name: JsName,
     initializer: JsStatement
 ): Boolean {
-    val thenStmt = (initializer as JsIf).thenStatement!!
+    val thenStmt = (initializer as JsIf).thenStatement
     val lastThenStmt = flattenStatement(thenStmt).last()
 
     val expr = (lastThenStmt as? JsExpressionStatement)?.expression
@@ -115,9 +129,9 @@ private fun getDefaultParamsNames(
     val argsParams = args.zipWithDefault(params, Namer.getUndefinedExpression())
     val relevantParams = argsParams.asSequence()
                                    .filter { it.second.hasDefaultValue }
-                                   .filter { initialized == !isUndefined(it.first) }
+                                   .filter { initialized == !JsAstUtils.isUndefinedExpression(it.first) }
 
     val names = relevantParams.map { it.second.name }
-    return names.toIdentitySet()
+    return names.toSet()
 }
 

@@ -14,8 +14,3 @@ fun test2(a: Alias3) = a
 
 typealias LA1 = List<@Ann2 Alias1>
 fun test3(la1: LA1) = la1
-
-// see KT-14318
-typealias AliasRepeated = @Ann1 Alias1
-fun test4(a: AliasRepeated) = a
-fun test4a(a: @Ann1 Alias1) = a

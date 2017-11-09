@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstructio
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -75,7 +75,7 @@ class ConstructorConsistencyChecker private constructor(
                 return true
             }
             if (descriptor.containingDeclaration != classDescriptor) return true
-            if (insideLValue(reference)) return descriptor.setter?.isDefault != false else return descriptor.getter?.isDefault != false
+            return if (insideLValue(reference)) descriptor.setter?.isDefault != false else descriptor.getter?.isDefault != false
         }
         return true
     }
@@ -113,11 +113,11 @@ class ConstructorConsistencyChecker private constructor(
                 .filterIsInstance<PropertyDescriptor>()
                 .filter { trace.get(BindingContext.BACKING_FIELD_REQUIRED, it) == true }
         pseudocode.traverse(
-                TraversalOrder.FORWARD, variablesData.variableInitializers, { instruction, enterData, exitData ->
+                TraversalOrder.FORWARD, variablesData.variableInitializers, { instruction, enterData, _ ->
 
             fun firstUninitializedNotNullProperty() = propertyDescriptors.firstOrNull {
                 !it.type.isMarkedNullable && !KotlinBuiltIns.isPrimitiveType(it.type) &&
-                !it.isLateInit && !(enterData[it]?.definitelyInitialized() ?: false)
+                !it.isLateInit && !(enterData.getOrNull(it)?.definitelyInitialized() ?: false)
             }
 
             fun handleLeakingThis(expression: KtExpression) {

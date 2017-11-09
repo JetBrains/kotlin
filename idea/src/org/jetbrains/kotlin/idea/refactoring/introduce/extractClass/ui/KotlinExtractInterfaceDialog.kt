@@ -16,15 +16,21 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.classMembers.MemberInfoModel
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.KotlinExtractInterfaceHandler
+import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.extractClassMembers
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.lightElementForMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.pullUp.getInterfaceContainmentVerifier
+import org.jetbrains.kotlin.idea.refactoring.pullUp.isAbstractInInterface
 import org.jetbrains.kotlin.idea.refactoring.pullUp.mustBeAbstractInInterface
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -54,12 +60,47 @@ class KotlinExtractInterfaceDialog(
                 extractableMemberInfos,
                 getInterfaceContainmentVerifier { selectedMembers }
         ) {
-            override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
+            override fun isMemberEnabled(memberInfo: KotlinMemberInfo): Boolean {
+                if (!super.isMemberEnabled(memberInfo)) return false
+
                 val member = memberInfo.member
+                return !(member.hasModifier(KtTokens.INLINE_KEYWORD) ||
+                         member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
+                         member.hasModifier(KtTokens.LATEINIT_KEYWORD) ||
+                         member.hasModifier(KtTokens.INTERNAL_KEYWORD) ||
+                         member.hasModifier(KtTokens.PROTECTED_KEYWORD))
+            }
+
+            override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
+                if (!super.isAbstractEnabled(memberInfo)) return false
+                val member = memberInfo.member
+                if (member.isAbstractInInterface(originalClass)) return false
+                if (member.isConstructorDeclaredProperty()) return false
                 return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface()) || member is KtParameter
             }
 
-            override fun isAbstractWhenDisabled(member: KotlinMemberInfo) = member.member is KtProperty
+            override fun isAbstractWhenDisabled(memberInfo: KotlinMemberInfo): Boolean {
+                val member = memberInfo.member
+                return member is KtProperty || member.isAbstractInInterface(originalClass) || member.isConstructorDeclaredProperty()
+            }
+
+            override fun checkForProblems(memberInfo: KotlinMemberInfo): Int {
+                val result = super.checkForProblems(memberInfo)
+                if (result != MemberInfoModel.OK) return result
+
+                if (!memberInfo.isSuperClass || memberInfo.overrides != false || memberInfo.isChecked) return result
+
+                val psiSuperInterface = lightElementForMemberInfo(memberInfo.member) as? PsiClass ?: return result
+
+                for (info in memberInfos) {
+                    if (!info.isChecked || info.isToAbstract) continue
+                    val member = info.member ?: continue
+                    val psiMethodToCheck = lightElementForMemberInfo(member) as? PsiMethod ?: continue
+                    if (psiSuperInterface.findMethodBySignature(psiMethodToCheck, true) != null) return MemberInfoModel.ERROR
+                }
+
+                return result
+            }
         }
     }
 
@@ -83,5 +124,5 @@ class KotlinExtractInterfaceDialog(
 
     override fun getHelpId() = HelpID.EXTRACT_INTERFACE
 
-    override fun createExtractedSuperNameField() = super.createExtractedSuperNameField()!!.apply { text = "I${originalClass.name}" }
+    override fun createExtractedSuperNameField() = super.createExtractedSuperNameField().apply { text = "I${originalClass.name}" }
 }

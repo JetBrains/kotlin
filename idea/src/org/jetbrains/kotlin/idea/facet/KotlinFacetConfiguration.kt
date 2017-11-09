@@ -20,47 +20,36 @@ import com.intellij.facet.FacetConfiguration
 import com.intellij.facet.ui.FacetEditorContext
 import com.intellij.facet.ui.FacetEditorTab
 import com.intellij.facet.ui.FacetValidatorsManager
-import com.intellij.openapi.components.PersistentStateComponent
 import org.jdom.Element
-import org.jetbrains.kotlin.idea.util.DescriptionAware
+import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.deserializeFacetSettings
+import org.jetbrains.kotlin.config.serializeFacetSettings
 
-class KotlinFacetConfiguration : FacetConfiguration, PersistentStateComponent<KotlinFacetConfiguration.Settings> {
-    enum class LanguageLevel(override val description: String) : DescriptionAware {
-        KOTLIN_1_0("1.0"),
-        KOTLIN_1_1("1.1")
-    }
-
-    enum class TargetPlatform(override val description: String) : DescriptionAware {
-        JVM_1_6("JVM 1.6"),
-        JVM_1_8("JVM 1.8"),
-        JS("JavaScript")
-    }
-
-    class Settings {
-        var languageLevel: LanguageLevel? = null
-        var targetPlatformKind: TargetPlatform? = null
-    }
-
-    private var settings = Settings()
+class KotlinFacetConfiguration : FacetConfiguration {
+    var settings = KotlinFacetSettings()
+        private set
 
     @Suppress("OverridingDeprecatedMember")
-    override fun readExternal(element: Element?) {
-
+    override fun readExternal(element: Element) {
+        settings = deserializeFacetSettings(element)
     }
 
     @Suppress("OverridingDeprecatedMember")
-    override fun writeExternal(element: Element?) {
-
+    override fun writeExternal(element: Element) {
+        settings.serializeFacetSettings(element)
     }
-
-    override fun loadState(state: Settings) {
-        this.settings = settings
-    }
-
-    override fun getState() = settings
 
     override fun createEditorTabs(
             editorContext: FacetEditorContext,
             validatorsManager: FacetValidatorsManager
-    ): Array<FacetEditorTab> = arrayOf(KotlinFacetEditorTab(this, editorContext, validatorsManager))
+    ): Array<FacetEditorTab> {
+        settings.initializeIfNeeded(editorContext.module, editorContext.rootModel)
+
+        val tabs = arrayListOf<FacetEditorTab>(KotlinFacetEditorGeneralTab(this, editorContext, validatorsManager))
+        if (KotlinFacetCompilerPluginsTab.parsePluginOptions(this).isNotEmpty()) {
+            tabs += KotlinFacetCompilerPluginsTab(this, validatorsManager)
+        }
+        KotlinFacetConfigurationExtension.EP_NAME.extensions.flatMapTo(tabs) { it.createEditorTabs(editorContext, validatorsManager) }
+        return tabs.toTypedArray()
+    }
 }

@@ -1,21 +1,8 @@
 package test.ranges
 
-import org.junit.Test
-import org.junit.Test as test
 import kotlin.test.*
 
 class CoercionTest {
-
-    fun usage() {
-        val n = 1
-        // infix usage
-        val n1 = n.coerceAtLeast(2)
-        // function usage
-        val n2 = n.coerceAtLeast(2)
-
-        // infix with range
-        val n3 = n.coerceIn(2..5)
-    }
 
     @Test
     fun coercionsInt() {
@@ -65,12 +52,14 @@ class CoercionTest {
     }
 
     @Test
-    @Suppress("DEPRECATION_ERROR")
     fun coercionsDouble() {
         expect(5.0) { 5.0.coerceAtLeast(1.0) }
         expect(5.0) { 1.0.coerceAtLeast(5.0) }
+        assertTrue { Double.NaN.coerceAtLeast(1.0).isNaN() }
+
         expect(1.0) { 5.0.coerceAtMost(1.0) }
         expect(1.0) { 1.0.coerceAtMost(5.0) }
+        assertTrue { Double.NaN.coerceAtMost(5.0).isNaN() }
 
         for (value in (0..10).map { it.toDouble() }) {
             expect(value) { value.coerceIn(null, null) }
@@ -86,6 +75,12 @@ class CoercionTest {
 
         assertFails { 1.0.coerceIn(1.0, 0.0) }
         assertFails { 1.0.coerceIn(1.0..0.0) }
+
+        assertTrue(0.0.equals(0.0.coerceIn(0.0, -0.0)))
+        assertTrue((-0.0).equals((-0.0).coerceIn(0.0..-0.0)))
+
+        assertTrue(Double.NaN.coerceIn(0.0, 1.0).isNaN())
+        assertTrue(Double.NaN.coerceIn(0.0..1.0).isNaN())
     }
 
     @Test

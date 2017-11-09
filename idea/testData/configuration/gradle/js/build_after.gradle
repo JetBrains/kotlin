@@ -1,0 +1,18 @@
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+buildscript {
+    ext.kotlin_version = '$VERSION$'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+apply plugin: 'kotlin2js'
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+}

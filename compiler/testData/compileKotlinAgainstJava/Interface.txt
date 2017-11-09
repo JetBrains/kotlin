@@ -1,0 +1,8 @@
+package test
+
+public/*package*/ interface Interface {
+}
+
+public final class InterfaceImpl : test.Interface {
+    public constructor InterfaceImpl()
+}

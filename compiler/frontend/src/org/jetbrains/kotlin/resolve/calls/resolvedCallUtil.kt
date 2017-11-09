@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.resolve.calls.resolvedCallUtil
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtThisExpression
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -47,18 +50,18 @@ fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
     if (resultingDescriptor.dispatchReceiverParameter == null || dispatchReceiverValue == null) return true
 
     var dispatchReceiverDescriptor: DeclarationDescriptor? = null
-    if (dispatchReceiverValue is ImplicitReceiver) {
-        // foo() -- implicit receiver
-        dispatchReceiverDescriptor = dispatchReceiverValue.declarationDescriptor
-    }
-    else if (dispatchReceiverValue is ClassValueReceiver) {
-        dispatchReceiverDescriptor = dispatchReceiverValue.classQualifier.descriptor
-    }
-    else if (dispatchReceiverValue is ExpressionReceiver) {
-        val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.expression)
-        if (expression is KtThisExpression) {
-            // this.foo() -- explicit receiver
-            dispatchReceiverDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression.instanceReference)
+    when (dispatchReceiverValue) {
+        is ImplicitReceiver -> // foo() -- implicit receiver
+            dispatchReceiverDescriptor = dispatchReceiverValue.declarationDescriptor
+        is ClassValueReceiver -> {
+            dispatchReceiverDescriptor = dispatchReceiverValue.classQualifier.descriptor
+        }
+        is ExpressionReceiver -> {
+            val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.expression)
+            if (expression is KtThisExpression) {
+                // this.foo() -- explicit receiver
+                dispatchReceiverDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression.instanceReference)
+            }
         }
     }
 
@@ -73,14 +76,16 @@ fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue? {
     }
 }
 
-fun ResolvedCall<*>.getImplicitReceiverValue(): ImplicitReceiver? {
-    return when (explicitReceiverKind) {
-        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> extensionReceiver ?: dispatchReceiver
-        ExplicitReceiverKind.DISPATCH_RECEIVER -> extensionReceiver
-        ExplicitReceiverKind.EXTENSION_RECEIVER -> dispatchReceiver
-        else -> null
-    } as? ImplicitReceiver
-}
+fun ResolvedCall<*>.getImplicitReceiverValue(): ImplicitReceiver? =
+        getImplicitReceivers().firstOrNull() as? ImplicitReceiver
+
+fun ResolvedCall<*>.getImplicitReceivers(): Collection<ReceiverValue> =
+        when (explicitReceiverKind) {
+            ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> listOfNotNull(extensionReceiver, dispatchReceiver)
+            ExplicitReceiverKind.DISPATCH_RECEIVER -> listOfNotNull(extensionReceiver)
+            ExplicitReceiverKind.EXTENSION_RECEIVER -> listOfNotNull(dispatchReceiver)
+            ExplicitReceiverKind.BOTH_RECEIVERS -> emptyList()
+        }
 
 private fun ResolvedCall<*>.hasSafeNullableReceiver(context: CallResolutionContext<*>): Boolean {
     if (!call.isSafeCall()) return false
@@ -96,3 +101,9 @@ fun ResolvedCall<*>.hasBothReceivers() = dispatchReceiver != null && extensionRe
 
 fun ResolvedCall<*>.getDispatchReceiverWithSmartCast(): ReceiverValue?
         = getReceiverValueWithSmartCast(dispatchReceiver, smartCastDispatchReceiverType)
+
+fun KtCallElement.getArgumentByParameterIndex(index: Int, context: BindingContext): List<ValueArgument> {
+    val resolvedCall = getResolvedCall(context) ?: return emptyList()
+    val parameterToProcess = resolvedCall.resultingDescriptor.valueParameters.getOrNull(index) ?: return emptyList()
+    return resolvedCall.valueArguments[parameterToProcess]?.arguments ?: emptyList()
+}

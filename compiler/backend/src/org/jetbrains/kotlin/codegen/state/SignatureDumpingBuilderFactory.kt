@@ -45,6 +45,7 @@ class SignatureDumpingBuilderFactory(
             modifiers -= DescriptorRendererModifier.VISIBILITY
         }
         val TYPE_RENDERER = DescriptorRenderer.withOptions {
+            withSourceFileForTopLevel = false
             modifiers -= DescriptorRendererModifier.VISIBILITY
         }
     }

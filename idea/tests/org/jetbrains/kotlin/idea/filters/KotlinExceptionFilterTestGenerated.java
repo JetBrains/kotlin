@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.filters;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionFilterTest {
     public void testAllFilesPresentInExceptionFilter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/exceptionFilter"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/exceptionFilter"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("breakpointReachedAt")
@@ -62,6 +63,12 @@ public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionF
     @TestMetadata("inlineFunctionAnotherFile")
     public void testInlineFunctionAnotherFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunctionAnotherFile/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inlineFunctionAnotherFileWithSmapApplied")
+    public void testInlineFunctionAnotherFileWithSmapApplied() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunctionAnotherFileWithSmapApplied/");
         doTest(fileName);
     }
 

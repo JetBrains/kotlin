@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1125
 // FILE: a.kt
 package foo
 

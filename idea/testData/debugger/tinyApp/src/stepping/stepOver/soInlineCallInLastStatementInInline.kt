@@ -14,4 +14,4 @@ inline fun foo(f: () -> Unit) {
     f()
 }
 
-// STEP_OVER: 2
+// STEP_OVER: 3

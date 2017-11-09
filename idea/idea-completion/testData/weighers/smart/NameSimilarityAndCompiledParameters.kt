@@ -7,4 +7,4 @@ fun g(zone: java.util.TimeZone) {
     zone.setID(x<caret>)
 }
 
-// ORDER: xLocal, xId, xP, xP1
+// ORDER: xId, xLocal, xP, xP1

@@ -1,7 +1,8 @@
+// EXPECTED_REACHABLE_NODES: 1114
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: identity_0
-// CHECK_CONTAINS_NO_CALLS: sumNoInline_0
+// CHECK_CONTAINS_NO_CALLS: identity
+// CHECK_CONTAINS_NO_CALLS: sumNoInline
 
 internal inline fun sum(a: Int, b: Int = 0): Int {
     return a + b

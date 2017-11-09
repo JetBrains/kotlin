@@ -1,4 +1,4 @@
-JetFile: ForEmptyParentheses.kt
+KtFile: ForEmptyParentheses.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

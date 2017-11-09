@@ -1,4 +1,4 @@
-JetFile: LocalDeclarations.kt
+KtFile: LocalDeclarations.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

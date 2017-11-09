@@ -11,33 +11,33 @@ L0:
     v(cond1: Boolean)                                                       INIT: in: {} out: {cond1=D}
     magic[FAKE_INITIALIZER](cond1: Boolean) -> <v0>                         INIT: in: {cond1=D} out: {cond1=D}
     w(cond1|<v0>)                                                           INIT: in: {cond1=D} out: {cond1=ID}
-  2 mark({ do { if (cond1) continue val cond2 = false } while (cond2) })    INIT: in: {cond1=ID} out: {cond1=ID}                          USE: in: {cond1=READ} out: {cond1=READ}
+  2 mark({ do { if (cond1) continue val cond2 = false } while (cond2) })    INIT: in: {cond1=ID} out: {cond1=ID}                        USE: in: {cond1=READ} out: {cond1=READ}
   3 mark(do { if (cond1) continue val cond2 = false } while (cond2))
 L2 [loop entry point]:
 L4 [body entry point]:
-    mark({ if (cond1) continue val cond2 = false })                         INIT: in: {cond1=ID, cond2=I?} out: {cond1=ID, cond2=I?}
+    mark({ if (cond1) continue val cond2 = false })
     mark(if (cond1) continue)
     r(cond1) -> <v1>
     jf(L7|<v1>)
-    jmp(L6)                                                                                                                               USE: in: {cond1=READ, cond2=READ} out: {cond1=READ, cond2=READ}
+    jmp(L6)                                                                                                                             USE: in: {cond1=READ, cond2=READ} out: {cond1=READ, cond2=READ}
 -   jmp(L8)
 L7 [else branch]:
-    read (Unit)                                                             INIT: in: {cond1=ID, cond2=I?} out: {cond1=ID, cond2=I?}
+    read (Unit)                                                             INIT: in: {cond1=ID} out: {cond1=ID}
 L8 ['if' expression result]:
     merge(if (cond1) continue|!<v2>) -> <v3>
-    v(val cond2 = false)                                                    INIT: in: {cond1=ID, cond2=I?} out: {cond1=ID, cond2=I?D}
-    r(false) -> <v4>                                                        INIT: in: {cond1=ID, cond2=I?D} out: {cond1=ID, cond2=I?D}
-    w(cond2|<v4>)                                                           INIT: in: {cond1=ID, cond2=I?D} out: {cond1=ID, cond2=ID}
+    v(val cond2 = false)                                                    INIT: in: {cond1=ID} out: {cond1=ID, cond2=D}
+    r(false) -> <v4>                                                        INIT: in: {cond1=ID, cond2=D} out: {cond1=ID, cond2=D}
+    w(cond2|<v4>)                                                           INIT: in: {cond1=ID, cond2=D} out: {cond1=ID, cond2=ID}     USE: in: {cond1=READ, cond2=READ} out: {cond1=READ, cond2=READ}
 L5 [body exit point]:
 L6 [condition entry point]:
-    r(cond2) -> <v5>                                                        INIT: in: {cond1=ID, cond2=I?} out: {cond1=ID, cond2=I?}
-    jt(L2|<v5>)                                                                                                                           USE: in: {cond1=READ, cond2=READ} out: {cond1=READ, cond2=READ}
+    r(cond2) -> <v5>                                                        INIT: in: {cond1=ID, cond2=I?} out: {cond1=ID, cond2=I?}    USE: in: {cond1=READ} out: {cond1=READ, cond2=READ}
+  2 jt(L2|<v5>)                                                             INIT: in: {cond1=ID} out: {cond1=ID}                        USE: in: {cond1=READ} out: {cond1=READ}
 L3 [loop exit point]:
     read (Unit)
 L1:
-  1 <END>                                                                   INIT: in: {cond1=ID} out: {cond1=ID}
+  1 <END>
 error:
     <ERROR>                                                                 INIT: in: {} out: {}
 sink:
-    <SINK>                                                                  INIT: in: {cond1=I?} out: {cond1=I?}                          USE: in: {} out: {}
+    <SINK>                                                                  INIT: in: {cond1=I?} out: {cond1=I?}                        USE: in: {} out: {}
 =====================

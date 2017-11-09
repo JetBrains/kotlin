@@ -1,4 +1,4 @@
-fun Any.equals(<warning>other</warning> : Any?) : Boolean = true
+fun Any.<warning>equals</warning>(<warning>other</warning> : Any?) : Boolean = true
 
 fun main(args: Array<String>) {
 

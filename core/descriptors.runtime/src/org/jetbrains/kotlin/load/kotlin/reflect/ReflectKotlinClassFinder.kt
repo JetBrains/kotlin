@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import java.io.InputStream
 
 class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinClassFinder {
     private fun findKotlinClass(fqName: String): KotlinJvmBinaryClass? {
@@ -33,9 +35,18 @@ class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinCla
         // TODO: go through javaClass's class loader
         return findKotlinClass(javaClass.fqName?.asString() ?: return null)
     }
+
+    // TODO
+    override fun findMetadata(classId: ClassId): InputStream? = null
+
+    // TODO
+    override fun hasMetadataPackage(fqName: FqName): Boolean = false
+
+    // TODO: load built-ins from classLoader
+    override fun findBuiltInsData(packageFqName: FqName): InputStream? = null
 }
 
 private fun ClassId.toRuntimeFqName(): String {
     val className = relativeClassName.asString().replace('.', '$')
-    return if (packageFqName.isRoot) className else "${packageFqName}.$className"
+    return if (packageFqName.isRoot) className else "$packageFqName.$className"
 }

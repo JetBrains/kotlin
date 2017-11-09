@@ -1,9 +1,5 @@
 package noParameterLambdaArgumentCallInLambda
 
-/*
- KT-11395 Breakpoint inside lambda argument of InlineOnly function doesn't work
- */
-
 fun main(args: Array<String>) {
     //Breakpoint! (lambdaOrdinal = 1)
     foo { val a = 11 } // Breakpoint inside lambda argument

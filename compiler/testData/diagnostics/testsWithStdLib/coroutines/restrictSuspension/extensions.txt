@@ -1,0 +1,41 @@
+package
+
+public fun generate1(/*0*/ f: suspend SuperInterface.() -> kotlin.Unit): kotlin.Unit
+public fun generate2(/*0*/ f: suspend RestrictedController.() -> kotlin.Unit): kotlin.Unit
+public fun generate3(/*0*/ f: suspend SubClass.() -> kotlin.Unit): kotlin.Unit
+public suspend fun RestrictedController.ext(): kotlin.Unit
+public suspend fun kotlin.Any?.extAny(): kotlin.Unit
+public suspend fun SubClass.extSub(): kotlin.Unit
+public suspend fun SuperInterface.extSuper(): kotlin.Unit
+public fun A.test(): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final suspend fun RestrictedController.memExt(): kotlin.Unit
+    public final suspend fun kotlin.Any?.memExtAny(): kotlin.Unit
+    public final suspend fun SubClass.memExtSub(): kotlin.Unit
+    public final suspend fun SuperInterface.memExtSuper(): kotlin.Unit
+}
+
+@kotlin.coroutines.experimental.RestrictsSuspension public open class RestrictedController : SuperInterface {
+    public constructor RestrictedController()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class SubClass : RestrictedController {
+    public constructor SubClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SuperInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

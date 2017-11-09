@@ -38,13 +38,6 @@ class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression): LiteralT
                 continue
             }
             when (child) {
-                is KtLiteralStringTemplateEntry -> {
-                    val textRange = rangeInsideHost.intersection(childRange)!!.shiftRight(-childRange.startOffset)
-                    outChars.append(child.getText(), textRange.startOffset, textRange.endOffset)
-                    repeat(textRange.length) {
-                        sourceOffsetsList.add(sourceOffset++)
-                    }
-                }
                 is KtEscapeStringTemplateEntry -> {
                     if (!rangeInsideHost.contains(childRange)) {
                         //don't allow injection if its range starts or ends inside escaped sequence
@@ -57,7 +50,13 @@ class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression): LiteralT
                     }
                     sourceOffset += child.getTextLength()
                 }
-                else -> return false
+                else -> {
+                    val textRange = rangeInsideHost.intersection(childRange)!!.shiftRight(-childRange.startOffset)
+                    outChars.append(child.text, textRange.startOffset, textRange.endOffset)
+                    repeat(textRange.length) {
+                        sourceOffsetsList.add(sourceOffset++)
+                    }
+                }
             }
         }
         sourceOffsetsList.add(sourceOffset)

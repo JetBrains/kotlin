@@ -1,5 +1,0 @@
-package test
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class function : kotlin.Annotation {
-    public constructor function()
-}

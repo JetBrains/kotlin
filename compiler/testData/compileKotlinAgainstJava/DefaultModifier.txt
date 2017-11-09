@@ -1,0 +1,12 @@
+package test
+
+public fun useDefaultMethod(): kotlin.String!
+
+public open class DefaultModifier : test.WithDefault {
+    public constructor DefaultModifier()
+    public open /*fake_override*/ fun getString(): kotlin.String!
+}
+
+public/*package*/ interface WithDefault {
+    public open fun getString(): kotlin.String!
+}

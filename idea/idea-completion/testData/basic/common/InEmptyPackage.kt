@@ -1,3 +1,4 @@
 package <caret>
 
-// EXIST: java, kotlin
+// EXIST: kotlin
+// EXIST_JAVA_ONLY: java

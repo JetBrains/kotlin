@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.folding;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NoCollapse extends AbstractKotlinFoldingTest {
         public void testAllFilesPresentInNoCollapse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/folding/noCollapse"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/folding/noCollapse"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("class.kt")
@@ -91,12 +92,18 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CheckCollapse extends AbstractKotlinFoldingTest {
         public void testAllFilesPresentInCheckCollapse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/folding/checkCollapse"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/folding/checkCollapse"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("customRegions.kt")
         public void testCustomRegions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/customRegions.kt");
+            doSettingsFoldingTest(fileName);
+        }
+
+        @TestMetadata("customRegionsNotFullBlock.kt")
+        public void testCustomRegionsNotFullBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/customRegionsNotFullBlock.kt");
             doSettingsFoldingTest(fileName);
         }
 

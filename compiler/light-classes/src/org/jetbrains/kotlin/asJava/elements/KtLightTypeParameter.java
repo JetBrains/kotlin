@@ -160,4 +160,16 @@ public class KtLightTypeParameter
         if (obj == this) return true;
         return obj instanceof KtLightTypeParameter && getKotlinOrigin().equals(((KtLightTypeParameter) obj).getKotlinOrigin());
     }
+
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+        if (another instanceof PsiTypeParameter) {
+            PsiTypeParameter anotherTypeParameter = (PsiTypeParameter) another;
+            PsiTypeParameterListOwner owner = getOwner();
+            if (owner != null) {
+                return owner.isEquivalentTo(anotherTypeParameter.getOwner()) && getIndex() == anotherTypeParameter.getIndex();
+            }
+        }
+        return false;
+    }
 }

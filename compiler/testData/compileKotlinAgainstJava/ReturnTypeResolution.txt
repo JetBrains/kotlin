@@ -1,0 +1,16 @@
+package test
+
+public fun checkReturnType(): test.ReturnTypeResolution.SomeClass!
+
+public open class ReturnTypeResolution {
+    public constructor ReturnTypeResolution()
+    public open fun getSomeClass(): test.ReturnTypeResolution.SomeClass!
+
+    public open inner class SomeClass {
+        public constructor SomeClass()
+    }
+}
+
+public/*package*/ open class SomeClass {
+    public/*package*/ constructor SomeClass()
+}

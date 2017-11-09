@@ -1,0 +1,23 @@
+package
+
+public final class TopLevelPropertiesWithGetSet : kotlin.script.templates.standard.ScriptTemplateWithArgs {
+    public constructor TopLevelPropertiesWithGetSet(/*0*/ args: kotlin.Array<kotlin.String>)
+    public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
+    public final val testVal: kotlin.Int
+    public final val testValLineBreak: kotlin.Int
+    public final val testValLineBreakNoType: kotlin.Int
+    public final val testValLineBreakSemi: kotlin.Int
+    public final val testValLineBreakSemiNoType: [ERROR : No type, no body]
+    public final val testValNoType: kotlin.Int
+    public final var testVar: kotlin.Int
+    public final var testVarLineBreak: kotlin.Int
+    public final var testVarLineBreakSemi: kotlin.Int
+    public final val kotlin.String.testExtVal: kotlin.Int
+    public final val kotlin.String.testExtValNoType: kotlin.Int
+    public final var kotlin.String.testExtVar: kotlin.Int
+    public final var kotlin.String.testExtVarLineBreak: kotlin.Int
+    public final var kotlin.String.testExtVarLineBreakSemi: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

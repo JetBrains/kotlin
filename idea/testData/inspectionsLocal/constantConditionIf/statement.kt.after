@@ -1,0 +1,6 @@
+fun foo(s: String) {}
+
+fun bar() {
+    foo("a")
+    foo("b")
+}

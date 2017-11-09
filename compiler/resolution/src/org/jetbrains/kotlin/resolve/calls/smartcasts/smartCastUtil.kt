@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.types.KotlinType
 fun getReceiverValueWithSmartCast(
         receiverArgument: ReceiverValue?,
         smartCastType: KotlinType?
-) = smartCastType?.let { SmartCastReceiverValue(it) } ?: receiverArgument
+) = smartCastType?.let(::SmartCastReceiverValue) ?: receiverArgument
 
 private class SmartCastReceiverValue(private val type: KotlinType) : ReceiverValue {
     override fun getType() = type
+    override fun replaceType(newType: KotlinType) = SmartCastReceiverValue(newType)
 }

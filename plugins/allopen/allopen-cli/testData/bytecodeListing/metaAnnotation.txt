@@ -1,0 +1,82 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AllOpen
+
+@OtherComponent
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AnotherComponent
+
+@Documented
+@kotlin.Metadata
+public final class ClassWithDocumented {
+    public method <init>(): void
+}
+
+@java.lang.annotation.Documented
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Documented
+
+@AllOpen
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class MyComponent
+
+@MyComponent
+@kotlin.Metadata
+public abstract class MyComponentBase {
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class MyComponentImpl2_ShouldBeFinal {
+    public method <init>(): void
+    public method method(): void
+}
+
+@kotlin.Metadata
+public class MyComponentImpl3_ShouldBeOpen {
+    public method <init>(): void
+    public final method method_ShouldBeFinal(): void
+}
+
+@kotlin.Metadata
+public class MyComponentImpl_ShouldBeOpen {
+    public method <init>(): void
+    public method method(): void
+}
+
+@MyComponent
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class OtherComponent
+
+@AllOpen
+@kotlin.Metadata
+public class TestAllOpen_ShouldBeOpen {
+    public method <init>(): void
+}
+
+@AnotherComponent
+@kotlin.Metadata
+public class TestAnotherComponent_ShouldBeOpen {
+    public method <init>(): void
+}
+
+@MyComponent
+@kotlin.Metadata
+public class TestMyComponent_ShouldBeOpen {
+    public method <init>(): void
+}
+
+@OtherComponent
+@kotlin.Metadata
+public class TestOtherComponent_ShouldBeOpen {
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class TestWithoutAnnotations_ShouldBeFinal {
+    public method <init>(): void
+}

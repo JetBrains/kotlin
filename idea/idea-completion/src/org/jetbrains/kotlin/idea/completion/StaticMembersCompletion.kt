@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,19 +22,19 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.collectSyntheticStaticMembersAndConstructors
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 class StaticMembersCompletion(
@@ -56,7 +56,7 @@ class StaticMembersCompletion(
                         .decorateAsStaticMember(descriptor, classNameAsLookupString = false)
                         ?.assignPriority(itemPriority)
                         ?.suppressAutoInsertion()
-                        .singletonOrEmptyList()
+                        .let(::listOfNotNull)
             }
 
             override fun createLookupElement(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean,
@@ -77,9 +77,14 @@ class StaticMembersCompletion(
                 .toSet()
 
         val result = ArrayList<DeclarationDescriptor>()
+
+        val kindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions
+        val nameFilter = prefixMatcher.asNameFilter()
         for (container in containers) {
             val memberScope = if (container.kind == ClassKind.OBJECT) container.unsubstitutedMemberScope else container.staticScope
-            val members = memberScope.getDescriptorsFiltered(DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions, prefixMatcher.asNameFilter())
+            val members =
+                    memberScope.getDescriptorsFiltered(kindFilter, nameFilter) +
+                    memberScope.collectSyntheticStaticMembersAndConstructors(resolutionFacade, kindFilter, nameFilter)
             members.filterTo(result) { it is CallableDescriptor && it !in alreadyAdded }
         }
         return result
@@ -94,7 +99,7 @@ class StaticMembersCompletion(
         val descriptorKindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions
         val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
 
-        val filter = { declaration: KtCallableDeclaration, objectDeclaration: KtObjectDeclaration ->
+        val filter = { declaration: KtNamedDeclaration, objectDeclaration: KtObjectDeclaration ->
             !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) && objectDeclaration.isTopLevelOrCompanion()
         }
         indicesHelper.processObjectMembers(descriptorKindFilter, nameFilter, filter) {

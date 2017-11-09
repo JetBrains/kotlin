@@ -1,5 +1,5 @@
 // FILE: bar/Foo.before.java
-// "Static import method 'foo.Bar.foobar'" "true"
+// "/(Static import|Import static) method 'foo.Bar.foobar'/" "true"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create method 'foobar'
 // WITH_RUNTIME
@@ -25,7 +25,7 @@ class Bar {
 }
 
 // FILE: bar/Foo.after.java
-// "Static import method 'foo.Bar.foobar'" "true"
+// "/(Static import|Import static) method 'foo.Bar.foobar'/" "true"
 // ERROR: Unresolved reference: foobar
 // ACTION: Create method 'foobar'
 // WITH_RUNTIME

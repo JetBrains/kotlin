@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class KotlinFileTypeFactory extends FileTypeFactory {
+    public final static String[] KOTLIN_EXTENSIONS = new String[] { "kt", "kts" };
+
     @Override
     public void createFileTypes(@NotNull FileTypeConsumer consumer) {
         consumer.consume(KotlinFileType.INSTANCE, "kt;kts");

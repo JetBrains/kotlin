@@ -11,7 +11,7 @@ public open class CharProgression : kotlin.collections.Iterable<kotlin.Char> {
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in kotlin.Char!>!): kotlin.Unit
     public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.collections.CharIterator
-    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Char!>!
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Char>
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -53,7 +53,7 @@ public final class CharRange : kotlin.ranges.CharProgression, kotlin.ranges.Clos
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in kotlin.Char!>!): kotlin.Unit
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.CharIterator
-    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Char!>!
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Char>
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -82,7 +82,7 @@ public open class IntProgression : kotlin.collections.Iterable<kotlin.Int> {
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
     public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.collections.IntIterator
-    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Int>
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -124,7 +124,7 @@ public final class IntRange : kotlin.ranges.IntProgression, kotlin.ranges.Closed
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.IntIterator
-    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Int>
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -144,7 +144,7 @@ public open class LongProgression : kotlin.collections.Iterable<kotlin.Long> {
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in kotlin.Long!>!): kotlin.Unit
     public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.collections.LongIterator
-    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Long!>!
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Long>
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -186,7 +186,7 @@ public final class LongRange : kotlin.ranges.LongProgression, kotlin.ranges.Clos
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in kotlin.Long!>!): kotlin.Unit
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.LongIterator
-    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Long!>!
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.Long>
 
     public companion object Companion {
         /*primary*/ private constructor Companion()

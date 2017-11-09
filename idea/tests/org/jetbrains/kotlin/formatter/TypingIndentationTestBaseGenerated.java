@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.formatter;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -64,7 +65,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         }
 
         public void testAllFilesPresentInDirectSettings() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AssignmentAfterEq.after.kt")
@@ -142,6 +143,12 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("InBinaryExpressionUnfinished.after.kt")
         public void testInBinaryExpressionUnfinished() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionUnfinished.after.kt");
+            doNewlineTest(fileName);
+        }
+
+        @TestMetadata("InBinaryExpressionUnfinishedInIf.after.kt")
+        public void testInBinaryExpressionUnfinishedInIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionUnfinishedInIf.after.kt");
             doNewlineTest(fileName);
         }
 
@@ -300,7 +307,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Script extends AbstractTypingIndentationTestBase {
             public void testAllFilesPresentInScript() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline/script"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline/script"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ScriptAfterClosingBrace.after.kts")
@@ -346,7 +353,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InvertedSettings extends AbstractTypingIndentationTestBase {
         public void testAllFilesPresentInInvertedSettings() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AssignmentAfterEq.after.inv.kt")
@@ -370,6 +377,12 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("InBinaryExpressionUnfinished.after.inv.kt")
         public void testInBinaryExpressionUnfinished() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionUnfinished.after.inv.kt");
+            doNewlineTestWithInvert(fileName);
+        }
+
+        @TestMetadata("InBinaryExpressionUnfinishedInIf.after.inv.kt")
+        public void testInBinaryExpressionUnfinishedInIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionUnfinishedInIf.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 
@@ -438,6 +451,5 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
-
     }
 }

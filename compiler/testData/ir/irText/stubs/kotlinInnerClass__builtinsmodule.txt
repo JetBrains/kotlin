@@ -1,0 +1,8 @@
+MODULE_FRAGMENT <built-ins module>
+  EXTERNAL_PACKAGE_FRAGMENT kotlin
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS Any
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor Any()
+      FUN IR_EXTERNAL_DECLARATION_STUB public open fun hashCode(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open fun toString(): kotlin.String
+      FUN IR_EXTERNAL_DECLARATION_STUB public open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+        VALUE_PARAMETER value-parameter other: kotlin.Any?

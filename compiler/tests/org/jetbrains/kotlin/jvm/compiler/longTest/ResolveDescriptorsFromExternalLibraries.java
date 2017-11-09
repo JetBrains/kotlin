@@ -146,7 +146,7 @@ public class ResolveDescriptorsFromExternalLibraries {
 
     @NotNull
     private static File findRtJar() {
-        List<File> roots = PathUtil.getJdkClassesRoots();
+        List<File> roots = PathUtil.getJdkClassesRootsFromCurrentJre();
         for (File root : roots) {
             if (root.getName().equals("rt.jar") || root.getName().equals("classes.jar")) {
                 return root;

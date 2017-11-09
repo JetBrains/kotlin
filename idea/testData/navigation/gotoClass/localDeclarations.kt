@@ -11,7 +11,7 @@ fun foo() {
 }
 
 // SEARCH_TEXT: Local
-// REF: LocalClass
-// REF: LocalObject
-// REF: LocalTrait
-// REF: LocalTraitWithImpl
+// REF: (in foo).LocalClass
+// REF: (in foo).LocalObject
+// REF: (in foo).LocalTrait
+// REF: (in foo).LocalTraitWithImpl

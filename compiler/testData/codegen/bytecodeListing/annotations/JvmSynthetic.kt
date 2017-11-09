@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 class Example {
     @JvmSynthetic
     val prop: String = "ABC"

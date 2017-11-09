@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.extensions.PreprocessedFileCreator;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -53,7 +54,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.*;
 
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompileEnvironmentUtil {
@@ -63,14 +63,14 @@ public class CompileEnvironmentUtil {
     public static ModuleScriptData loadModuleDescriptions(String moduleDefinitionFile, MessageCollector messageCollector) {
         File file = new File(moduleDefinitionFile);
         if (!file.exists()) {
-            messageCollector.report(ERROR, "Module definition file does not exist: " + moduleDefinitionFile, NO_LOCATION);
+            messageCollector.report(ERROR, "Module definition file does not exist: " + moduleDefinitionFile, null);
             return ModuleScriptData.EMPTY;
         }
         String extension = FileUtilRt.getExtension(moduleDefinitionFile);
         if ("xml".equalsIgnoreCase(extension)) {
             return ModuleXmlParser.parseModuleScript(moduleDefinitionFile, messageCollector);
         }
-        messageCollector.report(ERROR, "Unknown module definition type: " + moduleDefinitionFile, NO_LOCATION);
+        messageCollector.report(ERROR, "Unknown module definition type: " + moduleDefinitionFile, null);
         return ModuleScriptData.EMPTY;
     }
 
@@ -118,21 +118,15 @@ public class CompileEnvironmentUtil {
     }
 
     private static void writeRuntimeToJar(JarOutputStream stream) throws IOException {
-        File runtimePath = PathUtil.getKotlinPathsForCompiler().getRuntimePath();
-        if (!runtimePath.exists()) {
-            throw new CompileEnvironmentException("Couldn't find runtime library");
+        File stdlibPath = PathUtil.getKotlinPathsForCompiler().getStdlibPath();
+        if (!stdlibPath.exists()) {
+            throw new CompileEnvironmentException("Couldn't find kotlin-stdlib at " + stdlibPath);
         }
-        File scriptRuntimePath = PathUtil.getKotlinPathsForCompiler().getScriptRuntimePath();
-        if (!scriptRuntimePath.exists()) {
-            throw new CompileEnvironmentException("Couldn't find script runtime library");
-        }
-
-        copyJarImpl(stream, runtimePath);
+        copyJarImpl(stream, stdlibPath);
     }
 
     private static void copyJarImpl(JarOutputStream stream, File jarPath) throws IOException {
-        JarInputStream jis = new JarInputStream(new FileInputStream(jarPath));
-        try {
+        try (JarInputStream jis = new JarInputStream(new FileInputStream(jarPath))) {
             while (true) {
                 JarEntry e = jis.getNextJarEntry();
                 if (e == null) {
@@ -144,22 +138,21 @@ public class CompileEnvironmentUtil {
                 }
             }
         }
-        finally {
-            jis.close();
-        }
     }
 
     @NotNull
     public static List<KtFile> getKtFiles(
-            @NotNull final Project project,
+            @NotNull Project project,
             @NotNull Collection<String> sourceRoots,
             @NotNull CompilerConfiguration configuration,
             @NotNull Function1<String, Unit> reportError
     ) throws IOException {
-        final VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
+        VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
 
-        final Set<VirtualFile> processedFiles = Sets.newHashSet();
-        final List<KtFile> result = Lists.newArrayList();
+        Set<VirtualFile> processedFiles = Sets.newHashSet();
+        List<KtFile> result = Lists.newArrayList();
+
+        PreprocessedFileCreator virtualFileCreator = new PreprocessedFileCreator(project);
 
         for (String sourceRootPath : sourceRoots) {
             if (sourceRootPath == null) {
@@ -170,12 +163,11 @@ public class CompileEnvironmentUtil {
             if (vFile == null) {
                 String message = "Source file or directory not found: " + sourceRootPath;
 
-                File moduleFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE);
-                if (moduleFilePath != null) {
-                    String moduleFileContent = FileUtil.loadFile(moduleFilePath);
+                File buildFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE);
+                if (buildFilePath != null && Logger.isInitialized()) {
                     LOG.warn(message +
-                              "\n\nmodule file path: " + moduleFilePath +
-                              "\ncontent:\n" + moduleFileContent);
+                             "\n\nbuild file path: " + buildFilePath +
+                             "\ncontent:\n" + FileUtil.loadFile(buildFilePath));
                 }
 
                 reportError.invoke(message);
@@ -186,21 +178,19 @@ public class CompileEnvironmentUtil {
                 continue;
             }
 
-            SequencesKt.forEach(FilesKt.walkTopDown(new File(sourceRootPath)), new Function1<File, Unit>() {
-                @Override
-                public Unit invoke(File file) {
-                    if (file.isFile()) {
-                        VirtualFile virtualFile = localFileSystem.findFileByPath(file.getAbsolutePath());
-                        if (virtualFile != null && !processedFiles.contains(virtualFile)) {
-                            processedFiles.add(virtualFile);
-                            PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-                            if (psiFile instanceof KtFile) {
-                                result.add((KtFile) psiFile);
-                            }
+            SequencesKt.forEach(FilesKt.walkTopDown(new File(sourceRootPath)), file -> {
+                if (file.isFile()) {
+                    VirtualFile originalVirtualFile = localFileSystem.findFileByPath(file.getAbsolutePath());
+                    VirtualFile virtualFile = originalVirtualFile != null ? virtualFileCreator.create(originalVirtualFile) : null;
+                    if (virtualFile != null && !processedFiles.contains(virtualFile)) {
+                        processedFiles.add(virtualFile);
+                        PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+                        if (psiFile instanceof KtFile) {
+                            result.add((KtFile) psiFile);
                         }
                     }
-                    return Unit.INSTANCE;
                 }
+                return Unit.INSTANCE;
             });
         }
 

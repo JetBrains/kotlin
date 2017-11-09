@@ -1,0 +1,4 @@
+3 fun foo(n: Int): Int = <bold>n</bold>
+3 	fun <bold>foo(n: Int): Int = n</bold>
+6 		val x = <bold>foo(1)</bold>
+6 			val <bold>x = foo(1)</bold>

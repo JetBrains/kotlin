@@ -1,4 +1,4 @@
-JetFile: EndRightAfterText.kt
+KtFile: EndRightAfterText.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

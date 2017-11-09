@@ -28,7 +28,6 @@ class KotlinImportDirectiveStubImpl(
         parent: StubElement<PsiElement>,
         private val isAllUnder: Boolean,
         private val importedFqName: StringRef?,
-        private val aliasName: StringRef?,
         private val isValid: Boolean
 ) : KotlinStubBaseImpl<KtImportDirective>(parent, KtStubElementTypes.IMPORT_DIRECTIVE), KotlinImportDirectiveStub {
     override fun isAllUnder(): Boolean = isAllUnder
@@ -38,6 +37,5 @@ class KotlinImportDirectiveStubImpl(
         return if (fqNameString != null) FqName(fqNameString) else null
     }
 
-    override fun getAliasName(): String? = StringRef.toString(aliasName)
     override fun isValid(): Boolean = isValid
 }

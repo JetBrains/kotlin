@@ -24,12 +24,9 @@ import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
-import java.util.*
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
-import kotlin.reflect.KotlinReflectionInternalError
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
     abstract inner class Data {
@@ -47,6 +44,8 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     abstract fun getProperties(name: Name): Collection<PropertyDescriptor>
 
     abstract fun getFunctions(name: Name): Collection<FunctionDescriptor>
+
+    abstract fun getLocalProperty(index: Int): PropertyDescriptor?
 
     protected fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<KCallableImpl<*>> {
         val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>, Unit>() {
@@ -66,7 +65,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 belonginess.accept(descriptor))
                 descriptor.accept(visitor, Unit)
             else null
-        }.toReadOnlyList()
+        }.toList()
     }
 
     protected enum class MemberBelonginess {
@@ -98,9 +97,15 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
+        val match = LOCAL_PROPERTY_SIGNATURE.matchEntire(signature)
+        if (match != null) {
+            val (number) = match.destructured
+            return getLocalProperty(number.toInt())
+                   ?: throw KotlinReflectionInternalError("Local property #$number not found in $jClass")
+        }
+
         val properties = getProperties(Name.identifier(name))
                 .filter { descriptor ->
-                    descriptor is PropertyDescriptor &&
                     RuntimeTypeMapper.mapPropertySignature(descriptor).asString() == signature
                 }
 
@@ -153,10 +158,28 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         return functions.single()
     }
 
-    private fun Class<*>.tryGetMethod(name: String, parameterTypes: List<Class<*>>, returnType: Class<*>, declared: Boolean): Method? =
+    private fun Class<*>.lookupMethod(name: String, parameterTypes: List<Class<*>>, returnType: Class<*>, isPublic: Boolean): Method? {
+        val parametersArray = parameterTypes.toTypedArray()
+
+        // If we're looking for a public method, just use Java reflection's getMethod/getMethods
+        if (isPublic) {
+            return tryGetMethod(name, parametersArray, returnType, declared = false)
+        }
+
+        // If we're looking for a non-public method, it might be located not only in this class, but also in any of its superclasses
+        var klass: Class<*>? = this
+        while (klass != null) {
+            val method = klass.tryGetMethod(name, parametersArray, returnType, declared = true)
+            if (method != null) return method
+            klass = klass.superclass
+        }
+
+        return null
+    }
+
+    private fun Class<*>.tryGetMethod(name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>, declared: Boolean): Method? =
             try {
-                val parametersArray = parameterTypes.toTypedArray()
-                val result = if (declared) getDeclaredMethod(name, *parametersArray) else getMethod(name, *parametersArray)
+                val result = if (declared) getDeclaredMethod(name, *parameterTypes) else getMethod(name, *parameterTypes)
 
                 if (result.returnType == returnType) result
                 else {
@@ -168,7 +191,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                     allMethods.firstOrNull { method ->
                         method.name == name &&
                         method.returnType == returnType &&
-                        Arrays.equals(method.parameterTypes, parametersArray)
+                        method.parameterTypes.contentEquals(parameterTypes)
                     }
                 }
             }
@@ -176,7 +199,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 null
             }
 
-    private fun Class<*>.tryGetConstructor(parameterTypes: List<Class<*>>, declared: Boolean) =
+    private fun Class<*>.tryGetConstructor(parameterTypes: List<Class<*>>, declared: Boolean): Constructor<*>? =
             try {
                 if (declared) getDeclaredConstructor(*parameterTypes.toTypedArray())
                 else getConstructor(*parameterTypes.toTypedArray())
@@ -185,13 +208,13 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 null
             }
 
-    fun findMethodBySignature(name: String, desc: String, declared: Boolean): Method? {
+    fun findMethodBySignature(name: String, desc: String, isPublic: Boolean): Method? {
         if (name == "<init>") return null
 
-        return methodOwner.tryGetMethod(name, loadParameterTypes(desc), loadReturnType(desc), declared)
+        return methodOwner.lookupMethod(name, loadParameterTypes(desc), loadReturnType(desc), isPublic)
     }
 
-    fun findDefaultMethod(name: String, desc: String, isMember: Boolean, declared: Boolean): Method? {
+    fun findDefaultMethod(name: String, desc: String, isMember: Boolean, isPublic: Boolean): Method? {
         if (name == "<init>") return null
 
         val parameterTypes = arrayListOf<Class<*>>()
@@ -200,18 +223,18 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
         addParametersAndMasks(parameterTypes, desc, false)
 
-        return methodOwner.tryGetMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, loadReturnType(desc), declared)
+        return methodOwner.lookupMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, loadReturnType(desc), isPublic)
     }
 
-    fun findConstructorBySignature(desc: String, declared: Boolean): Constructor<*>? {
-        return jClass.tryGetConstructor(loadParameterTypes(desc), declared)
+    fun findConstructorBySignature(desc: String, isPublic: Boolean): Constructor<*>? {
+        return jClass.tryGetConstructor(loadParameterTypes(desc), declared = !isPublic)
     }
 
-    fun findDefaultConstructor(desc: String, declared: Boolean): Constructor<*>? {
+    fun findDefaultConstructor(desc: String, isPublic: Boolean): Constructor<*>? {
         val parameterTypes = arrayListOf<Class<*>>()
         addParametersAndMasks(parameterTypes, desc, true)
 
-        return jClass.tryGetConstructor(parameterTypes, declared)
+        return jClass.tryGetConstructor(parameterTypes, declared = !isPublic)
     }
 
     private fun addParametersAndMasks(result: MutableList<Class<*>>, desc: String, isConstructor: Boolean) {
@@ -264,5 +287,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     companion object {
         private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
+
+        internal val LOCAL_PROPERTY_SIGNATURE = "<v#(\\d+)>".toRegex()
     }
 }

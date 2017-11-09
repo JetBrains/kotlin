@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1121
 package foo
 
 fun testForNumber(numberX: Number) {

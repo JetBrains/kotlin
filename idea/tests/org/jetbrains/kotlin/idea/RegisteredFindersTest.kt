@@ -27,17 +27,19 @@ class RegisteredFindersTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
 
     fun testKnownNonClasspathFinder() {
-        val expectedFindersNames = setOf("GantClassFinder", "GradleClassFinder", "KotlinScriptDependenciesClassFinder").toMutableSet()
+        val expectedFindersNames = setOf("GantClassFinder", "GradleClassFinder", "KotlinScriptDependenciesClassFinder", "AlternativeJreClassFinder").toMutableSet()
+        val optionalFindersNames = setOf("AlternativeJreClassFinder").toMutableSet()
 
         project.getExtensions<PsiElementFinder>(PsiElementFinder.EP_NAME).forEach { finder ->
             if (finder is NonClasspathClassFinder) {
-                val name = finder.javaClass.simpleName
+                val name = finder::class.java.simpleName
                 val removed = expectedFindersNames.remove(name)
                 Assert.assertTrue("Unknown finder found: $finder, class name: $name, search in $expectedFindersNames.\n" +
                                   "Consider updating ${KotlinJavaPsiFacade::class.java}",
                                   removed)
             }
         }
+        expectedFindersNames.removeAll(optionalFindersNames)
 
         Assert.assertTrue("Some finders wasn't found: $expectedFindersNames", expectedFindersNames.isEmpty())
     }

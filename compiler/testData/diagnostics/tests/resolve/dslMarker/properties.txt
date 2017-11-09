@@ -1,0 +1,30 @@
+package
+
+public var A.a1: kotlin.Int
+public var B.b1: kotlin.Int
+public fun bar(/*0*/ x: B.() -> kotlin.Unit): kotlin.Unit
+public fun foo(/*0*/ x: A.() -> kotlin.Unit): kotlin.Unit
+public fun test(): kotlin.Unit
+
+@Ann public final class A {
+    public constructor A()
+    public final var a: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.DslMarker public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@Ann public final class B {
+    public constructor B()
+    public final var b: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

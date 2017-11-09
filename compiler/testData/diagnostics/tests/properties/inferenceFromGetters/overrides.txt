@@ -1,0 +1,30 @@
+package
+
+public fun foo(/*0*/ c: C): kotlin.Unit
+
+public interface A {
+    public abstract val x: kotlin.Int
+    public abstract val z: kotlin.Comparable<*>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class B {
+    public constructor B()
+    public open var y: kotlin.String
+    public open val z: kotlin.CharSequence
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C : B, A {
+    public constructor C()
+    public open override /*1*/ val x: kotlin.Int
+    public open override /*1*/ var y: kotlin.String
+    public open override /*2*/ var z: kotlin.String
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

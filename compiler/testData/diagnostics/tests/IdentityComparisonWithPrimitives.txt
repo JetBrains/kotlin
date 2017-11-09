@@ -1,0 +1,67 @@
+package
+
+public val a: kotlin.Any = 0
+public val b: kotlin.Byte = 0.toByte()
+public val c: kotlin.Char = \u0030 ('0')
+public val d: kotlin.Double = 0.0.toDouble()
+public val f: kotlin.Float = 0.0.toFloat()
+public val i: kotlin.Int = 0
+public val j: kotlin.Long = 0.toLong()
+public val n: kotlin.Number = 0
+public val na: kotlin.Any? = 0
+public val nb: kotlin.Byte? = 0.toByte()
+public val nc: kotlin.Char? = \u0030 ('0')
+public val nd: kotlin.Double? = 0.0.toDouble()
+public val nf: kotlin.Float? = 0.0.toFloat()
+public val ni: kotlin.Int? = 0
+public val nj: kotlin.Long? = 0.toLong()
+public val nn: kotlin.Number? = 0
+public val ns: kotlin.Short? = 0.toShort()
+public val nz: kotlin.Boolean? = true
+public val s: kotlin.Short = 0.toShort()
+public val test_ba: kotlin.Boolean
+public val test_bb: kotlin.Boolean
+public val test_bn: kotlin.Boolean
+public val test_bna: kotlin.Boolean
+public val test_bnb: kotlin.Boolean
+public val test_bnn: kotlin.Boolean
+public val test_ca: kotlin.Boolean
+public val test_cc: kotlin.Boolean
+public val test_cna: kotlin.Boolean
+public val test_cnc: kotlin.Boolean
+public val test_da: kotlin.Boolean
+public val test_dd: kotlin.Boolean
+public val test_dn: kotlin.Boolean
+public val test_dna: kotlin.Boolean
+public val test_dnd: kotlin.Boolean
+public val test_dnn: kotlin.Boolean
+public val test_fa: kotlin.Boolean
+public val test_ff: kotlin.Boolean
+public val test_fn: kotlin.Boolean
+public val test_fna: kotlin.Boolean
+public val test_fnf: kotlin.Boolean
+public val test_fnn: kotlin.Boolean
+public val test_ia: kotlin.Boolean
+public val test_ii: kotlin.Boolean
+public val test_in: kotlin.Boolean
+public val test_ina: kotlin.Boolean
+public val test_ini: kotlin.Boolean
+public val test_inn: kotlin.Boolean
+public val test_ja: kotlin.Boolean
+public val test_jj: kotlin.Boolean
+public val test_jn: kotlin.Boolean
+public val test_jna: kotlin.Boolean
+public val test_jnj: kotlin.Boolean
+public val test_jnn: kotlin.Boolean
+public val test_sa: kotlin.Boolean
+public val test_sn: kotlin.Boolean
+public val test_sna: kotlin.Boolean
+public val test_snn: kotlin.Boolean
+public val test_sns: kotlin.Boolean
+public val test_ss: kotlin.Boolean
+public val test_za: kotlin.Boolean
+public val test_zb: kotlin.Boolean
+public val test_zna: kotlin.Boolean
+public val test_znz: kotlin.Boolean
+public val test_zz: kotlin.Boolean
+public val z: kotlin.Boolean = true

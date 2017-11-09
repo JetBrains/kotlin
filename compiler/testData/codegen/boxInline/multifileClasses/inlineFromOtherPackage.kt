@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 // FILE: 1.kt
 // WITH_RUNTIME
 @file:[JvmName("MultifileClass") JvmMultifileClass]

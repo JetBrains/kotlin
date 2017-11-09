@@ -1,0 +1,62 @@
+package
+
+public interface A</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(/*0*/ x: T!, /*1*/ y: Fun<out T!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B : A<(raw) kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @java.lang.Override public abstract override /*1*/ fun foo(/*0*/ x: kotlin.Any!, /*1*/ y: Fun<(raw) kotlin.Any!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class C {
+    public constructor C()
+    public abstract fun </*0*/ T : kotlin.Any!> bar(/*0*/ y: Fun<T!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public abstract class D : C {
+        public constructor D()
+        @java.lang.Override public open override /*1*/ fun </*0*/ T : kotlin.Any!> bar(/*0*/ y: Fun<T!>!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public open fun aStaticMethod(/*0*/ x: kotlin.Any!, /*1*/ y: Fun<(raw) kotlin.Any!>!): kotlin.Unit
+    }
+
+    // Static members
+    public open fun </*0*/ T : kotlin.Any!> aStaticMethod(/*0*/ x: T!, /*1*/ y: Fun<T!>!): kotlin.Unit
+}
+
+public final class E1 : C.D, B {
+    public constructor E1()
+    @java.lang.Override public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> bar(/*0*/ y: Fun<T!>!): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun foo(/*0*/ x: kotlin.Any, /*1*/ y: Fun<kotlin.Any?>): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class E2 : B {
+    public constructor E2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ x: kotlin.Any, /*1*/ y: Fun<kotlin.String?>): kotlin.Unit
+    @java.lang.Override public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ x: kotlin.Any!, /*1*/ y: Fun<(raw) kotlin.Any!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Fun</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract operator fun invoke(/*0*/ x: T!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

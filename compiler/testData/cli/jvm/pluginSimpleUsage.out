@@ -3,5 +3,8 @@ error: required plugin option not present: org.jetbrains.kotlin.android:variant
 Plugin "org.jetbrains.kotlin.android" usage:
   variant <name;path>        Android build variant (required, multiple)
   package <fq name>          Application package (required)
+  experimental true/false    Enable experimental features
+  defaultCacheImplementation hashMap/sparseArray/none
+                             Default cache implementation for module
 
 COMPILATION_ERROR

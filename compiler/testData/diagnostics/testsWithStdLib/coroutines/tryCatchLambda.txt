@@ -1,0 +1,5 @@
+package
+
+public suspend fun </*0*/ V> await(/*0*/ f: V): V
+public fun foo(): kotlin.Unit
+public fun </*0*/ T> genericBuilder(/*0*/ c: suspend () -> T): T

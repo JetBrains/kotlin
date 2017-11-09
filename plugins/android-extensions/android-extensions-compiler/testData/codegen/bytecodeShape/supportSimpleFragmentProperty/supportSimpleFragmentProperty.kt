@@ -29,4 +29,3 @@ public class MyFragment : Fragment() {
 // 1 INVOKEVIRTUAL android/support/v4/app/Fragment\.getFragmentManager
 // 2 GETSTATIC test/R\$id\.fragm
 // 2 INVOKEVIRTUAL android/support/v4/app/FragmentManager\.findFragmentById
-// 2 CHECKCAST android/support/v4/app/Fragment

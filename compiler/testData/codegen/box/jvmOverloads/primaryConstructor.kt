@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_RUNTIME
 
 class C @kotlin.jvm.JvmOverloads constructor(s1: String, s2: String = "K") {

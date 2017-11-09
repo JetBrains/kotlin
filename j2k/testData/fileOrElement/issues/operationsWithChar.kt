@@ -39,9 +39,6 @@ internal class Test {
         i(c.toInt() shr i)
     }
 
-    fun b(b: Boolean) {
-    }
-
-    fun i(i: Int) {
-    }
+    fun b(b: Boolean) {}
+    fun i(i: Int) {}
 }

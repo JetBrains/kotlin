@@ -1,0 +1,7 @@
+public final fun staticExtension(): dynamic
+public final var staticProperty: dynamic
+    public final fun <get-staticProperty>(): dynamic
+    public final fun <set-staticProperty>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var staticParameter: dynamic
+    public final fun <get-staticParameter>(): dynamic
+    public final fun <set-staticParameter>(/*0*/ <set-?>: dynamic): kotlin.Unit

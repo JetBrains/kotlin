@@ -1,0 +1,134 @@
+MODULE_FRAGMENT <built-ins module>
+  EXTERNAL_PACKAGE_FRAGMENT kotlin
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS Int
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB private constructor Int()
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Byte): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Byte
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Double): kotlin.Double
+        VALUE_PARAMETER value-parameter other: kotlin.Double
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Float): kotlin.Float
+        VALUE_PARAMETER value-parameter other: kotlin.Float
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Long): kotlin.Long
+        VALUE_PARAMETER value-parameter other: kotlin.Long
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.Deprecated public final operator fun mod(other: kotlin.Short): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Short
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Byte): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Byte
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Double): kotlin.Double
+        VALUE_PARAMETER value-parameter other: kotlin.Double
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Float): kotlin.Float
+        VALUE_PARAMETER value-parameter other: kotlin.Float
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Long): kotlin.Long
+        VALUE_PARAMETER value-parameter other: kotlin.Long
+      FUN IR_EXTERNAL_DECLARATION_STUB @kotlin.SinceKotlin public final operator fun rem(other: kotlin.Short): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Short
+      CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT companion object of Int
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB private constructor Companion()
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public const final val MAX_VALUE: kotlin.Int = 2147483647
+          FUN IR_EXTERNAL_DECLARATION_STUB public final fun <get-MAX_VALUE>(): kotlin.Int
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public const final val MIN_VALUE: kotlin.Int = -2147483648
+          FUN IR_EXTERNAL_DECLARATION_STUB public final fun <get-MIN_VALUE>(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+      FUN IR_EXTERNAL_DECLARATION_STUB public final fun inv(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun and(other: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun or(other: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun shl(bitCount: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter bitCount: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun shr(bitCount: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter bitCount: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun ushr(bitCount: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter bitCount: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final infix fun xor(other: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun compareTo(other: kotlin.Byte): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Byte
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun compareTo(other: kotlin.Double): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Double
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun compareTo(other: kotlin.Float): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Float
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun compareTo(other: kotlin.Long): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Long
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun compareTo(other: kotlin.Short): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Short
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun dec(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Byte): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Byte
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Double): kotlin.Double
+        VALUE_PARAMETER value-parameter other: kotlin.Double
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Float): kotlin.Float
+        VALUE_PARAMETER value-parameter other: kotlin.Float
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Long): kotlin.Long
+        VALUE_PARAMETER value-parameter other: kotlin.Long
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun div(other: kotlin.Short): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Short
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun inc(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Byte): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Byte
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Double): kotlin.Double
+        VALUE_PARAMETER value-parameter other: kotlin.Double
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Float): kotlin.Float
+        VALUE_PARAMETER value-parameter other: kotlin.Float
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Long): kotlin.Long
+        VALUE_PARAMETER value-parameter other: kotlin.Long
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun minus(other: kotlin.Short): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Short
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Byte): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Byte
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Double): kotlin.Double
+        VALUE_PARAMETER value-parameter other: kotlin.Double
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Float): kotlin.Float
+        VALUE_PARAMETER value-parameter other: kotlin.Float
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Long): kotlin.Long
+        VALUE_PARAMETER value-parameter other: kotlin.Long
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun plus(other: kotlin.Short): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Short
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun rangeTo(other: kotlin.Byte): kotlin.ranges.IntRange
+        VALUE_PARAMETER value-parameter other: kotlin.Byte
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun rangeTo(other: kotlin.Int): kotlin.ranges.IntRange
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange
+        VALUE_PARAMETER value-parameter other: kotlin.Long
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun rangeTo(other: kotlin.Short): kotlin.ranges.IntRange
+        VALUE_PARAMETER value-parameter other: kotlin.Short
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Byte): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Byte
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Double): kotlin.Double
+        VALUE_PARAMETER value-parameter other: kotlin.Double
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Float): kotlin.Float
+        VALUE_PARAMETER value-parameter other: kotlin.Float
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Long): kotlin.Long
+        VALUE_PARAMETER value-parameter other: kotlin.Long
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun times(other: kotlin.Short): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Short
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun unaryMinus(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public final operator fun unaryPlus(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun compareTo(other: kotlin.Int): kotlin.Int
+        VALUE_PARAMETER value-parameter other: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toByte(): kotlin.Byte
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toChar(): kotlin.Char
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toDouble(): kotlin.Double
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toFloat(): kotlin.Float
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toInt(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toLong(): kotlin.Long
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toShort(): kotlin.Short
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String

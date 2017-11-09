@@ -16,11 +16,12 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.SinceKotlin;
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +33,45 @@ import java.util.Map;
  * and stored in the {@link CallableReference#reflected} field.
  */
 @SuppressWarnings({"unchecked", "NullableProblems"})
-public abstract class CallableReference implements KCallable {
+public abstract class CallableReference implements KCallable, Serializable {
     // This field is not volatile intentionally:
     // 1) It's fine if the value is computed multiple times in different threads;
     // 2) An uninitialized value cannot be observed in this field from other thread because only already initialized or safely initialized
     //    objects are written to it. The latter is guaranteed because both KFunctionImpl and KPropertyImpl have at least one final field.
-    private KCallable reflected;
+    private transient KCallable reflected;
+
+    @SinceKotlin(version = "1.1")
+    protected final Object receiver;
+
+    @SinceKotlin(version = "1.1")
+    public static final Object NO_RECEIVER = NoReceiver.INSTANCE;
+
+    @SinceKotlin(version = "1.2")
+    private static class NoReceiver implements Serializable {
+        private static final NoReceiver INSTANCE = new NoReceiver();
+
+        private Object readResolve() throws ObjectStreamException {
+            return INSTANCE;
+        }
+    }
+
+    public CallableReference() {
+        this(NO_RECEIVER);
+    }
+
+    @SinceKotlin(version = "1.1")
+    protected CallableReference(Object receiver) {
+        this.receiver = receiver;
+    }
 
     protected abstract KCallable computeReflected();
 
+    @SinceKotlin(version = "1.1")
+    public Object getBoundReceiver() {
+        return receiver;
+    }
+
+    @SinceKotlin(version = "1.1")
     public KCallable compute() {
         KCallable result = reflected;
         if (result == null) {
@@ -50,6 +81,7 @@ public abstract class CallableReference implements KCallable {
         return result;
     }
 
+    @SinceKotlin(version = "1.1")
     protected KCallable getReflected() {
         KCallable result = compute();
         if (result == this) {
@@ -106,39 +138,42 @@ public abstract class CallableReference implements KCallable {
         return getReflected().getAnnotations();
     }
 
-    @NotNull
     @Override
+    @SinceKotlin(version = "1.1")
     public List<KTypeParameter> getTypeParameters() {
         return getReflected().getTypeParameters();
     }
 
     @Override
-    public Object call(@NotNull Object... args) {
+    public Object call(Object... args) {
         return getReflected().call(args);
     }
 
     @Override
-    public Object callBy(@NotNull Map args) {
+    public Object callBy(Map args) {
         return getReflected().callBy(args);
     }
 
-    @Nullable
     @Override
+    @SinceKotlin(version = "1.1")
     public KVisibility getVisibility() {
         return getReflected().getVisibility();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isFinal() {
         return getReflected().isFinal();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isOpen() {
         return getReflected().isOpen();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isAbstract() {
         return getReflected().isAbstract();
     }

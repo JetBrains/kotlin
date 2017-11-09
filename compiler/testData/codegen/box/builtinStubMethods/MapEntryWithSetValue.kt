@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 class MyMapEntry<K, V>: Map.Entry<K, V> {
     override fun hashCode(): Int = 0
     override fun equals(other: Any?): Boolean = false

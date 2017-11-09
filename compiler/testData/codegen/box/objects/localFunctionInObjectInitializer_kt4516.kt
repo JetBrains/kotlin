@@ -1,4 +1,3 @@
-import java.util.HashMap
 
 object O {
     val mmmap = HashMap<String, Int>();

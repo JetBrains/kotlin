@@ -1,10 +1,8 @@
 package test.collections.js
 
 import kotlin.test.*
-import org.junit.Test
 import test.collections.*
 import test.collections.behaviors.*
-import java.util.*
 
 class ComplexSetJsTest : SetJsTest() {
     // Helper function with generic parameter to force to use ComlpexHashMap
@@ -13,6 +11,7 @@ class ComplexSetJsTest : SetJsTest() {
         HashSet<T>(3)
         HashSet<T>(3, 0.5f)
 
+        @Suppress("UNCHECKED_CAST")
         val set = HashSet<T>(data as HashSet<T>)
 
         assertEquals(data, set)
@@ -103,7 +102,7 @@ abstract class SetJsTest {
     }
 
     @Test
-    fun equals() {
+    fun equalsMethod() {
         assertNotEquals(createEmptyMutableSet(), data)
         assertNotEquals(data, empty)
         assertEquals(createEmptyMutableSet(), empty)
@@ -148,6 +147,10 @@ abstract class SetJsTest {
         assertFalse(data.add("baz"))
         assertEquals(3, data.size)
         assertTrue(data.containsAll(arrayListOf("foo", "bar", "baz")))
+
+        val nullableSet = createEmptyMutableSetWithNullableValues()
+        assertTrue(nullableSet.add(null))
+        assertFalse(nullableSet.add(null))
     }
 
     @Test
@@ -158,6 +161,12 @@ abstract class SetJsTest {
         assertFalse(data.remove("foo"))
         assertEquals(1, data.size)
         assertTrue(data.contains("bar"))
+
+        val nullableSet = createEmptyMutableSetWithNullableValues()
+        nullableSet.add(null)
+
+        assertTrue(nullableSet.remove(null))
+        assertFalse(nullableSet.remove(null))
     }
 
     @Test
@@ -182,9 +191,11 @@ abstract class SetJsTest {
         assertTrue(data.removeAll(arrayListOf("foo", "bar")))
         assertEquals(0, data.size)
 
-        val data2 = createTestMutableSet()
         assertFalse(data.removeAll(arrayListOf("foo", "bar", "baz")))
-        assertTrue(data.isEmpty())
+
+        val data2 = createTestMutableSet()
+        assertTrue(data2.removeAll(arrayListOf("foo", "bar", "baz")))
+        assertTrue(data2.isEmpty())
     }
 
     @Test

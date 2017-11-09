@@ -102,7 +102,7 @@ private object DeclarationKindDetector : KtVisitor<AnnotationHostKind?, Unit?>()
     override fun visitProperty(d: KtProperty, data: Unit?) = detect(d, d.valOrVarKeyword.text!!)
 
     override fun visitDestructuringDeclaration(d: KtDestructuringDeclaration, data: Unit?) = detect(d, d.valOrVarKeyword?.text ?: "val",
-                                                                                                    name = d.entries.map { it.name!! }.joinToString(", ", "(", ")"))
+                                                                                                    name = d.entries.joinToString(", ", "(", ")") { it.name!! })
 
     override fun visitTypeParameter(d: KtTypeParameter, data: Unit?) = detect(d, "type parameter", newLineNeeded = false)
 

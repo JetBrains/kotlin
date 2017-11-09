@@ -1,0 +1,1 @@
+fun <caret>test(f: (Int) -> Int) {}

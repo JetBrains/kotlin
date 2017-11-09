@@ -1,6 +1,23 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -18,6 +35,7 @@ fun generators(): List<GenericFunction> {
             """
         }
         doc(Sequences) { "Returns a sequence containing all elements of the original sequence and then the given [element]." }
+        sequenceClassification(intermediate, stateless)
 
         returns("List<T>")
         returns("SELF", Sets, Sequences)
@@ -29,6 +47,7 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then the given [element]." }
+        sequenceClassification(intermediate, stateless)
         returns("List<T>")
         body {
             """
@@ -48,7 +67,6 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        // TODO: use build scope function when available
         // TODO: use immutable sets when available
         returns("SELF", Sets, Sequences)
         doc(Sets) {
@@ -131,6 +149,7 @@ fun generators(): List<GenericFunction> {
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
             """
         }
+        sequenceClassification(intermediate, stateless)
         body(Sequences) {
             """
             return sequenceOf(this, elements.asSequence()).flatten()
@@ -186,6 +205,7 @@ fun generators(): List<GenericFunction> {
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
             """
         }
+        sequenceClassification(intermediate, stateless)
         body(Sequences) {
             """
             return this.plus(elements.asList())
@@ -244,6 +264,7 @@ fun generators(): List<GenericFunction> {
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
             """
         }
+        sequenceClassification(intermediate, stateless)
         body(Sequences) {
             """
             return sequenceOf(this, elements).flatten()
@@ -264,6 +285,7 @@ fun generators(): List<GenericFunction> {
             """
         }
         doc(Sequences) { "Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element]." }
+        sequenceClassification(intermediate, stateless)
 
         returns("List<T>")
         returns("SELF", Sets, Sequences)
@@ -302,6 +324,7 @@ fun generators(): List<GenericFunction> {
 
 
         doc(Sequences) { "Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element]." }
+        sequenceClassification(intermediate, stateless)
         body(Sequences) {
             """
             return object: Sequence<T> {
@@ -361,6 +384,7 @@ fun generators(): List<GenericFunction> {
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
             """
         }
+        sequenceClassification(intermediate, stateful)
         body(Sequences) {
             """
             return object: Sequence<T> {
@@ -413,6 +437,7 @@ fun generators(): List<GenericFunction> {
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
             """
         }
+        sequenceClassification(intermediate, stateful)
         body(Sequences) {
             """
             if (elements.isEmpty()) return this
@@ -463,6 +488,8 @@ fun generators(): List<GenericFunction> {
 
             Note that the source sequence and the sequence being subtracted are iterated only when an `iterator` is requested from
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+
+            The operation is _intermediate_ for this sequence and _terminal_ and _stateful_ for the [elements] sequence.
             """
         }
         body(Sequences) {
@@ -490,7 +517,7 @@ fun generators(): List<GenericFunction> {
             while *second* list contains elements for which [predicate] yielded `false`.
             """
         }
-        // TODO: Sequence variant
+        sequenceClassification(terminal)
         returns("Pair<List<T>, List<T>>")
         body {
             """
@@ -532,7 +559,379 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(other: Iterable<R>, transform: (T, R) -> V)") {
+    templates add f("windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R)") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        doc { f ->
+            """
+            Returns a ${f.mapResult} of results of applying the given [transform] function to
+            an each ${f.viewResult} representing a view over the window of the given [size]
+            sliding along this ${f.collection} with the given [step].
+
+            Note that the ${f.viewResult} passed to the [transform] function is ephemeral and is valid only inside that function.
+            You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+            Several last ${f.viewResult.pluralize()} may have less ${f.element.pluralize()} than the given [size].
+
+            Both [size] and [step] must be positive and can be greater than the number of elements in this ${f.collection}.
+            @param size the number of elements to take in each window
+            @param step the number of elements to move the window forward by on an each step, by default 1
+            @param partialWindows controls whether or not to keep partial windows in the end if any,
+            by default `false` which means partial windows won't be preserved
+
+            @sample samples.collections.Sequences.Transformations.averageWindows
+            """
+        }
+
+        typeParam("R")
+        returns("List<R>")
+
+        body {
+            """
+            checkWindowSizeStep(size, step)
+            if (this is RandomAccess && this is List) {
+                val thisSize = this.size
+                val result = ArrayList<R>((thisSize + step - 1) / step)
+                val window = MovingSubList(this)
+                var index = 0
+                while (index < thisSize) {
+                    window.move(index, (index + size).coerceAtMost(thisSize))
+                    if (!partialWindows && window.size < size) break
+                    result.add(transform(window))
+                    index += step
+                }
+                return result
+            }
+            val result = ArrayList<R>()
+            windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = true).forEach {
+                result.add(transform(it))
+            }
+            return result
+            """
+        }
+
+        customSignature(CharSequences) { "windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R)" }
+        body(CharSequences) {
+            """
+            checkWindowSizeStep(size, step)
+            val thisSize = this.length
+            val result = ArrayList<R>((thisSize + step - 1) / step)
+            var index = 0
+            while (index < thisSize) {
+                val end = index + size
+                val coercedEnd = if (end > thisSize) { if (partialWindows) thisSize else break } else end
+                result.add(transform(subSequence(index, coercedEnd)))
+                index += step
+            }
+            return result
+            """
+        }
+
+        returns(Sequences) { "Sequence<R>" }
+        body(Sequences) {
+            """
+            return windowedSequence(size, step, partialWindows, reuseBuffer = true).map(transform)
+            """
+        }
+    }
+
+    templates add f("windowed(size: Int, step: Int = 1, partialWindows: Boolean = false)") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        returns(Iterables) { "List<List<T>>" }
+        returns(Sequences) { "Sequence<List<T>>" }
+        returns(CharSequences) { "List<String>" }
+
+        doc { f ->
+            """
+            Returns a ${f.mapResult} of snapshots of the window of the given [size]
+            sliding along this ${f.collection} with the given [step], where each
+            snapshot is ${f.snapshotResult.prefixWithArticle()}.
+
+            Several last ${f.snapshotResult.pluralize()} may have less ${f.element.pluralize()} than the given [size].
+
+            Both [size] and [step] must be positive and can be greater than the number of elements in this ${f.collection}.
+            @param size the number of elements to take in each window
+            @param step the number of elements to move the window forward by on an each step, by default 1
+            @param partialWindows controls whether or not to keep partial windows in the end if any,
+            by default `false` which means partial windows won't be preserved
+
+            @sample samples.collections.Sequences.Transformations.takeWindows
+            """
+        }
+
+        body {
+            """
+            checkWindowSizeStep(size, step)
+            if (this is RandomAccess && this is List) {
+                val thisSize = this.size
+                val result = ArrayList<List<T>>((thisSize + step - 1) / step)
+                var index = 0
+                while (index < thisSize) {
+                    val windowSize = size.coerceAtMost(thisSize - index)
+                    if (windowSize < size && !partialWindows) break
+                    result.add(List(windowSize) { this[it + index] })
+                    index += step
+                }
+                return result
+            }
+            val result = ArrayList<List<T>>()
+            windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = false).forEach {
+                result.add(it)
+            }
+            return result
+            """
+        }
+        body(CharSequences) { "return windowed(size, step, partialWindows) { it.toString() }" }
+        body(Sequences) {
+            """
+            return windowedSequence(size, step, partialWindows, reuseBuffer = false)
+            """
+        }
+    }
+
+    templates add f("windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R)") {
+        since("1.2")
+        only(CharSequences)
+        doc { f ->
+            """
+            Returns a sequence of results of applying the given [transform] function to
+            an each ${f.viewResult} representing a view over the window of the given [size]
+            sliding along this ${f.collection} with the given [step].
+
+            Note that the ${f.viewResult} passed to the [transform] function is ephemeral and is valid only inside that function.
+            You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+            Several last ${f.viewResult.pluralize()} may have less ${f.element.pluralize()} than the given [size].
+
+            Both [size] and [step] must be positive and can be greater than the number of elements in this ${f.collection}.
+            @param size the number of elements to take in each window
+            @param step the number of elements to move the window forward by on an each step, by default 1
+            @param partialWindows controls whether or not to keep partial windows in the end if any,
+            by default `false` which means partial windows won't be preserved
+
+            @sample samples.collections.Sequences.Transformations.averageWindows
+            """
+        }
+        typeParam("R")
+        returns { "Sequence<R> "}
+
+        body {
+            """
+            checkWindowSizeStep(size, step)
+            val windows = (if (partialWindows) indices else 0 until length - size + 1) step step
+            return windows.asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
+            """
+        }
+    }
+
+    templates add f("windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false)") {
+        since("1.2")
+        only(CharSequences)
+        doc { f ->
+            """
+            Returns a sequence of snapshots of the window of the given [size]
+            sliding along this ${f.collection} with the given [step], where each
+            snapshot is ${f.snapshotResult.prefixWithArticle()}.
+
+            Several last ${f.snapshotResult.pluralize()} may have less ${f.element.pluralize()} than the given [size].
+
+            Both [size] and [step] must be positive and can be greater than the number of elements in this ${f.collection}.
+            @param size the number of elements to take in each window
+            @param step the number of elements to move the window forward by on an each step, by default 1
+            @param partialWindows controls whether or not to keep partial windows in the end if any,
+            by default `false` which means partial windows won't be preserved
+
+            @sample samples.collections.Sequences.Transformations.takeWindows
+            """
+        }
+        returns { "Sequence<String> "}
+
+        body(CharSequences) { "return windowedSequence(size, step, partialWindows) { it.toString() }" }
+    }
+
+    templates add f("chunked(size: Int, transform: (List<T>) -> R)") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        doc { f ->
+            """
+            Splits this ${f.collection} into several ${f.viewResult.pluralize()} each not exceeding the given [size]
+            and applies the given [transform] function to an each.
+
+            @return ${f.mapResult} of results of the [transform] applied to an each ${f.viewResult}.
+
+            Note that the ${f.viewResult} passed to the [transform] function is ephemeral and is valid only inside that function.
+            You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+            The last ${f.viewResult} may have less ${f.element.pluralize()} than the given [size].
+
+            @param size the number of elements to take in each ${f.viewResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
+
+            @sample samples.text.Strings.chunkedTransform
+            """
+        }
+
+        typeParam("R")
+        returns("List<R>")
+
+        customSignature(CharSequences) { "chunked(size: Int, transform: (CharSequence) -> R)" }
+
+        sequenceClassification(intermediate, stateful)
+        returns(Sequences) { "Sequence<R>" }
+        body { "return windowed(size, size, partialWindows = true, transform = transform)" }
+    }
+
+    templates add f("chunked(size: Int)") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        doc { f ->
+            """
+            Splits this ${f.collection} into a ${f.mapResult} of ${f.snapshotResult.pluralize()} each not exceeding the given [size].
+
+            The last ${f.snapshotResult} in the resulting ${f.mapResult} may have less ${f.element.pluralize()} than the given [size].
+
+            @param size the number of elements to take in each ${f.snapshotResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
+
+            @sample samples.collections.Collections.Transformations.chunked
+            """
+        }
+        returns(Iterables) { "List<List<T>>" }
+        returns(Sequences) { "Sequence<List<T>>" }
+        returns(CharSequences) { "List<String>" }
+
+        sequenceClassification(intermediate, stateful)
+
+        body { "return windowed(size, size, partialWindows = true)" }
+    }
+
+    templates add f("chunkedSequence(size: Int, transform: (CharSequence) -> R)") {
+        since("1.2")
+        only(CharSequences)
+        doc { f ->
+            """
+            Splits this ${f.collection} into several ${f.viewResult.pluralize()} each not exceeding the given [size]
+            and applies the given [transform] function to an each.
+
+            @return sequence of results of the [transform] applied to an each ${f.viewResult}.
+
+            Note that the ${f.viewResult} passed to the [transform] function is ephemeral and is valid only inside that function.
+            You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+            The last ${f.viewResult} may have less ${f.element.pluralize()} than the given [size].
+
+            @param size the number of elements to take in each ${f.viewResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
+
+            @sample samples.text.Strings.chunkedTransformToSequence
+            """
+        }
+
+        typeParam("R")
+        returns { "Sequence<R> "}
+
+        body {
+            """
+            return windowedSequence(size, size, partialWindows = true, transform = transform)
+            """
+        }
+    }
+
+    templates add f("chunkedSequence(size: Int)") {
+        since("1.2")
+        only(CharSequences)
+        doc { f ->
+            """
+            Splits this ${f.collection} into a sequence of ${f.snapshotResult.pluralize()} each not exceeding the given [size].
+
+            The last ${f.snapshotResult} in the resulting sequence may have less ${f.element.pluralize()} than the given [size].
+
+            @param size the number of elements to take in each ${f.snapshotResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
+
+            @sample samples.collections.Collections.Transformations.chunked
+            """
+        }
+        returns { "Sequence<String> "}
+
+        body(CharSequences) { "return chunkedSequence(size) { it.toString() }" }
+    }
+
+    templates add f("zipWithNext(transform: (a: T, b: T) -> R)") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        typeParam("R")
+        doc { f ->
+            """
+            Returns a ${f.mapResult} containing the results of applying the given [transform] function
+            to an each pair of two adjacent ${f.element.pluralize()} in this ${f.collection}.
+
+            The returned ${f.mapResult} is empty if this ${f.collection} contains less than two ${f.element.pluralize()}.
+
+            @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+            """
+        }
+        returns("List<R>")
+        inline(true)
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return emptyList()
+            val result = mutableListOf<R>()
+            var current = iterator.next()
+            while (iterator.hasNext()) {
+                val next = iterator.next()
+                result.add(transform(current, next))
+                current = next
+            }
+            return result
+            """
+        }
+        body(CharSequences) { f ->
+            """
+            val size = ${if (f == CharSequences) "length" else "size" } - 1
+            if (size < 1) return emptyList()
+            val result = ArrayList<R>(size)
+            for (index in 0..size - 1) {
+                result.add(transform(this[index], this[index + 1]))
+            }
+            return result
+            """
+
+        }
+        inline(false, Sequences)
+        sequenceClassification(intermediate, stateless)
+        returns(Sequences) { "Sequence<R>" }
+        body(Sequences) {
+            """
+            return buildSequence result@ {
+                val iterator = iterator()
+                if (!iterator.hasNext()) return@result
+                var current = iterator.next()
+                while (iterator.hasNext()) {
+                    val next = iterator.next()
+                    yield(transform(current, next))
+                    current = next
+                }
+            }
+            """
+        }
+    }
+
+    templates add f("zipWithNext()") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        returns("List<Pair<T, T>>")
+        doc { f ->
+            """
+            Returns a ${f.mapResult} of pairs of each two adjacent ${f.element.pluralize()} in this ${f.collection}.
+
+            The returned ${f.mapResult} is empty if this ${f.collection} contains less than two ${f.element.pluralize()}.
+
+            @sample samples.collections.Collections.Transformations.zipWithNext
+            """
+        }
+        sequenceClassification(intermediate, stateless)
+        returns(Sequences) { "Sequence<Pair<T, T>>" }
+        body {
+            "return zipWithNext { a, b -> a to b }"
+        }
+    }
+
+    templates add f("zip(other: Iterable<R>, transform: (a: T, b: R) -> V)") {
         exclude(Sequences)
         doc {
             """
@@ -547,8 +946,7 @@ fun generators(): List<GenericFunction> {
             """
             val first = iterator()
             val second = other.iterator()
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-            val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
+            val list = ArrayList<V>(minOf(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
             }
@@ -558,8 +956,7 @@ fun generators(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             val arraySize = size
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-            val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+            val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in other) {
                 if (i >= arraySize) break
@@ -570,7 +967,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(other: Array<out R>, transform: (T, R) -> V)") {
+    templates add f("zip(other: Array<out R>, transform: (a: T, b: R) -> V)") {
         exclude(Sequences)
         doc {
             """
@@ -584,8 +981,7 @@ fun generators(): List<GenericFunction> {
         body {
             """
             val arraySize = other.size
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-            val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
+            val list = ArrayList<V>(minOf(collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in this) {
                 if (i >= arraySize) break
@@ -596,7 +992,7 @@ fun generators(): List<GenericFunction> {
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val size = Math.min(size, other.size)
+            val size = minOf(size, other.size)
             val list = ArrayList<V>(size)
             for (i in 0..size-1) {
                 list.add(transform(this[i], other[i]))
@@ -607,7 +1003,7 @@ fun generators(): List<GenericFunction> {
 
     }
 
-    templates add f("zip(other: SELF, transform: (T, T) -> V)") {
+    templates add f("zip(other: SELF, transform: (a: T, b: T) -> V)") {
         only(ArraysOfPrimitives)
         doc {
             """
@@ -619,7 +1015,7 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body() {
             """
-            val size = Math.min(size, other.size)
+            val size = minOf(size, other.size)
             val list = ArrayList<V>(size)
             for (i in 0..size-1) {
                 list.add(transform(this[i], other[i]))
@@ -629,13 +1025,14 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(other: Sequence<R>, transform: (T, R) -> V)") {
+    templates add f("zip(other: Sequence<R>, transform: (a: T, b: R) -> V)") {
         only(Sequences)
         doc {
             """
             Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
             """
         }
+        sequenceClassification(intermediate, stateless)
         typeParam("R")
         typeParam("V")
         returns("Sequence<V>")
@@ -646,7 +1043,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(other: CharSequence, transform: (Char, Char) -> V)") {
+    templates add f("zip(other: CharSequence, transform: (a: Char, b: Char) -> V)") {
         only(CharSequences)
         doc {
             """
@@ -658,7 +1055,7 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body {
             """
-            val length = Math.min(this.length, other.length)
+            val length = minOf(this.length, other.length)
 
             val list = ArrayList<V>(length)
             for (i in 0..length-1) {
@@ -745,6 +1142,7 @@ fun generators(): List<GenericFunction> {
             Resulting sequence has length of shortest input sequence.
             """
         }
+        sequenceClassification(intermediate, stateless)
         typeParam("R")
         returns("Sequence<Pair<T, R>>")
         body {
@@ -756,3 +1154,17 @@ fun generators(): List<GenericFunction> {
 
     return templates
 }
+
+// documentation helpers
+
+private val Family.snapshotResult: String
+    get() = when (this) {
+        CharSequences, Strings -> "string"
+        else -> "list"
+    }
+
+private val Family.viewResult: String
+    get() = when (this) {
+        CharSequences, Strings -> "char sequence"
+        else -> "list"
+    }

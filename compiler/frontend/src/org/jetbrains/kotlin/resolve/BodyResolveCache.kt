@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
 interface BodyResolveCache {
-    open fun resolveFunctionBody(function: KtNamedFunction): BindingContext
+    fun resolveFunctionBody(function: KtNamedFunction): BindingContext
 
     object ThrowException : BodyResolveCache {
         override fun resolveFunctionBody(function: KtNamedFunction): BindingContext {

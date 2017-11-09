@@ -4,7 +4,6 @@ package test {
     public fun test(): kotlin.Unit
 
     public open class J {
-        public /*synthesized*/ constructor J(/*0*/ s: kotlin.String!, /*1*/ r: (() -> kotlin.Unit)!, /*2*/ z: kotlin.Boolean!)
         public constructor J(/*0*/ s: kotlin.String!, /*1*/ r: java.lang.Runnable!, /*2*/ z: kotlin.Boolean!)
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

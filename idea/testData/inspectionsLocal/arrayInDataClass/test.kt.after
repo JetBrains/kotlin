@@ -1,0 +1,20 @@
+import java.util.Arrays
+
+// WITH_RUNTIME
+
+data class A(val a: IntArray) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as A
+
+        if (!Arrays.equals(a, other.a)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return Arrays.hashCode(a)
+    }
+}

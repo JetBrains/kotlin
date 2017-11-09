@@ -21,17 +21,9 @@ import org.jetbrains.annotations.NotNull;
 public interface LabelOwner {
     boolean isMyLabel(@NotNull String name);
 
-    LabelOwner SKIP_ALL = new LabelOwner() {
-        @Override
-        public boolean isMyLabel(@NotNull String name) {
-            return false;
-        }
-    };
+    LabelOwner SKIP_ALL = name -> false;
 
-    LabelOwner NOT_APPLICABLE = new LabelOwner() {
-        @Override
-        public boolean isMyLabel(@NotNull String name) {
-            throw new RuntimeException("This operation not applicable for current context");
-        }
+    LabelOwner NOT_APPLICABLE = name -> {
+        throw new RuntimeException("This operation not applicable for current context");
     };
 }

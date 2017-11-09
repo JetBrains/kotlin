@@ -26,6 +26,7 @@ import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenamer
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -46,6 +47,7 @@ class JavaMemberByKotlinReferenceInplaceRenameHandler : MemberInplaceRenameHandl
         if (element?.unwrapped !is PsiMember) return false
         val refExpr = file.findElementAt(editor.caretModel.offset)?.getNonStrictParentOfType<KtSimpleNameExpression>() ?: return false
         if (refExpr.references.any { (it as? SyntheticPropertyAccessorReference)?.resolve() != null }) return false
+        if (refExpr.mainReference.getImportAlias() != null) return false
         return true
     }
 

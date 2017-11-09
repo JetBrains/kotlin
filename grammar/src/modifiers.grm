@@ -3,14 +3,14 @@
 */
 
 modifiers
-  : modifier*
+  : (modifier | annotations)*
+  ;
+
+typeModifiers
+  : (suspendModifier | annotations)*
   ;
 
 modifier
-  : modifierKeyword
-  ;
-
-modifierKeyword
   : classModifier
   : accessModifier
   : varianceAnnotation
@@ -19,7 +19,6 @@ modifierKeyword
   : typeParameterModifier
   : functionModifier
   : propertyModifier
-  : annotations
   ;
 
 classModifier
@@ -68,8 +67,13 @@ functionModifier
   : "infix"
   : "inline"
   : "external"
+  : suspendModifier
   ;
 
 propertyModifier
   : "const"
+  ;
+
+suspendModifier
+  : "suspend"
   ;

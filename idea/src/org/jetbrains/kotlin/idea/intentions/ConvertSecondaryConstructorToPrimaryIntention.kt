@@ -30,10 +30,11 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.util.kind
 
 class ConvertSecondaryConstructorToPrimaryInspection : IntentionBasedInspection<KtSecondaryConstructor>(
         ConvertSecondaryConstructorToPrimaryIntention::class,
-        { constructor -> constructor.containingClass()?.getSecondaryConstructors()?.size == 1 }
+        { constructor -> constructor.containingClass()?.secondaryConstructors?.size == 1 }
 ) {
     override fun inspectionTarget(element: KtSecondaryConstructor) = element.getConstructorKeyword()
 }
@@ -127,7 +128,9 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             if (parameterDescriptor != null && propertyDescriptor != null) {
                 val property = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtProperty
                 if (property != null) {
-                    if (propertyDescriptor.name == parameterDescriptor.name && propertyDescriptor.type == parameterDescriptor.type) {
+                    if (propertyDescriptor.name == parameterDescriptor.name &&
+                        propertyDescriptor.type == parameterDescriptor.type &&
+                        propertyDescriptor.accessors.all { it.isDefault }) {
                         propertyCommentSaver = CommentSaver(property)
                         val valOrVar = if (property.isVar) factory.createVarKeyword() else factory.createValKeyword()
                         newParameter.addBefore(valOrVar, newParameter.nameIdentifier)
@@ -162,17 +165,16 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
 
         element.moveParametersToPrimaryConstructorAndInitializers(constructor, parameterToPropertyMap, context, factory)
 
-        val delegationCall = element.getDelegationCall()
-        val argumentList = delegationCall.valueArgumentList
-        if (!delegationCall.isImplicit && argumentList != null) {
-            for (superTypeListEntry in klass.getSuperTypeListEntries()) {
-                val typeReference = superTypeListEntry.typeReference ?: continue
-                val type = context[BindingContext.TYPE, typeReference]
-                if ((type?.constructor?.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.CLASS) {
-                    val superTypeCallEntry = factory.createSuperTypeCallEntry("${typeReference.text}${argumentList.text}")
-                    superTypeListEntry.replace(superTypeCallEntry)
-                    break
-                }
+        val argumentList = element.getDelegationCall().valueArgumentList
+        for (superTypeListEntry in klass.superTypeListEntries) {
+            val typeReference = superTypeListEntry.typeReference ?: continue
+            val type = context[BindingContext.TYPE, typeReference]
+            if ((type?.constructor?.declarationDescriptor as? ClassifierDescriptorWithTypeParameters)?.kind == ClassKind.CLASS) {
+                val superTypeCallEntry = factory.createSuperTypeCallEntry(
+                        "${typeReference.text}${argumentList?.text ?: "()"}"
+                )
+                superTypeListEntry.replace(superTypeCallEntry)
+                break
             }
         }
 

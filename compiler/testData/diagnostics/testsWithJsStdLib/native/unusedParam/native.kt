@@ -1,18 +1,12 @@
-@native
-fun foo(a: String): Int = noImpl
+external fun foo(a: String): Int = definedExternally
 
-@native
-fun Int.foo(a: String): Int = noImpl
-
-@native
-class Bar(b: Int, c: Char) {
-    fun baz(d: Int) {}
+external class Bar(b: Int, c: Char) {
+    fun baz(d: Int) { definedExternally }
 }
 
-@native
-object Obj {
-    fun test1(e: String) {}
+external object Obj {
+    fun test1(e: String) { definedExternally  }
     object Nested {
-        fun test2(g: Int) {}
+        fun test2(g: Int) { definedExternally }
     }
 }

@@ -17,11 +17,10 @@
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.psi.*
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.impl.light.LightField
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.classMembers.MemberInfoBase
 import com.intellij.refactoring.memberPullUp.PullUpData
 import com.intellij.refactoring.memberPullUp.PullUpHelper
@@ -36,9 +35,11 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.dropDefaultValue
 import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.intentions.setType
+import org.jetbrains.kotlin.idea.core.setType
+import org.jetbrains.kotlin.idea.inspections.CONSTRUCTOR_VAL_VAR_MODIFIERS
 import org.jetbrains.kotlin.idea.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
+import org.jetbrains.kotlin.idea.refactoring.isAbstract
 import org.jetbrains.kotlin.idea.refactoring.isCompanionMemberOf
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.toKtDeclarationWrapperAware
@@ -49,7 +50,10 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.asAssignment
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -171,7 +175,7 @@ class KotlinPullUpHelper(
             }
         }
         commonInitializer?.accept(visitor)
-        if (targetConstructor == (data.targetClass as? KtClass)?.getPrimaryConstructor() ?: data.targetClass) {
+        if (targetConstructor == (data.targetClass as? KtClass)?.primaryConstructor ?: data.targetClass) {
             property.initializer?.accept(visitor)
         }
 
@@ -189,7 +193,7 @@ class KotlinPullUpHelper(
 
     private val targetToSourceConstructors = LinkedHashMap<KtElement, MutableList<KtElement>>().let { result ->
         if (!data.isInterfaceTarget && data.targetClass is KtClass) {
-            result[data.targetClass.getPrimaryConstructor() ?: data.targetClass] = ArrayList<KtElement>()
+            result[data.targetClass.primaryConstructor ?: data.targetClass] = ArrayList<KtElement>()
             data.sourceClass.accept(
                     object : KtTreeVisitorVoid() {
                         private fun processConstructorReference(expression: KtReferenceExpression, callingConstructorElement: KtElement) {
@@ -204,7 +208,7 @@ class KotlinPullUpHelper(
                         override fun visitSuperTypeCallEntry(specifier: KtSuperTypeCallEntry) {
                             val constructorRef = specifier.calleeExpression.constructorReferenceExpression ?: return
                             val containingClass = specifier.getStrictParentOfType<KtClassOrObject>() ?: return
-                            val callingConstructorElement = containingClass.getPrimaryConstructor() ?: containingClass
+                            val callingConstructorElement = containingClass.primaryConstructor ?: containingClass
                             processConstructorReference(constructorRef, callingConstructorElement)
                         }
 
@@ -269,15 +273,9 @@ class KotlinPullUpHelper(
         }
     }
 
-    private fun willBeUsedInSourceClass(member: PsiElement): Boolean {
-        return !ReferencesSearch
-                .search(member, LocalSearchScope(data.sourceClass), false)
-                .all { it.element.parentsWithSelf.any { it in data.membersToMove } }
-    }
-
     private fun liftToProtected(declaration: KtNamedDeclaration, ignoreUsages: Boolean = false) {
         if (!declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) return
-        if (ignoreUsages || willBeUsedInSourceClass(declaration)) declaration.addModifier(KtTokens.PROTECTED_KEYWORD)
+        if (ignoreUsages || willBeUsedInSourceClass(declaration, data.sourceClass, data.membersToMove)) declaration.addModifier(KtTokens.PROTECTED_KEYWORD)
     }
 
     override fun setCorrectVisibility(info: MemberInfoBase<PsiMember>) {
@@ -328,7 +326,7 @@ class KotlinPullUpHelper(
     }
 
     private fun moveSuperInterface(member: PsiNamedElement, substitutor: PsiSubstitutor) {
-        val realMemberPsi = if (member is KtPsiClassWrapper) member.psiClass else member
+        val realMemberPsi = (member as? KtPsiClassWrapper)?.psiClass ?: member
         val classDescriptor = data.memberDescriptors[member] as? ClassDescriptor ?: return
         val currentSpecifier = data.sourceClass.getSuperTypeEntryByDescriptor(classDescriptor, data.sourceClassContext) ?: return
         when (data.targetClass) {
@@ -360,7 +358,7 @@ class KotlinPullUpHelper(
     }
 
     private fun removeOriginalMemberOrAddOverride(member: KtCallableDeclaration) {
-        if (member.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+        if (member.isAbstract()) {
             member.delete()
         }
         else {
@@ -488,6 +486,7 @@ class KotlinPullUpHelper(
                 movedMember = doAddCallableMember(memberCopy, clashingSuper, classToAddTo)
                 if (member is KtParameter && movedMember is KtParameter) {
                     member.valOrVarKeyword?.delete()
+                    CONSTRUCTOR_VAL_VAR_MODIFIERS.forEach { member.removeModifier(it) }
 
                     val superEntry = data.superEntryForTargetClass
                     val superResolvedCall = data.targetClassSuperResolvedCall
@@ -532,6 +531,8 @@ class KotlinPullUpHelper(
                 else -> return
             }
 
+            movedMember.modifierList?.let { CodeStyleManager.getInstance(member.manager).reformat(it) }
+
             applyMarking(movedMember, data.sourceToTargetClassSubstitutor, data.targetClassDescriptor)
             addMovedMember(movedMember)
         }
@@ -550,7 +551,7 @@ class KotlinPullUpHelper(
 
         fun KtClassOrObject.getOrCreateClassInitializer(): KtAnonymousInitializer {
             getOrCreateBody().declarations.lastOrNull { it is KtAnonymousInitializer }?.let { return it as KtAnonymousInitializer }
-            return addDeclaration(psiFactory.createAnonymousInitializer()) as KtAnonymousInitializer
+            return addDeclaration(psiFactory.createAnonymousInitializer())
         }
 
         fun KtElement.getConstructorBodyBlock(): KtBlockExpression? {
@@ -569,7 +570,7 @@ class KotlinPullUpHelper(
         }
 
         fun KtClassOrObject.getDelegatorToSuperCall(): KtSuperTypeCallEntry? {
-            return getSuperTypeListEntries().singleOrNull { it is KtSuperTypeCallEntry } as? KtSuperTypeCallEntry
+            return superTypeListEntries.singleOrNull { it is KtSuperTypeCallEntry } as? KtSuperTypeCallEntry
         }
 
         fun addUsedParameters(constructorElement: KtElement, info: InitializerInfo) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.script.util
 
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -24,23 +25,24 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.CompilationException
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLocalResolving
+import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
+import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
 import org.junit.Test
 import java.io.ByteArrayOutputStream
-import java.io.File
+import java.io.OutputStream
 import java.io.PrintStream
-import java.net.URI
-import java.util.jar.Manifest
 import kotlin.reflect.KClass
+
+const val KOTLIN_JAVA_RUNTIME_JAR = "kotlin-stdlib.jar"
 
 class ScriptUtilIT {
 
@@ -59,7 +61,7 @@ done
 
     @Test
     fun testArgsHelloWorld() {
-        val scriptClass = compileScript("args-hello-world.kts", StandardScript::class)
+        val scriptClass = compileScript("args-hello-world.kts", StandardArgsScriptTemplateWithLocalResolving::class)
         Assert.assertNotNull(scriptClass)
         val ctor = scriptClass?.getConstructor(Array<String>::class.java)
         Assert.assertNotNull(ctor)
@@ -72,7 +74,7 @@ done
 
     @Test
     fun testBndHelloWorld() {
-        val scriptClass = compileScript("bindings-hello-world.kts", ScriptWithBindings::class)
+        val scriptClass = compileScript("bindings-hello-world.kts", BindingsScriptTemplateWithLocalResolving::class)
         Assert.assertNotNull(scriptClass)
         val ctor = scriptClass?.getConstructor(Map::class.java)
         Assert.assertNotNull(ctor)
@@ -84,13 +86,19 @@ done
     }
 
     @Test
-    fun testResolveStdHelloWorld() {
-        Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardScript::class))
+    fun testResolveStdJUnitHelloWorld() {
+        val savedErr = System.err
+        try {
+            System.setErr(PrintStream(NullOutputStream()))
+            Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithLocalResolving::class))
+        }
+        finally {
+            System.setErr(savedErr)
+        }
 
-        val scriptClass = compileScript("args-junit-hello-world.kts", StandardScriptWithAnnotatedResolving::class)
+        val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithMavenResolving::class)
         if (scriptClass == null) {
-            val resolver = DefaultKotlinAnnotatedScriptDependenciesResolver()
-            System.err.println(resolver.baseClassPath)
+            System.err.println(classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIfContainsAll(KOTLIN_JAVA_RUNTIME_JAR)?.joinToString())
         }
         Assert.assertNotNull(scriptClass)
         captureOut {
@@ -104,15 +112,16 @@ done
             scriptFileName: String,
             scriptTemplate: KClass<out Any>,
             environment: Map<String, Any?>? = null,
-            suppressOutput: Boolean = false): Class<*>? =
-            compileScriptImpl("src/test/resources/scripts/" + scriptFileName, KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), suppressOutput)
+            suppressOutput: Boolean = false
+    ): Class<*>? =
+            compileScriptImpl("src/test/resources/scripts/" + scriptFileName,
+                              KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
-            suppressOutput: Boolean): Class<*>?
-    {
-        val paths = PathUtil.getKotlinPathsForDistDirectory()
+            suppressOutput: Boolean
+    ): Class<*>? {
         val messageCollector =
                 if (suppressOutput) MessageCollector.NONE
                 else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
@@ -120,20 +129,15 @@ done
         val rootDisposable = Disposer.newDisposable()
         try {
             val configuration = CompilerConfiguration().apply {
-                addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
-                val rtJar = System.getProperty("kotlin.java.runtime.jar")
-                Assert.assertNotNull(rtJar)
-                addJvmClasspathRoot(File(rtJar))
+                classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIfContainsAll(KOTLIN_JAVA_RUNTIME_JAR)?.let {
+                    addJvmClasspathRoots(it)
+                }
+
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 addKotlinSourceRoot(scriptPath)
                 getResourcePathForClass(DependsOn::class.java).let {
                     if (it.exists()) {
                         addJvmClasspathRoot(it)
-                    }
-                    else {
-                        // attempt to workaround some maven quirks
-                        addJvmClasspathRoots(
-                                Thread.currentThread().contextClassLoader.manifestClassPath().toList())
                     }
                 }
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script-util-test")
@@ -141,10 +145,10 @@ done
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
             }
 
-            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             try {
-                return KotlinToJVMBytecodeCompiler.compileScript(environment, paths)
+                return KotlinToJVMBytecodeCompiler.compileScript(environment)
             }
             catch (e: CompilationException) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
@@ -160,19 +164,6 @@ done
         finally {
             Disposer.dispose(rootDisposable)
         }
-    }
-
-    private fun ClassLoader.manifestClassPath() =
-            getResources("META-INF/MANIFEST.MF")
-                    .asSequence()
-                    .mapNotNull { ifFailed(null) { it.openStream().use { Manifest().apply { read(it) } } } }
-                    .flatMap { it.mainAttributes?.getValue("Class-Path")?.splitToSequence(" ") ?: emptySequence() }
-                    .mapNotNull { ifFailed(null) { File(URI.create(it)) } }
-
-    private inline fun <R> ifFailed(default: R, block: () -> R) = try {
-        block()
-    } catch (t: Throwable) {
-        default
     }
 
     private fun String.linesSplitTrim() =
@@ -192,3 +183,10 @@ done
         return outStream.toString()
     }
 }
+
+private class NullOutputStream : OutputStream() {
+    override fun write(b: Int) { }
+    override fun write(b: ByteArray) { }
+    override fun write(b: ByteArray, off: Int, len: Int) { }
+}
+

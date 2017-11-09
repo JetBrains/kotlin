@@ -1,0 +1,46 @@
+package
+
+public fun test(): kotlin.Unit
+public operator fun Sample.modAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+public operator fun Sample.remAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+
+public final class ModAndRemAssign {
+    public constructor ModAndRemAssign()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun mod(/*0*/ x: kotlin.Int): ModAndRemAssign
+    public final operator fun remAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OldAndNew {
+    public constructor OldAndNew()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun modAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    public final operator fun remAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OnlyNew {
+    public constructor OnlyNew()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun remAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OnlyOld {
+    public constructor OnlyOld()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun modAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Sample {
+    public constructor Sample()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,5 +1,6 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("MapsKt")
+@file:kotlin.jvm.JvmVersion
 
 package kotlin.collections
 
@@ -9,9 +10,6 @@ package kotlin.collections
 //
 
 import kotlin.comparisons.*
-import java.util.*
-
-import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
  * Returns a [List] containing all key-value pairs.
@@ -90,6 +88,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.mapTo(des
  * Returns `true` if all entries match the given [predicate].
  */
 public inline fun <K, V> Map<out K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
+    if (isEmpty()) return true
     for (element in this) if (!predicate(element)) return false
     return true
 }
@@ -98,14 +97,14 @@ public inline fun <K, V> Map<out K, V>.all(predicate: (Map.Entry<K, V>) -> Boole
  * Returns `true` if map has at least one entry.
  */
 public fun <K, V> Map<out K, V>.any(): Boolean {
-    for (element in this) return true
-    return false
+    return !isEmpty()
 }
 
 /**
  * Returns `true` if at least one entry matches the given [predicate].
  */
 public inline fun <K, V> Map<out K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
+    if (isEmpty()) return false
     for (element in this) if (predicate(element)) return true
     return false
 }
@@ -122,6 +121,7 @@ public inline fun <K, V> Map<out K, V>.count(): Int {
  * Returns the number of entries matching the given [predicate].
  */
 public inline fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int {
+    if (isEmpty()) return 0
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
@@ -169,16 +169,24 @@ public fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V
  * Returns `true` if the map has no entries.
  */
 public fun <K, V> Map<out K, V>.none(): Boolean {
-    for (element in this) return false
-    return true
+    return isEmpty()
 }
 
 /**
  * Returns `true` if no entries match the given [predicate].
  */
 public inline fun <K, V> Map<out K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
+    if (isEmpty()) return true
     for (element in this) if (predicate(element)) return false
     return true
+}
+
+/**
+ * Performs the given [action] on each entry and returns the map itself afterwards.
+ */
+@SinceKotlin("1.1")
+public inline fun <K, V, M : Map<out K, V>> M.onEach(action: (Map.Entry<K, V>) -> Unit): M {
+    return apply { for (element in this) action(element) }
 }
 
 /**

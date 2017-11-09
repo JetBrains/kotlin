@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM
-
 open class Father(val param: String) {
     abstract inner class InClass {
         fun work(): String {

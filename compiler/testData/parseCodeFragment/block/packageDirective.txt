@@ -1,4 +1,4 @@
-JetFile: fragment.kt
+KtFile: fragment.kt
   BLOCK
     PsiErrorElement:Package directive and imports are forbidden in code fragments
       PACKAGE_DIRECTIVE

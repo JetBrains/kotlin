@@ -1,10 +1,10 @@
 class Test {
-    fun notNullString(p: Int): String {
-        return "response"
-    }
 
     private val notNullInitializerField = notNullString(3)
     var notNullInitializerPublicField = notNullString(3)
+    fun notNullString(p: Int): String {
+        return "response"
+    }
 
     fun testProperty() {
         notNullInitializerField[0]

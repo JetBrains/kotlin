@@ -28,5 +28,6 @@ interface SimpleNameReferenceExtension {
     }
 
     fun isReferenceTo(reference: KtSimpleNameReference, element: PsiElement): Boolean
+
     fun handleElementRename(reference: KtSimpleNameReference, psiFactory: KtPsiFactory, newElementName: String): PsiElement?
 }

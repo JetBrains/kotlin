@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.pullUp;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -33,6 +34,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class K2K extends AbstractPullUpTest {
+        @TestMetadata("abstractFromInterfaceToInterface.kt")
+        public void testAbstractFromInterfaceToInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/abstractFromInterfaceToInterface.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("accidentalOverrides.kt")
         public void testAccidentalOverrides() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/accidentalOverrides.kt");
@@ -40,7 +47,7 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         }
 
         public void testAllFilesPresentInK2K() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/k2k"), Pattern.compile("^(.+)\\.kt$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/k2k"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
         }
 
         @TestMetadata("clashWithSuper.kt")
@@ -100,6 +107,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         @TestMetadata("defaultValuesInOverride.kt")
         public void testDefaultValuesInOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/defaultValuesInOverride.kt");
+            doKotlinTest(fileName);
+        }
+
+        @TestMetadata("dropFinal.kt")
+        public void testDropFinal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/dropFinal.kt");
             doKotlinTest(fileName);
         }
 
@@ -277,6 +290,18 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("privateMemberWithUsagesToClass.kt")
+        public void testPrivateMemberWithUsagesToClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/privateMemberWithUsagesToClass.kt");
+            doKotlinTest(fileName);
+        }
+
+        @TestMetadata("privateMemberWithUsagesToInterface.kt")
+        public void testPrivateMemberWithUsagesToInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/privateMemberWithUsagesToInterface.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("propertyDependenceSatisfied.kt")
         public void testPropertyDependenceSatisfied() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/propertyDependenceSatisfied.kt");
@@ -298,6 +323,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         @TestMetadata("publicToInterface.kt")
         public void testPublicToInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/publicToInterface.kt");
+            doKotlinTest(fileName);
+        }
+
+        @TestMetadata("reformatModifierList.kt")
+        public void testReformatModifierList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/reformatModifierList.kt");
             doKotlinTest(fileName);
         }
 
@@ -343,7 +374,7 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class K2J extends AbstractPullUpTest {
         public void testAllFilesPresentInK2J() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/k2j"), Pattern.compile("^(.+)\\.kt$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/k2j"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
         }
 
         @TestMetadata("constructorParameterToClass.kt")
@@ -424,7 +455,7 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class J2K extends AbstractPullUpTest {
         public void testAllFilesPresentInJ2K() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/j2k"), Pattern.compile("^(.+)\\.java$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/j2k"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY);
         }
 
         @TestMetadata("fromClassToClass.java")

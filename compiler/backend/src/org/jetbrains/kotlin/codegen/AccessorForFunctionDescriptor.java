@@ -18,13 +18,19 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+
+import java.util.LinkedHashMap;
 
 public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDescriptor implements AccessorForCallableDescriptor<FunctionDescriptor> {
     private final FunctionDescriptor calleeDescriptor;
     private final ClassDescriptor superCallTarget;
+    private final String nameSuffix;
 
     public AccessorForFunctionDescriptor(
             @NotNull FunctionDescriptor descriptor,
@@ -36,6 +42,7 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
               Name.identifier("access$" + nameSuffix));
         this.calleeDescriptor = descriptor;
         this.superCallTarget = superCallTarget;
+        this.nameSuffix = nameSuffix;
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
                    descriptor instanceof ConstructorDescriptor || CodegenUtilKt.isJvmStaticInObjectOrClass(descriptor)
@@ -46,6 +53,28 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
                    descriptor.getReturnType(),
                    Modality.FINAL,
                    Visibilities.LOCAL);
+
+        setSuspend(descriptor.isSuspend());
+        if (descriptor.getUserData(CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) {
+            userDataMap = new LinkedHashMap<>();
+            userDataMap.put(
+                    CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION,
+                    descriptor.getUserData(CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)
+            );
+        }
+    }
+
+    @NotNull
+    @Override
+    protected FunctionDescriptorImpl createSubstitutedCopy(
+            @NotNull DeclarationDescriptor newOwner,
+            @Nullable FunctionDescriptor original,
+            @NotNull Kind kind,
+            @Nullable Name newName,
+            @NotNull Annotations annotations,
+            @NotNull SourceElement source
+    ) {
+        return new AccessorForFunctionDescriptor(calleeDescriptor, newOwner, superCallTarget, nameSuffix);
     }
 
     @NotNull

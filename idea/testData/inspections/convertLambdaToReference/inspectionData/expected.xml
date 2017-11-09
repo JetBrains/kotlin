@@ -9,7 +9,15 @@
     </problem>
     <problem>
         <file>test.kt</file>
-        <line>14</line>
+        <line>9</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can be replaced with function reference</problem_class>
+        <description>Convert lambda to reference</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>13</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Can be replaced with function reference</problem_class>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,7 +124,7 @@ class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
 
         val upperBounds = filterBounds(bounds, TypeBounds.BoundKind.UPPER_BOUND, values)
         if (upperBounds.isNotEmpty()) {
-            val intersectionOfUpperBounds = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, upperBounds)
+            val intersectionOfUpperBounds = TypeIntersector.intersectTypes(upperBounds)
             if (intersectionOfUpperBounds != null && tryPossibleAnswer(bounds, intersectionOfUpperBounds)) {
                 return setOf(intersectionOfUpperBounds)
             }

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 // KT-8132 Can't omit lambda parameter types
 
 fun <T> test(foo: List<T>): T {

@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 import java.util.AbstractMap
 import java.util.Collections
 

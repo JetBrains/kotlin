@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.js.test.utils;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNode;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsFunction;
+import org.jetbrains.kotlin.js.backend.ast.JsName;
+import org.jetbrains.kotlin.js.backend.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 
 import java.util.Map;
 
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectNamedFunctions;
-import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectJsProperties;
 
 public class AstSearchUtil {
     @NotNull
@@ -37,8 +37,8 @@ public class AstSearchUtil {
     }
 
     @NotNull
-    public static JsExpression getProperty(@NotNull JsNode searchRoot, @NotNull String name) {
-        JsExpression property = findByIdent(collectJsProperties(searchRoot), name);
+    public static JsExpression getMetadataOrFunction(@NotNull JsNode searchRoot, @NotNull String name) {
+        JsExpression property = findByIdent(CollectUtilsKt.collectNamedFunctionsOrMetadata(searchRoot), name);
         assert property != null: "Property `" + name + "` was not found";
         return property;
     }

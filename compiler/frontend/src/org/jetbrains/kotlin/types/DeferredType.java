@@ -28,46 +28,32 @@ import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import static org.jetbrains.kotlin.resolve.BindingContext.DEFERRED_TYPE;
 
 public class DeferredType extends WrappedType {
-
-    private static final Function1 EMPTY_CONSUMER = new Function1<Object, Void>() {
-        @Override
-        public Void invoke(Object t) {
-            return null;
-        }
-    };
-
-    private static final Function1<Boolean,KotlinType> RECURSION_PREVENTER = new Function1<Boolean, KotlinType>() {
-        @Override
-        public KotlinType invoke(Boolean firstTime) {
-            if (firstTime) throw new ReenteringLazyValueComputationException();
-            return ErrorUtils.createErrorType("Recursive dependency");
-        }
+    private static final Function1<Boolean, KotlinType> RECURSION_PREVENTER = firstTime -> {
+        if (firstTime) throw new ReenteringLazyValueComputationException();
+        return ErrorUtils.createErrorType("Recursive dependency");
     };
 
     @NotNull
-    public static DeferredType create(
+    /*package private*/ static DeferredType create(
             @NotNull StorageManager storageManager,
             @NotNull BindingTrace trace,
             @NotNull Function0<KotlinType> compute
     ) {
         DeferredType deferredType = new DeferredType(storageManager.createLazyValue(compute));
-        trace.record(DEFERRED_TYPE, new Box<DeferredType>(deferredType));
+        trace.record(DEFERRED_TYPE, new Box<>(deferredType));
         return deferredType;
     }
     
     @NotNull
-    public static DeferredType createRecursionIntolerant(
+    /*package private*/ static DeferredType createRecursionIntolerant(
             @NotNull StorageManager storageManager,
             @NotNull BindingTrace trace,
             @NotNull Function0<KotlinType> compute
     ) {
         //noinspection unchecked
-        DeferredType deferredType = new DeferredType(storageManager.createLazyValueWithPostCompute(
-                compute,
-                RECURSION_PREVENTER,
-                EMPTY_CONSUMER
-        ));
-        trace.record(DEFERRED_TYPE, new Box<DeferredType>(deferredType));
+        DeferredType deferredType =
+                new DeferredType(storageManager.createLazyValueWithPostCompute(compute, RECURSION_PREVENTER, t -> null));
+        trace.record(DEFERRED_TYPE, new Box<>(deferredType));
         return deferredType;
     }
 

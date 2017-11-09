@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,19 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsNumberLiteral
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
+import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.charToInt
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.compareForObject
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.invokeMethod
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.longFromInt
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
 import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.identity as ID
 
@@ -62,28 +60,28 @@ object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             val compareInvocation = compareForObject(toLeft(left), toRight(right))
-            return JsBinaryOperation(operator, compareInvocation, JsNumberLiteral.ZERO)
+            return JsBinaryOperation(operator, compareInvocation, JsIntLiteral(0))
         }
     }
 
-    private val INTEGER_COMPARE_TO_LONG = CompareToBinaryIntrinsic( { longFromInt(it) }, ID())
+    private val INTEGER_COMPARE_TO_LONG = CompareToBinaryIntrinsic(::longFromInt, ID())
     private val CHAR_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( { longFromInt(charToInt(it)) }, ID())
-    private val LONG_COMPARE_TO_INTEGER  = CompareToBinaryIntrinsic( ID(), { longFromInt(it) })
+    private val LONG_COMPARE_TO_INTEGER  = CompareToBinaryIntrinsic(ID(), ::longFromInt)
     private val LONG_COMPARE_TO_CHAR  = CompareToBinaryIntrinsic( ID(), { longFromInt(charToInt(it)) })
     private val LONG_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( ID(), ID() )
 
     override fun getSupportTokens() = OperatorConventions.COMPARISON_OPERATIONS
 
-    override fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
-        if (JsDescriptorUtils.isBuiltin(descriptor)) {
+    override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? {
+        if (KotlinBuiltIns.isBuiltIn(descriptor)) {
             return when {
-                FLOATING_POINT_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> FLOATING_POINT_COMPARE_TO_LONG
-                LONG_COMPARE_TO_FLOATING_POINT_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_FLOATING_POINT
-                INTEGER_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> INTEGER_COMPARE_TO_LONG
-                CHAR_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> CHAR_COMPARE_TO_LONG
-                LONG_COMPARE_TO_INTEGER_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_INTEGER
-                LONG_COMPARE_TO_CHAR_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_CHAR
-                LONG_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_LONG
+                FLOATING_POINT_COMPARE_TO_LONG_PATTERN.test(descriptor) -> FLOATING_POINT_COMPARE_TO_LONG
+                LONG_COMPARE_TO_FLOATING_POINT_PATTERN.test(descriptor) -> LONG_COMPARE_TO_FLOATING_POINT
+                INTEGER_COMPARE_TO_LONG_PATTERN.test(descriptor) -> INTEGER_COMPARE_TO_LONG
+                CHAR_COMPARE_TO_LONG_PATTERN.test(descriptor) -> CHAR_COMPARE_TO_LONG
+                LONG_COMPARE_TO_INTEGER_PATTERN.test(descriptor) -> LONG_COMPARE_TO_INTEGER
+                LONG_COMPARE_TO_CHAR_PATTERN.test(descriptor) -> LONG_COMPARE_TO_CHAR
+                LONG_COMPARE_TO_LONG_PATTERN.test(descriptor) -> LONG_COMPARE_TO_LONG
                 else -> null
             }
         }

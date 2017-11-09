@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 abstract class KotlinIntentionActionsFactory {
     protected open fun isApplicableForCodeFragment(): Boolean = false
@@ -30,7 +29,7 @@ abstract class KotlinIntentionActionsFactory {
             sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> = emptyList()
 
     fun createActions(diagnostic: Diagnostic): List<IntentionAction> =
-            createActions(diagnostic.singletonOrEmptyList(), false)
+            createActions(listOfNotNull(diagnostic), false)
 
     fun createActionsForAllProblems(sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> =
             createActions(sameTypeDiagnostics, true)

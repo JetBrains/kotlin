@@ -1,0 +1,18 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '<pluginMarkerVersion>'
+    id 'org.jetbrains.kotlin.plugin.allopen' version '<pluginMarkerVersion>'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+allOpen {
+    annotation("lib.AllOpen")
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8"
+    testCompile "junit:junit:4.12"
+}

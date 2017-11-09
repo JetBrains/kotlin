@@ -28,7 +28,6 @@ import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 abstract class KtCodeFragment(
@@ -53,6 +52,10 @@ abstract class KtCodeFragment(
         if (context != null) {
             initImports(imports)
         }
+    }
+
+    override final fun init(elementType: IElementType, contentElementType: IElementType?) {
+        super.init(elementType, contentElementType)
     }
 
     private var resolveScope: GlobalSearchScope? = null
@@ -141,9 +144,8 @@ abstract class KtCodeFragment(
         return null
     }
 
-    override fun getImportDirectives(): List<KtImportDirective> {
-        return importsAsImportList()?.imports ?: emptyList()
-    }
+    override val importDirectives: List<KtImportDirective>
+        get() = importsAsImportList()?.imports ?: emptyList()
 
     override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }
 
@@ -160,12 +162,12 @@ abstract class KtCodeFragment(
     }
 
     fun getContextContainingFile(): KtFile? {
-        return (getOriginalContext() as? KtElement)?.getContainingKtFile()
+        return getOriginalContext()?.containingKtFile
     }
 
     fun getOriginalContext(): KtElement? {
         val contextElement = getContext() as? KtElement
-        val contextFile = contextElement?.getContainingKtFile()
+        val contextFile = contextElement?.containingKtFile
         if (contextFile is KtCodeFragment) {
             return contextFile.getOriginalContext()
         }
@@ -175,7 +177,7 @@ abstract class KtCodeFragment(
     private fun initImports(imports: String?) {
         if (imports != null && !imports.isEmpty()) {
 
-            val importsWithPrefix = imports.split(IMPORT_SEPARATOR).map { it.check { it.startsWith("import ") } ?: "import ${it.trim()}" }
+            val importsWithPrefix = imports.split(IMPORT_SEPARATOR).map { it.takeIf { it.startsWith("import ") } ?: "import ${it.trim()}" }
             importsWithPrefix.forEach {
                 addImport(it)
             }

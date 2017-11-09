@@ -1,4 +1,4 @@
-JetFile: MissingCommaInValueParameterList.kt
+KtFile: MissingCommaInValueParameterList.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

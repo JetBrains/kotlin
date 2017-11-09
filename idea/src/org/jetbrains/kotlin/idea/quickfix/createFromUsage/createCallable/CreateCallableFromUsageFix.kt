@@ -25,15 +25,16 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
-import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.isAbstract
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import java.util.HashSet
+import java.util.*
 
 class CreateCallableFromUsageFix<E : KtElement>(
         originalExpression: E,
@@ -47,7 +48,7 @@ class CreateExtensionCallableFromUsageFix<E : KtElement>(
 
 abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         originalExpression: E,
-        val callableInfos: List<CallableInfo>,
+        private val callableInfos: List<CallableInfo>,
         val isExtension: Boolean
 ) : CreateFromUsageFixBase<E>(originalExpression) {
     init {
@@ -65,7 +66,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         if (descriptor is FunctionClassDescriptor) {
             val psiFactory = KtPsiFactory(project)
             val syntheticClass = psiFactory.createClass(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(descriptor))
-            return psiFactory.createAnalyzableFile("${descriptor.name.asString()}.kt", "", element).add(syntheticClass)
+            return psiFactory.createAnalyzableFile("${descriptor.name.asString()}.kt", "", element!!).add(syntheticClass)
         }
         return DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
     }
@@ -78,6 +79,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
     }
 
     override fun getText(): String {
+        val element = element ?: return ""
         val renderedCallables = callableInfos.map {
             buildString {
                 if (it.isAbstract) {
@@ -124,11 +126,13 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
             append("Create ")
 
             val receiverInfo = callableInfos.first().receiverTypeInfo
-            if (isExtension) {
-                append("extension ")
-            }
-            else if (receiverInfo !is TypeInfo.Empty) {
-                append("member ")
+            if (!callableInfos.any { it.isAbstract }) {
+                if (isExtension) {
+                    append("extension ")
+                }
+                else if (receiverInfo !is TypeInfo.Empty) {
+                    append("member ")
+                }
             }
 
             renderedCallables.joinTo(this)
@@ -138,6 +142,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
         if (file !is KtFile) return false
+        val element = element ?: return false
 
         val receiverInfo = callableInfos.first().receiverTypeInfo
 
@@ -169,6 +174,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val callableInfo = callableInfos.first()
 
         val callableBuilder =
@@ -185,7 +191,9 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         }
 
         val popupTitle = "Choose target class or interface"
-        val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo)
+        val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo).let {
+            if (callableInfo.isAbstract) it.filter { it.theType.isAbstract() } else it
+        }
         if (receiverTypeCandidates.isNotEmpty()) {
             val containers = receiverTypeCandidates
                     .mapNotNull { candidate -> getDeclarationIfApplicable(project, candidate)?.let { candidate to it } }

@@ -1,0 +1,11 @@
+// "Fix with 'asDynamic'" "true"
+// JS
+class A
+
+external class B<T: A> {
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T : A, T2> B<T>.exp(t: T, t2: T2) {
+    asDynamic()(t, t2)
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.highlighter;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -38,7 +39,7 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
     }
 
     public void testAllFilesPresentInDiagnosticMessage() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("annotationsForResolve.kt")
@@ -68,6 +69,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
     @TestMetadata("complexTypeMismatchWithTypeParameters.kt")
     public void testComplexTypeMismatchWithTypeParameters() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/complexTypeMismatchWithTypeParameters.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("complexTypeMismatchWithTypeParametersAndTypeAlias.kt")
+    public void testComplexTypeMismatchWithTypeParametersAndTypeAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/complexTypeMismatchWithTypeParametersAndTypeAlias.kt");
         doTest(fileName);
     }
 
@@ -122,6 +129,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
     @TestMetadata("functionPlaceholder.kt")
     public void testFunctionPlaceholder() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/functionPlaceholder.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("illegalSuspendCall.kt")
+    public void testIllegalSuspendCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/illegalSuspendCall.kt");
         doTest(fileName);
     }
 
@@ -275,6 +288,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("typeVarianceConflictInTypeAliasExpansion.kt")
+    public void testTypeVarianceConflictInTypeAliasExpansion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeVarianceConflictInTypeAliasExpansion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("unsupportedFeature.kt")
     public void testUnsupportedFeature() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/unsupportedFeature.kt");
@@ -302,6 +321,18 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
     @TestMetadata("upperBoundViolated.kt")
     public void testUpperBoundViolated() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/upperBoundViolated.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("upperBoundViolatedInTypeAliasConstructorCall.kt")
+    public void testUpperBoundViolatedInTypeAliasConstructorCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/upperBoundViolatedInTypeAliasConstructorCall.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("urlRender.kt")
+    public void testUrlRender() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/urlRender.kt");
         doTest(fileName);
     }
 }

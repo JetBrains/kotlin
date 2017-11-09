@@ -19,7 +19,8 @@
   a: Int
  a: Int
  a: String on Comparable<T>
- b: Any
+ -b: Any
+  object
  -Enum1
   FIRST
   SECOND

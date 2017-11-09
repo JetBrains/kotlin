@@ -1,0 +1,13 @@
+fun notNullValues(list: MutableList<String>) {
+    list.replaceAll { it.length.toString() }
+        // SUCCESS
+        // ORIGINAL:    fun replaceAll((E) -> E): Unit defined in kotlin.collections.MutableList
+        // SUBSTITUTED: fun replaceAll((String) -> String): Unit defined in kotlin.collections.MutableList
+}
+
+fun nullableValues(list: MutableList<String?>) {
+    list.replaceAll { it?.run {  length.toString() } }
+        // SUCCESS
+        // ORIGINAL:    fun replaceAll((E) -> E): Unit defined in kotlin.collections.MutableList
+        // SUBSTITUTED: fun replaceAll((String?) -> String?): Unit defined in kotlin.collections.MutableList
+}

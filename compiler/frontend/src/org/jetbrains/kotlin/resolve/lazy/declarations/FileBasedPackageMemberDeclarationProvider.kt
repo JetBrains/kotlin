@@ -45,5 +45,6 @@ class FileBasedPackageMemberDeclarationProvider(
 
     override fun getPackageFiles() = packageFiles
 
-    override fun toString() = "Declarations for package $fqName"
+    override fun toString() = "Declarations for package $fqName with files ${packageFiles.map { it.name }} " +
+                              "with declarations inside ${packageFiles.flatMap { it.declarations }.map { it.name ?: "???"}}"
 }

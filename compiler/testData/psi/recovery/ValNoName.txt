@@ -1,4 +1,4 @@
-JetFile: ValNoName.kt
+KtFile: ValNoName.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -49,6 +49,7 @@ fun PsiElement.canDeleteElement(): Boolean {
         || this is PsiClass
         || this is KtProperty
         || this is KtTypeParameter
+        || this is KtTypeAlias
 }
 
 fun PsiElement.removeOverrideModifier() {

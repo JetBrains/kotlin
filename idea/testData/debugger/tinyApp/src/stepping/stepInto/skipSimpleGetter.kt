@@ -1,9 +1,11 @@
 package skipSimpleGetter
 
+val top = 1
+
 fun main(args: Array<String>) {
     val a = A(1)
     //Breakpoint!
-    a.a1 + a.a2 + a.a3 + a.a4
+    a.a1 + a.a2 + a.a3 + a.a4 + top
 }
 
 class A(val a4: Int) {
@@ -21,5 +23,5 @@ class A(val a4: Int) {
         }
 }
 
-// STEP_INTO: 21
+// STEP_INTO: 3
 // SKIP_GETTERS: true

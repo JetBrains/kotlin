@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.internal
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
@@ -33,17 +35,21 @@ abstract class AbstractBytecodeToolWindowTest: KotlinLightCodeInsightFixtureTest
     fun doTest(testPath: String) {
         val mainDir = File(testPath)
         val mainFileName = mainDir.name + ".kt"
-        mainDir.listFiles { file, name -> name != mainFileName }.forEach { myFixture.configureByFile(testPath + "/" + it.name) }
+        mainDir.listFiles { _, name -> name != mainFileName }.forEach { myFixture.configureByFile(testPath + "/" + it.name) }
 
         val mainFileText = File("$testPath/$mainFileName").readText()
         myFixture.configureByText(KotlinFileType.INSTANCE, mainFileText)
 
         val file = myFixture.file as KtFile
 
-        val configuration = CompilerConfiguration()
-        if (InTextDirectivesUtils.getPrefixedBoolean(mainFileText, "// INLINE:") == false) {
-            configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true)
+        val configuration = CompilerConfiguration().apply {
+            if (InTextDirectivesUtils.getPrefixedBoolean(mainFileText, "// INLINE:") == false) {
+                put(CommonConfigurationKeys.DISABLE_INLINE, true)
+            }
+
+            languageVersionSettings = file.languageVersionSettings
         }
+
         val bytecodes = KotlinBytecodeToolWindow.getBytecodeForFile(file, configuration)
         assert(bytecodes.contains("// ================")) {
             "The header \"// ================\" is missing.\n This means that there is an exception failed during compilation:\n$bytecodes"

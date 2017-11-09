@@ -1,0 +1,20 @@
+FILE /secondaryConstructors.kt
+  CLASS CLASS C
+    $this: VALUE_PARAMETER this@C: C
+    CONSTRUCTOR public constructor C()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor C(Int)'
+          x: CONST Int type=kotlin.Int value='0'
+    CONSTRUCTOR public constructor C(x: kotlin.Int)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='C'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

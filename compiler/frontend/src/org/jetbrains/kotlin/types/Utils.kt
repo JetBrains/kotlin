@@ -37,3 +37,19 @@ internal fun hackForTypeIntersector(types: Collection<KotlinType>): KotlinType? 
         }
     }
 }
+
+fun getEffectiveVariance(parameterVariance: Variance, projectionKind: Variance): Variance {
+    if (parameterVariance === Variance.INVARIANT) {
+        return projectionKind
+    }
+    if (projectionKind === Variance.INVARIANT) {
+        return parameterVariance
+    }
+    if (parameterVariance === projectionKind) {
+        return parameterVariance
+    }
+
+    // In<out X> = In<*>
+    // Out<in X> = Out<*>
+    return Variance.OUT_VARIANCE
+}

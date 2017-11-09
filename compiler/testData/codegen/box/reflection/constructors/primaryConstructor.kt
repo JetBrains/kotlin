@@ -1,8 +1,11 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 
 import kotlin.test.assertNull
 import kotlin.test.assertNotNull
-import kotlin.reflect.*
+import kotlin.reflect.full.*
 
 class OnlyPrimary
 

@@ -26,7 +26,7 @@ class ReflectJavaTypeParameter(
 ) : ReflectJavaElement(), JavaTypeParameter, ReflectJavaAnnotationOwner {
     override val upperBounds: List<ReflectJavaClassifierType>
         get() {
-            val bounds = typeVariable.bounds.map { bound -> ReflectJavaClassifierType(bound) }
+            val bounds = typeVariable.bounds.map(::ReflectJavaClassifierType)
             if (bounds.singleOrNull()?.reflectType == Any::class.java) return emptyList()
             return bounds
         }
@@ -42,5 +42,5 @@ class ReflectJavaTypeParameter(
 
     override fun hashCode() = typeVariable.hashCode()
 
-    override fun toString() = javaClass.name + ": " + typeVariable
+    override fun toString() = this::class.java.name + ": " + typeVariable
 }

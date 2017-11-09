@@ -1,5 +1,5 @@
 // INTENTION_TEXT: "Add import for 'kotlin.test.assertFailsWith'"
-// WITH_RUNTIME
+// RUNTIME_WITH_KOTLIN_TEST
 
 fun foo() {
     kotlin.test.<caret>assertFailsWith<Exception>("", {})

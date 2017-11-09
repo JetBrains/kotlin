@@ -80,7 +80,7 @@ private fun buildTestCase(ownerClass: Class<TestData>,
                 }
                 catch (e: Throwable) {
                     val cause = e.cause ?: e
-                    expected = ExceptionThrown(objectToValue(cause, Type.getType(cause.javaClass)) as ObjectValue, ExceptionThrown.ExceptionKind.FROM_EVALUATOR)
+                    expected = ExceptionThrown(objectToValue(cause, Type.getType(cause::class.java)) as ObjectValue, ExceptionThrown.ExceptionKind.FROM_EVALUATOR)
                 }
             }
         }

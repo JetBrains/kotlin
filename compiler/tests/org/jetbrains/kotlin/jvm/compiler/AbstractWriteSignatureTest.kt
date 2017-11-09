@@ -144,7 +144,7 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             val classDir = classFile.parentFile
             val classLastName = classFile.name
             val packageFacadePrefix = classLastName.replace(".class", "\$")
-            classDir.listFiles { dir, lastName ->
+            classDir.listFiles { _, lastName ->
                 lastName.startsWith(packageFacadePrefix) && lastName.endsWith(".class")
             }.forEach { packageFacadeFile ->
                 processClassFile(checker, packageFacadeFile)
@@ -249,7 +249,7 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
     companion object {
         fun formatSignature(header: String, jvmSignature: String?, genericSignature: String): String {
             return listOf(
-                    "$header",
+                    header,
                     jvmSignature?.let { "jvm signature: $it" },
                     "generic signature: $genericSignature"
             ).filterNotNull().joinToString("\n") { "// $it" }

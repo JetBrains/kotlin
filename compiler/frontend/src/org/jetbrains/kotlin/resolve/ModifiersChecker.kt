@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -54,77 +52,104 @@ object ModifierCheckerCore {
         COMPATIBLE_FOR_CLASSES_ONLY
     }
 
-    private val defaultVisibilityTargets = EnumSet.of(CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS,
+    private val defaultVisibilityTargets = EnumSet.of(CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS,
                                                       MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
                                                       MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR, TYPEALIAS)
 
     val possibleTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
             ENUM_KEYWORD      to EnumSet.of(ENUM_CLASS),
-            ABSTRACT_KEYWORD  to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
-            OPEN_KEYWORD      to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
-            FINAL_KEYWORD     to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, ENUM_CLASS, OBJECT, MEMBER_PROPERTY, MEMBER_FUNCTION),
-            SEALED_KEYWORD    to EnumSet.of(CLASS_ONLY, INNER_CLASS),
-            // We should have also CLASS_ONLY here because INNER_CLASS is not always perfectly identified
-            INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS),
+            ABSTRACT_KEYWORD  to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
+            OPEN_KEYWORD      to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
+            FINAL_KEYWORD     to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS, OBJECT, MEMBER_PROPERTY, MEMBER_FUNCTION),
+            SEALED_KEYWORD    to EnumSet.of(CLASS_ONLY),
+            INNER_KEYWORD     to EnumSet.of(CLASS_ONLY),
             OVERRIDE_KEYWORD  to EnumSet.of(MEMBER_PROPERTY, MEMBER_FUNCTION),
             PRIVATE_KEYWORD   to defaultVisibilityTargets,
             PUBLIC_KEYWORD    to defaultVisibilityTargets,
             INTERNAL_KEYWORD  to defaultVisibilityTargets,
-            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS,
+            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS,
                                             MEMBER_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, MEMBER_PROPERTY, CONSTRUCTOR, TYPEALIAS),
             IN_KEYWORD        to EnumSet.of(TYPE_PARAMETER, TYPE_PROJECTION),
             OUT_KEYWORD       to EnumSet.of(TYPE_PARAMETER, TYPE_PROJECTION),
             REIFIED_KEYWORD   to EnumSet.of(TYPE_PARAMETER),
             VARARG_KEYWORD    to EnumSet.of(VALUE_PARAMETER, PROPERTY_PARAMETER),
             COMPANION_KEYWORD to EnumSet.of(OBJECT),
-            LATEINIT_KEYWORD to EnumSet.of(MEMBER_PROPERTY),
-            DATA_KEYWORD      to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS),
+            LATEINIT_KEYWORD  to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, LOCAL_VARIABLE),
+            DATA_KEYWORD      to EnumSet.of(CLASS_ONLY, LOCAL_CLASS),
             INLINE_KEYWORD    to EnumSet.of(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER),
             NOINLINE_KEYWORD  to EnumSet.of(VALUE_PARAMETER),
-            COROUTINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),
             TAILREC_KEYWORD   to EnumSet.of(FUNCTION),
-            SUSPEND_KEYWORD   to EnumSet.of(FUNCTION),
-            EXTERNAL_KEYWORD  to EnumSet.of(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER),
+            SUSPEND_KEYWORD   to EnumSet.of(MEMBER_FUNCTION, TOP_LEVEL_FUNCTION),
+            EXTERNAL_KEYWORD  to EnumSet.of(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, CLASS),
             ANNOTATION_KEYWORD to EnumSet.of(ANNOTATION_CLASS),
             CROSSINLINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),
             CONST_KEYWORD     to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY),
             OPERATOR_KEYWORD  to EnumSet.of(FUNCTION),
-            INFIX_KEYWORD     to EnumSet.of(FUNCTION)
+            INFIX_KEYWORD     to EnumSet.of(FUNCTION),
+            HEADER_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
+            IMPL_KEYWORD      to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS),
+            EXPECT_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
+            ACTUAL_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS)
     )
 
-    val featureDependencies = mapOf(
-            COROUTINE_KEYWORD to LanguageFeature.Coroutines,
-            SUSPEND_KEYWORD   to LanguageFeature.Coroutines,
-            INLINE_KEYWORD   to LanguageFeature.InlineProperties
+    private val featureDependencies = mapOf(
+            SUSPEND_KEYWORD   to listOf(LanguageFeature.Coroutines),
+            INLINE_KEYWORD    to listOf(LanguageFeature.InlineProperties),
+            HEADER_KEYWORD    to listOf(LanguageFeature.MultiPlatformProjects),
+            IMPL_KEYWORD      to listOf(LanguageFeature.MultiPlatformProjects),
+            EXPECT_KEYWORD    to listOf(LanguageFeature.MultiPlatformProjects),
+            ACTUAL_KEYWORD      to listOf(LanguageFeature.MultiPlatformProjects),
+            LATEINIT_KEYWORD  to listOf(LanguageFeature.LateinitTopLevelProperties, LanguageFeature.LateinitLocalVariables)
     )
 
-    val featureDependenciesTargets = mapOf(
-            LanguageFeature.InlineProperties to setOf(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
+    private val featureDependenciesTargets = mapOf(
+            LanguageFeature.InlineProperties to setOf(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER),
+            LanguageFeature.LateinitLocalVariables to setOf(LOCAL_VARIABLE),
+            LanguageFeature.LateinitTopLevelProperties to setOf(TOP_LEVEL_PROPERTY)
     )
 
     // NOTE: deprecated targets must be possible!
     private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
+
+    private val deprecatedModifierMap = mapOf(
+            HEADER_KEYWORD to EXPECT_KEYWORD,
+            IMPL_KEYWORD to ACTUAL_KEYWORD
+    )
 
     // NOTE: redundant targets must be possible!
     private val redundantTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
             OPEN_KEYWORD  to EnumSet.of(INTERFACE)
     )
 
-    val possibleParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
-            INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS),
-            OVERRIDE_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
-                                            INTERFACE, ENUM_CLASS, ENUM_ENTRY),
-            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, COMPANION_OBJECT),
-            INTERNAL_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
-                                            ENUM_CLASS, ENUM_ENTRY, FILE),
-            PRIVATE_KEYWORD   to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
-                                            INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
-            COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE),
-            FINAL_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
-                                            ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE)
+    private val possibleParentTargetPredicateMap = mapOf<KtModifierKeywordToken, TargetAllowedPredicate>(
+            INNER_KEYWORD to or(always(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS),
+                                ifSupported(LanguageFeature.InnerClassInEnumEntryClass, ENUM_ENTRY)),
+            OVERRIDE_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, INTERFACE, ENUM_CLASS, ENUM_ENTRY),
+            PROTECTED_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS, COMPANION_OBJECT),
+            INTERNAL_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, ENUM_CLASS, ENUM_ENTRY, FILE),
+            PRIVATE_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
+            COMPANION_KEYWORD to always(CLASS_ONLY, ENUM_CLASS, INTERFACE),
+            FINAL_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE),
+            VARARG_KEYWORD to always(CONSTRUCTOR, FUNCTION, CLASS)
     )
 
-    val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
+    private val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
+
+    fun isPossibleParentTarget(
+            modifier: KtModifierKeywordToken,
+            parentTarget: KotlinTarget,
+            languageVersionSettings: LanguageVersionSettings
+    ): Boolean {
+        deprecatedParentTargetMap[modifier]?.let {
+            if (parentTarget in it) return false
+        }
+
+        possibleParentTargetPredicateMap[modifier]?.let {
+            return it.isAllowed(parentTarget, languageVersionSettings)
+        }
+
+        return true
+    }
 
     // First modifier in pair should be also first in declaration
     private val mutualCompatibility = buildCompatibilityMap()
@@ -159,6 +184,16 @@ object ModifierCheckerCore {
         result += compatibilityForClassesRegister(PRIVATE_KEYWORD, ABSTRACT_KEYWORD)
 
         result += incompatibilityRegister(CROSSINLINE_KEYWORD, NOINLINE_KEYWORD)
+
+        // 1. subclasses contained inside a sealed class can not be instantiated, because their constructors needs
+        // an instance of an outer sealed (effectively abstract) class
+        // 2. subclasses of a non-top-level sealed class must be declared inside the class
+        // (see the KEEP https://github.com/Kotlin/KEEP/blob/master/proposals/sealed-class-inheritance.md)
+        result += incompatibilityRegister(SEALED_KEYWORD, INNER_KEYWORD)
+
+        // header / expect / impl / actual are all incompatible
+        result += incompatibilityRegister(HEADER_KEYWORD, EXPECT_KEYWORD, IMPL_KEYWORD, ACTUAL_KEYWORD)
+
         return result
     }
 
@@ -192,11 +227,11 @@ object ModifierCheckerCore {
     private fun deprecationRegister(vararg list: KtModifierKeywordToken) = compatibilityRegister(Compatibility.DEPRECATED, *list)
 
     private fun compatibility(first: KtModifierKeywordToken, second: KtModifierKeywordToken): Compatibility {
-        if (first == second) {
-            return Compatibility.REPEATED
+        return if (first == second) {
+            Compatibility.REPEATED
         }
         else {
-            return mutualCompatibility[Pair(first, second)] ?: Compatibility.COMPATIBLE
+            mutualCompatibility[Pair(first, second)] ?: Compatibility.COMPATIBLE
         }
     }
 
@@ -243,13 +278,16 @@ object ModifierCheckerCore {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
+        val deprecatedModifierReplacement = deprecatedModifierMap[modifier]
         val deprecatedTargets = deprecatedTargetMap[modifier] ?: emptySet()
         val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
-        if (actualTargets.any { it in deprecatedTargets }) {
-            trace.report(Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
-        }
-        else if (actualTargets.any { it in redundantTargets }) {
-            trace.report(Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
+        when {
+            deprecatedModifierReplacement != null ->
+                trace.report(Errors.DEPRECATED_MODIFIER.on(node.psi, modifier, deprecatedModifierReplacement))
+            actualTargets.any { it in deprecatedTargets } ->
+                trace.report(Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
+            actualTargets.any { it in redundantTargets } ->
+                trace.report(Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
         }
         return true
     }
@@ -262,15 +300,29 @@ object ModifierCheckerCore {
     ): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
 
-        val dependency = featureDependencies[modifier] ?: return true
+        val dependencies = featureDependencies[modifier] ?: return true
+        for (dependency in dependencies) {
+            val featureSupport = languageVersionSettings.getFeatureSupport(dependency)
 
-        if (!languageVersionSettings.supportsFeature(dependency)) {
-            val restrictedTargets = featureDependenciesTargets[dependency]
-            if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
-                return true
+            val diagnosticData = dependency to languageVersionSettings
+            if (featureSupport == LanguageFeature.State.ENABLED_WITH_ERROR || featureSupport == LanguageFeature.State.DISABLED) {
+                val restrictedTargets = featureDependenciesTargets[dependency]
+                if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
+                    continue
+                }
+
+                if (featureSupport == LanguageFeature.State.DISABLED) {
+                    trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, diagnosticData))
+                }
+                else {
+                    trace.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(node.psi, diagnosticData))
+                }
+                return false
             }
-            trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, dependency))
-            return false
+
+            if (featureSupport == LanguageFeature.State.ENABLED_WITH_WARNING) {
+                trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, diagnosticData))
+            }
         }
 
         return true
@@ -278,10 +330,12 @@ object ModifierCheckerCore {
 
 
     // Should return false if error is reported, true otherwise
-    private fun checkParent(trace: BindingTrace, node: ASTNode, parentDescriptor: DeclarationDescriptor?): Boolean {
+    private fun checkParent(trace: BindingTrace, node: ASTNode, parentDescriptor: DeclarationDescriptor?, languageVersionSettings: LanguageVersionSettings): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
         val actualParents: List<KotlinTarget> = when (parentDescriptor) {
             is ClassDescriptor -> KotlinTarget.classActualTargets(parentDescriptor)
+            is PropertySetterDescriptor -> listOf(PROPERTY_SETTER)
+            is PropertyGetterDescriptor -> listOf(PROPERTY_GETTER)
             is FunctionDescriptor -> listOf(FUNCTION)
             else -> listOf(FILE)
         }
@@ -290,9 +344,8 @@ object ModifierCheckerCore {
             trace.report(Errors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION.on(node.psi, modifier, actualParents.firstOrNull()?.description ?: "this scope"))
             return true
         }
-        val possibleParents = possibleParentTargetMap[modifier] ?: return true
-        if (possibleParents == KotlinTarget.ALL_TARGET_SET) return true
-        if (actualParents.any { it in possibleParents }) return true
+        val possibleParentPredicate = possibleParentTargetPredicateMap[modifier] ?: return true
+        if (actualParents.any { possibleParentPredicate.isAllowed(it, languageVersionSettings) }) return true
         trace.report(Errors.WRONG_MODIFIER_CONTAINING_DECLARATION.on(node.psi, modifier, actualParents.firstOrNull()?.description ?: "this scope"))
         return false
     }
@@ -318,14 +371,10 @@ object ModifierCheckerCore {
                 checkCompatibility(trace, first, second, list.owner, incorrectNodes)
             }
             if (second !in incorrectNodes) {
-                if (!checkTarget(trace, second, actualTargets)) {
-                    incorrectNodes += second
-                }
-                else if (!checkParent(trace, second, parentDescriptor)) {
-                    incorrectNodes += second
-                }
-                else if (!checkLanguageLevelSupport(trace, second, languageVersionSettings, actualTargets)) {
-                    incorrectNodes += second
+                when {
+                    !checkTarget(trace, second, actualTargets) -> incorrectNodes += second
+                    !checkParent(trace, second, parentDescriptor, languageVersionSettings) -> incorrectNodes += second
+                    !checkLanguageLevelSupport(trace, second, languageVersionSettings, actualTargets) -> incorrectNodes += second
                 }
             }
         }
@@ -341,7 +390,7 @@ object ModifierCheckerCore {
             // JetFunction or JetPropertyAccessor
             for (parameter in listOwner.valueParameters) {
                 if (!parameter.hasValOrVar()) {
-                    check(parameter, trace, null, languageVersionSettings)
+                    check(parameter, trace, trace[BindingContext.VALUE_PARAMETER, parameter], languageVersionSettings)
                 }
             }
         }
@@ -349,4 +398,30 @@ object ModifierCheckerCore {
         val list = listOwner.modifierList ?: return
         checkModifierList(list, trace, descriptor?.containingDeclaration, actualTargets, languageVersionSettings)
     }
+}
+
+
+private interface TargetAllowedPredicate {
+    fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings): Boolean
+}
+
+
+private fun always(target: KotlinTarget, vararg targets: KotlinTarget) = object : TargetAllowedPredicate {
+    private val targetSet = EnumSet.of(target, *targets)
+
+    override fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings) =
+            target in targetSet
+}
+
+private fun ifSupported(languageFeature: LanguageFeature, target: KotlinTarget, vararg targets: KotlinTarget) = object : TargetAllowedPredicate {
+    private val targetSet = EnumSet.of(target, *targets)
+
+    override fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings) =
+            languageVersionSettings.supportsFeature(languageFeature) && target in targetSet
+}
+
+private fun or(p1: TargetAllowedPredicate, p2: TargetAllowedPredicate) = object : TargetAllowedPredicate {
+    override fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings) =
+            p1.isAllowed(target, languageVersionSettings) ||
+            p2.isAllowed(target, languageVersionSettings)
 }

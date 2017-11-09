@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.preloading;
 import org.jetbrains.kotlin.preloading.instrumentation.Instrumenter;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -31,6 +32,13 @@ public class Preloader {
     public static final int DEFAULT_CLASS_NUMBER_ESTIMATE = 4096;
 
     public static void main(String[] args) throws Exception {
+        String javaVersion = System.getProperty("java.specification.version");
+        if (javaVersion.equals("1.6") || javaVersion.equals("1.7")) {
+            System.err.println("error: running the Kotlin compiler under Java " + javaVersion + " is not supported. " +
+                               "Java 1.8 or later is required");
+            System.exit(1);
+        }
+
         try {
             run(args);
         }
@@ -77,6 +85,13 @@ public class Preloader {
         ClassLoader parent = Preloader.class.getClassLoader();
 
         List<File> instrumenters = options.instrumenters;
+        if (options.arguments.contains("-Xuse-javac")) {
+            File toolsJar = getJdkToolsJar();
+            if (toolsJar != null) {
+                instrumenters.add(toolsJar);
+            }
+        }
+
         if (instrumenters.isEmpty()) return parent;
 
         URL[] classpath = new URL[instrumenters.size()];
@@ -87,11 +102,35 @@ public class Preloader {
         return new URLClassLoader(classpath, parent);
     }
 
+    private static File getJdkToolsJar() {
+        try {
+            String javaHomePath = System.getProperty("java.home");
+            if (javaHomePath == null || javaHomePath.isEmpty()) {
+                return null;
+            }
+            File javaHome = new File(javaHomePath);
+            File toolsJar = new File(javaHome, "lib/tools.jar");
+            if (toolsJar.exists()) {
+                return toolsJar.getCanonicalFile();
+            }
+
+            // We might be inside jre.
+            if (javaHome.getName().equals("jre")) {
+                toolsJar = new File(javaHome.getParent(), "lib/tools.jar");
+                if (toolsJar.exists()) {
+                    return toolsJar.getCanonicalFile();
+                }
+            }
+        } catch (IOException ignored) {}
+
+        return null;
+    }
+
     @SuppressWarnings("AssignmentToForLoopParameter")
     private static Options parseOptions(String[] args) throws Exception {
         List<File> classpath = Collections.emptyList();
         boolean measure = false;
-        List<File> instrumenters = Collections.emptyList();
+        List<File> instrumenters = new ArrayList<File>();
         int estimate = DEFAULT_CLASS_NUMBER_ESTIMATE;
         String mainClass = null;
         List<String> arguments = new ArrayList<String>();

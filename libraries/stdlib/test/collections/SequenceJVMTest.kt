@@ -1,11 +1,11 @@
+@file:kotlin.jvm.JvmVersion
 package test.collections
 
-import org.junit.Test as test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 class SequenceJVMTest {
 
-    @test fun filterIsInstance() {
+    @Test fun filterIsInstance() {
         val src: Sequence<Any> = listOf(1, 2, 3.toDouble(), "abc", "cde").asSequence()
 
         val intValues: Sequence<Int> = src.filterIsInstance<Int>()

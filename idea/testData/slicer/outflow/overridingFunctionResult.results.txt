@@ -1,0 +1,6 @@
+8 override fun foo() = <bold>2</bold>
+8 	override fun <bold>foo() = 2</bold>
+17 		val y = b.<bold>foo()</bold>
+17 			val <bold>y = b.foo()</bold>
+16 		val x = a.<bold>foo()</bold>
+16 			val <bold>x = a.foo()</bold>

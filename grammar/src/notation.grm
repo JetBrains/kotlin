@@ -18,7 +18,7 @@ Operator `*` denotes _iteration_ (zero or more).<br>
 Operator `+` denotes _iteration_ (one or more).<br>
 Operator `?` denotes _option_ (zero or one).<br>
 alpha`{`beta`}` denotes a nonempty _beta_-separated list of _alpha_'s. <br>
-Operator ``++'' means that no space or comment allowed between operands.
+Operator `++` means that no space or comment allowed between operands.
 
 # Semicolons
 

@@ -1,0 +1,3 @@
+module library {
+    exports foo;
+}

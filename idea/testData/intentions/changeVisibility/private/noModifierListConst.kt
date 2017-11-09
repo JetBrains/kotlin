@@ -1,0 +1,1 @@
+<caret>const val a = 1

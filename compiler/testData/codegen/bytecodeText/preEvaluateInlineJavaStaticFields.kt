@@ -38,8 +38,10 @@ object KoKobject {
     val JvmStaticString: String? = "123"
 }
 
+fun Any?.use() {}
+
 fun test() {
-    "res1: " +
+    ("res1: " +
     Integer.MIN_VALUE + " " +
     java.lang.Long.MAX_VALUE + " " +
     JClass.PrimitiveInt + " " +
@@ -52,7 +54,7 @@ fun test() {
     JClass.PrimitiveFloat + " " +
     JClass.PrimitiveDouble + " " +
     JClass.Str + " " +
-    JClass.StrNullable
+    JClass.StrNullable).use()
 
     "res2: " + JClass.BoxedInt
     "res3: " + JClass.NonFinal

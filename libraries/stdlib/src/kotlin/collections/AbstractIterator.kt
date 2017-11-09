@@ -28,6 +28,7 @@ public abstract class AbstractIterator<T>: Iterator<T> {
     override fun next(): T {
         if (!hasNext()) throw NoSuchElementException()
         state = State.NotReady
+        @Suppress("UNCHECKED_CAST")
         return nextValue as T
     }
 

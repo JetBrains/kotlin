@@ -41,10 +41,12 @@ class MakeConstructorParameterPropertyFix(
             "Make constructor parameter a property$suffix"
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return super.isAvailable(project, editor, file) && !element.hasValOrVar()
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         element.addBefore(kotlinValVar.createKeyword(KtPsiFactory(project))!!, element.firstChild)
         element.addModifier(KtTokens.PRIVATE_KEYWORD)
         element.visibilityModifier()?.let { private ->
@@ -73,6 +75,6 @@ class MakeConstructorParameterPropertyFix(
 
 fun KtNameReferenceExpression.getPrimaryConstructorParameterWithSameName(): KtParameter? {
     return nonStaticOuterClasses()
-            .mapNotNull { it.getPrimaryConstructor()?.valueParameters?.firstOrNull { it.name == getReferencedName() } }
+            .mapNotNull { it.primaryConstructor?.valueParameters?.firstOrNull { it.name == getReferencedName() } }
             .firstOrNull()
 }

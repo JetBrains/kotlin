@@ -17,8 +17,12 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.TypeSubstitution;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface CallableMemberDescriptor extends CallableDescriptor, MemberDescriptor {
     @NotNull
@@ -51,4 +55,42 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
 
     @NotNull
     CallableMemberDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides);
+
+    @NotNull
+    CopyBuilder<? extends CallableMemberDescriptor> newCopyBuilder();
+
+    interface CopyBuilder<D extends CallableMemberDescriptor> {
+        @NotNull
+        CopyBuilder<D> setOwner(@NotNull DeclarationDescriptor owner);
+
+        @NotNull
+        CopyBuilder<D> setModality(@NotNull Modality modality);
+
+        @NotNull
+        CopyBuilder<D> setVisibility(@NotNull Visibility visibility);
+
+        @NotNull
+        CopyBuilder<D> setKind(@NotNull Kind kind);
+
+        @NotNull
+        CopyBuilder<D> setTypeParameters(@NotNull List<TypeParameterDescriptor> parameters);
+
+        @NotNull
+        CopyBuilder<D> setDispatchReceiverParameter(@Nullable ReceiverParameterDescriptor dispatchReceiverParameter);
+
+        @NotNull
+        CopyBuilder<D> setSubstitution(@NotNull TypeSubstitution substitution);
+
+        @NotNull
+        CopyBuilder<D> setCopyOverrides(boolean copyOverrides);
+
+        @NotNull
+        CopyBuilder<D> setName(@NotNull Name name);
+
+        @NotNull
+        CopyBuilder<D> setOriginal(@Nullable CallableMemberDescriptor original);
+
+        @Nullable
+        D build();
+    }
 }

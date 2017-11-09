@@ -1,0 +1,21 @@
+package
+
+package foo {
+    @kotlin.js.JsModule(import = "bar") public val bar: kotlin.Int = 42
+    @kotlin.js.JsNonModule public val baz: kotlin.Int = 99
+    @kotlin.js.JsModule(import = "foo") public fun foo(): kotlin.Int
+
+    @kotlin.js.JsModule(import = "A") public final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsModule(import = "B") public object B {
+        private constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

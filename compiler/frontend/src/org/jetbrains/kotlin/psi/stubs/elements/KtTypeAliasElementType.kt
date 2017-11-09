@@ -37,7 +37,7 @@ class KtTypeAliasElementType(debugName: String) :
     }
 
     override fun serialize(stub: KotlinTypeAliasStub, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.getName())
+        dataStream.writeName(stub.name)
         dataStream.writeName(stub.getFqName()?.asString())
         dataStream.writeBoolean(stub.isTopLevel())
     }

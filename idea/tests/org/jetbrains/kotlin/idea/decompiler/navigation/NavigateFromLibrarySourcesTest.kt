@@ -25,7 +25,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtClass
@@ -83,7 +83,7 @@ class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
                 assertEquals(expectedFqName, element.fqName!!.asString())
             }
             else -> {
-                fail("Navigation element should be JetClass or PsiClass: " + element.javaClass + ", " + element.text)
+                fail("Navigation element should be JetClass or PsiClass: " + element::class.java + ", " + element.text)
             }
         }
     }

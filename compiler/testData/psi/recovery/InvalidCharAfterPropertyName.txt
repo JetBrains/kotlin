@@ -1,4 +1,4 @@
-JetFile: InvalidCharAfterPropertyName.kt
+KtFile: InvalidCharAfterPropertyName.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

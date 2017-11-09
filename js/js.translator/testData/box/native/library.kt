@@ -1,3 +1,5 @@
+// EXPECTED_REACHABLE_NODES: 1110
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 package foo
 
 @library class A() {

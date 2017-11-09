@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -50,13 +50,13 @@ class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpress
     override fun applyTo(element: KtPostfixExpression, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
 
-        val base = KtPsiUtil.safeDeparenthesize(element.baseExpression!!)
+        val base = KtPsiUtil.safeDeparenthesize(element.baseExpression!!, true)
         val expressionText = formatForUseInExceptionArgument(base.text!!)
 
         val defaultException = KtPsiFactory(element).createExpression("throw NullPointerException()")
 
         val isStatement = element.isUsedAsStatement(element.analyze())
-        val isStable = base.isStableVariable()
+        val isStable = base.isStable()
 
         val ifStatement = if (isStatement)
             element.convertToIfNullExpression(base, defaultException)

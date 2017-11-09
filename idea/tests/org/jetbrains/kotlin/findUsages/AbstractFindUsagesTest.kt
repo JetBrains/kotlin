@@ -17,18 +17,24 @@
 package org.jetbrains.kotlin.findUsages
 
 import com.intellij.codeInsight.JavaTargetElementEvaluator
-import com.intellij.codeInsight.TargetElementUtilBase
+import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.find.FindManager
-import com.intellij.find.findUsages.*
+import com.intellij.find.findUsages.FindUsagesHandler
+import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.find.findUsages.JavaFindUsagesHandler
+import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
 import com.intellij.find.impl.FindManagerImpl
 import com.intellij.lang.properties.psi.PropertiesFile
 import com.intellij.lang.properties.psi.Property
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.psi.*
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
@@ -41,17 +47,14 @@ import com.intellij.usages.impl.rules.UsageTypeProvider
 import com.intellij.usages.rules.UsageFilteringRule
 import com.intellij.usages.rules.UsageGroupingRule
 import com.intellij.util.CommonProcessors
-import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
-import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
+import org.jetbrains.kotlin.idea.core.util.clearDialogsResults
+import org.jetbrains.kotlin.idea.core.util.setDialogsResult
+import org.jetbrains.kotlin.idea.refactoring.CHECK_SUPER_METHODS_YES_NO_DIALOG
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -60,167 +63,7 @@ import java.util.*
 
 abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() {
 
-    protected enum class OptionsParser {
-        CLASS {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return KotlinClassFindUsagesOptions(project).apply {
-                    isUsages = false
-                    isSearchForTextOccurrences = false
-                    searchConstructorUsages = false
-                    for (s in InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                        if (parseCommonOptions(this, s)) continue
-
-                        when (s) {
-                            "constructorUsages" -> searchConstructorUsages = true
-                            "derivedInterfaces" -> isDerivedInterfaces = true
-                            "derivedClasses" -> isDerivedClasses = true
-                            "functionUsages" -> isMethodsUsages = true
-                            "propertyUsages" -> isFieldsUsages = true
-                            else -> fail("Invalid option: " + s)
-                        }
-                    }
-                }
-            }
-        },
-        FUNCTION {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return KotlinFunctionFindUsagesOptions(project).apply {
-                    isUsages = false
-                    for (s in InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                        if (parseCommonOptions(this, s)) continue
-
-                        when (s) {
-                            "overrides" -> {
-                                isOverridingMethods = true
-                                isImplementingMethods = true
-                            }
-                            "overloadUsages" -> {
-                                isIncludeOverloadUsages = true
-                                isUsages = true
-                            }
-                            else -> fail("Invalid option: " + s)
-                        }
-                    }
-                }
-            }
-        },
-        PROPERTY {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return KotlinPropertyFindUsagesOptions(project).apply {
-                    isUsages = false
-                    for (s in InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                        if (parseCommonOptions(this, s)) continue
-
-                        when (s) {
-                            "overrides" -> searchOverrides = true
-                            "skipRead" -> isReadAccess = false
-                            "skipWrite" -> isWriteAccess = false
-                            else -> fail("Invalid option: " + s)
-                        }
-                    }
-                }
-            }
-        },
-        JAVA_CLASS {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return KotlinClassFindUsagesOptions(project).apply {
-                    isUsages = false
-                    searchConstructorUsages = false
-                    for (s in InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                        if (parseCommonOptions(this, s)) continue
-
-                        when (s) {
-                            "derivedInterfaces" -> isDerivedInterfaces = true
-                            "derivedClasses" -> isDerivedClasses = true
-                            "implementingClasses" -> isImplementingClasses = true
-                            "methodUsages" -> isMethodsUsages = true
-                            "fieldUsages" -> isFieldsUsages = true
-                            else -> fail("Invalid option: " + s)
-                        }
-                    }
-                }
-            }
-        },
-        JAVA_METHOD {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return JavaMethodFindUsagesOptions(project).apply {
-                    isUsages = false
-                    for (s in InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                        if (parseCommonOptions(this, s)) continue
-
-                        when (s) {
-                            "overrides" -> {
-                                isOverridingMethods = true
-                                isImplementingMethods = true
-                            }
-                            else -> fail("Invalid option: " + s)
-                        }
-                    }
-                }
-            }
-        },
-        JAVA_FIELD {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return JavaVariableFindUsagesOptions(project)
-            }
-        },
-        JAVA_PACKAGE {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return JavaPackageFindUsagesOptions(project)
-            }
-        },
-        DEFAULT {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return FindUsagesOptions(project)
-            }
-        };
-
-        abstract fun parse(text: String, project: Project): FindUsagesOptions
-
-        companion object {
-
-            protected fun parseCommonOptions(options: JavaFindUsagesOptions, s: String): Boolean {
-                when (s) {
-                    "usages" -> {
-                        options.isUsages = true
-                        return true
-                    }
-                    "skipImports" -> {
-                        options.isSkipImportStatements = true
-                        return true
-                    }
-                    "textOccurrences" -> {
-                        options.isSearchForTextOccurrences = true
-                        return true
-                    }
-                    else -> return false
-                }
-
-            }
-
-            fun getParserByPsiElementClass(klass: Class<out PsiElement>): OptionsParser? {
-                return when (klass) {
-                    KtNamedFunction::class.java -> FUNCTION
-                    KtProperty::class.java, KtParameter::class.java -> PROPERTY
-                    KtClass::class.java -> CLASS
-                    PsiMethod::class.java -> JAVA_METHOD
-                    PsiClass::class.java -> JAVA_CLASS
-                    PsiField::class.java -> JAVA_FIELD
-                    PsiPackage::class.java -> JAVA_PACKAGE
-                    KtTypeParameter::class.java -> DEFAULT
-                    else -> null
-                }
-
-            }
-        }
-    }
-
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-
-    public override fun setUp() {
-        super.setUp()
-        myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/findUsages"
-    }
 
     // used in Spring tests (outside main project!)
     protected open fun extraConfig(path: String) {
@@ -259,25 +102,21 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             val rootPath = path.substringBeforeLast("/") + "/"
 
             val rootDir = File(rootPath)
-            val extraFiles = rootDir.listFiles { dir, name ->
+            val extraFiles = rootDir.listFiles { _, name ->
                 if (!name.startsWith(prefix) || name == mainFileName) return@listFiles false
 
                 val ext = FileUtilRt.getExtension(name)
-                ext == "kt"
-                || ext == "java"
-                || ext == "xml"
-                || ext == "properties"
-                || ext == "txt" && !name.endsWith(".results.txt")
+                ext in SUPPORTED_EXTENSIONS && !name.endsWith(".results.txt")
             }
 
             for (file in extraFiles) {
-                myFixture.configureByFile(rootPath + file.name)
+                myFixture.configureByFile(file.name)
             }
-            myFixture.configureByFile(path)
+            myFixture.configureByFile(mainFileName)
 
             val caretElement = if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF"))
-                TargetElementUtilBase.findTargetElement(myFixture.editor,
-                                                        TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR)!!
+                TargetElementUtil.findTargetElement(myFixture.editor,
+                                                    TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR)!!
             else
                 myFixture.elementAtCaret
             UsefulTestCase.assertInstanceOf(caretElement, caretElementClass)
@@ -290,15 +129,15 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             // Ensure that search by sources (if present) and decompiled declarations gives the same results
             if (isLibraryElement) {
                 val originalElement = caretElement.originalElement
-                findUsagesAndCheckResults(mainFileText, prefix, rootPath, originalElement, options)
+                findUsagesAndCheckResults(mainFileText, prefix, rootPath, originalElement, options, project)
 
                 val navigationElement = caretElement.navigationElement
                 if (navigationElement !== originalElement) {
-                    findUsagesAndCheckResults(mainFileText, prefix, rootPath, navigationElement, options)
+                    findUsagesAndCheckResults(mainFileText, prefix, rootPath, navigationElement, options, project)
                 }
             }
             else {
-                findUsagesAndCheckResults<PsiElement>(mainFileText, prefix, rootPath, caretElement, options)
+                findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options, project)
             }
         }
         finally {
@@ -306,99 +145,154 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
         }
     }
 
-    private fun <T : PsiElement> findUsagesAndCheckResults(
-            mainFileText: String,
-            prefix: String,
-            rootPath: String,
-            caretElement: T,
-            options: FindUsagesOptions?
-    ) {
-        val highlightingMode = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// HIGHLIGHTING")
 
-        var log: String? = null
-        val logList = ArrayList<String>()
-        val usageInfos = try {
-            if (ExpressionsOfTypeProcessor.mode !== ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN) {
-                ExpressionsOfTypeProcessor.testLog = logList
-            }
+    companion object {
+        val SUPPORTED_EXTENSIONS = setOf("kt", "kts", "java", "xml", "properties", "txt", "groovy")
 
-            findUsages(caretElement, options, highlightingMode)
-        }
-        finally {
-            ExpressionsOfTypeProcessor.testLog = null
-            if (logList.size > 0) {
-                log = logList.sorted().joinToString("\n")
-            }
+        val USAGE_VIEW_PRESENTATION = UsageViewPresentation()
+
+        internal fun getUsageAdapters(
+                filters: Collection<UsageFilteringRule>,
+                usageInfos: Collection<UsageInfo>
+        ): Collection<UsageInfo2UsageAdapter> {
+            return usageInfos
+                    .map(::UsageInfo2UsageAdapter)
+                    .filter { usageAdapter -> filters.all { it.isVisible(usageAdapter) } }
         }
 
-        val filteringRules = instantiateClasses<UsageFilteringRule>(mainFileText, "// FILTERING_RULES: ")
-        val groupingRules = instantiateClasses<UsageGroupingRule>(mainFileText, "// GROUPING_RULES: ")
+        internal fun getUsageType(element: PsiElement?): UsageType? {
+            if (element == null) return null
 
-        val filteredUsages = getUsageAdapters(filteringRules, usageInfos)
-
-        val usageFiles = filteredUsages.map { it.file.name }.distinct()
-        val appendFileName = usageFiles.size > 1
-
-        val convertToString: (UsageInfo2UsageAdapter) -> String = { usageAdapter ->
-            var groupAsString = groupingRules
-                    .map { it.groupUsage(usageAdapter)?.getText(null) ?: "" }
-                    .joinToString(", ")
-            if (!groupAsString.isEmpty()) {
-                groupAsString = "($groupAsString) "
+            if (element.getNonStrictParentOfType<PsiComment>() != null) {
+                return UsageType.COMMENT_USAGE
             }
 
-            val usageType = getUsageType(usageAdapter.element)
-            val usageTypeAsString = usageType?.toString(USAGE_VIEW_PRESENTATION) ?: "null"
-
-            val usageChunks = ArrayList<TextChunk>()
-            usageChunks.addAll(usageAdapter.presentation.text.asList())
-            usageChunks.add(1, TextChunk(TextAttributes(), " ")) // add space after line number
-
-            buildString {
-                if (appendFileName) {
-                    append("[").append(usageAdapter.file.name).append("] ")
-                }
-                append(usageTypeAsString)
-                append(" ")
-                append(groupAsString)
-                append(usageChunks.joinToString(""))
-            }
+            val providers = Extensions.getExtensions(UsageTypeProvider.EP_NAME)
+            return providers
+                           .mapNotNull { it.getUsageType(element) }
+                           .firstOrNull()
+                   ?: UsageType.UNCLASSIFIED
         }
 
-        val finalUsages = filteredUsages.map(convertToString).sorted()
-        KotlinTestUtils.assertEqualsToFile(File(rootPath, prefix + "results.txt"), finalUsages.joinToString("\n"))
+        internal fun <T> instantiateClasses(mainFileText: String, directive: String): Collection<T> {
+            val filteringRuleClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, directive)
+            return filteringRuleClassNames
+                    .map {
+                        @Suppress("UNCHECKED_CAST")
+                        (Class.forName(it).newInstance() as T)
+                    }
+        }
+    }
+}
 
-        if (log != null) {
-            KotlinTestUtils.assertEqualsToFile(File(rootPath, prefix + "log"), log)
+internal fun <T : PsiElement> findUsagesAndCheckResults(
+        mainFileText: String,
+        prefix: String,
+        rootPath: String,
+        caretElement: T,
+        options: FindUsagesOptions?,
+        project: Project,
+        alwaysAppendFileName: Boolean = false
+) {
+    val highlightingMode = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// HIGHLIGHTING")
 
-            // if log is empty then compare results with plain search
-            try {
-                ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN
+    var log: String? = null
+    val logList = ArrayList<String>()
+    val usageInfos = try {
+        if (ExpressionsOfTypeProcessor.mode !== ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN) {
+            ExpressionsOfTypeProcessor.testLog = logList
+        }
 
-                findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options)
+        if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// PLAIN_WHEN_NEEDED")) {
+            ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.PLAIN_WHEN_NEEDED
+        }
+
+        val searchSuperDeclaration =
+                InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, CHECK_SUPER_METHODS_YES_NO_DIALOG + ":").firstOrNull() != "no"
+
+        findUsages(caretElement, options, highlightingMode, project, searchSuperDeclaration)
+    }
+    finally {
+        ExpressionsOfTypeProcessor.testLog = null
+        if (logList.size > 0) {
+            log = logList.sorted().joinToString("\n")
+        }
+
+        ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART
+    }
+
+    val filteringRules = AbstractFindUsagesTest.instantiateClasses<UsageFilteringRule>(mainFileText, "// FILTERING_RULES: ")
+    val groupingRules = AbstractFindUsagesTest.instantiateClasses<UsageGroupingRule>(mainFileText, "// GROUPING_RULES: ")
+
+    val filteredUsages = AbstractFindUsagesTest.getUsageAdapters(filteringRules, usageInfos)
+
+    val usageFiles = filteredUsages.map { it.file.name }.distinct()
+    val appendFileName = alwaysAppendFileName || usageFiles.size > 1
+
+    val convertToString: (UsageInfo2UsageAdapter) -> String = { usageAdapter ->
+        var groupAsString = groupingRules
+                .map { it.groupUsage(usageAdapter)?.getText(null) ?: "" }
+                .joinToString(", ")
+        if (!groupAsString.isEmpty()) {
+            groupAsString = "($groupAsString) "
+        }
+
+        val usageType = AbstractFindUsagesTest.getUsageType(usageAdapter.element)
+        val usageTypeAsString = usageType?.toString(AbstractFindUsagesTest.USAGE_VIEW_PRESENTATION) ?: "null"
+
+        val usageChunks = ArrayList<TextChunk>()
+        usageChunks.addAll(usageAdapter.presentation.text.asList())
+        usageChunks.add(1, TextChunk(TextAttributes(), " ")) // add space after line number
+
+        buildString {
+            if (appendFileName) {
+                append("[").append(usageAdapter.file.name).append("] ")
             }
-            finally {
-                ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART
-            }
+            append(usageTypeAsString)
+            append(" ")
+            append(groupAsString)
+            append(usageChunks.joinToString(""))
         }
     }
 
-    protected fun findUsages(
-            targetElement: PsiElement,
-            options: FindUsagesOptions?,
-            highlightingMode: Boolean
-    ): Collection<UsageInfo> {
-        val project = project
+    val finalUsages = filteredUsages.map(convertToString).sorted()
+    KotlinTestUtils.assertEqualsToFile(File(rootPath, prefix + "results.txt"), finalUsages.joinToString("\n"))
 
-        val handler: FindUsagesHandler = (if (targetElement is PsiMember) {
-            JavaFindUsagesHandler(targetElement, JavaFindUsagesHandlerFactory(project))
+    if (log != null) {
+        KotlinTestUtils.assertEqualsToFile(File(rootPath, prefix + "log"), log)
+
+        // if log is empty then compare results with plain search
+        try {
+            ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN
+
+            findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options, project)
         }
-        else if (targetElement is KtDeclaration && targetElement !is KtTypeAlias) {
-            KotlinFindUsagesHandlerFactory(project).createFindUsagesHandlerNoQuestions(targetElement)
+        finally {
+            ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART
         }
-        else {
-            (FindManager.getInstance(project) as FindManagerImpl).findUsagesManager.getFindUsagesHandler(targetElement, false)
-        }) ?: error("Cannot find handler for: $targetElement")
+    }
+}
+
+internal fun findUsages(
+        targetElement: PsiElement,
+        options: FindUsagesOptions?,
+        highlightingMode: Boolean,
+        project: Project,
+        searchSuperDeclaration: Boolean = true
+): Collection<UsageInfo> {
+    try {
+        val handler: FindUsagesHandler = when {
+            targetElement is PsiMember ->
+                JavaFindUsagesHandler(targetElement, JavaFindUsagesHandlerFactory(project))
+            else -> {
+                if (!searchSuperDeclaration) {
+                    setDialogsResult(CHECK_SUPER_METHODS_YES_NO_DIALOG, Messages.NO)
+                }
+
+                val findManagerImpl = FindManager.getInstance(project) as FindManagerImpl
+                findManagerImpl.findUsagesManager.getFindUsagesHandler(targetElement, false) ?: error("Cannot find handler for: $targetElement")
+            }
+        }
 
         @Suppress("NAME_SHADOWING")
         val options = options ?: handler.getFindUsagesOptions(null)
@@ -425,41 +319,8 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
 
         return processor.results
     }
-
-    companion object {
-
-        val USAGE_VIEW_PRESENTATION = UsageViewPresentation()
-
-        private fun getUsageAdapters(
-                filters: Collection<UsageFilteringRule>,
-                usageInfos: Collection<UsageInfo>
-        ): Collection<UsageInfo2UsageAdapter> {
-            return usageInfos
-                    .map(::UsageInfo2UsageAdapter)
-                    .filter { usageAdapter -> filters.all { it.isVisible(usageAdapter) } }
-        }
-
-        private fun getUsageType(element: PsiElement?): UsageType? {
-            if (element == null) return null
-
-            if (element.getNonStrictParentOfType<PsiComment>() != null) {
-                return UsageType.COMMENT_USAGE
-            }
-
-            val providers = Extensions.getExtensions(UsageTypeProvider.EP_NAME)
-            return providers
-                           .mapNotNull { it.getUsageType(element) }
-                           .firstOrNull()
-                   ?: UsageType.UNCLASSIFIED
-        }
-
-        private fun <T> instantiateClasses(mainFileText: String, directive: String): Collection<T> {
-            val filteringRuleClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, directive)
-            return filteringRuleClassNames
-                    .map {
-                        @Suppress("UNCHECKED_CAST")
-                        (Class.forName(it).newInstance() as T)
-                    }
-        }
+    finally {
+        clearDialogsResults()
     }
 }
+

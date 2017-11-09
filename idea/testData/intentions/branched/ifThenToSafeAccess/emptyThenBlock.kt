@@ -1,3 +1,5 @@
+// IS_APPLICABLE: false
+
 fun maybeFoo(): String? {
     return "foo"
 }

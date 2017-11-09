@@ -1,5 +1,7 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
+// !LANGUAGE: +CallableReferencesToClassMembersWithEmptyLHS
+
 import kotlin.reflect.KFunction1
 
 class A {
@@ -7,7 +9,7 @@ class A {
 }
     
 fun A.main() {
-    ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>Inner<!>
+    ::Inner
     val y = A::Inner
 
     checkSubtype<KFunction1<A, A.Inner>>(y)

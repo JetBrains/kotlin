@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 import java.util.AbstractList
 
 class A : AbstractList<String>() {

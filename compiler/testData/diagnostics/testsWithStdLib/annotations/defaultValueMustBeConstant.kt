@@ -1,6 +1,6 @@
 import kotlin.reflect.KClass
 
-val CONST = 1
+const val CONST = 1
 fun foo() = 1
 val nonConst = foo()
 

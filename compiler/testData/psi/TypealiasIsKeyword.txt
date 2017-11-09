@@ -1,4 +1,4 @@
-JetFile: TypealiasIsKeyword.kt
+KtFile: TypealiasIsKeyword.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

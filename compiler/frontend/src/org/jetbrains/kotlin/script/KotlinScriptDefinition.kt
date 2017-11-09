@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.fileTypes.LanguageFileType
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
-import java.io.File
 import kotlin.reflect.KClass
+import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 open class KotlinScriptDefinition(val template: KClass<out Any>) {
@@ -33,21 +33,18 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) {
     // TODO: consider creating separate type (subtype? for kotlin scripts)
     open val fileType: LanguageFileType = KotlinFileType.INSTANCE
 
-    open fun <TF> isScript(file: TF): Boolean =
-            getFileName(file).endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
+    open val annotationsForSamWithReceivers: List<String>
+        get() = emptyList()
+
+    open fun isScript(fileName: String): Boolean =
+            fileName.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
 
     open fun getScriptName(script: KtScript): Name =
-        ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
+            NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
-    open fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
-}
+    open val dependencyResolver: DependenciesResolver get() = DependenciesResolver.NoDependencies
 
-interface KotlinScriptExternalDependencies {
-    val javaHome: String? get() = null
-    val classpath: Iterable<File> get() = emptyList()
-    val imports: Iterable<String> get() = emptyList()
-    val sources: Iterable<File> get() = emptyList()
-    val scripts: Iterable<File> get() = emptyList()
+    open val acceptedAnnotations: List<KClass<out Annotation>> get() = emptyList()
 }
 
 object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)

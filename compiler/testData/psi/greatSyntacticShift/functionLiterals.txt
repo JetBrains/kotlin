@@ -1,4 +1,4 @@
-JetFile: functionLiterals.kt
+KtFile: functionLiterals.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

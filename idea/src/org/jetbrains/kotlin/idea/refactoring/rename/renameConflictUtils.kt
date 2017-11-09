@@ -24,7 +24,7 @@ import com.intellij.usageView.UsageViewUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.copied
@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 internal fun ResolvedCall<*>.noReceivers() = dispatchReceiver == null && extensionReceiver == null
@@ -74,7 +73,7 @@ internal fun PsiElement.representativeContainer(): PsiNamedElement? =
         when (this) {
             is KtDeclaration -> containingClassOrObject
                                 ?: getStrictParentOfType<KtNamedDeclaration>()
-                                ?: JavaPsiFacade.getInstance(project).findPackage(getContainingKtFile().packageFqName.asString())
+                                ?: JavaPsiFacade.getInstance(project).findPackage(containingKtFile.packageFqName.asString())
             is PsiMember -> containingClass
             else -> null
         }
@@ -86,14 +85,24 @@ internal fun checkRedeclarations(
         newName: String,
         result: MutableList<UsageInfo>
 ) {
-    fun MemberScope.findSiblingByName(): DeclarationDescriptor? {
+    fun DeclarationDescriptor.isTopLevelPrivate(): Boolean {
+        return this is DeclarationDescriptorWithVisibility
+               && visibility == Visibilities.PRIVATE
+               && containingDeclaration is PackageFragmentDescriptor
+    }
+
+    fun isInSameFile(d1: DeclarationDescriptor, d2: DeclarationDescriptor): Boolean {
+        return (d1 as? DeclarationDescriptorWithSource)?.source?.getPsi()?.containingFile == (d2 as? DeclarationDescriptorWithSource)?.source?.getPsi()?.containingFile
+    }
+
+    fun MemberScope.findSiblingsByName(): List<DeclarationDescriptor> {
         val descriptorKindFilter = when (descriptor) {
             is ClassDescriptor -> DescriptorKindFilter.CLASSIFIERS
             is PropertyDescriptor -> DescriptorKindFilter.VARIABLES
             is FunctionDescriptor -> DescriptorKindFilter.FUNCTIONS
-            else -> return null
+            else -> return emptyList()
         }
-        return getDescriptorsFiltered(descriptorKindFilter) { it.asString() == newName }.firstOrNull { it != descriptor }
+        return getDescriptorsFiltered(descriptorKindFilter) { it.asString() == newName }.filter { it != descriptor }
     }
 
     fun getSiblingWithNewName(): DeclarationDescriptor? {
@@ -120,8 +129,11 @@ internal fun checkRedeclarations(
         }
 
         return when (containingDescriptor) {
-            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope.findSiblingByName()
-            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().findSiblingByName()
+            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope.findSiblingsByName().firstOrNull()
+            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().findSiblingsByName().firstOrNull {
+                it != descriptor
+                && (!(descriptor.isTopLevelPrivate() || it.isTopLevelPrivate()) || isInSameFile(descriptor, it))
+            }
             else -> {
                 val block = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()?.parent as? KtBlockExpression
                             ?: return null
@@ -133,7 +145,7 @@ internal fun checkRedeclarations(
                         is FunctionDescriptor -> it is KtNamedFunction
                         else -> false
                     }
-                } as? KtDeclaration)?.resolveToDescriptor()
+                } as? KtDeclaration)?.unsafeResolveToDescriptor()
             }
         }
     }
@@ -153,7 +165,7 @@ private fun LexicalScope.getRelevantDescriptors(
     val nameAsName = Name.identifier(name)
     return when (declaration) {
         is KtProperty, is KtParameter, is PsiField -> getAllAccessibleVariables(nameAsName)
-        is KtClassOrObject, is PsiClass -> findClassifier(nameAsName, NoLookupLocation.FROM_IDE).singletonOrEmptyList()
+        is KtClassOrObject, is PsiClass -> listOfNotNull(findClassifier(nameAsName, NoLookupLocation.FROM_IDE))
         else -> emptyList()
     }
 }
@@ -310,7 +322,7 @@ internal fun checkNewNameUsagesRetargeting(
         newUsages: MutableList<UsageInfo>
 ) {
     val currentName = declaration.name ?: return
-    val descriptor = declaration.resolveToDescriptor()
+    val descriptor = declaration.unsafeResolveToDescriptor()
 
     if (declaration is KtParameter && !declaration.hasValOrVar()) {
         val ownerFunction = declaration.ownerFunction

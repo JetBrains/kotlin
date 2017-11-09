@@ -13,6 +13,10 @@ fun classFileBytecodeString(classFile: File): String {
     return out.toString()
 }
 
+fun checkBytecodeContains(classFile: File, vararg strings: String) {
+    checkBytecodeContains(classFile, strings.toList())
+}
+
 fun checkBytecodeContains(classFile: File, strings: Iterable<String>) {
     val bytecode = classFileBytecodeString(classFile)
     for (string in strings) {

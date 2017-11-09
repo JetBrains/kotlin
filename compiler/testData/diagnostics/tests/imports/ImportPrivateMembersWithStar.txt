@@ -1,0 +1,73 @@
+package
+
+package test {
+    public fun testAccess(): kotlin.Unit
+
+    private final class TopLevelClass {
+        public constructor TopLevelClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        private final class NestedClass {
+            public constructor NestedClass()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public final class A1 {
+                public constructor A1()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            public object A2 {
+                private constructor A2()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+
+    private final enum class TopLevelEnum : kotlin.Enum<test.TopLevelEnum> {
+        enum entry E1
+
+        private constructor TopLevelEnum(/*0*/ e: test.TopLevelEnum.NestedEnum)
+        private final val e: test.TopLevelEnum.NestedEnum
+        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.TopLevelEnum): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.TopLevelEnum!>!
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        private final enum class NestedEnum : kotlin.Enum<test.TopLevelEnum.NestedEnum> {
+            enum entry NestedEntry
+
+            private constructor NestedEnum()
+            public final override /*1*/ /*fake_override*/ val name: kotlin.String
+            public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+            protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.TopLevelEnum.NestedEnum): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+            public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.TopLevelEnum.NestedEnum!>!
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            // Static members
+            public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.TopLevelEnum.NestedEnum
+            public final /*synthesized*/ fun values(): kotlin.Array<test.TopLevelEnum.NestedEnum>
+        }
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.TopLevelEnum
+        public final /*synthesized*/ fun values(): kotlin.Array<test.TopLevelEnum>
+    }
+}

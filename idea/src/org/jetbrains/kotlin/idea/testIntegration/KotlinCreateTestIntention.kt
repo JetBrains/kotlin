@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
 class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, "Create test") {
@@ -57,7 +56,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
         if (element.nameIdentifier == null) return null
 
         if (element is KtClassOrObject) {
-            if (element.isLocal()) return null
+            if (element.isLocal) return null
             if (element is KtEnumEntry) return null
             if (element is KtClass && (element.isAnnotation() || element.isInterface())) return null
 
@@ -83,11 +82,13 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
         return null
     }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: KtNamedDeclaration, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val lightClass = when (element) {
             is KtClassOrObject -> element.toLightClass()
-            else -> element.getContainingKtFile().findFacadeClass()
+            else -> element.containingKtFile.findFacadeClass()
         } ?: return
 
         object : CreateTestAction() {
@@ -184,7 +185,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                                     getDocument(generatedFile)?.let { doPostponedOperationsAndUnblockDocument(it) }
                                 }
 
-                                JavaToKotlinAction.convertFiles(generatedFile.singletonList(), project, false).singleOrNull()
+                                JavaToKotlinAction.convertFiles(listOf(generatedFile), project, false).singleOrNull()
                             }
                         }
                     }

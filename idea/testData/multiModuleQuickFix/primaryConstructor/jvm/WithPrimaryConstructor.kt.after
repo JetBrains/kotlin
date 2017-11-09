@@ -1,0 +1,2 @@
+// WithPrimaryConstructor: to be implemented
+actual class WithPrimaryConstructor actual constructor(x: Int, s: String)

@@ -1,4 +1,4 @@
-JetFile: qualifiedExpressionWithSelector.kt
+KtFile: qualifiedExpressionWithSelector.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

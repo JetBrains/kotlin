@@ -36,15 +36,15 @@ class MyChildClass() : MyClass() {}
 }
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass4<!>() : MyTrait, MyAbstractClass() {
-    <!VIRTUAL_MEMBER_HIDDEN!>fun foo()<!> {}
-    <!VIRTUAL_MEMBER_HIDDEN, MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val pr : Unit<!>
+    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>() {}
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val <!VIRTUAL_MEMBER_HIDDEN!>pr<!> : Unit<!>
     <!NOTHING_TO_OVERRIDE!>override<!> fun other() {}
     <!NOTHING_TO_OVERRIDE!>override<!> val otherPr : Int = 1
 }
 
 class MyChildClass1() : MyClass() {
-    <!VIRTUAL_MEMBER_HIDDEN!>fun foo()<!> {}
-    <!VIRTUAL_MEMBER_HIDDEN!>val pr : Unit<!> = Unit
+    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>() {}
+    val <!VIRTUAL_MEMBER_HIDDEN!>pr<!> : Unit = Unit
     override fun bar() {}
     override val prr : Unit = Unit
 }

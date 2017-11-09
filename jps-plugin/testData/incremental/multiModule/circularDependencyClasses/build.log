@@ -8,6 +8,8 @@ End of files
 Compiling files:
   module2/src/b.kt
 End of files
+Marked as dirty by Kotlin:
+  module1/src/a.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:

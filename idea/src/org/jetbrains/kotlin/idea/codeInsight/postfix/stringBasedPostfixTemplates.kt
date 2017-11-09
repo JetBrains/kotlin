@@ -22,12 +22,16 @@ import com.intellij.codeInsight.template.impl.MacroCallNode
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateExpressionSelector
 import com.intellij.codeInsight.template.postfix.templates.StringBasedPostfixTemplate
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.IterableTypesDetection
 import org.jetbrains.kotlin.idea.liveTemplates.macro.SuggestVariableNameMacro
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.idea.resolve.ideService
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
-import org.jetbrains.kotlin.types.typeUtil.isIterator
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal abstract class ConstantStringBasedPostfixTemplate(
         name: String,
@@ -46,7 +50,7 @@ internal class KtForEachPostfixTemplate(
         name,
         "for (item in expr)",
         "for (\$name$ in \$expr$) {\n    \$END$\n}",
-        createExpressionSelector(statementsOnly = true, typePredicate = KotlinType::containsIteratorMethod)
+        createExpressionSelectorWithComplexFilter(statementsOnly = true, predicate = KtExpression::hasIterableType)
 ) {
     override fun setVariables(template: Template, element: PsiElement) {
         val name = MacroCallNode(SuggestVariableNameMacro())
@@ -54,10 +58,13 @@ internal class KtForEachPostfixTemplate(
     }
 }
 
-private fun KotlinType.containsIteratorMethod() =
-    memberScope.getContributedFunctions(OperatorNameConventions.ITERATOR, NoLookupLocation.FROM_IDE).any {
-        it.returnType?.isIterator() ?: false && it.valueParameters.isEmpty()
-    }
+private fun KtExpression.hasIterableType(bindingContext: BindingContext): Boolean {
+    val resolutionFacade = getResolutionFacade()
+    val type = getType(bindingContext) ?: return false
+    val scope = getResolutionScope(bindingContext, resolutionFacade)
+    val detector = resolutionFacade.ideService<IterableTypesDetection>().createDetector(scope)
+    return detector.isIterable(type)
+}
 
 internal object KtAssertPostfixTemplate : ConstantStringBasedPostfixTemplate(
         "assert",

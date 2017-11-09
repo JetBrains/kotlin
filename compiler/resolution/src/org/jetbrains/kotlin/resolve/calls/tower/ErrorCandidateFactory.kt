@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,17 @@ enum class WrongResolutionToClassifier(val message: (Name) -> String) {
     TYPE_PARAMETER_AS_FUNCTION({ "Type parameter $it cannot be called as function" }),
     INTERFACE_AS_VALUE({ "Interface $it does not have companion object" }),
     INTERFACE_AS_FUNCTION({ "Interface $it does not have constructors" }),
+    EXPECT_CLASS_AS_FUNCTION({ "Expected class $it does not have default constructor" }),
     CLASS_AS_VALUE({ "Class $it does not have companion object" }),
-    OBJECT_AS_FUNCTION({ " Function 'invoke()' is not found in object $it " })
+    INNER_CLASS_CONSTRUCTOR_NO_RECEIVER({ "Constructor of inner class $it can be called only with receiver of containing class" }),
+    OBJECT_AS_FUNCTION({ "Function 'invoke()' is not found in object $it" })
 }
 
 sealed class ErrorCandidate<out D: DeclarationDescriptor>(val descriptor: D) {
-    class Classifier(classifierDescriptor: ClassifierDescriptor, val kind: WrongResolutionToClassifier)
-    : ErrorCandidate<ClassifierDescriptor>(classifierDescriptor) {
+    class Classifier(
+            classifierDescriptor: ClassifierDescriptor,
+            val kind: WrongResolutionToClassifier
+    ) : ErrorCandidate<ClassifierDescriptor>(classifierDescriptor) {
         val errorMessage = kind.message(descriptor.name)
     }
 }
@@ -83,20 +87,33 @@ private fun ErrorCandidateContext.asClassifierCall(asFunction: Boolean) {
                 else -> scopeTower.lexicalScope.findClassifier(name, scopeTower.location)
             } ?: return
 
-    val kind =
-            when (classifier) {
-                is TypeParameterDescriptor -> if (asFunction) TYPE_PARAMETER_AS_FUNCTION else TYPE_PARAMETER_AS_VALUE
-                is ClassDescriptor -> {
-                    when (classifier.kind) {
-                        ClassKind.INTERFACE -> if (asFunction) INTERFACE_AS_FUNCTION else INTERFACE_AS_VALUE
-                        ClassKind.OBJECT -> if (asFunction) OBJECT_AS_FUNCTION else return
-                        ClassKind.CLASS -> if (asFunction) return else CLASS_AS_VALUE
-                        else -> return
-                    }
-                }
-                else -> return
-            }
-
+    val kind = getWrongResolutionToClassifier(classifier, asFunction) ?: return
 
     add(ErrorCandidate.Classifier(classifier, kind))
 }
+
+private fun ErrorCandidateContext.getWrongResolutionToClassifier(classifier: ClassifierDescriptor, asFunction: Boolean): WrongResolutionToClassifier? =
+        when (classifier) {
+            is TypeAliasDescriptor -> classifier.classDescriptor?.let { getWrongResolutionToClassifier(it, asFunction) }
+
+            is TypeParameterDescriptor -> if (asFunction) TYPE_PARAMETER_AS_FUNCTION else TYPE_PARAMETER_AS_VALUE
+
+            is ClassDescriptor -> {
+                when (classifier.kind) {
+                    ClassKind.INTERFACE -> if (asFunction) INTERFACE_AS_FUNCTION else INTERFACE_AS_VALUE
+
+                    ClassKind.OBJECT -> if (asFunction) OBJECT_AS_FUNCTION else null
+
+                    ClassKind.CLASS -> when {
+                        asFunction && explicitReceiver is QualifierReceiver? && classifier.isInner -> INNER_CLASS_CONSTRUCTOR_NO_RECEIVER
+                        asFunction && classifier.isExpect -> EXPECT_CLASS_AS_FUNCTION
+                        !asFunction -> CLASS_AS_VALUE
+                        else -> null
+                    }
+
+                    else -> null
+                }
+            }
+
+            else -> null
+        }

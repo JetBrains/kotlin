@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jps.build;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,13 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultiModule extends AbstractIncrementalJpsTest {
         public void testAllFilesPresentInMultiModule() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("circular")
+        public void testCircular() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/circular/");
+            doTest(fileName);
         }
 
         @TestMetadata("circularDependencyClasses")
@@ -85,6 +92,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("defaultArgumentInConstructorRemoved")
+        public void testDefaultArgumentInConstructorRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/defaultArgumentInConstructorRemoved/");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultParameterAdded")
         public void testDefaultParameterAdded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/defaultParameterAdded/");
@@ -109,6 +122,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("defaultValueInConstructorRemoved")
+        public void testDefaultValueInConstructorRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/defaultValueInConstructorRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exportedDependency")
+        public void testExportedDependency() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/exportedDependency/");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineFunctionInlined")
         public void testInlineFunctionInlined() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionInlined/");
@@ -124,6 +149,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("moveFileToAnotherModule")
         public void testMoveFileToAnotherModule() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/moveFileToAnotherModule/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/simple/");
             doTest(fileName);
         }
 
@@ -168,7 +199,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/twoDependants/");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("jps-plugin/testData/incremental/pureKotlin")
@@ -178,12 +208,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("accessingFunctionsViaPackagePart")
         public void testAccessingFunctionsViaPackagePart() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessingFunctionsViaPackagePart/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("accessingFunctionsViaRenamedFileClass")
-        public void testAccessingFunctionsViaRenamedFileClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/accessingFunctionsViaRenamedFileClass/");
             doTest(fileName);
         }
 
@@ -224,7 +248,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("annotations")
@@ -317,15 +341,15 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("conflictingPlatformDeclarations")
-        public void testConflictingPlatformDeclarations() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/conflictingPlatformDeclarations/");
-            doTest(fileName);
-        }
-
         @TestMetadata("constantRemoved")
         public void testConstantRemoved() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/constantRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constantValueChanged")
+        public void testConstantValueChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/constantValueChanged/");
             doTest(fileName);
         }
 
@@ -356,12 +380,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("defaultValueChanged")
         public void testDefaultValueChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueChanged/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("defaultValueInConstructorAdded")
-        public void testDefaultValueInConstructorAdded() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueInConstructorAdded/");
             doTest(fileName);
         }
 
@@ -443,33 +461,27 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionReferencingClass")
+        public void testFunctionReferencingClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/functionReferencingClass/");
+            doTest(fileName);
+        }
+
         @TestMetadata("independentClasses")
         public void testIndependentClasses() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/independentClasses/");
             doTest(fileName);
         }
 
-        @TestMetadata("inlinFunctionUsageAdded")
-        public void testInlinFunctionUsageAdded() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlinFunctionUsageAdded/");
+        @TestMetadata("inlineFunctionBecomesNonInline")
+        public void testInlineFunctionBecomesNonInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineFunctionBecomesNonInline/");
             doTest(fileName);
         }
 
-        @TestMetadata("inlineClassValProperty")
-        public void testInlineClassValProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineClassValProperty/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inlineClassVarProperty")
-        public void testInlineClassVarProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineClassVarProperty/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inlineFunctionRemoved")
-        public void testInlineFunctionRemoved() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineFunctionRemoved/");
+        @TestMetadata("inlineFunctionUsageAdded")
+        public void testInlineFunctionUsageAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineFunctionUsageAdded/");
             doTest(fileName);
         }
 
@@ -503,27 +515,15 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("inlineTopLevelFunctionWithJvmName")
-        public void testInlineTopLevelFunctionWithJvmName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTopLevelFunctionWithJvmName/");
+        @TestMetadata("inlinePropertyInClass")
+        public void testInlinePropertyInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlinePropertyInClass/");
             doTest(fileName);
         }
 
-        @TestMetadata("inlineTopLevelValProperty")
-        public void testInlineTopLevelValProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTopLevelValProperty/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inlineTopLevelValPropertyWithJvmName")
-        public void testInlineTopLevelValPropertyWithJvmName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTopLevelValPropertyWithJvmName/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inlineTopLevelVarProperty")
-        public void testInlineTopLevelVarProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTopLevelVarProperty/");
+        @TestMetadata("inlinePropertyOnTopLevel")
+        public void testInlinePropertyOnTopLevel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlinePropertyOnTopLevel/");
             doTest(fileName);
         }
 
@@ -551,15 +551,27 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("localClassChanged")
-        public void testLocalClassChanged() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/localClassChanged/");
+        @TestMetadata("internalTypealias")
+        public void testInternalTypealias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/internalTypealias/");
             doTest(fileName);
         }
 
-        @TestMetadata("mainRedeclaration")
-        public void testMainRedeclaration() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/mainRedeclaration/");
+        @TestMetadata("internalTypealiasConstructor")
+        public void testInternalTypealiasConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/internalTypealiasConstructor/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("internalTypealiasObject")
+        public void testInternalTypealiasObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/internalTypealiasObject/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localClassChanged")
+        public void testLocalClassChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/localClassChanged/");
             doTest(fileName);
         }
 
@@ -581,54 +593,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("multifileClassFileAdded")
-        public void testMultifileClassFileAdded() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassFileAdded/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multifileClassFileChanged")
-        public void testMultifileClassFileChanged() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassFileChanged/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multifileClassFileMovedToAnotherMultifileClass")
-        public void testMultifileClassFileMovedToAnotherMultifileClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassFileMovedToAnotherMultifileClass/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multifileClassInlineFunction")
-        public void testMultifileClassInlineFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassInlineFunction/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multifileClassInlineFunctionAccessingField")
-        public void testMultifileClassInlineFunctionAccessingField() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassInlineFunctionAccessingField/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multifileClassRecreated")
-        public void testMultifileClassRecreated() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassRecreated/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multifileClassRecreatedAfterRenaming")
-        public void testMultifileClassRecreatedAfterRenaming() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassRecreatedAfterRenaming/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multifileClassRemoved")
-        public void testMultifileClassRemoved() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassRemoved/");
-            doTest(fileName);
-        }
-
         @TestMetadata("multiplePackagesModified")
         public void testMultiplePackagesModified() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multiplePackagesModified/");
@@ -638,12 +602,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("objectConstantChanged")
         public void testObjectConstantChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/objectConstantChanged/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("optionalParameter")
-        public void testOptionalParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/optionalParameter/");
             doTest(fileName);
         }
 
@@ -698,18 +656,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("packageInlineFunctionFromOurPackage")
         public void testPackageInlineFunctionFromOurPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/packageInlineFunctionFromOurPackage/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("packageMultifileClassOneFileWithPublicChanges")
-        public void testPackageMultifileClassOneFileWithPublicChanges() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/packageMultifileClassOneFileWithPublicChanges/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("packageMultifileClassPrivateOnlyChanged")
-        public void testPackageMultifileClassPrivateOnlyChanged() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/packageMultifileClassPrivateOnlyChanged/");
             doTest(fileName);
         }
 
@@ -821,6 +767,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("publicPropertyWithPrivateSetter")
+        public void testPublicPropertyWithPrivateSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/publicPropertyWithPrivateSetter/");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeAndRestoreCompanion")
         public void testRemoveAndRestoreCompanion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeAndRestoreCompanion/");
@@ -863,6 +815,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeUnusedFile")
+        public void testRemoveUnusedFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeUnusedFile/");
+            doTest(fileName);
+        }
+
         @TestMetadata("renameClass")
         public void testRenameClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/renameClass/");
@@ -899,15 +857,15 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("topLevelFunctionSameSignature")
-        public void testTopLevelFunctionSameSignature() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelFunctionSameSignature/");
+        @TestMetadata("suspendWithStateMachine")
+        public void testSuspendWithStateMachine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/suspendWithStateMachine/");
             doTest(fileName);
         }
 
-        @TestMetadata("topLevelFunctionWithJvmName")
-        public void testTopLevelFunctionWithJvmName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelFunctionWithJvmName/");
+        @TestMetadata("topLevelFunctionSameSignature")
+        public void testTopLevelFunctionSameSignature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelFunctionSameSignature/");
             doTest(fileName);
         }
 
@@ -920,12 +878,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("topLevelPrivateValUsageAdded")
         public void testTopLevelPrivateValUsageAdded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelPrivateValUsageAdded/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("topLevelPropertyWithJvmName")
-        public void testTopLevelPropertyWithJvmName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelPropertyWithJvmName/");
             doTest(fileName);
         }
 
@@ -953,7 +905,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WithJava extends AbstractIncrementalJpsTest {
         public void testAllFilesPresentInWithJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin")
@@ -961,7 +913,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ConvertBetweenJavaAndKotlin extends AbstractIncrementalJpsTest {
             public void testAllFilesPresentInConvertBetweenJavaAndKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin"), Pattern.compile("^([^\\.]+)$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("javaToKotlin")
@@ -987,7 +939,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/kotlinToJava/");
                 doTest(fileName);
             }
-
         }
 
         @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin")
@@ -995,7 +946,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaUsedInKotlin extends AbstractIncrementalJpsTest {
             public void testAllFilesPresentInJavaUsedInKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("changeNotUsedSignature")
@@ -1040,6 +991,24 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaFieldNullabilityChanged")
+            public void testJavaFieldNullabilityChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaFieldNullabilityChanged/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaMethodParamNullabilityChanged")
+            public void testJavaMethodParamNullabilityChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaMethodParamNullabilityChanged/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaMethodReturnTypeNullabilityChanged")
+            public void testJavaMethodReturnTypeNullabilityChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaMethodReturnTypeNullabilityChanged/");
+                doTest(fileName);
+            }
+
             @TestMetadata("methodAddedInSuper")
             public void testMethodAddedInSuper() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodAddedInSuper/");
@@ -1063,7 +1032,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class SamConversions extends AbstractIncrementalJpsTest {
                 public void testAllFilesPresentInSamConversions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions"), Pattern.compile("^([^\\.]+)$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("methodAdded")
@@ -1077,7 +1046,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChanged/");
                     doTest(fileName);
                 }
-
             }
         }
 
@@ -1092,7 +1060,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInKotlinUsedInJava() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/kotlinUsedInJava"), Pattern.compile("^([^\\.]+)$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/kotlinUsedInJava"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("changeNotUsedSignature")
@@ -1172,7 +1140,171 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/propertyRenamed/");
                 doTest(fileName);
             }
+        }
 
+        @TestMetadata("jps-plugin/testData/incremental/withJava/other")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Other extends AbstractIncrementalJpsTest {
+            @TestMetadata("accessingFunctionsViaRenamedFileClass")
+            public void testAccessingFunctionsViaRenamedFileClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/accessingFunctionsViaRenamedFileClass/");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInOther() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("classToPackageFacade")
+            public void testClassToPackageFacade() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/classToPackageFacade/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("conflictingPlatformDeclarations")
+            public void testConflictingPlatformDeclarations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/conflictingPlatformDeclarations/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("defaultValueInConstructorAdded")
+            public void testDefaultValueInConstructorAdded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/defaultValueInConstructorAdded/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineTopLevelFunctionWithJvmName")
+            public void testInlineTopLevelFunctionWithJvmName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/inlineTopLevelFunctionWithJvmName/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineTopLevelValPropertyWithJvmName")
+            public void testInlineTopLevelValPropertyWithJvmName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/inlineTopLevelValPropertyWithJvmName/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerClassNotGeneratedWhenRebuilding")
+            public void testInnerClassNotGeneratedWhenRebuilding() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/innerClassNotGeneratedWhenRebuilding/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmNameChanged")
+            public void testJvmNameChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/jvmNameChanged/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mainRedeclaration")
+            public void testMainRedeclaration() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/mainRedeclaration/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassAddTopLevelFunWithDefault")
+            public void testMultifileClassAddTopLevelFunWithDefault() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifileClassAddTopLevelFunWithDefault/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassFileAdded")
+            public void testMultifileClassFileAdded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifileClassFileAdded/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassFileChanged")
+            public void testMultifileClassFileChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifileClassFileChanged/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassFileMovedToAnotherMultifileClass")
+            public void testMultifileClassFileMovedToAnotherMultifileClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifileClassFileMovedToAnotherMultifileClass/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassInlineFunction")
+            public void testMultifileClassInlineFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifileClassInlineFunction/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassInlineFunctionAccessingField")
+            public void testMultifileClassInlineFunctionAccessingField() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifileClassInlineFunctionAccessingField/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassRecreated")
+            public void testMultifileClassRecreated() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifileClassRecreated/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassRecreatedAfterRenaming")
+            public void testMultifileClassRecreatedAfterRenaming() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifileClassRecreatedAfterRenaming/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifileClassRemoved")
+            public void testMultifileClassRemoved() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifileClassRemoved/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multifilePackagePartMethodAdded")
+            public void testMultifilePackagePartMethodAdded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/multifilePackagePartMethodAdded/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("optionalParameter")
+            public void testOptionalParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/optionalParameter/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("packageFacadeToClass")
+            public void testPackageFacadeToClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/packageFacadeToClass/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("packageMultifileClassOneFileWithPublicChanges")
+            public void testPackageMultifileClassOneFileWithPublicChanges() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/packageMultifileClassOneFileWithPublicChanges/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("packageMultifileClassPrivateOnlyChanged")
+            public void testPackageMultifileClassPrivateOnlyChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/packageMultifileClassPrivateOnlyChanged/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("publicPropertyWithPrivateSetterMultiFileFacade")
+            public void testPublicPropertyWithPrivateSetterMultiFileFacade() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/publicPropertyWithPrivateSetterMultiFileFacade/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelFunctionWithJvmName")
+            public void testTopLevelFunctionWithJvmName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/topLevelFunctionWithJvmName/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelPropertyWithJvmName")
+            public void testTopLevelPropertyWithJvmName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/topLevelPropertyWithJvmName/");
+                doTest(fileName);
+            }
         }
     }
 
@@ -1181,7 +1313,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InlineFunCallSite extends AbstractIncrementalJpsTest {
         public void testAllFilesPresentInInlineFunCallSite() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/inlineFunCallSite"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/inlineFunCallSite"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classProperty")
@@ -1267,6 +1399,242 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/inlineFunCallSite/topLevelProperty/");
             doTest(fileName);
         }
+    }
 
+    @TestMetadata("jps-plugin/testData/incremental/classHierarchyAffected")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ClassHierarchyAffected extends AbstractIncrementalJpsTest {
+        public void testAllFilesPresentInClassHierarchyAffected() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotationFlagRemoved")
+        public void testAnnotationFlagRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/annotationFlagRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("annotationListChanged")
+        public void testAnnotationListChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/annotationListChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("bridgeGenerated")
+        public void testBridgeGenerated() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/bridgeGenerated/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classBecameFinal")
+        public void testClassBecameFinal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/classBecameFinal/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classBecameInterface")
+        public void testClassBecameInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/classBecameInterface/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classBecamePrivate")
+        public void testClassBecamePrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/classBecamePrivate/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classRemoved")
+        public void testClassRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/classRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classRemovedAndRestored")
+        public void testClassRemovedAndRestored() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/classRemovedAndRestored/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionObjectInheritedMemberChanged")
+        public void testCompanionObjectInheritedMemberChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/companionObjectInheritedMemberChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionObjectMemberChanged")
+        public void testCompanionObjectMemberChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/companionObjectMemberChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionObjectNameChanged")
+        public void testCompanionObjectNameChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/companionObjectNameChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionObjectToSimpleObject")
+        public void testCompanionObjectToSimpleObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/companionObjectToSimpleObject/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constructorVisibilityChanged")
+        public void testConstructorVisibilityChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/constructorVisibilityChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumEntryAdded")
+        public void testEnumEntryAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/enumEntryAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumEntryRemoved")
+        public void testEnumEntryRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/enumEntryRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumMemberChanged")
+        public void testEnumMemberChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/enumMemberChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("flagsAndMemberInDifferentClassesChanged")
+        public void testFlagsAndMemberInDifferentClassesChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/flagsAndMemberInDifferentClassesChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("flagsAndMemberInSameClassChanged")
+        public void testFlagsAndMemberInSameClassChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/flagsAndMemberInSameClassChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implcitUpcast")
+        public void testImplcitUpcast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/implcitUpcast/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inferredTypeArgumentChanged")
+        public void testInferredTypeArgumentChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/inferredTypeArgumentChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inferredTypeChanged")
+        public void testInferredTypeChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/inferredTypeChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaParameterAffected")
+        public void testLambdaParameterAffected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/lambdaParameterAffected/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodAdded")
+        public void testMethodAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/methodAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodAnnotationAdded")
+        public void testMethodAnnotationAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/methodAnnotationAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodNullabilityChanged")
+        public void testMethodNullabilityChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/methodNullabilityChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodParameterWithDefaultValueAdded")
+        public void testMethodParameterWithDefaultValueAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/methodParameterWithDefaultValueAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodRemoved")
+        public void testMethodRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/methodRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideExplicit")
+        public void testOverrideExplicit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/overrideExplicit/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideImplicit")
+        public void testOverrideImplicit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/overrideImplicit/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyNullabilityChanged")
+        public void testPropertyNullabilityChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/propertyNullabilityChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassImplAdded")
+        public void testSealedClassImplAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/sealedClassImplAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassIndirectImplAdded")
+        public void testSealedClassIndirectImplAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/sealedClassIndirectImplAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassNestedImplAdded")
+        public void testSealedClassNestedImplAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/sealedClassNestedImplAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorAdded")
+        public void testSecondaryConstructorAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/secondaryConstructorAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("starProjectionUpperBoundChanged")
+        public void testStarProjectionUpperBoundChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/starProjectionUpperBoundChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("supertypesListChanged")
+        public void testSupertypesListChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/supertypesListChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeParameterListChanged")
+        public void testTypeParameterListChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/typeParameterListChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varianceChanged")
+        public void testVarianceChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/varianceChanged/");
+            doTest(fileName);
+        }
     }
 }

@@ -22,8 +22,11 @@ class MyClass {
 // EXPRESSION: publicTopLevelObject
 // RESULT: instance of ceAnonymousObject.CeAnonymousObjectKt$publicTopLevelObject$1(id=ID): LceAnonymousObject/CeAnonymousObjectKt$publicTopLevelObject$1;
 
-// EXPRESSION: privateTopLevelObject
-// RESULT: instance of ceAnonymousObject.CeAnonymousObjectKt$privateTopLevelObject$1(id=ID): LceAnonymousObject/CeAnonymousObjectKt$privateTopLevelObject$1;
+// -EXPRESSION: privateTopLevelObject
+// -RESULT: 1
+
+// -EXPRESSION: privateTopLevelObject.test()
+// -RESULT: 1: I
 
 // EXPRESSION: publicObject
 // RESULT: instance of ceAnonymousObject.MyClass$publicObject$1(id=ID): LceAnonymousObject/MyClass$publicObject$1;

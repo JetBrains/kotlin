@@ -1,3 +1,4 @@
 // "Suppress 'REDUNDANT_NULLABLE' for fun foo" "true"
 
-@Suppress("REDUNDANT_NULLABLE") fun foo(): String?<caret>? = null
+@Suppress("REDUNDANT_NULLABLE")
+fun foo(): String?? = null

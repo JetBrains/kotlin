@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'count{}'"
+// IS_APPLICABLE_2: false
+fun f11(list: List<Any?>): Int{
+    val <caret>c = list.count { it is String }
+    return c
+}

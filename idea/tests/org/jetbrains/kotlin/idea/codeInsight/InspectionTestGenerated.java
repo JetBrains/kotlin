@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Intentions extends AbstractInspectionTest {
         public void testAllFilesPresentInIntentions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/intentions"), Pattern.compile("^(inspections\\.test)$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/intentions"), Pattern.compile("^(inspections\\.test)$"), TargetBackend.ANY);
         }
 
         @TestMetadata("branched/ifThenToElvis/inspectionData/inspections.test")
@@ -115,7 +116,13 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         }
 
         public void testAllFilesPresentInInspections() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/inspections"), Pattern.compile("^(inspections\\.test)$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/inspections"), Pattern.compile("^(inspections\\.test)$"), TargetBackend.ANY);
+        }
+
+        @TestMetadata("allOpenSimple/inspectionData/inspections.test")
+        public void testAllOpenSimple_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/allOpenSimple/inspectionData/inspections.test");
+            doTest(fileName);
         }
 
         @TestMetadata("androidIllegalIdentifiers/inspectionData/inspections.test")
@@ -154,6 +161,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("constantConditionIf/inspectionData/inspections.test")
+        public void testConstantConditionIf_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/constantConditionIf/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("convertLambdaToReference/inspectionData/inspections.test")
         public void testConvertLambdaToReference_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/convertLambdaToReference/inspectionData/inspections.test");
@@ -166,9 +179,33 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("dynamic/js/inspectionData/inspections.test")
-        public void testDynamic_js_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/dynamic/js/inspectionData/inspections.test");
+        @TestMetadata("copyWithoutNamedArguments/inspectionData/inspections.test")
+        public void testCopyWithoutNamedArguments_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/copyWithoutNamedArguments/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dataClassPrivateConstructor/inspectionData/inspections.test")
+        public void testDataClassPrivateConstructor_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/dataClassPrivateConstructor/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("destructuringWrongName/inspectionData/inspections.test")
+        public void testDestructuringWrongName_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/destructuringWrongName/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dynamic/inspectionData/inspections.test")
+        public void testDynamic_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/dynamic/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyRange/inspectionData/inspections.test")
+        public void testEmptyRange_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/emptyRange/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -190,9 +227,57 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt18195/inspectionData/inspections.test")
+        public void testKt18195_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/kt18195/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("leakingThis/inspectionData/inspections.test")
         public void testLeakingThis_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/leakingThis/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberVisibilityCanBePrivate/inspectionData/inspections.test")
+        public void testMemberVisibilityCanBePrivate_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/memberVisibilityCanBePrivate/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("naming/class/inspectionData/inspections.test")
+        public void testNaming_class_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/class/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("naming/enumEntry/inspectionData/inspections.test")
+        public void testNaming_enumEntry_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/enumEntry/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("naming/function/inspectionData/inspections.test")
+        public void testNaming_function_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/function/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("naming/privateProperty/inspectionData/inspections.test")
+        public void testNaming_privateProperty_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/privateProperty/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("naming/property/inspectionData/inspections.test")
+        public void testNaming_property_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/naming/property/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableBooleanElvis/inspectionData/inspections.test")
+        public void testNullableBooleanElvis_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/nullableBooleanElvis/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -205,6 +290,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("protectedInFinal/inspectionData/inspections.test")
         public void testProtectedInFinal_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/protectedInFinal/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("recursivePropertyAccessor/inspectionData/inspections.test")
+        public void testRecursivePropertyAccessor_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/recursivePropertyAccessor/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -232,9 +323,21 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("redundantUnitReturnType/inspectionData/inspections.test")
+        public void testRedundantUnitReturnType_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantUnitReturnType/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("redundantVisibilityModifier/inspectionData/inspections.test")
         public void testRedundantVisibilityModifier_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantVisibilityModifier/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("reformat/inspectionData/inspections.test")
+        public void testReformat_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/reformat/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -268,9 +371,21 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("replaceRangeToWithUntil/inspectionData/inspections.test")
+        public void testReplaceRangeToWithUntil_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/replaceRangeToWithUntil/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("spelling/inspectionData/inspections.test")
         public void testSpelling_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/spelling/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("suspiciousEqualsCombination/inspectionData/inspections.test")
+        public void testSuspiciousEqualsCombination_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/suspiciousEqualsCombination/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -280,9 +395,21 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unusedEquals/inspectionData/inspections.test")
+        public void testUnusedEquals_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unusedEquals/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("unusedImport/inspectionData/inspections.test")
         public void testUnusedImport_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unusedImport/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unusedLambdaExpressionBody/inspectionData/inspections.test")
+        public void testUnusedLambdaExpressionBody_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unusedLambdaExpressionBody/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -334,9 +461,21 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unusedSymbol/typeAlias/inspectionData/inspections.test")
+        public void testUnusedSymbol_typeAlias_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/typeAlias/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("unusedSymbol/typeParameter/inspectionData/inspections.test")
         public void testUnusedSymbol_typeParameter_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/typeParameter/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrapUnaryOperator/inspectionData/inspections.test")
+        public void testWrapUnaryOperator_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/wrapUnaryOperator/inspectionData/inspections.test");
             doTest(fileName);
         }
     }

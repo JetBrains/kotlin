@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import javax.swing.Icon
@@ -80,18 +80,18 @@ open class DescriptorMemberChooserObject(
                 MEMBER_RENDERER.render(descriptor)
         }
 
-        fun getIcon(declaration: PsiElement?, descriptor: DeclarationDescriptor): Icon {
+        fun getIcon(declaration: PsiElement?, descriptor: DeclarationDescriptor): Icon? {
             if (declaration != null && declaration.isValid) {
                 val isClass = declaration is PsiClass || declaration is KtClass
                 val flags = if (isClass) 0 else Iconable.ICON_FLAG_VISIBILITY
-                if (declaration is KtDeclaration) {
+                return if (declaration is KtDeclaration) {
                     // kotlin declaration
                     // visibility and abstraction better detect by a descriptor
-                    return KotlinDescriptorIconProvider.getIcon(descriptor, declaration, flags)
+                    KotlinDescriptorIconProvider.getIcon(descriptor, declaration, flags)
                 }
                 else {
                     // it is better to show java icons for java code
-                    return declaration.getIcon(flags)
+                    declaration.getIcon(flags)
                 }
             }
             else {

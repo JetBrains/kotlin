@@ -35,10 +35,15 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean SPACE_AROUND_FUNCTION_TYPE_ARROW = true;
     public boolean SPACE_AROUND_WHEN_ARROW = true;
     public boolean SPACE_BEFORE_LAMBDA_ARROW = true;
+    public boolean SPACE_BEFORE_WHEN_PARENTHESES = true;
     public boolean LBRACE_ON_NEXT_LINE = false;
     public int NAME_COUNT_TO_USE_STAR_IMPORT = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 5;
     public int NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 3;
     public boolean IMPORT_NESTED_CLASSES = false;
+    public boolean CONTINUATION_INDENT_IN_PARAMETER_LISTS = true;
+    public boolean CONTINUATION_INDENT_FOR_EXPRESSION_BODIES = true;
+    public boolean CONTINUATION_INDENT_FOR_CHAINED_CALLS = true;
+    public int BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES = 0;
 
     public KotlinCodeStyleSettings(CodeStyleSettings container) {
         super("JetCodeStyleSettings", container);

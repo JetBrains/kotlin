@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1121
 package foo
 
 class RangeIterator(val start: Int, var count: Int, val reversed: Boolean) {

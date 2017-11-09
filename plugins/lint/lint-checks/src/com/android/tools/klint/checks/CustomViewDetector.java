@@ -16,38 +16,30 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.CLASS_VIEW;
-import static com.android.SdkConstants.CLASS_VIEWGROUP;
-import static com.android.SdkConstants.DOT_LAYOUT_PARAMS;
-import static com.android.SdkConstants.R_STYLEABLE_PREFIX;
-
 import com.android.annotations.NonNull;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Context;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
+import com.android.annotations.Nullable;
+import com.android.tools.klint.detector.api.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.util.InheritanceUtil;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.visitor.UastVisitor;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import static com.android.SdkConstants.*;
+import static com.android.tools.klint.detector.api.LintUtils.skipParentheses;
 
 /**
  * Makes sure that custom views use a declare styleable that matches
  * the name of the custom view
  */
-public class CustomViewDetector extends Detector implements UastScanner {
+public class CustomViewDetector extends Detector implements Detector.UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             CustomViewDetector.class,
-            Scope.SOURCE_FILE_SCOPE);
+            Scope.JAVA_FILE_SCOPE);
 
     /** Mismatched style and class names */
     public static final Issue ISSUE = Issue.create(
@@ -72,74 +64,62 @@ public class CustomViewDetector extends Detector implements UastScanner {
     public CustomViewDetector() {
     }
 
-    @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return true;
-    }
-
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
     // ---- Implements UastScanner ----
 
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList(OBTAIN_STYLED_ATTRIBUTES);
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        if (node.getParent() instanceof UExpression) {
-            if (!context.getLintContext().isContextMethod(node)) {
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression node, @NonNull UMethod method) {
+        if (skipParentheses(node.getUastParent()) instanceof UExpression) {
+            if (!context.getEvaluator().isMemberInSubClassOf(method, CLASS_CONTEXT, false)) {
                 return;
             }
-            List<UExpression> expressions = node.getValueArguments();
-            int size = expressions.size();
+            List<UExpression> arguments = node.getValueArguments();
+            int size = arguments.size();
             // Which parameter contains the styleable (attrs) ?
             int parameterIndex;
             if (size == 1) {
                 // obtainStyledAttributes(int[] attrs)
                 parameterIndex = 0;
-            } else if (size > 1) {
+            } else {
                 // obtainStyledAttributes(int resid, int[] attrs)
                 // obtainStyledAttributes(AttributeSet set, int[] attrs)
                 // obtainStyledAttributes(AttributeSet set, int[] attrs, int defStyleAttr, int defStyleRes)
                 parameterIndex = 1;
-            } else {
+            }
+            UExpression expression = arguments.get(parameterIndex);
+            if (!UastUtils.startsWithQualified(expression, R_STYLEABLE_PREFIX)) {
                 return;
             }
 
-            UExpression expression = expressions.get(parameterIndex);
-            if (!(expression instanceof UQualifiedExpression)) {
+            List<String> path = UastUtils.asQualifiedPath(expression);
+            if (path == null || path.size() < 3) {
                 return;
             }
 
-            String s = expression.renderString();
-            if (!s.startsWith(R_STYLEABLE_PREFIX)) {
-                return;
-            }
-            String styleableName = s.substring(R_STYLEABLE_PREFIX.length());
-
-            UClass resolvedClass = UastUtils.getContainingClass(node);
-            if (resolvedClass == null) {
+            String styleableName = path.get(2);
+            UClass cls = UastUtils.getParentOfType(node, UClass.class, false);
+            if (cls == null) {
                 return;
             }
 
-            String className = resolvedClass.getName();
-            if (resolvedClass.isSubclassOf(CLASS_VIEW)) {
+            String className = cls.getName();
+            if (InheritanceUtil.isInheritor(cls, false, CLASS_VIEW)) {
                 if (!styleableName.equals(className)) {
                     String message = String.format(
-                      "By convention, the custom view (`%1$s`) and the declare-styleable (`%2$s`) "
-                      + "should have the same name (various editor features rely on "
-                      + "this convention)",
-                      className, styleableName);
-                    context.report(ISSUE, node, context.getLocation(expression), message);
+                            "By convention, the custom view (`%1$s`) and the declare-styleable (`%2$s`) "
+                                    + "should have the same name (various editor features rely on "
+                                    + "this convention)",
+                            className, styleableName);
+                    context.report(ISSUE, node, context.getUastLocation(expression), message);
                 }
-            } else if (resolvedClass.isSubclassOf(CLASS_VIEWGROUP + DOT_LAYOUT_PARAMS)) {
-                UClass outer = UastUtils.getContainingClass(resolvedClass);
+            } else if (InheritanceUtil.isInheritor(cls, false,
+                    CLASS_VIEWGROUP + DOT_LAYOUT_PARAMS)) {
+                PsiClass outer = PsiTreeUtil.getParentOfType(cls, PsiClass.class, true);
                 if (outer == null) {
                     return;
                 }
@@ -147,12 +127,12 @@ public class CustomViewDetector extends Detector implements UastScanner {
                 String expectedName = layoutClassName + "_Layout";
                 if (!styleableName.equals(expectedName)) {
                     String message = String.format(
-                      "By convention, the declare-styleable (`%1$s`) for a layout parameter "
-                      + "class (`%2$s`) is expected to be the surrounding "
-                      + "class (`%3$s`) plus \"`_Layout`\", e.g. `%4$s`. "
-                      + "(Various editor features rely on this convention.)",
-                      styleableName, className, layoutClassName, expectedName);
-                    context.report(ISSUE, node, context.getLocation(expression), message);
+                            "By convention, the declare-styleable (`%1$s`) for a layout parameter "
+                                    + "class (`%2$s`) is expected to be the surrounding "
+                                    + "class (`%3$s`) plus \"`_Layout`\", e.g. `%4$s`. "
+                                    + "(Various editor features rely on this convention.)",
+                            styleableName, className, layoutClassName, expectedName);
+                    context.report(ISSUE, node, context.getUastLocation(expression), message);
                 }
             }
         }

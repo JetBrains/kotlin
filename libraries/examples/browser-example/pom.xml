@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-js-library</artifactId>
+            <artifactId>kotlin-stdlib-js</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -42,8 +42,8 @@
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-htmlunit-driver</artifactId>
-            <version>${selenium.version}</version>
+            <artifactId>htmlunit-driver</artifactId>
+            <version>${htmlunit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -90,7 +90,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.jetbrains.kotlin</groupId>
-                                    <artifactId>kotlin-js-library</artifactId>
+                                    <artifactId>kotlin-stdlib-js</artifactId>
                                     <version>${project.version}</version>
                                     <outputDirectory>${project.build.directory}/js/lib</outputDirectory>
                                     <includes>*.js</includes>
@@ -99,6 +99,13 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <jvm>${env.JDK_18}/bin/java</jvm>
+                </configuration>
             </plugin>
 
             <plugin>

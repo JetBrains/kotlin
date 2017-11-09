@@ -1,4 +1,4 @@
-JetFile: TypeConstraints.kt
+KtFile: TypeConstraints.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

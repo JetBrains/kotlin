@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.types;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -31,13 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 public class BoundsSubstitutor {
-    private static final Function<TypeProjection,KotlinType> PROJECTIONS_TO_TYPES = new Function<TypeProjection, KotlinType>() {
-        @Override
-        public KotlinType apply(TypeProjection projection) {
-            return projection.getType();
-        }
-    };
-
     private BoundsSubstitutor() {
     }
 
@@ -61,7 +52,7 @@ public class BoundsSubstitutor {
 
     @NotNull
     private static TypeSubstitutor createUpperBoundsSubstitutor(@NotNull List<TypeParameterDescriptor> typeParameters) {
-        Map<TypeConstructor, TypeProjection> mutableSubstitution = new HashMap<TypeConstructor, TypeProjection>();
+        Map<TypeConstructor, TypeProjection> mutableSubstitution = new HashMap<>();
         TypeSubstitutor substitutor = TypeSubstitutor.create(mutableSubstitution);
 
         // todo assert: no loops
@@ -75,18 +66,12 @@ public class BoundsSubstitutor {
     }
 
     @NotNull
-    private static List<TypeParameterDescriptor> topologicallySortTypeParameters(@NotNull final List<TypeParameterDescriptor> typeParameters) {
+    private static List<TypeParameterDescriptor> topologicallySortTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters) {
         // In the end, we want every parameter to have no references to those after it in the list
         // This gives us the reversed order: the one that refers to everybody else comes first
         List<TypeParameterDescriptor> topOrder = DFS.topologicalOrder(
-                typeParameters,
-                new DFS.Neighbors<TypeParameterDescriptor>() {
-                    @NotNull
-                    @Override
-                    public Iterable<TypeParameterDescriptor> getNeighbors(TypeParameterDescriptor current) {
-                        return getTypeParametersFromUpperBounds(current, typeParameters);
-                    }
-                });
+                typeParameters, current -> getTypeParametersFromUpperBounds(current, typeParameters)
+        );
 
         assert topOrder.size() == typeParameters.size() : "All type parameters must be visited, but only " + topOrder + " were";
 
@@ -98,17 +83,11 @@ public class BoundsSubstitutor {
     @NotNull
     private static List<TypeParameterDescriptor> getTypeParametersFromUpperBounds(
             @NotNull TypeParameterDescriptor current,
-            @NotNull final List<TypeParameterDescriptor> typeParameters
+            @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
         return DFS.dfs(
                 current.getUpperBounds(),
-                new DFS.Neighbors<KotlinType>() {
-                    @NotNull
-                    @Override
-                    public Iterable<KotlinType> getNeighbors(KotlinType current) {
-                        return Collections2.transform(current.getArguments(), PROJECTIONS_TO_TYPES);
-                    }
-                },
+                typeParameter -> CollectionsKt.map(typeParameter.getArguments(), TypeProjection::getType),
                 new DFS.NodeHandlerWithListResult<KotlinType, TypeParameterDescriptor>() {
                     @Override
                     public boolean beforeChildren(KotlinType current) {

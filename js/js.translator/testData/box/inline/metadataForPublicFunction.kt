@@ -1,15 +1,16 @@
+// EXPECTED_REACHABLE_NODES: 1129
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test1_0
-// CHECK_CONTAINS_NO_CALLS: test2_0
-// CHECK_CONTAINS_NO_CALLS: test3_0
-// CHECK_CONTAINS_NO_CALLS: test4_buocd8$
-// CHECK_CONTAINS_NO_CALLS: test5_0
-// CHECK_HAS_INLINE_METADATA: apply_hiyix$
-// CHECK_HAS_INLINE_METADATA: applyL_hiyix$
-// CHECK_HAS_INLINE_METADATA: applyM_hiyix$
-// CHECK_HAS_NO_INLINE_METADATA: applyN_hiyix$
-// CHECK_HAS_NO_INLINE_METADATA: applyO_hiyix$
+// CHECK_CONTAINS_NO_CALLS: test1 except=imul
+// CHECK_CONTAINS_NO_CALLS: test2 except=imul
+// CHECK_CONTAINS_NO_CALLS: test3 except=imul
+// CHECK_CONTAINS_NO_CALLS: test4_buocd8$ except=imul
+// CHECK_CONTAINS_NO_CALLS: test5 except=imul
+// CHECK_HAS_INLINE_METADATA: apply
+// CHECK_HAS_INLINE_METADATA: applyL_h43q6c$
+// CHECK_HAS_INLINE_METADATA: applyM_h43q6c$
+// CHECK_HAS_INLINE_METADATA: applyN_h43q6c$
+// CHECK_HAS_NO_INLINE_METADATA: applyO_h43q6c$
 
 inline
 public fun <T> apply(arg: T, func: (T)->T): T = func(arg)

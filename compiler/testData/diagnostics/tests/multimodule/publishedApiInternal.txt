@@ -1,0 +1,42 @@
+// -- Module: <m1> --
+package
+
+package p {
+    @kotlin.PublishedApi internal val a: p.A
+    @kotlin.PublishedApi internal var v: p.A
+    @kotlin.PublishedApi internal fun a(): p.A
+
+    public final class A {
+        public constructor A()
+        @kotlin.PublishedApi internal final val a: p.A
+        @kotlin.PublishedApi internal final var v: p.A
+        @kotlin.PublishedApi internal final fun a(): p.A
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        @kotlin.PublishedApi internal final inner class B {
+            public constructor B()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    @kotlin.PublishedApi internal final class B {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <m2> --
+package
+
+public fun test(): kotlin.Unit
+public inline fun testInline(): kotlin.Unit
+
+package p {
+}

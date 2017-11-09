@@ -25,10 +25,12 @@ class LexicalWritableScope(
         parent: LexicalScope,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
-        override val implicitReceiver: ReceiverParameterDescriptor?,
         redeclarationChecker: LocalRedeclarationChecker,
         override val kind: LexicalScopeKind
 ) : LexicalScopeStorage(parent, redeclarationChecker) {
+
+    override val implicitReceiver: ReceiverParameterDescriptor?
+        get() = null
 
     private var canWrite: Boolean = true
     private var lastSnapshot: Snapshot? = null
@@ -86,7 +88,7 @@ class LexicalWritableScope(
     override fun toString(): String = kind.toString()
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
+        p.println(this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
                   " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
         p.pushIndent()
 

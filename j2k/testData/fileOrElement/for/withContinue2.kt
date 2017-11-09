@@ -1,5 +1,6 @@
 object TestClass {
-    @JvmStatic fun main(args: Array<String>) {
+    @JvmStatic
+    fun main(args: Array<String>) {
         var i = 0
         var j = 1
         while (i < 10) {

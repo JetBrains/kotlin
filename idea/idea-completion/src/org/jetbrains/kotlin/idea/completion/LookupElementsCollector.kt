@@ -29,10 +29,12 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import java.util.*
 
 class LookupElementsCollector(
+        private val onFlush: () -> Unit,
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         resultSet: CompletionResultSet,
-        sorter: CompletionSorter
+        sorter: CompletionSorter,
+        private val filter: ((LookupElement) -> Boolean)?
 ) {
 
     var bestMatchingDegree = Int.MIN_VALUE
@@ -49,8 +51,11 @@ class LookupElementsCollector(
     var isResultEmpty: Boolean = true
         private set
 
+
     fun flushToResultSet() {
         if (!elements.isEmpty()) {
+            onFlush()
+
             resultSet.addAllElements(elements)
             elements.clear()
             isResultEmpty = false
@@ -125,14 +130,16 @@ class LookupElementsCollector(
             result = postProcessor(result)
         }
 
-        val psiElement = (result.`object` as? DeclarationLookupObject)?.psiElement
-        if (psiElement != null) {
+        val declarationLookupObject = result.`object` as? DeclarationLookupObject
+        if (declarationLookupObject != null) {
             result = object : LookupElementDecorator<LookupElement>(result) {
-                override fun getPsiElement() = psiElement
+                override fun getPsiElement() = declarationLookupObject.psiElement
             }
         }
 
-        elements.add(result)
+        if (filter?.invoke(result) ?: true) {
+            elements.add(result)
+        }
 
         val matchingDegree = RealPrefixMatchingWeigher.getBestMatchingDegree(result, prefixMatcher)
         bestMatchingDegree = Math.max(bestMatchingDegree, matchingDegree)

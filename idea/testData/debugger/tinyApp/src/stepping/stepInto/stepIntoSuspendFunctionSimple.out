@@ -1,0 +1,8 @@
+LineBreakpoint created at stepIntoSuspendFunctionSimple.kt:18
+Run Java
+Connected to the target VM
+stepIntoSuspendFunctionSimple.kt:18
+stepIntoSuspendFunctionSimple.kt:10
+Disconnected from the target VM
+
+Process finished with exit code 0

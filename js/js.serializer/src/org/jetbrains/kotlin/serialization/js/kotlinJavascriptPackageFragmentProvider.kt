@@ -16,25 +16,45 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
+import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
+import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
-import java.io.InputStream
 
 fun createKotlinJavascriptPackageFragmentProvider(
         storageManager: StorageManager,
         module: ModuleDescriptor,
-        packageFqNames: Set<FqName>,
+        header: JsProtoBuf.Header,
+        packageFragmentProtos: List<ProtoBuf.PackageFragment>,
         configuration: DeserializationConfiguration,
-        loadResource: (String) -> InputStream?
+        lookupTracker: LookupTracker
 ): PackageFragmentProvider {
-    val packageFragments = packageFqNames.map { fqName ->
-        KotlinJavascriptPackageFragment(fqName, storageManager, module, loadResource)
+    val packageFragments: MutableList<PackageFragmentDescriptor> = packageFragmentProtos.mapNotNullTo(mutableListOf()) { proto ->
+        proto.fqName?.let { fqName ->
+            KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, header, configuration)
+        }
     }
+
+    // Generate empty PackageFragmentDescriptor instances for packages that aren't mentioned in compilation units directly.
+    // For example, if there's `package foo.bar` directive, we'll get only PackageFragmentDescriptor for `foo.bar`, but
+    // none for `foo`. Various descriptor/scope code relies on presence of such package fragments, and currently we
+    // don't know if it's possible to fix this.
+    // TODO: think about fixing issues in descriptors/scopes
+    val packageFqNames = packageFragmentProtos.mapNotNullTo(mutableSetOf()) { it.fqName }
+    for (packageFqName in packageFqNames.mapNotNull { it.parentOrNull() }) {
+        var ancestorFqName = packageFqName
+        while (!ancestorFqName.isRoot && packageFqNames.add(ancestorFqName)) {
+            packageFragments += EmptyPackageFragmentDescriptor(module, ancestorFqName)
+            ancestorFqName = ancestorFqName.parent()
+        }
+    }
+
     val provider = PackageFragmentProviderImpl(packageFragments)
 
     val notFoundClasses = NotFoundClasses(storageManager, module)
@@ -48,15 +68,27 @@ fun createKotlinJavascriptPackageFragmentProvider(
             provider,
             LocalClassifierTypeSettings.Default,
             ErrorReporter.DO_NOTHING,
-            LookupTracker.DO_NOTHING,
+            lookupTracker,
             DynamicTypeDeserializer,
-            ClassDescriptorFactory.EMPTY,
-            notFoundClasses
+            emptyList(),
+            notFoundClasses,
+            ContractDeserializerImpl(configuration),
+            platformDependentDeclarationFilter = PlatformDependentDeclarationFilter.NoPlatformDependent
     )
 
-    for (packageFragment in packageFragments) {
+    for (packageFragment in packageFragments.filterIsInstance<KotlinJavascriptPackageFragment>()) {
         packageFragment.components = components
     }
 
     return provider
 }
+
+private val ProtoBuf.PackageFragment.fqName: FqName?
+    get() {
+        val nameResolver = NameResolverImpl(strings, qualifiedNames)
+        return when {
+            hasPackage() -> nameResolver.getPackageFqName(`package`.getExtension(JsProtoBuf.packageFqName))
+            class_Count > 0 -> nameResolver.getClassId(class_OrBuilderList.first().fqName).packageFqName
+            else -> null
+        }
+    }

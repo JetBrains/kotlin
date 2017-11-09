@@ -41,20 +41,18 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
-import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
-import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.refactoring.isAbstract
+import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 import javax.swing.ListSelectionModel
 
@@ -62,16 +60,6 @@ abstract class ImplementAbstractMemberIntentionBase :
         SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, "", "Implement abstract member") {
     companion object {
         private val LOG = Logger.getInstance("#${ImplementAbstractMemberIntentionBase::class.java.canonicalName}")
-    }
-
-    private fun isAbstract(element: KtNamedDeclaration): Boolean {
-        if (element.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return true
-        if (!(element.containingClassOrObject?.isInterfaceClass() ?: false)) return false
-        return when (element) {
-            is KtProperty -> element.initializer == null && element.delegate == null && element.accessors.isEmpty()
-            is KtNamedFunction -> !element.hasBody()
-            else -> false
-        }
     }
 
     protected fun findExistingImplementation(
@@ -82,7 +70,7 @@ abstract class ImplementAbstractMemberIntentionBase :
         val substitutor = getTypeSubstitutor(superClass.defaultType, subClass.defaultType) ?: TypeSubstitutor.EMPTY
         val signatureInSubClass = superMember.substitute(substitutor) as? CallableMemberDescriptor ?: return null
         val subMember = subClass.findCallableMemberBySignature(signatureInSubClass)
-        if (subMember?.kind?.isReal ?: false) return subMember else return null
+        return if (subMember?.kind?.isReal == true) subMember else null
     }
 
     protected abstract fun acceptSubClass(subClassDescriptor: ClassDescriptor, memberDescriptor: CallableMemberDescriptor): Boolean
@@ -117,7 +105,7 @@ abstract class ImplementAbstractMemberIntentionBase :
     protected abstract fun computeText(element: KtNamedDeclaration): String?
 
     override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
-        if (!isAbstract(element)) return null
+        if (!element.isAbstract()) return null
 
         text = computeText(element) ?: return null
 
@@ -140,7 +128,7 @@ abstract class ImplementAbstractMemberIntentionBase :
                                                                descriptorToImplement,
                                                                OverrideMemberChooserObject.BodyType.EMPTY,
                                                                preferConstructorParameters)
-        OverrideImplementMembersHandler.generateMembers(editor, targetClass, chooserObject.singletonList(), false)
+        OverrideImplementMembersHandler.generateMembers(editor, targetClass, listOf(chooserObject), false)
     }
 
     private fun implementInJavaClass(member: KtNamedDeclaration, targetClass: PsiClass) {
@@ -215,7 +203,7 @@ abstract class ImplementAbstractMemberIntentionBase :
         ) { findClassesToProcess(element).toList() } ?: return
         if (classesToProcess.isEmpty()) return
 
-        classesToProcess.singleOrNull()?.let { return implementInClass(element, it.singletonList()) }
+        classesToProcess.singleOrNull()?.let { return implementInClass(element, listOf(it)) }
 
         val renderer = ClassRenderer()
         val sortedClasses = classesToProcess.sortedWith(renderer.comparator)

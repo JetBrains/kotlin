@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.flags;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,30 +33,51 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     public void testAllFilesPresentInWriteFlags() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/writeFlags"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/writeFlags"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
-    @TestMetadata("defaultMethod.kt")
-    public void testDefaultMethod() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaultMethod.kt");
+    @TestMetadata("interfaceMethod.kt")
+    public void testInterfaceMethod() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/interfaceMethod.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("defaultMethodCompatibility.kt")
-    public void testDefaultMethodCompatibility() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaultMethodCompatibility.kt");
+    @TestMetadata("interfaceProperty.kt")
+    public void testInterfaceProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/interfaceProperty.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("defaultProperty.kt")
-    public void testDefaultProperty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaultProperty.kt");
-        doTest(fileName);
-    }
+    @TestMetadata("compiler/testData/codegen/java8/writeFlags/defaults")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Defaults extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInDefaults() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/writeFlags/defaults"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
 
-    @TestMetadata("defaultPropertyCompatibility.kt")
-    public void testDefaultPropertyCompatibility() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaultPropertyCompatibility.kt");
-        doTest(fileName);
+        @TestMetadata("defaultMethod.kt")
+        public void testDefaultMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaults/defaultMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultMethodCompatibility.kt")
+        public void testDefaultMethodCompatibility() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaults/defaultMethodCompatibility.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultProperty.kt")
+        public void testDefaultProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaults/defaultProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultPropertyCompatibility.kt")
+        public void testDefaultPropertyCompatibility() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaults/defaultPropertyCompatibility.kt");
+            doTest(fileName);
+        }
     }
 }

@@ -25,16 +25,16 @@ import com.intellij.usages.rules.PsiElementUsage
 import com.intellij.usages.rules.UsageGroupingRule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class KotlinDeclarationGroupingRule(val level: Int = 0) : UsageGroupingRule {
     override fun groupUsage(usage: Usage): UsageGroup? {
         val element = (usage as? PsiElementUsage)?.element ?: return null
 
-        val containingFile = element.containingFile
-        if (containingFile !is KtFile) return null
+        if (element.containingFile !is KtFile) return null
 
-        val parentList = element.parents.filterIsInstance<KtNamedDeclaration>().toList()
+        val parentList = element.parents.filterIsInstance<KtNamedDeclaration>().filterNot { it is KtProperty && it.isLocal }.toList()
         if (parentList.size <= level) {
             return null
         }

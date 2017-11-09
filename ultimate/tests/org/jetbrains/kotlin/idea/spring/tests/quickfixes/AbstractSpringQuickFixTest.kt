@@ -5,6 +5,6 @@ import org.jetbrains.kotlin.idea.spring.tests.configureSpringFileSetByDirective
 
 abstract class AbstractSpringQuickFixTest : AbstractQuickFixTest() {
     override fun configExtra(options: String) {
-        configureSpringFileSetByDirective(getModule(), options, listOf(getFile()))
+        configureSpringFileSetByDirective(module, options, listOf(getFile()))
     }
 }

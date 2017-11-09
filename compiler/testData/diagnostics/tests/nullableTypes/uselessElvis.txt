@@ -1,5 +1,13 @@
 package
 
+public fun bar(): [ERROR : Error function type]
+public fun </*0*/ T> dependOn(/*0*/ x: T): T
+public fun </*0*/ T> notNull(): T
+public fun </*0*/ T> nullable(): T?
+public inline fun </*0*/ reified T : kotlin.Any> reifiedNull(): T?
+public fun takeNotNull(/*0*/ s: kotlin.String): kotlin.Unit
+public fun test(): kotlin.Unit
 public fun </*0*/ T> test1(/*0*/ t: kotlin.Any?): kotlin.Any
 public fun </*0*/ T : kotlin.Any> test2(/*0*/ t: kotlin.Any?): kotlin.Any
 public fun </*0*/ T> test3(/*0*/ t: kotlin.Any?): kotlin.Any
+public fun testFrom13648(): kotlin.Unit

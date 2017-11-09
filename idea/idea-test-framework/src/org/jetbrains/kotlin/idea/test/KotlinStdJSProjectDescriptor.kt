@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,25 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleType
+import com.intellij.openapi.module.StdModuleTypes
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
+import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
 
-open class KotlinStdJSProjectDescriptor : KotlinLightProjectDescriptor() {
-    companion object {
-        val instance: KotlinStdJSProjectDescriptor
-                = Class.forName("org.jetbrains.kotlin.test.KotlinStdJSProjectDescriptorImpl").newInstance() as KotlinStdJSProjectDescriptor
+object KotlinStdJSProjectDescriptor : KotlinLightProjectDescriptor() {
+    override fun getModuleType(): ModuleType<*> = StdModuleTypes.JAVA
+    override fun getSdk(): Sdk? = null
+
+    override fun configureModule(module: Module, model: ModifiableRootModel) {
+        val configuration = JSLibraryStdDescription(module.project).createNewLibraryForTests()
+
+        val editor = NewLibraryEditor(configuration.libraryType, configuration.properties)
+        configuration.addRoots(editor)
+
+        ConfigLibraryUtil.addLibrary(editor, model, JSLibraryKind)
     }
 }

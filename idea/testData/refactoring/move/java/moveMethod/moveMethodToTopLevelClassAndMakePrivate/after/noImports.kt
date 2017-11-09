@@ -1,3 +1,3 @@
 fun bar(s: String) {
-    A.foo(s)
+    B.foo(s)
 }

@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -29,25 +31,37 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 
 open class DeserializedPackageMemberScope(
-        packageDescriptor: PackageFragmentDescriptor,
+        private val packageDescriptor: PackageFragmentDescriptor,
         proto: ProtoBuf.Package,
         nameResolver: NameResolver,
-        containerSource: SourceElement?,
+        containerSource: DeserializedContainerSource?,
         components: DeserializationComponents,
         classNames: () -> Collection<Name>
 ) : DeserializedMemberScope(
-        components.createContext(packageDescriptor, nameResolver, TypeTable(proto.typeTable), containerSource),
+        components.createContext(packageDescriptor, nameResolver, TypeTable(proto.typeTable),
+                                 VersionRequirementTable.create(proto.versionRequirementTable), containerSource),
         proto.functionList, proto.propertyList, proto.typeAliasList, classNames
 ) {
     private val packageFqName = packageDescriptor.fqName
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = computeDescriptors(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
+            = computeDescriptors(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS) +
+              c.components.fictitiousClassDescriptorFactories.flatMap { it.getAllContributedClassesIfPossible(packageFqName) }
 
     override fun hasClass(name: Name) =
-            super.hasClass(name) || c.components.fictitiousClassDescriptorFactory.shouldCreateClass(packageFqName, name)
+            super.hasClass(name) || c.components.fictitiousClassDescriptorFactories.any { it.shouldCreateClass(packageFqName, name) }
 
     override fun createClassId(name: Name) = ClassId(packageFqName, name)
+
+
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        recordLookup(name, location)
+        return super.getContributedClassifier(name, location)
+    }
+
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        c.components.lookupTracker.record(location, packageDescriptor, name)
+    }
 
     override fun getNonDeclaredFunctionNames(): Set<Name> = emptySet()
     override fun getNonDeclaredVariableNames(): Set<Name> = emptySet()

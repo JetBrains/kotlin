@@ -21,7 +21,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.psi.KtFunction
 import java.util.*
 
-class FunctionParametersMacro : Macro() {
+class FunctionParametersMacro : KotlinMacro() {
     override fun getName() = "functionParameters"
     override fun getPresentableName() = "functionParameters()"
 
@@ -46,7 +46,4 @@ class FunctionParametersMacro : Macro() {
         }
         return null
     }
-
-    override fun isAcceptableInContext(context: TemplateContextType?) = context is JavaCodeContextType
-
 }

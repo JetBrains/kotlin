@@ -41,11 +41,12 @@ class TypeAliasInfo(
 
 class CreateTypeAliasFromUsageFix<E : KtElement>(
         element: E,
-        val aliasInfo: TypeAliasInfo
+        private val aliasInfo: TypeAliasInfo
 ) : CreateFromUsageFixBase<E>(element), LowPriorityAction {
     override fun getText() = "Create type alias '${aliasInfo.name}'"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         if (editor == null) return
 
         val typeAliasProto = KtPsiFactory(project).createTypeAlias(aliasInfo.name, aliasInfo.typeParameterNames, "Dummy")

@@ -1,4 +1,4 @@
-JetFile: ParameterType.kt
+KtFile: ParameterType.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

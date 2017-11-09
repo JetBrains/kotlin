@@ -1,0 +1,9 @@
+class Test {
+    private var s: String? = null
+
+    fun test() {
+        s = "Hello"
+        println(s)
+        println(s)
+    }
+}

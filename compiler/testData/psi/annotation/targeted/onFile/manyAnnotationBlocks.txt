@@ -1,4 +1,4 @@
-JetFile: manyAnnotationBlocks.kt
+KtFile: manyAnnotationBlocks.kt
   FILE_ANNOTATION_LIST
     ANNOTATION_ENTRY
       PsiElement(AT)('@')

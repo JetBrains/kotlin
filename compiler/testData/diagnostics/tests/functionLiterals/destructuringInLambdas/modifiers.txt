@@ -1,0 +1,23 @@
+package
+
+public fun bar(): kotlin.Unit
+public fun foo(/*0*/ block: (A) -> kotlin.Unit): kotlin.Unit
+
+public final data class A {
+    public constructor A(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)
+    public final val x: kotlin.Int
+    public final val y: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ...): A
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

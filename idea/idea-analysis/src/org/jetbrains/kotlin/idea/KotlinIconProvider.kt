@@ -25,14 +25,14 @@ import com.intellij.ui.RowIcon
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
-import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 import javax.swing.Icon
 
 class KotlinIconProvider : IconProvider(), DumbAware {
-
     override fun getIcon(psiElement: PsiElement, flags: Int): Icon? {
         if (psiElement is KtFile) {
             val mainClass = getMainClass(psiElement)
@@ -92,10 +92,12 @@ class KotlinIconProvider : IconProvider(), DumbAware {
             }
             is KtLightClassForSourceDeclaration -> navigationElement.getBaseIcon()
             is KtNamedFunction -> when {
-                receiverTypeReference != null -> KotlinIcons.EXTENSION_FUNCTION
+                receiverTypeReference != null ->
+                    if (KtPsiUtil.isAbstract(this)) KotlinIcons.ABSTRACT_EXTENSION_FUNCTION else KotlinIcons.EXTENSION_FUNCTION
                 getStrictParentOfType<KtNamedDeclaration>() is KtClass ->
                     if (KtPsiUtil.isAbstract(this)) PlatformIcons.ABSTRACT_METHOD_ICON else PlatformIcons.METHOD_ICON
-                else -> KotlinIcons.FUNCTION
+                else ->
+                    KotlinIcons.FUNCTION
             }
             is KtFunctionLiteral -> KotlinIcons.LAMBDA
             is KtClass -> when {
@@ -103,7 +105,7 @@ class KotlinIconProvider : IconProvider(), DumbAware {
                 isEnum() -> KotlinIcons.ENUM
                 isAnnotation() -> KotlinIcons.ANNOTATION
                 this is KtEnumEntry && getPrimaryConstructorParameterList() == null -> KotlinIcons.ENUM
-                else -> KotlinIcons.CLASS
+                else -> if (isAbstract()) KotlinIcons.ABSTRACT_CLASS else KotlinIcons.CLASS
             }
             is KtObjectDeclaration -> KotlinIcons.OBJECT
             is KtParameter -> {
@@ -115,6 +117,7 @@ class KotlinIconProvider : IconProvider(), DumbAware {
             }
             is KtProperty -> if (isVar) KotlinIcons.FIELD_VAR else KotlinIcons.FIELD_VAL
             is KtClassInitializer -> KotlinIcons.CLASS_INITIALIZER
+            is KtTypeAlias -> KotlinIcons.TYPE_ALIAS
             else -> null
         }
     }

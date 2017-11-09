@@ -33,20 +33,20 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.TokenType;
+import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry;
 
 public class KotlinTypedHandler extends TypedHandlerDelegate {
@@ -229,8 +229,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             LtGtTypingUtils.handleKotlinAutoCloseLT(editor);
             return Result.STOP;
         }
-
-        if (c == '{' && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
+        else if (c == '{' && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
             PsiDocumentManager.getInstance(project).commitAllDocuments();
 
             int offset = editor.getCaretModel().getOffset();
@@ -238,6 +237,16 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             if (previousElement instanceof LeafPsiElement
                     && ((LeafPsiElement) previousElement).getElementType() == KtTokens.LONG_TEMPLATE_ENTRY_START) {
                 editor.getDocument().insertString(offset, "}");
+                return Result.STOP;
+            }
+        }
+        else if (c == ':') {
+            if (autoIndentCase(editor, project, file, KtClassOrObject.class)) {
+                return Result.STOP;
+            }
+        }
+        else if (c == '.') {
+            if (autoIndentCase(editor, project, file, KtQualifiedExpression.class)) {
                 return Result.STOP;
             }
         }
@@ -284,5 +293,32 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 });
             }
         }
+    }
+
+    private static boolean autoIndentCase(Editor editor, Project project, PsiFile file, Class<?> kclass) {
+        int offset = editor.getCaretModel().getOffset();
+
+        PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+
+        PsiElement currElement = file.findElementAt(offset - 1);
+        if (currElement != null) {
+
+            // Should be applied only if there's nothing but the whitespace in line before the element
+            PsiElement prevLeaf = PsiTreeUtil.prevLeaf(currElement);
+            if (!(prevLeaf instanceof PsiWhiteSpace && prevLeaf.getText().contains("\n"))) {
+                return false;
+            }
+
+            PsiElement parent = currElement.getParent();
+            if (parent != null && kclass.isInstance(parent)) {
+                int curElementLength = currElement.getText().length();
+                if (offset < curElementLength) return false;
+
+                CodeStyleManager.getInstance(project).adjustLineIndent(file, offset - curElementLength);
+
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,0 +1,43 @@
+// FILE: /expressionIf.kt
+// FUN: max
+BB 0
+CONTENT
+      1 FUN public fun max(x: kotlin.Int, y: kotlin.Int): kotlin.Int
+      2 WHEN type=kotlin.Int origin=null
+      3 GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
+      4 GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=null
+      5 CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
+OUTGOING -> BB 1, 2
+    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+BB 1
+INCOMING <- BB 0
+    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+CONTENT
+OUTGOING -> BB 3
+    CONST Boolean type=kotlin.Boolean value='true'
+BB 2
+INCOMING <- BB 0
+    CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+CONTENT
+      1 GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
+OUTGOING -> BB 4
+    When exit: WHEN type=kotlin.Int origin=null
+BB 3
+INCOMING <- BB 1
+    CONST Boolean type=kotlin.Boolean value='true'
+CONTENT
+      1 GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=null
+OUTGOING -> BB 4
+    When exit: WHEN type=kotlin.Int origin=null
+BB 4
+INCOMING <- BB 2, 3
+    When exit: WHEN type=kotlin.Int origin=null
+CONTENT
+      1 RETURN type=kotlin.Nothing from='max(Int, Int): Int'
+OUTGOING -> NONE
+    Function exit: FUN public fun max(x: kotlin.Int, y: kotlin.Int): kotlin.Int
+
+// END FUN: max
+
+// END FILE: /expressionIf.kt
+

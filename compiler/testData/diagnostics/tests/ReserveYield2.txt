@@ -1,0 +1,51 @@
+package
+
+public fun bar(/*0*/ p: kotlin.Int): kotlin.Unit
+public fun </*0*/ T> listOf(/*0*/ vararg e: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
+public operator fun </*0*/ T> kotlin.collections.List<T>.component1(): T
+
+public object X {
+    private constructor X()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test3(/*0*/ yield: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun yield(): kotlin.Unit
+}
+
+public final annotation class yield : kotlin.Annotation {
+    public constructor yield()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package p3 {
+    public fun f1(/*0*/ yield: kotlin.Int, /*1*/ foo: kotlin.Int = ...): kotlin.Unit
+    public fun f2(/*0*/ foo: p3.yield): kotlin.Unit
+
+    public final enum class yield : kotlin.Enum<p3.yield> {
+        enum entry yield
+
+        private constructor yield()
+        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: p3.yield): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<p3.yield!>!
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): p3.yield
+        public final /*synthesized*/ fun values(): kotlin.Array<p3.yield>
+    }
+}
+
+package p4 {
+    public fun </*0*/ yield : kotlin.Number> f1(): kotlin.Unit
+    public fun </*0*/ y : p4.yield /* = kotlin.Number */> f2(): kotlin.Unit
+    public typealias yield = kotlin.Number
+}

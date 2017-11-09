@@ -1,7 +1,7 @@
 // "Create member function 'A.contains'" "true"
 
 class A<T>(val n: T) {
-    infix operator fun contains(t: T): Boolean {
+    operator fun contains(t: T): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

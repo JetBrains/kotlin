@@ -19,12 +19,13 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -57,9 +58,15 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         commentSaver.restore(commentRestoreRange)
 
         val newIfCondition = newIf.condition
-        val simplifyIntention = ConvertNegatedExpressionWithDemorgansLawIntention()
-        if (newIfCondition is KtPrefixExpression && simplifyIntention.isApplicableTo(newIfCondition)) {
-            simplifyIntention.applyTo(newIfCondition)
+        val simplifyIntention = ConvertBinaryExpressionWithDemorgansLawIntention()
+        (newIfCondition as? KtPrefixExpression)?.let {
+            //use De Morgan's law only for negated condition to not make it more complex
+            if (it.operationReference.getReferencedNameElementType() == KtTokens.EXCL) {
+                val binaryExpr = (it.baseExpression as? KtParenthesizedExpression)?.expression as? KtBinaryExpression
+                if (binaryExpr != null && simplifyIntention.isApplicableTo(binaryExpr)) {
+                    simplifyIntention.applyTo(binaryExpr)
+                }
+            }
         }
 
         editor?.apply {
@@ -205,7 +212,7 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
             is KtNamedFunction -> {
                 if (parent.bodyExpression == expression) {
                     if (!parent.hasBlockBody()) return null
-                    val returnType = (parent.resolveToDescriptor() as FunctionDescriptor).returnType
+                    val returnType = (parent.resolveToDescriptorIfAny() as? FunctionDescriptor)?.returnType
                     if (returnType == null || !returnType.isUnit()) return null
                     return KtPsiFactory(expression).createExpression("return")
                 }

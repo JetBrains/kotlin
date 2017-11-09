@@ -1,0 +1,2 @@
+error: cannot open output file '$TESTDATA_DIR$/min/simple.js': is a directory
+COMPILATION_ERROR

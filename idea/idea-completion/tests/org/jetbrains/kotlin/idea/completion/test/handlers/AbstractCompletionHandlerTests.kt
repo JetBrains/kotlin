@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.idea.completion.test.handlers
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
+import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -39,7 +41,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
 
         val settingManager = CodeStyleSettingsManager.getInstance()
         val tempSettings = settingManager.currentSettings.clone()
-        settingManager.temporarySettings = tempSettings
+        settingManager.setTemporarySettings(tempSettings)
         try {
             val fileText = FileUtil.loadFile(File(testPath))
             assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"));
@@ -57,20 +59,26 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
 
             val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
 
-            val codeStyleSettings = KotlinCodeStyleSettings.getInstance(project)
+            val kotlinStyleSettings = KotlinCodeStyleSettings.getInstance(project)
+            val commonStyleSettings = CodeStyleSettingsManager.getSettings(project).getCommonSettings(KotlinLanguage.INSTANCE)
             for (line in InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, CODE_STYLE_SETTING_PREFIX)) {
                 val index = line.indexOfOrNull('=') ?: error("Invalid code style setting '$line': '=' expected")
                 val settingName = line.substring(0, index).trim()
                 val settingValue = line.substring(index + 1).trim()
-                val field = codeStyleSettings.javaClass.getDeclaredField(settingName)
+                val (field, settings) = try {
+                    kotlinStyleSettings::class.java.getDeclaredField(settingName) to kotlinStyleSettings
+                }
+                catch (e: NoSuchFieldException) {
+                    commonStyleSettings::class.java.getDeclaredField(settingName) to commonStyleSettings
+                }
                 when (field.type.name) {
-                    "boolean" -> field.setBoolean(codeStyleSettings, settingValue.toBoolean())
-                    "int" -> field.setInt(codeStyleSettings, settingValue.toInt())
+                    "boolean" -> field.setBoolean(settings, settingValue.toBoolean())
+                    "int" -> field.setInt(settings, settingValue.toInt())
                     else -> error("Unsupported setting type: ${field.type}")
                 }
             }
 
-            doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, testPath + ".after")
+            doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, File(testPath).name + ".after")
         }
         finally {
             settingManager.dropTemporarySettings()
@@ -79,7 +87,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
     }
 
     protected open fun setUpFixture(testPath: String) {
-        fixture.configureByFile(testPath)
+        fixture.configureWithExtraFile(testPath, ".dependency", ".dependency.1", ".dependency.2")
     }
 
     protected open fun tearDownFixture() {

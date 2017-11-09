@@ -22,7 +22,7 @@ import java.util.*
 
 class DefaultCallArgs(val size: Int) {
 
-    val bits: BitSet = BitSet(size)
+    private val bits: BitSet = BitSet(size)
 
     fun mark(index: Int) {
         assert (index < size) {
@@ -39,7 +39,7 @@ class DefaultCallArgs(val size: Int) {
         val masks = ArrayList<Int>(1)
 
         var mask = 0
-        for (i in 0..size - 1) {
+        for (i in 0 until size) {
             if (i != 0 && i % Integer.SIZE == 0) {
                 masks.add(mask)
                 mask = 0
@@ -55,11 +55,11 @@ class DefaultCallArgs(val size: Int) {
         val toInts = toInts()
         if (!toInts.isEmpty()) {
             for (mask in toInts) {
-                callGenerator.putValueIfNeeded(Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE))
+                callGenerator.putValueIfNeeded(Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE), ValueKind.DEFAULT_MASK)
             }
 
             val parameterType = if (isConstructor) AsmTypes.DEFAULT_CONSTRUCTOR_MARKER else AsmTypes.OBJECT_TYPE
-            callGenerator.putValueIfNeeded(parameterType, StackValue.constant(null, parameterType))
+            callGenerator.putValueIfNeeded(parameterType, StackValue.constant(null, parameterType), ValueKind.METHOD_HANDLE_IN_DEFAULT)
         }
         return toInts.isNotEmpty()
     }

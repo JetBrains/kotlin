@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.kdoc;
 
 import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingTest;
+import org.jetbrains.kotlin.idea.inspections.kdoc.KDocMissingDocumentationInspection;
 
 public abstract class AbstractKDocHighlightingTest extends AbstractHighlightingTest {
     @Override

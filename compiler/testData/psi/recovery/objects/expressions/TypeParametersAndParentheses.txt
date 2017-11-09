@@ -1,4 +1,4 @@
-JetFile: TypeParametersAndParentheses.kt
+KtFile: TypeParametersAndParentheses.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST
@@ -13,16 +13,15 @@ JetFile: TypeParametersAndParentheses.kt
     OBJECT_LITERAL
       OBJECT_DECLARATION
         PsiElement(object)('object')
-        PsiErrorElement:Type parameters are not allowed for objects
-          TYPE_PARAMETER_LIST
-            PsiElement(LT)('<')
-            TYPE_PARAMETER
-              PsiElement(IDENTIFIER)('T')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            TYPE_PARAMETER
-              PsiElement(IDENTIFIER)('R')
-            PsiElement(GT)('>')
+        TYPE_PARAMETER_LIST
+          PsiElement(LT)('<')
+          TYPE_PARAMETER
+            PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          TYPE_PARAMETER
+            PsiElement(IDENTIFIER)('R')
+          PsiElement(GT)('>')
         PRIMARY_CONSTRUCTOR
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -50,16 +49,15 @@ JetFile: TypeParametersAndParentheses.kt
     OBJECT_LITERAL
       OBJECT_DECLARATION
         PsiElement(object)('object')
-        PsiErrorElement:Type parameters are not allowed for objects
-          TYPE_PARAMETER_LIST
-            PsiElement(LT)('<')
-            TYPE_PARAMETER
-              PsiElement(IDENTIFIER)('T')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            TYPE_PARAMETER
-              PsiElement(IDENTIFIER)('R')
-            PsiElement(GT)('>')
+        TYPE_PARAMETER_LIST
+          PsiElement(LT)('<')
+          TYPE_PARAMETER
+            PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          TYPE_PARAMETER
+            PsiElement(IDENTIFIER)('R')
+          PsiElement(GT)('>')
         PRIMARY_CONSTRUCTOR
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -89,16 +87,15 @@ JetFile: TypeParametersAndParentheses.kt
     OBJECT_LITERAL
       OBJECT_DECLARATION
         PsiElement(object)('object')
-        PsiErrorElement:Type parameters are not allowed for objects
-          TYPE_PARAMETER_LIST
-            PsiElement(LT)('<')
-            TYPE_PARAMETER
-              PsiElement(IDENTIFIER)('T')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            TYPE_PARAMETER
-              PsiElement(IDENTIFIER)('R')
-            PsiElement(GT)('>')
+        TYPE_PARAMETER_LIST
+          PsiElement(LT)('<')
+          TYPE_PARAMETER
+            PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          TYPE_PARAMETER
+            PsiElement(IDENTIFIER)('R')
+          PsiElement(GT)('>')
         PRIMARY_CONSTRUCTOR
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')

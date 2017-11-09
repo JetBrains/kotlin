@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.completion.test.handlers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -62,7 +63,7 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     }
 
     public void testAllFilesPresentInSmart() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("AnonymousObject1.kt")
@@ -635,6 +636,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("NamedBooleanArgument.kt")
+    public void testNamedBooleanArgument() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/NamedBooleanArgument.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedDataClass.kt")
     public void testNestedDataClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/NestedDataClass.kt");
@@ -898,7 +905,7 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         }
 
         public void testAllFilesPresentInLambda() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambda"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("InsertImport.kt")
@@ -916,6 +923,27 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         @TestMetadata("ParameterNamesSpecified_NullableType.kt")
         public void testParameterNamesSpecified_NullableType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambda/ParameterNamesSpecified_NullableType.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/idea-completion/testData/handlers/smart/lambdaSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LambdaSignature extends AbstractSmartCompletionHandlerTest {
+        public void testAllFilesPresentInLambdaSignature() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambdaSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("NoAdditionalSpace.kt")
+        public void testNoAdditionalSpace() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambdaSignature/NoAdditionalSpace.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambdaSignature/Simple.kt");
             doTest(fileName);
         }
     }

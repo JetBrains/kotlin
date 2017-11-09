@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -76,7 +77,7 @@ fun PsiMember.getJavaOrKotlinMemberDescriptor(resolutionFacade: ResolutionFacade
     return when (callable) {
         is PsiMember -> getJavaMemberDescriptor(resolutionFacade)
         is KtDeclaration -> {
-            val descriptor = resolutionFacade?.resolveToDescriptor(callable) ?: callable.resolveToDescriptor()
+            val descriptor = resolutionFacade?.resolveToDescriptor(callable) ?: callable.unsafeResolveToDescriptor()
             if (descriptor is ClassDescriptor && this is PsiMethod) descriptor.unsubstitutedPrimaryConstructor else descriptor
         }
         else -> null
@@ -105,7 +106,7 @@ fun PsiClass.resolveToDescriptor(
 
 private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFacade?): JavaDescriptorResolver? {
     if (resolutionFacade != null) {
-        return resolutionFacade.getFrontendService(this, JavaDescriptorResolver::class.java)
+        return resolutionFacade.tryGetFrontendService(this, JavaDescriptorResolver::class.java)
     }
     else {
         //TODO_R: should this work in scripts?
@@ -114,7 +115,7 @@ private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFac
         val cacheService = KotlinCacheService.getInstance(project)
         val moduleInfo = this.getNullableModuleInfo() ?: return null
         @Suppress("DEPRECATION")
-        return (cacheService as? KotlinCacheServiceImpl)?.getProjectService(JvmPlatform, moduleInfo, JavaDescriptorResolver::class.java)
+        return (cacheService as? KotlinCacheServiceImpl)?.tryGetProjectService(JvmPlatform, moduleInfo, JavaDescriptorResolver::class.java)
     }
 }
 
@@ -127,7 +128,7 @@ private fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstruct
 }
 
 private fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {
-    return getContainingScope(field)?.getContributedVariables(field.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(field) as? PropertyDescriptor
+    return getContainingScope(field)?.getContributedVariables(field.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(field)
 }
 
 private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): MemberScope? {

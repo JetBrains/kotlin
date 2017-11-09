@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 open class A<T> : Collection<T> {
     override val size: Int
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.

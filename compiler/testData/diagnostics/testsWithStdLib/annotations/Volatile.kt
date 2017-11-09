@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 import kotlin.jvm.Volatile
 import kotlin.properties.Delegates
 

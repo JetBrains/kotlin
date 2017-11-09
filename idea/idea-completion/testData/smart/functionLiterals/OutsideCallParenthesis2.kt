@@ -5,5 +5,6 @@ fun bar(p: String.(Int) -> Unit) {
 }
 
 // EXIST: "{...}"
-// EXIST: "{ Int -> ... }"
+// EXIST: "{ i -> ... }"
+// EXIST: "{ i: Int -> ... }"
 // ABSENT: p

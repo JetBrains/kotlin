@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.collect.Sets;
 import com.intellij.util.containers.MultiMap;
+import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -49,13 +50,13 @@ public class KotlinCodegenFacade {
             @NotNull GenerationState state,
             @NotNull CompilationErrorHandler errorHandler
     ) {
-        MultiMap<FqName, KtFile> filesInPackages = new MultiMap<FqName, KtFile>();
-        MultiMap<FqName, KtFile> filesInMultifileClasses = new MultiMap<FqName, KtFile>();
+        MultiMap<FqName, KtFile> filesInPackages = new MultiMap<>();
+        MultiMap<FqName, KtFile> filesInMultifileClasses = new MultiMap<>();
 
         for (KtFile file : files) {
             if (file == null) throw new IllegalArgumentException("A null file given for compilation");
 
-            JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
+            JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file);
 
             if (fileClassInfo.getWithJvmMultifileClass()) {
                 filesInMultifileClasses.putValue(fileClassInfo.getFacadeClassFqName(), file);
@@ -65,14 +66,14 @@ public class KotlinCodegenFacade {
             }
         }
 
-        Set<FqName> obsoleteMultifileClasses = new HashSet<FqName>(state.getObsoleteMultifileClasses());
-        for (FqName multifileClassFqName : Sets.union(filesInMultifileClasses.keySet(), obsoleteMultifileClasses)) {
+        Set<FqName> obsoleteMultifileClasses = new HashSet<>(state.getObsoleteMultifileClasses());
+        for (FqName multifileClassFqName : SetsKt.plus(filesInMultifileClasses.keySet(), obsoleteMultifileClasses)) {
             doCheckCancelled(state);
             generateMultifileClass(state, multifileClassFqName, filesInMultifileClasses.get(multifileClassFqName), errorHandler);
         }
 
-        Set<FqName> packagesWithObsoleteParts = new HashSet<FqName>(state.getPackagesWithObsoleteParts());
-        for (FqName packageFqName : Sets.union(packagesWithObsoleteParts, filesInPackages.keySet())) {
+        Set<FqName> packagesWithObsoleteParts = new HashSet<>(state.getPackagesWithObsoleteParts());
+        for (FqName packageFqName : SetsKt.plus(packagesWithObsoleteParts, filesInPackages.keySet())) {
             doCheckCancelled(state);
             generatePackage(state, packageFqName, filesInPackages.get(packageFqName), errorHandler);
         }

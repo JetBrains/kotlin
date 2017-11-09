@@ -22,6 +22,8 @@ import com.intellij.psi.impl.search.MethodUsagesSearcher
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
+import com.intellij.psi.util.MethodSignatureUtil
+import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -40,16 +42,24 @@ import org.jetbrains.kotlin.utils.ifEmpty
 
 class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
     override fun processQuery(p: MethodReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
-        super.processQuery(p, consumer)
-
         val method = p.method
-        p.project.runReadActionInSmartMode {
-            val containingClass = method.containingClass ?: return@runReadActionInSmartMode
+        val isConstructor = p.project.runReadActionInSmartMode { method.isConstructor }
+        if (isConstructor) {
+            return
+        }
 
-            val searchScope = p.effectiveSearchScope
+        val searchScope = p.project.runReadActionInSmartMode {
+            p.effectiveSearchScope
                     .intersectWith(method.useScope)
                     .restrictToKotlinSources()
-            if (searchScope === GlobalSearchScope.EMPTY_SCOPE) return@runReadActionInSmartMode
+        }
+
+        if (searchScope === GlobalSearchScope.EMPTY_SCOPE) return
+
+        super.processQuery(MethodReferencesSearch.SearchParameters(method, searchScope, p.isStrictSignatureSearch, p.optimizer), consumer)
+
+        p.project.runReadActionInSmartMode {
+            val containingClass = method.containingClass ?: return@runReadActionInSmartMode
 
             val nameCandidates = getPropertyNamesCandidatesByAccessorName(Name.identifier(method.name))
             for (name in nameCandidates) {
@@ -85,19 +95,38 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
 
                 if (refElement !is KtCallableDeclaration) {
                     if (isWrongAccessorReference()) return true
-                    return super.processInexactReference(ref, refElement, method, consumer)
+                    if (refElement !is PsiMethod) return true
+
+                    val refMethodClass = refElement.containingClass ?: return true
+                    val substitutor = TypeConversionUtil.getClassSubstitutor(myContainingClass, refMethodClass, PsiSubstitutor.EMPTY)
+                    if (substitutor != null) {
+                        val superSignature = method.getSignature(substitutor)
+                        val refSignature = refElement.getSignature(PsiSubstitutor.EMPTY)
+
+                        if (MethodSignatureUtil.isSubsignature(superSignature, refSignature)) {
+                            return super.processInexactReference(ref, refElement, method, consumer)
+                        }
+                    }
+                    return true
                 }
 
-                var lightMethods = refElement.toLightMethods()
+                fun countNonFinalLightMethods() = refElement
+                        .toLightMethods()
                         .filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
-                        .ifEmpty { return true }
-                if (refElement is KtProperty || refElement is KtParameter) {
-                    if (isWrongAccessorReference()) return true
-                    lightMethods = lightMethods.filter { JvmAbi.isGetterName(it.name) == isGetter }
+
+                val lightMethods = when (refElement) {
+                    is KtProperty, is KtParameter -> {
+                        if (isWrongAccessorReference()) return true
+                        countNonFinalLightMethods().filter { JvmAbi.isGetterName(it.name) == isGetter }
+                    }
+
+                    is KtNamedFunction ->
+                        countNonFinalLightMethods().filter { it.name == method.name }
+
+                    else ->
+                        countNonFinalLightMethods()
                 }
-                if (refElement is KtNamedFunction) {
-                    lightMethods = lightMethods.filter { it.name == method.name }
-                }
+
 
                 return lightMethods.all { super.processInexactReference(ref, it, method, consumer) }
             }

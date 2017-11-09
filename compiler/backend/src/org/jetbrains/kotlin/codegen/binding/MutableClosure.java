@@ -29,6 +29,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDirectMember;
 
 public final class MutableClosure implements CalculatedClosure {
+    private final ClassDescriptor closureClass;
     private final ClassDescriptor enclosingClass;
     private final CallableDescriptor enclosingFunWithReceiverDescriptor;
 
@@ -39,9 +40,11 @@ public final class MutableClosure implements CalculatedClosure {
     private Map<DeclarationDescriptor, Integer> parameterOffsetInConstructor;
     private List<Pair<String, Type>> recordedFields;
     private KotlinType captureReceiverType;
-    private boolean isCoroutine;
+    private boolean isSuspend;
+    private boolean isSuspendLambda;
 
     MutableClosure(@NotNull ClassDescriptor classDescriptor, @Nullable ClassDescriptor enclosingClass) {
+        this.closureClass = classDescriptor;
         this.enclosingClass = enclosingClass;
         this.enclosingFunWithReceiverDescriptor = enclosingExtensionMemberForClass(classDescriptor);
     }
@@ -56,6 +59,12 @@ public final class MutableClosure implements CalculatedClosure {
             }
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    public ClassDescriptor getClosureClass() {
+        return closureClass;
     }
 
     @Nullable
@@ -97,7 +106,7 @@ public final class MutableClosure implements CalculatedClosure {
     @NotNull
     @Override
     public Map<DeclarationDescriptor, EnclosedValueDescriptor> getCaptureVariables() {
-        return captureVariables != null ? captureVariables : Collections.<DeclarationDescriptor, EnclosedValueDescriptor>emptyMap();
+        return captureVariables != null ? captureVariables : Collections.emptyMap();
     }
 
     public void setCaptureReceiverType(@NotNull KotlinType type) {
@@ -107,35 +116,46 @@ public final class MutableClosure implements CalculatedClosure {
     @NotNull
     @Override
     public List<Pair<String, Type>> getRecordedFields() {
-        return recordedFields != null ? recordedFields : Collections.<Pair<String, Type>>emptyList();
+        return recordedFields != null ? recordedFields : Collections.emptyList();
     }
 
     @Override
-    public boolean isCoroutine() {
-        return isCoroutine;
+    public boolean isSuspend() {
+        return isSuspend;
     }
 
-    public void setCoroutine(boolean coroutine) {
-        this.isCoroutine = coroutine;
+    public void setSuspend(boolean suspend) {
+        this.isSuspend = suspend;
     }
 
-    public void recordField(String name, Type type) {
+    @Override
+    public boolean isSuspendLambda() {
+        return isSuspendLambda;
+    }
+
+    public void setSuspendLambda() {
+        isSuspendLambda = true;
+    }
+
+    private void recordField(String name, Type type) {
         if (recordedFields == null) {
-            recordedFields = new LinkedList<Pair<String, Type>>();
+            recordedFields = new LinkedList<>();
         }
-        recordedFields.add(new Pair<String, Type>(name, type));
+        recordedFields.add(new Pair<>(name, type));
     }
 
     public void captureVariable(EnclosedValueDescriptor value) {
+        recordField(value.getFieldName(), value.getType());
+
         if (captureVariables == null) {
-            captureVariables = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
+            captureVariables = new LinkedHashMap<>();
         }
         captureVariables.put(value.getDescriptor(), value);
     }
 
     public void setCapturedParameterOffsetInConstructor(DeclarationDescriptor descriptor, int offset) {
         if (parameterOffsetInConstructor == null) {
-            parameterOffsetInConstructor = new LinkedHashMap<DeclarationDescriptor, Integer>();
+            parameterOffsetInConstructor = new LinkedHashMap<>();
         }
         parameterOffsetInConstructor.put(descriptor, offset);
     }

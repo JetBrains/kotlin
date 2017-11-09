@@ -1,4 +1,5 @@
 // "Replace with 'newFun()'" "true"
+// WITH_RUNTIME
 package ppp
 
 fun bar(): Int = 0

@@ -19,29 +19,29 @@ fun test(d: dynamic) {
 
     d.<!DEBUG_INFO_DYNAMIC!>onStringVal<!> = 1
 
-    <!VAL_REASSIGNMENT!>d.onDynamicVal<!> = 1
+    d.<!DEBUG_INFO_DYNAMIC!>onDynamicVal<!> = 1
 
     (d as String).onStringVal
     (d as Any).onAnyVal
     (d as Any?).onNullableAnyVal
-    (d as Any).onDynamicVal
+    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVal<!>
 }
 
 fun testReassignmentWithSafeCall(d: dynamic) {
-    <!VAL_REASSIGNMENT!>d?.onDynamicVal<!> = 1
+    d?.<!DEBUG_INFO_DYNAMIC!>onDynamicVal<!> = 1
 }
 
 fun testReassignmentWithStaticCalls(d: dynamic) {
     <!VAL_REASSIGNMENT!>(d as String).onStringVal<!> = 1
     <!VAL_REASSIGNMENT!>(d as Any).onAnyVal<!> = 1
     <!VAL_REASSIGNMENT!>(d as Any?).onNullableAnyVal<!> = 1
-    <!VAL_REASSIGNMENT!>(d as Any).onDynamicVal<!> = 1
+    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVal<!> = 1
 }
 
 val Any.onAnyVal: Int get() = 1
 val Any?.onNullableAnyVal: Int get() = 1
 val String.onStringVal: Int get() = 1
-val dynamic.onDynamicVal: Int get() = 1
+val <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.onDynamicVal: Int get() = 1
 
 class C {
     fun test(d: dynamic) {

@@ -25,6 +25,10 @@ import com.intellij.ide.IdeBundle
 import com.intellij.openapi.roots.ui.configuration.libraries.AddCustomLibraryDialog
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager
+import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.framework.CommonStandardLibraryDescription
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
+import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
 import javax.swing.JComponent
 
 // Based on com.intellij.facet.impl.ui.libraries.FrameworkLibraryValidatorImpl
@@ -32,10 +36,27 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         private val context: LibrariesValidatorContext,
         private val validatorsManager: FacetValidatorsManager,
         private val libraryCategoryName: String,
-        private val getLibraryDescription: () -> CustomLibraryDescription
+        private val getTargetPlatform: () -> TargetPlatformKind<*>
 ) : FrameworkLibraryValidator() {
-    override fun check(): ValidationResult {
-        val libraryDescription = getLibraryDescription()
+    private val TargetPlatformKind<*>.libraryDescription: CustomLibraryDescription
+        get() {
+            val project = context.module.project
+            return when (this) {
+                is TargetPlatformKind.Jvm -> JavaRuntimeLibraryDescription(project)
+                is TargetPlatformKind.JavaScript -> JSLibraryStdDescription(project)
+                is TargetPlatformKind.Common -> CommonStandardLibraryDescription(project)
+            }
+        }
+
+    private fun checkLibraryIsConfigured(targetPlatform: TargetPlatformKind<*>): Boolean {
+        // TODO: propose to configure kotlin-stdlib-common once it's available
+        if (targetPlatform == TargetPlatformKind.Common) return true
+
+        if (KotlinVersionInfoProvider.EP_NAME.extensions.any {
+            it.getLibraryVersions(context.module, targetPlatform, context.rootModel).isNotEmpty()
+        }) return true
+
+        val libraryDescription = targetPlatform.libraryDescription
         val libraryKinds = libraryDescription.suitableLibraryKinds
         var found = false
         val presentationManager = LibraryPresentationManager.getInstance()
@@ -50,11 +71,28 @@ class FrameworkLibraryValidatorWithDynamicDescription(
                     }
                     !found
                 }
-        if (found) return ValidationResult.OK
+        return found
+    }
+
+    override fun check(): ValidationResult {
+        val targetPlatform = getTargetPlatform()
+
+        if (checkLibraryIsConfigured(targetPlatform)) {
+            val conflictingPlatforms = TargetPlatformKind.ALL_PLATFORMS.filter {
+                it != TargetPlatformKind.Common && it.name != targetPlatform.name && checkLibraryIsConfigured(it)
+            }
+            if (conflictingPlatforms.isNotEmpty()) {
+                val platformText = conflictingPlatforms.mapTo(LinkedHashSet()) { it.name }.joinToString()
+                return ValidationResult("Libraries for the following platform are also present in the module dependencies: $platformText")
+            }
+
+            return ValidationResult.OK
+        }
+
 
         return ValidationResult(
                 IdeBundle.message("label.missed.libraries.text", libraryCategoryName),
-                LibrariesQuickFix(libraryDescription)
+                LibrariesQuickFix(targetPlatform.libraryDescription)
         )
     }
 

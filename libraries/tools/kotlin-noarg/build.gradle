@@ -1,0 +1,54 @@
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
+configurePublishing(project)
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.fork = false
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'http://repository.jetbrains.com/utils' }
+}
+
+dependencies {
+    compile project(':kotlin-gradle-plugin-api')
+
+    compile project(':kotlin-stdlib')
+    compileOnly project(':compiler')
+    compileOnly project(':kotlin-noarg-compiler-plugin')
+
+    compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
+}
+
+evaluationDependsOn(":kotlin-noarg-compiler-plugin")
+
+jar {
+    from(project(":kotlin-noarg-compiler-plugin").sourceSets.main.output.classesDirs)
+    from(project(":kotlin-noarg-compiler-plugin").sourceSets.main.output.resourcesDir)
+    manifestAttributes(manifest, project)
+}
+
+ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+pluginBundle {
+    plugins {
+        kotlinNoargPlugin {
+            id = 'org.jetbrains.kotlin.plugin.noarg'
+            description = displayName = 'Kotlin No Arg compiler plugin'
+        }
+        kotlinJpaPlugin {
+            id = 'org.jetbrains.kotlin.plugin.jpa'
+            description = displayName = 'Kotlin JPA compiler plugin'
+        }
+    }
+}

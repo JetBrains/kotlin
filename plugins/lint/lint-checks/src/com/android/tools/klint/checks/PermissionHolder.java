@@ -18,6 +18,8 @@ package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
+import com.android.annotations.VisibleForTesting;
+import com.android.sdklib.AndroidVersion;
 
 import java.util.Collections;
 import java.util.Set;
@@ -31,34 +33,67 @@ public interface PermissionHolder {
     /** Returns true if the permission holder has been granted the given permission */
     boolean hasPermission(@NonNull String permission);
 
-    /** Returns true if the given permission is known to be revocable for targetSdkVersion >= M */
+    /** Returns true if the given permission is known to be revocable for targetSdkVersion &ge; M */
     boolean isRevocable(@NonNull String permission);
+
+    @NonNull
+    AndroidVersion getMinSdkVersion();
+
+    @NonNull
+    AndroidVersion getTargetSdkVersion();
 
     /**
      * A convenience implementation of {@link PermissionHolder} backed by a set
      */
     class SetPermissionLookup implements PermissionHolder {
-        private Set<String> myGrantedPermissions;
-        private Set<String> myRevocablePermissions;
+        private final Set<String> mGrantedPermissions;
+        private final Set<String> mRevocablePermissions;
+        private final AndroidVersion mMinSdkVersion;
+        private final AndroidVersion mTargetSdkVersion;
 
-        public SetPermissionLookup(@NonNull Set<String> grantedPermissions,
-                @NonNull Set<String> revocablePermissions) {
-            myGrantedPermissions = grantedPermissions;
-            myRevocablePermissions = revocablePermissions;
+        public SetPermissionLookup(
+                @NonNull Set<String> grantedPermissions,
+                @NonNull Set<String> revocablePermissions,
+                @NonNull AndroidVersion minSdkVersion,
+                @NonNull AndroidVersion targetSdkVersion) {
+            mGrantedPermissions = grantedPermissions;
+            mRevocablePermissions = revocablePermissions;
+            mMinSdkVersion = minSdkVersion;
+            mTargetSdkVersion = targetSdkVersion;
         }
 
+        @VisibleForTesting
+        public SetPermissionLookup(@NonNull Set<String> grantedPermissions,
+                @NonNull Set<String> revocablePermissions) {
+            this(grantedPermissions, revocablePermissions, AndroidVersion.DEFAULT,
+                    AndroidVersion.DEFAULT);
+        }
+
+        @VisibleForTesting
         public SetPermissionLookup(@NonNull Set<String> grantedPermissions) {
             this(grantedPermissions, Collections.<String>emptySet());
         }
 
         @Override
         public boolean hasPermission(@NonNull String permission) {
-            return myGrantedPermissions.contains(permission);
+            return mGrantedPermissions.contains(permission);
         }
 
         @Override
         public boolean isRevocable(@NonNull String permission) {
-            return myRevocablePermissions.contains(permission);
+            return mRevocablePermissions.contains(permission);
+        }
+
+        @NonNull
+        @Override
+        public AndroidVersion getMinSdkVersion() {
+            return mMinSdkVersion;
+        }
+
+        @NonNull
+        @Override
+        public AndroidVersion getTargetSdkVersion() {
+            return mTargetSdkVersion;
         }
 
         /**
@@ -69,7 +104,9 @@ public interface PermissionHolder {
         @NonNull
         public static PermissionHolder join(@NonNull PermissionHolder lookup,
                                             @NonNull PermissionRequirement requirement) {
-            SetPermissionLookup empty = new SetPermissionLookup(Collections.<String>emptySet());
+            SetPermissionLookup empty = new SetPermissionLookup(Collections.<String>emptySet(),
+                    Collections.<String>emptySet(), lookup.getMinSdkVersion(),
+                    lookup.getTargetSdkVersion());
             return join(lookup, requirement.getMissingPermissions(empty));
         }
 
@@ -91,6 +128,18 @@ public interface PermissionHolder {
                     @Override
                     public boolean isRevocable(@NonNull String permission) {
                         return lookup.isRevocable(permission);
+                    }
+
+                    @NonNull
+                    @Override
+                    public AndroidVersion getMinSdkVersion() {
+                        return lookup.getMinSdkVersion();
+                    }
+
+                    @NonNull
+                    @Override
+                    public AndroidVersion getTargetSdkVersion() {
+                        return lookup.getTargetSdkVersion();
                     }
                 };
             }

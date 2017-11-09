@@ -16,26 +16,33 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 
-import com.google.common.base.Predicates
-import com.google.dart.compiler.backend.js.ast.JsExpression
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
-import org.jetbrains.kotlin.utils.identity
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.invokeKotlinFunction
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toByte
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toChar
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toShort
+import java.util.function.Predicate
 
 object NumberAndCharConversionFIF : CompositeFIF() {
-    val USE_AS_IS = Predicates.or(
-            pattern("Int.toInt|toFloat|toDouble"), pattern("Short.toShort|toInt|toFloat|toDouble"),
-            pattern("Byte.toByte|toShort|toInt|toFloat|toDouble"), pattern("Float|Double.toFloat|toDouble"),
-            pattern("Long.toLong"), pattern("Char.toChar")
-    )
+    val USE_AS_IS: Predicate<FunctionDescriptor> = pattern("Int.toInt|toFloat|toDouble")
+            .or(pattern("Short.toShort|toInt|toFloat|toDouble"))
+            .or(pattern("Byte.toByte|toShort|toInt|toFloat|toDouble"))
+            .or(pattern("Float|Double.toFloat|toDouble"))
+            .or(pattern("Long.toLong"))
+            .or(pattern("Char.toChar"))
 
-    private val convertOperations: Map<String, ConversionUnaryIntrinsic>  =
+    private val convertOperations: Map<String, FunctionIntrinsicWithReceiverComputed> =
             mapOf(
-                    "Float|Double.toInt" to ConversionUnaryIntrinsic { toInt32(it) },
-                    "Int|Float|Double.toShort" to ConversionUnaryIntrinsic { toShort(it) },
-                    "Short|Int|Float|Double.toByte" to ConversionUnaryIntrinsic { toByte(it) },
+                    "Float|Double.toInt" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToInt", it) },
+                    "Float|Double.toShort" to ConversionUnaryIntrinsic { toShort(invokeKotlinFunction("numberToInt", it)) },
+                    "Int.toShort" to ConversionUnaryIntrinsic { toShort(it) },
+                    "Float|Double.toByte" to ConversionUnaryIntrinsic { toByte(invokeKotlinFunction("numberToInt", it)) },
+                    "Short|Int.toByte" to ConversionUnaryIntrinsic { toByte(it) },
 
                     "Int|Short|Byte.toLong" to ConversionUnaryIntrinsic { longFromInt(it) },
                     "Float|Double.toLong" to ConversionUnaryIntrinsic { longFromNumber(it) },
@@ -52,7 +59,8 @@ object NumberAndCharConversionFIF : CompositeFIF() {
                     "Number.toFloat|toDouble" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToDouble", it) },
                     "Number.toLong" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToLong", it) },
 
-                    "Int|Short|Byte|Float|Double.toChar" to  ConversionUnaryIntrinsic { toChar(it) },
+                    "Float|Double.toChar" to ConversionUnaryIntrinsic { toChar(invokeKotlinFunction("numberToInt", it)) },
+                    "Int|Short|Byte.toChar" to ConversionUnaryIntrinsic { toChar(it) },
 
                     "Long.toFloat|toDouble" to  ConversionUnaryIntrinsic { invokeMethod(it, "toNumber") },
                     "Long.toInt" to  ConversionUnaryIntrinsic { invokeMethod(it, "toInt") },
@@ -62,16 +70,16 @@ object NumberAndCharConversionFIF : CompositeFIF() {
 
             )
 
-    class ConversionUnaryIntrinsic(val applyFun: (receiver: JsExpression) -> JsExpression) : FunctionIntrinsic() {
+    class ConversionUnaryIntrinsic(val applyFun: TranslationContext.(receiver: JsExpression) -> JsExpression) : FunctionIntrinsicWithReceiverComputed() {
         override fun apply(receiver: JsExpression?, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
             assert(receiver != null)
-            assert(arguments.size == 0)
-            return applyFun(receiver!!)
+            assert(arguments.isEmpty())
+            return context.applyFun(receiver!!)
         }
     }
 
     init {
-        add(USE_AS_IS!!, ConversionUnaryIntrinsic(identity()))
+        add(USE_AS_IS, ConversionUnaryIntrinsic { it })
         for((stringPattern, intrinsic) in convertOperations) {
             add(pattern(stringPattern), intrinsic)
         }

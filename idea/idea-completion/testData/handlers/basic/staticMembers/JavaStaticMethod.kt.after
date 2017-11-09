@@ -6,4 +6,4 @@ fun foo() {
 
 // INVOCATION_COUNT: 2
 // ELEMENT_TEXT: "SwingUtilities.invokeLater"
-// TAIL_TEXT: "(Runnable!) (javax.swing)"
+// TAIL_TEXT: "(doRun: Runnable!) (javax.swing)"

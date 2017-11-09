@@ -1,7 +1,8 @@
+@file:kotlin.jvm.JvmVersion
+@file:Suppress("DEPRECATION", "DEPRECATED_JAVA_ANNOTATION")
 package test.reflection
 
 import kotlin.test.*
-import org.junit.Test as test
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class MyAnno
@@ -12,7 +13,7 @@ class AnnotatedClass
 
 
 class AnnotationTest {
-    @test fun annotationType() {
+    @Test fun annotationType() {
         val kAnnotations = AnnotatedClass::class.java.annotations.map { it!!.annotationClass }
         val jAnnotations = AnnotatedClass::class.java.annotations.map { it!!.annotationClass.java }
 

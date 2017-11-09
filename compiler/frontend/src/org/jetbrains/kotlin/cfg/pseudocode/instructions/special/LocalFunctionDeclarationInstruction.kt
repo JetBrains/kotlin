@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
-import com.google.common.collect.Lists
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -26,20 +25,20 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 
-class LocalFunctionDeclarationInstruction(
+open class LocalFunctionDeclarationInstruction(
         element: KtElement,
         val body: Pseudocode,
         blockScope: BlockScope
 ) : InstructionWithNext(element, blockScope) {
     var sink: SubroutineSinkInstruction? = null
-        set(value: SubroutineSinkInstruction?) {
+        set(value) {
             field = outgoingEdgeTo(value) as SubroutineSinkInstruction?
         }
 
     override val nextInstructions: Collection<Instruction>
         get() {
-            if (sink != null) {
-                val instructions = Lists.newArrayList<Instruction>(sink)
+            sink?.let {
+                val instructions = arrayListOf<Instruction>(it)
                 instructions.addAll(super.nextInstructions)
                 return instructions
             }
@@ -50,9 +49,7 @@ class LocalFunctionDeclarationInstruction(
         visitor.visitLocalFunctionDeclarationInstruction(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitLocalFunctionDeclarationInstruction(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitLocalFunctionDeclarationInstruction(this)
 
     override fun toString(): String = "d(${render(element)})"
 

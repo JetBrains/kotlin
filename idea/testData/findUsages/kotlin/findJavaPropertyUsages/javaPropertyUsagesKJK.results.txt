@@ -1,4 +1,4 @@
-[javaPropertyUsagesKJK.0.kt] Value read 25 val t = B().p
-[javaPropertyUsagesKJK.0.kt] Value write 26 B().p = 1
+[javaPropertyUsagesKJK.0.kt] Value read 26 val t = B().p
+[javaPropertyUsagesKJK.0.kt] Value write 27 B().p = 1
 [javaPropertyUsagesKJK.1.java] Unclassified usage 24 new B().getP();
 [javaPropertyUsagesKJK.1.java] Unclassified usage 25 new B().setP(1);

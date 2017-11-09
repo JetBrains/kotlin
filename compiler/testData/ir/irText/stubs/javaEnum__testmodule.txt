@@ -1,0 +1,23 @@
+MODULE_FRAGMENT <test-module>
+  EXTERNAL_PACKAGE_FRAGMENT <root>
+    CLASS IR_EXTERNAL_DECLARATION_STUB ENUM_CLASS JEnum
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor JEnum()
+      ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB enum entry ONE
+      ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB enum entry THREE
+      ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB enum entry TWO
+      FUN IR_EXTERNAL_DECLARATION_STUB protected final override fun clone(): kotlin.Any
+      FUN IR_EXTERNAL_DECLARATION_STUB protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+      FUN IR_EXTERNAL_DECLARATION_STUB public final override fun getDeclaringClass(): java.lang.Class<JEnum!>!
+      FUN IR_EXTERNAL_DECLARATION_STUB public final override fun compareTo(other: JEnum!): kotlin.Int
+        VALUE_PARAMETER value-parameter other: JEnum!
+      FUN IR_EXTERNAL_DECLARATION_STUB public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN IR_EXTERNAL_DECLARATION_STUB public final override fun hashCode(): kotlin.Int
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val name: kotlin.String
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-name>(): kotlin.String
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public final override val ordinal: kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public final override fun <get-ordinal>(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+      FUN IR_EXTERNAL_DECLARATION_STUB public final fun valueOf(value: kotlin.String): JEnum
+        VALUE_PARAMETER value-parameter value: kotlin.String
+      FUN IR_EXTERNAL_DECLARATION_STUB public final fun values(): kotlin.Array<JEnum>

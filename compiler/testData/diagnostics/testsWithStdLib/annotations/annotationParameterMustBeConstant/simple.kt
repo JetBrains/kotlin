@@ -19,6 +19,7 @@ val i2 = foo()
 
 fun foo(): Int = 1
 
+@AnnSA(emptyArray())
 class MyClass {
     val i = 1
 }

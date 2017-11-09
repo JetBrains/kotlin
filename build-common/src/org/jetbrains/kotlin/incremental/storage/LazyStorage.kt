@@ -87,7 +87,7 @@ class LazyStorage<K, V>(
         try {
             storage?.close()
         }
-        catch (ignored: IOException) {
+        catch (ignored: Throwable) {
         }
 
         PersistentHashMap.deleteFilesStartingWith(storageFile)

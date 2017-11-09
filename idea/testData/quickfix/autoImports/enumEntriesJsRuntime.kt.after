@@ -1,0 +1,16 @@
+// "Import" "true"
+package e
+
+import e.ImportClass.Companion.BLUE
+
+enum class ImportEnum {
+    RED, GREEN, BLUE
+}
+
+class ImportClass {
+    companion object {
+        val BLUE = 0
+    }
+}
+
+val v5 = BLUE

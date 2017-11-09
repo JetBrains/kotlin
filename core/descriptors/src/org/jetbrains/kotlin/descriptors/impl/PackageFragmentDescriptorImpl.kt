@@ -16,18 +16,18 @@
 
 package org.jetbrains.kotlin.descriptors.impl
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.TypeSubstitutor
 
 abstract class PackageFragmentDescriptorImpl(
         module: ModuleDescriptor,
         final override val fqName: FqName
 ) : DeclarationDescriptorNonRootImpl(module, Annotations.EMPTY, fqName.shortNameOrSpecial(), SourceElement.NO_SOURCE),
         PackageFragmentDescriptor {
-    override fun substitute(substitutor: TypeSubstitutor): DeclarationDescriptor? = this
-
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
             visitor.visitPackageFragmentDescriptor(this, data)
 

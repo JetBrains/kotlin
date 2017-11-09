@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.j2k.AccessorKind
 import org.jetbrains.kotlin.j2k.CodeConverter
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.dot
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class FieldToPropertyProcessing(
         private val field: PsiField,
@@ -38,16 +37,15 @@ class FieldToPropertyProcessing(
             if (field.name != propertyName || replaceReadWithFieldReference || replaceWriteWithFieldReference) MyConvertedCodeProcessor() else null
 
     override var javaCodeProcessors =
-            if (field.hasModifierProperty(PsiModifier.PRIVATE))
-                emptyList()
-            else if (field.name != propertyName)
-                listOf(ElementRenamedCodeProcessor(propertyName), UseAccessorsJavaCodeProcessor())
-            else
-                UseAccessorsJavaCodeProcessor().singletonList()
+            when {
+                field.hasModifierProperty(PsiModifier.PRIVATE) -> emptyList()
+                field.name != propertyName -> listOf(ElementRenamedCodeProcessor(propertyName), UseAccessorsJavaCodeProcessor())
+                else -> listOf(UseAccessorsJavaCodeProcessor())
+            }
 
     override val kotlinCodeProcessors =
             if (field.name != propertyName)
-                ElementRenamedCodeProcessor(propertyName).singletonList()
+                listOf(ElementRenamedCodeProcessor(propertyName))
             else
                 emptyList()
 
@@ -106,10 +104,8 @@ class FieldToPropertyProcessing(
 
                 is PsiPrefixExpression, is PsiPostfixExpression -> {
                     //TODO: what if it's used as value?
-                    val operationType = if (parent is PsiPrefixExpression)
-                        parent.operationTokenType
-                    else
-                        (parent as PsiPostfixExpression).operationTokenType
+                    val operationType = (parent as? PsiPrefixExpression)?.operationTokenType
+                                        ?: (parent as PsiPostfixExpression).operationTokenType
                     val opText = when (operationType) {
                         JavaTokenType.PLUSPLUS -> "+"
                         JavaTokenType.MINUSMINUS -> "-"

@@ -1,6 +1,7 @@
 package custom.scriptDefinition
 
-import org.jetbrains.kotlin.script.*
+import kotlin.script.dependencies.*
+import kotlin.script.templates.*
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future

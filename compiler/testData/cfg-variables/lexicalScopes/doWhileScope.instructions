@@ -11,29 +11,29 @@ L0:
   1 <START>                                                      INIT: in: {} out: {}
   2 mark({ "before" do { var a = 2 } while (a > 0) "after" })
     mark("before")
-    r("before") -> <v0>                                                                            USE: in: {} out: {}
+    r("before") -> <v0>                                                                          USE: in: {} out: {}
   3 mark(do { var a = 2 } while (a > 0))
 L2 [loop entry point]:
 L4 [body entry point]:
-    mark({ var a = 2 })                                          INIT: in: {a=I?} out: {a=I?}
-    v(var a = 2)                                                 INIT: in: {a=I?} out: {a=I?D}
-    r(2) -> <v1>                                                 INIT: in: {a=I?D} out: {a=I?D}
-    w(a|<v1>)                                                    INIT: in: {a=I?D} out: {a=ID}
+    mark({ var a = 2 })
+    v(var a = 2)                                                 INIT: in: {} out: {a=D}
+    r(2) -> <v1>                                                 INIT: in: {a=D} out: {a=D}
+    w(a|<v1>)                                                    INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
 L5 [body exit point]:
 L6 [condition entry point]:
-    r(a) -> <v2>                                                 INIT: in: {a=ID} out: {a=ID}
+    r(a) -> <v2>                                                 INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
     r(0) -> <v3>
     mark(a > 0)
     call(a > 0, compareTo|<v2>, <v3>) -> <v4>
-    jt(L2|<v4>)                                                                                    USE: in: {a=READ} out: {a=READ}
+  2 jt(L2|<v4>)                                                  INIT: in: {} out: {}
 L3 [loop exit point]:
     read (Unit)
-  2 mark("after")                                                INIT: in: {} out: {}
+    mark("after")
     r("after") -> <v5>
 L1:
   1 <END>
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                         USE: in: {} out: {}
+    <SINK>                                                                                       USE: in: {} out: {}
 =====================

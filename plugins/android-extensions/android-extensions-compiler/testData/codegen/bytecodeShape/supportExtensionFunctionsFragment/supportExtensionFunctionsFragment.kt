@@ -20,7 +20,7 @@ fun MyFragment.b() {
 
 // 2 public _\$_findCachedViewById
 // 2 public _\$_clearFindViewByIdCache
-// 1 INVOKEVIRTUAL android/support/v4/app/MyFragment\.getView
+// 2 INVOKEVIRTUAL android/support/v4/app/Fragment\.getView
 // 2 GETSTATIC test/R\$id\.login
 // 2 INVOKEVIRTUAL android/support/v4/app/MyFragment\._\$_findCachedViewById
 // 2 CHECKCAST android/widget/Button

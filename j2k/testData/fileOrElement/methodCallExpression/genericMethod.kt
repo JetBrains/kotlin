@@ -1,8 +1,7 @@
 package demo
 
 internal class Map {
-    fun <K, V> put(k: K?, v: V) {
-    }
+    fun <K, V> put(k: K?, v: V) {}
 }
 
 internal class U {

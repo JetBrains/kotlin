@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,16 @@
 package org.jetbrains.kotlin.cfg
 
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.collectData
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.calls.tower.getFakeDescriptorForObject
-import java.util.ArrayList
-import java.util.HashMap
 
 class PseudocodeVariableDataCollector(
         private val bindingContext: BindingContext,
@@ -38,21 +34,20 @@ class PseudocodeVariableDataCollector(
 ) {
     val blockScopeVariableInfo = computeBlockScopeVariableInfo(pseudocode)
 
-    fun <I : ControlFlowInfo<*>> collectData(
+    fun <I : ControlFlowInfo<*, *>> collectData(
             traversalOrder: TraversalOrder,
-            mergeDataWithLocalDeclarations: Boolean,
             initialInfo: I,
             instructionDataMergeStrategy: (Instruction, Collection<I>) -> Edges<I>
     ): Map<Instruction, Edges<I>> {
         return pseudocode.collectData(
-                traversalOrder, mergeDataWithLocalDeclarations,
+                traversalOrder,
                 instructionDataMergeStrategy,
                 { from, to, info -> filterOutVariablesOutOfScope(from, to, info) },
                 initialInfo
         )
     }
 
-    private fun <I : ControlFlowInfo<*>> filterOutVariablesOutOfScope(
+    private fun <I : ControlFlowInfo<*, *>> filterOutVariablesOutOfScope(
             from: Instruction,
             to: Instruction,
             info: I
@@ -64,7 +59,7 @@ class PseudocodeVariableDataCollector(
         // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
         // Thus they can be filtered out upon leaving the inner scope.
         @Suppress("UNCHECKED_CAST")
-        return info.copy().retainAll { variable ->
+        return info.retainAll { variable ->
             val blockScope = blockScopeVariableInfo.declaredIn[variable]
             // '-1' for variables declared outside this pseudocode
             val depth = blockScope?.depth ?: -1
@@ -72,15 +67,12 @@ class PseudocodeVariableDataCollector(
         } as I
     }
 
-    fun computeBlockScopeVariableInfo(pseudocode: Pseudocode): BlockScopeVariableInfo {
+    private fun computeBlockScopeVariableInfo(pseudocode: Pseudocode): BlockScopeVariableInfo {
         val blockScopeVariableInfo = BlockScopeVariableInfoImpl()
         pseudocode.traverse(TraversalOrder.FORWARD, { instruction ->
             if (instruction is VariableDeclarationInstruction) {
                 val variableDeclarationElement = instruction.variableDeclarationElement
                 val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement) ?: return@traverse
-                // TODO: investigate why tests fail without this eager computation here
-                // TODO: https://youtrack.jetbrains.com/issue/KT-13354
-                descriptor.toString()
                 val variableDescriptor = BindingContextUtils.variableDescriptorForDeclaration(descriptor)
                                          ?: throw AssertionError("Variable or class descriptor should correspond to " +
                                                                  "the instruction for ${instruction.element.text}.\n" +
@@ -103,7 +95,7 @@ class BlockScopeVariableInfoImpl : BlockScopeVariableInfo {
 
     fun registerVariableDeclaredInScope(variable: VariableDescriptor, blockScope: BlockScope) {
         declaredIn[variable] = blockScope
-        val variablesInScope = scopeVariables.getOrPut(blockScope, { ArrayList<VariableDescriptor>() })
+        val variablesInScope = scopeVariables.getOrPut(blockScope, { arrayListOf() })
         variablesInScope.add(variable)
     }
 }

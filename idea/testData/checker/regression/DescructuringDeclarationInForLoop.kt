@@ -1,3 +1,3 @@
 fun main() {
-    for ((i, <warning>j</warning>)<error>)</error> {}
+    for ((<warning>i</warning>, <warning>j</warning>)<error>)</error> {}
 }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.idea.core.NotPropertiesService
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
@@ -75,14 +76,14 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
     override fun getFamilyName() = QuickFixBundle.message("rename.wrong.reference.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return super.isAvailable(project, editor, file)
                && editor != null
                && element.getStrictParentOfType<KtTypeReference>() == null
     }
 
-    private fun KtExpression.isCallee() = getParentOfTypeAndBranch<KtCallElement> { calleeExpression } != null
-
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         if (editor == null) return
         val patternExpression = element.getQualifiedElement() as? KtExpression ?: return
 
@@ -99,9 +100,9 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
         val resolutionFacade = element.getResolutionFacade()
         val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
         val moduleDescriptor = resolutionFacade.moduleDescriptor
-        val variantsHelper = ReferenceVariantsHelper(context, resolutionFacade, moduleDescriptor) {
+        val variantsHelper = ReferenceVariantsHelper(context, resolutionFacade, moduleDescriptor, {
             it !is DeclarationDescriptorWithVisibility || it.isVisible(element, null, context, resolutionFacade)
-        }
+        }, NotPropertiesService.getNotProperties(element))
         val expectedTypes = patternExpression
                 .guessTypes(context, moduleDescriptor)
                 .ifEmpty { arrayOf(moduleDescriptor.builtIns.nullableAnyType) }

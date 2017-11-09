@@ -1,4 +1,4 @@
-JetFile: simpleFieldAnnotation.kt
+KtFile: simpleFieldAnnotation.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

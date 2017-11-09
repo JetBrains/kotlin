@@ -1,5 +1,5 @@
 // FILE: bar/Foo.before.java
-// "Static import method 'foo.Bar.getValue'" "true"
+// "/(Static import|Import static) method 'foo.Bar.getValue'/" "true"
 // ERROR: Unresolved reference: getValue
 // ACTION: Create method 'foobar'
 // WITH_RUNTIME
@@ -18,14 +18,14 @@ package foo
 
 object Bar {
     companion object {
-        val value = "foobar";
+        val value = "foobar"
             @JvmStatic get() {
             }
     }
 }
 
 // FILE: bar/Foo.after.java
-// "Static import method 'foo.Bar.getValue'" "true"
+// "/(Static import|Import static) method 'foo.Bar.getValue'/" "true"
 // ERROR: Unresolved reference: getValue
 // ACTION: Create method 'foobar'
 // WITH_RUNTIME

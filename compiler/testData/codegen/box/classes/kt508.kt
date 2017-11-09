@@ -1,8 +1,3 @@
-// TODO: Enable for JS when it supports Java class library.
-// TARGET_BACKEND: JVM
-import java.util.HashMap
-import java.io.*
-
 operator fun <K, V> MutableMap<K, V>.set(key : K, value : V) = put(key, value)
 
 fun box() : String {

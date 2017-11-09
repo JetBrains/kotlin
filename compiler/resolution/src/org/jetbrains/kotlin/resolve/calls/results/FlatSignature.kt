@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.resolve.calls.results
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import org.jetbrains.kotlin.types.checker.captureFromExpression
 
 interface SpecificityComparisonCallbacks {
     fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean
@@ -35,30 +38,73 @@ interface TypeSpecificityComparator {
     }
 }
 
-class FlatSignature<out T>(
+class FlatSignature<out T> private constructor(
         val origin: T,
         val typeParameters: Collection<TypeParameterDescriptor>,
         val valueParameterTypes: List<KotlinType?>,
         val hasExtensionReceiver: Boolean,
         val hasVarargs: Boolean,
-        val numDefaults: Int
+        val numDefaults: Int,
+        val isExpect: Boolean,
+        val isSyntheticMember: Boolean
 ) {
     val isGeneric = typeParameters.isNotEmpty()
 
     companion object {
-        fun <D : CallableDescriptor> createFromCallableDescriptor(descriptor: D): FlatSignature<D> =
+        fun <T> createFromReflectionType(
+                origin: T,
+                descriptor: CallableDescriptor,
+                numDefaults: Int,
+                reflectionType: UnwrappedType
+        ): FlatSignature<T> {
+            return FlatSignature(origin,
+                                 descriptor.typeParameters,
+                                 reflectionType.arguments.map { it.type }, // should we drop return type?
+                                 hasExtensionReceiver = false,
+                                 hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+                                 numDefaults = numDefaults,
+                                 isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
+                                 isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+                                 )
+        }
+
+        fun <T> create(
+                origin: T,
+                descriptor: CallableDescriptor,
+                numDefaults: Int,
+                parameterTypes: List<KotlinType?>
+        ): FlatSignature<T> {
+            val extensionReceiverType = descriptor.extensionReceiverParameter?.type
+
+            return FlatSignature(origin,
+                                 descriptor.typeParameters,
+                                 valueParameterTypes =
+                                 listOfNotNull(extensionReceiverType) + parameterTypes,
+                                 hasExtensionReceiver = extensionReceiverType != null,
+                                 hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+                                 numDefaults = numDefaults,
+                                 isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
+                                 isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+            )
+        }
+
+        fun <D : CallableDescriptor> createFromCallableDescriptor(
+                descriptor: D
+        ): FlatSignature<D> =
+                create(descriptor, descriptor, numDefaults = 0, parameterTypes = descriptor.valueParameters.map { it.argumentValueType })
+
+        fun <D : CallableDescriptor> createForPossiblyShadowedExtension(descriptor: D): FlatSignature<D> =
                 FlatSignature(descriptor,
                               descriptor.typeParameters,
-                              valueParameterTypes = descriptor.extensionReceiverTypeOrEmpty() + descriptor.valueParameters.map { it.argumentValueType },
-                              hasExtensionReceiver = descriptor.extensionReceiverParameter != null,
+                              valueParameterTypes = descriptor.valueParameters.map { it.argumentValueType },
+                              hasExtensionReceiver = false,
                               hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
-                              numDefaults = 0)
+                              numDefaults = descriptor.valueParameters.count { it.hasDefaultValue() },
+                              isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
+                              isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+                )
 
-        val ValueParameterDescriptor.argumentValueType: KotlinType
-            get() = varargElementType ?: type
-
-        fun CallableDescriptor.extensionReceiverTypeOrEmpty() =
-                extensionReceiverParameter?.type.singletonOrEmptyList()
+        val ValueParameterDescriptor.argumentValueType get() = varargElementType ?: type
     }
 }
 
@@ -67,6 +113,9 @@ interface SimpleConstraintSystem {
     fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>): TypeSubstitutor
     fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType)
     fun hasContradiction(): Boolean
+
+    // todo hack for migration
+    val captureFromArgument get() = false
 }
 
 fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
@@ -97,7 +146,16 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
         }
         else {
             val substitutedGeneralType = typeSubstitutor.safeSubstitute(generalType, Variance.INVARIANT)
-            addSubtypeConstraint(specificType.unwrap(), substitutedGeneralType.unwrap())
+
+            /**
+             * Example:
+             * fun <X> Array<out X>.sort(): Unit {}
+             * fun <Y: Comparable<Y>> Array<out Y>.sort(): Unit {}
+             * Here, when we try solve this CS(Y is variables) then Array<out X> <: Array<out Y> and this system impossible to solve,
+             * so we capture types from receiver and value parameters.
+             */
+            val specificCapturedType = specificType.unwrap().let { if (captureFromArgument) captureFromExpression(it) ?: it else it }
+            addSubtypeConstraint(specificCapturedType, substitutedGeneralType.unwrap())
         }
     }
 

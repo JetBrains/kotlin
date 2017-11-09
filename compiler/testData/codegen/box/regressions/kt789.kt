@@ -1,7 +1,5 @@
 package foo
 
-import java.util.*;
-
 fun box() : String {
     val a = ArrayList<Int>();
     a.add(1)

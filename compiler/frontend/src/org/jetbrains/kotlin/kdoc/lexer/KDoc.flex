@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
     return zzMarkedPos == zzBuffer.length();
   }
 
-  private Boolean yytextContainLineBreaks() {
+  private boolean yytextContainLineBreaks() {
     return CharArrayUtil.containLineBreaks(zzBuffer, zzStartRead, zzMarkedPos);
   }
 
@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
 %state CODE_BLOCK
 %state CODE_BLOCK_LINE_BEGINNING
 %state CODE_BLOCK_CONTENTS_BEGINNING
+%state INDENTED_CODE_BLOCK
 
 WHITE_SPACE_CHAR    =[\ \t\f\n]
 NOT_WHITE_SPACE_CHAR=[^\ \t\f\n]
@@ -130,18 +131,28 @@ CODE_FENCE_END=("```" | "~~~")
 }
 
 <LINE_BEGINNING, CONTENTS_BEGINNING, CONTENTS> {
+
+    ([\ ]{4}[\ ]*)|([\t]+) {
+        if(yystate() == CONTENTS_BEGINNING) {
+            yybegin(INDENTED_CODE_BLOCK);
+            return KDocTokens.CODE_BLOCK_TEXT;
+        }
+    }
+
     {WHITE_SPACE_CHAR}+ {
         if (yytextContainLineBreaks()) {
             yybegin(LINE_BEGINNING);
             return TokenType.WHITE_SPACE;
-        } else {
-            yybegin(yystate() == CONTENTS_BEGINNING? CONTENTS_BEGINNING:CONTENTS);
+        }  else {
+            yybegin(yystate() == CONTENTS_BEGINNING ? CONTENTS_BEGINNING : CONTENTS);
             return KDocTokens.TEXT;  // internal white space
         }
     }
 
-    "\\"[\[\]]   { yybegin(CONTENTS);
-                   return KDocTokens.MARKDOWN_ESCAPED_CHAR; }
+    "\\"[\[\]] {
+        yybegin(CONTENTS);
+        return KDocTokens.MARKDOWN_ESCAPED_CHAR;
+    }
 
     "[" [^\[]* "](" [^)]* ")" {
         yybegin(CONTENTS);
@@ -158,11 +169,15 @@ CODE_FENCE_END=("```" | "~~~")
        used in type declarations. No brackets, backticks, asterisks or anything like that.
        Also if a link is followed by [ or (, then its destination is a regular HTTP
        link and not a Kotlin identifier, so we don't need to do our parsing and resolution. */
-    {CODE_LINK} / [^\(\[] { yybegin(CONTENTS);
-                  return KDocTokens.MARKDOWN_LINK; }
+    {CODE_LINK} / [^\(\[] {
+        yybegin(CONTENTS);
+        return KDocTokens.MARKDOWN_LINK;
+    }
 
-    .     { yybegin(CONTENTS);
-            return KDocTokens.TEXT; }
+    . {
+        yybegin(CONTENTS);
+        return KDocTokens.TEXT;
+    }
 }
 
 <CODE_BLOCK_LINE_BEGINNING> {
@@ -180,17 +195,17 @@ CODE_FENCE_END=("```" | "~~~")
     }
 }
 
-<CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING, CODE_BLOCK> {
+<INDENTED_CODE_BLOCK, CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING, CODE_BLOCK> {
     {WHITE_SPACE_CHAR}+ {
         if (yytextContainLineBreaks()) {
-            yybegin(CODE_BLOCK_LINE_BEGINNING);
+            yybegin(yystate() == INDENTED_CODE_BLOCK ? LINE_BEGINNING : CODE_BLOCK_LINE_BEGINNING);
             return TokenType.WHITE_SPACE;
         }
         return KDocTokens.CODE_BLOCK_TEXT;
     }
 
     . {
-        yybegin(CODE_BLOCK);
+        yybegin(yystate() == INDENTED_CODE_BLOCK ? INDENTED_CODE_BLOCK : CODE_BLOCK);
         return KDocTokens.CODE_BLOCK_TEXT;
     }
 }

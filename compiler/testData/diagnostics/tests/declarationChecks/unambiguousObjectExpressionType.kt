@@ -1,5 +1,5 @@
 open class MyClass {
-  fun f1() {}
+    fun f1() {}
 }
 
 
@@ -19,15 +19,15 @@ class Foo {
 
 
     fun testProperties() {
-      privateProperty.f1()
-      internalProperty.f1()
-      protected2Property.f1()
-      public2Property.f1()
+        privateProperty.f1()
+        internalProperty.f1()
+        protected2Property.f1()
+        public2Property.f1()
 
-      privateProperty.visible()
-      protected2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
-      public2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
-      internalProperty.<!UNRESOLVED_REFERENCE!>invisible<!>()
+        privateProperty.visible()
+        protected2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
+        public2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
+        internalProperty.<!UNRESOLVED_REFERENCE!>invisible<!>()
     }
 
 
@@ -45,15 +45,15 @@ class Foo {
 
 
     fun testFunctions() {
-      privateFunction().f1()
-      internalFunction().f1()
-      public2Function().f1()
-      protected2Function().f1()
+        privateFunction().f1()
+        internalFunction().f1()
+        public2Function().f1()
+        protected2Function().f1()
 
-      privateFunction().visible()
-      internalFunction().<!UNRESOLVED_REFERENCE!>invisible<!>()
-      public2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
-      protected2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
+        privateFunction().visible()
+        internalFunction().<!UNRESOLVED_REFERENCE!>invisible<!>()
+        public2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
+        protected2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
     }
 
 
@@ -73,49 +73,49 @@ class Foo {
 
 
         fun testProperties() {
-          privateProperty.f1()
-          internalProperty.f1()
-          protected2Property.f1()
-          public2Property.f1()
+            privateProperty.f1()
+            internalProperty.f1()
+            protected2Property.f1()
+            public2Property.f1()
 
-          privateProperty.visible()
-          protected2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
-          public2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
-          internalProperty.<!UNRESOLVED_REFERENCE!>invisible<!>()
+            privateProperty.visible()
+            protected2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
+            public2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
+            internalProperty.<!UNRESOLVED_REFERENCE!>invisible<!>()
         }
 
 
-         protected fun protectedFunction() = object : MyClass() {}
+        protected fun protectedFunction() = object : MyClass() {}
 
-         public fun publicFunction() = object : MyClass() {}
+        public fun publicFunction() = object : MyClass() {}
 
-         protected fun protected2Function(): MyClass = object : MyClass() {fun visible() {}}
+        protected fun protected2Function(): MyClass = object : MyClass() {fun visible() {}}
 
-         public fun public2Function(): MyClass = object : MyClass() {fun visible() {}}
+        public fun public2Function(): MyClass = object : MyClass() {fun visible() {}}
 
-         private fun privateFunction() = object : MyClass() {fun visible() {}}
+        private fun privateFunction() = object : MyClass() {fun visible() {}}
 
-         internal fun internalFunction() = object : MyClass() {fun invisible() {}}
+        internal fun internalFunction() = object : MyClass() {fun invisible() {}}
 
 
-         fun testFunctions() {
-           privateFunction().f1()
-           internalFunction().f1()
-           public2Function().f1()
-           protected2Function().f1()
+        fun testFunctions() {
+            privateFunction().f1()
+            internalFunction().f1()
+            public2Function().f1()
+            protected2Function().f1()
 
-           privateFunction().visible()
-           internalFunction().<!UNRESOLVED_REFERENCE!>invisible<!>()
-           public2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
-           protected2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
-         }
+            privateFunction().visible()
+            internalFunction().<!UNRESOLVED_REFERENCE!>invisible<!>()
+            public2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
+            protected2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
+        }
     }
 
     fun foo() {
-      val localVar = object : MyClass() {}
-      localVar.f1()
-      fun foo2() = object : MyClass() {}
-      foo2().f1()
+        val localVar = object : MyClass() {}
+        localVar.f1()
+        fun foo2() = object : MyClass() {}
+        foo2().f1()
     }
 
 }
@@ -136,7 +136,7 @@ fun testProperties() {
     packageInternalProperty.f1()
     packagePublic2Property.f1()
 
-    packagePrivateProperty.<!UNRESOLVED_REFERENCE!>invisible<!>()
+    packagePrivateProperty.invisible()
     packageInternalProperty.<!UNRESOLVED_REFERENCE!>invisible<!>()
     packagePublic2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
 }
@@ -155,13 +155,13 @@ internal fun internalFunction() = object : MyClass() {fun invisible() {}}
 
 
 fun testFunctions() {
-  privateFunction().f1()
-  internalFunction().f1()
-  public2Function().f1()
+    privateFunction().f1()
+    internalFunction().f1()
+    public2Function().f1()
 
-  privateFunction().<!UNRESOLVED_REFERENCE!>invisible<!>()
-  internalFunction().<!UNRESOLVED_REFERENCE!>invisible<!>()
-  public2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
+    privateFunction().invisible()
+    internalFunction().<!UNRESOLVED_REFERENCE!>invisible<!>()
+    public2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
 }
 
 fun fooPackage() {

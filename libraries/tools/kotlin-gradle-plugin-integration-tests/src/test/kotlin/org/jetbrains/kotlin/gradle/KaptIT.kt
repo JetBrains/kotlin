@@ -109,7 +109,7 @@ class KaptIT: BaseGradleIT() {
 
     private fun doTestIncrementalBuild(projectName: String, compileTasks: Array<String>) {
         val compileTasksUpToDate = compileTasks.map { it + " UP-TO-DATE" }.toTypedArray()
-        val project = Project(projectName, GRADLE_VERSION)
+        val project = Project(projectName, "2.10")
 
         project.build("build") {
             assertSuccessful()
@@ -200,6 +200,24 @@ class KaptIT: BaseGradleIT() {
         project.build("build", options = options) {
             assertSuccessful()
             assertCompiledKotlinSources(project.relativize(internalDummyUserKt, internalDummyTestKt))
+        }
+    }
+
+    @Test
+    fun testKotlinCompilerNotCalledStubsIC() {
+        val options = defaultBuildOptions().copy(incremental = true)
+        val project = Project("kaptStubs", GRADLE_VERSION)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+        }
+
+        val javaDummy = project.projectDir.getFileByName("JavaDummy.java")
+        javaDummy.modify { it + " " }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(emptyList())
         }
     }
 }

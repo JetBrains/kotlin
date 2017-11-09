@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.kdoc;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
     public void testAllFilesPresentInResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/resolve"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("AmbiguousReference.kt")
@@ -45,6 +46,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
     @TestMetadata("AmbiguousReferenceTypeParameter.kt")
     public void testAmbiguousReferenceTypeParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/AmbiguousReferenceTypeParameter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CheckExtensionReceiver.kt")
+    public void testCheckExtensionReceiver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/CheckExtensionReceiver.kt");
         doTest(fileName);
     }
 
@@ -72,9 +79,45 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ExtensionFromImports.kt")
+    public void testExtensionFromImports() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ExtensionFromImports.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExtensionFun.kt")
+    public void testExtensionFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ExtensionFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExtensionNonQualified.kt")
+    public void testExtensionNonQualified() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ExtensionNonQualified.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExtensionVal.kt")
+    public void testExtensionVal() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ExtensionVal.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImportAliasClass.kt")
+    public void testImportAliasClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ImportAliasClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ImportedClassReference.kt")
     public void testImportedClassReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ImportedClassReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnlyMembersFromClass.kt")
+    public void testOnlyMembersFromClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/OnlyMembersFromClass.kt");
         doTest(fileName);
     }
 
@@ -111,6 +154,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
     @TestMetadata("QualifiedNameReference.kt")
     public void testQualifiedNameReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/QualifiedNameReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReceiverReference.kt")
+    public void testReceiverReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ReceiverReference.kt");
         doTest(fileName);
     }
 

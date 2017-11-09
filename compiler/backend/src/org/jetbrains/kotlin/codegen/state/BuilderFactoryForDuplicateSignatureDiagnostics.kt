@@ -25,9 +25,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
-import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
+import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
@@ -37,7 +36,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
-        JvmDeclarationOriginKind.DELEGATION_TO_DEFAULT_IMPLS,
+        JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL,
         JvmDeclarationOriginKind.DELEGATION,
         JvmDeclarationOriginKind.BRIDGE
 )
@@ -57,13 +56,13 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
         bindingContext: BindingContext,
         private val diagnostics: DiagnosticSink,
-        fileClassesProvider: JvmFileClassesProvider,
-        moduleName: String
-) : SignatureCollectingClassBuilderFactory(builderFactory) {
+        moduleName: String,
+        shouldGenerate: (JvmDeclarationOrigin) -> Boolean
+) : SignatureCollectingClassBuilderFactory(builderFactory, shouldGenerate) {
 
     // Avoid errors when some classes are not loaded for some reason
     private val typeMapper = KotlinTypeMapper(
-            bindingContext, ClassBuilderMode.LIGHT_CLASSES, fileClassesProvider, IncompatibleClassTracker.DoNothing, moduleName, false
+            bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, moduleName, false, false
     )
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
 

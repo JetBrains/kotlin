@@ -27,13 +27,20 @@ val RELATIVE_COMPLETION_TEST_DATA_BASE_PATH = "idea/idea-completion/testData"
 
 val COMPLETION_TEST_DATA_BASE_PATH = KotlinTestUtils.getHomeDirectory() + "/" + RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
 
-fun testCompletion(fileText: String, platform: TargetPlatform?, complete: (CompletionType, Int) -> Array<LookupElement>?, defaultCompletionType: CompletionType = CompletionType.BASIC, defaultInvocationCount: Int = 0) {
+fun testCompletion(
+        fileText: String,
+        platform: TargetPlatform?,
+        complete: (CompletionType, Int) -> Array<LookupElement>?,
+        defaultCompletionType: CompletionType = CompletionType.BASIC,
+        defaultInvocationCount: Int = 0,
+        additionalValidDirectives: Collection<String> = emptyList()
+) {
     testWithAutoCompleteSetting(fileText) {
         val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
         val invocationCount = ExpectedCompletionUtils.getInvocationCount(fileText) ?: defaultInvocationCount
         val items = complete(completionType, invocationCount) ?: emptyArray()
 
-        ExpectedCompletionUtils.assertDirectivesValid(fileText)
+        ExpectedCompletionUtils.assertDirectivesValid(fileText, additionalValidDirectives)
 
         val expected = ExpectedCompletionUtils.itemsShouldExist(fileText, platform)
         val unexpected = ExpectedCompletionUtils.itemsShouldAbsent(fileText, platform)

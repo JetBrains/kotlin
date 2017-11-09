@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.staticRef
-import com.google.dart.compiler.backend.js.ast.metadata.isLocal
-
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.isLocal
+import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.inline.util.collectFunctionReferencesInside
 
@@ -35,12 +34,18 @@ fun removeUnusedFunctionDefinitions(root: JsNode, functions: Map<JsName, JsFunct
         process()
         accept(root)
         removableFunctions
+    }.toSet()
+
+    val remover = NodeRemover(JsStatement::class.java) { statement ->
+        val expression = when (statement) {
+            is JsExpressionStatement -> statement.expression
+            is JsVars -> if (statement.vars.size == 1) statement.vars[0].initExpression else null
+            else -> null
+        }
+        expression is JsFunction && expression in removable
     }
 
-    NodeRemover(JsPropertyInitializer::class.java) {
-        val function = it.valueExpr as? JsFunction
-        function != null && function in removable
-    }.accept(root)
+    remover.accept(root)
 }
 
 private class UnusedLocalFunctionsCollector(private val functions: Map<JsName, JsFunction>) : JsVisitorWithContextImpl() {
@@ -74,9 +79,7 @@ private class UnusedLocalFunctionsCollector(private val functions: Map<JsName, J
         }
     }
 
-    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
-        return !(wasProcessed(x))
-    }
+    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean = !wasProcessed(x)
 
     override fun endVisit(x: JsFunction, ctx: JsContext<*>) {
         processed.add(x)

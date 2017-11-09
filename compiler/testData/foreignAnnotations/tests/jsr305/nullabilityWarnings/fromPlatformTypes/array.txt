@@ -1,0 +1,15 @@
+package
+
+public fun test(): kotlin.Unit
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final var staticJ: kotlin.Array<(out) kotlin.Int!>!
+    @MyNullable public final var staticN: kotlin.Array<(out) kotlin.Int!>!
+    @MyNonnull public final var staticNN: kotlin.Array<(out) kotlin.Int!>!
+}

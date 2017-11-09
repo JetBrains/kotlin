@@ -1,3 +1,4 @@
+// JAVAC_SKIP
 // FILE: JavaClass.java
 public class JavaClass {
     public void foo(? x) {}

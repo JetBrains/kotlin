@@ -48,7 +48,7 @@ fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Valu
     frame.setReturn(makeNotInitializedValue(Type.getReturnType(methodNode.desc)))
 
     var index = 0
-    for ((i, arg) in arguments.withIndex()) {
+    for (arg in arguments) {
         frame.setLocal(index++, arg)
         if (arg.size == 2) {
             frame.setLocal(index++, NOT_A_VALUE)

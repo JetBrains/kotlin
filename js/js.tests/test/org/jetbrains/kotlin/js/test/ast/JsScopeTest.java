@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.test.ast;
 
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsScope;
+import org.jetbrains.kotlin.js.backend.ast.JsName;
+import org.jetbrains.kotlin.js.backend.ast.JsScope;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 

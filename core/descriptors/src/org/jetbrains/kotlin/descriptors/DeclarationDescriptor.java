@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 public interface DeclarationDescriptor extends Annotated, Named {
     /**
@@ -33,9 +32,6 @@ public interface DeclarationDescriptor extends Annotated, Named {
 
     @Nullable
     DeclarationDescriptor getContainingDeclaration();
-
-    @Nullable
-    DeclarationDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data);
 

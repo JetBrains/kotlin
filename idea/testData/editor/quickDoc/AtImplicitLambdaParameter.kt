@@ -1,7 +1,7 @@
 fun foo() {
     listOf(1).forEach {
-        println(it<caret>)
+        println(i<caret>t)
     }
 }
 
-//INFO: <b>value-parameter</b> it: Int <i>defined in</i> foo.&lt;anonymous&gt;
+//INFO: <pre><b>value-parameter</b> it: Int</pre>

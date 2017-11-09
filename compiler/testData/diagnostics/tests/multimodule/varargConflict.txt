@@ -24,8 +24,4 @@ package m {
 }
 
 package p {
-    public fun foo(/*0*/ a: kotlin.Int): kotlin.Unit
-    public fun foo(/*0*/ a: kotlin.Int): kotlin.Unit
-    public fun foo(/*0*/ vararg values: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
-    public fun foo(/*0*/ vararg values: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
 }

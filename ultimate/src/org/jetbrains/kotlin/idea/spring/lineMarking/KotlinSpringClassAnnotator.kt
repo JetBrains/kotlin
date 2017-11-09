@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.spring.lineMarking
 
+import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.navigation.GotoRelatedItem
@@ -26,7 +27,7 @@ import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.spring.gutter.SpringClassAnnotator
 import com.intellij.util.Function
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -78,7 +79,7 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
         }
 
         // Workaround for SpringClassAnnotator
-        (getElementToProcess(psiElement) as? KtLightAnnotation)?.let { return super.collectNavigationMarkers(it, result) }
+        (getElementToProcess(psiElement) as? KtLightAnnotationForSourceEntry)?.let { return super.collectNavigationMarkers(it, result) }
 
         super.collectNavigationMarkers(psiElement, result)
     }
@@ -105,6 +106,7 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
                 else -> return@mapNotNullTo item
             }
             if (elementToAnnotate == null) return@mapNotNullTo null
+            if (alreadyMarked(result, elementToAnnotate, item.navigationHandler)) return@mapNotNullTo null
 
             @Suppress("UNCHECKED_CAST")
             RelatedItemLineMarkerInfo<PsiElement>(
@@ -119,4 +121,16 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
             )
         }
     }
+
+    private fun alreadyMarked(result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>,
+                              elementToAnnotate: PsiElement,
+                              navigationHandler: GutterIconNavigationHandler<*>?) =
+            result.any {
+                when (it) {
+                    is RelatedItemLineMarkerInfo<*> -> {
+                        it.element == elementToAnnotate && it.navigationHandler == navigationHandler
+                    }
+                    else -> false
+                }
+            }
 }

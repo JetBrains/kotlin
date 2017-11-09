@@ -1,4 +1,4 @@
-import java.util.ArrayList
+// TARGET_BACKEND: JVM
 
 public object SomeObject {
     private val workerThread = object : Thread() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,19 +19,23 @@ package org.jetbrains.kotlin.idea
 import com.intellij.psi.PsiDocumentManager
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.typeUtil.containsError
 
 class ResolveElementCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
@@ -193,33 +197,40 @@ class C(param1: String = "", param2: Int = 0) {
 
             val bindingContext3 = statement2.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
             assert(bindingContext3 === bindingContext1)
+
+            val bindingContext4 = statement2.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+            assert(bindingContext4 === bindingContext1)
         }
     }
 
     fun testPartialResolveCaching() {
-        doTest { this.testPartialResolveCaching() }
+        doTest { this.testPartialResolveCaching(BodyResolveMode.PARTIAL) }
     }
 
-    private fun Data.testPartialResolveCaching() {
+    fun testPartialForCompletionResolveCaching() {
+        doTest { this.testPartialResolveCaching(BodyResolveMode.PARTIAL_FOR_COMPLETION) }
+    }
+
+    private fun Data.testPartialResolveCaching(mode: BodyResolveMode) {
         val statement1 = statements[0]
         val statement2 = statements[1]
-        val bindingContext1 = statement1.analyze(BodyResolveMode.PARTIAL)
-        val bindingContext2 = statement2.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext1 = statement1.analyze(mode)
+        val bindingContext2 = statement2.analyze(mode)
         assert(bindingContext1 !== bindingContext2)
 
-        val bindingContext3 = statement1.analyze(BodyResolveMode.PARTIAL)
-        val bindingContext4 = statement2.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext3 = statement1.analyze(mode)
+        val bindingContext4 = statement2.analyze(mode)
         assert(bindingContext3 === bindingContext1)
         assert(bindingContext4 === bindingContext2)
 
         file.add(factory.createFunction("fun foo(){}"))
 
-        val bindingContext5 = statement1.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext5 = statement1.analyze(mode)
         assert(bindingContext5 !== bindingContext1)
 
         statement1.parent.addAfter(factory.createExpression("x()"), statement1)
 
-        val bindingContext6 = statement1.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext6 = statement1.analyze(mode)
         assert(bindingContext6 !== bindingContext5)
     }
 
@@ -227,7 +238,7 @@ class C(param1: String = "", param2: Int = 0) {
         doTest {
             val nonPhysicalFile = KtPsiFactory(project).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
             val nonPhysicalData = extractData(nonPhysicalFile)
-            nonPhysicalData.testPartialResolveCaching()
+            nonPhysicalData.testPartialResolveCaching(BodyResolveMode.PARTIAL)
         }
     }
 
@@ -262,6 +273,30 @@ class C(param1: String = "", param2: Int = 0) {
 
             val bindingContext3 = statements[0].analyze(BodyResolveMode.PARTIAL)
             assert(bindingContext3 !== bindingContext2)
+        }
+    }
+
+    fun testPartialForCompletionAndPartialAfter() {
+        doTest {
+            val statement = statements[0]
+            val bindingContext1 = statement.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
+            val bindingContext2 = statement.analyze(BodyResolveMode.PARTIAL)
+            assert(bindingContext2 === bindingContext1)
+
+            val bindingContext3 = statement.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+            assert(bindingContext3 !== bindingContext1)
+        }
+    }
+
+    fun testPartialWithDiagnosticsAndPartialAfter() {
+        doTest {
+            val statement = statements[0]
+            val bindingContext1 = statement.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+            val bindingContext2 = statement.analyze(BodyResolveMode.PARTIAL)
+            assert(bindingContext2 === bindingContext1)
+
+            val bindingContext3 = statement.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
+            assert(bindingContext3 !== bindingContext1)
         }
     }
 
@@ -320,7 +355,7 @@ class C(param1: String = "", param2: Int = 0) {
 
         val function = file.declarations[0] as KtNamedFunction
         val functionType = function.valueParameters.first().typeReference!!.typeElement as KtFunctionType
-        val descriptorsForParameters = functionType.parameters.map { it.resolveToDescriptor() }
+        val descriptorsForParameters = functionType.parameters.map { it.unsafeResolveToDescriptor() }
 
         assert(
                 listOf("key", "next", SpecialNames.NO_NAME_PROVIDED.asString()) ==
@@ -468,6 +503,39 @@ class C(param1: String = "", param2: Int = 0) {
             val bindingContext1 = statement1InFunA.analyze(BodyResolveMode.PARTIAL)
             assert(bindingContext1 === bindingContext)
         }
+    }
+
+    fun testKT14376() {
+        val file = myFixture.configureByText("Test.kt", "object Obj(val x: Int)") as KtFile
+        val nameRef = file.findDescendantOfType<KtNameReferenceExpression>()!!
+        val bindingContext = nameRef.analyze(BodyResolveMode.PARTIAL)
+        assert(bindingContext[BindingContext.REFERENCE_TARGET, nameRef]?.fqNameSafe?.asString() == "kotlin.Int")
+    }
+
+    fun testResolveDefaultValueInPrimaryConstructor() {
+        val file = myFixture.configureByText("Test.kt", """
+        class ClassA<N> (
+                messenger: ClassB<N> = object : ClassB<N> {
+                    override fun methodOne(param: List<N>) {
+                    }
+                }
+        )
+
+        interface ClassB<N> {
+            fun methodOne(param: List<N>)
+        }
+        """) as KtFile
+
+        val classA = file.declarations[0] as KtClass
+        val defaultValue = classA.primaryConstructor!!.valueParameters[0].defaultValue as KtObjectLiteralExpression
+        val methodOne = defaultValue.objectDeclaration.declarations[0] as KtFunction
+
+        val bindingContext = methodOne.analyze(BodyResolveMode.FULL)
+
+        val parameter = methodOne.valueParameters[0]
+        val parameterDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parameter] as ValueParameterDescriptor
+
+        assert(!parameterDescriptor.type.containsError())
     }
 
     private fun checkResolveMultiple(mode: BodyResolveMode, vararg expressions: KtExpression): BindingContext {

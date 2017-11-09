@@ -47,7 +47,7 @@ class KotlinFileChooserDialog(
         return when (userObject) {
             is KtFileTreeNode -> userObject.ktFile
             is KtClassOrObjectTreeNode -> {
-                val containingFile = userObject.value.getContainingKtFile()
+                val containingFile = userObject.value.containingKtFile
                 if (containingFile.declarations.size == 1) containingFile else null
             }
             else -> null

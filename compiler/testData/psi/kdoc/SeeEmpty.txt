@@ -1,4 +1,4 @@
-JetFile: SeeEmpty.kt
+KtFile: SeeEmpty.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

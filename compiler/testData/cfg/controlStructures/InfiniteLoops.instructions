@@ -30,11 +30,11 @@ L4 [body entry point]:
 L5 [body exit point]:
 L6 [condition entry point]:
     r(true) -> <v0>
-    magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+  2 magic[VALUE_CONSUMER](true|<v0>) -> <v1>
     jmp(L2)                                        NEXT:[mark({ })]
 L3 [loop exit point]:
 -   read (Unit)                                    PREV:[]
-- 2 mark(unreachable())                            PREV:[]
+-   mark(unreachable())                            PREV:[]
 -   call(unreachable(), unreachable) -> <v2>       PREV:[]
 L1:
   1 <END>                                          NEXT:[<SINK>]                                         PREV:[]

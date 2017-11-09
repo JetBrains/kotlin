@@ -1,4 +1,4 @@
-import java.util.*
+// IGNORE_BACKEND: NATIVE
 
 open class Base<Target : DatabaseEntity>() : HashSet<Target>() {
     override fun remove(element: Target): Boolean {

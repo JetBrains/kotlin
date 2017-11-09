@@ -18,4 +18,3 @@ public class MyFragment : Fragment() {
 // 1 INVOKEVIRTUAL android/app/Fragment\.getFragmentManager
 // 2 GETSTATIC test/R\$id\.fragm
 // 2 INVOKEVIRTUAL android/app/FragmentManager\.findFragmentById
-// 2 CHECKCAST android/app/Fragment

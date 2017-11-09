@@ -23,24 +23,20 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-fun quoteKeywords(packageName: String): String = packageName.split('.').map { Identifier.toKotlin(it) }.joinToString(".")
+fun quoteKeywords(packageName: String): String = packageName.split('.').joinToString(".") { Identifier.toKotlin(it) }
 
 fun getDefaultInitializer(property: Property): Expression? {
     val t = property.type
-    val result = if (t.isNullable) {
-        LiteralExpression("null")
-    }
-    else if (t is PrimitiveType) {
-        when (t.name.name) {
+    val result = when {
+        t.isNullable -> LiteralExpression("null")
+        t is PrimitiveType -> when (t.name.name) {
             "Boolean" -> LiteralExpression("false")
             "Char" -> LiteralExpression("' '")
             "Double" -> MethodCallExpression.buildNonNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.DOUBLE.toString())
             "Float" -> MethodCallExpression.buildNonNull(LiteralExpression("0").assignNoPrototype(), OperatorConventions.FLOAT.toString())
             else -> LiteralExpression("0")
         }
-    }
-    else {
-        null
+        else -> null
     }
     return result?.assignNoPrototype()
 }
@@ -115,16 +111,16 @@ fun PsiExpressionList.lPar(): PsiElement? = node.findChildByType(JavaTokenType.L
 fun PsiExpressionList.rPar(): PsiElement? = node.findChildByType(JavaTokenType.RPARENTH)?.psi
 
 fun PsiMember.isImported(file: PsiJavaFile): Boolean {
-    if (this is PsiClass) {
+    return if (this is PsiClass) {
         val fqName = qualifiedName
         val index = fqName?.lastIndexOf('.') ?: -1
         val parentName = if (index >= 0) fqName!!.substring(0, index) else null
-        return file.importList?.allImportStatements?.any {
+        file.importList?.allImportStatements?.any {
             it.importReference?.qualifiedName == (if (it.isOnDemand) parentName else fqName)
         } ?: false
     }
     else {
-        return containingClass != null && file.importList?.importStaticStatements?.any {
+        containingClass != null && file.importList?.importStaticStatements?.any {
             it.resolveTargetClass() == containingClass && (it.isOnDemand || it.referenceName == name)
         } ?: false
     }

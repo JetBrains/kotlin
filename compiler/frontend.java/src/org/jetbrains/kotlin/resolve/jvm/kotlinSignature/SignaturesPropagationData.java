@@ -17,24 +17,20 @@
 package org.jetbrains.kotlin.resolve.jvm.kotlinSignature;
 
 import com.google.common.collect.Lists;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
+import org.jetbrains.kotlin.load.java.descriptors.UtilKt;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapperKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -53,7 +49,7 @@ public class SignaturesPropagationData {
     ).iterator().next();
 
     private final ValueParameters modifiedValueParameters;
-    private final List<String> signatureErrors = new ArrayList<String>(0);
+    private final List<String> signatureErrors = new ArrayList<>(0);
     private final List<FunctionDescriptor> superFunctions;
 
     public SignaturesPropagationData(
@@ -71,10 +67,12 @@ public class SignaturesPropagationData {
         JavaMethodDescriptor autoMethodDescriptor =
                 createAutoMethodDescriptor(containingClass, method, autoReturnType, autoValueParameters, autoTypeParameters);
 
+        boolean hasStableParameterNames = autoValueParameters.stream().allMatch(it -> UtilKt.getParameterNameAnnotation(it) != null);
+
         superFunctions = getSuperFunctionsForMethod(method, autoMethodDescriptor, containingClass);
         modifiedValueParameters = superFunctions.isEmpty()
-                                  ? new ValueParameters(null, autoValueParameters, /* stableParameterNames = */false)
-                                  : modifyValueParametersAccordingToSuperMethods(autoValueParameters);
+                                  ? new ValueParameters(null, autoValueParameters, hasStableParameterNames)
+                                  : modifyValueParametersAccordingToSuperMethods(autoValueParameters, hasStableParameterNames);
     }
 
     @NotNull
@@ -123,28 +121,30 @@ public class SignaturesPropagationData {
         signatureErrors.add(error);
     }
 
-    private ValueParameters modifyValueParametersAccordingToSuperMethods(@NotNull List<ValueParameterDescriptor> parameters) {
+    private ValueParameters modifyValueParametersAccordingToSuperMethods(
+            @NotNull List<ValueParameterDescriptor> parameters,
+            boolean annotatedWithParameterName
+    ) {
         KotlinType resultReceiverType = null;
-        List<ValueParameterDescriptor> resultParameters = new ArrayList<ValueParameterDescriptor>(parameters.size());
+        List<ValueParameterDescriptor> resultParameters = new ArrayList<>(parameters.size());
 
         boolean shouldBeExtension = checkIfShouldBeExtension();
 
-        for (final ValueParameterDescriptor originalParam : parameters) {
-            final int originalIndex = originalParam.getIndex();
-            List<TypeAndName> typesFromSuperMethods = ContainerUtil.map(superFunctions,
-                    new Function<FunctionDescriptor, TypeAndName>() {
-                        @Override
-                        public TypeAndName fun(FunctionDescriptor superFunction) {
-                            ReceiverParameterDescriptor receiver = superFunction.getExtensionReceiverParameter();
-                            int index = receiver != null ? originalIndex - 1 : originalIndex;
-                            if (index == -1) {
-                                assert receiver != null : "can't happen: index is -1, while function is not extension";
-                                return new TypeAndName(receiver.getType(), originalParam.getName());
-                            }
-                            ValueParameterDescriptor parameter = superFunction.getValueParameters().get(index);
-                            return new TypeAndName(parameter.getType(), parameter.getName());
+        for (ValueParameterDescriptor originalParam : parameters) {
+            int originalIndex = originalParam.getIndex();
+            List<TypeAndName> typesFromSuperMethods = CollectionsKt.map(
+                    superFunctions,
+                    superFunction -> {
+                        ReceiverParameterDescriptor receiver = superFunction.getExtensionReceiverParameter();
+                        int index = receiver != null ? originalIndex - 1 : originalIndex;
+                        if (index == -1) {
+                            assert receiver != null : "can't happen: index is -1, while function is not extension";
+                            return new TypeAndName(receiver.getType(), originalParam.getName());
                         }
-                    });
+                        ValueParameterDescriptor parameter = superFunction.getValueParameters().get(index);
+                        return new TypeAndName(parameter.getType(), parameter.getName());
+                    }
+            );
 
             VarargCheckResult varargCheckResult = checkVarargInSuperFunctions(originalParam);
 
@@ -165,29 +165,27 @@ public class SignaturesPropagationData {
                     }
                 }
 
+                AnnotationDescriptor currentName = UtilKt.getParameterNameAnnotation(originalParam);
+                boolean shouldTakeOldName = currentName == null && stableName != null;
+
                 resultParameters.add(new ValueParameterDescriptorImpl(
                         originalParam.getContainingDeclaration(),
                         null,
                         shouldBeExtension ? originalIndex - 1 : originalIndex,
                         originalParam.getAnnotations(),
-                        stableName != null ? stableName : originalParam.getName(),
+                        shouldTakeOldName ? stableName : originalParam.getName(),
                         altType,
                         originalParam.declaresDefaultValue(),
                         originalParam.isCrossinline(),
                         originalParam.isNoinline(),
-                        originalParam.isCoroutine(),
                         varargCheckResult.isVararg ? DescriptorUtilsKt.getBuiltIns(originalParam).getArrayElementType(altType) : null,
                         SourceElement.NO_SOURCE
                 ));
             }
         }
 
-        boolean hasStableParameterNames = CollectionsKt.any(superFunctions, new Function1<FunctionDescriptor, Boolean>() {
-            @Override
-            public Boolean invoke(FunctionDescriptor descriptor) {
-                return descriptor.hasStableParameterNames();
-            }
-        });
+        boolean hasStableParameterNames =
+                annotatedWithParameterName || CollectionsKt.any(superFunctions, CallableDescriptor::hasStableParameterNames);
 
         return new ValueParameters(resultReceiverType, resultParameters, hasStableParameterNames);
     }
@@ -214,6 +212,10 @@ public class SignaturesPropagationData {
             }
 
             for (FunctionDescriptor candidate : superFunctionCandidates) {
+                // Skip suspend super functions, because we doesn't process them correctly by now
+                // Moreover, we fail with exception sometimes
+                // TODO: remove this continue when KT-15747 is fixed
+                if (candidate.isSuspend()) continue;
                 Method candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
                 if (KotlinToJvmSignatureMapperKt.erasedSignaturesEqualIgnoringReturnTypes(autoSignature, candidateSignature)) {
                     superFunctions.add(candidate);
@@ -222,14 +224,8 @@ public class SignaturesPropagationData {
         }
 
         // sorting for diagnostic stability
-        Collections.sort(superFunctions, new Comparator<FunctionDescriptor>() {
-            @Override
-            public int compare(@NotNull FunctionDescriptor fun1, @NotNull FunctionDescriptor fun2) {
-                FqNameUnsafe fqName1 = getFqName(fun1.getContainingDeclaration());
-                FqNameUnsafe fqName2 = getFqName(fun2.getContainingDeclaration());
-                return fqName1.asString().compareTo(fqName2.asString());
-            }
-        });
+        superFunctions.sort(Comparator.comparing(fun -> getFqName(fun.getContainingDeclaration()).asString()));
+
         return superFunctions;
     }
 

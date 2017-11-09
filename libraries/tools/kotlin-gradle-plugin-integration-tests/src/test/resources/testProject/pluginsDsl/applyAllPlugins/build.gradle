@@ -1,0 +1,22 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '<pluginMarkerVersion>'
+    id 'org.jetbrains.kotlin.kapt' version '<pluginMarkerVersion>'
+    id 'org.jetbrains.kotlin.plugin.allopen' version '<pluginMarkerVersion>'
+    id 'org.jetbrains.kotlin.plugin.spring' version '<pluginMarkerVersion>'
+    id 'org.jetbrains.kotlin.plugin.noarg' version '<pluginMarkerVersion>'
+    id 'org.jetbrains.kotlin.plugin.jpa' version '<pluginMarkerVersion>'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8"
+    testCompile "junit:junit:4.12"
+}
+
+afterEvaluate {
+    plugins.forEach { println("applied plugin class:" + it.class.canonicalName) }
+}

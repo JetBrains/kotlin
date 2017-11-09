@@ -1,0 +1,25 @@
+package
+
+package bar {
+    public fun main(): kotlin.Unit
+}
+
+package foo {
+
+    public open class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public interface B {
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public abstract fun g(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        // Static members
+        public/*package*/ open fun f(/*0*/ b: foo.A.B!): kotlin.Unit
+    }
+}

@@ -1,4 +1,4 @@
--injars '<output>/kotlin-compiler-before-shrink.jar'(
+-injars '<kotlin-compiler-jar-before-shrink>'(
 !com/thoughtworks/xstream/converters/extended/ISO8601**,
 !com/thoughtworks/xstream/converters/reflection/CGLIBEnhancedConverter**,
 !com/thoughtworks/xstream/io/xml/JDom**,
@@ -15,14 +15,15 @@
 !org/apache/log4j/net/SMTP*,
 !org/apache/log4j/or/jms/MessageRenderer*,
 !org/jdom/xpath/Jaxen*,
+!org/jline/builtins/ssh/**,
 !org/mozilla/javascript/xml/impl/xmlbeans/**,
 !net/sf/cglib/**,
 !META-INF/maven**,
-**.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,
+**.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,**.txt,**.caps,
 META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
 messages/**)
 
--outjars '<kotlin-home>/lib/kotlin-compiler.jar'
+-outjars '<kotlin-compiler-jar>'
 
 -dontnote **
 -dontwarn com.intellij.util.ui.IsRetina*
@@ -41,20 +42,38 @@ messages/**)
 -dontwarn com.sun.jna.NativeString
 -dontwarn com.sun.jna.WString
 -dontwarn com.intellij.psi.util.PsiClassUtil
+-dontwarn org.apache.hadoop.io.compress.*
+-dontwarn com.google.j2objc.annotations.Weak
+-dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionInputStream
+-dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionOutputStream
+-dontwarn com.google.common.util.concurrent.*
+-dontwarn org.apache.xerces.dom.**
+-dontwarn org.apache.xerces.util.**
+-dontwarn org.w3c.dom.ElementTraversal
+-dontwarn javaslang.match.annotation.Unapply
+-dontwarn javaslang.match.annotation.Patterns
+-dontwarn javaslang.*
+-dontwarn com.google.errorprone.**
+-dontwarn com.google.j2objc.**
+-dontwarn javax.crypto.**
+-dontwarn java.lang.invoke.MethodHandle
+-dontwarn org.jline.builtins.Nano$Buffer
+-dontwarn net.jpountz.lz4.LZ4Factory
+-dontwarn org.jetbrains.annotations.ReadOnly
+-dontwarn org.jetbrains.annotations.Mutable
 
--libraryjars '<rtjar>'
--libraryjars '<jssejar>'
--libraryjars '<bootstrap.runtime>'
--libraryjars '<bootstrap.reflect>'
--libraryjars '<bootstrap.script.runtime>'
+#-libraryjars '<rtjar>'
+#-libraryjars '<jssejar>'
+#-libraryjars '<bootstrap.runtime>'
+#-libraryjars '<bootstrap.reflect>'
+#-libraryjars '<bootstrap.script.runtime>'
+#-libraryjars '<tools.jar>'
 
--target 1.6
 -dontoptimize
 -dontobfuscate
 
 -keep class org.fusesource.** { *; }
 -keep class com.sun.jna.** { *; }
--keep class org.jdom.input.JAXPParserFactory { *; }
 
 -keep class org.jetbrains.annotations.** {
     public protected *;
@@ -80,6 +99,8 @@ messages/**)
     public protected *;
 }
 
+-keep class org.jetbrains.kotlin.container.** { *; }
+
 -keep class org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
@@ -89,7 +110,7 @@ messages/**)
 }
 
 -keepclassmembers class com.intellij.openapi.vfs.VirtualFile {
-    public InputStream getInputStream();
+    public protected *;
 }
 
 -keep class com.intellij.openapi.vfs.StandardFileSystems {
@@ -109,15 +130,16 @@ messages/**)
     public protected *;
 }
 
+# This is needed so that the platform code which parses XML wouldn't fail, see KT-16968
+# This API is used from org.jdom.input.SAXBuilder via reflection.
+-keep class org.jdom.input.JAXPParserFactory { public ** createParser(...); }
+
 # for kdoc & dokka
 -keep class com.intellij.openapi.util.TextRange { *; }
 -keep class com.intellij.lang.impl.PsiBuilderImpl* {
     public protected *;
 }
 -keep class com.intellij.openapi.util.text.StringHash { *; }
-
-# for gradle plugin and other server tools
--keep class com.intellij.openapi.util.io.ZipFileCache { public *; }
 
 # for j2k
 -keep class com.intellij.codeInsight.NullableNotNullManager { public protected *; }
@@ -143,6 +165,7 @@ messages/**)
 -keep class gnu.trove.TIntHashSet { *; }
 -keep class gnu.trove.TIntIterator { *; }
 -keep class org.iq80.snappy.SlowMemory { *; }
+-keep class javaslang.match.PatternsProcessor { *; }
 
 -keepclassmembers enum * {
     public static **[] values();
@@ -161,6 +184,21 @@ messages/**)
     *** ASM5;
 }
 
+-keep class org.jetbrains.org.objectweb.asm.tree.AnnotationNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.ClassNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.LocalVariableNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.MethodNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.FieldNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.ParameterNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.TypeAnnotationNode { *; }
+
+-keep class org.jetbrains.org.objectweb.asm.signature.SignatureReader { *; }
+-keep class org.jetbrains.org.objectweb.asm.signature.SignatureVisitor { *; }
+
+-keep class org.jetbrains.org.objectweb.asm.Type {
+    public protected *;
+}
+
 -keepclassmembers class org.jetbrains.org.objectweb.asm.ClassReader {
     *** SKIP_CODE;
     *** SKIP_DEBUG;
@@ -169,3 +207,18 @@ messages/**)
 
 # for kotlin-android-extensions in maven
 -keep class com.intellij.openapi.module.ModuleServiceManager { public *; }
+
+# for building kotlin-build-common-test
+-keep class org.jetbrains.kotlin.build.SerializationUtilsKt { *; }
+
+# for tools.jar
+-keep class com.sun.tools.javac.** { *; }
+-keep class com.sun.source.** { *; }
+
+# for coroutines
+-keep class kotlinx.coroutines.** { *; }
+
+# for webdemo
+-keep class com.intellij.openapi.progress.ProgressManager { *; }
+
+        

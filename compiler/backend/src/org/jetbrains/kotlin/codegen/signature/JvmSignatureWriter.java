@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.signature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.load.kotlin.JvmDescriptorTypeWriter;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
@@ -31,7 +32,7 @@ import java.util.List;
 
 public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
 
-    private final List<JvmMethodParameterSignature> kotlinParameterTypes = new ArrayList<JvmMethodParameterSignature>();
+    private final List<JvmMethodParameterSignature> kotlinParameterTypes = new ArrayList<>();
 
     private Type jvmReturnType;
 
@@ -57,7 +58,7 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
                 return;
             case Type.ARRAY:
                 writeArrayType();
-                writeAsmType(asmType.getElementType());
+                writeAsmType(AsmUtil.correctElementType(asmType));
                 writeArrayEnd();
                 return;
             default:
@@ -148,7 +149,7 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
 
     @NotNull
     public JvmMethodGenericSignature makeJvmMethodSignature(@NotNull String name) {
-        List<Type> types = new ArrayList<Type>(kotlinParameterTypes.size());
+        List<Type> types = new ArrayList<>(kotlinParameterTypes.size());
         for (JvmMethodParameterSignature parameter : kotlinParameterTypes) {
             types.add(parameter.getAsmType());
         }

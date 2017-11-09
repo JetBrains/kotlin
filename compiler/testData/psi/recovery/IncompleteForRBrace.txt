@@ -1,4 +1,4 @@
-JetFile: IncompleteForRBrace.kt
+KtFile: IncompleteForRBrace.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

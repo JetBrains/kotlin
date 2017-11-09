@@ -28,6 +28,13 @@ class RegexTaskToFriendTaskMapperTest {
     }
 
     @Test
+    fun getFriendTasksNameJavaScript() {
+        val mapper = RegexTaskToFriendTaskMapper.JavaScript()
+        Assert.assertEquals("compileKotlin2Js", mapper["compileTestKotlin2Js"])
+        Assert.assertEquals(null, mapper["compileKotlin2Js"])
+    }
+
+    @Test
     fun getFriendTaskNameAndroid() {
         val mapper = RegexTaskToFriendTaskMapper.Android()
         // Unit test examples

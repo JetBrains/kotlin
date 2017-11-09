@@ -29,8 +29,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.builder.KotlinFacadeLightClassData
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForFileFacade
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils.fileHasTopLevelCallables
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -50,17 +48,17 @@ import javax.swing.Icon
 class KtLightClassForFacade private constructor(
         manager: PsiManager,
         private val facadeClassFqName: FqName,
-        private val lightClassDataCache: CachedValue<KotlinFacadeLightClassData>,
+        private val lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
         files: Collection<KtFile>
-) : KtLightClassBase(manager) {
+) : KtLazyLightClass(manager) {
     private data class StubCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
 
     class FacadeStubCache(private val project: Project) {
         private inner class FacadeCacheData {
-            val cache = object : SLRUCache<StubCacheKey, CachedValue<KotlinFacadeLightClassData>>(20, 30) {
-                override fun createValue(key: StubCacheKey): CachedValue<KotlinFacadeLightClassData> {
+            val cache = object : SLRUCache<StubCacheKey, CachedValue<LightClassDataHolder.ForFacade>>(20, 30) {
+                override fun createValue(key: StubCacheKey): CachedValue<LightClassDataHolder.ForFacade> {
                     val stubProvider = LightClassDataProviderForFileFacade.ByProjectSource(project, key.fqName, key.searchScope)
-                    return CachedValuesManager.getManager(project).createCachedValue<KotlinFacadeLightClassData>(stubProvider, /*trackValue = */false)
+                    return CachedValuesManager.getManager(project).createCachedValue<LightClassDataHolder.ForFacade>(stubProvider, /*trackValue = */false)
                 }
             }
         }
@@ -69,7 +67,7 @@ class KtLightClassForFacade private constructor(
                 { CachedValueProvider.Result.create(FacadeCacheData(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT) },
                 /*trackValue = */ false)
 
-        operator fun get(qualifiedName: FqName, searchScope: GlobalSearchScope): CachedValue<KotlinFacadeLightClassData> {
+        operator fun get(qualifiedName: FqName, searchScope: GlobalSearchScope): CachedValue<LightClassDataHolder.ForFacade> {
             synchronized (cachedValue) {
                 return cachedValue.value.cache.get(StubCacheKey(qualifiedName, searchScope))
             }
@@ -191,36 +189,48 @@ class KtLightClassForFacade private constructor(
 
     override fun getQualifiedName() = facadeClassFqName.asString()
 
-    override fun isValid() = files.all { it.isValid && fileHasTopLevelCallables(it) && facadeClassFqName == it.javaFileFacadeFqName }
+    override fun isValid() = files.all { it.isValid && it.hasTopLevelCallables() && facadeClassFqName == it.javaFileFacadeFqName }
 
-    override fun copy() = KtLightClassForFacade(getManager(), facadeClassFqName, lightClassDataCache, files)
+    override fun copy() = KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
 
-    override val clsDelegate: PsiClass
-        get() {
-            return LightClassUtil.findClass(lightClassDataCache.value.javaFileStub) {
-                facadeClassFqName.asString() == it.qualifiedName
-            } ?: throw IllegalStateException("Facade class $facadeClassFqName not found")
-        }
+    override val lightClassData
+        get() = lightClassDataCache.value.findDataForFacade(facadeClassFqName)
 
     override fun getNavigationElement() = files.iterator().next()
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        return another is PsiClass && Comparing.equal(another.qualifiedName, getQualifiedName())
+        return another is KtLightClassForFacade && Comparing.equal(another.qualifiedName, qualifiedName)
     }
 
     override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by JetIconProvider")
 
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        return baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT
+    }
+
+    override fun getSuperClass(): PsiClass? {
+        return JavaPsiFacade.getInstance(project).findClass(CommonClassNames.JAVA_LANG_OBJECT, resolveScope)
+    }
+
+    override fun getSupers(): Array<PsiClass> {
+        return superClass?.let { arrayOf(it) } ?: arrayOf()
+    }
+
+    override fun getSuperTypes(): Array<PsiClassType> {
+        return arrayOf(PsiType.getJavaLangObject(manager, resolveScope))
+    }
+
     override fun hashCode() = hashCode
 
     private fun computeHashCode(): Int {
-        var result = getManager().hashCode()
+        var result = manager.hashCode()
         result = 31 * result + files.hashCode()
         result = 31 * result + facadeClassFqName.hashCode()
         return result
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other == null || javaClass != other.javaClass) {
+        if (other == null || this::class.java != other::class.java) {
             return false
         }
 
@@ -228,7 +238,7 @@ class KtLightClassForFacade private constructor(
         if (this === other) return true
 
         if (this.hashCode != lightClass.hashCode) return false
-        if (getManager() != lightClass.getManager()) return false
+        if (manager != lightClass.manager) return false
         if (files != lightClass.files) return false
         if (facadeClassFqName != lightClass.facadeClassFqName) return false
 
@@ -257,7 +267,7 @@ class KtLightClassForFacade private constructor(
         ): KtLightClassForFacade {
             // TODO: refactor, using cached value doesn't make sense for this case
             val cachedValue = CachedValuesManager.getManager(manager.project).
-                    createCachedValue<KotlinFacadeLightClassData>(
+                    createCachedValue<LightClassDataHolder.ForFacade>(
                             LightClassDataProviderForFileFacade.ByFile(manager.project, facadeClassFqName, file), /*trackValue = */false
                     )
             return KtLightClassForFacade(manager, facadeClassFqName, cachedValue, listOf(file))

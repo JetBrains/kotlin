@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.imports;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Jvm extends AbstractJvmOptimizeImportsTest {
         public void testAllFilesPresentInJvm() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/jvm"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/jvm"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AlreadyOptimized.kt")
@@ -100,12 +101,6 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
         @TestMetadata("KT10226.kt")
         public void testKT10226() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/jvm/KT10226.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("KT13766.kt")
-        public void testKT13766() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/jvm/KT13766.kt");
             doTest(fileName);
         }
 
@@ -192,7 +187,7 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AllUnderImports extends AbstractJvmOptimizeImportsTest {
             public void testAllFilesPresentInAllUnderImports() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/jvm/allUnderImports"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/jvm/allUnderImports"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ClassNameConflict.kt")
@@ -225,6 +220,12 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
                 doTest(fileName);
             }
 
+            @TestMetadata("ClassNameConflictWithinDefaultImports.kt")
+            public void testClassNameConflictWithinDefaultImports() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/jvm/allUnderImports/ClassNameConflictWithinDefaultImports.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NameCountSetting.kt")
             public void testNameCountSetting() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/jvm/allUnderImports/NameCountSetting.kt");
@@ -250,7 +251,7 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Common extends AbstractJvmOptimizeImportsTest {
         public void testAllFilesPresentInCommon() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/common"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/common"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ArrayAccessExpression.kt")
@@ -286,6 +287,24 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
         @TestMetadata("Enums.kt")
         public void testEnums() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/Enums.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionFunctionalTypeValFromCompanionObject.kt")
+        public void testExtensionFunctionalTypeValFromCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/ExtensionFunctionalTypeValFromCompanionObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionFunctionalTypeValFromCompanionObjectCallOnCompanion.kt")
+        public void testExtensionFunctionalTypeValFromCompanionObjectCallOnCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/ExtensionFunctionalTypeValFromCompanionObjectCallOnCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionFunctionalTypeValFromCompanionObjectNonExtCall.kt")
+        public void testExtensionFunctionalTypeValFromCompanionObjectNonExtCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/ExtensionFunctionalTypeValFromCompanionObjectNonExtCall.kt");
             doTest(fileName);
         }
 

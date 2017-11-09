@@ -38,8 +38,7 @@ public class KtImportDirectiveElementType extends KtStubElementType<KotlinImport
     public KotlinImportDirectiveStub createStub(@NotNull KtImportDirective psi, StubElement parentStub) {
         FqName importedFqName = psi.getImportedFqName();
         StringRef fqName = StringRef.fromString(importedFqName == null ? null : importedFqName.asString());
-        StringRef aliasName = StringRef.fromString(psi.getAliasName());
-        return new KotlinImportDirectiveStubImpl(parentStub, psi.isAllUnder(), fqName, aliasName, psi.isValidImport());
+        return new KotlinImportDirectiveStubImpl(parentStub, psi.isAllUnder(), fqName, psi.isValidImport());
     }
 
     @Override
@@ -47,7 +46,6 @@ public class KtImportDirectiveElementType extends KtStubElementType<KotlinImport
         dataStream.writeBoolean(stub.isAllUnder());
         FqName importedFqName = stub.getImportedFqName();
         dataStream.writeName(importedFqName != null ? importedFqName.asString() : null);
-        dataStream.writeName(stub.getAliasName());
         dataStream.writeBoolean(stub.isValid());
     }
 
@@ -56,8 +54,7 @@ public class KtImportDirectiveElementType extends KtStubElementType<KotlinImport
     public KotlinImportDirectiveStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         boolean isAllUnder = dataStream.readBoolean();
         StringRef importedName = dataStream.readName();
-        StringRef aliasName = dataStream.readName();
         boolean isValid = dataStream.readBoolean();
-        return new KotlinImportDirectiveStubImpl(parentStub, isAllUnder, importedName, aliasName, isValid);
+        return new KotlinImportDirectiveStubImpl(parentStub, isAllUnder, importedName, isValid);
     }
 }

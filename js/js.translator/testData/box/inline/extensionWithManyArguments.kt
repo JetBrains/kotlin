@@ -1,6 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1115
 package foo
 
-// CHECK_NOT_CALLED_IN_SCOPE: scope=multiply_0 function=multiply_0$f
+// CHECK_NOT_CALLED_IN_SCOPE: scope=multiply function=multiply$lambda
 
 internal class A(val a: Int)
 

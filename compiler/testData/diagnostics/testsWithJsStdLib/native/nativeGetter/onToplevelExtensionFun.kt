@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER, -DEPRECATION
 
 @nativeGetter
 fun Int.get(a: String): Int? = 1

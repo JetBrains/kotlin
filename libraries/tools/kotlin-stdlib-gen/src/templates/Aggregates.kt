@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun aggregates(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -9,8 +10,13 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
         doc { f -> "Returns `true` if all ${f.element.pluralize()} match the given [predicate]." }
         returns("Boolean")
-        body {
+        body { f ->
             """
+            ${when (f) {
+                Iterables -> "if (this is Collection && isEmpty()) return true"
+                Maps -> "if (isEmpty()) return true"
+                else -> ""
+            }}
             for (element in this) if (!predicate(element)) return false
             return true
             """
@@ -23,8 +29,13 @@ fun aggregates(): List<GenericFunction> {
 
         doc { f -> "Returns `true` if no ${f.element.pluralize()} match the given [predicate]." }
         returns("Boolean")
-        body {
+        body { f ->
             """
+            ${when (f) {
+                Iterables -> "if (this is Collection && isEmpty()) return true"
+                Maps -> "if (isEmpty()) return true"
+                else -> ""
+            }}
             for (element in this) if (predicate(element)) return false
             return true
             """
@@ -36,10 +47,16 @@ fun aggregates(): List<GenericFunction> {
         doc { f -> "Returns `true` if the ${f.collection} has no ${f.element.pluralize()}." }
         returns("Boolean")
         body {
+            "return !iterator().hasNext()"
+        }
+        body(Iterables) {
             """
-            for (element in this) return false
-            return true
+            if (this is Collection) return isEmpty()
+            return !iterator().hasNext()
             """
+        }
+        body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+            "return isEmpty()"
         }
         include(Maps, CharSequences)
     }
@@ -49,8 +66,13 @@ fun aggregates(): List<GenericFunction> {
 
         doc { f -> "Returns `true` if at least one ${f.element} matches the given [predicate]." }
         returns("Boolean")
-        body {
+        body { f ->
             """
+            ${when (f) {
+                Iterables -> "if (this is Collection && isEmpty()) return false"
+                Maps -> "if (isEmpty()) return false"
+                else -> ""
+            }}
             for (element in this) if (predicate(element)) return true
             return false
             """
@@ -62,10 +84,16 @@ fun aggregates(): List<GenericFunction> {
         doc { f -> "Returns `true` if ${f.collection} has at least one ${f.element}." }
         returns("Boolean")
         body {
+            "return iterator().hasNext()"
+        }
+        body(Iterables) {
             """
-            for (element in this) return true
-            return false
+            if (this is Collection) return !isEmpty()
+            return iterator().hasNext()
             """
+        }
+        body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+            "return !isEmpty()"
         }
         include(Maps, CharSequences)
     }
@@ -75,8 +103,13 @@ fun aggregates(): List<GenericFunction> {
 
         doc { f -> "Returns the number of ${f.element.pluralize()} matching the given [predicate]." }
         returns("Int")
-        body {
+        body { f ->
             """
+            ${when (f) {
+                Iterables -> "if (this is Collection && isEmpty()) return 0"
+                Maps -> "if (isEmpty()) return 0"
+                else -> ""
+            }}
             var count = 0
             for (element in this) if (predicate(element)) count++
             return count
@@ -88,8 +121,9 @@ fun aggregates(): List<GenericFunction> {
     templates add f("count()") {
         doc { f -> "Returns the number of ${f.element.pluralize()} in this ${f.collection}." }
         returns("Int")
-        body {
+        body { f ->
             """
+            ${if (f == Iterables) "if (this is Collection) return size" else "" }
             var count = 0
             for (element in this) count++
             return count
@@ -137,36 +171,68 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("min()") {
-        doc { f -> "Returns the smallest ${f.element} or `null` if there are no ${f.element.pluralize()}." }
-        returns("T?")
-        exclude(PrimitiveType.Boolean)
-        typeParam("T : Comparable<T>")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
 
-            var min = iterator.next()
-            while (iterator.hasNext()) {
-                val e = iterator.next()
-                if (min > e) min = e
+    templates addAll listOf("min", "max").flatMap { op ->
+        val genericSpecializations = PrimitiveType.numericPrimitives.filterNot { it.isIntegral() } + listOf(null)
+
+        listOf(
+            Iterables to genericSpecializations,
+            Sequences to genericSpecializations,
+            ArraysOfObjects to genericSpecializations,
+            ArraysOfPrimitives to (PrimitiveType.defaultPrimitives - PrimitiveType.Boolean),
+            CharSequences to setOf(null)
+        ).map { (f, primitives) -> primitives.map { primitive ->
+            f("$op()") {
+                val isFloat = primitive?.isIntegral() == false
+                val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
+
+                only(f)
+                typeParam("T : Comparable<T>")
+                if (primitive != null) {
+                    onlyPrimitives(f, primitive)
+                    if (isFloat && isGeneric)
+                        since("1.1")
+                }
+                doc { f ->
+                    "Returns the ${if (op == "max") "largest" else "smallest"} ${f.element} or `null` if there are no ${f.element.pluralize()}." +
+                    if (isFloat) "\n\n" + "If any of ${f.element.pluralize()} is `NaN` returns `NaN`."  else ""
+                }
+                returns("T?")
+
+                body {
+                    if (f == ArraysOfObjects || f == ArraysOfPrimitives || f == CharSequences) {
+                        """
+                        if (isEmpty()) return null
+                        var $op = this[0]
+                        ${if (isFloat) "if ($op.isNaN()) return $op" else "\\"}
+
+                        for (i in 1..lastIndex) {
+                            val e = this[i]
+                            ${if (isFloat) "if (e.isNaN()) return e" else "\\"}
+                            if ($op ${if (op == "max") "<" else ">"} e) $op = e
+                        }
+                        return $op
+                        """
+                    }
+                    else {
+                        """
+                        val iterator = iterator()
+                        if (!iterator.hasNext()) return null
+                        var $op = iterator.next()
+                        ${if (isFloat) "if ($op.isNaN()) return $op" else "\\"}
+
+                        while (iterator.hasNext()) {
+                            val e = iterator.next()
+                            ${if (isFloat) "if (e.isNaN()) return e" else "\\"}
+                            if ($op ${if (op == "max") "<" else ">"} e) $op = e
+                        }
+                        return $op
+                        """
+                    }.replace(Regex("""^\s+\\\n""", RegexOption.MULTILINE), "") // trim lines ending with \
+                }
             }
-            return min
-            """
-        }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            if (isEmpty()) return null
-            var min = this[0]
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                if (min > e) min = e
-            }
-            return min
-            """
-        }
-    }
+        }}
+    }.flatten()
 
     templates add f("minBy(selector: (T) -> R)") {
         inline(true)
@@ -240,39 +306,6 @@ fun aggregates(): List<GenericFunction> {
             """
         }
         body(Maps) { "return entries.minWith(comparator)" }
-    }
-
-    templates add f("max()") {
-        doc { f -> "Returns the largest ${f.element} or `null` if there are no ${f.element.pluralize()}." }
-        returns("T?")
-        exclude(PrimitiveType.Boolean)
-        typeParam("T : Comparable<T>")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
-
-            var max = iterator.next()
-            while (iterator.hasNext()) {
-                val e = iterator.next()
-                if (max < e) max = e
-            }
-            return max
-            """
-        }
-
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            if (isEmpty()) return null
-
-            var max = this[0]
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                if (max < e) max = e
-            }
-            return max
-            """
-        }
     }
 
     templates add f("maxBy(selector: (T) -> R)") {
@@ -352,7 +385,7 @@ fun aggregates(): List<GenericFunction> {
         body(Maps) { "return entries.maxWith(comparator)" }
     }
 
-    templates add f("foldIndexed(initial: R, operation: (Int, R, T) -> R)") {
+    templates add f("foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R)") {
         inline(true)
 
         include(CharSequences)
@@ -376,7 +409,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("foldRightIndexed(initial: R, operation: (Int, T, R) -> R)") {
+    templates add f("foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R)") {
         inline(true)
 
         only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
@@ -416,7 +449,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("fold(initial: R, operation: (R, T) -> R)") {
+    templates add f("fold(initial: R, operation: (acc: R, T) -> R)") {
         inline(true)
 
         include(CharSequences)
@@ -432,7 +465,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("foldRight(initial: R, operation: (T, R) -> R)") {
+    templates add f("foldRight(initial: R, operation: (T, acc: R) -> R)") {
         inline(true)
 
         only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
@@ -463,7 +496,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceIndexed(operation: (Int, T, T) -> T)") {
+    templates add f("reduceIndexed(operation: (index: Int, acc: T, T) -> T)") {
         inline(true)
         only(ArraysOfPrimitives, CharSequences)
 
@@ -490,7 +523,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceIndexed(operation: (Int, S, T) -> S)") {
+    templates add f("reduceIndexed(operation: (index: Int, acc: S, T) -> S)") {
         inline(true)
         only(ArraysOfObjects, Iterables, Sequences)
 
@@ -532,7 +565,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceRightIndexed(operation: (Int, T, T) -> T)") {
+    templates add f("reduceRightIndexed(operation: (index: Int, T, acc: T) -> T)") {
         inline(true)
 
         only(CharSequences, ArraysOfPrimitives)
@@ -561,7 +594,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceRightIndexed(operation: (Int, T, S) -> S)") {
+    templates add f("reduceRightIndexed(operation: (index: Int, T, acc: S) -> S)") {
         inline(true)
 
         only(Lists, ArraysOfObjects)
@@ -607,7 +640,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduce(operation: (T, T) -> T)") {
+    templates add f("reduce(operation: (acc: T, T) -> T)") {
         inline(true)
         only(ArraysOfPrimitives, CharSequences)
 
@@ -627,7 +660,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduce(operation: (S, T) -> S)") {
+    templates add f("reduce(operation: (acc: S, T) -> S)") {
         inline(true)
         only(ArraysOfObjects, Iterables, Sequences)
 
@@ -661,7 +694,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceRight(operation: (T, T) -> T)") {
+    templates add f("reduceRight(operation: (T, acc: T) -> T)") {
         inline(true)
 
         only(CharSequences, ArraysOfPrimitives)
@@ -682,7 +715,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceRight(operation: (T, S) -> S)") {
+    templates add f("reduceRight(operation: (T, acc: S) -> S)") {
         inline(true)
 
         only(Lists, ArraysOfObjects)
@@ -719,6 +752,48 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
+
+    templates addAll listOf(Iterables, Maps, CharSequences).map { f -> f("onEach(action: (T) -> Unit)") {
+        only(f)
+        since("1.1")
+        inline(true)
+        doc { f -> "Performs the given [action] on each ${f.element} and returns the ${f.collection} itself afterwards." }
+        val collectionType = when(f) {
+            Maps -> "M"
+            CharSequences -> "S"
+            else -> "C"
+        }
+        customReceiver(collectionType)
+        returns(collectionType)
+        typeParam("$collectionType : SELF")
+
+        body {
+            """
+            return apply { for (element in this) action(element) }
+            """
+        }
+    }}
+
+    templates add f("onEach(action: (T) -> Unit)") {
+        only(Sequences)
+        since("1.1")
+        returns("SELF")
+        doc { f ->
+            """
+            Returns a sequence which performs the given [action] on each ${f.element} of the original sequence as they pass though it.
+            """
+        }
+        sequenceClassification(intermediate, stateless)
+        body(Sequences) {
+            """
+            return map {
+                action(it)
+                it
+            }
+            """
+        }
+    }
+
     templates add f("forEach(action: (T) -> Unit)") {
         inline(true)
 
@@ -733,7 +808,7 @@ fun aggregates(): List<GenericFunction> {
         include(Maps, CharSequences)
     }
 
-    templates add f("forEachIndexed(action: (Int, T) -> Unit)") {
+    templates add f("forEachIndexed(action: (index: Int, T) -> Unit)") {
         inline(true)
         include(CharSequences)
         doc { f ->
@@ -748,6 +823,12 @@ fun aggregates(): List<GenericFunction> {
             var index = 0
             for (item in this) action(index++, item)
             """
+        }
+    }
+
+    templates.forEach {
+        if (it.sequenceClassification.isEmpty()) {
+            it.sequenceClassification(terminal)
         }
     }
 

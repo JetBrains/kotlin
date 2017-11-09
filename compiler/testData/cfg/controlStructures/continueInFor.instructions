@@ -16,26 +16,32 @@ L0:
     r(10) -> <v2>
     mark(1..10)
     call(1..10, rangeTo|<v1>, <v2>) -> <v3>
+    mark(1..10)
+    call(1..10, iterator|<v3>) -> <v4>
     v(i)
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3)                                                  NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..10|<v3>) -> <v4>]    PREV:[v(i), jmp(L6)]
-    magic[LOOP_RANGE_ITERATION](1..10|<v3>) -> <v4>
-    w(i|<v4>)
+    mark(1..10)                                               PREV:[v(i), jmp(L6)]
+    call(1..10, hasNext) -> <v5>
+    jmp?(L3)                                                  NEXT:[read (Unit), mark(1..10)]
+    mark(1..10)
+    call(1..10, next) -> <v6>
+    magic[LOOP_RANGE_ITERATION](1..10|<v6>) -> <v7>
+    w(i|<v7>)
     mark(for (i in 1..10) { if (b) break; continue; })
 L4 [body entry point]:
   4 mark({ if (b) break; continue; })
     mark(if (b) break)
-    r(b) -> <v5>
-    jf(L7|<v5>)                                               NEXT:[read (Unit), jmp(L3)]
+    r(b) -> <v8>
+    jf(L7|<v8>)                                               NEXT:[read (Unit), jmp(L3)]
     jmp(L3)                                                   NEXT:[read (Unit)]
--   jmp(L8)                                                   NEXT:[merge(if (b) break|!<v6>) -> <v7>]                               PREV:[]
+-   jmp(L8)                                                   NEXT:[merge(if (b) break|!<v9>) -> <v10>]                        PREV:[]
 L7 [else branch]:
-    read (Unit)                                               PREV:[jf(L7|<v5>)]
+    read (Unit)                                               PREV:[jf(L7|<v8>)]
 L8 ['if' expression result]:
-    merge(if (b) break|!<v6>) -> <v7>
-    jmp(L6)                                                   NEXT:[jmp?(L3)]
-- 3 jmp(L2)                                                   NEXT:[jmp?(L3)]                                                        PREV:[]
+    merge(if (b) break|!<v9>) -> <v10>
+    jmp(L6)                                                   NEXT:[mark(1..10)]
+- 3 jmp(L2)                                                   NEXT:[mark(1..10)]                                               PREV:[]
 L3 [loop exit point]:
 L5 [body exit point]:
     read (Unit)                                               PREV:[jmp?(L3), jmp(L3)]

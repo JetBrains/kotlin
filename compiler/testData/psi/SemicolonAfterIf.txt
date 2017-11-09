@@ -1,4 +1,4 @@
-JetFile: SemicolonAfterIf.kt
+KtFile: SemicolonAfterIf.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

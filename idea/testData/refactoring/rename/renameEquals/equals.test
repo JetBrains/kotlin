@@ -3,5 +3,6 @@
   "classId": "/A",
   "oldName": "equals",
   "newName": "foo",
-  "mainFile": "equals.kt"
+  "mainFile": "equals.kt",
+  "skipSubstitute": true
 }

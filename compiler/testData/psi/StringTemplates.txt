@@ -1,4 +1,4 @@
-JetFile: StringTemplates.kt
+KtFile: StringTemplates.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

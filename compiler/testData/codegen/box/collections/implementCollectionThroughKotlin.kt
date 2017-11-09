@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 // FILE: J.java
 
 import org.jetbrains.annotations.NotNull;

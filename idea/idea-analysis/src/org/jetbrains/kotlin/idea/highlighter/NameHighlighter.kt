@@ -16,10 +16,6 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 
 object NameHighlighter {
@@ -27,14 +23,3 @@ object NameHighlighter {
         @TestOnly set
 }
 
-fun AnnotationHolder.highlightName(element: PsiElement, attributesKey: TextAttributesKey) {
-    if (NameHighlighter.namesHighlightingEnabled) {
-        createInfoAnnotation(element, null).textAttributes = attributesKey
-    }
-}
-
-fun AnnotationHolder.highlightName(textRange: TextRange, attributesKey: TextAttributesKey) {
-    if (NameHighlighter.namesHighlightingEnabled) {
-        createInfoAnnotation(textRange, null).textAttributes = attributesKey
-    }
-}

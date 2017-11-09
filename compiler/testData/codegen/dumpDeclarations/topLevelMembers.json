@@ -42,8 +42,7 @@
 			{"visibility": "private",	"declaration": "fun privateFun(x: kotlin.Any?): kotlin.Unit", "name": "access$privateFun", "desc": "(Ljava/lang/Object;)V"},
 			{"visibility": "private",	"declaration": "fun <get-privateVal>(): kotlin.Any?", "name": "access$getPrivateVal$p", "desc": "()Ljava/lang/Object;"},
 			{"visibility": "private",	"declaration": "fun <get-privateVar>(): kotlin.Any?", "name": "access$getPrivateVar$p", "desc": "()Ljava/lang/Object;"},
-			{"visibility": "private",	"declaration": "fun <set-privateVar>(<set-?>: kotlin.Any?): kotlin.Unit", "name": "access$setPrivateVar$p", "desc": "(Ljava/lang/Object;)V"},
-			{"visibility": "private",	"declaration": "fun <get-privateConst>(): kotlin.Int", "name": "access$getPrivateConst$p", "desc": "()I"}
+			{"visibility": "private",	"declaration": "fun <set-privateVar>(<set-?>: kotlin.Any?): kotlin.Unit", "name": "access$setPrivateVar$p", "desc": "(Ljava/lang/Object;)V"}
 		]
 	}
 ]

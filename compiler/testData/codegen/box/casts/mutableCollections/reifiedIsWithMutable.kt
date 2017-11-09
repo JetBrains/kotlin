@@ -1,6 +1,5 @@
+// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
-
-import java.util.*
 
 class Itr : Iterator<String> by ArrayList<String>().iterator()
 class MItr : MutableIterator<String> by ArrayList<String>().iterator()
@@ -32,6 +31,8 @@ class MME : MutableMap.MutableEntry<String, String> {
 
 inline fun <reified T> reifiedIs(x: Any): Boolean = x is T
 inline fun <reified T> reifiedIsNot(x: Any): Boolean = x !is T
+
+fun assert(condition: Boolean, message: () -> String) { if (!condition) throw AssertionError(message())}
 
 fun box(): String {
     val itr = Itr() as Any

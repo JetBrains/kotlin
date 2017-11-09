@@ -33,6 +33,8 @@ class ArrayAccessExpression(val expression: Expression, val index: Expression, v
 
 open class AssignmentExpression(val left: Expression, val right: Expression, val op: Operator) : Expression() {
 
+    fun isMultiAssignment() = right is AssignmentExpression
+
     fun appendAssignment(builder: CodeBuilder, left: Expression, right: Expression) {
         builder.appendOperand(this, left).append(" ").append(op).append(" ").appendOperand(this, right)
     }
@@ -84,9 +86,15 @@ class TypeCastExpression(val type: Type, val expression: Expression) : Expressio
         get() = type.isNullable
 }
 
-class LiteralExpression(val literalText: String) : Expression() {
+open class LiteralExpression(val literalText: String) : Expression() {
+
     override fun generateCode(builder: CodeBuilder) {
         builder.append(literalText)
+    }
+
+    object NullLiteral : LiteralExpression("null"){
+        override val isNullable: Boolean
+            get() = true
     }
 }
 
@@ -145,20 +153,6 @@ class QualifiedExpression(val qualifier: Expression, val identifier: Expression,
     }
 }
 
-class PolyadicExpression(val expressions: List<Expression>, val operators: List<Operator>) : Expression() {
-    override fun generateCode(builder: CodeBuilder) {
-        assert(expressions.size == operators.size + 1)
-        for ((i, expression) in expressions.withIndex()) {
-            builder.append(expression)
-            if (i < operators.size) {
-                builder.append(" ")
-                builder.append(operators[i])
-                builder.append(" ")
-            }
-        }
-    }
-}
-
 open class Operator(val operatorType: IElementType): Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append(asString(operatorType))
@@ -176,8 +170,21 @@ open class Operator(val operatorType: IElementType): Expression() {
         }
     }
 
+    val precedence: Int
+        get() = when (this.operatorType) {
+            JavaTokenType.ASTERISK, JavaTokenType.DIV, JavaTokenType.PERC -> 3
+            JavaTokenType.PLUS, JavaTokenType.MINUS -> 4
+            KtTokens.ELVIS -> 7
+            JavaTokenType.GT, JavaTokenType.LT, JavaTokenType.GE, JavaTokenType.LE -> 9
+            JavaTokenType.EQEQ, JavaTokenType.NE, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ -> 10
+            JavaTokenType.ANDAND -> 11
+            JavaTokenType.OROR -> 12
+            JavaTokenType.GTGTGT, JavaTokenType.GTGT, JavaTokenType.LTLT -> 7
+            else -> 6 /* simple name */
+        }
+
     private fun asString(tokenType: IElementType): String {
-        return when(tokenType) {
+        return when (tokenType) {
             JavaTokenType.EQ -> "="
             JavaTokenType.EQEQ -> "=="
             JavaTokenType.NE -> "!="
@@ -258,6 +265,12 @@ class RangeExpression(val start: Expression, val end: Expression): Expression() 
     }
 }
 
+class UntilExpression(val start: Expression, val end: Expression): Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, start).append(" until ").appendOperand(this, end)
+    }
+}
+
 class DownToExpression(val start: Expression, val end: Expression): Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder.appendOperand(this, start).append(" downTo ").appendOperand(this, end)
@@ -272,11 +285,10 @@ class ClassLiteralExpression(val type: Type): Expression() {
 
 fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>, needExplicitType: Boolean = true) : MethodCallExpression {
     val elementType = arrayType.elementType
-    val createArrayFunction = if (elementType is PrimitiveType)
-            (elementType.toNotNullType().canonicalCode() + "ArrayOf").decapitalize()
-        else if (needExplicitType)
-            "arrayOf<" + arrayType.elementType.canonicalCode() + ">"
-        else
-            "arrayOf"
+    val createArrayFunction = when {
+        elementType is PrimitiveType -> (elementType.toNotNullType().canonicalCode() + "ArrayOf").decapitalize()
+        needExplicitType -> "arrayOf<" + arrayType.elementType.canonicalCode() + ">"
+        else -> "arrayOf"
+    }
     return MethodCallExpression.buildNonNull(null, createArrayFunction, ArgumentList.withNoPrototype(initializers))
 }

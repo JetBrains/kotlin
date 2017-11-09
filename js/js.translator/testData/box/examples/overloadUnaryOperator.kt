@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1380
 
 class ArrayWrapper<T>() {
     val contents = ArrayList<T>()
@@ -9,10 +10,7 @@ class ArrayWrapper<T>() {
     operator fun unaryMinus(): ArrayWrapper<T> {
         val result = ArrayWrapper<T>()
         result.contents.addAll(contents)
-        var i = contents.size;
-        for (a in contents) {
-            result.contents[--i] = a;
-        }
+        result.contents.reverse()
         return result
     }
 

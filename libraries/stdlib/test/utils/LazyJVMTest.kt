@@ -1,3 +1,4 @@
+@file:kotlin.jvm.JvmVersion
 package test.utils
 
 
@@ -7,11 +8,11 @@ import java.io.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
-import org.junit.Test as test
+import test.io.serializeAndDeserialize
 
 class LazyJVMTest {
 
-    @test fun synchronizedLazy() {
+    @Test fun synchronizedLazy() {
         val counter = AtomicInteger(0)
         val lazy = lazy {
             val value = counter.incrementAndGet()
@@ -25,7 +26,7 @@ class LazyJVMTest {
         assertEquals(1, counter.get())
     }
 
-    @test fun externallySynchronizedLazy() {
+    @Test fun externallySynchronizedLazy() {
         val counter = AtomicInteger(0)
         var initialized: Boolean = false
         val runs = ConcurrentHashMap<Int, Boolean>()
@@ -45,12 +46,13 @@ class LazyJVMTest {
         accessThreads.forEach { it.join() }
 
         assertEquals(2, counter.get())
+        @Suppress("NAME_SHADOWING")
         for ((counter, initialized) in runs) {
             assertEquals(initialized, counter == 2, "Expected uninitialized on first, initialized on second call: initialized=$initialized, counter=$counter")
         }
     }
 
-    @test fun publishOnceLazy() {
+    @Test fun publishOnceLazy() {
         val counter = AtomicInteger(0)
         var initialized: Boolean = false
         val runs = ConcurrentHashMap<Int, Boolean>()
@@ -69,12 +71,13 @@ class LazyJVMTest {
 
         assertEquals(2, counter.get())
         assertEquals(2, lazy.value)
-        for ((counter, initialized) in runs) {
+        @Suppress("NAME_SHADOWING")
+        for ((_, initialized) in runs) {
             assertFalse(initialized, "Expected uninitialized on first and second run")
         }
     }
 
-    @test fun lazyInitializationForcedOnSerialization() {
+    @Test fun lazyInitializationForcedOnSerialization() {
         for(mode in listOf(LazyThreadSafetyMode.SYNCHRONIZED, LazyThreadSafetyMode.PUBLICATION, LazyThreadSafetyMode.NONE)) {
             val lazy = lazy(mode) { "initialized" }
             assertFalse(lazy.isInitialized())
@@ -84,19 +87,4 @@ class LazyJVMTest {
             assertEquals(lazy.value, lazy2.value)
         }
     }
-
-
-    private fun <T> serializeAndDeserialize(value: T): T {
-        val outputStream = ByteArrayOutputStream()
-        val objectOutputStream = ObjectOutputStream(outputStream)
-
-        objectOutputStream.writeObject(value)
-        objectOutputStream.close()
-        outputStream.close()
-
-        val inputStream = ByteArrayInputStream(outputStream.toByteArray())
-        val inputObjectStream = ObjectInputStream(inputStream)
-        return inputObjectStream.readObject() as T
-    }
-
 }

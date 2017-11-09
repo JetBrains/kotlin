@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper
 import com.intellij.codeInsight.daemon.impl.MarkerType
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.ide.util.PsiClassListCellRenderer
 import com.intellij.openapi.progress.ProgressManager
@@ -34,8 +33,10 @@ import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.util.AdapterProcessor
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Function
-import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.getAccessorLightMethods
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
+import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -50,9 +51,9 @@ fun getOverriddenPropertyTooltip(property: KtNamedDeclaration): String? {
             Function { method: PsiMethod? -> method?.containingClass }
     )
 
-    for (method in property.getAccessorLightMethods()) {
+    for (method in property.toPossiblyFakeLightMethods()) {
         if (!overriddenInClassesProcessor.isOverflow) {
-            OverridingMethodsSearch.search(method, true).forEach(consumer)
+            method.forEachOverridingMethod(processor = consumer::process)
         }
     }
 
@@ -76,18 +77,18 @@ fun getOverriddenPropertyTooltip(property: KtNamedDeclaration): String? {
     return GutterIconTooltipHelper.composeText(collectedClasses.sortedWith(PsiClassListCellRenderer().comparator), start, pattern)
 }
 
-fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: KtProperty) {
-    val project = property.project
+fun buildNavigateToPropertyOverriddenDeclarationsPopup(e: MouseEvent?, element: PsiElement?): NavigationPopupDescriptor? {
+    val propertyOrParameter = element?.parent as? KtNamedDeclaration ?: return null
+    val project = propertyOrParameter.project
 
     if (DumbService.isDumb(project)) {
         DumbService.getInstance(project)?.showDumbModeNotification("Navigation to overriding classes is not possible during index update")
-        return
+        return null
     }
 
-    val psiPropertyMethods = LightClassUtil.getLightClassPropertyMethods(property)
-
+    val psiPropertyMethods = propertyOrParameter.toPossiblyFakeLightMethods()
     val elementProcessor = CommonProcessors.CollectUniquesProcessor<PsiElement>()
-    val jetPsiMethodProcessor = Runnable {
+    val ktPsiMethodProcessor = Runnable {
         KotlinDefinitionsSearcher.processPropertyImplementationsMethods(
                 psiPropertyMethods,
                 GlobalSearchScope.allScope(project),
@@ -95,12 +96,12 @@ fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: KtPropert
     }
 
     if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
-            /* runnable */ jetPsiMethodProcessor,
+            /* runnable */ ktPsiMethodProcessor,
             MarkerType.SEARCHING_FOR_OVERRIDING_METHODS,
             /* can be canceled */ true,
             project,
             e?.component as JComponent?)) {
-        return
+        return null
     }
 
     val renderer = DefaultPsiElementCellRenderer()
@@ -108,10 +109,9 @@ fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: KtPropert
             .sortedWith(renderer.comparator)
             .filterIsInstance<NavigatablePsiElement>()
 
-    PsiElementListNavigator.openTargets(e,
-                                        navigatingOverrides.toTypedArray(),
-                                        KotlinBundle.message("navigation.title.overriding.property", property.name),
-                                        KotlinBundle.message("navigation.findUsages.title.overriding.property", property.name), renderer)
+    return NavigationPopupDescriptor(navigatingOverrides,
+                                     KotlinBundle.message("navigation.title.overriding.property", propertyOrParameter.name),
+                                     KotlinBundle.message("navigation.findUsages.title.overriding.property", propertyOrParameter.name), renderer)
 }
 
 

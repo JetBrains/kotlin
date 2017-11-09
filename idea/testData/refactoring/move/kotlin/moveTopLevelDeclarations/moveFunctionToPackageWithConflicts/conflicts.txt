@@ -1,4 +1,0 @@
-Function bar() uses function test() which will be inaccessible after move
-Function test() uses class Foo which will be inaccessible after move
-Function test() uses function foo(Foo) which will be inaccessible after move
-Method bar() uses function test() which will be inaccessible after move

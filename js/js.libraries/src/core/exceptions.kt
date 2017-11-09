@@ -16,41 +16,32 @@
 
 package kotlin
 
-@library
-public open class Error(message: String? = null) : Throwable(message) {}
+public open class Error(message: String? = null) : Throwable(message, null)
 
-@library
-public open class Exception(message: String? = null) : Throwable(message) {}
+public open class Exception(message: String? = null) : Throwable(message, null)
 
-@library
-public open class RuntimeException(message: String? = null) : Exception(message) {}
+public open class RuntimeException(message: String? = null) : Exception(message)
 
-@library
-public open class IllegalArgumentException(message: String? = null) : RuntimeException(message) {}
+public open class IllegalArgumentException(message: String? = null) : RuntimeException(message)
 
-@library
-public open class IllegalStateException(message: String? = null) : RuntimeException(message) {}
+public open class IllegalStateException(message: String? = null) : RuntimeException(message)
 
-@library
-public open class IndexOutOfBoundsException(message: String? = null) : RuntimeException(message) {}
+public open class IndexOutOfBoundsException(message: String? = null) : RuntimeException(message)
 
-@library
-public open class ConcurrentModificationException(message: String? = null) : RuntimeException(message) {}
+public open class ConcurrentModificationException(message: String? = null) : RuntimeException(message)
 
-@library
-public open class UnsupportedOperationException(message: String? = null) : RuntimeException(message) {}
+public open class UnsupportedOperationException(message: String? = null) : RuntimeException(message)
 
-@library
-public open class NumberFormatException(message: String? = null) : RuntimeException(message) {}
+public open class NumberFormatException(message: String? = null) : RuntimeException(message)
 
-@library
-public open class NullPointerException(message: String? = null) : RuntimeException(message) {}
+public open class NullPointerException(message: String? = null) : RuntimeException(message)
 
-@library
-public open class ClassCastException(message: String? = null) : RuntimeException(message) {}
+public open class ClassCastException(message: String? = null) : RuntimeException(message)
 
-@library
-public open class AssertionError(message: String? = null) : Error(message) {}
+public open class AssertionError(message: String? = null) : Error(message)
 
-@library
-public open class NoSuchElementException(message: String? = null) : Exception() {}
+public open class NoSuchElementException(message: String? = null) : Exception(message)
+
+public open class NoWhenBranchMatchedException(message: String? = null) : RuntimeException(message)
+
+public open class UninitializedPropertyAccessException(message: String? = null) : RuntimeException(message)

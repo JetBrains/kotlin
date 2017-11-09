@@ -48,6 +48,13 @@ public class KotlinFormattingModelBuilder implements FormattingModelBuilder {
             return new PsiBasedFormattingModel(containingFile, block, formattingDocumentModel);
         }
 
+        if (element instanceof PsiFile) {
+            FormattingModel collectChangesModel = CollectChangesWithoutApplyModelKt.createCollectFormattingChangesModel((PsiFile) element, block);
+            if (collectChangesModel != null) {
+                return collectChangesModel;
+            }
+        }
+
         return FormattingModelProvider.createFormattingModelForPsiFile(element.getContainingFile(), block, settings);
     }
 

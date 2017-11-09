@@ -1,0 +1,16 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/jvm.kt:5:14: error: actual class 'Foo' has no corresponding members for expected class members:
+
+    public final expect fun function(b: ByteArray): Int
+
+    The following declaration is incompatible because return type is different:
+        public final fun function(b: ByteArray): Long
+
+actual class Foo : Base()
+             ^

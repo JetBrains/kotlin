@@ -1,0 +1,28 @@
+package
+
+public fun test(/*0*/ s: SelectorFor<State>): kotlin.Double
+public operator inline fun </*0*/ S, /*1*/ I> SelectorFor<S>.invoke(/*0*/ f: S.() -> I): AbstractSelector<S, I>
+
+public final class AbstractSelector</*0*/ S, /*1*/ I> {
+    public constructor AbstractSelector</*0*/ S, /*1*/ I>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class SelectorFor</*0*/ S> {
+    public constructor SelectorFor</*0*/ S>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class State {
+    public constructor State(/*0*/ p1: kotlin.Double, /*1*/ p2: () -> kotlin.Int, /*2*/ p3: kotlin.String?)
+    public final val p1: kotlin.Double
+    public final val p2: () -> kotlin.Int
+    public final val p3: kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

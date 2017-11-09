@@ -1,5 +1,5 @@
 // FILE: main.before.kt
-// "Import member" "true"
+// "Import" "true"
 // ERROR: Unresolved reference: foobar
 
 //KT-9009
@@ -19,7 +19,7 @@ object Foo {
 }
 
 // FILE: main.after.kt
-// "Import member" "true"
+// "Import" "true"
 // ERROR: Unresolved reference: foobar
 
 //KT-9009

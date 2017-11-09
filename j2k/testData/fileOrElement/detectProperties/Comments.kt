@@ -18,7 +18,6 @@ internal class A(// comment for field2 getter
     // comment for setProperty
     var property: Int
         get() = 1
-        set(value) {
-        } // end of getProperty
+        set(value) {} // end of getProperty
     // end of setProperty
 }

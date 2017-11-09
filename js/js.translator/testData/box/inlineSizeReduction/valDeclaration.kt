@@ -1,7 +1,8 @@
+// EXPECTED_REACHABLE_NODES: 1115
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test_0
-// CHECK_VARS_COUNT: function=test_0 count=1
+// CHECK_CONTAINS_NO_CALLS: test
+// CHECK_VARS_COUNT: function=test count=2
 
 internal inline fun sum(x: Int, y: Int): Int {
     if (x == 0 || y == 0) return 0

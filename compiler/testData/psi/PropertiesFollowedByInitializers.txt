@@ -1,4 +1,4 @@
-JetFile: PropertiesFollowedByInitializers.kt
+KtFile: PropertiesFollowedByInitializers.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

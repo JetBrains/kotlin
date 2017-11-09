@@ -1,0 +1,4 @@
+package
+
+public val barException: kotlin.Exception /* = java.lang.Exception */
+public val fooException: kotlin.Exception /* = java.lang.Exception */

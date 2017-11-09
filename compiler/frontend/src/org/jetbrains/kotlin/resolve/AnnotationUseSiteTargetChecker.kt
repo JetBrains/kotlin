@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 
 object AnnotationUseSiteTargetChecker {
@@ -33,35 +36,12 @@ object AnnotationUseSiteTargetChecker {
                 trace.checkDeclaration(parameter, parameterDescriptor)
             }
         }
-
-        if (descriptor is CallableDescriptor) trace.checkReceiverAnnotations(descriptor)
-    }
-
-    private fun BindingTrace.checkReceiverAnnotations(descriptor: CallableDescriptor) {
-        val extensionReceiver = descriptor.extensionReceiverParameter ?: return
-        for (annotationWithTarget in extensionReceiver.type.annotations.getUseSiteTargetedAnnotations()) {
-            val target = annotationWithTarget.target ?: continue
-            fun annotationEntry() = DescriptorToSourceUtils.getSourceFromAnnotation(annotationWithTarget.annotation)
-
-            when (target) {
-                AnnotationUseSiteTarget.RECEIVER -> {}
-                AnnotationUseSiteTarget.FIELD,
-                AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD,
-                AnnotationUseSiteTarget.PROPERTY,
-                AnnotationUseSiteTarget.PROPERTY_GETTER,
-                AnnotationUseSiteTarget.PROPERTY_SETTER,
-                AnnotationUseSiteTarget.SETTER_PARAMETER -> {
-                    annotationEntry()?.let { report(INAPPLICABLE_TARGET_ON_PROPERTY.on(it, target.renderName)) }
-                }
-                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> annotationEntry()?.let { report(INAPPLICABLE_PARAM_TARGET.on(it)) }
-                AnnotationUseSiteTarget.FILE -> throw IllegalArgumentException("@file annotations are not allowed here")
-            }
-        }
     }
 
     private fun BindingTrace.checkDeclaration(annotated: KtAnnotated, descriptor: DeclarationDescriptor) {
         for (annotation in annotated.annotationEntries) {
-            val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
+            val useSiteTarget = annotation.useSiteTarget
+            val target = useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
 
             when (target) {
                 AnnotationUseSiteTarget.FIELD -> checkIfHasBackingField(annotated, descriptor, annotation)
@@ -84,8 +64,8 @@ object AnnotationUseSiteTargetChecker {
                     }
                 }
                 AnnotationUseSiteTarget.SETTER_PARAMETER -> checkIfMutableProperty(annotated, annotation)
-                AnnotationUseSiteTarget.FILE -> throw IllegalArgumentException("@file annotations are not allowed here")
-                AnnotationUseSiteTarget.RECEIVER -> report(INAPPLICABLE_RECEIVER_TARGET.on(annotation))
+                AnnotationUseSiteTarget.FILE -> reportDiagnosticOnce(INAPPLICABLE_FILE_TARGET.on(useSiteTarget))
+                AnnotationUseSiteTarget.RECEIVER -> {}
             }
         }
     }
@@ -109,11 +89,11 @@ object AnnotationUseSiteTargetChecker {
     private fun BindingTrace.checkIfMutableProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry) {
         if (!checkIfProperty(annotated, annotation)) return
 
-        val isMutable = if (annotated is KtProperty)
-            annotated.isVar
-        else if (annotated is KtParameter)
-            annotated.isMutable
-        else false
+        val isMutable = when (annotated) {
+            is KtProperty -> annotated.isVar
+            is KtParameter -> annotated.isMutable
+            else -> false
+        }
 
         if (!isMutable) {
             report(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE.on(annotation, annotation.useSiteDescription()))
@@ -121,11 +101,11 @@ object AnnotationUseSiteTargetChecker {
     }
 
     private fun BindingTrace.checkIfProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry): Boolean {
-        val isProperty = if (annotated is KtProperty)
-            !annotated.isLocal
-        else if (annotated is KtParameter)
-            annotated.hasValOrVar()
-        else false
+        val isProperty = when (annotated) {
+            is KtProperty -> !annotated.isLocal
+            is KtParameter -> annotated.hasValOrVar()
+            else -> false
+        }
 
         if (!isProperty) report(INAPPLICABLE_TARGET_ON_PROPERTY.on(annotation, annotation.useSiteDescription()))
         return isProperty

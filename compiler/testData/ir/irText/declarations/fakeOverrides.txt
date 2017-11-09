@@ -1,0 +1,71 @@
+FILE /fakeOverrides.kt
+  CLASS INTERFACE IFooStr
+    $this: VALUE_PARAMETER this@IFooStr: IFooStr
+    FUN public abstract fun foo(x: kotlin.String): kotlin.Unit
+      $this: VALUE_PARAMETER this@IFooStr: IFooStr
+      VALUE_PARAMETER value-parameter x: kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS INTERFACE IBar
+    $this: VALUE_PARAMETER this@IBar: IBar
+    PROPERTY public abstract val bar: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-bar>(): kotlin.Int
+        $this: VALUE_PARAMETER this@IBar: IBar
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS CLASS CFoo
+    $this: VALUE_PARAMETER this@CFoo: CFoo<T>
+    TYPE_PARAMETER <T>
+    CONSTRUCTOR public constructor CFoo<T>()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CFoo'
+    FUN public final fun foo(x: T): kotlin.Unit
+      $this: VALUE_PARAMETER this@CFoo: CFoo<T>
+      VALUE_PARAMETER value-parameter x: T
+      BLOCK_BODY
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS CLASS Test1
+    $this: VALUE_PARAMETER this@Test1: Test1
+    CONSTRUCTOR public constructor Test1()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor CFoo()'
+          <T>: String
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
+    PROPERTY public open override val bar: kotlin.Int = 42
+      FIELD PROPERTY_BACKING_FIELD public open override val bar: kotlin.Int = 42
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value='42'
+      FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-bar>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
+            GET_FIELD 'bar: Int' type=kotlin.Int origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN FAKE_OVERRIDE public final override fun foo(x: kotlin.String): kotlin.Unit
+      $this: VALUE_PARAMETER this@CFoo: CFoo<String>
+      VALUE_PARAMETER value-parameter x: kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

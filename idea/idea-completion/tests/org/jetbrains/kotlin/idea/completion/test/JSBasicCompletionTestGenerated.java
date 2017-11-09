@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.completion.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -46,7 +47,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         }
 
         public void testAllFilesPresentInCommon() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("BasicAny.kt")
@@ -154,6 +155,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("ExtensionInsideFunction.kt")
         public void testExtensionInsideFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ExtensionInsideFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionOnTypeAliasFromOtherTypeAlias.kt")
+        public void testExtensionOnTypeAliasFromOtherTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ExtensionOnTypeAliasFromOtherTypeAlias.kt");
             doTest(fileName);
         }
 
@@ -463,6 +470,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("InnerInBaseClass.kt")
+        public void testInnerInBaseClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InnerInBaseClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InsideAnonymousClass.kt")
         public void testInsideAnonymousClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InsideAnonymousClass.kt");
@@ -472,12 +485,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("InterfaceNameBeforeRunBug.kt")
         public void testInterfaceNameBeforeRunBug() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InterfaceNameBeforeRunBug.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("JavaPackage.kt")
-        public void testJavaPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/JavaPackage.kt");
             doTest(fileName);
         }
 
@@ -574,6 +581,24 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("NoClassNameDuplication.kt")
         public void testNoClassNameDuplication() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoClassNameDuplication.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoCompletionForCoroutinesIntinsics.kt")
+        public void testNoCompletionForCoroutinesIntinsics() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionForCoroutinesIntinsics.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoCompletionForCoroutinesJvmInternal.kt")
+        public void testNoCompletionForCoroutinesJvmInternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionForCoroutinesJvmInternal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoCompletionForExcluded.kt")
+        public void testNoCompletionForExcluded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionForExcluded.kt");
             doTest(fileName);
         }
 
@@ -840,7 +865,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
 
             public void testAllFilesPresentInAnnotations() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("Annotated.kt")
@@ -1010,6 +1035,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/TopLevelAnnotationArg2.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("TypeAliasToAnnotation.kt")
+            public void testTypeAliasToAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/TypeAliasToAnnotation.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/idea-completion/testData/basic/common/autoPopup")
@@ -1017,7 +1048,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AutoPopup extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInAutoPopup() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/autoPopup"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/autoPopup"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("AutopopupInFunExtensionReceiver.kt")
@@ -1047,6 +1078,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("InGenericExtFunName.kt")
             public void testInGenericExtFunName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/InGenericExtFunName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InValExtType.kt")
+            public void testInValExtType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/InValExtType.kt");
                 doTest(fileName);
             }
 
@@ -1128,7 +1165,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
 
             public void testAllFilesPresentInBoldOrGrayed() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/boldOrGrayed"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/boldOrGrayed"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ImmediateExtensionMembers1.kt")
@@ -1233,7 +1270,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CallableReference extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInCallableReference() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("EmptyQualifier.kt")
@@ -1251,6 +1288,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("ExpressionQualifier.kt")
             public void testExpressionQualifier() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/ExpressionQualifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("GenericConstructor.kt")
+            public void testGenericConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/GenericConstructor.kt");
                 doTest(fileName);
             }
 
@@ -1279,12 +1322,57 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/dslMarker")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DslMarker extends AbstractJSBasicCompletionTest {
+            @TestMetadata("2dslsInsideOtherChild.kt")
+            public void test2dslsInsideOtherChild() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/2dslsInsideOtherChild.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("2receivers.kt")
+            public void test2receivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/2receivers.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInDslMarker() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/dslMarker"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("child.kt")
+            public void testChild() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/child.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("compositeDsl.kt")
+            public void testCompositeDsl() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/compositeDsl.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("container.kt")
+            public void testContainer() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/container.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("root.kt")
+            public void testRoot() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/dslMarker/root.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ExtensionFunctionTypeValues extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInExtensionFunctionTypeValues() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ImplicitReceiver.kt")
@@ -1317,7 +1405,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Extensions extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInExtensions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/extensions"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/extensions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ComplexCapture.kt")
@@ -1476,7 +1564,31 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
 
             public void testAllFilesPresentInFromSmart() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/fromSmart"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/fromSmart"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("ArrayLiteralAnnotationConstructorAsDefaultValueForArray.kt")
+            public void testArrayLiteralAnnotationConstructorAsDefaultValueForArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationConstructorAsDefaultValueForArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArrayLiteralAnnotationConstructorAsDefaultValueForVararg.kt")
+            public void testArrayLiteralAnnotationConstructorAsDefaultValueForVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationConstructorAsDefaultValueForVararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArrayLiteralAnnotationUseForArray.kt")
+            public void testArrayLiteralAnnotationUseForArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationUseForArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArrayLiteralAnnotationUseForVararg.kt")
+            public void testArrayLiteralAnnotationUseForVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/ArrayLiteralAnnotationUseForVararg.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("EnumEntries.kt")
@@ -1521,7 +1633,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FromUnresolvedNames extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInFromUnresolvedNames() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/fromUnresolvedNames"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/fromUnresolvedNames"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("FunctionInCompanionObject.kt")
@@ -1590,7 +1702,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class GetOperator extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInGetOperator() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/getOperator"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/getOperator"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("Extension.kt")
@@ -1617,7 +1729,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class HighOrderFunctions extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInHighOrderFunctions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/highOrderFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/highOrderFunctions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ContextVariables1.kt")
@@ -1673,6 +1785,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/OptionalParameters.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("SuspendFunction.kt")
+            public void testSuspendFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/SuspendFunction.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/idea-completion/testData/basic/common/inStringLiterals")
@@ -1680,7 +1798,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InStringLiterals extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInInStringLiterals() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/inStringLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/inStringLiterals"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("EA76497.kt")
@@ -1719,7 +1837,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class LambdaSignature extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInLambdaSignature() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/lambdaSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/lambdaSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ParameterName1.kt")
@@ -1806,7 +1924,13 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
 
             public void testAllFilesPresentInNamedArguments() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/namedArguments"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/namedArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("BooleanArgumentExpected.kt")
+            public void testBooleanArgumentExpected() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/BooleanArgumentExpected.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("CompactTypeNames.kt")
@@ -1905,7 +2029,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NoCompletion extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInNoCompletion() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/noCompletion"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/noCompletion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("DoNotCompleteForErrorReceivers.kt")
@@ -1951,6 +2075,60 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/objects")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Objects extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInObjects() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/objects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("PropertyFromCompanionObjectFromTypeAliasToNestedInObjectClass.kt")
+            public void testPropertyFromCompanionObjectFromTypeAliasToNestedInObjectClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/objects/PropertyFromCompanionObjectFromTypeAliasToNestedInObjectClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PropertyOfTypeAliasToObject.kt")
+            public void testPropertyOfTypeAliasToObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/objects/PropertyOfTypeAliasToObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TypeAliasToNestedObject.kt")
+            public void testTypeAliasToNestedObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/objects/TypeAliasToNestedObject.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/operatorNames")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class OperatorNames extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInOperatorNames() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/operatorNames"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("NoOperatorNameForTopLevel.kt")
+            public void testNoOperatorNameForTopLevel() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/operatorNames/NoOperatorNameForTopLevel.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OperatorNameForExtension.kt")
+            public void testOperatorNameForExtension() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/operatorNames/OperatorNameForExtension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OperatorNameForMember.kt")
+            public void testOperatorNameForMember() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/operatorNames/OperatorNameForMember.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/override")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1980,7 +2158,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
 
             public void testAllFilesPresentInOverride() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/override"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/override"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("Generics.kt")
@@ -2037,7 +2215,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ParameterNameAndType extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInParameterNameAndType() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/parameterNameAndType"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/parameterNameAndType"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ByAbbreviation.kt")
@@ -2208,7 +2386,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Shadowing extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInShadowing() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/shadowing"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/shadowing"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("InInitializer1.kt")
@@ -2331,7 +2509,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SmartCast extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInSmartCast() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/smartCast"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/smartCast"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("MemberExtensionAfterThisSmartCast.kt")
@@ -2382,7 +2560,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class StaticMembers extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInStaticMembers() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/staticMembers"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/staticMembers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ImportsFromEnumEntry.kt")
@@ -2445,7 +2623,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SubstitutedSignature extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInSubstitutedSignature() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/substitutedSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/substitutedSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("SubstitutedSignature1.kt")
@@ -2496,7 +2674,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Super extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInSuper() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/super"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/super"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("QualifierType1.kt")
@@ -2559,7 +2737,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TypeArgsOrNot extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInTypeArgsOrNot() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/typeArgsOrNot"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/typeArgsOrNot"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ConstructorTypeArg.kt")
@@ -2617,12 +2795,39 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/variableNameAndType")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class VariableNameAndType extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInVariableNameAndType() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/variableNameAndType"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("Lateinit.kt")
+            public void testLateinit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/variableNameAndType/Lateinit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Local.kt")
+            public void testLocal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/variableNameAndType/Local.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevel.kt")
+            public void testTopLevel() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/variableNameAndType/TopLevel.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/visibility")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInVisibility() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("KT9970.kt")
@@ -2710,7 +2915,7 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Js extends AbstractJSBasicCompletionTest {
         public void testAllFilesPresentInJs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/js"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/js"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AutoForceCompletion.kt")

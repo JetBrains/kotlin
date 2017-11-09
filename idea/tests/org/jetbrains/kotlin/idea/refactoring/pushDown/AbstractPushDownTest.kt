@@ -40,8 +40,8 @@ abstract class AbstractPushDownTest : AbstractMemberPullPushTest() {
     }
 
     protected fun doJavaTest(path: String) {
-        doTest(path) { file ->
-            val elementAt = getFile().findElementAt(editor.caretModel.offset)
+        doTest(path) {
+            val elementAt = file.findElementAt(editor.caretModel.offset)
             val sourceClass = PsiTreeUtil.getParentOfType(elementAt, PsiClass::class.java)!!
             val storage = MemberInfoStorage(sourceClass) { true }
             val memberInfos = chooseMembers(storage.getClassMemberInfos(sourceClass))

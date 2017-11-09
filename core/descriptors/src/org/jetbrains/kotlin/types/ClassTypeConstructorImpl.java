@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 
@@ -31,22 +30,16 @@ import java.util.List;
 
 public class ClassTypeConstructorImpl extends AbstractClassTypeConstructor implements TypeConstructor {
     private final ClassDescriptor classDescriptor;
-    private final Annotations annotations;
     private final List<TypeParameterDescriptor> parameters;
     private final Collection<KotlinType> supertypes;
-    private final boolean isFinal;
 
     public ClassTypeConstructorImpl(
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull Annotations annotations,
-            boolean isFinal,
             @NotNull List<? extends TypeParameterDescriptor> parameters,
             @NotNull Collection<KotlinType> supertypes
     ) {
         super(LockBasedStorageManager.NO_LOCKS);
         this.classDescriptor = classDescriptor;
-        this.annotations = annotations;
-        this.isFinal = isFinal;
         this.parameters = Collections.unmodifiableList(new ArrayList<TypeParameterDescriptor>(parameters));
         this.supertypes = Collections.unmodifiableCollection(supertypes);
     }
@@ -60,11 +53,6 @@ public class ClassTypeConstructorImpl extends AbstractClassTypeConstructor imple
     @Override
     public String toString() {
         return DescriptorUtils.getFqName(classDescriptor).asString();
-    }
-
-    @Override
-    public boolean isFinal() {
-        return isFinal;
     }
 
     @Override
@@ -88,11 +76,5 @@ public class ClassTypeConstructorImpl extends AbstractClassTypeConstructor imple
     @Override
     protected SupertypeLoopChecker getSupertypeLoopChecker() {
         return SupertypeLoopChecker.EMPTY.INSTANCE;
-    }
-
-    @NotNull
-    @Override
-    public Annotations getAnnotations() {
-        return annotations;
     }
 }

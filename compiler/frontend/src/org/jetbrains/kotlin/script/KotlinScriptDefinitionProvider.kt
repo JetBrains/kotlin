@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import java.util.*
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
@@ -44,11 +43,15 @@ class KotlinScriptDefinitionProvider {
         return changed
     }
 
-    fun<TF> findScriptDefinition(file: TF): KotlinScriptDefinition? = definitionsLock.read {
-        definitions.firstOrNull { it.isScript(file) }
+    fun findScriptDefinition(file: VirtualFile): KotlinScriptDefinition? = findScriptDefinition(file.name)
+
+    fun findScriptDefinition(fileName: String): KotlinScriptDefinition? = definitionsLock.read {
+        definitions.firstOrNull { it.isScript(fileName) }
     }
 
-    fun<TF> isScript(file: TF): Boolean = findScriptDefinition(file) != null
+    fun isScript(fileName: String): Boolean = definitionsLock.read {
+        definitions.any { it.isScript(fileName) }
+    }
 
     fun addScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
         definitionsLock.write {
@@ -68,13 +71,13 @@ class KotlinScriptDefinitionProvider {
 
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): KotlinScriptDefinitionProvider =
+        fun getInstance(project: Project): KotlinScriptDefinitionProvider? =
                 ServiceManager.getService(project, KotlinScriptDefinitionProvider::class.java)
     }
 }
 
 fun getScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? =
-        KotlinScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)
+        KotlinScriptDefinitionProvider.getInstance(project)?.findScriptDefinition(file)
 
 fun getScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? =
-        KotlinScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile)
+        KotlinScriptDefinitionProvider.getInstance(psiFile.project)?.findScriptDefinition(psiFile.name)

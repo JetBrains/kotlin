@@ -16,34 +16,44 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class KotlinFunctionIntrinsic extends FunctionIntrinsic {
+public class KotlinFunctionIntrinsic extends FunctionIntrinsicWithReceiverComputed {
     @NotNull
     private final String functionName;
+    private final JsExpression[] additionalArguments;
 
-    public KotlinFunctionIntrinsic(@NotNull String functionName) {
+    public KotlinFunctionIntrinsic(@NotNull String functionName, JsExpression... additionalArguments) {
         this.functionName = functionName;
+        this.additionalArguments = additionalArguments;
     }
 
     @NotNull
     @Override
     public JsExpression apply(
             @Nullable JsExpression receiver,
-            @NotNull List<JsExpression> arguments,
+            @NotNull List<? extends JsExpression> arguments,
             @NotNull TranslationContext context
     ) {
         JsExpression function = JsAstUtils.pureFqn(functionName, Namer.kotlinObject());
+        if (additionalArguments.length > 0) {
+            List<JsExpression> newArguments = new ArrayList<>(arguments);
+            for (JsExpression e : additionalArguments) {
+                newArguments.add(e.deepCopy());
+            }
+            arguments = newArguments;
+        }
         return new JsInvocation(function, receiver == null ? arguments : TranslationUtils.generateInvocationArguments(receiver, arguments));
     }
 }

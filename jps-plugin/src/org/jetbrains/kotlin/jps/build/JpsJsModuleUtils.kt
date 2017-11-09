@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.util.Consumer
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaModuleType
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 object JpsJsModuleUtils {
-
     fun getLibraryFilesAndDependencies(target: ModuleBuildTarget): List<String> {
         val result = ArrayList<String>()
         getLibraryFiles(target, result)
@@ -40,11 +40,7 @@ object JpsJsModuleUtils {
         val libraries = JpsUtils.getAllDependencies(target).libraries
         for (library in libraries) {
             for (root in library.getRoots(JpsOrderRootType.COMPILED)) {
-                val path = JpsPathUtil.urlToPath(root.url)
-                // ignore files, added only for IDE support (stubs and indexes)
-                if (!path.startsWith(KotlinJavascriptMetadataUtils.VFS_PROTOCOL + "://")) {
-                    result.add(path)
-                }
+                result.add(JpsPathUtil.urlToPath(root.url))
             }
         }
     }
@@ -52,19 +48,46 @@ object JpsJsModuleUtils {
     fun getDependencyModulesAndSources(target: ModuleBuildTarget, result: MutableList<String>) {
         JpsUtils.getAllDependencies(target).processModules(object : Consumer<JpsModule> {
             override fun consume(module: JpsModule) {
-                if (module == target.module || module.moduleType != JpsJavaModuleType.INSTANCE) return
+                if (module.moduleType != JpsJavaModuleType.INSTANCE) return
 
-                val moduleBuildTarget = ModuleBuildTarget(module, JavaModuleBuildTargetType.PRODUCTION)
-                val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(moduleBuildTarget)
-                val metaInfoFile = getOutputMetaFile(outputDir, module.name)
-                result.add(metaInfoFile.absolutePath)
+                if ((module != target.module || target.isTests) && module.hasProductionSourceRoot) {
+                    addTarget(module, isTests = false)
+                }
+
+                if (module != target.module && target.isTests && module.hasTestSourceRoot) {
+                    addTarget(module, isTests = true)
+                }
+            }
+
+            fun addTarget(module: JpsModule, isTests: Boolean) {
+                val metaInfoFile = getOutputMetaFile(module, isTests)
+                if (metaInfoFile.exists()) {
+                    result.add(metaInfoFile.absolutePath)
+                }
             }
         })
     }
 
     @JvmStatic
-    fun getOutputFile(outputDir: File, moduleName: String) = File(outputDir, moduleName + KotlinJavascriptMetadataUtils.JS_EXT)
+    fun getOutputMetaFile(module: JpsModule, isTests: Boolean): File {
+        val moduleBuildTarget = ModuleBuildTarget(module, if (isTests) JavaModuleBuildTargetType.TEST else JavaModuleBuildTargetType.PRODUCTION)
+        val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(moduleBuildTarget)
+        return getOutputMetaFile(outputDir, module.name, isTests)
+    }
 
     @JvmStatic
-    fun getOutputMetaFile(outputDir: File, moduleName: String) = File(outputDir, moduleName + KotlinJavascriptMetadataUtils.META_JS_SUFFIX)
+    fun getOutputFile(outputDir: File, moduleName: String, isTests: Boolean)
+            = File(outputDir, moduleName + suffix(isTests) + KotlinJavascriptMetadataUtils.JS_EXT)
+
+    @JvmStatic
+    fun getOutputMetaFile(outputDir: File, moduleName: String, isTests: Boolean)
+            = File(outputDir, moduleName + suffix(isTests) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX)
+
+    private fun suffix(isTests: Boolean) = if (isTests) "_test" else ""
 }
+
+val JpsModule.hasProductionSourceRoot
+    get() = sourceRoots.any { it.rootType == JavaSourceRootType.SOURCE}
+
+val JpsModule.hasTestSourceRoot
+    get() = sourceRoots.any { it.rootType == JavaSourceRootType.TEST_SOURCE}

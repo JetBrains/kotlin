@@ -20,8 +20,6 @@ import com.intellij.navigation.ChooseByNameContributor
 import com.intellij.navigation.GotoClassContributor
 import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -88,15 +86,11 @@ class KotlinGotoSymbolContributor : ChooseByNameContributor {
             LightClassUtil.getLightClassBackingField(it) == null ||
             it.containingClass()?.isInterface() ?: false
         }
-        result += KotlinClassShortNameIndex.getInstance().get(name, project, BuiltInClassesScope(noLibrarySourceScope))
+        result += KotlinClassShortNameIndex.getInstance().get(name, project, noLibrarySourceScope).filter {
+            it is KtEnumEntry || it.containingFile.virtualFile?.fileType == KotlinBuiltInFileType
+        }
         result += KotlinTypeAliasShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
 
         return result.toTypedArray()
-    }
-}
-
-private class BuiltInClassesScope(baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
-    override fun contains(file: VirtualFile): Boolean {
-        return file.fileType == KotlinBuiltInFileType && file in myBaseScope
     }
 }

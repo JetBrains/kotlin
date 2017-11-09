@@ -1,0 +1,36 @@
+package
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER}) public final annotation class A : kotlin.Annotation {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface AnnotationsOnNullableParenthesizedTypes {
+    public abstract val lambdaParameter: (@A C?) -> C
+    public abstract val lambdaReceiver: (@A C?).() -> C
+    public abstract val lambdaReturnValue: () -> @A C?
+    public abstract val lambdaType: @A() (() -> C)?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun parameter(/*0*/ a: @A C?): kotlin.Unit
+    public open fun parameterArgument(/*0*/ a: B<@A C?>): kotlin.Unit
+    public abstract fun returnArgument(): B<@A C?>
+    public abstract fun </*0*/ T> returnTypeParameterValue(): @A T?
+    public abstract fun returnValue(): @A C?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open fun B<@A C?>.receiverArgument(): kotlin.Unit
+}
+
+public interface B</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface C {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

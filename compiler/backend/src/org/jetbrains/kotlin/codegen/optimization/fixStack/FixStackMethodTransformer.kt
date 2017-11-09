@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.isAfterInlineMarker
+import org.jetbrains.kotlin.codegen.inline.isBeforeInlineMarker
+import org.jetbrains.kotlin.codegen.inline.isInlineMarker
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
@@ -33,33 +35,57 @@ class FixStackMethodTransformer : MethodTransformer() {
         // If inline method markers are inconsistent, remove them now
         if (!context.consistentInlineMarkers) {
             InsnSequence(methodNode.instructions).forEach { insnNode ->
-                if (InlineCodegenUtil.isInlineMarker(insnNode))
+                if (isInlineMarker(insnNode))
                     methodNode.instructions.remove(insnNode)
             }
         }
 
         if (context.isAnalysisRequired()) {
-            val analyzer = FixStackAnalyzer(internalClassName, methodNode, context)
-            analyzer.analyze()
-
-            methodNode.maxStack = methodNode.maxStack + analyzer.maxExtraStackSize
-
-            val actions = arrayListOf<() -> Unit>()
-
-            transformBreakContinueGotos(methodNode, context, actions, analyzer)
-
-            transformSaveRestoreStackMarkers(methodNode, context, actions, analyzer)
-
-            actions.forEach { it() }
+            analyzeAndTransformBreakContinueGotos(context, internalClassName, methodNode)
+            removeAlwaysFalseIfeqMarkers(context, methodNode)
+            analyzeAndTransformSaveRestoreStack(context, internalClassName, methodNode)
         }
 
-        context.fakeAlwaysTrueIfeqMarkers.forEach { marker ->
-            replaceAlwaysTrueIfeqWithGoto(methodNode, marker)
-        }
+        removeAlwaysTrueIfeqMarkers(context, methodNode)
+        removeAlwaysFalseIfeqMarkers(context, methodNode)
+    }
 
+    private fun analyzeAndTransformBreakContinueGotos(context: FixStackContext, internalClassName: String, methodNode: MethodNode) {
+        val analyzer = FixStackAnalyzer(internalClassName, methodNode, context)
+        analyzer.analyze()
+
+        methodNode.maxStack = methodNode.maxStack + analyzer.maxExtraStackSize
+
+        val actions = arrayListOf<() -> Unit>()
+
+        transformBreakContinueGotos(methodNode, context, actions, analyzer)
+
+        actions.forEach { it() }
+    }
+
+    private fun analyzeAndTransformSaveRestoreStack(context: FixStackContext, internalClassName: String, methodNode: MethodNode) {
+        val analyzer = FixStackAnalyzer(internalClassName, methodNode, context, skipBreakContinueGotoEdges = false)
+        analyzer.analyze()
+
+        val actions = arrayListOf<() -> Unit>()
+
+        transformSaveRestoreStackMarkers(methodNode, context, actions, analyzer)
+
+        actions.forEach { it() }
+    }
+
+    private fun removeAlwaysFalseIfeqMarkers(context: FixStackContext, methodNode: MethodNode) {
         context.fakeAlwaysFalseIfeqMarkers.forEach { marker ->
             removeAlwaysFalseIfeq(methodNode, marker)
         }
+        context.fakeAlwaysFalseIfeqMarkers.clear()
+    }
+
+    private fun removeAlwaysTrueIfeqMarkers(context: FixStackContext, methodNode: MethodNode) {
+        context.fakeAlwaysTrueIfeqMarkers.forEach { marker ->
+            replaceAlwaysTrueIfeqWithGoto(methodNode, marker)
+        }
+        context.fakeAlwaysTrueIfeqMarkers.clear()
     }
 
     private fun transformBreakContinueGotos(
@@ -72,21 +98,23 @@ class FixStackMethodTransformer : MethodTransformer() {
             val gotoIndex = methodNode.instructions.indexOf(gotoNode)
             val labelIndex = methodNode.instructions.indexOf(gotoNode.label)
 
-            val DEAD_CODE = -1 // Stack size is always non-negative
-            val actualStackSize = analyzer.frames[gotoIndex]?.stackSize ?: DEAD_CODE
-            val expectedStackSize = analyzer.frames[labelIndex]?.stackSize ?: DEAD_CODE
+            val actualStackSize = analyzer.getActualStackSize(gotoNode)
+            val expectedStackSize = analyzer.getExpectedStackSize(gotoNode.label)
 
-            if (actualStackSize != DEAD_CODE && expectedStackSize != DEAD_CODE) {
-                assert(expectedStackSize <= actualStackSize) { "Label at $labelIndex, jump at $gotoIndex: stack underflow: $expectedStackSize > $actualStackSize" }
-                val frame = analyzer.frames[gotoIndex]!!
-                actions.add({ replaceMarkerWithPops(methodNode, gotoNode.previous, expectedStackSize, frame) })
+            if (actualStackSize >= 0 && expectedStackSize >= 0) {
+                assert(expectedStackSize <= actualStackSize) {
+                    "Label at $labelIndex, jump at $gotoIndex: stack underflow: $expectedStackSize > $actualStackSize"
+                }
+                val actualStackContent = analyzer.getActualStack(gotoNode)
+                                         ?: throw AssertionError("Jump at $gotoIndex should be alive")
+                actions.add { replaceMarkerWithPops(methodNode, gotoNode.previous, expectedStackSize, actualStackContent) }
             }
-            else if (actualStackSize != DEAD_CODE && expectedStackSize == DEAD_CODE) {
+            else if (actualStackSize >= 0 && expectedStackSize < 0) {
                 throw AssertionError("Live jump $gotoIndex to dead label $labelIndex")
             }
             else {
                 val marker = gotoNode.previous
-                actions.add({ methodNode.instructions.remove(marker) })
+                actions.add { methodNode.instructions.remove(marker) }
             }
         }
     }
@@ -105,9 +133,9 @@ class FixStackMethodTransformer : MethodTransformer() {
                     transformSaveStackMarker(methodNode, actions, analyzer, marker, localVariablesManager)
                 pseudoInsn == PseudoInsn.RESTORE_STACK_IN_TRY_CATCH ->
                     transformRestoreStackMarker(methodNode, actions, marker, localVariablesManager)
-                InlineCodegenUtil.isBeforeInlineMarker(marker) ->
+                isBeforeInlineMarker(marker) ->
                     transformBeforeInlineCallMarker(methodNode, actions, analyzer, marker, localVariablesManager)
-                InlineCodegenUtil.isAfterInlineMarker(marker) ->
+                isAfterInlineMarker(marker) ->
                     transformAfterInlineCallMarker(methodNode, actions, analyzer, marker, localVariablesManager)
             }
         }
@@ -120,15 +148,15 @@ class FixStackMethodTransformer : MethodTransformer() {
             marker: AbstractInsnNode,
             localVariablesManager: LocalVariablesManager
     ) {
-        val savedStackValues = analyzer.savedStacks[marker]
+        val savedStackValues = analyzer.getStackToSpill(marker)
         if (savedStackValues != null) {
             val savedStackDescriptor = localVariablesManager.allocateVariablesForSaveStackMarker(marker, savedStackValues)
-            actions.add({ saveStack(methodNode, marker, savedStackDescriptor, false) })
+            actions.add { saveStack(methodNode, marker, savedStackDescriptor) }
         }
         else {
             // marker is dead code
             localVariablesManager.allocateVariablesForSaveStackMarker(marker, emptyList())
-            actions.add({ methodNode.instructions.remove(marker) })
+            actions.add { methodNode.instructions.remove(marker) }
         }
     }
 
@@ -139,7 +167,7 @@ class FixStackMethodTransformer : MethodTransformer() {
             localVariablesManager: LocalVariablesManager
     ) {
         val savedStackDescriptor = localVariablesManager.getSavedStackDescriptor(marker)
-        actions.add({ restoreStack(methodNode, marker, savedStackDescriptor) })
+        actions.add { restoreStack(methodNode, marker, savedStackDescriptor) }
         localVariablesManager.markRestoreStackMarkerEmitted(marker)
     }
 
@@ -151,25 +179,27 @@ class FixStackMethodTransformer : MethodTransformer() {
             localVariablesManager: LocalVariablesManager
     ) {
         val savedStackDescriptor = localVariablesManager.getBeforeInlineDescriptor(inlineMarker)
-        val afterInlineFrame = analyzer.getFrame(inlineMarker) as FixStackAnalyzer.FixStackFrame?
-        if (afterInlineFrame != null && savedStackDescriptor.isNotEmpty()) {
-            assert(afterInlineFrame.stackSize <= 1) { "Inline method should not leave more than 1 value on stack" }
-            if (afterInlineFrame.stackSize == 1) {
-                val afterInlineStackValues = afterInlineFrame.getStackContent()
-                val returnValue = afterInlineStackValues.last()
-                val returnValueLocalVarIndex = localVariablesManager.createReturnValueVariable(returnValue)
-                actions.add({
-                                restoreStackWithReturnValue(methodNode, inlineMarker, savedStackDescriptor,
-                                                            returnValue, returnValueLocalVarIndex)
-                            })
-            }
-            else {
-                actions.add({ restoreStack(methodNode, inlineMarker, savedStackDescriptor) })
+        val stackContentAfterInline = analyzer.getActualStack(inlineMarker)
+        if (stackContentAfterInline != null && savedStackDescriptor.isNotEmpty()) {
+            when (stackContentAfterInline.size) {
+                1 -> {
+                    val returnValue = stackContentAfterInline.last()
+                    val returnValueLocalVarIndex = localVariablesManager.createReturnValueVariable(returnValue)
+                    actions.add {
+                        restoreStackWithReturnValue(methodNode, inlineMarker, savedStackDescriptor,
+                                                    returnValue, returnValueLocalVarIndex
+                        )
+                    }
+                }
+                0 ->
+                    actions.add { restoreStack(methodNode, inlineMarker, savedStackDescriptor) }
+                else ->
+                    throw AssertionError("Inline method should not leave more than 1 value on stack")
             }
         }
         else {
             // after inline marker is dead code
-            actions.add({ methodNode.instructions.remove(inlineMarker) })
+            actions.add { methodNode.instructions.remove(inlineMarker) }
         }
         localVariablesManager.markAfterInlineMarkerEmitted(inlineMarker)
     }
@@ -181,15 +211,15 @@ class FixStackMethodTransformer : MethodTransformer() {
             inlineMarker: AbstractInsnNode,
             localVariablesManager: LocalVariablesManager
     ) {
-        val savedStackValues = analyzer.savedStacks[inlineMarker]
+        val savedStackValues = analyzer.getStackToSpill(inlineMarker)
         if (savedStackValues != null) {
             val savedStackDescriptor = localVariablesManager.allocateVariablesForBeforeInlineMarker(inlineMarker, savedStackValues)
-            actions.add({ saveStack(methodNode, inlineMarker, savedStackDescriptor, false) })
+            actions.add { saveStack(methodNode, inlineMarker, savedStackDescriptor) }
         }
         else {
             // before inline marker is dead code
             localVariablesManager.allocateVariablesForBeforeInlineMarker(inlineMarker, emptyList())
-            actions.add({ methodNode.instructions.remove(inlineMarker) })
+            actions.add { methodNode.instructions.remove(inlineMarker) }
         }
     }
 

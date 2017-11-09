@@ -1,4 +1,4 @@
-JetFile: multiDeclaration.kt
+KtFile: multiDeclaration.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

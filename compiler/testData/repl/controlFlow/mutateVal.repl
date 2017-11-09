@@ -1,0 +1,11 @@
+>>> val x = 1
+>>> x = 2
+error: val cannot be reassigned
+x = 2
+^
+>>> x++
+error: val cannot be reassigned
+x++
+^
+>>> x
+1

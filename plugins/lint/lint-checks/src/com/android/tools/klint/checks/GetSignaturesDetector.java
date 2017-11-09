@@ -16,120 +16,84 @@
 
 package com.android.tools.klint.checks;
 
+import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.client.api.JavaParser;
 import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.ConstantEvaluator;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
+
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-
-public class GetSignaturesDetector extends Detector implements UastScanner {
+public class GetSignaturesDetector extends Detector implements Detector.UastScanner {
     public static final Issue ISSUE = Issue.create(
             "PackageManagerGetSignatures", //$NON-NLS-1$
             "Potential Multiple Certificate Exploit",
             "Improper validation of app signatures could lead to issues where a malicious app " +
-                "submits itself to the Play Store with both its real certificate and a fake " +
-                "certificate and gains access to functionality or information it shouldn't " +
-                "have due to another application only checking for the fake certificate and " +
-                "ignoring the rest. Please make sure to validate all signatures returned " +
-                "by this method.",
+            "submits itself to the Play Store with both its real certificate and a fake " +
+            "certificate and gains access to functionality or information it shouldn't " +
+            "have due to another application only checking for the fake certificate and " +
+            "ignoring the rest. Please make sure to validate all signatures returned " +
+            "by this method.",
             Category.SECURITY,
             8,
             Severity.INFORMATIONAL,
             new Implementation(
                     GetSignaturesDetector.class,
-                    Scope.SOURCE_FILE_SCOPE))
+                    Scope.JAVA_FILE_SCOPE))
             .addMoreInfo("https://bluebox.com/technical/android-fake-id-vulnerability/");
 
     private static final String PACKAGE_MANAGER_CLASS = "android.content.pm.PackageManager"; //$NON-NLS-1$
     private static final String GET_PACKAGE_INFO = "getPackageInfo"; //$NON-NLS-1$
     private static final int GET_SIGNATURES_FLAG = 0x00000040; //$NON-NLS-1$
 
-    // ---- Implements UastScanner ----
-
+    // ---- Implements JavaScanner ----
 
     @Override
-    public List<String> getApplicableFunctionNames() {
+    @Nullable
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList(GET_PACKAGE_INFO);
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        UFunction resolved = node.resolve(context);
-
-        if (resolved == null ||
-                !UastUtils.getContainingClassOrEmpty(resolved).isSubclassOf(PACKAGE_MANAGER_CLASS)) {
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression node, @NonNull UMethod method) {
+        JavaEvaluator evaluator = context.getEvaluator();
+        if (!evaluator.methodMatches(method, PACKAGE_MANAGER_CLASS, true,
+                JavaParser.TYPE_STRING,
+                JavaParser.TYPE_INT)) {
             return;
         }
 
-        List<UExpression> argumentList = node.getValueArguments();
-
-        // Ignore if the method doesn't fit our description.
-        if (argumentList.size() == 2) {
-            UType firstParameterType = argumentList.get(0).getExpressionType();
-            if (firstParameterType != null
-                && firstParameterType.matchesFqName(JavaParser.TYPE_STRING)) {
-                maybeReportIssue(calculateValue(context, argumentList.get(1)), context, node);
-            }
+        List<UExpression> arguments = node.getValueArguments();
+        UExpression second = arguments.get(1);
+        Object number = ConstantEvaluator.evaluate(context, second);
+        if (number instanceof Number) {
+            int flagValue = ((Number)number).intValue();
+            maybeReportIssue(flagValue, context, node, second);
         }
     }
-
+    
     private static void maybeReportIssue(
-            int flagValue, UastAndroidContext context, UCallExpression node) {
+            int flagValue, JavaContext context, UCallExpression node,
+            UExpression last) {
         if ((flagValue & GET_SIGNATURES_FLAG) != 0) {
-            context.report(ISSUE, node, context.getLocation(node.getValueArguments().get(1)),
+            context.report(ISSUE, node, context.getUastLocation(last),
                 "Reading app signatures from getPackageInfo: The app signatures "
                     + "could be exploited if not validated properly; "
                     + "see issue explanation for details.");
         }
-    }
-
-    private static int calculateValue(UastAndroidContext context, UExpression expression) {
-        // This function assumes that the only inputs to the expression are static integer
-        // flags that combined via bitwise operands.
-        if (UastLiteralUtils.isIntegralLiteral(expression)) {
-            return (int) UastLiteralUtils.getLongValue((ULiteralExpression) expression);
-        }
-
-        if (expression instanceof UResolvable) {
-            UDeclaration resolvedNode = ((UResolvable) expression).resolve(context);
-            if (resolvedNode instanceof UVariable) {
-                UExpression initializer = ((UVariable)resolvedNode).getInitializer();
-                if (initializer != null) {
-                    Object value = initializer.evaluate();
-                    if (value instanceof Integer) {
-                        return (Integer)value;
-                    }
-                }
-            }
-        }
-
-
-        if (expression instanceof UBinaryExpression) {
-            UBinaryExpression binaryExpression = (UBinaryExpression) expression;
-            UastBinaryOperator operator = binaryExpression.getOperator();
-            int leftValue = calculateValue(context, binaryExpression.getLeftOperand());
-            int rightValue = calculateValue(context, binaryExpression.getRightOperand());
-
-            if (operator == UastBinaryOperator.BITWISE_OR) {
-                return leftValue | rightValue;
-            }
-            if (operator == UastBinaryOperator.BITWISE_AND) {
-                return leftValue & rightValue;
-            }
-            if (operator == UastBinaryOperator.BITWISE_XOR) {
-                return leftValue ^ rightValue;
-            }
-        }
-
-        return 0;
     }
 }

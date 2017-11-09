@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JS
 package foo
 
-@native interface A {
+external interface A {
     fun foo(value: Int): String
 }
 

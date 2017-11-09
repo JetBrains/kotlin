@@ -16,7 +16,6 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.ANDROID_MANIFEST_XML;
 import static com.android.SdkConstants.ANDROID_URI;
 import static com.android.SdkConstants.ATTR_EXPORTED;
 import static com.android.SdkConstants.ATTR_NAME;
@@ -37,37 +36,39 @@ import static com.android.SdkConstants.TAG_SERVICE;
 import static com.android.xml.AndroidManifest.NODE_ACTION;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
 import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.ConstantEvaluator;
 import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.XmlScanner;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.XmlContext;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.USimpleReferenceExpression;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.USimpleNameReferenceExpression;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Checks that exported services request a permission.
  */
-public class SecurityDetector extends Detector implements Detector.XmlScanner, UastScanner {
+public class SecurityDetector extends Detector implements XmlScanner, Detector.UastScanner {
 
     private static final Implementation IMPLEMENTATION_MANIFEST = new Implementation(
             SecurityDetector.class,
@@ -75,7 +76,7 @@ public class SecurityDetector extends Detector implements Detector.XmlScanner, U
 
     private static final Implementation IMPLEMENTATION_JAVA = new Implementation(
             SecurityDetector.class,
-            Scope.SOURCE_FILE_SCOPE);
+            Scope.JAVA_FILE_SCOPE);
 
     /** Exported services */
     public static final Issue EXPORTED_SERVICE = Issue.create(
@@ -129,10 +130,36 @@ public class SecurityDetector extends Detector implements Detector.XmlScanner, U
             Severity.WARNING,
             IMPLEMENTATION_MANIFEST);
 
+    /** Using java.io.File.setReadable(true, false) to set file world-readable */
+    public static final Issue SET_READABLE = Issue.create(
+            "SetWorldReadable",
+            "`File.setReadable()` used to make file world-readable",
+            "Setting files world-readable is very dangerous, and likely to cause security " +
+            "holes in applications. It is strongly discouraged; instead, applications should " +
+            "use more formal mechanisms for interactions such as `ContentProvider`, " +
+            "`BroadcastReceiver`, and `Service`.",
+            Category.SECURITY,
+            6,
+            Severity.WARNING,
+            IMPLEMENTATION_JAVA);
+
+    /** Using java.io.File.setWritable(true, false) to set file world-writable */
+    public static final Issue SET_WRITABLE = Issue.create(
+            "SetWorldWritable",
+            "`File.setWritable()` used to make file world-writable",
+            "Setting files world-writable is very dangerous, and likely to cause security " +
+            "holes in applications. It is strongly discouraged; instead, applications should " +
+            "use more formal mechanisms for interactions such as `ContentProvider`, " +
+            "`BroadcastReceiver`, and `Service`.",
+            Category.SECURITY,
+            6,
+            Severity.WARNING,
+            IMPLEMENTATION_JAVA);
+
     /** Using the world-writable flag */
     public static final Issue WORLD_WRITEABLE = Issue.create(
             "WorldWriteableFiles", //$NON-NLS-1$
-            "`openFileOutput()` call passing `MODE_WORLD_WRITEABLE`",
+            "`openFileOutput()` or similar call passing `MODE_WORLD_WRITEABLE`",
             "There are cases where it is appropriate for an application to write " +
             "world writeable files, but these should be reviewed carefully to " +
             "ensure that they contain no private data, and that if the file is " +
@@ -147,7 +174,7 @@ public class SecurityDetector extends Detector implements Detector.XmlScanner, U
     /** Using the world-readable flag */
     public static final Issue WORLD_READABLE = Issue.create(
             "WorldReadableFiles", //$NON-NLS-1$
-            "`openFileOutput()` call passing `MODE_WORLD_READABLE`",
+            "`openFileOutput()` or similar call passing `MODE_WORLD_READABLE`",
             "There are cases where it is appropriate for an application to write " +
             "world readable files, but these should be reviewed carefully to " +
             "ensure that they contain no private data that is leaked to other " +
@@ -157,19 +184,10 @@ public class SecurityDetector extends Detector implements Detector.XmlScanner, U
             Severity.WARNING,
             IMPLEMENTATION_JAVA);
 
+    private static final String FILE_CLASS = "java.io.File"; //$NON-NLS-1$
+
     /** Constructs a new {@link SecurityDetector} check */
     public SecurityDetector() {
-    }
-
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
-    @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return file.getName().equals(ANDROID_MANIFEST_XML);
     }
 
     // ---- Implements Detector.XmlScanner ----
@@ -352,47 +370,89 @@ public class SecurityDetector extends Detector implements Detector.XmlScanner, U
         }
     }
 
-    // ---- Implements UastScanner ----
+    // ---- Implements Detector.JavaScanner ----
 
     @Override
-    public UastVisitor createUastVisitor(UastAndroidContext context) {
+    public List<String> getApplicableMethodNames() {
+        // These are the API calls that can accept a MODE_WORLD_READABLE/MODE_WORLD_WRITEABLE
+        // argument.
+        List<String> values = new ArrayList<String>(3);
+        values.add("openFileOutput"); //$NON-NLS-1$
+        values.add("getSharedPreferences"); //$NON-NLS-1$
+        values.add("getDir"); //$NON-NLS-1$
+        // These API calls can be used to set files world-readable or world-writable
+        values.add("setReadable"); //$NON-NLS-1$
+        values.add("setWritable"); //$NON-NLS-1$
+        return values;
+    }
+
+    @Override
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression node, @NonNull UMethod method) {
+        List<UExpression> args = node.getValueArguments();
+        String methodName = node.getMethodName();
+        if (context.getEvaluator().isMemberInSubClassOf(method, FILE_CLASS, false)) {
+            // Report calls to java.io.File.setReadable(true, false) or
+            // java.io.File.setWritable(true, false)
+            if ("setReadable".equals(methodName)) {
+                if (args.size() == 2 &&
+                        Boolean.TRUE.equals(ConstantEvaluator.evaluate(context, args.get(0))) &&
+                        Boolean.FALSE.equals(ConstantEvaluator.evaluate(context, args.get(1)))) {
+                    context.report(SET_READABLE, node, context.getUastLocation(node),
+                            "Setting file permissions to world-readable can be " +
+                                    "risky, review carefully");
+                }
+                return;
+            } else if ("setWritable".equals(methodName)) {
+                if (args.size() == 2 &&
+                        Boolean.TRUE.equals(ConstantEvaluator.evaluate(context, args.get(0))) &&
+                        Boolean.FALSE.equals(ConstantEvaluator.evaluate(context, args.get(1)))) {
+                    context.report(SET_WRITABLE, node, context.getUastLocation(node),
+                            "Setting file permissions to world-writable can be " +
+                                    "risky, review carefully");
+                }
+                return;
+            }
+        }
+
+        assert visitor != null;
+        for (UExpression arg : args) {
+            arg.accept(visitor);
+        }
+
+    }
+
+    @Nullable
+    @Override
+    public UastVisitor createUastVisitor(@NonNull JavaContext context) {
         return new IdentifierVisitor(context);
     }
 
     private static class IdentifierVisitor extends AbstractUastVisitor {
-        private final UastAndroidContext mContext;
+        private final JavaContext mContext;
 
-        private final AbstractUastVisitor identifierHandler = new AbstractUastVisitor() {
-            @Override
-            public boolean visitSimpleReferenceExpression(@NotNull USimpleReferenceExpression node) {
-                if ("MODE_WORLD_WRITEABLE".equals(node.getIdentifier())) { //$NON-NLS-1$
-                    Location location = mContext.getLocation(node);
-                    mContext.report(WORLD_WRITEABLE, node, location,
-                                    "Using `MODE_WORLD_WRITEABLE` when creating files can be " +
-                                    "risky, review carefully");
-                } else if ("MODE_WORLD_READABLE".equals(node.getIdentifier())) { //$NON-NLS-1$
-                    Location location = mContext.getLocation(node);
-                    mContext.report(WORLD_READABLE, node, location,
-                                    "Using `MODE_WORLD_READABLE` when creating files can be " +
-                                    "risky, review carefully");
-                }
-
-                return false;
-            }
-        };
-
-        public IdentifierVisitor(UastAndroidContext context) {
+        private IdentifierVisitor(JavaContext context) {
+            super();
             mContext = context;
         }
-
+        
         @Override
-        public boolean visitCallExpression(@NotNull UCallExpression node) {
-            String name = node.getFunctionName();
-            if ("openFileOutput".equals(name) || "getSharedPreferences".equals(name)) {
-                return false;
+        public boolean visitSimpleNameReferenceExpression(USimpleNameReferenceExpression node) {
+            String name = node.getIdentifier();
+
+            if ("MODE_WORLD_WRITEABLE".equals(name)) { //$NON-NLS-1$
+                Location location = mContext.getUastLocation(node);
+                mContext.report(WORLD_WRITEABLE, node, location,
+                        "Using `MODE_WORLD_WRITEABLE` when creating files can be " +
+                                "risky, review carefully");
+            } else if ("MODE_WORLD_READABLE".equals(name)) { //$NON-NLS-1$
+                Location location = mContext.getUastLocation(node);
+                mContext.report(WORLD_READABLE, node, location,
+                        "Using `MODE_WORLD_READABLE` when creating files can be " +
+                                "risky, review carefully");
             }
 
-            return true;
+            return super.visitSimpleNameReferenceExpression(node);
         }
     }
 }

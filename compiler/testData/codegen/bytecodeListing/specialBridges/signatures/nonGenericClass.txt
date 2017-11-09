@@ -1,0 +1,53 @@
+@kotlin.Metadata
+public abstract class<Ljava/lang/Object;Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMutableMap;>  AbstractStringStringMap {
+    public @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<Ljava/lang/String;>;> method getValues(): java.util.Collection
+    public final <()Ljava/util/Collection<Ljava/lang/String;>;> method values(): java.util.Collection
+    public @org.jetbrains.annotations.NotNull <()Ljava/util/Set<Ljava/lang/String;>;> method getKeys(): java.util.Set
+    public final <()Ljava/util/Set<Ljava/lang/String;>;> method keySet(): java.util.Set
+    public final <()Ljava/util/Set<Ljava/util/Map$Entry<Ljava/lang/String;Ljava/lang/String;>;>;> method entrySet(): java.util.Set
+    public @org.jetbrains.annotations.NotNull <()Ljava/util/Set<Ljava/util/Map$Entry<Ljava/lang/String;Ljava/lang/String;>;>;> method getEntries(): java.util.Set
+    public <(Ljava/util/Map<+Ljava/lang/String;+Ljava/lang/String;>;)V> method putAll(@org.jetbrains.annotations.NotNull p0: java.util.Map): void
+    public <null> method <init>(): void
+    public <null> method clear(): void
+    public <null> method containsKey(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public final <null> method containsKey(p0: java.lang.Object): boolean
+    public <null> method containsValue(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public final <null> method containsValue(p0: java.lang.Object): boolean
+    public @org.jetbrains.annotations.Nullable <null> method get(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final <null> method get(p0: java.lang.Object): java.lang.Object
+    public <null> method getSize(): int
+    public <null> method isEmpty(): boolean
+    public @org.jetbrains.annotations.Nullable <null> method put(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+    public synthetic <null> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public @org.jetbrains.annotations.Nullable <null> method remove(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final <null> method remove(p0: java.lang.Object): java.lang.Object
+    public final <null> method size(): int
+    private synthetic final field <null> $$delegate_0: java.util.HashMap
+}
+
+@kotlin.Metadata
+public final class<Ljava/lang/Object;Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMutableMap;>  StringStringMap {
+    public @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<Ljava/lang/String;>;> method getValues(): java.util.Collection
+    public final <()Ljava/util/Collection<Ljava/lang/String;>;> method values(): java.util.Collection
+    public @org.jetbrains.annotations.NotNull <()Ljava/util/Set<Ljava/lang/String;>;> method getKeys(): java.util.Set
+    public final <()Ljava/util/Set<Ljava/lang/String;>;> method keySet(): java.util.Set
+    public final <()Ljava/util/Set<Ljava/util/Map$Entry<Ljava/lang/String;Ljava/lang/String;>;>;> method entrySet(): java.util.Set
+    public @org.jetbrains.annotations.NotNull <()Ljava/util/Set<Ljava/util/Map$Entry<Ljava/lang/String;Ljava/lang/String;>;>;> method getEntries(): java.util.Set
+    public <(Ljava/util/Map<+Ljava/lang/String;+Ljava/lang/String;>;)V> method putAll(@org.jetbrains.annotations.NotNull p0: java.util.Map): void
+    public <null> method <init>(): void
+    public <null> method clear(): void
+    public <null> method containsKey(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public final <null> method containsKey(p0: java.lang.Object): boolean
+    public <null> method containsValue(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public final <null> method containsValue(p0: java.lang.Object): boolean
+    public @org.jetbrains.annotations.Nullable <null> method get(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final <null> method get(p0: java.lang.Object): java.lang.Object
+    public <null> method getSize(): int
+    public <null> method isEmpty(): boolean
+    public @org.jetbrains.annotations.Nullable <null> method put(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+    public synthetic <null> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public @org.jetbrains.annotations.Nullable <null> method remove(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final <null> method remove(p0: java.lang.Object): java.lang.Object
+    public final <null> method size(): int
+    private synthetic final field <null> $$delegate_0: java.util.HashMap
+}

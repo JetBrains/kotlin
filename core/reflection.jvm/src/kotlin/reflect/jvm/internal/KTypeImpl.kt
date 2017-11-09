@@ -33,7 +33,6 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
-import kotlin.reflect.KotlinReflectionInternalError
 import kotlin.reflect.jvm.jvmErasure
 
 internal class KTypeImpl(

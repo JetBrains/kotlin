@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,16 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
         return new ClassConstructorDescriptorImpl(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION, source);
     }
 
+    @NotNull
+    public static ClassConstructorDescriptorImpl createSynthesized(
+            @NotNull ClassDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            boolean isPrimary,
+            @NotNull SourceElement source
+    ) {
+        return new ClassConstructorDescriptorImpl(containingDeclaration, null, annotations, isPrimary, Kind.SYNTHESIZED, source);
+    }
+
     public ClassConstructorDescriptorImpl initialize(
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull Visibility visibility,
@@ -77,7 +87,7 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
     }
 
     @Nullable
-    private ReceiverParameterDescriptor calculateDispatchReceiverParameter() {
+    public ReceiverParameterDescriptor calculateDispatchReceiverParameter() {
         ClassDescriptor classDescriptor = getContainingDeclaration();
         if (classDescriptor.isInner()) {
             DeclarationDescriptor classContainer = classDescriptor.getContainingDeclaration();

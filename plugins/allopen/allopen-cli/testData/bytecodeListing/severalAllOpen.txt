@@ -1,0 +1,17 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AllOpen
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AllOpen2
+
+@AllOpen
+@AllOpen2
+@kotlin.Metadata
+public class Test {
+    private final @org.jetbrains.annotations.NotNull field prop: java.lang.String
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public method method(): void
+}

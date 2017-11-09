@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.idea.maven
 
-import com.intellij.analysis.AnalysisScope
-import com.intellij.codeInspection.*
-import com.intellij.codeInspection.ex.InspectionManagerEx
-import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
+import com.intellij.codeInspection.CommonProblemDescriptor
+import com.intellij.codeInspection.ProblemDescriptorBase
+import com.intellij.codeInspection.QuickFix
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.Result
@@ -31,13 +30,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.testFramework.InspectionTestUtil
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenPluginPhaseInspection
-import org.jetbrains.kotlin.idea.maven.inspections.DifferentKotlinMavenVersionInspection
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
@@ -69,14 +64,21 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
 
         val matcher = "<!--\\s*problem:\\s*on\\s*([^,]+),\\s*title\\s*(.+)\\s*-->".toRegex()
         val expected = pomText.lines().mapNotNull { matcher.find(it) }.map { SimplifiedProblemDescription(it.groups[2]!!.value.trim(), it.groups[1]!!.value.trim()) }
-        val actual = runInspection(inspectionClass).sortedBy { it.first.text }
+        val actual = runInspection(inspectionClass, myProject)
+                .problemElements
+                .filter { it.key.name == "pom.xml" }
+                .values
+                .flatMap { it.toList() }
+                .mapNotNull { it as? ProblemDescriptorBase }
+                .map { SimplifiedProblemDescription(it.descriptionTemplate, it.psiElement.text.replace("\\s+".toRegex(), "")) to it }
+                .sortedBy { it.first.text }
 
         assertEquals(expected.sortedBy { it.text }, actual.map { it.first })
 
         val suggestedFixes = actual.flatMap { p -> p.second.fixes?.sortedBy { it.familyName }?.map { p.second to it } ?: emptyList() }
 
         val filenamePrefix = pomFile.nameWithoutExtension + ".fixed."
-        val fixFiles = pomFile.parentFile.listFiles { file, name -> name.startsWith(filenamePrefix) && name.endsWith(".xml") }.sortedBy { it.name }
+        val fixFiles = pomFile.parentFile.listFiles { _, name -> name.startsWith(filenamePrefix) && name.endsWith(".xml") }.sortedBy { it.name }
 
         if (fixFiles.size > suggestedFixes.size) {
             fail("Not all fixes were suggested by the inspection: expected count: ${fixFiles.size}, actual fixes count: ${suggestedFixes.size}")
@@ -141,37 +143,10 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
         val sourceFolder = getContentRoots(myProject.allModules().single().name).single().getSourceFolders(JavaSourceRootType.SOURCE).single()
         ApplicationManager.getApplication().runWriteAction {
             val javaFile = sourceFolder.file?.toPsiDirectory(myProject)?.createFile("Test.java") ?: throw IllegalStateException()
-            javaFile.virtualFile.setBinaryContent("class Test {}\n".toByteArray())
-
-            FileBasedIndex.getInstance().ensureUpToDate(FileTypeIndex.NAME, myProject, GlobalSearchScope.projectScope(myProject))
-            myProject.allModules().forEach { module ->
-                FileBasedIndex.getInstance().ensureUpToDate(FileTypeIndex.NAME, myProject, module.moduleScope)
-            }
+            javaFile.viewProvider.document!!.setText("class Test {}\n")
         }
 
         assertTrue(FileTypeIndex.containsFileOfType(JavaFileType.INSTANCE, myProject.allModules().single().moduleScope))
-    }
-
-    private fun runInspection(inspectionClass: Class<*>): List<Pair<SimplifiedProblemDescription, ProblemDescriptorBase>> {
-        val toolWrapper = LocalInspectionToolWrapper(inspectionClass.newInstance() as LocalInspectionTool)
-
-        val tool = toolWrapper.tool
-        if (tool is DifferentKotlinMavenVersionInspection) {
-            tool.testVersionMessage = "\$PLUGIN_VERSION"
-        }
-
-        val scope = AnalysisScope(myProject)
-        val inspectionManager = (InspectionManager.getInstance(myProject) as InspectionManagerEx)
-        val globalContext = CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, myProject, inspectionManager, toolWrapper)
-
-        InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
-        val presentation = globalContext.getPresentation(toolWrapper)
-
-        return presentation.problemElements.filter { it.key.name == "pom.xml" }
-                .values
-                .flatMap { it.toList() }
-                .mapNotNull { it as? ProblemDescriptorBase }
-                .map { SimplifiedProblemDescription(it.descriptionTemplate, it.psiElement.text.replace("\\s+".toRegex(), "")) to it }
     }
 
     private data class SimplifiedProblemDescription(val text: String, val elementText: String)

@@ -45,3 +45,9 @@ interface Explicit : I {
     override fun f(): Int {
     }
 }
+
+data class Pair(x: Int, y: Int)
+
+class Exc {
+    val (a, b) = Pair(1, 2)
+}

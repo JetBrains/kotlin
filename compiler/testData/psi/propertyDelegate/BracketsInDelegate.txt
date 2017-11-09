@@ -1,4 +1,4 @@
-JetFile: BracketsInDelegate.kt
+KtFile: BracketsInDelegate.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

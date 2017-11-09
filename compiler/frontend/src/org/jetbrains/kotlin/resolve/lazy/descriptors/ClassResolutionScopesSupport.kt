@@ -60,7 +60,7 @@ class ClassResolutionScopesSupport(
         createInheritanceScope(inheritanceScopeWithoutMe(), classDescriptor, classDescriptor, withCompanionObject = false)
     }
 
-    val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
+    val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
         val scopeWithGenerics = scopeWithGenerics(inheritanceScopeWithMe())
         LexicalScopeImpl(scopeWithGenerics, classDescriptor, true, classDescriptor.thisAsReceiverParameter, LexicalScopeKind.CLASS_MEMBER_SCOPE)
     }
@@ -116,7 +116,9 @@ class ClassResolutionScopesSupport(
             createLazyValueWithPostCompute(compute, onRecursion, {})
 
     companion object {
-        private val createThrowingLexicalScope: (Boolean) -> LexicalScope =  { ThrowingLexicalScope() }
+        private val createThrowingLexicalScope: (Boolean) -> LexicalScope =  {
+            ThrowingLexicalScope()
+        }
     }
 }
 

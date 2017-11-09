@@ -36,6 +36,14 @@ fun fooOneLine(i: Int): Int { return 1 }
 //Breakpoint!
 fun fooEmpty(i: Int) {}
 
+object A {
+    // EXPRESSION: test2()
+    // RESULT: 2: I
+    //Breakpoint!
+    @JvmStatic fun fooWithoutBodyInsideObject() = test2()
+    fun test2() = 2
+}
+
 fun main(args: Array<String>) {
     aGet
     aGet2
@@ -44,4 +52,6 @@ fun main(args: Array<String>) {
     foo(2)
     fooOneLine(2)
     fooEmpty(2)
+
+    A.fooWithoutBodyInsideObject()
 }

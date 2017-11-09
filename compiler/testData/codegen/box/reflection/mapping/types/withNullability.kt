@@ -1,6 +1,9 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 
-import kotlin.reflect.withNullability
+import kotlin.reflect.full.withNullability
 import kotlin.reflect.jvm.javaType
 import kotlin.test.assertEquals
 

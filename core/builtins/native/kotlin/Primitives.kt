@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ package kotlin
  * Represents a 8-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `byte`.
  */
-public class Byte private () : Number, Comparable<Byte> {
+public class Byte private constructor() : Number(), Comparable<Byte> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Byte can have.
@@ -35,41 +35,46 @@ public class Byte private () : Number, Comparable<Byte> {
         public const val MAX_VALUE: Byte = 127
     }
 
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public override operator fun compareTo(other: Byte): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Short): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Int): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Long): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Float): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
@@ -125,17 +130,42 @@ public class Byte private () : Number, Comparable<Byte> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Int): Int
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Double): Double
+
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Byte): Int
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Short): Int
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Int): Int
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Long): Long
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Float): Float
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     public operator fun inc(): Byte
@@ -168,7 +198,7 @@ public class Byte private () : Number, Comparable<Byte> {
  * Represents a 16-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `short`.
  */
-public class Short private () : Number, Comparable<Short> {
+public class Short private constructor() : Number(), Comparable<Short> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Short can have.
@@ -181,41 +211,46 @@ public class Short private () : Number, Comparable<Short> {
         public const val MAX_VALUE: Short = 32767
     }
 
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Byte): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public override operator fun compareTo(other: Short): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Int): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Long): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Float): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
@@ -271,17 +306,42 @@ public class Short private () : Number, Comparable<Short> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Int): Int
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Double): Double
+
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Byte): Int
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Short): Int
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Int): Int
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Long): Long
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Float): Float
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     public operator fun inc(): Short
@@ -314,7 +374,7 @@ public class Short private () : Number, Comparable<Short> {
  * Represents a 32-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `int`.
  */
-public class Int private () : Number, Comparable<Int> {
+public class Int private constructor() : Number(), Comparable<Int> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Int can have.
@@ -327,41 +387,46 @@ public class Int private () : Number, Comparable<Int> {
         public const val MAX_VALUE: Int = 2147483647
     }
 
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Byte): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Short): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public override operator fun compareTo(other: Int): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Long): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Float): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
@@ -417,17 +482,42 @@ public class Int private () : Number, Comparable<Int> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Int): Int
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Double): Double
+
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Byte): Int
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Short): Int
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Int): Int
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Long): Long
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Float): Float
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     public operator fun inc(): Int
@@ -459,7 +549,7 @@ public class Int private () : Number, Comparable<Int> {
     public infix fun or(other: Int): Int
     /** Performs a bitwise XOR operation between the two values. */
     public infix fun xor(other: Int): Int
-    /** Inverts the bits in this value/ */
+    /** Inverts the bits in this value. */
     public fun inv(): Int
 
     public override fun toByte(): Byte
@@ -475,7 +565,7 @@ public class Int private () : Number, Comparable<Int> {
  * Represents a 64-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `long`.
  */
-public class Long private () : Number, Comparable<Long> {
+public class Long private constructor() : Number(), Comparable<Long> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Long can have.
@@ -488,41 +578,46 @@ public class Long private () : Number, Comparable<Long> {
         public const val MAX_VALUE: Long = 9223372036854775807L
     }
 
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Byte): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Short): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Int): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public override operator fun compareTo(other: Long): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Float): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
@@ -578,17 +673,42 @@ public class Long private () : Number, Comparable<Long> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Byte): Long
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Short): Long
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Int): Long
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Double): Double
+
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Byte): Long
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Short): Long
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Int): Long
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Long): Long
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Float): Float
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     public operator fun inc(): Long
@@ -620,7 +740,7 @@ public class Long private () : Number, Comparable<Long> {
     public infix fun or(other: Long): Long
     /** Performs a bitwise XOR operation between the two values. */
     public infix fun xor(other: Long): Long
-    /** Inverts the bits in this value/ */
+    /** Inverts the bits in this value. */
     public fun inv(): Long
 
     public override fun toByte(): Byte
@@ -636,7 +756,7 @@ public class Long private () : Number, Comparable<Long> {
  * Represents a single-precision 32-bit IEEE 754 floating point number.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
-public class Float private () : Number, Comparable<Float> {
+public class Float private constructor() : Number(), Comparable<Float> {
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
@@ -664,41 +784,46 @@ public class Float private () : Number, Comparable<Float> {
         public val NaN: Float
     }
 
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Byte): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Short): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Int): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Long): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public override operator fun compareTo(other: Float): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
@@ -754,17 +879,42 @@ public class Float private () : Number, Comparable<Float> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Byte): Float
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Short): Float
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Int): Float
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Long): Float
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Double): Double
+
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Byte): Float
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Short): Float
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Int): Float
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Long): Float
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Float): Float
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     public operator fun inc(): Float
@@ -789,7 +939,7 @@ public class Float private () : Number, Comparable<Float> {
  * Represents a double-precision 64-bit IEEE 754 floating point number.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
-public class Double private () : Number, Comparable<Double> {
+public class Double private constructor() : Number(), Comparable<Double> {
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
@@ -817,41 +967,46 @@ public class Double private () : Number, Comparable<Double> {
         public val NaN: Double
     }
 
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Byte): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Short): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Int): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Long): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public operator fun compareTo(other: Float): Int
-/**
- * Compares this value with the specified value for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
+
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */
     public override operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
@@ -907,17 +1062,42 @@ public class Double private () : Number, Comparable<Double> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Byte): Double
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Short): Double
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Int): Double
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Long): Double
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Float): Double
     /** Calculates the remainder of dividing this value by the other value. */
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
     public operator fun mod(other: Double): Double
+
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Byte): Double
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Short): Double
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Int): Double
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Long): Double
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Float): Double
+    /** Calculates the remainder of dividing this value by the other value. */
+    @SinceKotlin("1.1")
+    public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     public operator fun inc(): Double

@@ -1,0 +1,9 @@
+FILE /whenElse.kt
+  FUN public fun test(): kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(): Int'
+        WHEN type=kotlin.Int origin=WHEN
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value='true'
+            then: CONST Int type=kotlin.Int value='42'
+

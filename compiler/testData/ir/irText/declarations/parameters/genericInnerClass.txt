@@ -1,0 +1,36 @@
+FILE /genericInnerClass.kt
+  CLASS CLASS Outer
+    $this: VALUE_PARAMETER this@Outer: Outer<T1>
+    TYPE_PARAMETER <T1>
+    CONSTRUCTOR public constructor Outer<T1>()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
+    CLASS CLASS Inner
+      $this: VALUE_PARAMETER this@Inner: Inner<T2, T1>
+      TYPE_PARAMETER <T2>
+      CONSTRUCTOR public constructor Inner<T2>()
+        $outer: VALUE_PARAMETER this@Outer: Outer<T1>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
+      FUN public final fun foo(x1: T1, x2: T2): kotlin.Unit
+        $this: VALUE_PARAMETER this@Inner: Inner<T2, T1>
+        VALUE_PARAMETER value-parameter x1: T1
+        VALUE_PARAMETER value-parameter x2: T2
+        BLOCK_BODY
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

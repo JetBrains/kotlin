@@ -3,5 +3,5 @@
 
 fun use() {
     val text = B.text
-    text.map(MutableList<Any>?::toString)
+    text.map(MutableList<Any>::toString)
 }

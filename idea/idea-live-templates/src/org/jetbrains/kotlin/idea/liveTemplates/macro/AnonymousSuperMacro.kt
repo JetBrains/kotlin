@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 
-class AnonymousSuperMacro : Macro() {
+class AnonymousSuperMacro : KotlinMacro() {
     override fun getName() = "anonymousSuper"
     override fun getPresentableName() = "anonymousSuper()"
 

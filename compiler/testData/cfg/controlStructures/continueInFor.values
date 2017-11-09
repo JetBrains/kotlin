@@ -7,15 +7,15 @@ fun test(b: Boolean) {
 }
 ---------------------
                                                    <v0>: Boolean              NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
-                                                   <v4>: Int                  NEW: magic[LOOP_RANGE_ITERATION](1..10|<v3>) -> <v4>
+                                                   <v7>: Int                  NEW: magic[LOOP_RANGE_ITERATION](1..10|<v6>) -> <v7>
 1                                                  <v1>: Int                  NEW: r(1) -> <v1>
 10                                                 <v2>: Int                  NEW: r(10) -> <v2>
-1..10                                              <v3>: {<: Iterable<Int>}   NEW: call(1..10, rangeTo|<v1>, <v2>) -> <v3>
-b                                                  <v5>: Boolean              NEW: r(b) -> <v5>
-break                                              !<v6>: *
-if (b) break                                       <v7>: *                    NEW: merge(if (b) break|!<v6>) -> <v7>
-continue                                           !<v8>: *
-{ if (b) break; continue; }                        !<v8>: *                   COPY
-for (i in 1..10) { if (b) break; continue; }       !<v9>: *
-{ for (i in 1..10) { if (b) break; continue; } }   !<v9>: *                   COPY
+1..10                                              <v6>: {<: Iterable<Int>}   NEW: call(1..10, next) -> <v6>
+b                                                  <v8>: Boolean              NEW: r(b) -> <v8>
+break                                              !<v9>: *
+if (b) break                                       <v10>: *                   NEW: merge(if (b) break|!<v9>) -> <v10>
+continue                                           !<v11>: *
+{ if (b) break; continue; }                        !<v11>: *                  COPY
+for (i in 1..10) { if (b) break; continue; }       !<v12>: *
+{ for (i in 1..10) { if (b) break; continue; } }   !<v12>: *                  COPY
 =====================

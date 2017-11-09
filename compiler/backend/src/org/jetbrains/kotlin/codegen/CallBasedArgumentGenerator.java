@@ -20,12 +20,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.*;
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
+import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.pushDefaultValueOnStack;
+import static org.jetbrains.kotlin.codegen.StackValue.*;
 
 public class CallBasedArgumentGenerator extends ArgumentGenerator {
     private final ExpressionCodegen codegen;
@@ -48,20 +51,6 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
                 "Value parameters and their types mismatch in sizes: " + valueParameters.size() + " != " + valueParameterTypes.size();
     }
 
-
-    @NotNull
-    @Override
-    public DefaultCallArgs generate(
-            @NotNull List<? extends ResolvedValueArgument> valueArgumentsByIndex,
-            @NotNull List<? extends ResolvedValueArgument> valueArgs
-    ) {
-        boolean shouldMarkLineNumbers = this.codegen.isShouldMarkLineNumbers();
-        this.codegen.setShouldMarkLineNumbers(false);
-        DefaultCallArgs defaultArgs = super.generate(valueArgumentsByIndex, valueArgs);
-        this.codegen.setShouldMarkLineNumbers(shouldMarkLineNumbers);
-        return defaultArgs;
-    }
-
     @Override
     protected void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
@@ -75,17 +64,27 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @Override
     protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-        Type type = valueParameterTypes.get(i);
-        pushDefaultValueOnStack(type, codegen.v);
-        callGenerator.afterParameterPut(type, null, i);
+        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), createDefaultValue(valueParameterTypes.get(i)), ValueKind.DEFAULT_PARAMETER, i);
     }
 
     @Override
     protected void generateVararg(int i, @NotNull VarargValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
-        Type type = valueParameterTypes.get(i);
-        codegen.genVarargs(argument, parameter.getType());
-        callGenerator.afterParameterPut(type, null, i);
+        // Upper bound for type of vararg parameter should always have a form of 'Array<out T>',
+        // while its lower bound may be Nothing-typed after approximation
+        StackValue lazyVararg = codegen.genVarargs(argument, FlexibleTypesKt.upperIfFlexible(parameter.getType()));
+        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), lazyVararg, ValueKind.GENERAL_VARARG, i);
+    }
+
+    @Override
+    protected void generateDefaultJava(int i, @NotNull DefaultValueArgument argument) {
+        StackValue argumentValue = StackValueKt.findJavaDefaultArgumentValue(
+                valueParameters.get(i),
+                valueParameterTypes.get(i),
+                codegen.typeMapper
+        );
+
+        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), argumentValue);
     }
 
     @Override

@@ -38,7 +38,6 @@ fun <D : TypeHolder<D>> D.checkTypePosition(
         reportError: (TypeParameterDescriptor, D, Variance) -> Unit = DO_NOTHING_3,
         customVariance: (TypeParameterDescriptor) -> Variance? = { null }
 ): Boolean {
-
     flexibleBounds?.let {
         return it.first.checkTypePosition(position, reportError, customVariance) and
                     it.second.checkTypePosition(position, reportError, customVariance)
@@ -56,7 +55,7 @@ fun <D : TypeHolder<D>> D.checkTypePosition(
 
     var noError = true
     for (argument in arguments) {
-        if (argument == null || argument.typeParameter == null || argument.projection.isStarProjection) continue
+        if (argument?.typeParameter == null || argument.projection.isStarProjection) continue
 
         val projectionKind = TypeCheckingProcedure.getEffectiveProjectionKind(argument.typeParameter!!, argument.projection)!!
         val newPosition = when (projectionKind) {

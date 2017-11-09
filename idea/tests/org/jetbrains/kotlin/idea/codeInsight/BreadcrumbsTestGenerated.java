@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class BreadcrumbsTestGenerated extends AbstractBreadcrumbsTest {
     public void testAllFilesPresentInBreadcrumbs() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/breadcrumbs"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/breadcrumbs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("AnonymousObjects.kt")
@@ -50,6 +51,12 @@ public class BreadcrumbsTestGenerated extends AbstractBreadcrumbsTest {
     @TestMetadata("For.kt")
     public void testFor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/For.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FunctionalType.kt")
+    public void testFunctionalType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/FunctionalType.kt");
         doTest(fileName);
     }
 
@@ -86,6 +93,12 @@ public class BreadcrumbsTestGenerated extends AbstractBreadcrumbsTest {
     @TestMetadata("PropertyAccessor.kt")
     public void testPropertyAccessor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/PropertyAccessor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StarProjection.kt")
+    public void testStarProjection() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/StarProjection.kt");
         doTest(fileName);
     }
 

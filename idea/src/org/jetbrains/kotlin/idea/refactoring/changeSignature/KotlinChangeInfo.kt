@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaOrKotlinMemberDescriptor
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
@@ -47,9 +47,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
@@ -77,7 +78,7 @@ open class KotlinChangeInfo(
     private val originalReceiverTypeInfo = methodDescriptor.receiver?.originalTypeInfo
 
     var receiverParameterInfo: KotlinParameterInfo? = receiver
-        set(value: KotlinParameterInfo?) {
+        set(value) {
             if (value != null && value !in newParameters) {
                 newParameters.add(value)
             }
@@ -120,6 +121,11 @@ open class KotlinChangeInfo(
     override fun isParameterSetOrOrderChanged(): Boolean = isParameterSetOrOrderChangedLazy
 
     fun getNewParametersCount(): Int = newParameters.size
+
+    fun hasAppendedParametersOnly(): Boolean {
+        val oldParamCount = originalBaseFunctionDescriptor.valueParameters.size
+        return newParameters.withIndex().all { (i, p) -> if (i < oldParamCount) p.oldIndex == i else p.isNewParameter }
+    }
 
     override fun getNewParameters(): Array<KotlinParameterInfo> = newParameters.toTypedArray()
 
@@ -187,7 +193,7 @@ open class KotlinChangeInfo(
         private set
 
     var primaryPropagationTargets: Collection<PsiElement> = emptyList()
-        set(value: Collection<PsiElement>) {
+        set(value) {
             field = value
 
             val result = LinkedHashSet<UsageInfo>()
@@ -209,7 +215,7 @@ open class KotlinChangeInfo(
 
             for (caller in value) {
                 add(caller)
-                OverridingMethodsSearch.search(caller.getRepresentativeLightMethod() ?: continue).forEach { add(it); true }
+                OverridingMethodsSearch.search(caller.getRepresentativeLightMethod() ?: continue).forEach(::add)
             }
 
             propagationTargetUsageInfos = result.toList()
@@ -284,12 +290,12 @@ open class KotlinChangeInfo(
 
         val isLambda = inheritedCallable.declaration is KtFunctionLiteral
         if (isLambda && signatureParameters.size == 1 && !signatureParameters[0].requiresExplicitType(inheritedCallable)) {
-            return signatureParameters[0].getDeclarationSignature(0, inheritedCallable)
+            return signatureParameters[0].getDeclarationSignature(0, inheritedCallable).text
         }
 
-        return signatureParameters.indices
-                .map { i -> signatureParameters[i].getDeclarationSignature(i, inheritedCallable) }
-                .joinToString(separator = ", ")
+        return signatureParameters.indices.joinToString(separator = ", ") { i ->
+            signatureParameters[i].getDeclarationSignature(i, inheritedCallable).text
+        }
     }
 
     fun renderReceiverType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String? {
@@ -352,7 +358,7 @@ open class KotlinChangeInfo(
         fun matchOriginalAndCurrentMethods(currentPsiMethods: List<PsiMethod>): Map<PsiMethod, PsiMethod> {
             if (!(isPrimaryMethodUpdated
                   && originalBaseFunctionDescriptor is FunctionDescriptor
-                  && originalBaseFunctionDescriptor.hasJvmOverloadsAnnotation())) {
+                  && originalBaseFunctionDescriptor.findJvmOverloadsAnnotation() != null)) {
                 return (originalPsiMethods.zip(currentPsiMethods)).toMap()
             }
 
@@ -457,14 +463,14 @@ open class KotlinChangeInfo(
                 currentPsiMethod: PsiMethod,
                 isGetter: Boolean
         ): JavaChangeInfo? {
-            val newParameterList = receiverParameterInfo.singletonOrEmptyList() + getNonReceiverParameters()
+            val newParameterList = listOfNotNull(receiverParameterInfo) + getNonReceiverParameters()
             val newJavaParameters = getJavaParameterInfos(originalPsiMethod, currentPsiMethod, newParameterList).toTypedArray()
             val newName = if (isGetter) JvmAbi.getterName(newName) else newName
             return createJavaChangeInfo(originalPsiMethod, currentPsiMethod, newName, currentPsiMethod.returnType, newJavaParameters)
         }
 
         fun createJavaChangeInfoForSetter(originalPsiMethod: PsiMethod, currentPsiMethod: PsiMethod): JavaChangeInfo? {
-            val newJavaParameters = getJavaParameterInfos(originalPsiMethod, currentPsiMethod, receiverParameterInfo.singletonOrEmptyList())
+            val newJavaParameters = getJavaParameterInfos(originalPsiMethod, currentPsiMethod, listOfNotNull(receiverParameterInfo))
             val oldIndex = if (methodDescriptor.receiver != null) 1 else 0
             if (isPrimaryMethodUpdated) {
                 val newIndex = if (receiverParameterInfo != null) 1 else 0
@@ -479,7 +485,7 @@ open class KotlinChangeInfo(
             return createJavaChangeInfo(originalPsiMethod, currentPsiMethod, newName, PsiType.VOID, newJavaParameters.toTypedArray())
         }
 
-        if (ProjectStructureUtil.isJsKotlinModule(method.containingFile as KtFile)) return null
+        if (TargetPlatformDetector.getPlatform(method.containingFile as KtFile) != JvmPlatform) return null
 
         if (javaChangeInfos == null) {
             val method = method

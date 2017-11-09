@@ -1,0 +1,4 @@
+6 val <bold>x = 1</bold>
+8 	val <bold>y = x</bold>
+10 	val <bold>z: Int</bold>
+2 	fun foo(<bold>n: Int</bold>) {

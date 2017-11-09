@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
+
 tailrec fun test(x : Int) : Int {
     if (x == 0) {
         return 0

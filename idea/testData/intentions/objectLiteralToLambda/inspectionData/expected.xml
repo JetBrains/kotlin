@@ -166,4 +166,22 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
         <description>Convert to lambda</description>
     </problem>
+
+    <problem>
+        <file>WithComment.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/WithComment.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Object literal can be converted to lambda</problem_class>
+        <description>Convert to lambda</description>
+    </problem>
+
+    <problem>
+        <file>WithCommentAfterExpression.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/WithCommentAfterExpression.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Object literal can be converted to lambda</problem_class>
+        <description>Convert to lambda</description>
+    </problem>
 </problems>

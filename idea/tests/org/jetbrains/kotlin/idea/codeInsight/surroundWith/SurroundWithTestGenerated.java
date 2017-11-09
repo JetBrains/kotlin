@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight.surroundWith;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class If extends AbstractSurroundWithTest {
         public void testAllFilesPresentInIf() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("block.kt")
@@ -67,6 +68,12 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             doTestWithIfSurrounder(fileName);
         }
 
+        @TestMetadata("usedAsExpression.kt")
+        public void testUsedAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/if/usedAsExpression.kt");
+            doTestWithIfSurrounder(fileName);
+        }
+
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/if/variable.kt");
@@ -78,7 +85,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MoveDeclarationsOut extends AbstractSurroundWithTest {
             public void testAllFilesPresentInMoveDeclarationsOut() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/class")
@@ -86,7 +93,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Class extends AbstractSurroundWithTest {
                 public void testAllFilesPresentInClass() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/class"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/class"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("classInType.kt")
@@ -107,7 +114,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Function extends AbstractSurroundWithTest {
                 public void testAllFilesPresentInFunction() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/function"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/function"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("firstChildLocalFun.kt")
@@ -134,7 +141,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Object extends AbstractSurroundWithTest {
                 public void testAllFilesPresentInObject() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/object"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/object"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("localObject.kt")
@@ -149,7 +156,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Order extends AbstractSurroundWithTest {
                 public void testAllFilesPresentInOrder() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/order"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/order"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("twoClasses.kt")
@@ -176,7 +183,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Val extends AbstractSurroundWithTest {
                 public void testAllFilesPresentInVal() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/val"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/val"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("fullQualifiedType.kt")
@@ -215,7 +222,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Var extends AbstractSurroundWithTest {
                 public void testAllFilesPresentInVar() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("varWithNotNullableTypeWithInitializer.kt")
@@ -241,7 +248,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class DefaultValue extends AbstractSurroundWithTest {
                     public void testAllFilesPresentInDefaultValue() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/defaultValue"), Pattern.compile("^(.+)\\.kt$"), true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/defaultValue"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
                     @TestMetadata("boolean.kt")
@@ -271,7 +278,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class IfElse extends AbstractSurroundWithTest {
         public void testAllFilesPresentInIfElse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/ifElse"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/ifElse"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("block.kt")
@@ -310,10 +317,64 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             doTestWithIfElseSurrounder(fileName);
         }
 
+        @TestMetadata("usedAsExpression.kt")
+        public void testUsedAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElse/usedAsExpression.kt");
+            doTestWithIfElseSurrounder(fileName);
+        }
+
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElse/variable.kt");
             doTestWithIfElseSurrounder(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/codeInsight/surroundWith/ifElseExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IfElseExpression extends AbstractSurroundWithTest {
+        public void testAllFilesPresentInIfElseExpression() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/ifElseExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("asStatement.kt")
+        public void testAsStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElseExpression/asStatement.kt");
+            doTestWithIfElseExpressionSurrounder(fileName);
+        }
+
+        @TestMetadata("paranthesized.kt")
+        public void testParanthesized() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElseExpression/paranthesized.kt");
+            doTestWithIfElseExpressionSurrounder(fileName);
+        }
+
+        @TestMetadata("singleExpression.kt")
+        public void testSingleExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElseExpression/singleExpression.kt");
+            doTestWithIfElseExpressionSurrounder(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/codeInsight/surroundWith/ifElseExpressionBraces")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IfElseExpressionBraces extends AbstractSurroundWithTest {
+        public void testAllFilesPresentInIfElseExpressionBraces() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/ifElseExpressionBraces"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("asStatement.kt")
+        public void testAsStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElseExpressionBraces/asStatement.kt");
+            doTestWithIfElseExpressionBracesSurrounder(fileName);
+        }
+
+        @TestMetadata("singleExpression.kt")
+        public void testSingleExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/ifElseExpressionBraces/singleExpression.kt");
+            doTestWithIfElseExpressionBracesSurrounder(fileName);
         }
     }
 
@@ -322,7 +383,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Not extends AbstractSurroundWithTest {
         public void testAllFilesPresentInNot() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/not"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/not"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("booleanExpr.kt")
@@ -373,7 +434,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Parentheses extends AbstractSurroundWithTest {
         public void testAllFilesPresentInParentheses() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/parentheses"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/parentheses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("expr.kt")
@@ -399,7 +460,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NotApplicable extends AbstractSurroundWithTest {
             public void testAllFilesPresentInNotApplicable() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/parentheses/notApplicable"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/parentheses/notApplicable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("if.kt")
@@ -463,7 +524,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StringTemplate extends AbstractSurroundWithTest {
         public void testAllFilesPresentInStringTemplate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("multiExpression.kt")
@@ -496,7 +557,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class When extends AbstractSurroundWithTest {
         public void testAllFilesPresentInWhen() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/when"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/when"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("enum.kt")
@@ -523,7 +584,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TryCatch extends AbstractSurroundWithTest {
         public void testAllFilesPresentInTryCatch() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/tryCatch"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/tryCatch"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("moveDeclarationsOut.kt")
@@ -543,6 +604,33 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryCatch/singleExpression.kt");
             doTestWithTryCatchSurrounder(fileName);
         }
+
+        @TestMetadata("usedAsExpression.kt")
+        public void testUsedAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryCatch/usedAsExpression.kt");
+            doTestWithTryCatchSurrounder(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/codeInsight/surroundWith/tryCatchExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TryCatchExpression extends AbstractSurroundWithTest {
+        public void testAllFilesPresentInTryCatchExpression() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/tryCatchExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("asStatement.kt")
+        public void testAsStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryCatchExpression/asStatement.kt");
+            doTestWithTryCatchExpressionSurrounder(fileName);
+        }
+
+        @TestMetadata("singleExpression.kt")
+        public void testSingleExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryCatchExpression/singleExpression.kt");
+            doTestWithTryCatchExpressionSurrounder(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/codeInsight/surroundWith/tryCatchFinally")
@@ -550,7 +638,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TryCatchFinally extends AbstractSurroundWithTest {
         public void testAllFilesPresentInTryCatchFinally() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("multiExpression.kt")
@@ -564,6 +652,33 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryCatchFinally/singleExpression.kt");
             doTestWithTryCatchFinallySurrounder(fileName);
         }
+
+        @TestMetadata("usedAsExpression.kt")
+        public void testUsedAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryCatchFinally/usedAsExpression.kt");
+            doTestWithTryCatchFinallySurrounder(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/codeInsight/surroundWith/tryCatchFinallyExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TryCatchFinallyExpression extends AbstractSurroundWithTest {
+        public void testAllFilesPresentInTryCatchFinallyExpression() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/tryCatchFinallyExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("asStatement.kt")
+        public void testAsStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryCatchFinallyExpression/asStatement.kt");
+            doTestWithTryCatchFinallyExpressionSurrounder(fileName);
+        }
+
+        @TestMetadata("singleExpression.kt")
+        public void testSingleExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryCatchFinallyExpression/singleExpression.kt");
+            doTestWithTryCatchFinallyExpressionSurrounder(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/codeInsight/surroundWith/tryFinally")
@@ -571,7 +686,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TryFinally extends AbstractSurroundWithTest {
         public void testAllFilesPresentInTryFinally() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/tryFinally"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/tryFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("multiExpression.kt")
@@ -585,6 +700,12 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryFinally/singleExpression.kt");
             doTestWithTryFinallySurrounder(fileName);
         }
+
+        @TestMetadata("usedAsExpression.kt")
+        public void testUsedAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryFinally/usedAsExpression.kt");
+            doTestWithTryFinallySurrounder(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/codeInsight/surroundWith/functionLiteral")
@@ -592,7 +713,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FunctionLiteral extends AbstractSurroundWithTest {
         public void testAllFilesPresentInFunctionLiteral() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/functionLiteral"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/functionLiteral"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("moveDeclarationsOut.kt")
@@ -619,7 +740,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WithIfExpression extends AbstractSurroundWithTest {
         public void testAllFilesPresentInWithIfExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/withIfExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/withIfExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("complexBoolean.kt")
@@ -640,7 +761,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WithIfElseExpression extends AbstractSurroundWithTest {
         public void testAllFilesPresentInWithIfElseExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/withIfElseExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/surroundWith/withIfElseExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("complexBoolean.kt")

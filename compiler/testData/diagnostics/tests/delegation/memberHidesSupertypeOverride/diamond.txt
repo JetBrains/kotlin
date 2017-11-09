@@ -1,0 +1,56 @@
+package
+
+public fun box(): kotlin.String
+
+public interface Base {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun test(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Base2 : Base {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun test(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Base3 : Base {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun test(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Impl : Base {
+    public constructor Impl()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Impl2 : Base2 {
+    public constructor Impl2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Impl3 : Base3 {
+    public constructor Impl3()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ImplAll : Base, Base2, Base3 {
+    public constructor ImplAll()
+    public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*3*/ fun test(): kotlin.String
+    public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
+}

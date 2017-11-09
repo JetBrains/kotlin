@@ -1,4 +1,4 @@
-JetFile: EnumWithAnnotationKeyword.kt
+KtFile: EnumWithAnnotationKeyword.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

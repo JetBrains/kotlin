@@ -1,7 +1,14 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
 class Controller {
     var result = false
-    suspend fun suspendHere(x: Continuation<String>) {
+    suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
         x.resume("OK")
+        COROUTINE_SUSPENDED
     }
 
     fun foo() {
@@ -9,10 +16,10 @@ class Controller {
     }
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
+fun builder(c: suspend Controller.() -> Unit) {
     val controller = Controller()
-    c(controller).resume(Unit)
-    if (!controller.result) throw java.lang.RuntimeException("fail")
+    c.startCoroutine(controller, EmptyContinuation)
+    if (!controller.result) throw RuntimeException("fail")
 }
 
 fun noinlineRun(block: () -> Unit) {
@@ -22,14 +29,14 @@ fun noinlineRun(block: () -> Unit) {
 fun box(): String {
     builder {
         if (suspendHere() != "OK") {
-            throw java.lang.RuntimeException("fail 1")
+            throw RuntimeException("fail 1")
         }
         noinlineRun {
             foo()
         }
 
         if (suspendHere() != "OK") {
-            throw java.lang.RuntimeException("fail 2")
+            throw RuntimeException("fail 2")
         }
     }
 

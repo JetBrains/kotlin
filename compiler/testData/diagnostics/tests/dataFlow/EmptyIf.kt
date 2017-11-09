@@ -18,7 +18,7 @@ fun f3(s: Number?) {
 }
 
 fun f4(s: Int?) {
-    var u = <!INVALID_IF_AS_EXPRESSION!>if (s!! == 42)<!>;
-    if (u == Unit) u = <!INVALID_IF_AS_EXPRESSION!>if (s == 239)<!>;
+    var u = <!INVALID_IF_AS_EXPRESSION!>if<!> (s!! == 42);
+    if (u == Unit) u = <!INVALID_IF_AS_EXPRESSION!>if<!> (s == 239);
     return u
 }

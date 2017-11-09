@@ -1,0 +1,5 @@
+object Obj
+
+fun foo() {
+    val o = Obj
+}

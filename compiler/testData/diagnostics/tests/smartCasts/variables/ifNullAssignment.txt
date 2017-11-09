@@ -1,0 +1,8 @@
+package
+
+public fun bar(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun basic(): kotlin.String
+public fun baz(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun foo(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun gau(/*0*/ flag: kotlin.Boolean, /*1*/ arg: kotlin.String?): kotlin.Unit
+public fun gav(/*0*/ flag: kotlin.Boolean, /*1*/ arg: kotlin.String?): kotlin.Unit

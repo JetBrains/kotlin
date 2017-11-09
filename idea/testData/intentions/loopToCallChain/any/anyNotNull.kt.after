@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'any{}'"
+// IS_APPLICABLE_2: false
+fun foo(list: List<Any?>): Boolean {
+    <caret>return list.any { it != null }
+}

@@ -1,0 +1,6 @@
+@Target(AnnotationTarget.EXPRESSION)
+annotation class Ann
+
+fun foo(arg: String?) {
+    if (@Ann arg == null) throw NullPointerException("Expression '@Ann arg' must not be null")
+}

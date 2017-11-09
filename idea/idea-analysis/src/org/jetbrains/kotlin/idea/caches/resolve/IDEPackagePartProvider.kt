@@ -18,14 +18,17 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndex
-import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
 import org.jetbrains.kotlin.load.kotlin.PackageParts
 
 class IDEPackagePartProvider(val scope: GlobalSearchScope) : PackagePartProvider {
+    override fun findPackageParts(packageFqName: String): List<String> =
+            getPackageParts(packageFqName).flatMap(PackageParts::parts).distinct()
 
-    override fun findPackageParts(packageFqName: String): List<String> {
-        val values: MutableList<PackageParts> = FileBasedIndex.getInstance().getValues(KotlinModuleMappingIndex.KEY, packageFqName, scope)
-        return values.flatMap { it.parts }.distinct()
-    }
+    override fun findMetadataPackageParts(packageFqName: String): List<String> =
+            getPackageParts(packageFqName).flatMap(PackageParts::metadataParts).distinct()
+
+    private fun getPackageParts(packageFqName: String): MutableList<PackageParts> =
+            FileBasedIndex.getInstance().getValues(KotlinModuleMappingIndex.KEY, packageFqName, scope)
 }

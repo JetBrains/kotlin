@@ -1,0 +1,65 @@
+FILE /class.kt
+  CLASS INTERFACE TestInterface
+    $this: VALUE_PARAMETER this@TestInterface: TestInterface<T>
+    TYPE_PARAMETER <T>
+    CLASS INTERFACE TestNestedInterface
+      $this: VALUE_PARAMETER this@TestNestedInterface: TestNestedInterface<TT>
+      TYPE_PARAMETER <TT>
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS CLASS Test
+    $this: VALUE_PARAMETER this@Test: Test<T0>
+    TYPE_PARAMETER <T0>
+    CONSTRUCTOR public constructor Test<T0>()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test'
+    CLASS CLASS TestNested
+      $this: VALUE_PARAMETER this@TestNested: TestNested<T1>
+      TYPE_PARAMETER <T1>
+      CONSTRUCTOR public constructor TestNested<T1>()
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='TestNested'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
+    CLASS CLASS TestInner
+      $this: VALUE_PARAMETER this@TestInner: TestInner<T2, T0>
+      TYPE_PARAMETER <T2>
+      CONSTRUCTOR public constructor TestInner<T2>()
+        $outer: VALUE_PARAMETER this@Test: Test<T0>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='TestInner'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

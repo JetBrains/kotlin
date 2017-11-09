@@ -20,6 +20,7 @@ import java.io.File
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
+import java.net.URL
 import java.net.URLClassLoader
 import java.util.jar.Attributes
 import java.util.jar.JarFile
@@ -29,9 +30,9 @@ class RunnerException(message: String) : RuntimeException(message)
 abstract class AbstractRunner : Runner {
     protected abstract val className: String
 
-    protected abstract fun createClassLoader(classpath: Classpath): ClassLoader
+    protected abstract fun createClassLoader(classpath: List<URL>): ClassLoader
 
-    override fun run(classpath: Classpath, arguments: List<String>) {
+    override fun run(classpath: List<URL>, arguments: List<String>) {
         val classLoader = createClassLoader(classpath)
 
         val mainClass = try {
@@ -69,8 +70,8 @@ abstract class AbstractRunner : Runner {
 }
 
 class MainClassRunner(override val className: String) : AbstractRunner() {
-    override fun createClassLoader(classpath: Classpath): ClassLoader =
-            URLClassLoader(classpath.getURLs(), null)
+    override fun createClassLoader(classpath: List<URL>): ClassLoader =
+            URLClassLoader(classpath.toTypedArray(), null)
 }
 
 class JarRunner(private val path: String) : AbstractRunner() {
@@ -89,7 +90,7 @@ class JarRunner(private val path: String) : AbstractRunner() {
             }
             ?: throw RunnerException("no Main-Class entry found in manifest in $path")
 
-    override fun createClassLoader(classpath: Classpath): ClassLoader {
+    override fun createClassLoader(classpath: List<URL>): ClassLoader {
         // 'kotlin *.jar' ignores the passed classpath as 'java -jar' does
         // TODO: warn on non-empty classpath?
 
@@ -98,21 +99,21 @@ class JarRunner(private val path: String) : AbstractRunner() {
 }
 
 class ReplRunner : Runner {
-    override fun run(classpath: Classpath, arguments: List<String>) {
+    override fun run(classpath: List<URL>, arguments: List<String>) {
         // TODO: run REPL instead
         throw RunnerException("please specify at least one name or file to run")
     }
 }
 
 class ScriptRunner(private val path: String) : Runner {
-    override fun run(classpath: Classpath, arguments: List<String>) {
+    override fun run(classpath: List<URL>, arguments: List<String>) {
         // TODO
         throw RunnerException("running Kotlin scripts is not yet supported")
     }
 }
 
 class ExpressionRunner(private val code: String) : Runner {
-    override fun run(classpath: Classpath, arguments: List<String>) {
+    override fun run(classpath: List<URL>, arguments: List<String>) {
         // TODO
         throw RunnerException("evaluating expressions is not yet supported")
     }

@@ -22,24 +22,17 @@ import org.jetbrains.kotlin.backend.common.bridges.firstSuperMethodFromKotlin
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.DelegationToDefaultImpls
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes.*
-import java.util.*
 
 class InterfaceImplBodyCodegen(
-        aClass: KtClassOrObject,
+        aClass: KtPureClassOrObject,
         context: ClassContext,
         v: ClassBuilder,
         state: GenerationState,
@@ -48,27 +41,25 @@ class InterfaceImplBodyCodegen(
     private var isAnythingGenerated: Boolean = false
         get() = (v as InterfaceImplClassBuilder).isAnythingGenerated
 
+    private val defaultImplType = typeMapper.mapDefaultImpls(descriptor)
+
     override fun generateDeclaration() {
+        val codegenFlags = ACC_PUBLIC or ACC_FINAL or ACC_SUPER
+        val flags = if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) codegenFlags or ACC_STATIC else codegenFlags
         v.defineClass(
-                myClass, state.classFileVersion, ACC_PUBLIC or ACC_FINAL or ACC_SUPER,
-                typeMapper.mapDefaultImpls(descriptor).internalName,
+                myClass.psiOrParent, state.classFileVersion, flags,
+                defaultImplType.internalName,
                 null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
-        v.visitSource(myClass.containingFile.name, null)
+        v.visitSource(myClass.containingKtFile.name, null)
     }
 
     override fun classForInnerClassRecord(): ClassDescriptor? {
         if (!isAnythingGenerated) return null
-        if (DescriptorUtils.isLocal(descriptor)) return null
-        val classDescriptorImpl = ClassDescriptorImpl(
-                descriptor, Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
-                Modality.FINAL, ClassKind.CLASS, Collections.emptyList(), SourceElement.NO_SOURCE)
-
-        classDescriptorImpl.initialize(MemberScope.Empty, emptySet(), null)
-        return classDescriptorImpl
+        return InnerClassConsumer.classForInnerClassRecord(descriptor, true)
     }
 
-    override fun generateSyntheticParts() {
+    override fun generateSyntheticPartsAfterBody() {
         for (memberDescriptor in descriptor.defaultType.memberScope.getContributedDescriptors()) {
             if (memberDescriptor !is CallableMemberDescriptor) continue
 
@@ -113,7 +104,10 @@ class InterfaceImplBodyCodegen(
         if (delegateTo is JavaMethodDescriptor) return
 
         functionCodegen.generateMethod(
-                DelegationToDefaultImpls(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor),
+                JvmDeclarationOrigin(
+                        JvmDeclarationOriginKind.DEFAULT_IMPL_DELEGATION_TO_SUPERINTERFACE_DEFAULT_IMPL,
+                        DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor
+                ),
                 descriptor,
                 object : FunctionGenerationStrategy.CodegenBased(state) {
                     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
@@ -150,13 +144,13 @@ class InterfaceImplBodyCodegen(
     override fun generateKotlinMetadataAnnotation() {
         (v as InterfaceImplClassBuilder).stopCounting()
 
-        writeSyntheticClassMetadata(v)
+        writeSyntheticClassMetadata(v, state)
     }
 
     override fun done() {
         super.done()
         if (!isAnythingGenerated) {
-            state.factory.removeClasses(setOf(typeMapper.mapDefaultImpls(descriptor).internalName))
+            state.factory.removeClasses(setOf(defaultImplType.internalName))
         }
     }
 
@@ -184,5 +178,9 @@ class InterfaceImplBodyCodegen(
             }
             return super.newMethod(origin, access, name, desc, signature, exceptions)
         }
+    }
+
+    override fun generateSyntheticPartsBeforeBody() {
+        generatePropertyMetadataArrayFieldIfNeeded(defaultImplType)
     }
 }

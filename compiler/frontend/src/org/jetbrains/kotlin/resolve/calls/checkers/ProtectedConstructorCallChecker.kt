@@ -33,11 +33,7 @@ object ProtectedConstructorCallChecker : CallChecker {
         val constructorOwner = descriptor.containingDeclaration.original
         val scopeOwner = context.scope.ownerDescriptor
 
-        val actualConstructor =
-                if (descriptor is TypeAliasConstructorDescriptor)
-                    descriptor.underlyingConstructorDescriptor
-                else
-                    descriptor
+        val actualConstructor = (descriptor as? TypeAliasConstructorDescriptor)?.underlyingConstructorDescriptor ?: descriptor
 
         if (actualConstructor.visibility.normalize() != Visibilities.PROTECTED) return
         // Error already reported

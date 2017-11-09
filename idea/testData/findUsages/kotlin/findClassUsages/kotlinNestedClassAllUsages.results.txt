@@ -18,4 +18,5 @@
 [kotlinNestedClassAllUsages.1.kt] Usage in cast target type 41 return if (this is Outer.A) this as Outer.A else null
 [kotlinNestedClassAllUsages.2.java] Field declaration 6 Outer.A next = new Outer.A();
 [kotlinNestedClassAllUsages.2.java] New instance creation 6 Outer.A next = new Outer.A();
+[kotlinNestedClassAllUsages.2.java] Unclassified usage 5 public class X extends Outer.A {
 [kotlinNestedClassAllUsages.2.java] Usage in extends/implements clause 5 public class X extends Outer.A {

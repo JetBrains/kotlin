@@ -28,7 +28,7 @@ data class Repository(
 enum class AttributeKind {
     VAL, VAR, ARGUMENT
 }
-data class GenerateAttribute(val name: String, val type: Type, val initializer: String?, val getterSetterNoImpl: Boolean, val kind: AttributeKind, val override: Boolean, var vararg: Boolean, val static: Boolean)
+data class GenerateAttribute(val name: String, val type: Type, val initializer: String?, val getterSetterNoImpl: Boolean, val kind: AttributeKind, val override: Boolean, var vararg: Boolean, val static: Boolean, val required: Boolean)
 
 val GenerateAttribute.getterNoImpl: Boolean
     get() = getterSetterNoImpl
@@ -58,8 +58,9 @@ enum class NativeGetterOrSetter {
 }
 
 enum class GenerateDefinitionKind {
-    TRAIT,
-    CLASS
+    INTERFACE,
+    CLASS,
+    ABSTRACT_CLASS
 }
 
 data class GenerateFunctionCall(val name: String, val arguments: List<String>)
@@ -68,17 +69,18 @@ data class GenerateFunction(
         val returnType: Type,
         val arguments: List<GenerateAttribute>,
         val nativeGetterOrSetter: NativeGetterOrSetter,
-        val static: Boolean
+        val static: Boolean,
+        val override: Boolean
 )
 
-data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute, val initTypeCall: GenerateFunctionCall?)
+data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute)
 data class GenerateTraitOrClass(
         val name: String,
         val namespace: String,
         val kind: GenerateDefinitionKind,
         val superTypes: List<String>,
-        val memberAttributes: List<GenerateAttribute>,
-        val memberFunctions: List<GenerateFunction>,
+        val memberAttributes: MutableList<GenerateAttribute>,
+        val memberFunctions: MutableList<GenerateFunction>,
         val constants: List<GenerateAttribute>,
         val primaryConstructor: ConstructorWithSuperTypeCall?,
         val secondaryConstructors: List<ConstructorWithSuperTypeCall>,

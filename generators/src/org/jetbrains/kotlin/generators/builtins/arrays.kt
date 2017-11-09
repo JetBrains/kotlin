@@ -32,7 +32,7 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println(" * An array of ${typeLower}s. When targeting the JVM, instances of this class are represented as `$typeLower[]`.")
             out.println(" * @constructor Creates a new array of the specified [size], with all elements initialized to $defaultValue.")
             out.println(" */")
-            out.println("public class ${s}Array(size: Int) : Cloneable {")
+            out.println("public class ${s}Array(size: Int) {")
             out.println("    /**")
             out.println("     * Creates a new array of the specified [size], where each element is calculated by calling the specified")
             out.println("     * [init] function. The [init] function returns an array element given its index.")
@@ -49,8 +49,6 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println()
             out.println("    /** Creates an iterator over the elements of the array. */")
             out.println("    public operator fun iterator(): ${s}Iterator")
-            out.println()
-            out.println("    public override fun clone(): ${s}Array")
             out.println("}")
             out.println()
         }

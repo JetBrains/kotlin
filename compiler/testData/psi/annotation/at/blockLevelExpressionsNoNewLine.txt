@@ -1,4 +1,4 @@
-JetFile: blockLevelExpressionsNoNewLine.kt
+KtFile: blockLevelExpressionsNoNewLine.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

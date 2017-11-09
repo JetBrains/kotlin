@@ -65,9 +65,12 @@ class IfStatement(
     private val brAfterElse = if (singleLine || elseStatement is IfStatement) " " else "\n"
 
     override fun generateCode(builder: CodeBuilder) {
-        builder append "if (" append condition append ")" append br append thenStatement
+        builder append "if (" append condition append ")" append br append thenStatement.wrapToBlockIfRequired()
         if (!elseStatement.isEmpty) {
-            builder append br append "else" append brAfterElse append elseStatement
+            builder append br append "else" append brAfterElse append elseStatement.wrapToBlockIfRequired()
+        }
+        else if (thenStatement.isEmpty) {
+            builder append ";"
         }
     }
 }
@@ -78,7 +81,10 @@ class WhileStatement(val condition: Expression, val body: Element, singleLine: B
     private val br = if (singleLine) " " else "\n"
 
     override fun generateCode(builder: CodeBuilder) {
-        builder append "while (" append condition append ")" append br append body
+        builder append "while (" append condition append ")" append br append body.wrapToBlockIfRequired()
+        if (body.isEmpty) {
+            builder append ";"
+        }
     }
 }
 
@@ -86,7 +92,7 @@ class DoWhileStatement(val condition: Expression, val body: Element, singleLine:
     private val br = if (singleLine) " " else "\n"
 
     override fun generateCode(builder: CodeBuilder) {
-        builder append "do" append br append body append br append "while (" append condition append ")"
+        builder append "do" append br append body.wrapToBlockIfRequired() append br append "while (" append condition append ")"
     }
 }
 
@@ -105,7 +111,10 @@ class ForeachStatement(
         if (explicitVariableType != null) {
             builder append ":" append explicitVariableType
         }
-        builder append " in " append collection append ")" append br append body
+        builder append " in " append collection append ")" append br append body.wrapToBlockIfRequired()
+        if (body.isEmpty) {
+            builder append ";"
+        }
     }
 }
 
@@ -166,7 +175,7 @@ class ValueWhenEntrySelector(val expression: Expression) : WhenEntrySelector() {
     }
 }
 
-class ElseWhenEntrySelector() : WhenEntrySelector() {
+class ElseWhenEntrySelector : WhenEntrySelector() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("else")
     }

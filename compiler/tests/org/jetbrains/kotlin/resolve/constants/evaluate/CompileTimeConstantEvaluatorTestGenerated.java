@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.constants.evaluate;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Constant extends AbstractCompileTimeConstantEvaluatorTest {
         public void testAllFilesPresentInConstant() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/constant"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/constant"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classObjectProperty.kt")
@@ -169,7 +170,7 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class IsPure extends AbstractCompileTimeConstantEvaluatorTest {
         public void testAllFilesPresentInIsPure() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/isPure"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/isPure"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("innerToType.kt")
@@ -208,7 +209,7 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UsesVariableAsConstant extends AbstractCompileTimeConstantEvaluatorTest {
         public void testAllFilesPresentInUsesVariableAsConstant() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/usesVariableAsConstant"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/evaluate/usesVariableAsConstant"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("binaryTypes.kt")

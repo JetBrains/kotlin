@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 // WITH_REFLECT
 
 class A

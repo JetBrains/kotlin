@@ -19,6 +19,10 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.ide.highlighter.ArchiveFileType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.fileTypes.FileTypeEvent
+import com.intellij.openapi.fileTypes.FileTypeListener
+import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.SimpleModificationTracker
@@ -58,6 +62,26 @@ class LibraryModificationTracker(project: Project) : SimpleModificationTracker()
                 processBulk(events) {
                     projectFileIndex.isInLibraryClasses(it)
                 }
+            }
+        })
+
+        connection.subscribe(DumbService.DUMB_MODE, object : DumbService.DumbModeListener {
+            override fun enteredDumbMode() {
+                incModificationCount()
+            }
+
+            override fun exitDumbMode() {
+                incModificationCount()
+            }
+        })
+
+        connection.subscribe(FileTypeManager.TOPIC, object : FileTypeListener {
+            override fun beforeFileTypesChanged(event: FileTypeEvent) {
+                incModificationCount()
+            }
+
+            override fun fileTypesChanged(event: FileTypeEvent) {
+                incModificationCount()
             }
         })
     }

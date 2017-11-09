@@ -16,21 +16,11 @@ fun test(d: dynamic) {
     d <!DEBUG_INFO_DYNAMIC!>/<!> d
     d <!DEBUG_INFO_DYNAMIC!>%<!> d
 
-    d<!DEBUG_INFO_DYNAMIC!>..<!>d
-
     d <!DEBUG_INFO_DYNAMIC!>and<!> d
 
-    d <!DEBUG_INFO_DYNAMIC!>in<!> d
-    d <!DEBUG_INFO_DYNAMIC!>!in<!> d
-
-    1 <!DEBUG_INFO_DYNAMIC!>in<!> d
-    1 <!DEBUG_INFO_DYNAMIC!>!in<!> d
-
     <!DEBUG_INFO_DYNAMIC!>d[1]<!>
-    <!DEBUG_INFO_DYNAMIC!>d[1, 2]<!>
 
     <!DEBUG_INFO_DYNAMIC!>d[1]<!> = 2
-    <!DEBUG_INFO_DYNAMIC!>d[1, 2]<!> = 3
 
     <!DEBUG_INFO_DYNAMIC!>d[1]<!><!DEBUG_INFO_DYNAMIC!>++<!>
     <!DEBUG_INFO_DYNAMIC!>++<!><!DEBUG_INFO_DYNAMIC!>d[1]<!>
@@ -65,11 +55,6 @@ fun test(d: dynamic) {
         i.<!DEBUG_INFO_DYNAMIC!>foo<!>()
     }
 
-    val (<!DEBUG_INFO_DYNAMIC!>a<!>, <!DEBUG_INFO_DYNAMIC!>b<!>, <!DEBUG_INFO_DYNAMIC!>c<!>) = d
-    a.<!DEBUG_INFO_DYNAMIC!>foo<!>()
-    b.<!DEBUG_INFO_DYNAMIC!>foo<!>()
-    c.<!DEBUG_INFO_DYNAMIC!>foo<!>()
-
     var dVar = d
     dVar<!DEBUG_INFO_DYNAMIC!>++<!>
     <!DEBUG_INFO_DYNAMIC!>++<!>dVar
@@ -96,6 +81,3 @@ fun test(d: dynamic) {
     <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>%=<!> 1
 }
 
-val dyn: dynamic = null
-val foo : Int <!DEBUG_INFO_DYNAMIC, DEBUG_INFO_DYNAMIC!>by dyn<!>
-var bar : Int <!DEBUG_INFO_DYNAMIC, DEBUG_INFO_DYNAMIC, DEBUG_INFO_DYNAMIC!>by dyn<!>

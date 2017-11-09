@@ -3,7 +3,7 @@ class M {
   operator fun Long.component2() = this + 2
 }
 
-fun M.doTest(l : java.util.ArrayList<Long>): String {
+fun M.doTest(l : ArrayList<Long>): String {
     var s = ""
     for ((a, b) in l) {
       s += "$a:$b;"
@@ -12,7 +12,7 @@ fun M.doTest(l : java.util.ArrayList<Long>): String {
 }
 
 fun box(): String {
-  val l = java.util.ArrayList<Long>()
+  val l = ArrayList<Long>()
   l.add(0)
   l.add(1)
   l.add(2)

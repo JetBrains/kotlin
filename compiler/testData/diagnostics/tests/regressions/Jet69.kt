@@ -2,7 +2,7 @@ class Command() {}
 
 fun parse(<!UNUSED_PARAMETER!>cmd<!>: String): Command? { return null  }
 
-fun Any.equals(other : Any?) : Boolean = this === other
+fun Any.<!EXTENSION_SHADOWED_BY_MEMBER!>equals<!>(other : Any?) : Boolean = this === other
 
 fun main(args: Array<String>) {
     val command = parse("")

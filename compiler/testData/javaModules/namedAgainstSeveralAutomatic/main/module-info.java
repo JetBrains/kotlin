@@ -1,0 +1,3 @@
+module main {
+    requires autoB;
+}

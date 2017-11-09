@@ -34,22 +34,22 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.actions.NewKotlinFileAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.resolveToDescriptorWrapperAware
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.toJavaMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinMoveTargetForDeferredFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinMoveTargetForExistingElement
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveConflictChecker
-import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.refactoring.pullUp.checkPrivateMembersWithUsages
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -67,6 +67,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import java.util.*
+import kotlin.collections.LinkedHashMap
+import kotlin.collections.LinkedHashSet
 
 data class ExtractSuperInfo(
         val originalClass: KtClassOrObject,
@@ -103,7 +105,7 @@ class ExtractSuperRefactoring(
 
                 val superTypeList = originalClass.getSuperTypeList()
                 if (superTypeList != null) {
-                    for (superTypeListEntry in originalClass.getSuperTypeListEntries()) {
+                    for (superTypeListEntry in originalClass.superTypeListEntries) {
                         val superType = superTypeListEntry.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, superTypeListEntry.typeReference]
                                         ?: continue
                         val superClassDescriptor = superType.constructor.declarationDescriptor ?: continue
@@ -145,11 +147,17 @@ class ExtractSuperRefactoring(
             else {
                 KotlinMoveTargetForExistingElement(targetParent as KtElement)
             }
-            val conflictChecker = MoveConflictChecker(project, elementsToMove, moveTarget, originalClass)
+            val conflictChecker = MoveConflictChecker(
+                    project,
+                    elementsToMove,
+                    moveTarget,
+                    originalClass,
+                    memberInfos.filter { it.isToAbstract }.mapNotNull { it.member }
+            )
 
             project.runSynchronouslyWithProgress(RefactoringBundle.message("detecting.possible.conflicts"), true) {
                 runReadAction {
-                    val usages = ArrayList<UsageInfo>()
+                    val usages = LinkedHashSet<UsageInfo>()
                     for (element in elementsToMove) {
                         ReferencesSearch.search(element).mapTo(usages) { MoveRenameUsageInfo(it, element) }
                         if (element is KtCallableDeclaration) {
@@ -158,9 +166,19 @@ class ExtractSuperRefactoring(
                             }
                         }
                     }
-                    conflictChecker.checkAllConflicts(usages, conflicts)
+                    conflictChecker.checkAllConflicts(usages, LinkedHashSet<UsageInfo>(), conflicts)
                     if (targetParent is PsiDirectory) {
                         ExtractSuperClassUtil.checkSuperAccessible(targetParent, conflicts, originalClass.toLightClass())
+                    }
+
+                    if (isExtractInterface) {
+                        val resolutionFacade = originalClass.getResolutionFacade()
+
+                        val membersToMove = elementsToMove.filterIsInstance<KtNamedDeclaration>()
+                        for (member in membersToMove) {
+                            val memberDescriptor = member.resolveToDescriptorWrapperAware(resolutionFacade)
+                            checkPrivateMembersWithUsages(member, memberDescriptor, originalClass, membersToMove, conflicts)
+                        }
                     }
                 }
             }
@@ -199,14 +217,14 @@ class ExtractSuperRefactoring(
                 .asSequence()
                 .flatMap {
                     val (element, info) = it
-                    if (info != null) info.getChildrenToAnalyze().asSequence() else sequenceOf(element)
+                    info?.getChildrenToAnalyze()?.asSequence() ?: sequenceOf(element)
                 }
                 .forEach { it.accept(visitor) }
     }
 
     private fun createClass(superClassEntry: KtSuperTypeListEntry?): KtClass {
         val targetParent = extractInfo.targetParent
-        val newClassName = extractInfo.newClassName
+        val newClassName = extractInfo.newClassName.quoteIfNeeded()
         val originalClass = extractInfo.originalClass
 
         val kind = if (extractInfo.isInterface) "interface" else "class"
@@ -227,7 +245,7 @@ class ExtractSuperRefactoring(
         }
 
         if (typeParameters.isNotEmpty()) {
-            val typeParameterListText = typeParameters.sortedBy { it.startOffset }.map { it.text }.joinToString(prefix = "<", postfix = ">")
+            val typeParameterListText = typeParameters.sortedBy { it.startOffset }.joinToString(prefix = "<", postfix = ">") { it.text }
             newClass.addAfter(psiFactory.createTypeParameterList(typeParameterListText), newClass.nameIdentifier)
         }
 
@@ -245,7 +263,7 @@ class ExtractSuperRefactoring(
         val needSuperCall = !extractInfo.isInterface
                             && (superClassEntry is KtSuperTypeCallEntry
                             || originalClass.hasPrimaryConstructor()
-                            || originalClass.getSecondaryConstructors().isEmpty())
+                            || originalClass.secondaryConstructors.isEmpty())
         val newSuperTypeListEntry = if (needSuperCall) {
             psiFactory.createSuperTypeCallEntry("$superTypeText()")
         }
@@ -279,9 +297,9 @@ class ExtractSuperRefactoring(
         handler.getErrorMessage(originalClass)?.let { throw CommonRefactoringUtil.RefactoringErrorHintException(it) }
 
         val superClassEntry = if (!extractInfo.isInterface) {
-            val originalClassDescriptor = originalClass.resolveToDescriptor() as ClassDescriptor
+            val originalClassDescriptor = originalClass.unsafeResolveToDescriptor() as ClassDescriptor
             val superClassDescriptor = originalClassDescriptor.getSuperClassNotAny()
-            originalClass.getSuperTypeListEntries().firstOrNull {
+            originalClass.superTypeListEntries.firstOrNull {
                 bindingContext[BindingContext.TYPE, it.typeReference]?.constructor?.declarationDescriptor == superClassDescriptor
             }
         }
@@ -302,7 +320,7 @@ class ExtractSuperRefactoring(
                     extractInfo.docPolicy
             ).moveMembersToBase()
 
-            performDelayedShortening(project)
+            performDelayedRefactoringRequests(project)
         }
     }
 }

@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.lexer.KtTokens;
 
 import java.util.List;
 
@@ -48,4 +50,8 @@ public class KtTryExpression extends KtExpressionImpl {
         return (KtFinallySection) findChildByType(KtNodeTypes.FINALLY);
     }
 
+    @Nullable
+    public PsiElement getTryKeyword() {
+        return findChildByType(KtTokens.TRY_KEYWORD);
+    }
 }

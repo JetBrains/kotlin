@@ -3,8 +3,8 @@
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
-// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var b: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var c: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var d: kotlin.Int defined in foo
 // SIBLING:

@@ -55,7 +55,7 @@ abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
 
     private fun getClassFileToDecompile(sourcePath: String): VirtualFile {
         val outDir = KotlinTestUtils.tmpDir("libForStubTest-" + sourcePath)
-        MockLibraryUtil.compileKotlin(sourcePath, outDir, true)
+        MockLibraryUtil.compileKotlin(sourcePath, outDir, extraOptions = listOf("-Xallow-kotlin-package"))
         val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outDir)!!
         return root.findClassFileByName(lastSegment(sourcePath))
     }
@@ -73,7 +73,7 @@ fun VirtualFile.findClassFileByName(className: String): VirtualFile {
     val files = LinkedHashSet<VirtualFile>()
     VfsUtilCore.iterateChildrenRecursively(
             this,
-            { virtualFile -> virtualFile.isDirectory || virtualFile.name.equals("$className.class") },
+            { virtualFile -> virtualFile.isDirectory || virtualFile.name == "$className.class" },
             { virtualFile -> if (!virtualFile.isDirectory) files.addIfNotNull(virtualFile); true })
 
     return files.single()

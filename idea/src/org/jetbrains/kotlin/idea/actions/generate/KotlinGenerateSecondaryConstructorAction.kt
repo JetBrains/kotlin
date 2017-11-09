@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<KotlinGenerateSecondaryConstructorAction.Info>() {
@@ -127,7 +126,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
             val prototypes = if (superConstructors.isNotEmpty()) {
                 superConstructors.mapNotNull { generateConstructor(classDescriptor, propertiesToInitialize, it) }
             } else {
-                generateConstructor(classDescriptor, propertiesToInitialize, null).singletonOrEmptyList()
+                listOfNotNull(generateConstructor(classDescriptor, propertiesToInitialize, null))
             }
 
             if (prototypes.isEmpty()) {

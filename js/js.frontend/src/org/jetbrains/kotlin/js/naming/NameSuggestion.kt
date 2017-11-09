@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.js.naming
 
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -67,6 +69,12 @@ class NameSuggestion {
             return suggest(descriptor.containingDeclaration!!)
         }
 
+        if (descriptor is FunctionDescriptor && descriptor.isSuspend) {
+            descriptor.initialSignatureDescriptor?.let {
+                return suggest(it)
+            }
+        }
+
         // Dynamic declarations always require stable names as defined in Kotlin source code
         if (descriptor.isDynamic()) {
             return SuggestedName(listOf(descriptor.name.asString()), true, descriptor, descriptor.containingDeclaration!!)
@@ -78,7 +86,7 @@ class NameSuggestion {
 
             is PackageFragmentDescriptor -> {
                 return if (!descriptor.fqName.isRoot) {
-                    SuggestedName(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor,
+                    SuggestedName(descriptor.fqName.pathSegments().map(Name::asString), true, descriptor,
                                   descriptor.containingDeclaration)
                 }
                 else {
@@ -103,8 +111,29 @@ class NameSuggestion {
             // Local functions and variables are always private with their own names as suggested names
             is CallableDescriptor ->
                 if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) {
-                    val name = getNameForAnnotatedObject(descriptor) ?: getSuggestedName(descriptor)
-                    return SuggestedName(listOf(name), false, descriptor, descriptor.containingDeclaration)
+                    val ownName = getNameForAnnotatedObject(descriptor) ?: getSuggestedName(descriptor)
+                    var name = ownName
+                    var scope = descriptor.containingDeclaration
+
+                    // Local functions always lifted to the closest class or package when they are contained inside public inline function
+                    if (descriptor is FunctionDescriptor) {
+                        var container = descriptor.containingDeclaration
+                        var liftedName = ownName
+                        var hasInline = false
+                        while (container is FunctionDescriptor) {
+                            if (container.isInline && container.ownEffectiveVisibility.isPublicAPI) {
+                                hasInline = true
+                            }
+                            liftedName = getSuggestedName(container) + "$" + liftedName
+                            container = container.containingDeclaration
+                        }
+                        if (hasInline) {
+                            scope = container
+                            name = liftedName
+                        }
+                    }
+
+                    return SuggestedName(listOf(name), false, descriptor, scope)
                 }
         }
 
@@ -141,16 +170,21 @@ class NameSuggestion {
         }
         val fixedDescriptor = current
 
-        do {
-            parts += getSuggestedName(current)
-            var last = current
+        parts += if (fixedDescriptor is ConstructorDescriptor) {
             current = current.containingDeclaration!!
-            if (last is ConstructorDescriptor && !last.isPrimary) {
-                last = current
-                parts[parts.lastIndex] = getSuggestedName(current) + "_init"
-                current = current.containingDeclaration!!
-            }
-        } while (current is FunctionDescriptor)
+            getSuggestedName(current) + "_init"
+        }
+        else {
+            getSuggestedName(fixedDescriptor)
+        }
+        if (current.containingDeclaration is FunctionDescriptor && current !is TypeParameterDescriptor) {
+            val outerFunctionName = suggest(current.containingDeclaration as FunctionDescriptor)!!
+            parts += outerFunctionName.names.single()
+            current = outerFunctionName.scope
+        }
+        else {
+            current = current.containingDeclaration!!
+        }
 
         // Getters and setters have generation strategy similar to common declarations, except for they are declared as
         // members of classes/packages, not corresponding properties.
@@ -194,9 +228,29 @@ class NameSuggestion {
                 descriptor
             }
 
-            // If declaration is marked with either @native, @library or @JsName, return its stable name as is.
+            // If declaration is marked with either external, @native, @library or @JsName, return its stable name as is.
             val nativeName = getNameForAnnotatedObject(overriddenDescriptor)
             if (nativeName != null) return NameAndStability(nativeName, true)
+
+            if (overriddenDescriptor is FunctionDescriptor) {
+                when (overriddenDescriptor.fqNameUnsafe.asString()) {
+                    "kotlin.CharSequence.get" -> return NameAndStability("charCodeAt", true)
+                    "kotlin.Any.equals" -> return NameAndStability("equals", true)
+                }
+                val container = overriddenDescriptor.containingDeclaration
+                if (container is ClassDescriptor && ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(container.defaultType)) {
+                    val name = overriddenDescriptor.name.asString()
+                    when (name) {
+                        "get",
+                        "set" -> return NameAndStability(name, true)
+                    }
+                }
+            }
+            else if (overriddenDescriptor is PropertyDescriptor) {
+                when (overriddenDescriptor.fqNameUnsafe.asString()) {
+                    "kotlin.reflect.KCallable.name" -> return NameAndStability("callableName", true)
+                }
+            }
 
             return mangleRegularNameIfNecessary(baseName, overriddenDescriptor)
         }
@@ -218,35 +272,41 @@ class NameSuggestion {
                 return regularAndUnstable()
             }
 
-            fun mangledAndStable() = NameAndStability(getStableMangledName(baseName, getArgumentTypesAsString(descriptor)), true)
+            fun mangledAndStable() = NameAndStability(getStableMangledName(baseName, encodeSignature(descriptor)), true)
+            fun mangledInternal() = NameAndStability(getInternalMangledName(baseName, encodeSignature(descriptor)), true)
             fun mangledPrivate() = NameAndStability(getPrivateMangledName(baseName, descriptor), false)
+
+            val effectiveVisibility = descriptor.ownEffectiveVisibility
 
             val containingDeclaration = descriptor.containingDeclaration
             return when (containingDeclaration) {
-                is PackageFragmentDescriptor -> if (descriptor.visibility.isPublicAPI) mangledAndStable() else regularAndUnstable()
-                is ClassDescriptor -> {
+                is PackageFragmentDescriptor -> when {
+                    effectiveVisibility.isPublicAPI -> mangledAndStable()
+
+                    effectiveVisibility == Visibilities.INTERNAL -> mangledInternal()
+
+                    else -> regularAndUnstable()
+                }
+                is ClassDescriptor -> when {
                     // valueOf() is created in the library with a mangled name for every enum class
-                    if (descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod()) return mangledAndStable()
+                    descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod() -> mangledAndStable()
 
                     // Make all public declarations stable
-                    if (descriptor.visibility == Visibilities.PUBLIC) return mangledAndStable()
+                    effectiveVisibility == Visibilities.PUBLIC -> mangledAndStable()
 
-                    if (descriptor is CallableMemberDescriptor && descriptor.isOverridableOrOverrides) return mangledAndStable()
+                    descriptor.isOverridableOrOverrides -> mangledAndStable()
 
                     // Make all protected declarations of non-final public classes stable
-                    if (descriptor.visibility == Visibilities.PROTECTED &&
+                    effectiveVisibility == Visibilities.PROTECTED &&
                         !containingDeclaration.isFinalClass &&
-                        containingDeclaration.visibility.isPublicAPI
-                    ) {
-                        return mangledAndStable()
-                    }
+                        containingDeclaration.visibility.isPublicAPI -> mangledAndStable()
+
+                    effectiveVisibility == Visibilities.INTERNAL -> mangledInternal()
 
                     // Mangle (but make unstable) all non-public API of public classes
-                    if (containingDeclaration.visibility.isPublicAPI && !containingDeclaration.isFinalClass) {
-                        return mangledPrivate()
-                    }
+                    containingDeclaration.visibility.isPublicAPI && !containingDeclaration.isFinalClass -> mangledPrivate()
 
-                    regularAndUnstable()
+                    else -> regularAndUnstable()
                 }
                 else -> {
                     assert(containingDeclaration is CallableMemberDescriptor) {
@@ -262,20 +322,15 @@ class NameSuggestion {
 
         @JvmStatic fun getPrivateMangledName(baseName: String, descriptor: CallableDescriptor): String {
             val ownerName = descriptor.containingDeclaration.fqNameUnsafe.asString()
-            return getStableMangledName(baseName, ownerName + ":" + getArgumentTypesAsString(descriptor))
+
+            // Base name presents here since name part gets sanitized, so we have to produce different suffixes to distinguish
+            // between, say `.` and `;`.
+            return getStableMangledName(sanitizeName(baseName), ownerName + "." + baseName + ":" + encodeSignature(descriptor))
         }
 
-        private fun getArgumentTypesAsString(descriptor: CallableDescriptor): String {
-            val argTypes = StringBuilder()
-
-            val receiverParameter = descriptor.extensionReceiverParameter
-            if (receiverParameter != null) {
-                argTypes.append(receiverParameter.type.getJetTypeFqName(true)).append(".")
-            }
-
-            argTypes.append(descriptor.valueParameters.joinToString(",") { it.type.getJetTypeFqName(true) })
-
-            return argTypes.toString()
+        fun getInternalMangledName(suggestedName: String, forCalculateId: String): String {
+            val suffix = "_${mangledId("internal:" + forCalculateId)}\$"
+            return suggestedName + suffix
         }
 
         @JvmStatic fun getStableMangledName(suggestedName: String, forCalculateId: String): String {
@@ -287,5 +342,40 @@ class NameSuggestion {
             val absHashCode = Math.abs(forCalculateId.hashCode())
             return if (absHashCode != 0) Integer.toString(absHashCode, Character.MAX_RADIX) else ""
         }
+
+        private val DeclarationDescriptorWithVisibility.ownEffectiveVisibility
+            get() = visibility.effectiveVisibility(this, checkPublishedApi = true).toVisibility()
+
+        @JvmStatic fun sanitizeName(name: String): String {
+            if (name.isEmpty()) return "_"
+
+            val first = name.first().let { if (it.isES5IdentifierStart()) it else '_' }
+            return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
+        }
     }
 }
+
+// See ES 5.1 spec: https://www.ecma-international.org/ecma-262/5.1/#sec-7.6
+fun Char.isES5IdentifierStart() =
+        Character.isLetter(this) ||   // Lu | Ll | Lt | Lm | Lo
+        Character.getType(this).toByte() == Character.LETTER_NUMBER ||
+        // Nl which is missing in Character.isLetter, but present in UnicodeLetter in spec
+        this == '_' ||
+        this == '$'
+
+fun Char.isES5IdentifierPart() =
+        isES5IdentifierStart() ||
+        when (Character.getType(this).toByte()) {
+            Character.NON_SPACING_MARK,
+            Character.COMBINING_SPACING_MARK,
+            Character.DECIMAL_DIGIT_NUMBER,
+            Character.CONNECTOR_PUNCTUATION -> true
+            else -> false
+        } ||
+        this == '\u200C' ||   // Zero-width non-joiner
+        this == '\u200D'      // Zero-width joiner
+
+fun String.isValidES5Identifier() =
+        isNotEmpty() &&
+        first().isES5IdentifierStart() &&
+        drop(1).all { it.isES5IdentifierPart() }

@@ -1,0 +1,4 @@
+Function call 11 foo(fun(): Boolean { return@foo false })
+Function call 7 foo {
+Unclassified usage 11 foo(fun(): Boolean { return@foo false })
+Unclassified usage 8 return@foo false

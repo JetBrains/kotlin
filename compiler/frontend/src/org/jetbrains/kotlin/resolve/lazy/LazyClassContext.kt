@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.WrappedTypeFactory
 
 interface LazyClassContext {
     val declarationScopeProvider: DeclarationScopeProvider
@@ -38,4 +40,7 @@ interface LazyClassContext {
     val lookupTracker: LookupTracker
     val supertypeLoopChecker: SupertypeLoopChecker
     val languageVersionSettings: LanguageVersionSettings
+    val syntheticResolveExtension: SyntheticResolveExtension
+    val delegationFilter: DelegationFilter
+    val wrappedTypeFactory: WrappedTypeFactory
 }

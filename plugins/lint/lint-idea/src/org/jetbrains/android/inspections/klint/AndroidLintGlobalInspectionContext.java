@@ -21,6 +21,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressWrapper;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -34,13 +35,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class AndroidLintGlobalInspectionContext implements GlobalInspectionContextExtension<AndroidLintGlobalInspectionContext> {
-  static final Key<AndroidLintGlobalInspectionContext> ID = Key.create("AndroidKlintGlobalInspectionContext");
+  static final Key<AndroidLintGlobalInspectionContext> ID = Key.create("AndroidLintGlobalInspectionContext");
   private Map<Issue, Map<File, List<ProblemData>>> myResults;
 
   @NotNull
@@ -107,7 +105,9 @@ class AndroidLintGlobalInspectionContext implements GlobalInspectionContextExten
       case AnalysisScope.VIRTUAL_FILES:
       case AnalysisScope.UNCOMMITTED_FILES: {
         files = Lists.newArrayList();
-        SearchScope searchScope = scope.toSearchScope();
+        SearchScope searchScope = ApplicationManager
+                .getApplication()
+                .runReadAction((Computable<SearchScope>) scope::toSearchScope);
         if (searchScope instanceof LocalSearchScope) {
           final LocalSearchScope localSearchScope = (LocalSearchScope)searchScope;
           final PsiElement[] elements = localSearchScope.getScope();

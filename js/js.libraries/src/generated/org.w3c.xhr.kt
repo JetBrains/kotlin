@@ -5,8 +5,10 @@
  * See libraries/tools/idl2k for details
  */
 
+@file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.xhr
 
+import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
 import org.w3c.dom.css.*
@@ -20,106 +22,93 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.workers.*
 
-@native public interface XMLHttpRequestEventTarget : EventTarget {
-    var onloadstart: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onprogress: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onabort: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onerror: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onload: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ontimeout: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onloadend: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
+/**
+ * Exposes the JavaScript [XMLHttpRequestEventTarget](https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequestEventTarget) to Kotlin
+ */
+public external abstract class XMLHttpRequestEventTarget : EventTarget {
+    open var onloadstart: ((Event) -> dynamic)?
+    open var onprogress: ((Event) -> dynamic)?
+    open var onabort: ((Event) -> dynamic)?
+    open var onerror: ((Event) -> dynamic)?
+    open var onload: ((Event) -> dynamic)?
+    open var ontimeout: ((Event) -> dynamic)?
+    open var onloadend: ((Event) -> dynamic)?
 }
 
-@native public interface XMLHttpRequestUpload : XMLHttpRequestEventTarget {
+public external abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget {
 }
 
-@native public open class XMLHttpRequest : XMLHttpRequestEventTarget {
+/**
+ * Exposes the JavaScript [XMLHttpRequest](https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest) to Kotlin
+ */
+public external open class XMLHttpRequest : XMLHttpRequestEventTarget {
     var onreadystatechange: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     open val readyState: Short
-        get() = noImpl
     var timeout: Int
-        get() = noImpl
-        set(value) = noImpl
     var withCredentials: Boolean
-        get() = noImpl
-        set(value) = noImpl
     open val upload: XMLHttpRequestUpload
-        get() = noImpl
     open val responseURL: String
-        get() = noImpl
     open val status: Short
-        get() = noImpl
     open val statusText: String
-        get() = noImpl
-    var responseType: String
-        get() = noImpl
-        set(value) = noImpl
+    var responseType: XMLHttpRequestResponseType
     open val response: Any?
-        get() = noImpl
     open val responseText: String
-        get() = noImpl
     open val responseXML: Document?
-        get() = noImpl
-    fun open(method: String, url: String): Unit = noImpl
-    fun open(method: String, url: String, async: Boolean, username: String? = null, password: String? = null): Unit = noImpl
-    fun setRequestHeader(name: String, value: String): Unit = noImpl
-    fun send(body: dynamic = null): Unit = noImpl
-    fun abort(): Unit = noImpl
-    fun getResponseHeader(name: String): String? = noImpl
-    fun getAllResponseHeaders(): String = noImpl
-    fun overrideMimeType(mime: String): Unit = noImpl
+    fun open(method: String, url: String): Unit
+    fun open(method: String, url: String, async: Boolean, username: String? = definedExternally, password: String? = definedExternally): Unit
+    fun setRequestHeader(name: String, value: String): Unit
+    fun send(body: dynamic = definedExternally): Unit
+    fun abort(): Unit
+    fun getResponseHeader(name: String): String?
+    fun getAllResponseHeaders(): String
+    fun overrideMimeType(mime: String): Unit
 
     companion object {
-        val UNSENT: Short = 0
-        val OPENED: Short = 1
-        val HEADERS_RECEIVED: Short = 2
-        val LOADING: Short = 3
-        val DONE: Short = 4
+        val UNSENT: Short
+        val OPENED: Short
+        val HEADERS_RECEIVED: Short
+        val LOADING: Short
+        val DONE: Short
     }
 }
 
-@native public open class FormData(form: HTMLFormElement = noImpl) {
-    fun append(name: String, value: dynamic): Unit = noImpl
-    fun delete(name: String): Unit = noImpl
-    fun get(name: String): dynamic = noImpl
-    fun getAll(name: String): Array<dynamic> = noImpl
-    fun has(name: String): Boolean = noImpl
-    fun set(name: String, value: dynamic): Unit = noImpl
+/**
+ * Exposes the JavaScript [FormData](https://developer.mozilla.org/en/docs/Web/API/FormData) to Kotlin
+ */
+public external open class FormData(form: HTMLFormElement = definedExternally) {
+    fun append(name: String, value: String): Unit
+    fun append(name: String, value: Blob, filename: String = definedExternally): Unit
+    fun delete(name: String): Unit
+    fun get(name: String): dynamic
+    fun getAll(name: String): Array<dynamic>
+    fun has(name: String): Boolean
+    fun set(name: String, value: String): Unit
+    fun set(name: String, value: Blob, filename: String = definedExternally): Unit
 }
 
-@native public open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event(type, eventInitDict) {
+/**
+ * Exposes the JavaScript [ProgressEvent](https://developer.mozilla.org/en/docs/Web/API/ProgressEvent) to Kotlin
+ */
+public external open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = definedExternally) : Event {
     open val lengthComputable: Boolean
-        get() = noImpl
     open val loaded: Int
-        get() = noImpl
     open val total: Int
-        get() = noImpl
 }
 
-@native public interface ProgressEventInit : EventInit {
-    var lengthComputable: Boolean
-    var loaded: Int
-    var total: Int
+public external interface ProgressEventInit : EventInit {
+    var lengthComputable: Boolean? /* = false */
+        get() = definedExternally
+        set(value) = definedExternally
+    var loaded: Int? /* = 0 */
+        get() = definedExternally
+        set(value) = definedExternally
+    var total: Int? /* = 0 */
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
-@Suppress("NOTHING_TO_INLINE")
-public inline fun ProgressEventInit(lengthComputable: Boolean = false, loaded: Int = 0, total: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): ProgressEventInit {
+@kotlin.internal.InlineOnly
+public inline fun ProgressEventInit(lengthComputable: Boolean? = false, loaded: Int? = 0, total: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ProgressEventInit {
     val o = js("({})")
 
     o["lengthComputable"] = lengthComputable
@@ -127,7 +116,19 @@ public inline fun ProgressEventInit(lengthComputable: Boolean = false, loaded: I
     o["total"] = total
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
+
+/* please, don't implement this interface! */
+public external interface XMLHttpRequestResponseType {
+    companion object
+}
+public inline val XMLHttpRequestResponseType.Companion.EMPTY: XMLHttpRequestResponseType get() = "".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.ARRAYBUFFER: XMLHttpRequestResponseType get() = "arraybuffer".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.BLOB: XMLHttpRequestResponseType get() = "blob".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.DOCUMENT: XMLHttpRequestResponseType get() = "document".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.JSON: XMLHttpRequestResponseType get() = "json".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.TEXT: XMLHttpRequestResponseType get() = "text".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
 

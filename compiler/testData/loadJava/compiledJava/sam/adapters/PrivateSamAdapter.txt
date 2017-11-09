@@ -7,7 +7,4 @@ public open class PrivateSamAdapter {
     private interface SamInterface {
         public abstract fun foo(): kotlin.Unit
     }
-
-    // Static members
-    private final /*synthesized*/ fun SamInterface(/*0*/ function: () -> kotlin.Unit): test.PrivateSamAdapter.SamInterface
 }

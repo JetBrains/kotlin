@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.configuration.getAbleToRunConfigurators
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
-import org.jetbrains.kotlin.idea.configuration.getNonConfiguredModules
+import org.jetbrains.kotlin.idea.configuration.getCanBeConfiguredModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
 import javax.swing.event.HyperlinkEvent
 
@@ -42,9 +42,6 @@ class ConfigureKotlinNotification(
     }
 }) {
 
-    constructor(project: Project, excludeModules: List<Module>)
-        : this(project, excludeModules, getNotificationString(project, excludeModules))
-
     override fun equals(o: Any?): Boolean {
         if (this === o) return true
         if (o !is ConfigureKotlinNotification) return false
@@ -59,13 +56,15 @@ class ConfigureKotlinNotification(
     }
 
     companion object {
-        fun getNotificationString(project: Project, excludeModules: Collection<Module>): String {
-            val modules = getNonConfiguredModules(project, excludeModules)
+        fun getNotificationString(project: Project, excludeModules: Collection<Module>): String? {
+            val modules = getCanBeConfiguredModulesWithKotlinFiles(project, excludeModules)
 
             val isOnlyOneModule = modules.size == 1
 
             val modulesString = if (isOnlyOneModule) "'${modules.first().name}' module" else "modules"
-            val links = getAbleToRunConfigurators(project).joinToString(separator = "<br/>") {
+            val ableToRunConfigurators = getAbleToRunConfigurators(project)
+            if (ableToRunConfigurators.isEmpty()) return null
+            val links = ableToRunConfigurators.joinToString(separator = "<br/>") {
                 configurator -> getLink(configurator, isOnlyOneModule)
             }
 

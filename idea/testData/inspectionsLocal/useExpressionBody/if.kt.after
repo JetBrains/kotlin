@@ -1,0 +1,9 @@
+// HIGHLIGHT: INFORMATION
+
+fun abs(x: Int): Int =// No highlighting here
+        if (x > 0) {
+            x
+        }
+        else {
+            -x
+        }

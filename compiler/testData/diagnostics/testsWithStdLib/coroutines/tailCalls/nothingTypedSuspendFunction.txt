@@ -1,0 +1,3 @@
+package
+
+public suspend fun suspendLogAndThrow(/*0*/ exception: kotlin.Throwable): kotlin.Nothing

@@ -1,5 +1,3 @@
-import java.util.HashMap
-
 data class Pair<First, Second>(val first: First, val second: Second)
 
 fun parseCatalogs(hashMap: Any?) {

@@ -10,12 +10,16 @@ fun box(): String {
         var counter: Int? = null
         fun path(metaRunnerId: String) = counter != 2
 
+        var i = 0
         while (true) {
             val name = projectId + "_" + it.id + (if (counter == null) "" else "_$counter")
             if (!path(name)) {
                 return name
             }
             counter++
+
+            i++
+            if (i > 2) return "Infinity loop: $counter"
         }
     }
     val X = selectMetaRunnerId()

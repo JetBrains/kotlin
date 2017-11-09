@@ -1,0 +1,8 @@
+package
+
+public fun fooByte(/*0*/ p: kotlin.Byte): kotlin.Byte
+public fun fooInt(/*0*/ p: kotlin.Int): kotlin.Int
+public fun fooLong(/*0*/ p: kotlin.Long): kotlin.Long
+public fun fooShort(/*0*/ p: kotlin.Short): kotlin.Short
+public fun test(): kotlin.Unit
+public operator fun kotlin.Int.rem(/*0*/ other: kotlin.Int): kotlin.Int

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.android.configure;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest;
 import org.jetbrains.kotlin.idea.configuration.AbstractGradleConfigureProjectByChangingFileTest;
 
 public abstract class AbstractConfigureProjectTest extends AbstractGradleConfigureProjectByChangingFileTest {

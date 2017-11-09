@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cfg;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
-import kotlin.jvm.functions.Function3;
+import javaslang.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
@@ -39,65 +39,75 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
             @NotNull BindingContext bindingContext
     ) {
         PseudocodeVariablesData pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode.getRootPseudocode(), bindingContext);
-        final Map<Instruction, Edges<InitControlFlowInfo>> variableInitializers =
+        Map<Instruction, Edges<ReadOnlyInitControlFlowInfo>> variableInitializers =
                 pseudocodeVariablesData.getVariableInitializers();
-        final Map<Instruction, Edges<UseControlFlowInfo>> useStatusData =
+        Map<Instruction, Edges<ReadOnlyControlFlowInfo<VariableUseState>>> useStatusData =
                 pseudocodeVariablesData.getVariableUseStatusData();
-        final String initPrefix = "    INIT:";
-        final String usePrefix  = "    USE:";
-        final int initializersColumnWidth = countDataColumnWidth(initPrefix, pseudocode.getInstructionsIncludingDeadCode(), variableInitializers);
+        String initPrefix = "    INIT:";
+        String usePrefix = "    USE:";
+        int initializersColumnWidth = countDataColumnWidth(initPrefix, pseudocode.getInstructionsIncludingDeadCode(), variableInitializers,
+                                                           pseudocodeVariablesData);
 
-        dumpInstructions(pseudocode, out, new Function3<Instruction, Instruction, Instruction, String>() {
-            @Override
-            public String invoke(Instruction instruction, Instruction next, Instruction prev) {
-                StringBuilder result = new StringBuilder();
-                Edges<InitControlFlowInfo> initializersEdges = variableInitializers.get(instruction);
-                Edges<InitControlFlowInfo> previousInitializersEdges = variableInitializers.get(prev);
-                String initializersData = "";
-                if (initializersEdges != null && !initializersEdges.equals(previousInitializersEdges)) {
-                    initializersData = dumpEdgesData(initPrefix, initializersEdges);
-                }
-                result.append(String.format("%1$-" + initializersColumnWidth + "s", initializersData));
-
-                Edges<UseControlFlowInfo> useStatusEdges = useStatusData.get(instruction);
-                Edges<UseControlFlowInfo> nextUseStatusEdges = useStatusData.get(next);
-                if (useStatusEdges != null && !useStatusEdges.equals(nextUseStatusEdges)) {
-                    result.append(dumpEdgesData(usePrefix, useStatusEdges));
-                }
-                return result.toString();
+        dumpInstructions(pseudocode, out, (instruction, next, prev) -> {
+            StringBuilder result = new StringBuilder();
+            Edges<ReadOnlyInitControlFlowInfo> initializersEdges = variableInitializers.get(instruction);
+            Edges<ReadOnlyInitControlFlowInfo> previousInitializersEdges = variableInitializers.get(prev);
+            String initializersData = "";
+            if (initializersEdges != null && !initializersEdges.equals(previousInitializersEdges)) {
+                initializersData = dumpEdgesData(initPrefix, initializersEdges, pseudocodeVariablesData);
             }
+            result.append(String.format("%1$-" + initializersColumnWidth + "s", initializersData));
+
+            Edges<ReadOnlyControlFlowInfo<VariableUseState>> useStatusEdges = useStatusData.get(instruction);
+            Edges<ReadOnlyControlFlowInfo<VariableUseState>> nextUseStatusEdges = useStatusData.get(next);
+            if (useStatusEdges != null && !useStatusEdges.equals(nextUseStatusEdges)) {
+                result.append(dumpEdgesData(usePrefix, useStatusEdges, pseudocodeVariablesData));
+            }
+            return result.toString();
         });
     }
 
     private static int countDataColumnWidth(
             @NotNull String prefix,
             @NotNull List<Instruction> instructions,
-            @NotNull Map<Instruction, Edges<InitControlFlowInfo>> data
+            @NotNull Map<Instruction, Edges<ReadOnlyInitControlFlowInfo>> data,
+            @NotNull PseudocodeVariablesData variablesData
     ) {
         int maxWidth = 0;
         for (Instruction instruction : instructions) {
-            Edges<InitControlFlowInfo> edges = data.get(instruction);
+            Edges<ReadOnlyInitControlFlowInfo> edges = data.get(instruction);
             if (edges == null) continue;
-            int length = dumpEdgesData(prefix, edges).length();
+            int length = dumpEdgesData(prefix, edges, variablesData).length();
             if (maxWidth < length) {
                 maxWidth = length;
             }
         }
+
         return maxWidth;
     }
 
     @NotNull
-    private static <S, I extends ControlFlowInfo<S>> String dumpEdgesData(String prefix, @NotNull Edges<I> edges) {
+    private static <S, I extends ReadOnlyControlFlowInfo<S>> String dumpEdgesData(
+            String prefix,
+            @NotNull Edges<I> edges,
+            @NotNull PseudocodeVariablesData variablesData
+    ) {
         return prefix +
-               " in: " + renderVariableMap(edges.getIncoming()) +
-               " out: " + renderVariableMap(edges.getOutgoing());
+               " in: " + renderVariableMap(edges.getIncoming().asMap(), variablesData) +
+               " out: " + renderVariableMap(edges.getOutgoing().asMap(), variablesData);
     }
 
-    private static <S> String renderVariableMap(Map<VariableDescriptor, S> map) {
+    private static <S> String renderVariableMap(
+            javaslang.collection.Map<VariableDescriptor, S> map,
+            PseudocodeVariablesData variablesData
+    ) {
         List<String> result = Lists.newArrayList();
-        for (Map.Entry<VariableDescriptor, S> entry : map.entrySet()) {
-            VariableDescriptor variable = entry.getKey();
-            S state = entry.getValue();
+        for (Tuple2<VariableDescriptor, S> entry : map) {
+            VariableDescriptor variable = entry._1;
+            S state = entry._2;
+
+            if (variablesData.isVariableWithTrivialInitializer(variable)) continue;
+
             result.add(variable.getName() + "=" + state);
         }
         Collections.sort(result);

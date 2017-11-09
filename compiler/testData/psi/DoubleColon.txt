@@ -1,4 +1,4 @@
-JetFile: DoubleColon.kt
+KtFile: DoubleColon.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

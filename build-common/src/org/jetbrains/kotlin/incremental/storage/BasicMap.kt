@@ -46,7 +46,7 @@ abstract class BasicMap<K : Comparable<K>, V>(
     fun dump(): String {
         return with(StringBuilder()) {
             with(Printer(this)) {
-                println(this@BasicMap.javaClass.simpleName)
+                println(this@BasicMap::class.java.simpleName)
                 pushIndent()
 
                 for (key in storage.keys.sorted()) {

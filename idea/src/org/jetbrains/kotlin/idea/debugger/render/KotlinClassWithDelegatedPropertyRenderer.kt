@@ -16,32 +16,72 @@
 
 package org.jetbrains.kotlin.idea.debugger.render
 
+import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContext
+import com.intellij.debugger.settings.NodeRendererSettings
 import com.intellij.debugger.ui.impl.watch.MessageDescriptor
 import com.intellij.debugger.ui.impl.watch.NodeManagerImpl
 import com.intellij.debugger.ui.tree.DebuggerTreeNode
+import com.intellij.debugger.ui.tree.ValueDescriptor
 import com.intellij.debugger.ui.tree.render.ChildrenBuilder
 import com.intellij.debugger.ui.tree.render.ClassRenderer
+import com.intellij.debugger.ui.tree.render.DescriptorLabelListener
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.xdebugger.settings.XDebuggerSettingsManager
-import com.sun.jdi.ObjectReference
-import com.sun.jdi.ReferenceType
+import com.sun.jdi.*
 import com.sun.jdi.Type
-import com.sun.jdi.Value
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.util.*
 import com.sun.jdi.Type as JdiType
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 
-class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
+private val LOG = Logger.getInstance(KotlinClassWithDelegatedPropertyRenderer::class.java)
+private fun notPreparedClassMessage(referenceType: ReferenceType) =
+    "$referenceType ${referenceType.isPrepared} ${referenceType.sourceName()}"
 
+class KotlinClassWithDelegatedPropertyRenderer(private val rendererSettings: NodeRendererSettings) : ClassRenderer() {
     override fun isApplicable(jdiType: Type?): Boolean {
         if (!super.isApplicable(jdiType)) return false
 
         if (jdiType !is ReferenceType) return false
 
-        return jdiType.allFields().any { it.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) }
+        if (!jdiType.isPrepared) {
+            LOG.info(notPreparedClassMessage(jdiType))
+            return false
+        }
+
+        try {
+            return jdiType.allFields().any { it.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) }
+        }
+        catch (notPrepared: ClassNotPreparedException) {
+            LOG.error(notPreparedClassMessage(jdiType), notPrepared)
+        }
+
+        return false
+    }
+
+    override fun calcLabel(descriptor: ValueDescriptor,
+                           evaluationContext: EvaluationContext,
+                           listener: DescriptorLabelListener): String {
+        val res = calcToStringLabel(descriptor, evaluationContext, listener)
+        if (res != null) {
+            return res
+        }
+
+        return super.calcLabel(descriptor, evaluationContext, listener)
+    }
+
+    private fun calcToStringLabel(descriptor: ValueDescriptor, evaluationContext: EvaluationContext,
+                                  listener: DescriptorLabelListener): String? {
+        val toStringRenderer = rendererSettings.toStringRenderer
+        if (toStringRenderer.isEnabled && DebuggerManagerEx.getInstanceEx(evaluationContext.project).context.isEvaluationPossible) {
+            if (toStringRenderer.isApplicable(descriptor.type)) {
+                return toStringRenderer.calcLabel(descriptor, evaluationContext, listener)
+            }
+        }
+        return null
     }
 
     override fun buildChildren(value: Value?, builder: ChildrenBuilder, context: EvaluationContext) {

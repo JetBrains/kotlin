@@ -6,6 +6,6 @@ val File.prop: String
     get() = absolutePath
 
 fun foo(file: File) {
-    file.prop<caret>
+    val v = file.prop<caret>
 }
 

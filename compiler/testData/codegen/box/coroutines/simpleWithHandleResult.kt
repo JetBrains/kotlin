@@ -1,20 +1,33 @@
-class Controller {
+// WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
+suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+    x.resume("OK")
+    COROUTINE_SUSPENDED
+}
+
+fun builder(c: suspend () -> Int): Int {
     var res = 0
-    suspend fun suspendHere(x: Continuation<String>) {
-        x.resume("OK")
-    }
 
-    operator fun handleResult(x: Int, y: Continuation<Nothing>) {
-        res = x
-    }
+    c.createCoroutine(object : Continuation<Int> {
+        override val context = EmptyCoroutineContext
+
+        override fun resume(data: Int) {
+            res = data
+        }
+
+        override fun resumeWithException(exception: Throwable) {
+            throw exception
+        }
+    }).resume(Unit)
+
+    return res
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): Int {
-    val controller = Controller()
-    c(controller).resume(Unit)
 
-    return controller.res
-}
 
 fun box(): String {
     var result = ""

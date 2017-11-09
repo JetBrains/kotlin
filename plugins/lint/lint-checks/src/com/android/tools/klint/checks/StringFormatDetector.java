@@ -17,22 +17,23 @@
 package com.android.tools.klint.checks;
 
 import static com.android.SdkConstants.ATTR_NAME;
+import static com.android.SdkConstants.CLASS_CONTEXT;
+import static com.android.SdkConstants.CLASS_FRAGMENT;
+import static com.android.SdkConstants.CLASS_RESOURCES;
+import static com.android.SdkConstants.CLASS_V4_FRAGMENT;
 import static com.android.SdkConstants.DOT_JAVA;
 import static com.android.SdkConstants.FORMAT_METHOD;
 import static com.android.SdkConstants.GET_STRING_METHOD;
-import static com.android.SdkConstants.R_CLASS;
-import static com.android.SdkConstants.R_PREFIX;
 import static com.android.SdkConstants.TAG_STRING;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_BOOLEAN;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_BYTE;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_CHAR;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_DOUBLE;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_FLOAT;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_INT;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_LONG;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_NULL;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_BOOLEAN_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_BYTE_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_CHARACTER_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_DOUBLE_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_FLOAT_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_INTEGER_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_LONG_WRAPPER;
 import static com.android.tools.klint.client.api.JavaParser.TYPE_OBJECT;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_SHORT;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_SHORT_WRAPPER;
 import static com.android.tools.klint.client.api.JavaParser.TYPE_STRING;
 
 import com.android.annotations.NonNull;
@@ -41,11 +42,14 @@ import com.android.annotations.VisibleForTesting;
 import com.android.ide.common.rendering.api.ResourceValue;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceItem;
+import com.android.ide.common.resources.ResourceUrl;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.client.api.LintClient;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
 import com.android.tools.klint.detector.api.JavaContext;
@@ -53,20 +57,30 @@ import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Location.Handle;
 import com.android.tools.klint.detector.api.Position;
+import com.android.tools.klint.detector.api.ResourceEvaluator;
 import com.android.tools.klint.detector.api.ResourceXmlDetector;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
 import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.Pair;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameterList;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiVariable;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.AbstractUastVisitor;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.ULiteralExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.UReferenceExpression;
+import org.jetbrains.uast.util.UastExpressionUtils;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -79,7 +93,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -90,10 +103,9 @@ import java.util.regex.Pattern;
  * Check which looks for problems with formatting strings such as inconsistencies between
  * translations or between string declaration and string usage in Java.
  * <p>
- * TODO: Verify booleans!
  * TODO: Handle Resources.getQuantityString as well
  */
-public class StringFormatDetector extends ResourceXmlDetector implements UastScanner {
+public class StringFormatDetector extends ResourceXmlDetector implements Detector.UastScanner {
     private static final Implementation IMPLEMENTATION_XML = new Implementation(
             StringFormatDetector.class,
             Scope.ALL_RESOURCES_SCOPE);
@@ -101,8 +113,8 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
     @SuppressWarnings("unchecked")
     private static final Implementation IMPLEMENTATION_XML_AND_JAVA = new Implementation(
             StringFormatDetector.class,
-            EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.SOURCE_FILE),
-            Scope.SOURCE_FILE_SCOPE);
+            EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.JAVA_FILE),
+            Scope.JAVA_FILE_SCOPE);
 
 
     /** Whether formatting strings are invalid */
@@ -202,8 +214,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
     private Map<String, List<Pair<Handle, String>>> mFormatStrings;
 
     /**
-     * Map of strings that contain percents that aren't formatting strings; these
-     * should not be passed to String.format.
+     * Map of strings that do not contain any formatting.
      */
     private final Map<String, Handle> mNotFormatStrings = new HashMap<String, Handle>();
 
@@ -243,7 +254,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
             if (childNodes.getLength() == 1) {
                 Node child = childNodes.item(0);
                 if (child.getNodeType() == Node.TEXT_NODE) {
-                    checkTextNode(context, element, strip(child.getNodeValue()));
+                    checkTextNode(context, element, stripQuotes(child.getNodeValue()));
                 }
             } else {
                 // Concatenate children and build up a plain string.
@@ -261,7 +272,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
 
     private static void addText(StringBuilder sb, Node node) {
         if (node.getNodeType() == Node.TEXT_NODE) {
-            sb.append(strip(node.getNodeValue().trim()));
+            sb.append(stripQuotes(node.getNodeValue().trim()));
         } else {
             NodeList childNodes = node.getChildNodes();
             for (int i = 0, n = childNodes.getLength(); i < n; i++) {
@@ -270,21 +281,40 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
         }
     }
 
-    private static String strip(String s) {
-        if (s.length() < 2) {
-            return s;
-        }
-        char first = s.charAt(0);
-        char last = s.charAt(s.length() - 1);
-        if (first == last && (first == '\'' || first == '"')) {
-            return s.substring(1, s.length() - 1);
+    /**
+     * Removes all the unescaped quotes. See
+     * <a href="http://developer.android.com/guide/topics/resources/string-resource.html#FormattingAndStyling">Escaping apostrophes and quotes</a>
+     */
+    @VisibleForTesting
+    static String stripQuotes(String s) {
+        StringBuilder sb = new StringBuilder();
+        boolean isEscaped = false;
+        boolean isQuotedBlock = false;
+        for (int i = 0, len = s.length(); i < len; i++) {
+            char current = s.charAt(i);
+            if (isEscaped) {
+                sb.append(current);
+                isEscaped = false;
+            } else {
+                isEscaped = current == '\\'; // Next char will be escaped so we will just copy it
+                if (current == '"') {
+                    isQuotedBlock = !isQuotedBlock;
+                } else if (current == '\'') {
+                    if (isQuotedBlock) {
+                        // We only add single quotes when they are within a quoted block
+                        sb.append(current);
+                    }
+                } else {
+                    sb.append(current);
+                }
+            }
         }
 
-        return s;
+        return sb.toString();
     }
 
     private void checkTextNode(XmlContext context, Element element, String text) {
-        String name = null;
+        String name = element.getAttribute(ATTR_NAME);
         boolean found = false;
         boolean foundPlural = false;
 
@@ -296,10 +326,6 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
                 j++;
             }
             if (c == '%') {
-                if (name == null) {
-                    name = element.getAttribute(ATTR_NAME);
-                }
-
                 // Also make sure this String isn't an unformatted String
                 String formatted = element.getAttribute("formatted"); //$NON-NLS-1$
                 if (!formatted.isEmpty() && !Boolean.parseBoolean(formatted)) {
@@ -358,26 +384,42 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
             }
         }
 
-        if (found && name != null) {
-            if (!context.getProject().getReportIssues()) {
-                // If this is a library project not being analyzed, ignore it
-                return;
-            }
+        if (!context.getProject().getReportIssues()) {
+            // If this is a library project not being analyzed, ignore it
+            return;
+        }
 
-            // Record it for analysis when seen in Java code
-            if (mFormatStrings == null) {
-                mFormatStrings = new HashMap<String, List<Pair<Handle,String>>>();
-            }
-
-            List<Pair<Handle, String>> list = mFormatStrings.get(name);
-            if (list == null) {
-                list = new ArrayList<Pair<Handle, String>>();
-                mFormatStrings.put(name, list);
-            }
+        if (name != null) {
             Handle handle = context.createLocationHandle(element);
             handle.setClientData(element);
-            list.add(Pair.of(handle, text));
+            if (found) {
+                // Record it for analysis when seen in Java code
+                if (mFormatStrings == null) {
+                    mFormatStrings = new HashMap<String, List<Pair<Handle, String>>>();
+                }
+
+                List<Pair<Handle, String>> list = mFormatStrings.get(name);
+                if (list == null) {
+                    list = new ArrayList<Pair<Handle, String>>();
+                    mFormatStrings.put(name, list);
+                }
+                list.add(Pair.of(handle, text));
+            } else {
+                if (!isReference(text)) {
+                    mNotFormatStrings.put(name, handle);
+                }
+            }
         }
+    }
+
+    private static boolean isReference(@NonNull String text) {
+        for (int i = 0, n = text.length(); i < n; i++) {
+            char c = text.charAt(i);
+            if (!Character.isWhitespace(c)) {
+                return c == '@' || c == '?';
+            }
+        }
+        return false;
     }
 
     /**
@@ -466,6 +508,11 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
 
                 // Check argument counts
                 if (checkCount) {
+                    Handle notFormatted = mNotFormatStrings.get(name);
+                    if (notFormatted != null) {
+                        list = ImmutableList.<Pair<Handle, String>>builder()
+                                .add(Pair.of(notFormatted, name)).addAll(list).build();
+                    }
                     checkArity(context, name, list);
                 }
 
@@ -788,7 +835,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
             // Argument Index
             "(\\d+\\$)?" +                                                      //$NON-NLS-1$
             // Flags
-            "([-+#, 0(\\<]*)?" +                                                //$NON-NLS-1$
+            "([-+#, 0(<]*)?" +                                                  //$NON-NLS-1$
             // Width
             "(\\d+)?" +                                                         //$NON-NLS-1$
             // Precision
@@ -862,7 +909,6 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
      * {@code seenArguments} parameter is not null, put the indices of any
      * observed arguments into it.
      */
-    @VisibleForTesting
     static int getFormatArgumentCount(@NonNull String s, @Nullable Set<Integer> seenArguments) {
         Matcher matcher = FORMAT.matcher(s);
         int index = 0;
@@ -978,130 +1024,209 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
         return false;
     }
 
-    // ---- Implements UastScanner ----
-
-
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Arrays.asList(FORMAT_METHOD, GET_STRING_METHOD);
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        if (mFormatStrings == null && !context.getLintContext().getClient().supportsProjectResources()) {
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression node, @NonNull UMethod method) {
+        if (mFormatStrings == null && !context.getClient().supportsProjectResources()) {
             return;
         }
 
-        UExpression receiver = UastUtils.getReceiver(node);
+        JavaEvaluator evaluator = context.getEvaluator();
+        String methodName = method.getName();
+        if (methodName.equals(FORMAT_METHOD)) {
+            if (JavaEvaluator.isMemberInClass(method, TYPE_STRING)) {
+                // Check formatting parameters for
+                //   java.lang.String#format(String format, Object... formatArgs)
+                //   java.lang.String#format(Locale locale, String format, Object... formatArgs)
+                checkStringFormatCall(context, method, node,
+                        method.getParameterList().getParametersCount() == 3);
 
-        String methodName = node.getFunctionName();
-        if (FORMAT_METHOD.equals(methodName)) {
-            // String.format(getResources().getString(R.string.foo), arg1, arg2, ...)
-            // Check that the arguments in R.string.foo match arg1, arg2, ...
-            if (receiver instanceof USimpleReferenceExpression) {
-                USimpleReferenceExpression ref = (USimpleReferenceExpression) receiver;
-                if ("String".equals(ref.getIdentifier())) { //$NON-NLS-1$
-                    // Found a String.format call
-                    // Look inside to see if we can find an R string
-                    // Find surrounding method
-                    checkFormatCall(context, node);
-                }
+                // TODO: Consider also enforcing
+                // java.util.Formatter#format(String string, Object... formatArgs)
             }
         } else {
-            // getResources().getString(R.string.foo, arg1, arg2, ...)
-            // Check that the arguments in R.string.foo match arg1, arg2, ...
-            if (node.getValueArgumentCount() > 1 && receiver != null ) {
-                checkFormatCall(context, node);
-            }
-        }
-    }
+            // Look up any of these string formatting methods:
+            // android.content.res.Resources#getString(@StringRes int resId, Object... formatArgs)
+            // android.content.Context#getString(@StringRes int resId, Object... formatArgs)
+            // android.app.Fragment#getString(@StringRes int resId, Object... formatArgs)
+            // android.support.v4.app.Fragment#getString(@StringRes int resId, Object... formatArgs)
 
-    private void checkFormatCall(UastAndroidContext context, UCallExpression node) {
-        UFunction current = UastUtils.getContainingFunction(node);
-        if (current != null) {
-            checkStringFormatCall(context, current, node);
+            // Many of these also define a plain getString method:
+            // android.content.res.Resources#getString(@StringRes int resId)
+            // However, while it's possible that these contain formatting strings) it's
+            // also possible that they're looking up strings that are not intended to be used
+            // for formatting so while we may want to warn about this it's not necessarily
+            // an error.
+            if (method.getParameterList().getParametersCount() < 2) {
+                return;
+            }
+
+            if (evaluator.isMemberInSubClassOf(method, CLASS_RESOURCES, false) ||
+                    evaluator.isMemberInSubClassOf(method, CLASS_CONTEXT, false) ||
+                    evaluator.isMemberInSubClassOf(method, CLASS_FRAGMENT, false) ||
+                    evaluator.isMemberInSubClassOf(method, CLASS_V4_FRAGMENT, false)) {
+                checkStringFormatCall(context, method, node, false);
+            }
+
+            // TODO: Consider also looking up
+            // android.content.res.Resources#getQuantityString(@PluralsRes int id, int quantity,
+            //              Object... formatArgs)
+            // though this will require being smarter about cross referencing formatting
+            // strings since we'll need to go via the quantity string definitions
         }
     }
 
     /**
-     * Check the given String.format call (with the given arguments) to see if
-     * the string format is being used correctly
-     *
+     * Checks a String.format call that is using a string that doesn't contain format placeholders.
      * @param context the context to report errors to
-     * @param method the method containing the {@link String#format} call
      * @param call the AST node for the {@link String#format}
+     * @param name the string name
+     * @param handle the string location
+     */
+    private static void checkNotFormattedHandle(
+            JavaContext context,
+            UCallExpression call,
+            String name,
+            Handle handle) {
+        Object clientData = handle.getClientData();
+        if (clientData instanceof Node) {
+            if (context.getDriver().isSuppressed(null, INVALID, (Node) clientData)) {
+                return;
+            }
+        }
+        Location location = context.getUastLocation(call);
+        Location secondary = handle.resolve();
+        secondary.setMessage("This definition does not require arguments");
+        location.setSecondary(secondary);
+        String message = String.format(
+                "Format string '`%1$s`' is not a valid format string so it should not be " +
+                        "passed to `String.format`",
+                name);
+        context.report(INVALID, call, location, message);
+    }
+
+    /**
+     * Check the given String.format call (with the given arguments) to see if the string format is
+     * being used correctly
+     *  @param context           the context to report errors to
+     * @param calledMethod      the method being called
+     * @param call              the AST node for the {@link String#format}
+     * @param specifiesLocale   whether the first parameter is a locale string, shifting the
      */
     private void checkStringFormatCall(
-            UastAndroidContext context,
-            UFunction method,
-            UCallExpression call) {
+            JavaContext context,
+            PsiMethod calledMethod,
+            UCallExpression call,
+            boolean specifiesLocale) {
 
+        int argIndex = specifiesLocale ? 1 : 0;
         List<UExpression> args = call.getValueArguments();
-        if (args.isEmpty()) {
+
+        if (args.size() <= argIndex) {
             return;
         }
 
-        JavaContext lintContext = context.getLintContext();
-        UastStringTracker tracker = new UastStringTracker(lintContext, method, call, 0);
-        method.accept(tracker);
-        String name = tracker.getFormatStringName();
-        if (name == null) {
+        UExpression argument = args.get(argIndex);
+        ResourceUrl resource = ResourceEvaluator.getResource(context, argument);
+        if (resource == null || resource.framework || resource.type != ResourceType.STRING) {
             return;
         }
 
+        String name = resource.name;
         if (mIgnoreStrings != null && mIgnoreStrings.contains(name)) {
             return;
         }
 
-        if (mNotFormatStrings.containsKey(name)) {
-            Handle handle = mNotFormatStrings.get(name);
-            Object clientData = handle.getClientData();
-            if (clientData instanceof Node) {
-                if (lintContext.getDriver().isSuppressed(null, INVALID, (Node) clientData)) {
-                    return;
+        boolean passingVarArgsArray = false;
+        int callCount = args.size() - 1 - argIndex;
+
+        if (callCount == 1) {
+            // If instead of a varargs call like
+            //    getString(R.string.foo, arg1, arg2, arg3)
+            // the code is calling the varargs method with a packed Object array, as in
+            //    getString(R.string.foo, new Object[] { arg1, arg2, arg3 })
+            // we'll need to handle that such that we don't think this is a single
+            // argument
+
+            UExpression lastArg = args.get(args.size() - 1);
+            PsiParameterList parameterList = calledMethod.getParameterList();
+            int parameterCount = parameterList.getParametersCount();
+            if (parameterCount > 0 && parameterList.getParameters()[parameterCount - 1].isVarArgs()) {
+                boolean knownArity = false;
+
+                boolean argWasReference = false;
+                if (lastArg instanceof UReferenceExpression) {
+                    PsiElement resolved = ((UReferenceExpression) lastArg).resolve();
+                    if (resolved instanceof PsiVariable) {
+                        UExpression initializer = context.getUastContext().getInitializerBody (
+                                (PsiVariable) resolved);
+                        if (initializer != null &&
+                            (UastExpressionUtils.isNewArray(initializer) ||
+                             UastExpressionUtils.isArrayInitializer(initializer))) {
+                            argWasReference = true;
+                            // Now handled by check below
+                            lastArg = initializer;
+                        }
+                    }
+                }
+
+                if (UastExpressionUtils.isNewArray(lastArg) ||
+                    UastExpressionUtils.isArrayInitializer(lastArg)) {
+                    UCallExpression arrayInitializer = (UCallExpression) lastArg;
+
+                    if (UastExpressionUtils.isNewArrayWithInitializer(lastArg) ||
+                        UastExpressionUtils.isArrayInitializer(lastArg)) {
+                        callCount = arrayInitializer.getValueArgumentCount();
+                        knownArity = true;
+                    } else if (UastExpressionUtils.isNewArrayWithDimensions(lastArg)) {
+                        List<UExpression> arrayDimensions = arrayInitializer.getValueArguments();
+                        if (arrayDimensions.size() == 1) {
+                            UExpression first = arrayDimensions.get(0);
+                            if (first instanceof ULiteralExpression) {
+                                Object o = ((ULiteralExpression) first).getValue();
+                                if (o instanceof Integer) {
+                                    callCount = (Integer)o;
+                                    knownArity = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!knownArity) {
+                        if (!argWasReference) {
+                            return;
+                        }
+                    } else {
+                        passingVarArgsArray = true;
+                    }
                 }
             }
-            Location location = handle.resolve();
-            String message = String.format(
-                    "Format string '`%1$s`' is not a valid format string so it should not be " +
-                    "passed to `String.format`",
-                    name);
-            context.report(INVALID, call, location, message);
-            return;
         }
 
-        Iterator<UExpression> argIterator = args.iterator();
-        UExpression first = argIterator.next();
-        UExpression second = argIterator.hasNext() ? argIterator.next() : null;
-
-        boolean specifiesLocale;
-        UType parameterType = first.getExpressionType();
-        if (parameterType != null) {
-            specifiesLocale = isLocaleReference(parameterType.getName());
-        } else if (!FORMAT_METHOD.equals(call.getFunctionName())) {
-            specifiesLocale = false;
-        } else {
-            // No type information with this AST; use string patterns instead to make
-            // an educated guess
-            String firstName = first.renderString();
-            specifiesLocale = firstName.startsWith("Locale.")                     //$NON-NLS-1$
-                    || firstName.contains("locale")                               //$NON-NLS-1$
-                    || firstName.equals("null")                                   //$NON-NLS-1$
-                    || (second != null && second.renderString().contains("getString") //$NON-NLS-1$
-                        && !firstName.contains("getString")                       //$NON-NLS-1$
-                        && !firstName.contains(R_PREFIX)
-                        && !(UastLiteralUtils.isStringLiteral(first)));
+        if (callCount > 0 && mNotFormatStrings.containsKey(name)) {
+            checkNotFormattedHandle(context, call, name, mNotFormatStrings.get(name));
+            return;
         }
 
         List<Pair<Handle, String>> list = mFormatStrings != null ? mFormatStrings.get(name) : null;
         if (list == null) {
-            LintClient client = lintContext.getClient();
+            LintClient client = context.getClient();
             if (client.supportsProjectResources() &&
-                    !lintContext.getScope().contains(Scope.RESOURCE_FILE)) {
+                    !context.getScope().contains(Scope.RESOURCE_FILE)) {
                 AbstractResourceRepository resources = client
-                        .getProjectResources(lintContext.getMainProject(), true);
-                List<ResourceItem> items = resources
-                        .getResourceItem(ResourceType.STRING, name);
+                        .getProjectResources(context.getMainProject(), true);
+                List<ResourceItem> items;
+                if (resources != null) {
+                    items = resources.getResourceItem(ResourceType.STRING, name);
+                } else {
+                    // Must be a non-Android module
+                    items = null;
+                }
                 if (items != null) {
                     for (final ResourceItem item : items) {
                         ResourceValue v = item.getResourceValue(false);
@@ -1136,6 +1261,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
                                     // If the user marked the string with
                                 }
 
+                                Handle handle = client.createResourceItemHandle(item);
                                 if (isFormattingString) {
                                     if (list == null) {
                                         list = Lists.newArrayList();
@@ -1144,8 +1270,9 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
                                         }
                                         mFormatStrings.put(name, list);
                                     }
-                                    Handle handle = client.createResourceItemHandle(item);
                                     list.add(Pair.of(handle, value));
+                                } else if (callCount > 0) {
+                                    checkNotFormattedHandle(context, call, name, handle);
                                 }
                             }
                         }
@@ -1165,32 +1292,30 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
                 }
                 int count = getFormatArgumentCount(s, null);
                 Handle handle = pair.getFirst();
-                if (count != args.size() - 1 - (specifiesLocale ? 1 : 0)) {
-                    if (isSharedPreferenceGetString(context, call)) {
-                        continue;
-                    }
-
-                    Location location = context.getLocation(call);
+                if (count != callCount) {
+                    Location location = context.getUastLocation(call);
                     Location secondary = handle.resolve();
-
-                    if (location != null && secondary != null) {
-                        secondary.setMessage(String.format("This definition requires %1$d arguments",
-                                                           count));
-                        location.setSecondary(secondary);
-                        String message = String.format(
-                          "Wrong argument count, format string `%1$s` requires `%2$d` but format " +
-                          "call supplies `%3$d`",
-                          name, count, args.size() - 1 - (specifiesLocale ? 1 : 0));
-                        context.report(ARG_TYPES, method, location, message);
-                        if (reported == null) {
-                            reported = Sets.newHashSet();
-                        }
-                        reported.add(s);
+                    secondary.setMessage(String.format("This definition requires %1$d arguments",
+                            count));
+                    location.setSecondary(secondary);
+                    String message = String.format(
+                            "Wrong argument count, format string `%1$s` requires `%2$d` but format " +
+                            "call supplies `%3$d`",
+                            name, count, callCount);
+                    context.report(ARG_TYPES, call, location, message);
+                    if (reported == null) {
+                        reported = Sets.newHashSet();
                     }
+                    reported.add(s);
                 } else {
+                    if (passingVarArgsArray) {
+                        // Can't currently check these: make sure we don't incorrectly
+                        // flag parameters on the Object[] instead of the wrapped parameters
+                        return;
+                    }
                     for (int i = 1; i <= count; i++) {
-                        int argumentIndex = i + (specifiesLocale ? 1 : 0);
-                        Class<?> type = tracker.getArgumentType(argumentIndex);
+                        int argumentIndex = i + argIndex;
+                        PsiType type = args.get(argumentIndex).getExpressionType();
                         if (type != null) {
                             boolean valid = true;
                             String formatType = getFormatArgumentType(s, i);
@@ -1211,7 +1336,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
                                 // unusual and probably not intended.
                                 case 'b':
                                 case 'B':
-                                    valid = type == Boolean.TYPE;
+                                    valid = isBooleanType(type);
                                     break;
 
                                 // Numeric: integer and floats in various formats
@@ -1226,17 +1351,12 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
                                 case 'G':
                                 case 'a':
                                 case 'A':
-                                    valid = type == Integer.TYPE
-                                            || type == Float.TYPE
-                                            || type == Double.TYPE
-                                            || type == Long.TYPE
-                                            || type == Byte.TYPE
-                                            || type == Short.TYPE;
+                                    valid = isNumericType(type, true);
                                     break;
                                 case 'c':
                                 case 'C':
                                     // Unicode character
-                                    valid = type == Character.TYPE;
+                                    valid = isCharacterType(type);
                                     break;
                                 case 'h':
                                 case 'H': // Hex print of hash code of objects
@@ -1246,35 +1366,66 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
                                     // numbers since you may have meant more
                                     // specific formatting. Use special issue
                                     // explanation for this?
-                                    valid = type != Boolean.TYPE &&
-                                        !Number.class.isAssignableFrom(type);
+                                    valid = !isBooleanType(type) &&
+                                            !isNumericType(type, false);
                                     break;
                             }
 
                             if (!valid) {
-                                if (isSharedPreferenceGetString(context, call)) {
-                                    continue;
-                                }
-
-                                UExpression argument = tracker.getArgument(argumentIndex);
-                                Location location = context.getLocation(argument);
+                                Location location = context.getUastLocation(args.get(argumentIndex));
                                 Location secondary = handle.resolve();
-                                if (location != null && secondary != null) {
-                                    secondary.setMessage("Conflicting argument declaration here");
-                                    location.setSecondary(secondary);
-
-                                    String message = String.format(
-                                      "Wrong argument type for formatting argument '#%1$d' " +
-                                      "in `%2$s`: conversion is '`%3$s`', received `%4$s` " +
-                                      "(argument #%5$d in method call)",
-                                      i, name, formatType, type.getSimpleName(),
-                                      argumentIndex + 1);
-                                    context.report(ARG_TYPES, method, location, message);
-                                    if (reported == null) {
-                                        reported = Sets.newHashSet();
+                                secondary.setMessage("Conflicting argument declaration here");
+                                location.setSecondary(secondary);
+                                String suggestion = null;
+                                if (isBooleanType(type)) {
+                                    suggestion = "`b`";
+                                } else if (isCharacterType(type)) {
+                                    suggestion = "'c'";
+                                } else if (PsiType.INT.equals(type)
+                                            || PsiType.LONG.equals(type)
+                                            || PsiType.BYTE.equals(type)
+                                            || PsiType.SHORT.equals(type)) {
+                                    suggestion = "`d`, 'o' or `x`";
+                                } else if (PsiType.FLOAT.equals(type)
+                                        || PsiType.DOUBLE.equals(type)) {
+                                    suggestion = "`e`, 'f', 'g' or `a`";
+                                } else if (type instanceof PsiClassType) {
+                                    String fqn = type.getCanonicalText();
+                                    if (TYPE_INTEGER_WRAPPER.equals(fqn)
+                                            || TYPE_LONG_WRAPPER.equals(fqn)
+                                            || TYPE_BYTE_WRAPPER.equals(fqn)
+                                            || TYPE_SHORT_WRAPPER.equals(fqn)) {
+                                        suggestion = "`d`, 'o' or `x`";
+                                    } else if (TYPE_FLOAT_WRAPPER.equals(fqn)
+                                            || TYPE_DOUBLE_WRAPPER.equals(fqn)) {
+                                        suggestion = "`d`, 'o' or `x`";
+                                    } else if (TYPE_OBJECT.equals(fqn)) {
+                                        suggestion = "'s' or 'h'";
                                     }
-                                    reported.add(s);
                                 }
+
+                                if (suggestion != null) {
+                                    suggestion = " (Did you mean formatting character "
+                                            + suggestion + "?)";
+                                } else {
+                                    suggestion = "";
+                                }
+
+                                String canonicalText = type.getCanonicalText();
+                                canonicalText = canonicalText.substring(
+                                        canonicalText.lastIndexOf('.') + 1);
+
+                                String message = String.format(
+                                        "Wrong argument type for formatting argument '#%1$d' " +
+                                        "in `%2$s`: conversion is '`%3$s`', received `%4$s` " +
+                                        "(argument #%5$d in method call)%6$s",
+                                        i, name, formatType, canonicalText,
+                                        argumentIndex + 1, suggestion);
+                                context.report(ARG_TYPES, call, location, message);
+                                if (reported == null) {
+                                    reported = Sets.newHashSet();
+                                }
+                                reported.add(s);
                             }
                         }
                     }
@@ -1283,358 +1434,61 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
         }
     }
 
-    private static boolean isSharedPreferenceGetString(@NonNull UastAndroidContext context,
-            @NonNull UCallExpression call) {
-        if (!GET_STRING_METHOD.equals(call.getFunctionName())) {
-            return false;
+    private static boolean isCharacterType(PsiType type) {
+        //return PsiType.CHAR.isAssignableFrom(type);
+        if (type == PsiType.CHAR) {
+            return true;
+        }
+        if (type instanceof PsiClassType) {
+            String fqn = type.getCanonicalText();
+            return TYPE_CHARACTER_WRAPPER.equals(fqn);
         }
 
-        UFunction resolvedMethod = call.resolve(context);
-        if (resolvedMethod != null) {
-            UClass containingClass = UastUtils.getContainingClassOrEmpty(resolvedMethod);
-            return containingClass.isSubclassOf(SharedPrefsDetector.ANDROID_CONTENT_SHARED_PREFERENCES);
-        }
-
-        return false; // not certain
+        return false;
     }
 
-    private static boolean isLocaleReference(@Nullable UType reference) {
-        return reference != null && isLocaleReference(reference.getName());
+    private static boolean isBooleanType(PsiType type) {
+        //return PsiType.BOOLEAN.isAssignableFrom(type);
+        if (type == PsiType.BOOLEAN) {
+            return true;
+        }
+        if (type instanceof PsiClassType) {
+            String fqn = type.getCanonicalText();
+            return TYPE_BOOLEAN_WRAPPER.equals(fqn);
+        }
+
+        return false;
     }
 
-    private static boolean isLocaleReference(@Nullable String typeName) {
-        return typeName != null && (typeName.equals("Locale")            //$NON-NLS-1$
-                || typeName.equals("java.util.Locale"));                 //$NON-NLS-1$
-    }
-
-    /** Returns the resource name corresponding to the first argument in the given call */
-    @Nullable
-    public static String getResourceForFirstArg(
-      @NonNull UElement method,
-      @NonNull UElement call) {
-        assert call instanceof UCallExpression;
-        UastStringTracker tracker = new UastStringTracker(null, method, call, 0);
-        method.accept(tracker);
-
-        return tracker.getFormatStringName();
-    }
-
-    /** Returns the resource name corresponding to the given argument in the given call */
-    @Nullable
-    public static String getResourceArg(
-      @NonNull UElement method,
-      @NonNull UElement call,
-      int argIndex) {
-        assert call instanceof UCallExpression;
-        UastStringTracker tracker = new UastStringTracker(null, method, call, argIndex);
-        method.accept(tracker);
-
-        return tracker.getFormatStringName();
-    }
-
-    /**
-     * Given a variable reference, finds the original R.string value corresponding to it.
-     * For example:
-     * <pre>
-     * {@code
-     *  String target = "World";
-     *  String hello = getResources().getString(R.string.hello);
-     *  String output = String.format(hello, target);
-     * }
-     * </pre>
-     *
-     * Given the {@code String.format} call, we want to find out what R.string resource
-     * corresponds to the first argument, in this case {@code R.string.hello}.
-     * To do this, we look for R.string references, and track those through assignments
-     * until we reach the target node.
-     * <p>
-     * In addition, it also does some primitive type tracking such that it (in some cases)
-     * can answer questions about the types of variables. This allows it to check whether
-     * certain argument types are valid. Note however that it does not do full-blown
-     * type analysis by checking method call signatures and so on.
-     */
-    private static class UastStringTracker extends AbstractUastVisitor {
-        /** Method we're searching within */
-        private final UElement mTop;
-        /** The argument index in the method we're targeting */
-        private final int mArgIndex;
-        /** Map from variable name to corresponding string resource name */
-        private final Map<String, String> mMap = new HashMap<String, String>();
-        /** Map from variable name to corresponding type */
-        private final Map<String, Class<?>> mTypes = new HashMap<String, Class<?>>();
-        /** The AST node for the String.format we're interested in */
-        private final UElement mTargetNode;
-        private boolean mDone;
-        @Nullable
-        private JavaContext mContext;
-
-        /**
-         * Result: the name of the string resource being passed to the
-         * String.format, if any
-         */
-        private String mName;
-
-        public UastStringTracker(@Nullable JavaContext context, UElement top, UElement targetNode, int argIndex) {
-            mContext = context;
-            mTop = top;
-            mArgIndex = argIndex;
-            mTargetNode = targetNode;
+    //PsiType:java.lang.Boolean
+    private static boolean isNumericType(@NonNull PsiType type, boolean allowBigNumbers) {
+        if (PsiType.INT.equals(type)
+                || PsiType.FLOAT.equals(type)
+                || PsiType.DOUBLE.equals(type)
+                || PsiType.LONG.equals(type)
+                || PsiType.BYTE.equals(type)
+                || PsiType.SHORT.equals(type)) {
+            return true;
         }
 
-        public String getFormatStringName() {
-            return mName;
-        }
-
-        /** Returns the argument type of the given formatting argument of the
-         * target node. Note: This is in the formatting string, which is one higher
-         * than the String.format parameter number, since the first argument is the
-         * formatting string itself.
-         *
-         * @param argument the argument number
-         * @return the class (such as {@link Integer#TYPE} etc) or null if not known
-         */
-        public Class<?> getArgumentType(int argument) {
-            UExpression arg = getArgument(argument);
-            if (arg != null) {
-                // Look up type based on the source code literals
-                Class<?> type = getType(arg);
-                if (type != null) {
-                    return type;
-                }
-
-                // If the AST supports type resolution, use that for other types
-                // of expressions
-                if (mContext != null) {
-                    return getTypeClass(arg.getExpressionType());
-                }
+        if (type instanceof PsiClassType) {
+            String fqn = type.getCanonicalText();
+            if (TYPE_INTEGER_WRAPPER.equals(fqn)
+                    || TYPE_FLOAT_WRAPPER.equals(fqn)
+                    || TYPE_DOUBLE_WRAPPER.equals(fqn)
+                    || TYPE_LONG_WRAPPER.equals(fqn)
+                    || TYPE_BYTE_WRAPPER.equals(fqn)
+                    || TYPE_SHORT_WRAPPER.equals(fqn)) {
+                return true;
             }
-
-            return null;
-        }
-
-        private static Class<?> getTypeClass(@Nullable UType type) {
-            if (type != null) {
-                return getTypeClass(type.getName());
-            }
-            return null;
-        }
-
-        private static Class<?> getTypeClass(@Nullable String fqcn) {
-            if (fqcn == null) {
-                return null;
-            } else if (fqcn.equals(TYPE_STRING) || fqcn.equals("String")) {   //$NON-NLS-1$
-                return String.class;
-            } else if (fqcn.equals(TYPE_INT)) {
-                return Integer.TYPE;
-            } else if (fqcn.equals(TYPE_BOOLEAN)) {
-                return Boolean.TYPE;
-            } else if (fqcn.equals(TYPE_NULL)) {
-                return Object.class;
-            } else if (fqcn.equals(TYPE_LONG)) {
-                return Long.TYPE;
-            } else if (fqcn.equals(TYPE_FLOAT)) {
-                return Float.TYPE;
-            } else if (fqcn.equals(TYPE_DOUBLE)) {
-                return Double.TYPE;
-            } else if (fqcn.equals(TYPE_CHAR)) {
-                return Character.TYPE;
-            } else if (fqcn.equals("BigDecimal")                //$NON-NLS-1$
-                       || fqcn.equals("java.math.BigDecimal")) {   //$NON-NLS-1$
-                return Float.TYPE;
-            } else if (fqcn.equals("BigInteger")                //$NON-NLS-1$
-                       || fqcn.equals("java.math.BigInteger")) {   //$NON-NLS-1$
-                return Integer.TYPE;
-            } else if (fqcn.equals(TYPE_OBJECT)) {
-                return null;
-            } else if (fqcn.startsWith("java.lang.")) {
-                if (fqcn.equals("java.lang.Integer")
-                    || fqcn.equals("java.lang.Short")
-                    || fqcn.equals("java.lang.Byte")
-                    || fqcn.equals("java.lang.Long")) {
-                    return Integer.TYPE;
-                } else if (fqcn.equals("java.lang.Float")
-                           || fqcn.equals("java.lang.Double")) {
-                    return Float.TYPE;
-                } else {
-                    return null;
-                }
-            } else if (fqcn.equals(TYPE_BYTE)) {
-                return Byte.TYPE;
-            } else if (fqcn.equals(TYPE_SHORT)) {
-                return Short.TYPE;
-            } else {
-                return null;
-            }
-        }
-
-        public UExpression getArgument(int argument) {
-            if (!(mTargetNode instanceof UCallExpression)) {
-                return null;
-            }
-            UCallExpression call = (UCallExpression) mTargetNode;
-            List<UExpression> args = call.getValueArguments();
-            if (argument < 0 || argument >= args.size()) {
-                return null;
-            }
-
-            return args.get(argument);
-        }
-
-        @Override
-        public boolean visitElement(@NotNull UElement node) {
-            return mDone || super.visitElement(node);
-        }
-
-        @Override
-        public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
-            if (node.selectorMatches(R_CLASS) &&   //$NON-NLS-1$
-                node.getParent() instanceof UQualifiedExpression &&
-                node.getParent().getParent() instanceof UQualifiedExpression) {
-
-                // See if we're on the right hand side of an assignment
-                UElement current = node.getParent().getParent();
-                String reference = ((UQualifiedExpression) current).getSelector().renderString();
-
-                while (current != null && current != mTop && !(current instanceof UVariable)) {
-                    if (current == mTargetNode) {
-                        mName = reference;
-                        mDone = true;
-                        return false;
-                    }
-                    current = current.getParent();
-                }
-                if (current instanceof UVariable) {
-                    UVariable entry = (UVariable) current;
-                    String variable = entry.getName();
-                    mMap.put(variable, reference);
-                }
-            }
-
-            return false;
-        }
-
-        @Nullable
-        private UExpression getTargetArgument() {
-            Iterator<UExpression> iterator;
-            if (mTargetNode instanceof UCallExpression) {
-                iterator = ((UCallExpression) mTargetNode).getValueArguments().iterator();
-            } else {
-                return null;
-            }
-            int i = 0;
-            while (i < mArgIndex && iterator.hasNext()) {
-                iterator.next();
-                i++;
-            }
-            if (iterator.hasNext()) {
-                UExpression next = iterator.next();
-                if (next != null && mContext != null && iterator.hasNext()) {
-                    UType type = next.getExpressionType();
-                    if (isLocaleReference(type)) {
-                        next = iterator.next();
-                    } else if (type == null
-                               && next.renderString().startsWith("Locale.")) { //$NON-NLS-1$
-                        next = iterator.next();
-                    }
-                }
-                return next;
-            }
-
-            return null;
-        }
-
-        @Override
-        public boolean visitCallExpression(@NotNull UCallExpression node) {
-            if (node == mTargetNode) {
-                UExpression arg = getTargetArgument();
-                if (arg instanceof USimpleReferenceExpression) {
-                    USimpleReferenceExpression reference = (USimpleReferenceExpression) arg;
-                    String variable = reference.getIdentifier();
-                    mName = mMap.get(variable);
-                    mDone = true;
+            if (allowBigNumbers) {
+                if ("java.math.BigInteger".equals(fqn) ||
+                        "java.math.BigDecimal".equals(fqn)) {
                     return true;
                 }
             }
-
-            // Is this a getString() call? On a resource object? If so,
-            // promote the resource argument up to the left hand side
-            return false;
         }
 
-        @Override
-        public boolean visitVariable(@NotNull UVariable node) {
-            String name = node.getName();
-            UExpression rhs = node.getInitializer();
-            Class<?> type = getType(rhs);
-            if (type != null) {
-                mTypes.put(name, type);
-            } else {
-                // Make sure we're not visiting the String.format node itself. If you have
-                //    msg = String.format("%1$s", msg)
-                // then we'd be wiping out the type of "msg" before visiting the
-                // String.format call!
-                if (rhs != mTargetNode) {
-                    mTypes.remove(name);
-                }
-            }
-
-            return false;
-        }
-
-        private Class<?> getType(UExpression expression) {
-            if (expression == null) {
-                return null;
-            }
-
-            if (expression instanceof USimpleReferenceExpression) {
-                USimpleReferenceExpression reference = (USimpleReferenceExpression)expression;
-                String variable = reference.getIdentifier();
-                Class<?> type = mTypes.get(variable);
-                if (type != null) {
-                    return type;
-                }
-            } else if (expression instanceof UCallExpression) {
-                UCallExpression method = (UCallExpression)expression;
-                String methodName = method.getFunctionName();
-                if (GET_STRING_METHOD.equals(methodName)) {
-                    return String.class;
-                }
-            } else if (expression instanceof ULiteralExpression) {
-                Object value = ((ULiteralExpression)expression).getValue();
-                if (value == null) {
-                    return Object.class;
-                } else if (value instanceof String) {
-                    return String.class;
-                } else if (value instanceof Integer) {
-                    return Integer.TYPE;
-                } else if (value instanceof Long) {
-                    return Long.TYPE;
-                } else if (value instanceof Byte) {
-                    return Byte.TYPE;
-                } else if (value instanceof Short) {
-                    return Short.TYPE;
-                } else if (value instanceof Float) {
-                    return Float.TYPE;
-                } else if (value instanceof Double) {
-                    return Double.TYPE;
-                } else if (value instanceof Character) {
-                    return Character.TYPE;
-                } else if (value instanceof Boolean) {
-                    return Boolean.TYPE;
-                }
-            }
-
-            UType type = expression.getExpressionType();
-            if (type != null) {
-                Class<?> typeClass = getTypeClass(type);
-                if (typeClass != null) {
-                    return typeClass;
-                } else {
-                    return Object.class;
-                }
-            }
-
-            return null;
-        }
+        return false;
     }
 }

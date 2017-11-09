@@ -30,9 +30,10 @@ public class GradleRunner {
     private final List<String> listOfCommands;
 
     public GradleRunner(PathManager pathManager) {
-        listOfCommands = new ArrayList<String>();
+        listOfCommands = new ArrayList<>();
         String cmdName = SystemInfo.isWindows ? "gradle.bat" : "gradle";
         listOfCommands.add(pathManager.getGradleBinFolder() + "/" + cmdName);
+        listOfCommands.add("--no-daemon");
         listOfCommands.add("--build-file");
         listOfCommands.add(pathManager.getTmpFolder() + "/build.gradle");
     }
@@ -46,7 +47,9 @@ public class GradleRunner {
 
     public void build() {
         System.out.println("Building gradle project...");
-        RunResult result = RunUtils.execute(generateCommandLine("build"));
+        GeneralCommandLine build = generateCommandLine("build");
+        build.addParameter("--stacktrace");
+        RunResult result = RunUtils.execute(build);
         OutputUtils.checkResult(result);
     }
 

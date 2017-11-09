@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.name.Name
 object OperatorNameConventions {
     @JvmField val GET_VALUE = Name.identifier("getValue")
     @JvmField val SET_VALUE = Name.identifier("setValue")
+    @JvmField val PROVIDE_DELEGATE = Name.identifier("provideDelegate")
 
     @JvmField val EQUALS = Name.identifier("equals")
     @JvmField val COMPARE_TO = Name.identifier("compareTo")
@@ -49,29 +50,27 @@ object OperatorNameConventions {
     @JvmField val TIMES = Name.identifier("times")
     @JvmField val DIV = Name.identifier("div")
     @JvmField val MOD = Name.identifier("mod")
+    @JvmField val REM = Name.identifier("rem")
     @JvmField val RANGE_TO = Name.identifier("rangeTo")
 
     @JvmField val TIMES_ASSIGN = Name.identifier("timesAssign")
     @JvmField val DIV_ASSIGN = Name.identifier("divAssign")
     @JvmField val MOD_ASSIGN = Name.identifier("modAssign")
+    @JvmField val REM_ASSIGN = Name.identifier("remAssign")
     @JvmField val PLUS_ASSIGN = Name.identifier("plusAssign")
     @JvmField val MINUS_ASSIGN = Name.identifier("minusAssign")
-    @JvmField val COROUTINE_HANDLE_RESULT = Name.identifier("handleResult")
-    @JvmField val COROUTINE_HANDLE_EXCEPTION = Name.identifier("handleException")
-
-    @JvmField val PROPERTY_DELEGATED = Name.identifier("propertyDelegated")
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
     @JvmField
-    internal val UNARY_OPERATION_NAMES = setOf(INC, DEC, UNARY_PLUS, UNARY_MINUS, NOT)
+    val UNARY_OPERATION_NAMES = setOf(INC, DEC, UNARY_PLUS, UNARY_MINUS, NOT)
 
     @JvmField
     internal val SIMPLE_UNARY_OPERATION_NAMES = setOf(UNARY_PLUS, UNARY_MINUS, NOT)
 
     @JvmField
-    internal val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, RANGE_TO)
+    val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM, RANGE_TO)
 
     @JvmField
-    internal val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN)
+    internal val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN)
 }

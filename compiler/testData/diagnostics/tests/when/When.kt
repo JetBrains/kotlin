@@ -5,8 +5,9 @@ fun foo() : Int {
     val x = 1
     when (x) {
       is <!INCOMPATIBLE_TYPES!>String<!> -> <!UNUSED_EXPRESSION!>1<!>
-      !is Int -> <!UNUSED_EXPRESSION!>1<!>
-      is Any<!USELESS_NULLABLE_CHECK!>?<!> -> <!UNUSED_EXPRESSION!>1<!>
+      <!USELESS_IS_CHECK!>!is Int<!> -> <!UNUSED_EXPRESSION!>1<!>
+      <!USELESS_IS_CHECK!>is Any<!USELESS_NULLABLE_CHECK!>?<!><!> -> <!UNUSED_EXPRESSION!>1<!>
+      <!USELESS_IS_CHECK!>is Any<!> -> <!UNUSED_EXPRESSION!>1<!>
       <!INCOMPATIBLE_TYPES!>s<!> -> <!UNUSED_EXPRESSION!>1<!>
       1 -> <!UNUSED_EXPRESSION!>1<!>
       1 + <!UNRESOLVED_REFERENCE!>a<!> -> <!UNUSED_EXPRESSION!>1<!>

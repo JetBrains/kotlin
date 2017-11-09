@@ -1,4 +1,4 @@
-JetFile: noParameterYet.kt
+KtFile: noParameterYet.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

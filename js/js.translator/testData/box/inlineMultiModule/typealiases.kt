@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1114
 // MODULE: lib
 // FILE: lib.kt
 
@@ -10,6 +11,7 @@ object O {
 }
 
 class C {
+    @Suppress("TOPLEVEL_TYPEALIASES_ONLY")
     typealias B = O
 }
 

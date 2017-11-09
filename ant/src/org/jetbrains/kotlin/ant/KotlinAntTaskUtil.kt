@@ -29,8 +29,8 @@ internal object KotlinAntTaskUtil {
 
     private val libPath: File by lazy {
         // Find path of kotlin-ant.jar in the filesystem and find kotlin-compiler.jar in the same directory
-        val resourcePath = "/" + javaClass.name.replace('.', '/') + ".class"
-        val jarConnection = javaClass.getResource(resourcePath).openConnection() as? JarURLConnection
+        val resourcePath = "/" + this::class.java.name.replace('.', '/') + ".class"
+        val jarConnection = this::class.java.getResource(resourcePath).openConnection() as? JarURLConnection
                             ?: throw UnsupportedOperationException("Kotlin compiler Ant task should be loaded from the JAR file")
         val antTaskJarPath = File(jarConnection.jarFileURL.toURI())
 
@@ -54,7 +54,7 @@ internal object KotlinAntTaskUtil {
         val cached = classLoaderRef.get()
         if (cached != null) return cached
 
-        val myLoader = javaClass.classLoader
+        val myLoader = this::class.java.classLoader
         if (myLoader !is AntClassLoader) return myLoader
 
         val classLoader = ClassPreloadingUtils.preloadClasses(listOf(compilerJar), Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, myLoader, null)

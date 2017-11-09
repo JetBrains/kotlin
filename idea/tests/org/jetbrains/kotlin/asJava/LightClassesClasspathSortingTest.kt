@@ -20,7 +20,7 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.impl.ResolveScopeManager
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -56,8 +56,8 @@ class LightClassesClasspathSortingTest : KotlinCodeInsightTestCase() {
 
         assertNotNull(psiClass, "Can't find class for $fqName")
         psiClass!!
-        assert(psiClass is KtLightClassForSourceDeclaration || psiClass is KtLightClassForFacade) { "Should be an explicit light class, but was $fqName ${psiClass.javaClass}" }
-        assert(psiClass !is KtLightClassForDecompiledDeclaration) { "Should not be decompiled light class: $fqName ${psiClass.javaClass}" }
+        assert(psiClass is KtLightClassForSourceDeclaration || psiClass is KtLightClassForFacade) { "Should be an explicit light class, but was $fqName ${psiClass::class.java}" }
+        assert(psiClass !is KtLightClassForDecompiledDeclaration) { "Should not be decompiled light class: $fqName ${psiClass::class.java}" }
     }
 
     private fun getProjectDescriptor(dir: String) =

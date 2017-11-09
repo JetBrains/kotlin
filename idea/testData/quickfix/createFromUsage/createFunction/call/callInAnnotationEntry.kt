@@ -3,7 +3,7 @@
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: Rename reference
-// ACTION: Convert to expression body
+// ACTION: Put arguments on separate lines
 // ERROR: Unresolved reference: foo
 // ERROR: Unresolved reference: bar
 

@@ -16,19 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
-import org.jetbrains.kotlin.fileClasses.getFileClassFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import java.util.*
-
 
 object JvmOverloadFilter : OverloadFilter {
     override fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot> {
@@ -38,22 +33,15 @@ object JvmOverloadFilter : OverloadFilter {
         for (overload in overloads) {
             val file = DescriptorToSourceUtils.getContainingFile(overload) ?: continue
             result.add(overload)
-            sourceClassesFQNs.add(NoResolveFileClassesProvider.getFileClassFqName(file))
+            sourceClassesFQNs.add(JvmFileClassUtil.getFileClassInfoNoResolve(file).fileClassFqName)
         }
 
         for (overload in overloads) {
             if (overload is ConstructorDescriptor) continue
             if (overload !is DeserializedCallableMemberDescriptor) continue
 
-            val containingDeclaration = overload.containingDeclaration
-            if (containingDeclaration !is PackageFragmentDescriptor) {
-                throw AssertionError("Package member expected; got $overload with containing declaration $containingDeclaration")
-            }
-
-            val implClassName = JvmFileClassUtil.getImplClassName(overload) ?:
-                                throw AssertionError("No implClassName: $overload")
-            val implClassFQN = containingDeclaration.fqName.child(implClassName)
-            if (!sourceClassesFQNs.contains(implClassFQN)) {
+            val implClassFQN = JvmFileClassUtil.getPartFqNameForDeserialized(overload)
+            if (implClassFQN !in sourceClassesFQNs) {
                 result.add(overload)
             }
         }

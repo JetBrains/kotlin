@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-import org.jetbrains.kotlin.load.java.components.IncompatibleVersionErrorData
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
@@ -36,13 +37,18 @@ class IncompatibleClassTrackerImpl(val trace: BindingTrace) : IncompatibleClassT
 
     override fun record(binaryClass: KotlinJvmBinaryClass) {
         if (classes.add(binaryClass.location)) {
-            val errorData = IncompatibleVersionErrorData(binaryClass.classHeader.bytecodeVersion, binaryClass.location, binaryClass.classId)
+            val errorData = IncompatibleVersionErrorData(
+                    binaryClass.classHeader.bytecodeVersion,
+                    JvmBytecodeBinaryVersion.INSTANCE,
+                    binaryClass.location,
+                    binaryClass.classId
+            )
             trace.record(BYTECODE_VERSION_ERRORS, binaryClass.location, errorData)
         }
     }
 
     companion object {
         @JvmField
-        val BYTECODE_VERSION_ERRORS: WritableSlice<String, IncompatibleVersionErrorData> = Slices.createCollectiveSlice()
+        val BYTECODE_VERSION_ERRORS: WritableSlice<String, IncompatibleVersionErrorData<JvmBytecodeBinaryVersion>> = Slices.createCollectiveSlice()
     }
 }

@@ -1,0 +1,66 @@
+KtFile: lambdaExpressionInString_2.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('main')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('args')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Array')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('String')
+              PsiElement(GT)('>')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      LAMBDA_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace(' ')
+          BLOCK
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  LITERAL_STRING_TEMPLATE_ENTRY
+                    PsiElement(REGULAR_STRING_PART)('}')
+                  PsiErrorElement:Expecting '"'
+                    <empty list>
+                PsiErrorElement:Expecting '}'
+                  <empty list>
+                PsiWhiteSpace('\n  ')
+                LAMBDA_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace(' ')
+                    BLOCK
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        PsiElement(CLOSING_QUOTE)('"')
+                    PsiWhiteSpace(' ')
+                    PsiElement(RBRACE)('}')
+                PsiWhiteSpace('\n')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiErrorElement:Expecting '"'
+                <empty list>
+      PsiErrorElement:Expecting '}'
+        <empty list>

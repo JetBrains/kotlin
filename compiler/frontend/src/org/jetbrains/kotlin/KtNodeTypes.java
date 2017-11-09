@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,9 @@
 
 package org.jetbrains.kotlin;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiBuilderFactory;
-import com.intellij.lexer.Lexer;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IErrorCounterReparseableElementType;
 import com.intellij.psi.tree.IFileElementType;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.lexer.KotlinLexer;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.parsing.KotlinParser;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -66,6 +55,7 @@ public interface KtNodeTypes {
     IElementType IMPORT_LIST                        = KtStubElementTypes.IMPORT_LIST;
     IElementType FILE_ANNOTATION_LIST               = KtStubElementTypes.FILE_ANNOTATION_LIST;
     IElementType IMPORT_DIRECTIVE                   = KtStubElementTypes.IMPORT_DIRECTIVE;
+    IElementType IMPORT_ALIAS                       = KtStubElementTypes.IMPORT_ALIAS;
     IElementType MODIFIER_LIST                      = KtStubElementTypes.MODIFIER_LIST;
     IElementType ANNOTATION                         = KtStubElementTypes.ANNOTATION;
     IElementType ANNOTATION_ENTRY                   = KtStubElementTypes.ANNOTATION_ENTRY;
@@ -127,46 +117,7 @@ public interface KtNodeTypes {
     KtNodeType BODY                      = new KtNodeType("BODY", KtContainerNodeForControlStructureBody.class);
     KtNodeType BLOCK                     = new KtNodeType("BLOCK", KtBlockExpression.class);
 
-    IElementType LAMBDA_EXPRESSION = new IErrorCounterReparseableElementType("LAMBDA_EXPRESSION", KotlinLanguage.INSTANCE) {
-        @Override
-        public ASTNode parseContents(ASTNode chameleon) {
-            Project project = chameleon.getPsi().getProject();
-            PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, KotlinLanguage.INSTANCE, chameleon.getChars());
-            return KotlinParser.parseLambdaExpression(builder).getFirstChildNode();
-        }
-
-        @Nullable
-        @Override
-        public ASTNode createNode(CharSequence text) {
-            return new KtLambdaExpression(text);
-        }
-
-        @Override
-        public int getErrorsCount(CharSequence seq, Language fileLanguage, Project project) {
-            Lexer lexer = new KotlinLexer();
-
-            lexer.start(seq);
-            if (lexer.getTokenType() != KtTokens.LBRACE) return IErrorCounterReparseableElementType.FATAL_ERROR;
-            lexer.advance();
-            int balance = 1;
-            while (true) {
-                IElementType type = lexer.getTokenType();
-                if (type == null) break;
-                if (balance == 0) {
-                    return IErrorCounterReparseableElementType.FATAL_ERROR;
-                }
-                if (type == KtTokens.LBRACE) {
-                    balance++;
-                }
-                else if (type == KtTokens.RBRACE) {
-                    balance--;
-                }
-                lexer.advance();
-            }
-            return balance;
-        }
-    };
-
+    IElementType LAMBDA_EXPRESSION       = new LambdaExpressionElementType();
 
     KtNodeType FUNCTION_LITERAL          = new KtNodeType("FUNCTION_LITERAL", KtFunctionLiteral.class);
     KtNodeType ANNOTATED_EXPRESSION      = new KtNodeType("ANNOTATED_EXPRESSION", KtAnnotatedExpression.class);
@@ -202,6 +153,8 @@ public interface KtNodeTypes {
     KtNodeType WHEN_CONDITION_IN_RANGE   = new KtNodeType("WHEN_CONDITION_IN_RANGE", KtWhenConditionInRange.class);
     KtNodeType WHEN_CONDITION_IS_PATTERN = new KtNodeType("WHEN_CONDITION_IS_PATTERN", KtWhenConditionIsPattern.class);
     KtNodeType WHEN_CONDITION_EXPRESSION = new KtNodeType("WHEN_CONDITION_WITH_EXPRESSION", KtWhenConditionWithExpression.class);
+
+    KtNodeType COLLECTION_LITERAL_EXPRESSION = new KtNodeType("COLLECTION_LITERAL_EXPRESSION", KtCollectionLiteralExpression.class);
 
     IElementType PACKAGE_DIRECTIVE = KtStubElementTypes.PACKAGE_DIRECTIVE;
 

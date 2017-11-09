@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+
 open class Base {
     open fun foo() {}
 }

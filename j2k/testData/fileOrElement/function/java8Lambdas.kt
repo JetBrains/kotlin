@@ -5,17 +5,13 @@
 // ERROR: 'return' is not allowed here
 // ERROR: Type mismatch: inferred type is String but Unit was expected
 class Java8Class {
-    fun foo0(r: Function0<String>) {
-    }
+    fun foo0(r: Function0<String>) {}
 
-    fun foo1(r: Function1<Int, String>) {
-    }
+    fun foo1(r: Function1<Int, String>) {}
 
-    fun foo2(r: Function2<Int, Int, String>) {
-    }
+    fun foo2(r: Function2<Int, Int, String>) {}
 
-    fun helper() {
-    }
+    fun helper() {}
 
     fun foo() {
         foo0 { "42" }

@@ -1,0 +1,31 @@
+package
+
+public fun test1(/*0*/ x: C<kotlin.Int>.DA /* = C<kotlin.Int>.D */): C<kotlin.Int>.DA /* = C<kotlin.Int>.D */
+public fun test2(/*0*/ x: C.SDA /* = C<kotlin.Int>.D */): C.SDA /* = C<kotlin.Int>.D */
+public fun test3(/*0*/ x: C<kotlin.Int>.TSDA /* = C<kotlin.Int>.D */): C<kotlin.Int>.TSDA /* = C<kotlin.Int>.D */
+public fun test4(/*0*/ x: C<kotlin.Int>.TC /* = C<kotlin.Int> */): C<kotlin.Int>.TC /* = C<kotlin.Int> */
+public fun test5(/*0*/ x: C<*>.DA /* = C<*>.D */): C<*>.DA /* = C<*>.D */
+public fun test6(/*0*/ x: C<*>.TSDA /* = C<*>.D */): C<*>.TSDA /* = C<*>.D */
+public fun test7(/*0*/ x: C<*>.TC /* = C<*> */): C<*>.TC /* = C<*> */
+public fun test8(/*0*/ x: C.SSDA /* = C<*>.D */): C.SSDA /* = C<*>.D */
+public fun test9(/*0*/ x: C.SSC /* = C<*> */): C.SSC /* = C<*> */
+
+public final class C</*0*/ T> {
+    public constructor C</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class D /*captured type parameters: /*0*/ T*/ {
+        public constructor D()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+    public typealias DA /*captured type parameters: /*0*/ T*/ = C<T>.D
+    public typealias SDA = C<kotlin.Int>.D
+    public typealias SSC = C<*>
+    public typealias SSDA = C<*>.D
+    public typealias TC /*captured type parameters: /*0*/ T*/ = C<T>
+    public typealias TSDA /*captured type parameters: /*0*/ T*/ = C<T>.D
+}

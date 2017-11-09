@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.incremental.components
 
+import org.jetbrains.kotlin.container.DefaultImplementation
 import java.io.Serializable
 
+@DefaultImplementation(LookupTracker.DO_NOTHING::class)
 interface LookupTracker {
     // used in tests for more accurate checks
     val requiresPosition: Boolean
@@ -30,13 +32,11 @@ interface LookupTracker {
             name: String
     )
 
-    companion object {
-        val DO_NOTHING: LookupTracker = object : LookupTracker {
-            override val requiresPosition: Boolean
-                get() = false
+    object DO_NOTHING : LookupTracker {
+        override val requiresPosition: Boolean
+            get() = false
 
-            override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-            }
+        override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
         }
     }
 }

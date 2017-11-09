@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun mapping(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -23,7 +24,7 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
-    templates add f("mapIndexed(transform: (Int, T) -> R)") {
+    templates add f("mapIndexed(transform: (index: Int, T) -> R)") {
         inline(true)
 
         doc { f ->
@@ -36,7 +37,6 @@ fun mapping(): List<GenericFunction> {
         }
         typeParam("R")
         returns("List<R>")
-        annotations(Iterables) { """@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")""" }
         body(Iterables) {
             "return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
@@ -64,7 +64,6 @@ fun mapping(): List<GenericFunction> {
         }
         typeParam("R")
         returns("List<R>")
-        annotations(Iterables) { """@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")""" }
         body(Iterables) {
             "return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
@@ -107,7 +106,7 @@ fun mapping(): List<GenericFunction> {
 
     }
 
-    templates add f("mapIndexedNotNull(transform: (Int, T) -> R?)") {
+    templates add f("mapIndexedNotNull(transform: (index: Int, T) -> R?)") {
         inline(true)
         include(CharSequences)
         exclude(ArraysOfPrimitives)
@@ -155,7 +154,7 @@ fun mapping(): List<GenericFunction> {
         include(Maps, CharSequences)
     }
 
-    templates add f("mapIndexedTo(destination: C, transform: (Int, T) -> R)") {
+    templates add f("mapIndexedTo(destination: C, transform: (index: Int, T) -> R)") {
         inline(true)
 
         doc { f ->
@@ -202,7 +201,7 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
-    templates add f("mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?)") {
+    templates add f("mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?)") {
         inline(true)
         include(CharSequences)
         exclude(ArraysOfPrimitives)
@@ -297,9 +296,10 @@ fun mapping(): List<GenericFunction> {
 
             The returned map preserves the entry iteration order of the keys produced from the original ${f.collection}.
 
-            @sample test.collections.CollectionTest.groupBy
+            @sample samples.collections.Collections.Transformations.groupBy
             """
         }
+        sequenceClassification(terminal)
         typeParam("K")
         returns("Map<K, List<T>>")
         body { "return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)" }
@@ -318,9 +318,10 @@ fun mapping(): List<GenericFunction> {
 
             @return The [destination] map.
 
-            @sample test.collections.CollectionTest.groupBy
+            @sample samples.collections.Collections.Transformations.groupBy
             """
         }
+        sequenceClassification(terminal)
         returns("M")
         body {
             """
@@ -346,9 +347,10 @@ fun mapping(): List<GenericFunction> {
 
             The returned map preserves the entry iteration order of the keys produced from the original ${f.collection}.
 
-            @sample test.collections.CollectionTest.groupByKeysAndValues
+            @sample samples.collections.Collections.Transformations.groupByKeysAndValues
             """
         }
+        sequenceClassification(terminal)
         typeParam("K")
         typeParam("V")
         returns("Map<K, List<V>>")
@@ -372,9 +374,10 @@ fun mapping(): List<GenericFunction> {
 
             @return The [destination] map.
 
-            @sample test.collections.CollectionTest.groupByKeysAndValues
+            @sample samples.collections.Collections.Transformations.groupByKeysAndValues
             """
         }
+        sequenceClassification(terminal)
         returns("M")
         body {
             """
@@ -388,5 +391,43 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
+    templates add f("groupingBy(crossinline keySelector: (T) -> K)") {
+        since("1.1")
+        inline(true)
+        only(Iterables, Sequences, ArraysOfObjects, CharSequences)
+
+        typeParam("T")
+        typeParam("K")
+
+        returns("Grouping<T, K>")
+
+        doc { f ->
+            """
+            Creates a [Grouping] source from ${f.collection.prefixWithArticle()} to be used later with one of group-and-fold operations
+            using the specified [keySelector] function to extract a key from each ${f.element}.
+
+            @sample samples.collections.Collections.Transformations.groupingByEachCount
+            """
+        }
+
+        body {
+            """
+            return object : Grouping<T, K> {
+                override fun sourceIterator(): Iterator<T> = this@groupingBy.iterator()
+                override fun keyOf(element: T): K = keySelector(element)
+            }
+            """
+        }
+    }
+
+    val terminalOperationPattern = Regex("^\\w+To")
+    templates.forEach { with (it) {
+        if (sequenceClassification.isEmpty()) {
+            if (terminalOperationPattern in signature)
+                sequenceClassification(terminal)
+            else
+                sequenceClassification(intermediate, stateless)
+        }
+    } }
     return templates
 }

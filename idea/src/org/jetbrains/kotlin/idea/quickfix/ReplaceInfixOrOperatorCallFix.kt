@@ -19,24 +19,32 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
-class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
+class ReplaceInfixOrOperatorCallFix(
+        element: KtExpression,
+        private val notNullNeeded: Boolean
+) : KotlinQuickFixAction<KtExpression>(element) {
 
     override fun getText() = "Replace with safe (?.) call"
 
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val psiFactory = KtPsiFactory(file)
+        val elvis = elvisOrEmpty(notNullNeeded)
+        var replacement: PsiElement? = null
         when (element) {
             is KtArrayAccessExpression -> {
                 val assignment = element.getAssignmentByLHS()
@@ -50,19 +58,19 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
                 }
                 else {
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.get($1)", arrayExpression, element.indexExpressions.joinToString(", ") { it.text })
-                    element.replace(newExpression)
+                            "$0?.get($1)$elvis", arrayExpression, element.indexExpressions.joinToString(", ") { it.text })
+                    replacement = element.replace(newExpression)
                 }
             }
             is KtCallExpression -> {
                 val newExpression = psiFactory.createExpressionByPattern(
-                        "$0?.invoke($1)", element.calleeExpression ?: return, element.valueArguments.joinToString(", ") { it.text })
-                element.replace(newExpression)
+                        "$0?.invoke($1)$elvis", element.calleeExpression ?: return, element.valueArguments.joinToString(", ") { it.text })
+                replacement = element.replace(newExpression)
             }
             is KtBinaryExpression -> {
-                if (element.operationToken == KtTokens.IDENTIFIER) {
+                replacement = if (element.operationToken == KtTokens.IDENTIFIER) {
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.$1($2)", element.left ?: return, element.operationReference, element.right ?: return)
+                            "$0?.$1($2)$elvis", element.left ?: return, element.operationReference, element.right ?: return)
                     element.replace(newExpression)
                 }
                 else {
@@ -70,10 +78,13 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
                     val callExpression = nameExpression.parent as KtCallExpression
                     val qualifiedExpression = callExpression.parent as KtDotQualifiedExpression
                     val safeExpression = psiFactory.createExpressionByPattern(
-                            "$0?.$1", qualifiedExpression.receiverExpression, callExpression)
+                            "$0?.$1$elvis", qualifiedExpression.receiverExpression, callExpression)
                     qualifiedExpression.replace(safeExpression)
                 }
             }
+        }
+        if (notNullNeeded) {
+            replacement?.moveCaretToEnd(editor, project)
         }
     }
 
@@ -82,23 +93,27 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val expression = diagnostic.psiElement
-            if (expression is KtArrayAccessExpression) {
+            if (expression is KtArrayAccessExpression && diagnostic.factory != Errors.UNSAFE_IMPLICIT_INVOKE_CALL) {
                 if (expression.arrayExpression == null) return null
-                return ReplaceInfixOrOperatorCallFix(expression)
+                return ReplaceInfixOrOperatorCallFix(expression, expression.shouldHaveNotNullType())
             }
             val parent = expression.parent
             return when (parent) {
                 is KtBinaryExpression -> {
-                    if (parent.left == null || parent.right == null) null
-                    else {
-                        if (parent.operationToken in OperatorConventions.COMPARISON_OPERATIONS) null
-                        else ReplaceInfixOrOperatorCallFix(parent)
+                    when {
+                        parent.left == null || parent.right == null -> null
+                        parent.operationToken == KtTokens.EQ -> null
+                        parent.operationToken in OperatorConventions.COMPARISON_OPERATIONS -> null
+                        else -> ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType())
                     }
                 }
                 is KtCallExpression -> {
-                    if (parent.calleeExpression == null) null
-                    else if (parent.parent is KtQualifiedExpression) null
-                    else ReplaceInfixOrOperatorCallFix(parent)
+                    when {
+                        parent.calleeExpression == null -> null
+                        parent.parent is KtQualifiedExpression -> null
+                        parent.getResolvedCall(parent.analyze())?.getImplicitReceiverValue() != null -> null
+                        else -> ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType())
+                    }
                 }
                 else -> null
             }

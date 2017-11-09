@@ -16,18 +16,20 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.ModuleManager
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.CachedValueProvider
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 
 //TODO: this should go away to support cross-platform projects
 object JsProjectDetector {
-    @JvmStatic fun isJsProject(project: Project): Boolean {
+    @JvmStatic
+    fun isJsProject(project: Project): Boolean {
         return CachedValuesManager.getManager(project).getCachedValue(project) {
-            val result = ModuleManager.getInstance(project).modules.any { ProjectStructureUtil.isJsKotlinModule(it) }
+            val result = ModuleManager.getInstance(project).modules.any { TargetPlatformDetector.getPlatform(it) == JsPlatform }
             CachedValueProvider.Result(result, ProjectRootModificationTracker.getInstance(project))
         }
     }

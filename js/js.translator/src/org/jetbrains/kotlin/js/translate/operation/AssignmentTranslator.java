@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.AccessTranslationUtils;
@@ -31,8 +32,7 @@ import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.isVariableReassignment;
+import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSimpleName;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isAssignment;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.hasCorrespondingFunctionIntrinsic;
@@ -44,10 +44,16 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public static JsExpression translate(@NotNull KtBinaryExpression expression,
-                                         @NotNull TranslationContext context) {
+    public static JsExpression translate(@NotNull KtBinaryExpression expression, @NotNull TranslationContext context) {
         if (hasCorrespondingFunctionIntrinsic(context, expression)) {
-            return IntrinsicAssignmentTranslator.doTranslate(expression, context);
+            // This is a hack. This code is conceptually wrong, refactoring required here.
+            // The right implementation is: get assignment via OverloadedAssignmentTranslator and see at the result.
+            // If it's an expression like `a = a + b` then represent it as `a += b`
+            // Another right implementation is: enumerate explicitly which descriptors are OK to intrinsify like this.
+            CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
+            if (operationDescriptor == null || operationDescriptor.getExtensionReceiverParameter() == null) {
+                return IntrinsicAssignmentTranslator.doTranslate(expression, context);
+            }
         }
         return OverloadedAssignmentTranslator.doTranslate(expression, context);
     }
@@ -56,21 +62,20 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
     protected final KtBinaryExpression expression;
     protected final boolean isVariableReassignment;
 
-    protected AssignmentTranslator(@NotNull KtBinaryExpression expression,
-                                   @NotNull TranslationContext context) {
+    protected AssignmentTranslator(@NotNull KtBinaryExpression expression, @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
         this.isVariableReassignment = isVariableReassignment(context.bindingContext(), expression);
-        KtExpression left = expression.getLeft();
-        assert left != null : "No left-hand side: " + expression.getText();
+        assert expression.getLeft() != null : "No left-hand side: " + expression.getText();
     }
 
-    protected final AccessTranslator createAccessTranslator(KtExpression left, boolean forceOrderOfEvaluation) {
+    protected final AccessTranslator createAccessTranslator(@NotNull KtExpression left, boolean forceOrderOfEvaluation) {
         if (isReferenceToBackingFieldFromConstructor(left, context())) {
             KtSimpleNameExpression simpleName = getSimpleName(left);
             assert simpleName != null;
             return BackingFieldAccessTranslator.newInstance(simpleName, context());
-        } else {
+        }
+        else {
             return AccessTranslationUtils.getAccessTranslator(left, context(), forceOrderOfEvaluation);
         }
     }
@@ -87,7 +92,8 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
         else if (expression instanceof KtDotQualifiedExpression) {
             KtDotQualifiedExpression qualifiedExpression = (KtDotQualifiedExpression) expression;
             if (qualifiedExpression.getReceiverExpression() instanceof KtThisExpression &&
-                qualifiedExpression.getSelectorExpression() instanceof KtSimpleNameExpression) {
+                qualifiedExpression.getSelectorExpression() instanceof KtSimpleNameExpression
+            ) {
                 KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) qualifiedExpression.getSelectorExpression();
                 DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), nameExpression);
                 return isReferenceToBackingFieldFromConstructor(descriptor, context);
@@ -100,19 +106,13 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
             @Nullable DeclarationDescriptor descriptor,
             @NotNull TranslationContext context
     ) {
-        if (!(descriptor instanceof PropertyDescriptor)) {
-            return false;
-        }
+        if (!(descriptor instanceof PropertyDescriptor)) return false;
+
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+        if (!(context.getDeclarationDescriptor() instanceof ClassDescriptor)) return false;
 
-        if (!(context.getDeclarationDescriptor() instanceof ClassDescriptor)) {
-            return false;
-        }
         ClassDescriptor classDescriptor = (ClassDescriptor) context.getDeclarationDescriptor();
-
-        if (classDescriptor != propertyDescriptor.getContainingDeclaration()) {
-            return false;
-        }
+        if (classDescriptor != propertyDescriptor.getContainingDeclaration()) return false;
 
         return !propertyDescriptor.isVar();
     }

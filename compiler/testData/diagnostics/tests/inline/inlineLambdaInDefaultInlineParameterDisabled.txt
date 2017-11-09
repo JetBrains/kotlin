@@ -1,0 +1,16 @@
+package
+
+public inline fun default0_1(/*0*/ lambda: () -> kotlin.String, /*1*/ dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default0_2(/*0*/ lambda: () -> kotlin.String, /*1*/ dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default1_0(/*0*/ lambda: () -> kotlin.String, /*1*/ dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default1_1(/*0*/ lambda: () -> kotlin.String, /*1*/ noinline dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default1_1crossinline(/*0*/ crossinline lambda: () -> kotlin.String, /*1*/ noinline dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default1_2(/*0*/ noinline lambda: () -> kotlin.String, /*1*/ dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default1_3(/*0*/ noinline lambda: () -> kotlin.String, /*1*/ noinline dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default2_0(/*0*/ lambda: () -> kotlin.String, /*1*/ dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default2_1(/*0*/ lambda: () -> kotlin.String, /*1*/ noinline dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default2_1crossinline(/*0*/ crossinline lambda: () -> kotlin.String, /*1*/ noinline dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default2_2(/*0*/ noinline lambda: () -> kotlin.String, /*1*/ dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun default2_3(/*0*/ noinline lambda: () -> kotlin.String, /*1*/ noinline dlambda: () -> kotlin.String = ...): kotlin.Unit
+public inline fun inlineFun(/*0*/ lambda: () -> kotlin.String): kotlin.String
+public fun noInlineFun(/*0*/ lambda: () -> kotlin.String): kotlin.String

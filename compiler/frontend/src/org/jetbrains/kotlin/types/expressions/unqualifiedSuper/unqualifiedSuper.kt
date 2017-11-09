@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 
 fun resolveUnqualifiedSuperFromExpressionContext(
@@ -49,11 +49,11 @@ fun resolveUnqualifiedSuperFromExpressionContext(
                 val calleeExpression = selectorExpression.calleeExpression
                 if (calleeExpression is KtSimpleNameExpression) {
                     val calleeName = calleeExpression.getReferencedNameAsName()
-                    if (isCallingMethodOfAny(selectorExpression, calleeName)) {
-                        return resolveSupertypesForMethodOfAny(supertypes, calleeName, anyType)
+                    return if (isCallingMethodOfAny(selectorExpression, calleeName)) {
+                        resolveSupertypesForMethodOfAny(supertypes, calleeName, anyType)
                     }
                     else {
-                        return resolveSupertypesByCalleeName(supertypes, calleeName)
+                        resolveSupertypesByCalleeName(supertypes, calleeName)
                     }
                 }
             }
@@ -105,7 +105,7 @@ private fun resolveSupertypesForMethodOfAny(supertypes: Collection<KotlinType>, 
     return if (typesWithConcreteOverride.isNotEmpty())
         typesWithConcreteOverride
     else
-        anyType.singletonList()
+        listOf(anyType)
 }
 
 private fun resolveSupertypesByCalleeName(supertypes: Collection<KotlinType>, calleeName: Name): Collection<KotlinType> =
@@ -121,25 +121,36 @@ private fun resolveSupertypesByPropertyName(supertypes: Collection<KotlinType>, 
 
 private inline fun resolveSupertypesByMembers(
         supertypes: Collection<KotlinType>,
-        allowArbitraryMembers: Boolean,
+        allowNonConcreteMembers: Boolean,
         getMembers: (KotlinType) -> Collection<MemberDescriptor>
 ): Collection<KotlinType> {
     val typesWithConcreteMembers = SmartList<KotlinType>()
-    val typesWithArbitraryMembers = SmartList<KotlinType>()
+    val typesWithNonConcreteMembers = SmartList<KotlinType>()
 
     for (supertype in supertypes) {
         val members = getMembers(supertype)
         if (members.isNotEmpty()) {
-            typesWithArbitraryMembers.add(supertype)
-            if (members.any { isConcreteMember(supertype, it) }) {
+            if (members.any { isConcreteMember(supertype, it) })
                 typesWithConcreteMembers.add(supertype)
-            }
+            else
+                typesWithNonConcreteMembers.add(supertype)
         }
     }
 
-    return if (typesWithConcreteMembers.isNotEmpty()) typesWithConcreteMembers
-        else if (allowArbitraryMembers) typesWithArbitraryMembers
-        else emptyList<KotlinType>()
+    typesWithConcreteMembers.removeAll { typeWithConcreteMember ->
+        typesWithNonConcreteMembers.any { typeWithNonConcreteMember ->
+            KotlinTypeChecker.DEFAULT.isSubtypeOf(typeWithNonConcreteMember, typeWithConcreteMember)
+        }
+    }
+
+    return when {
+        typesWithConcreteMembers.isNotEmpty() ->
+            typesWithConcreteMembers
+        allowNonConcreteMembers ->
+            typesWithNonConcreteMembers
+        else ->
+            emptyList()
+    }
 }
 
 private fun getFunctionMembers(type: KotlinType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =

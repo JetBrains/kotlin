@@ -2,5 +2,5 @@
 package d
 
 fun foo(a : IntArray) {
-    if (null == <!FUNCTION_EXPECTED!>a<!>()<!SYNTAX!><!>
+    if (<!SENSELESS_COMPARISON!>null == <!FUNCTION_EXPECTED!>a<!>()<!><!SYNTAX!><!>
 <!SYNTAX!><!>}

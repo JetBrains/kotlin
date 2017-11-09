@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
+import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
@@ -25,10 +26,10 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 /**
@@ -48,16 +49,14 @@ class FunctionClassDescriptor(
 
     enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
         Function(BUILT_INS_PACKAGE_FQ_NAME, "Function"),
+        SuspendFunction(BUILT_INS_PACKAGE_FQ_NAME, "SuspendFunction"),
         KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction");
 
         fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
 
         companion object {
-            fun byPackage(fqName: FqName) = when (fqName) {
-                BUILT_INS_PACKAGE_FQ_NAME -> Function
-                KOTLIN_REFLECT_FQ_NAME -> KFunction
-                else -> null
-            }
+            fun byClassNamePrefix(packageFqName: FqName, className: String) =
+                    Kind.values().firstOrNull { it.packageFqName == packageFqName && className.startsWith(it.classNamePrefix) }
         }
     }
 
@@ -81,7 +80,7 @@ class FunctionClassDescriptor(
 
         typeParameter(Variance.OUT_VARIANCE, "R")
 
-        parameters = result.toReadOnlyList()
+        parameters = result.toList()
     }
 
     override fun getContainingDeclaration() = containingDeclaration
@@ -101,8 +100,12 @@ class FunctionClassDescriptor(
     override fun isCompanionObject() = false
     override fun isInner() = false
     override fun isData() = false
+    override fun isExpect() = false
+    override fun isActual() = false
+    override fun isExternal() = false
     override val annotations: Annotations get() = Annotations.EMPTY
-    override fun getSource() = SourceElement.NO_SOURCE
+    override fun getSource(): SourceElement = SourceElement.NO_SOURCE
+    override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
 
     override fun getDeclaredTypeParameters() = parameters
 
@@ -124,26 +127,31 @@ class FunctionClassDescriptor(
                 result.add(KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, descriptor, arguments))
             }
 
-            // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
-            add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
+
+            if (functionKind == Kind.SuspendFunction) {
+                // SuspendFunction$N<...> <: Any
+                result.add(containingDeclaration.builtIns.anyType)
+            }
+            else {
+                // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
+                add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
+            }
 
             // For KFunction{n}, add corresponding numbered Function{n} class, e.g. Function2 for KFunction2
             if (functionKind == Kind.KFunction) {
-                val module = containingDeclaration.containingDeclaration
-                val kotlinPackageFragment = module.getPackage(BUILT_INS_PACKAGE_FQ_NAME).fragments.single()
+                val packageView = containingDeclaration.containingDeclaration.getPackage(BUILT_INS_PACKAGE_FQ_NAME)
+                val kotlinPackageFragment = packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().first()
 
                 add(kotlinPackageFragment, Kind.Function.numberedClassName(arity))
             }
 
-            return result.toReadOnlyList()
+            return result.toList()
         }
 
         override fun getParameters() = this@FunctionClassDescriptor.parameters
 
         override fun getDeclarationDescriptor() = this@FunctionClassDescriptor
         override fun isDenotable() = true
-        override fun isFinal() = false
-        override val annotations: Annotations get() = Annotations.EMPTY
 
         override fun toString() = declarationDescriptor.toString()
 

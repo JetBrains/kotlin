@@ -24,14 +24,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.ExceptionUtil
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
+import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.BindingContext.IMPLICIT_RECEIVER_SMARTCAST
 import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
 
 fun getFunctionForExtractedFragment(
@@ -57,13 +55,13 @@ fun getFunctionForExtractedFragment(
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: $breakpointLine"),
                                       Attachment("context.info", codeFragment.context?.text ?: "null"),
-                                      Attachment("errors.info", analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")))
+                                      Attachment("errors.info", analysisResult.messages.joinToString("\n") { "$it: ${it.renderMessage()}" }))
             LOG.error(LogMessageEx.createEvent(
                     "Internal error during evaluate expression",
                     ExceptionUtil.getThrowableText(Throwable("Extract function fails with ${analysisResult.messages.joinToString { it.name }}")),
                     mergeAttachments(*attachments)))
         }
-        return analysisResult.messages.map { errorMessage ->
+        return analysisResult.messages.joinToString(", ") { errorMessage ->
             val message = when(errorMessage) {
                 ErrorMessage.NO_EXPRESSION -> "Cannot perform an action without an expression"
                 ErrorMessage.NO_CONTAINER -> "Cannot perform an action at this breakpoint ${breakpointFile.name}:$breakpointLine"
@@ -78,7 +76,7 @@ fun getFunctionForExtractedFragment(
                 ErrorMessage.MULTIPLE_OUTPUT -> throw AssertionError("Unexpected error: $errorMessage")
             }
             errorMessage.additionalInfo?.let { "$message: ${it.joinToString(", ")}" } ?: message
-        }.joinToString(", ")
+        }
     }
 
     fun generateFunction(): ExtractionResult? {
@@ -86,7 +84,7 @@ fun getFunctionForExtractedFragment(
 
         val newDebugExpressions = addDebugExpressionIntoTmpFileForExtractFunction(originalFile, codeFragment, breakpointLine)
         if (newDebugExpressions.isEmpty()) return null
-        val tmpFile = newDebugExpressions.first().getContainingKtFile()
+        val tmpFile = newDebugExpressions.first().containingKtFile
 
         if (LOG.isDebugEnabled) {
             LOG.debug("TMP_FILE:\n${runReadAction { tmpFile.text }}")
@@ -106,7 +104,7 @@ fun getFunctionForExtractedFragment(
 
         val validationResult = analysisResult.descriptor!!.validate()
         if (!validationResult.conflicts.isEmpty) {
-            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().map { it.text }.joinToString(",")}")
+            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().joinToString(",") { it.text }}")
         }
 
         val generatorOptions = ExtractionGeneratorOptions(inTempFile = true,
@@ -156,7 +154,7 @@ private fun KtFile.findContextElement(): KtElement? {
 private var PsiElement.DEBUG_SMART_CAST: PsiElement? by CopyableUserDataProperty(Key.create("DEBUG_SMART_CAST"))
 
 private fun KtCodeFragment.markSmartCasts() {
-    val bindingContext = analyzeFullyAndGetResult().bindingContext
+    val bindingContext = runInReadActionWithWriteActionPriorityWithPCE { analyzeFully() }
     val factory = KtPsiFactory(project)
 
     getContentElement()?.forEachDescendantOfType<KtExpression> { expression ->
@@ -208,7 +206,7 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElem
 
         val elementAtOffset = tmpFile.findElementAt(lineStart) ?: return null
 
-        return CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
+        return CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart)
     }
 
     fun shouldStop(el: PsiElement?, p: PsiElement?) = p is KtBlockExpression || el is KtDeclaration || el is KtFile
@@ -237,8 +235,7 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElem
 private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment, contextElement: PsiElement): List<KtExpression> {
     val elementBefore = findElementBefore(contextElement)
 
-    val parent = elementBefore?.parent
-    if (parent == null || elementBefore == null) return emptyList()
+    val parent = elementBefore?.parent ?: return emptyList()
 
     val psiFactory = KtPsiFactory(codeFragment)
 
@@ -246,7 +243,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
 
     fun insertExpression(expr: KtElement?): List<KtExpression> {
         when (expr) {
-            is KtBlockExpression -> return expr.statements.flatMap { insertExpression(it) }
+            is KtBlockExpression -> return expr.statements.flatMap(::insertExpression)
             is KtExpression -> {
                 val newDebugExpression = parent.addBefore(expr, elementBefore)
                 if (newDebugExpression == null) {
@@ -289,15 +286,22 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
         contextElement is KtProperty && !contextElement.isLocal -> {
             val delegateExpressionOrInitializer = contextElement.delegateExpressionOrInitializer
             if (delegateExpressionOrInitializer != null) {
-                wrapInRunFun(delegateExpressionOrInitializer)
+                wrapInLambdaCall(delegateExpressionOrInitializer)
             }
             else {
-                val getter = contextElement.getter!!
-                if (!getter.hasBlockBody()) {
-                    wrapInRunFun(getter.bodyExpression!!)
+                val getter = contextElement.getter
+                val bodyExpression = getter?.bodyExpression
+
+                if (getter != null && bodyExpression != null) {
+                    if (!getter.hasBlockBody()) {
+                        wrapInLambdaCall(bodyExpression)
+                    }
+                    else {
+                        (bodyExpression as KtBlockExpression).statements.first()
+                    }
                 }
                 else {
-                    (getter.bodyExpression as KtBlockExpression).statements.first()
+                    contextElement
                 }
             }
         }
@@ -322,15 +326,12 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
             newBlock.rBrace
         }
         contextElement is KtDeclarationWithBody && !contextElement.hasBlockBody() -> {
-            wrapInRunFun(contextElement.bodyExpression!!)
+            wrapInLambdaCall(contextElement.bodyExpression!!)
         }
         contextElement is KtDeclarationWithBody && contextElement.hasBlockBody() -> {
             val block = contextElement.bodyExpression as KtBlockExpression
             val last = block.statements.lastOrNull()
-            if (last is KtReturnExpression)
-                last
-            else
-                block.rBrace
+            last as? KtReturnExpression ?: block.rBrace
         }
         contextElement is KtWhenEntry -> {
             val entryExpression = contextElement.expression
@@ -338,7 +339,7 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
                 entryExpression.statements.firstOrNull() ?: entryExpression.lastChild
             }
             else {
-                wrapInRunFun(entryExpression!!)
+                wrapInLambdaCall(entryExpression!!)
             }
         }
         else -> {
@@ -347,18 +348,12 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
     }
 }
 
-private fun replaceByRunFunction(expression: KtExpression): KtCallExpression {
-    val callExpression = KtPsiFactory(expression).createExpression("run { \n${expression.text} \n}") as KtCallExpression
-    val replaced = expression.replaced(callExpression)
-    val typeArguments = InsertExplicitTypeArgumentsIntention.createTypeArguments(replaced, replaced.analyze())
-    if (typeArguments?.arguments?.isNotEmpty() ?: false) {
-        val calleeExpression = replaced.calleeExpression
-        replaced.addAfter(typeArguments!!, calleeExpression)
-    }
-    return replaced
+private fun replaceByLambdaCall(expression: KtExpression): KtCallExpression {
+    val callExpression = KtPsiFactory(expression).createExpression("{ \n${expression.text} \n}()") as KtCallExpression
+    return expression.replaced(callExpression)
 }
 
-private fun wrapInRunFun(expression: KtExpression): PsiElement? {
-    val replacedBody = replaceByRunFunction(expression)
-    return replacedBody.lambdaArguments.first().getLambdaExpression().bodyExpression?.firstChild
+private fun wrapInLambdaCall(expression: KtExpression): PsiElement? {
+    val replacedBody = replaceByLambdaCall(expression)
+    return (replacedBody.calleeExpression as? KtLambdaExpression)?.bodyExpression?.firstChild
 }

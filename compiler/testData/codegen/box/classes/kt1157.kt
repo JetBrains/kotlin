@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 public object SomeClass {
     private val work = object : Runnable {
         override fun run() {
@@ -9,6 +10,10 @@ public object SomeClass {
     }
 
     public fun run(): Unit = work.run()
+}
+
+interface Runnable {
+    fun run(): Unit
 }
 
 fun box(): String {

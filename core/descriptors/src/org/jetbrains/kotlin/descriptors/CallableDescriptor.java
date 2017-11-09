@@ -20,12 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface CallableDescriptor extends DeclarationDescriptorWithVisibility, DeclarationDescriptorNonRoot {
+public interface CallableDescriptor extends DeclarationDescriptorWithVisibility, DeclarationDescriptorNonRoot,
+                                            Substitutable<CallableDescriptor> {
     @Nullable
     ReceiverParameterDescriptor getExtensionReceiverParameter();
 
@@ -45,9 +45,6 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     @NotNull
     @Override
     CallableDescriptor getOriginal();
-
-    @Override
-    CallableDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     @NotNull
     List<ValueParameterDescriptor> getValueParameters();

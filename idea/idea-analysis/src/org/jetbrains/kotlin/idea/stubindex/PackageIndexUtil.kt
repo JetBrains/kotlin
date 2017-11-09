@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS
+import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+
 
 object PackageIndexUtil {
     @JvmStatic fun getSubPackageFqNames(
@@ -46,6 +49,7 @@ object PackageIndexUtil {
             searchScope: GlobalSearchScope,
             project: Project
     ): Boolean {
+
         val subpackagesIndex = SubpackagesIndexService.getInstance(project)
         if (!subpackagesIndex.packageExists(packageFqName)) {
             return false
@@ -60,13 +64,17 @@ object PackageIndexUtil {
             searchScope: GlobalSearchScope,
             project: Project
     ): Boolean {
-        var result = false
-        StubIndex.getInstance().processElements<String, KtFile>(
-                KotlinExactPackagesIndex.getInstance().key, packageFqName.asString(), project, searchScope, KtFile::class.java
-        ) {
-            result = true
-            false
+        val ids = StubIndex.getInstance().getContainingIds(KotlinExactPackagesIndex.getInstance().key,
+                                                           packageFqName.asString(),
+                                                           project,
+                                                           searchScope)
+        val fs = PersistentFS.getInstance() as PersistentFSImpl
+        while (ids.hasNext()) {
+            val file = fs.findFileByIdIfCached(ids.next())
+            if (file != null && file in searchScope) {
+                return true
+            }
         }
-        return result
+        return false
     }
 }

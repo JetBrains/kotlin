@@ -1,13 +1,13 @@
-interface <lineMarker></lineMarker>A1 {
-    fun <lineMarker></lineMarker>foo()
+interface <lineMarker>A1</lineMarker> {
+    fun <lineMarker>foo</lineMarker>()
 }
 
-interface <lineMarker></lineMarker>B1 {
-    fun <lineMarker></lineMarker>foo()
+interface <lineMarker>B1</lineMarker> {
+    fun <lineMarker>foo</lineMarker>()
 }
 
 class C1: A1, B1 {
-    override fun <lineMarker descr="Implements function in 'A1'<br/>Implements function in 'B1'"></lineMarker>foo() {}
+    override fun <lineMarker descr="Implements function in 'A1'<br/>Implements function in 'B1'">foo</lineMarker>() {}
 }
 
 /*

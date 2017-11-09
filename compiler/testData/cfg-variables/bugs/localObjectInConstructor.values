@@ -1,0 +1,255 @@
+== println ==
+fun println(obj: Any?) {}
+---------------------
+    <v0>: *   NEW: magic[FAKE_INITIALIZER](obj: Any?) -> <v0>
+=====================
+== Demo0 ==
+class Demo0 {
+    private val some = object {
+        fun foo() {
+            println(state) // Ok
+        }
+    }
+
+    private var state: Boolean = true
+}
+---------------------
+object { fun foo() { println(state) // Ok } }   <v0>: <no name provided>   NEW: r(object { fun foo() { println(state) // Ok } }) -> <v0>
+true                                            <v1>: Boolean              NEW: r(true) -> <v1>
+=====================
+== foo ==
+fun foo() {
+            println(state) // Ok
+        }
+---------------------
+                           <v0>: Demo0   NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
+state                      <v1>: *       NEW: r(state|<v0>) -> <v1>
+println(state)             <v2>: *       NEW: call(println(state), println|<v1>) -> <v2>
+{ println(state) // Ok }   <v2>: *       COPY
+=====================
+== Demo1 ==
+class Demo1 {
+    private val some = object {
+        fun foo() {
+            if (state)
+                state = true
+
+            println(state) // must be initialized
+        }
+    }
+
+    private var state: Boolean = true
+}
+---------------------
+object { fun foo() { if (state) state = true println(state) // must be initialized } }   <v0>: <no name provided>   NEW: r(object { fun foo() { if (state) state = true println(state) // must be initialized } }) -> <v0>
+true                                                                                     <v1>: Boolean              NEW: r(true) -> <v1>
+=====================
+== foo ==
+fun foo() {
+            if (state)
+                state = true
+
+            println(state) // must be initialized
+        }
+---------------------
+                                                                    <v0>: Demo1     NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
+                                                                    <v2>: Demo1     NEW: magic[IMPLICIT_RECEIVER](state) -> <v2>
+                                                                    <v6>: Demo1     NEW: magic[IMPLICIT_RECEIVER](state) -> <v6>
+state                                                               <v1>: Boolean   NEW: r(state|<v0>) -> <v1>
+true                                                                <v3>: Boolean   NEW: r(true) -> <v3>
+state = true                                                        !<v4>: *
+if (state) state = true                                             <v5>: *         NEW: merge(if (state) state = true|!<v4>) -> <v5>
+state                                                               <v7>: *         NEW: r(state|<v6>) -> <v7>
+println(state)                                                      <v8>: *         NEW: call(println(state), println|<v7>) -> <v8>
+{ if (state) state = true println(state) // must be initialized }   <v8>: *         COPY
+=====================
+== Demo1A ==
+class Demo1A {
+    fun foo() {
+        if (state)
+            state = true
+
+        println(state) // Ok
+    }
+
+    private var state: Boolean = true
+}
+---------------------
+true   <v0>: Boolean   NEW: r(true) -> <v0>
+=====================
+== foo ==
+fun foo() {
+        if (state)
+            state = true
+
+        println(state) // Ok
+    }
+---------------------
+                                                   <v0>: Demo1A    NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
+                                                   <v2>: Demo1A    NEW: magic[IMPLICIT_RECEIVER](state) -> <v2>
+                                                   <v6>: Demo1A    NEW: magic[IMPLICIT_RECEIVER](state) -> <v6>
+state                                              <v1>: Boolean   NEW: r(state|<v0>) -> <v1>
+true                                               <v3>: Boolean   NEW: r(true) -> <v3>
+state = true                                       !<v4>: *
+if (state) state = true                            <v5>: *         NEW: merge(if (state) state = true|!<v4>) -> <v5>
+state                                              <v7>: *         NEW: r(state|<v6>) -> <v7>
+println(state)                                     <v8>: *         NEW: call(println(state), println|<v7>) -> <v8>
+{ if (state) state = true println(state) // Ok }   <v8>: *         COPY
+=====================
+== Demo2 ==
+class Demo2 {
+    private val some = object {
+        fun foo() {
+            if (state)
+                state = true
+            else
+                state = false
+
+            println(state) // OK
+        }
+    }
+
+    private var state: Boolean = true
+}
+---------------------
+object { fun foo() { if (state) state = true else state = false println(state) // OK } }   <v0>: <no name provided>   NEW: r(object { fun foo() { if (state) state = true else state = false println(state) // OK } }) -> <v0>
+true                                                                                       <v1>: Boolean              NEW: r(true) -> <v1>
+=====================
+== foo ==
+fun foo() {
+            if (state)
+                state = true
+            else
+                state = false
+
+            println(state) // OK
+        }
+---------------------
+                                                                      <v0>: Demo2     NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
+                                                                      <v2>: Demo2     NEW: magic[IMPLICIT_RECEIVER](state) -> <v2>
+                                                                      <v4>: Demo2     NEW: magic[IMPLICIT_RECEIVER](state) -> <v4>
+                                                                      <v9>: Demo2     NEW: magic[IMPLICIT_RECEIVER](state) -> <v9>
+state                                                                 <v1>: Boolean   NEW: r(state|<v0>) -> <v1>
+true                                                                  <v3>: Boolean   NEW: r(true) -> <v3>
+state = true                                                          !<v6>: *
+false                                                                 <v5>: Boolean   NEW: r(false) -> <v5>
+state = false                                                         !<v7>: *
+if (state) state = true else state = false                            <v8>: *         NEW: merge(if (state) state = true else state = false|!<v6>, !<v7>) -> <v8>
+state                                                                 <v10>: *        NEW: r(state|<v9>) -> <v10>
+println(state)                                                        <v11>: *        NEW: call(println(state), println|<v10>) -> <v11>
+{ if (state) state = true else state = false println(state) // OK }   <v11>: *        COPY
+=====================
+== Demo3 ==
+class Demo3 {
+    private val some = run {
+        if (state)
+            state = true
+
+        println(state) // OK
+    }
+
+    private var state: Boolean = true
+}
+---------------------
+                                                       <v0>: Demo3                   NEW: magic[IMPLICIT_RECEIVER](run { if (state) state = true println(state) // OK }) -> <v0>
+{ if (state) state = true println(state) // OK }       <v1>: {<: Demo3.() -> Unit}   NEW: r({ if (state) state = true println(state) // OK }) -> <v1>
+run { if (state) state = true println(state) // OK }   <v2>: Unit                    NEW: call(run { if (state) state = true println(state) // OK }, run|<v0>, <v1>) -> <v2>
+true                                                   <v3>: Boolean                 NEW: r(true) -> <v3>
+=====================
+== anonymous_0 ==
+{
+        if (state)
+            state = true
+
+        println(state) // OK
+    }
+---------------------
+                                               <v0>: Demo3     NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
+                                               <v2>: Demo3     NEW: magic[IMPLICIT_RECEIVER](state) -> <v2>
+                                               <v6>: Demo3     NEW: magic[IMPLICIT_RECEIVER](state) -> <v6>
+state                                          <v1>: Boolean   NEW: r(state|<v0>) -> <v1>
+true                                           <v3>: Boolean   NEW: r(true) -> <v3>
+state = true                                   !<v4>: *
+if (state) state = true                        <v5>: *         NEW: merge(if (state) state = true|!<v4>) -> <v5>
+state                                          <v7>: *         NEW: r(state|<v6>) -> <v7>
+println(state)                                 <v8>: *         NEW: call(println(state), println|<v7>) -> <v8>
+if (state) state = true println(state) // OK   <v8>: *         COPY
+=====================
+== exec ==
+fun <T> exec(f: () -> T): T = f()
+---------------------
+      <v0>: {<: () -> T}   NEW: magic[FAKE_INITIALIZER](f: () -> T) -> <v0>
+f     <v1>: {<: () -> T}   NEW: r(f) -> <v1>
+f()   <v2>: {<: T}         NEW: call(f(), invoke|<v1>) -> <v2>
+=====================
+== Demo4 ==
+class Demo4 {
+    private val some = exec {
+        if (state)
+            state = true
+
+        println(state) // must be initialized
+    }
+
+    private var state: Boolean = true
+}
+---------------------
+{ if (state) state = true println(state) // must be initialized }        <v0>: {<: () -> Unit}   NEW: r({ if (state) state = true println(state) // must be initialized }) -> <v0>
+exec { if (state) state = true println(state) // must be initialized }   <v1>: Unit              NEW: call(exec { if (state) state = true println(state) // must be initialized }, exec|<v0>) -> <v1>
+true                                                                     <v2>: Boolean           NEW: r(true) -> <v2>
+=====================
+== anonymous_1 ==
+{
+        if (state)
+            state = true
+
+        println(state) // must be initialized
+    }
+---------------------
+                                                                <v0>: Demo4     NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
+                                                                <v2>: Demo4     NEW: magic[IMPLICIT_RECEIVER](state) -> <v2>
+                                                                <v6>: Demo4     NEW: magic[IMPLICIT_RECEIVER](state) -> <v6>
+state                                                           <v1>: Boolean   NEW: r(state|<v0>) -> <v1>
+true                                                            <v3>: Boolean   NEW: r(true) -> <v3>
+state = true                                                    !<v4>: *
+if (state) state = true                                         <v5>: *         NEW: merge(if (state) state = true|!<v4>) -> <v5>
+state                                                           <v7>: *         NEW: r(state|<v6>) -> <v7>
+println(state)                                                  <v8>: *         NEW: call(println(state), println|<v7>) -> <v8>
+if (state) state = true println(state) // must be initialized   <v8>: *         COPY
+=====================
+== Demo5 ==
+class Demo5 {
+    private var state: Boolean = true
+
+    private val some = object {
+        fun foo() {
+            if (state)
+                state = true
+
+            println(state) // OK
+        }
+    }
+}
+---------------------
+true                                                                    <v0>: Boolean              NEW: r(true) -> <v0>
+object { fun foo() { if (state) state = true println(state) // OK } }   <v1>: <no name provided>   NEW: r(object { fun foo() { if (state) state = true println(state) // OK } }) -> <v1>
+=====================
+== foo ==
+fun foo() {
+            if (state)
+                state = true
+
+            println(state) // OK
+        }
+---------------------
+                                                   <v0>: Demo5     NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
+                                                   <v2>: Demo5     NEW: magic[IMPLICIT_RECEIVER](state) -> <v2>
+                                                   <v6>: Demo5     NEW: magic[IMPLICIT_RECEIVER](state) -> <v6>
+state                                              <v1>: Boolean   NEW: r(state|<v0>) -> <v1>
+true                                               <v3>: Boolean   NEW: r(true) -> <v3>
+state = true                                       !<v4>: *
+if (state) state = true                            <v5>: *         NEW: merge(if (state) state = true|!<v4>) -> <v5>
+state                                              <v7>: *         NEW: r(state|<v6>) -> <v7>
+println(state)                                     <v8>: *         NEW: call(println(state), println|<v7>) -> <v8>
+{ if (state) state = true println(state) // OK }   <v8>: *         COPY
+=====================

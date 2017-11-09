@@ -16,26 +16,36 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.components.RuntimeSourceElementFactory
 import org.jetbrains.kotlin.load.java.reflect.tryLoadClass
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaClass
 import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectAnnotationSource
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirementTable
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
-import kotlin.reflect.IllegalCallableAccessException
 import kotlin.reflect.KVisibility
+import kotlin.reflect.full.IllegalCallableAccessException
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
@@ -49,9 +59,9 @@ internal fun ClassDescriptor.toJavaClass(): Class<*>? {
             (source.javaElement as ReflectJavaClass).element
         }
         else -> {
-            // If this is neither a Kotlin class nor a Java class, it is either a built-in or some fake class descriptor like the one
+            // If this is neither a Kotlin class nor a Java class, it's likely either a built-in or some fake class descriptor like the one
             // that's created for java.io.Serializable in JvmBuiltInsSettings
-            val classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(this)) ?: classId
+            val classId = JavaToKotlinClassMap.mapKotlinToJava(DescriptorUtils.getFqName(this)) ?: classId ?: return null
             val packageName = classId.packageFqName.asString()
             val className = classId.relativeClassName.asString()
             // All pseudo-classes like kotlin.String.Companion must be accessible from the current class loader
@@ -117,3 +127,54 @@ internal fun Any?.asKPropertyImpl(): KPropertyImpl<*>? =
 
 internal fun Any?.asKCallableImpl(): KCallableImpl<*>? =
         this as? KCallableImpl<*> ?: asKFunctionImpl() ?: asKPropertyImpl()
+
+internal val ReflectKotlinClass.packageModuleName: String?
+    get() {
+        val header = classHeader
+        if (!header.metadataVersion.isCompatible()) return null
+
+        return when (header.kind) {
+            KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+                // TODO: avoid reading and parsing metadata twice (here and later in KPackageImpl#descriptor)
+                val (nameResolver, proto) = JvmProtoBufUtil.readPackageDataFrom(header.data!!, header.strings!!)
+                // If no packageModuleName extension is written, the name is assumed to be JvmAbi.DEFAULT_MODULE_NAME
+                // (see JvmSerializerExtension.serializePackage)
+                if (proto.hasExtension(JvmProtoBuf.packageModuleName))
+                    nameResolver.getString(proto.getExtension(JvmProtoBuf.packageModuleName))
+                else JvmAbi.DEFAULT_MODULE_NAME
+            }
+            KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
+                val partName = header.multifilePartNames.firstOrNull() ?: return null
+                ReflectKotlinClass.create(klass.classLoader.loadClass(partName.replace('/', '.')))?.packageModuleName
+            }
+            else -> null
+        }
+    }
+
+internal val CallableMemberDescriptor.isPublicInBytecode: Boolean
+    get() {
+        val visibility = visibility
+        return (visibility == Visibilities.PUBLIC || visibility == Visibilities.INTERNAL) && !isEffectivelyInlineOnly()
+    }
+
+internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
+        moduleAnchor: Class<*>,
+        proto: M,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        createDescriptor: MemberDeserializer.(M) -> D
+): D? {
+    val moduleData = moduleAnchor.getOrCreateModule()
+
+    val typeParameters = when (proto) {
+        is ProtoBuf.Function -> proto.typeParameterList
+        is ProtoBuf.Property -> proto.typeParameterList
+        else -> error("Unsupported message: $proto")
+    }
+
+    val context = DeserializationContext(
+            moduleData.deserialization, nameResolver, moduleData.module, typeTable, VersionRequirementTable.EMPTY,
+            containerSource = null, parentTypeDeserializer = null, typeParameters = typeParameters
+    )
+    return MemberDeserializer(context).createDescriptor(proto)
+}

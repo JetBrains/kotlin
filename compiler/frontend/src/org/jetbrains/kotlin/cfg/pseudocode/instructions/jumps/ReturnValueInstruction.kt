@@ -23,13 +23,15 @@ import java.util.Collections
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
 class ReturnValueInstruction(
         returnExpression: KtExpression,
         blockScope: BlockScope,
         targetLabel: Label,
-        val returnedValue: PseudoValue
+        val returnedValue: PseudoValue,
+        val subroutine: KtElement
 ) : AbstractJumpInstruction(returnExpression, targetLabel, blockScope) {
     override val inputValues: List<PseudoValue> get() = Collections.singletonList(returnedValue)
 
@@ -37,17 +39,12 @@ class ReturnValueInstruction(
         visitor.visitReturnValue(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitReturnValue(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitReturnValue(this)
 
-    override fun toString(): String {
-        return "ret(*|$returnedValue) $targetLabel"
-    }
+    override fun toString(): String = "ret(*|$returnedValue) $targetLabel"
 
-    override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction {
-        return ReturnValueInstruction((element as KtExpression), blockScope, newLabel, returnedValue)
-    }
+    override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction =
+            ReturnValueInstruction((element as KtExpression), blockScope, newLabel, returnedValue, subroutine)
 
     val returnExpressionIfAny: KtReturnExpression? = element as? KtReturnExpression
 }

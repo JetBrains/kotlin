@@ -21,10 +21,10 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class KotlinReferenceUsageInfo(reference: PsiReference) : UsageInfo(reference) {
-    private val referenceType = reference.javaClass
+    private val referenceType = reference::class.java
 
     override fun getReference(): PsiReference? {
         val element = element ?: return null
-        return element.references.singleOrNull { it.javaClass == referenceType }
+        return element.references.singleOrNull { it::class.java == referenceType }
     }
 }

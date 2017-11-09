@@ -17,23 +17,16 @@
 package org.jetbrains.kotlin.cli.common.repl
 
 import com.google.common.base.Throwables
+import java.io.File
+import java.net.URLClassLoader
 
-fun <T> checkAndUpdateReplHistoryCollection(col: MutableList<Pair<ReplCodeLine, T>>, baseHistory: Iterable<ReplCodeLine>): Int? {
-    val baseHistoryIt = baseHistory.iterator()
-    var idx = 0
-    while (baseHistoryIt.hasNext()) {
-        val curLine = baseHistoryIt.next()
-        if (col[idx].first != curLine) return curLine.no
-        idx += 1
-    }
-    col.dropLast(col.size - idx)
-    return null
-}
+fun makeScriptBaseName(codeLine: ReplCodeLine) =
+        "Line_${codeLine.no}${if (codeLine.generation > REPL_CODE_LINE_FIRST_GEN) "_gen_${codeLine.generation}" else ""}"
 
 fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String {
     val newTrace = arrayListOf<StackTraceElement>()
     var skip = true
-    for ((i, element) in cause.stackTrace.withIndex().reversed()) {
+    for (element in cause.stackTrace.reversed()) {
         if ("${element.className}.${element.methodName}" == startFromMethodName) {
             skip = false
         }
@@ -47,6 +40,21 @@ fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String 
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "UsePropertyAccessSyntax")
     (cause as java.lang.Throwable).setStackTrace(resultingTrace.toTypedArray())
 
-    return Throwables.getStackTraceAsString(cause)
+    return Throwables.getStackTraceAsString(cause).trimEnd()
 }
 
+internal fun ClassLoader.listAllUrlsAsFiles(): List<File> {
+    val parents = generateSequence(this) { loader -> loader.parent }.filterIsInstance(URLClassLoader::class.java)
+    return parents.fold(emptyList<File>()) { accum, loader ->
+        loader.listLocalUrlsAsFiles() + accum
+    }.distinct()
+}
+
+internal fun URLClassLoader.listLocalUrlsAsFiles(): List<File> {
+    return this.urLs.mapNotNull { it.toString().removePrefix("file:") }.map(::File)
+}
+
+internal fun <T : Any> List<T>.ensureNotEmpty(error: String): List<T> {
+    if (this.isEmpty()) throw IllegalStateException(error)
+    return this
+}

@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 interface Annotated {
     val annotations: Annotations
@@ -28,11 +26,11 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
     fun isEmpty(): Boolean
 
-    fun findAnnotation(fqName: FqName): AnnotationDescriptor?
+    fun findAnnotation(fqName: FqName): AnnotationDescriptor? = firstOrNull { it.fqName == fqName }
 
-    fun hasAnnotation(fqName: FqName) = findAnnotation(fqName) != null
+    fun hasAnnotation(fqName: FqName): Boolean = findAnnotation(fqName) != null
 
-    fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor?
+    fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor? = null
 
     fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget>
 
@@ -45,8 +43,6 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
             override fun findAnnotation(fqName: FqName) = null
 
-            override fun findExternalAnnotation(fqName: FqName) = null
-
             override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
 
             override fun getAllAnnotations() = emptyList<AnnotationWithTarget>()
@@ -57,27 +53,19 @@ interface Annotations : Iterable<AnnotationDescriptor> {
         }
 
         fun findAnyAnnotation(annotations: Annotations, fqName: FqName): AnnotationWithTarget? {
-            return annotations.getAllAnnotations().firstOrNull { checkAnnotationName(it.annotation, fqName) }
+            return annotations.getAllAnnotations().firstOrNull { it.annotation.fqName == fqName }
         }
 
         fun findUseSiteTargetedAnnotation(annotations: Annotations, target: AnnotationUseSiteTarget, fqName: FqName): AnnotationDescriptor? {
-            return getUseSiteTargetedAnnotations(annotations, target).firstOrNull { checkAnnotationName(it, fqName) }
+            return getUseSiteTargetedAnnotations(annotations, target).firstOrNull { it.fqName == fqName }
         }
 
         private fun getUseSiteTargetedAnnotations(annotations: Annotations, target: AnnotationUseSiteTarget): List<AnnotationDescriptor> {
-            return annotations.getUseSiteTargetedAnnotations().fold(arrayListOf<AnnotationDescriptor>()) { list, targeted ->
-                if (target == targeted.target) {
-                    list.add(targeted.annotation)
-                }
-                list
+            return annotations.getUseSiteTargetedAnnotations().mapNotNull { (annotation, annotationTarget) ->
+                annotation.takeIf { target == annotationTarget }
             }
         }
     }
-}
-
-private fun checkAnnotationName(annotation: AnnotationDescriptor, fqName: FqName): Boolean {
-    val descriptor = annotation.type.constructor.declarationDescriptor
-    return descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
 }
 
 class FilteredAnnotations(
@@ -105,16 +93,14 @@ class FilteredAnnotations(
         return delegate.getAllAnnotations().filter { shouldBeReturned(it.annotation) }
     }
 
-    override fun iterator() = delegate.filter { shouldBeReturned(it) }.iterator()
+    override fun iterator() = delegate.filter(this::shouldBeReturned).iterator()
 
-    private fun shouldBeReturned(annotation: AnnotationDescriptor): Boolean {
-        val descriptor = annotation.type.constructor.declarationDescriptor
-        return descriptor != null && DescriptorUtils.getFqName(descriptor).let { fqName ->
-            fqName.isSafe && fqNameFilter(fqName.toSafe())
-        }
-    }
+    override fun isEmpty() = delegate.any(this::shouldBeReturned)
 
-    override fun isEmpty() = !iterator().hasNext()
+    private fun shouldBeReturned(annotation: AnnotationDescriptor): Boolean =
+            annotation.fqName.let { fqName ->
+                fqName != null && fqNameFilter(fqName)
+            }
 }
 
 class CompositeAnnotations(

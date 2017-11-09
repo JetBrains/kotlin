@@ -1,7 +1,5 @@
 package test
 
-public /*synthesized*/ fun VarargParameter(/*0*/ function: (kotlin.Array<(out) kotlin.String!>!) -> kotlin.Unit): test.VarargParameter
-
 public interface VarargParameter {
     public abstract fun f(/*0*/ vararg p0: kotlin.String! /*kotlin.Array<(out) kotlin.String!>!*/): kotlin.Unit
 }

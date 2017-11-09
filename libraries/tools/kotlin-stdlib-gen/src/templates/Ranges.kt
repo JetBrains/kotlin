@@ -127,12 +127,31 @@ fun ranges(): List<GenericFunction> {
         platformName("${rangeType.name.decapitalize()}RangeContains")
         returns("Boolean")
         doc { "Checks if the specified [value] belongs to this range." }
-        body { "return start <= value && value <= endInclusive" }
+        body {
+            if (rangeType.capacity > itemType.capacity || !rangeType.isIntegral())
+                "return contains(value.to$rangeType())"
+            else
+                "return value.to${rangeType}ExactOrNull().let { if (it != null) contains(it) else false }"
+        }
     }
 
 
     templates addAll numericPermutations.filter { it.first != it.second }.map { contains(it.first, it.second) }
 
+    fun narrowingExactOrNull(fromType: PrimitiveType, toType: PrimitiveType) = f("to${toType}ExactOrNull()") {
+        visibility("internal")
+        sourceFile(SourceFile.Ranges)
+        check(toType.isIntegral())
+
+        returns("$toType?")
+        only(Primitives)
+        only(fromType)
+        body {
+            "return if (this in $toType.MIN_VALUE.to$fromType()..$toType.MAX_VALUE.to$fromType()) this.to$toType() else null"
+        }
+    }
+
+    templates addAll numericPermutations.filter { it.first.capacity > it.second.capacity && it.second.isIntegral() }.map { narrowingExactOrNull(it.first, it.second) }
 
     return templates
 }

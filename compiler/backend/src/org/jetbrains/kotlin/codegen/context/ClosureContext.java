@@ -26,23 +26,23 @@ import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.anonymousClass
 
 public class ClosureContext extends ClassContext {
     private final FunctionDescriptor functionDescriptor;
-    private final FunctionDescriptor coroutineDescriptor;
+    private final FunctionDescriptor originalSuspendLambdaDescriptor;
 
     public ClosureContext(
             @NotNull KotlinTypeMapper typeMapper,
             @NotNull FunctionDescriptor functionDescriptor,
             @Nullable CodegenContext parentContext,
             @NotNull LocalLookup localLookup,
-            // original coroutine lambda descriptor having return type T (the type that can be returned within lambda)
-            @Nullable FunctionDescriptor coroutineDescriptor
+            // original suspend lambda descriptor
+            @Nullable FunctionDescriptor originalSuspendLambdaDescriptor
     ) {
         super(typeMapper,
               anonymousClassForCallable(
-                      typeMapper.getBindingContext(), coroutineDescriptor != null ? coroutineDescriptor : functionDescriptor),
+                      typeMapper.getBindingContext(), originalSuspendLambdaDescriptor != null ? originalSuspendLambdaDescriptor : functionDescriptor),
               OwnerKind.IMPLEMENTATION, parentContext, localLookup);
 
         this.functionDescriptor = functionDescriptor;
-        this.coroutineDescriptor = coroutineDescriptor;
+        this.originalSuspendLambdaDescriptor = originalSuspendLambdaDescriptor;
     }
 
     public ClosureContext(
@@ -65,7 +65,7 @@ public class ClosureContext extends ClassContext {
     }
 
     @Nullable
-    public FunctionDescriptor getCoroutineDescriptor() {
-        return coroutineDescriptor;
+    public FunctionDescriptor getOriginalSuspendLambdaDescriptor() {
+        return originalSuspendLambdaDescriptor;
     }
 }

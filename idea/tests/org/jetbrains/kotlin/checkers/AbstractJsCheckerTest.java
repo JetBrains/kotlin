@@ -25,7 +25,7 @@ public abstract class AbstractJsCheckerTest extends KotlinLightCodeInsightFixtur
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return KotlinStdJSProjectDescriptor.Companion.getInstance();
+        return KotlinStdJSProjectDescriptor.INSTANCE;
     }
 
     public void doTest(String filePath) {

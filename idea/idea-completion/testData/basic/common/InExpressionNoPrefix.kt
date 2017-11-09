@@ -5,4 +5,4 @@ class Test {
 }
 
 // EXIST: Any, Nothing, Unit, Int, Number, Array
-// EXIST_JAVA_ONLY: Math, Thread
+// EXIST_JAVA_ONLY: Thread

@@ -1,6 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1152
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: add_0
+// CHECK_CONTAINS_NO_CALLS: add
 
 internal data class State(var count: Int = 0)
 

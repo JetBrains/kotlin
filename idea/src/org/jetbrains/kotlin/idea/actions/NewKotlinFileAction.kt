@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
+import com.intellij.ide.actions.CreateFromTemplateAction
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.fileTemplates.actions.AttributesDefaults
@@ -25,6 +26,8 @@ import com.intellij.ide.fileTemplates.ui.CreateFromTemplateDialog
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.editor.LogicalPosition
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
@@ -36,6 +39,9 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.*
 
 class NewKotlinFileAction
@@ -50,6 +56,22 @@ class NewKotlinFileAction
         val module = ModuleUtilCore.findModuleForPsiElement(createdElement!!)
         if (module != null) {
             showConfigureKotlinNotificationIfNeeded(module)
+        }
+
+        if (createdElement is KtFile) {
+            val ktClass = createdElement.declarations.singleOrNull() as? KtNamedDeclaration
+            if (ktClass != null) {
+                CreateFromTemplateAction.moveCaretAfterNameIdentifier(ktClass)
+            }
+            else {
+                val editor = FileEditorManager.getInstance(createdElement.project).selectedTextEditor ?: return
+                if (editor.document == createdElement.viewProvider.document) {
+                    val lineCount = editor.document.lineCount
+                    if (lineCount > 0) {
+                        editor.caretModel.moveToLogicalPosition(LogicalPosition(lineCount - 1, 0))
+                    }
+                }
+            }
         }
     }
 
@@ -82,6 +104,8 @@ class NewKotlinFileAction
         return obj is NewKotlinFileAction
     }
 
+    override fun startInWriteAction() = false
+
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory) =
             Companion.createFileFromTemplate(name, template, dir)
 
@@ -95,7 +119,9 @@ class NewKotlinFileAction
                     val names = className.trim().split(splitChar)
 
                     for (dirName in names.dropLast(1)) {
-                        targetDir = targetDir.findSubdirectory(dirName) ?: targetDir.createSubdirectory(dirName)
+                        targetDir = targetDir.findSubdirectory(dirName) ?: runWriteAction {
+                            targetDir.createSubdirectory(dirName)
+                        }
                     }
 
                     className = names.last()

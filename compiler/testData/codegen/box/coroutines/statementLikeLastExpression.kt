@@ -1,16 +1,19 @@
-var globalResult = ""
-class Controller {
-    suspend fun suspendWithValue(v: String, x: Continuation<String>) {
-        x.resume(v)
-    }
+// WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
-    operator fun handleResult(x: String, c: Continuation<Nothing>) {
-        globalResult = x
-    }
+var globalResult = ""
+suspend fun suspendWithValue(v: String): String = suspendCoroutineOrReturn { x ->
+    x.resume(v)
+    COROUTINE_SUSPENDED
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: suspend () -> String) {
+    c.startCoroutine(handleResultContinuation {
+        globalResult = it
+    })
 }
 
 fun box(): String {

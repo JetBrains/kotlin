@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
@@ -38,8 +39,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-private val CONSTRUCTOR_VAL_VAR_MODIFIERS = listOf(
-        OPEN_KEYWORD, FINAL_KEYWORD,
+internal val CONSTRUCTOR_VAL_VAR_MODIFIERS = listOf(
+        OPEN_KEYWORD, FINAL_KEYWORD, OVERRIDE_KEYWORD,
         PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD,
         LATEINIT_KEYWORD
 )
@@ -124,6 +125,7 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
         override fun getFamilyName() = fix.familyName
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
             parameter.valOrVarKeyword?.delete()
             // Delete visibility / open / final / lateinit, if any
             // Retain annotations / vararg

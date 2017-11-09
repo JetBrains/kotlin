@@ -1,0 +1,16 @@
+// WITH_RUNTIME
+fun test(x: Any) {
+    var res: String
+    <caret>res = when (x) {
+        is String ->
+            if (x.length > 3) "long string"
+            else "short string"
+        is Int ->
+            if (x > 999 || x < -99) "long int"
+            else "short int"
+        is Long ->
+            TODO()
+        else ->
+            "I don't know"
+    }
+}

@@ -1,25 +1,3 @@
-WARN: Source file or directory not found: $TESTDATA_DIR$/nonexistentFile.kt
-
-module file path: compiler/testData/cli/jvm/nonexistentPathInModule.xml
-content:
-<modules>
-    <module name="name" outputDir="whatever" type="java-production">
-        <sources path="nonexistentFile.kt"/>
-        <sources path="some/nonexistent/dir/"/>
-    </module>
-</modules>
-
-WARN: Source file or directory not found: $TESTDATA_DIR$/some/nonexistent/dir
-
-module file path: compiler/testData/cli/jvm/nonexistentPathInModule.xml
-content:
-<modules>
-    <module name="name" outputDir="whatever" type="java-production">
-        <sources path="nonexistentFile.kt"/>
-        <sources path="some/nonexistent/dir/"/>
-    </module>
-</modules>
-
 error: source file or directory not found: $TESTDATA_DIR$/nonexistentFile.kt
 error: source file or directory not found: $TESTDATA_DIR$/some/nonexistent/dir
 COMPILATION_ERROR

@@ -16,45 +16,42 @@
 
 package org.jetbrains.kotlin.idea.caches
 
-import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
+import com.intellij.testFramework.LightProjectDescriptor
 import com.sun.tools.javac.util.Convert.shortName
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import kotlin.reflect.KMutableProperty0
 
-class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
+class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
-    lateinit var cacheInstance: PsiShortNamesCache
+    private lateinit var cacheInstance: PsiShortNamesCache
+
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     override fun setUp() {
         super.setUp()
         cacheInstance = KotlinShortNamesCache(project)
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, testProjectJdk)
     }
 
     override fun tearDown() {
-        ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myModule, testProjectJdk)
+        (this::cacheInstance as KMutableProperty0<GlobalSearchScope?>).set(null)
         super.tearDown()
-
     }
 
-    override fun getModule() = myModule!!
-
     fun testGetMethodsByNameIfNotMoreThanLimits() {
-        val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestData1.kt")
-        configureByFile(file)
+        myFixture.configureByFile("kotlinShortNamesCacheTestData1.kt")
         val scope = GlobalSearchScope.allScope(project)
         assertSize(2, cacheInstance.getMethodsByNameIfNotMoreThan("foobar", scope, 2))
         assertSize(3, cacheInstance.getMethodsByNameIfNotMoreThan("foobar", scope, 3))
@@ -62,8 +59,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
     }
 
     fun testGetFieldsByNameIfNotMoreThanLimits() {
-        val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestData1.kt")
-        configureByFile(file)
+        myFixture.configureByFile("kotlinShortNamesCacheTestData1.kt")
         val scope = GlobalSearchScope.allScope(project)
         assertSize(2, cacheInstance.getFieldsByNameIfNotMoreThan("barfoo", scope, 2))
         assertSize(3, cacheInstance.getFieldsByNameIfNotMoreThan("barfoo", scope, 3))
@@ -71,16 +67,14 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
     }
 
     fun testGetAllFields() {
-        val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestData2.kt")
-        configureByFile(file)
+        myFixture.configureByFile("kotlinShortNamesCacheTestData2.kt")
         val allFieldNameList = cacheInstance.allFieldNames.asList()
         assertContainsElements(allFieldNameList, "foobar")
         assertContainsElements(allFieldNameList, "barfoo")
     }
 
     fun testGetAllMethods() {
-        val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestData2.kt")
-        configureByFile(file)
+        myFixture.configureByFile("kotlinShortNamesCacheTestData2.kt")
         val allMethodNameList = cacheInstance.allMethodNames.asList()
         assertContainsElements(allMethodNameList, "getFoobar")
         assertContainsElements(allMethodNameList, "getBarfoo")
@@ -92,8 +86,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
     }
 
     fun testGetAllClasses() {
-        val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestDataClasses.kt")
-        configureByFile(file)
+        myFixture.configureByFile("kotlinShortNamesCacheTestDataClasses.kt")
         val allClassNameList = cacheInstance.allClassNames.asList()
         assertContainsElements(allClassNameList, "C1")
         assertContainsElements(allClassNameList, "O1")
@@ -103,7 +96,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
             = a.map { "${(it as KtLightMethod).clsDelegate.getKotlinFqName()} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
     fun accessorArrayDebugToString(a: Array<PsiMethod>)
-            = a.map { "${(it as KtLightMethod).clsDelegate.getKotlinFqName()} property=${(it.lightMethodOrigin?.originalElement as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+            = a.map { "${(it as KtLightMethod).clsDelegate.getKotlinFqName()} property=${(it.lightMemberOrigin?.originalElement as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
     fun checkMethodFound(methods: Array<PsiMethod>, stringFqName: String, static: Boolean) {
         assertNotNull("Method $stringFqName with static=$static not found\n" + methodArrayDebugToString(methods),
@@ -189,15 +182,14 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
                       methods.find {
                           stringFqName == (it as KtLightMethod).clsDelegate.getKotlinFqName().toString()
                           &&
-                          (it.lightMethodOrigin?.originalElement as KtProperty).fqName?.asString() == propertyFqName
+                          (it.lightMemberOrigin?.originalElement as KtProperty).fqName?.asString() == propertyFqName
                           &&
                           it.hasModifierProperty(PsiModifier.STATIC) == static
                       })
     }
 
     fun testGetMethodsByNameWithFunctions() {
-        val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestDataMethods.kt")
-        configureByFile(file)
+        myFixture.configureByFile("kotlinShortNamesCacheTestDataMethods.kt")
         val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule)
         checkIsSingleMethodFound(scope, "KotlinShortNamesCacheTestDataMethodsKt.topLevelFunction", true)
         checkIsSingleMethodFound(scope, "B1.staticMethodOfObject", true)
@@ -208,8 +200,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
     }
 
     fun doTestGetMethodsByNameWithAccessors(file: String) {
-
-        configureByFile(file)
+        myFixture.configureByFile(file)
         val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule)
         checkIsVarAccessorsFound(scope, "topLevelVar", "KotlinShortNameCacheTestData.getTopLevelVar",
                                  "KotlinShortNameCacheTestData.setTopLevelVar", true)
@@ -222,13 +213,11 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
     }
 
     fun testGetMethodsByNameWithDefaultPropertyAccessors() {
-        val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestDataDefaultProperties.kt")
-        doTestGetMethodsByNameWithAccessors(file)
+        doTestGetMethodsByNameWithAccessors("kotlinShortNamesCacheTestDataDefaultProperties.kt")
     }
 
     fun testGetMethodsByNameWithCustomPropertyAccessors() {
-        val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestDataCustomProperties.kt")
-        doTestGetMethodsByNameWithAccessors(file)
+        doTestGetMethodsByNameWithAccessors("kotlinShortNamesCacheTestDataCustomProperties.kt")
     }
 
     fun checkFieldFound(methods: Array<PsiField>, stringFqName: String, static: Boolean) {
@@ -252,8 +241,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
     }
 
     fun testGetFieldsByName() {
-        val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestDataFields.kt")
-        configureByFile(file)
+        myFixture.configureByFile("kotlinShortNamesCacheTestDataFields.kt")
         val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule)
         checkIsSingleFieldFound(scope, "KotlinShortNamesCacheTestDataFieldsKt.topLevelVar", true)
         checkIsSingleFieldFound(scope, "B1.objectVar", true)
@@ -261,13 +249,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
         checkIsSingleFieldFound(scope, "C1.companionVar", true)
     }
 
-
-    override fun getTestProjectJdk(): Sdk? {
-        return PluginTestCaseBase.mockJdk()
-    }
-
     override fun getTestDataPath(): String {
-        return KotlinTestUtils.getHomeDirectory() + "/"
+        return KotlinTestUtils.getHomeDirectory() + "/idea/testData/cache/"
     }
-
 }

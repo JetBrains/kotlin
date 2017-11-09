@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,23 +32,20 @@ import org.jetbrains.kotlin.utils.CollectionsKt;
 import java.util.*;
 
 public class Visibilities {
+    @NotNull
     public static final Visibility PRIVATE = new Visibility("private", false) {
         @Override
         public boolean mustCheckInImports() {
             return true;
         }
 
-        private boolean inSameFile(@NotNull DeclarationDescriptor what, @NotNull DeclarationDescriptor from) {
-            SourceFile fromContainingFile = DescriptorUtils.getContainingSourceFile(from);
-            if (fromContainingFile != SourceFile.NO_SOURCE_FILE) {
-                return fromContainingFile.equals(DescriptorUtils.getContainingSourceFile(what));
-            }
-            return false;
+        private boolean hasContainingSourceFile(@NotNull DeclarationDescriptor descriptor) {
+            return DescriptorUtils.getContainingSourceFile(descriptor) != SourceFile.NO_SOURCE_FILE;
         }
 
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            if (DescriptorUtils.isTopLevelDeclaration(what)) {
+            if (DescriptorUtils.isTopLevelDeclaration(what) && hasContainingSourceFile(from)) {
                 return inSameFile(what, from);
             }
 
@@ -104,6 +101,7 @@ public class Visibilities {
      *      }
      *  }
      */
+    @NotNull
     public static final Visibility PRIVATE_TO_THIS = new Visibility("private_to_this", false) {
         @Override
         public boolean isVisible(@Nullable ReceiverValue thisObject, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
@@ -133,6 +131,7 @@ public class Visibilities {
         }
     };
 
+    @NotNull
     public static final Visibility PROTECTED = new Visibility("protected", true) {
         @Override
         public boolean mustCheckInImports() {
@@ -198,6 +197,7 @@ public class Visibilities {
         }
     };
 
+    @NotNull
     public static final Visibility INTERNAL = new Visibility("internal", false) {
         @Override
         public boolean mustCheckInImports() {
@@ -206,13 +206,20 @@ public class Visibilities {
 
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            DeclarationDescriptor fromOrModule = from instanceof PackageViewDescriptor ? ((PackageViewDescriptor) from).getModule() : from;
-            if (!DescriptorUtils.getContainingModule(fromOrModule).shouldSeeInternalsOf(DescriptorUtils.getContainingModule(what))) return false;
+            ModuleDescriptor whatModule = DescriptorUtils.getContainingModule(what);
+            ModuleDescriptor fromModule = DescriptorUtils.getContainingModule(from);
+
+            // Can't invert this condition because CLI compiler analyzes sources as like all in the one module
+            // and for modules with circular dependency (chunk) JPS provides sources of all modules,
+            // so we can't be sure that references to an internal member are correct.
+            if (!fromModule.shouldSeeInternalsOf(whatModule)) return false;
+
 
             return MODULE_VISIBILITY_HELPER.isInFriendModule(what, from);
         }
     };
 
+    @NotNull
     public static final Visibility PUBLIC = new Visibility("public", true) {
         @Override
         public boolean mustCheckInImports() {
@@ -225,6 +232,7 @@ public class Visibilities {
         }
     };
 
+    @NotNull
     public static final Visibility LOCAL = new Visibility("local", false) {
         @Override
         public boolean mustCheckInImports() {
@@ -237,6 +245,7 @@ public class Visibilities {
         }
     };
 
+    @NotNull
     public static final Visibility INHERITED = new Visibility("inherited", false) {
         @Override
         public boolean mustCheckInImports() {
@@ -250,6 +259,7 @@ public class Visibilities {
     };
 
     /* Visibility for fake override invisible members (they are created for better error reporting) */
+    @NotNull
     public static final Visibility INVISIBLE_FAKE = new Visibility("invisible_fake", false) {
         @Override
         public boolean mustCheckInImports() {
@@ -264,6 +274,7 @@ public class Visibilities {
 
     // Currently used as default visibility of FunctionDescriptor
     // It's needed to prevent NPE when requesting non-nullable visibility of descriptor before `initialize` has been called
+    @NotNull
     public static final Visibility UNKNOWN = new Visibility("unknown", false) {
         @Override
         public boolean mustCheckInImports() {
@@ -301,6 +312,16 @@ public class Visibilities {
      */
     public static boolean isVisibleWithAnyReceiver(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
         return findInvisibleMember(IRRELEVANT_RECEIVER, what, from) == null;
+    }
+
+    // Note that this method returns false if `from` declaration is `init` initializer
+    // because initializer does not have source element
+    public static boolean inSameFile(@NotNull DeclarationDescriptor what, @NotNull DeclarationDescriptor from) {
+        SourceFile fromContainingFile = DescriptorUtils.getContainingSourceFile(from);
+        if (fromContainingFile != SourceFile.NO_SOURCE_FILE) {
+            return fromContainingFile.equals(DescriptorUtils.getContainingSourceFile(what));
+        }
+        return false;
     }
 
     @Nullable
@@ -375,6 +396,12 @@ public class Visibilities {
         public KotlinType getType() {
             throw new IllegalStateException("This method should not be called");
         }
+
+        @NotNull
+        @Override
+        public ReceiverValue replaceType(@NotNull KotlinType newType) {
+            throw new IllegalStateException("This method should not be called");
+        }
     };
 
     /**
@@ -387,6 +414,12 @@ public class Visibilities {
         public KotlinType getType() {
             throw new IllegalStateException("This method should not be called");
         }
+
+        @NotNull
+        @Override
+        public ReceiverValue replaceType(@NotNull KotlinType newType) {
+            throw new IllegalStateException("This method should not be called");
+        }
     };
 
     // This constant is not intended to use somewhere else from
@@ -395,6 +428,12 @@ public class Visibilities {
         @NotNull
         @Override
         public KotlinType getType() {
+            throw new IllegalStateException("This method should not be called");
+        }
+
+        @NotNull
+        @Override
+        public ReceiverValue replaceType(@NotNull KotlinType newType) {
             throw new IllegalStateException("This method should not be called");
         }
     };

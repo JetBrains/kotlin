@@ -18,10 +18,13 @@ package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.cli.common.KotlinVersion
-import org.jetbrains.kotlin.cli.jvm.repl.LineResult.*
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.io.File
 import java.io.PrintWriter
 import java.util.*
@@ -34,7 +37,6 @@ class ReplFromTerminal(
         compilerConfiguration: CompilerConfiguration,
         replConfiguration: ReplConfiguration
 ) : ReplConfiguration by replConfiguration {
-
     private val replInitializer: Future<ReplInterpreter> = Executors.newSingleThreadExecutor().submit(Callable {
         ReplInterpreter(disposable, compilerConfiguration, replConfiguration)
     })
@@ -42,11 +44,19 @@ class ReplFromTerminal(
     private val replInterpreter: ReplInterpreter
         get() = replInitializer.get()
 
+    private val messageCollector: MessageCollector = compilerConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
     private fun doRun() {
         try {
-            writer.printlnWelcomeMessage("Welcome to Kotlin version ${KotlinVersion.VERSION} " +
+            writer.printlnWelcomeMessage("Welcome to Kotlin version ${KotlinCompilerVersion.VERSION} " +
                                          "(JRE ${System.getProperty("java.runtime.version")})")
             writer.printlnWelcomeMessage("Type :help for help, :quit for quit")
+
+            // Display compiler messages related to configuration and CLI arguments, quit if there are errors
+            val hasErrors = messageCollector.hasErrors()
+            (messageCollector as? GroupingMessageCollector)?.flush()
+            if (hasErrors) return
+
             var next = WhatNextAfterOneLine.READ_LINE
             while (true) {
                 next = one(next)
@@ -86,28 +96,28 @@ class ReplFromTerminal(
         }
 
         val lineResult = eval(line)
-        if (lineResult is LineResult.Incomplete) {
-            return WhatNextAfterOneLine.INCOMPLETE
+        return if (lineResult is ReplEvalResult.Incomplete) {
+            WhatNextAfterOneLine.INCOMPLETE
         }
         else {
-            return WhatNextAfterOneLine.READ_LINE
+            WhatNextAfterOneLine.READ_LINE
         }
     }
 
-    private fun eval(line: String): LineResult {
-        val lineResult = replInterpreter.eval(line)
-        when (lineResult) {
-            is ValueResult, UnitResult -> {
+    private fun eval(line: String): ReplEvalResult {
+        val evalResult = replInterpreter.eval(line)
+        when (evalResult) {
+            is ReplEvalResult.ValueResult, is ReplEvalResult.UnitResult -> {
                 writer.notifyCommandSuccess()
-                if (lineResult is ValueResult) {
-                    writer.outputCommandResult(lineResult.valueAsString)
+                if (evalResult is ReplEvalResult.ValueResult) {
+                    writer.outputCommandResult(evalResult.value.toString())
                 }
             }
-            Incomplete -> writer.notifyIncomplete()
-            is Error.CompileTime -> writer.outputCompileError(lineResult.errorText)
-            is Error.Runtime -> writer.outputRuntimeError(lineResult.errorText)
+            is ReplEvalResult.Error.Runtime -> writer.outputRuntimeError(evalResult.message)
+            is ReplEvalResult.Error.CompileTime -> writer.outputRuntimeError(evalResult.message)
+            is ReplEvalResult.Incomplete -> writer.notifyIncomplete()
         }
-        return lineResult
+        return evalResult
     }
 
     @Throws(Exception::class)
@@ -142,7 +152,7 @@ class ReplFromTerminal(
 
     companion object {
         private fun splitCommand(command: String): List<String> {
-            return Arrays.asList(*command.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+            return Arrays.asList(*command.split(" ".toRegex()).dropLastWhile(String::isEmpty).toTypedArray())
         }
 
         fun run(disposable: Disposable, configuration: CompilerConfiguration) {

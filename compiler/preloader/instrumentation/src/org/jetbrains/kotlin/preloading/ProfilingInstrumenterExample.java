@@ -84,15 +84,14 @@ public class ProfilingInstrumenterExample extends InterceptionInstrumenterAdapto
     public static Object c = new CollectFirstArguments();
 
     public static class CollectFirstArguments {
-
-        private final List<Object> arguments = new ArrayList<Object>(30000);
+        private final List<Object> arguments = new ArrayList<>(30000);
 
         public void enter(Object arg) {
             arguments.add(arg);
         }
 
         public void dump(PrintStream out) {
-            out.println("Different values: " + new HashSet<Object>(arguments).size());
+            out.println("Different values: " + new HashSet<>(arguments).size());
         }
     }
 
@@ -104,7 +103,7 @@ public class ProfilingInstrumenterExample extends InterceptionInstrumenterAdapto
     public static Object d = new MethodCollector();
 
     public static class MethodCollector {
-        private final Collection<String> collected = new LinkedHashSet<String>();
+        private final Collection<String> collected = new LinkedHashSet<>();
 
         public void enter(@ClassName String className, @MethodName String name, @MethodDesc String desc) {
             collected.add(className + "." + name + desc);
@@ -130,7 +129,7 @@ public class ProfilingInstrumenterExample extends InterceptionInstrumenterAdapto
     };
 
     public static abstract class FirstArgumentCollector {
-        private final Collection<Object> collected = new HashSet<Object>();
+        private final Collection<Object> collected = new HashSet<>();
 
         protected abstract boolean accept(Object arg);
 

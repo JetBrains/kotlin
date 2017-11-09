@@ -29,13 +29,12 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 
 object LightClassUtil {
 
     fun findClass(stub: StubElement<*>, predicate: (PsiClassStub<*>) -> Boolean): PsiClass? {
         if (stub is PsiClassStub<*> && predicate(stub)) {
-            return stub.getPsi()
+            return stub.psi
         }
 
         if (stub is PsiClassStub<*> || stub is PsiFileStub<*>) {
@@ -154,9 +153,7 @@ object LightClassUtil {
 
         if (parent is KtFile) {
             // top-level declaration
-            val fqName = parent.javaFileFacadeFqName
-            val project = declaration.project
-            return JavaElementFinder.getInstance(project).findClass(fqName.asString(), GlobalSearchScope.allScope(project))
+            return findFileFacade(parent)
         }
         else if (parent is KtClassBody) {
             assert(parent.parent is KtClassOrObject)
@@ -166,11 +163,22 @@ object LightClassUtil {
         return null
     }
 
+    private fun findFileFacade(ktFile: KtFile): PsiClass? {
+        val fqName = ktFile.javaFileFacadeFqName
+        val project = ktFile.project
+        val classesWithMatchingFqName = JavaElementFinder.getInstance(project).findClasses(fqName.asString(), GlobalSearchScope.allScope(project))
+        return classesWithMatchingFqName.singleOrNull() ?:
+               classesWithMatchingFqName.find {
+                   // NOTE: for multipart facades this works via FakeLightClassForFileOfPackage
+                   it.containingFile?.virtualFile == ktFile.virtualFile
+               }
+    }
+
     private fun getWrappingClasses(declaration: KtDeclaration): Sequence<PsiClass> {
         val wrapperClass = getWrappingClass(declaration) ?: return emptySequence()
         val wrapperClassOrigin = (wrapperClass as KtLightClass).kotlinOrigin
-        if (wrapperClassOrigin is KtObjectDeclaration && wrapperClassOrigin.isCompanion()) {
-            return sequenceOfLazyValues({ wrapperClass }, { wrapperClass.parent as PsiClass })
+        if (wrapperClassOrigin is KtObjectDeclaration && wrapperClassOrigin.isCompanion() && wrapperClass.parent is PsiClass) {
+            return sequenceOf(wrapperClass, wrapperClass.parent as PsiClass)
         }
         return sequenceOf(wrapperClass)
     }
@@ -246,5 +254,13 @@ object LightClassUtil {
         }
 
         override fun iterator(): Iterator<PsiMethod> = allMethods.iterator()
+    }
+}
+
+fun KtNamedDeclaration.getAccessorLightMethods(): LightClassUtil.PropertyAccessorsPsiMethods {
+    return when (this) {
+        is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this)
+        is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this)
+        else -> throw IllegalStateException("Unexpected property type: ${this}")
     }
 }

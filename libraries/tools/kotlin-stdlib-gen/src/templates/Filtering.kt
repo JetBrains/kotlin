@@ -17,6 +17,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun filtering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -230,7 +231,7 @@ fun filtering(): List<GenericFunction> {
                 for (index in size - n .. size - 1)
                     list.add(this[index])
             } else {
-                for (item in listIterator(n))
+                for (item in listIterator(size - n))
                     list.add(item)
             }
             return list
@@ -468,7 +469,7 @@ fun filtering(): List<GenericFunction> {
         }
     }
 
-    templates add f("filterIndexed(predicate: (Int, T) -> Boolean)") {
+    templates add f("filterIndexed(predicate: (index: Int, T) -> Boolean)") {
         inline(true)
 
         doc { f ->
@@ -506,7 +507,7 @@ fun filtering(): List<GenericFunction> {
     }
 
 
-    templates add f("filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean)") {
+    templates add f("filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean)") {
         inline(true)
 
         include(CharSequences)
@@ -762,6 +763,16 @@ fun filtering(): List<GenericFunction> {
             """
         }
     }
+
+
+    val terminalOperationPattern = Regex("^\\w+To")
+    templates.forEach { with (it) {
+        if (terminalOperationPattern in signature)
+            sequenceClassification(terminal)
+        else
+            sequenceClassification(intermediate, stateless)
+    } }
+
 
     return templates
 }

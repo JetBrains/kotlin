@@ -1,19 +1,18 @@
+// !DIAGNOSTICS: -DEPRECATION
 @nativeGetter
-fun Int.foo(a: String): Int? = noImpl
+fun Int.foo(a: String): Int? = definedExternally
 
-@native
-class Bar(b: Int, c: Char) {
+external class Bar(b: Int, c: Char) {
     @nativeGetter
-    fun baz(d: Int): Any? = noImpl
+    fun baz(d: Int): Any? = definedExternally
 }
 
-@native
-object Obj {
+external object Obj {
     @nativeGetter
-    fun test1(e: String): String? = noImpl
+    fun test1(e: String): String? = definedExternally
 
     object Nested {
         @nativeGetter
-        fun test2(g: Int): Any? = noImpl
+        fun test2(g: Int): Any? = definedExternally
     }
 }

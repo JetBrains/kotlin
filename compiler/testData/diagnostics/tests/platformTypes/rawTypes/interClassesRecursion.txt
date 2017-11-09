@@ -1,0 +1,15 @@
+package
+
+public open class JSPsiTypeParser</*0*/ T : JavaScriptParser<(raw) JSPsiTypeParser<*>!>!> {
+    public constructor JSPsiTypeParser</*0*/ T : JavaScriptParser<(raw) JSPsiTypeParser<*>!>!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class JavaScriptParser</*0*/ F : JSPsiTypeParser<(raw) JavaScriptParser<*>!>!> {
+    public constructor JavaScriptParser</*0*/ F : JSPsiTypeParser<(raw) JavaScriptParser<*>!>!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

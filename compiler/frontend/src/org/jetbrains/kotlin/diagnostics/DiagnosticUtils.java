@@ -38,14 +38,11 @@ import java.util.List;
 
 public class DiagnosticUtils {
     @NotNull
-    private static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = new Comparator<TextRange>() {
-        @Override
-        public int compare(@NotNull TextRange o1, @NotNull TextRange o2) {
-            if (o1.getStartOffset() != o2.getStartOffset()) {
-                return o1.getStartOffset() - o2.getStartOffset();
-            }
-            return o1.getEndOffset() - o2.getEndOffset();
+    private static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = (o1, o2) -> {
+        if (o1.getStartOffset() != o2.getStartOffset()) {
+            return o1.getStartOffset() - o2.getStartOffset();
         }
+        return o1.getEndOffset() - o2.getEndOffset();
     };
 
     private DiagnosticUtils() {
@@ -163,25 +160,21 @@ public class DiagnosticUtils {
 
     @NotNull
     public static List<Diagnostic> sortedDiagnostics(@NotNull Collection<Diagnostic> diagnostics) {
-        Comparator<Diagnostic> diagnosticComparator = new Comparator<Diagnostic>() {
-            @Override
-            public int compare(@NotNull Diagnostic d1, @NotNull Diagnostic d2) {
-                String path1 = d1.getPsiFile().getViewProvider().getVirtualFile().getPath();
-                String path2 = d2.getPsiFile().getViewProvider().getVirtualFile().getPath();
-                if (!path1.equals(path2)) return path1.compareTo(path2);
-
-                TextRange range1 = firstRange(d1.getTextRanges());
-                TextRange range2 = firstRange(d2.getTextRanges());
-
-                if (!range1.equals(range2)) {
-                    return TEXT_RANGE_COMPARATOR.compare(range1, range2);
-                }
-
-                return d1.getFactory().getName().compareTo(d2.getFactory().getName());
-            }
-        };
         List<Diagnostic> result = Lists.newArrayList(diagnostics);
-        Collections.sort(result, diagnosticComparator);
+        result.sort((d1, d2) -> {
+            String path1 = d1.getPsiFile().getViewProvider().getVirtualFile().getPath();
+            String path2 = d2.getPsiFile().getViewProvider().getVirtualFile().getPath();
+            if (!path1.equals(path2)) return path1.compareTo(path2);
+
+            TextRange range1 = firstRange(d1.getTextRanges());
+            TextRange range2 = firstRange(d2.getTextRanges());
+
+            if (!range1.equals(range2)) {
+                return TEXT_RANGE_COMPARATOR.compare(range1, range2);
+            }
+
+            return d1.getFactory().getName().compareTo(d2.getFactory().getName());
+        });
         return result;
     }
 

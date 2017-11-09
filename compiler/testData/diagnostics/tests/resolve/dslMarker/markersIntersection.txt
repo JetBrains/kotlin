@@ -1,0 +1,39 @@
+package
+
+public fun bar1(/*0*/ x: (@L1 B).() -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> bar1t(/*0*/ q: T, /*1*/ x: (@L1 T).() -> kotlin.Unit): kotlin.Unit
+public fun bar2(/*0*/ x: (@L2 B).() -> kotlin.Unit): kotlin.Unit
+public fun foo1(/*0*/ x: (@L1 A).() -> kotlin.Unit): kotlin.Unit
+public fun foo12(/*0*/ x: (@L1 @L2 A).() -> kotlin.Unit): kotlin.Unit
+public fun foo2(/*0*/ x: (@L2 A).() -> kotlin.Unit): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public final fun a(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B {
+    public constructor B()
+    public final fun b(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.DslMarker @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class L1 : kotlin.Annotation {
+    public constructor L1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.DslMarker @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class L2 : kotlin.Annotation {
+    public constructor L2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

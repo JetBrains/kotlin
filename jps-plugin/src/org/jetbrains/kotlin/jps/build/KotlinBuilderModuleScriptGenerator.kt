@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
+import com.intellij.util.io.URLUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.jps.incremental.CompileContext
@@ -28,6 +30,7 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.ProjectBuildException
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.jps.model.module.JpsSdkDependency
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies
@@ -113,6 +116,7 @@ object KotlinBuilderModuleScriptGenerator {
                     moduleSources,
                     findSourceRoots(context, target),
                     findClassPathRoots(target),
+                    findModularJdkRoot(target),
                     targetId.type,
                     (targetType as JavaModuleBuildTargetType).isTests,
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
@@ -132,18 +136,19 @@ object KotlinBuilderModuleScriptGenerator {
     fun getOutputDirSafe(target: ModuleBuildTarget): File =
             target.outputDir ?: throw ProjectBuildException("No output directory found for " + target)
 
-    private fun getAdditionalOutputDirsWhereInternalsAreVisible(target: ModuleBuildTarget): List<File> {
-        if (!target.isTests) return emptyList()
+    fun getProductionModulesWhichInternalsAreVisible(from: ModuleBuildTarget): List<JpsModule> {
+        if (!from.isTests) return emptyList()
 
-        val result = SmartList<File>()
+        val result = SmartList<JpsModule>(from.module)
+        result.addIfNotNull(getRelatedProductionModule(from.module))
 
-        result.addIfNotNull(JpsJavaExtensionService.getInstance().getOutputDirectory(target.module, false))
+        return result.filter { it.hasProductionSourceRoot }
+    }
 
-        getRelatedProductionModule(target.module)?.let {
-            result.addIfNotNull(JpsJavaExtensionService.getInstance().getOutputDirectory(it, false))
+    fun getAdditionalOutputDirsWhereInternalsAreVisible(target: ModuleBuildTarget): List<File> {
+        return getProductionModulesWhichInternalsAreVisible(target).mapNotNullTo(SmartList<File>()) {
+            JpsJavaExtensionService.getInstance().getOutputDirectory(it, false)
         }
-
-        return result
     }
 
     private fun findClassPathRoots(target: ModuleBuildTarget): Collection<File> {
@@ -159,6 +164,18 @@ object KotlinBuilderModuleScriptGenerator {
 
             true
         }
+    }
+
+    private fun findModularJdkRoot(target: ModuleBuildTarget): File? {
+        // List of paths to JRE modules in the following format:
+        // jrt:///Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home!/java.base
+        val urls = JpsJavaExtensionService.dependencies(target.module)
+                .satisfying { dependency -> dependency is JpsSdkDependency }
+                .classes().urls
+
+        val url = urls.firstOrNull { it.startsWith(StandardFileSystems.JRT_PROTOCOL_PREFIX) } ?: return null
+
+        return File(url.substringAfter(StandardFileSystems.JRT_PROTOCOL_PREFIX).substringBeforeLast(URLUtil.JAR_SEPARATOR))
     }
 
     private fun findSourceRoots(context: CompileContext, target: ModuleBuildTarget): List<JvmSourceRoot> {

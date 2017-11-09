@@ -62,16 +62,16 @@ class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
         val module = moduleBuildTarget.module
         if (!hasAndroidJpsPlugin() || !isAndroidModuleWithoutGradle(module)) return emptyList()
 
-        val inJar = File(PathUtil.getJarPathForClass(javaClass)).isFile
+        val inJar = File(PathUtil.getJarPathForClass(this::class.java)).isFile
         val manifestFile = getAndroidManifest(moduleBuildTarget.module)
         return if (manifestFile != null) {
             listOf(
                     if (inJar) {
-                        val libDirectory = File(PathUtil.getJarPathForClass(javaClass)).parentFile.parentFile
+                        val libDirectory = File(PathUtil.getJarPathForClass(this::class.java)).parentFile.parentFile
                         File(libDirectory, JAR_FILE_NAME).absolutePath
                     } else {
                         // We're in tests now (in out/production/android-extensions/android-extensions-jps)
-                        val kotlinProjectDirectory = File(PathUtil.getJarPathForClass(javaClass)).parentFile.parentFile.parentFile
+                        val kotlinProjectDirectory = File(PathUtil.getJarPathForClass(this::class.java)).parentFile.parentFile.parentFile
                         File(kotlinProjectDirectory, "dist/kotlinc/lib/$JAR_FILE_NAME").absolutePath
                     })
         }
@@ -91,7 +91,7 @@ class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     companion object {
         private val ANDROID_JPS_UTIL_CLASS_FQNAME = "org.jetbrains.jps.android.AndroidJpsUtil"
 
-        private val JAR_FILE_NAME = "kotlin-android-extensions-compiler-plugin.jar"
+        private val JAR_FILE_NAME = "android-extensions-compiler.jar"
         private val ANDROID_COMPILER_PLUGIN_ID = "org.jetbrains.kotlin.android"
 
         private val VARIANT_OPTION_NAME = "variant"

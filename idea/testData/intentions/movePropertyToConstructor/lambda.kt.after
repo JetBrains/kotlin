@@ -1,0 +1,2 @@
+class TestClass(val prop2: (Int, String) -> Unit = { a: Int, b: String -> }) {
+}

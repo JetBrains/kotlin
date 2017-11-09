@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.completion.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJvmBasicCompletionTest {
     public void testAllFilesPresentInMultifile() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/multifile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/multifile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("CallableReferenceNotImported")
@@ -86,6 +87,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
     @TestMetadata("DoNotCompleteWithConstraints")
     public void testDoNotCompleteWithConstraints() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/DoNotCompleteWithConstraints/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("EntriesOfNotImportedEnumFromKotlin")
+    public void testEntriesOfNotImportedEnumFromKotlin() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/EntriesOfNotImportedEnumFromKotlin/");
         doTest(fileName);
     }
 
@@ -392,6 +399,30 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
     @TestMetadata("PropertyKeysWithPrefix")
     public void testPropertyKeysWithPrefix() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/PropertyKeysWithPrefix/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMembersOfNotImportedClassFromJava")
+    public void testStaticMembersOfNotImportedClassFromJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/StaticMembersOfNotImportedClassFromJava/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMembersOfNotImportedClassFromKotlin")
+    public void testStaticMembersOfNotImportedClassFromKotlin() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/StaticMembersOfNotImportedClassFromKotlin/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMembersOfNotImportedClassFromKotlinObject")
+    public void testStaticMembersOfNotImportedClassFromKotlinObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/StaticMembersOfNotImportedClassFromKotlinObject/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMembersOfNotImportedClassNameConflict")
+    public void testStaticMembersOfNotImportedClassNameConflict() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/StaticMembersOfNotImportedClassNameConflict/");
         doTest(fileName);
     }
 

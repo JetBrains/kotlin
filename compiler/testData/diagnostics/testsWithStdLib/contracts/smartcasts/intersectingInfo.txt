@@ -1,0 +1,12 @@
+package
+
+public fun intersectingInfo(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.Unit
+public fun intersectingInfo2(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.Unit
+public fun isString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is String
+
+public fun notIsInt(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(FALSE) -> x !is Int
+
+public fun notIsString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(FALSE) -> x is String

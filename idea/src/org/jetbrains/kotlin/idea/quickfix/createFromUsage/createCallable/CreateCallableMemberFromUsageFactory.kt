@@ -26,11 +26,10 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.PropertyInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterFromUsageFix
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 abstract class CreateCallableMemberFromUsageFactory<E : KtElement>(
-        val extensionsSupported: Boolean = true
+        private val extensionsSupported: Boolean = true
 ) : KotlinIntentionActionFactoryWithDelegate<E, List<CallableInfo>>() {
     private fun newCallableQuickFix(
             originalElementPointer: SmartPsiElementPointer<E>,
@@ -48,7 +47,7 @@ abstract class CreateCallableMemberFromUsageFactory<E : KtElement>(
     protected open fun createCallableInfo(element: E, diagnostic: Diagnostic): CallableInfo? = null
 
     override fun extractFixData(element: E, diagnostic: Diagnostic): List<CallableInfo>
-            = createCallableInfo(element, diagnostic).singletonOrEmptyList()
+            = listOfNotNull(createCallableInfo(element, diagnostic))
 
     override fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
@@ -69,6 +68,7 @@ abstract class CreateCallableMemberFromUsageFactory<E : KtElement>(
 
         if (extensionsSupported) {
             newCallableQuickFix(originalElementPointer, IntentionActionPriority.LOW, quickFixDataFactory) { element, data ->
+                if (data.any { it.isAbstract }) return@newCallableQuickFix null
                 CreateExtensionCallableFromUsageFix(element, data)
             }.let { fixes.add(it) }
         }

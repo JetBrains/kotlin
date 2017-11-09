@@ -1,0 +1,5 @@
+enum class A {
+    E1(0), E2(1);
+
+    constructor(v: Int)
+}

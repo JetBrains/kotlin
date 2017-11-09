@@ -7,3 +7,9 @@ val valUtil = 0
 fun funUtil() {}
 
 fun notAnnotatedFun() {}
+
+fun functionWithBody() {
+    if (2 * 2 == 4) {
+        // All's right
+    }
+}

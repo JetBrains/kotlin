@@ -6,5 +6,3 @@ class Test {
         get
     <caret>
 }
-
-// FORCED

@@ -49,7 +49,7 @@ class KotlinMemberSelectionTable(
     override fun isAbstractColumnEditable(rowIndex: Int): Boolean {
         val memberInfo = myMemberInfos[rowIndex]
 
-        if (memberInfo.isStatic()) return false
+        if (memberInfo.isStatic) return false
 
         val member = memberInfo.member
         if (member !is KtNamedFunction && member !is KtProperty && member !is KtParameter) return false
@@ -71,7 +71,7 @@ class KotlinMemberSelectionTable(
         val member = memberInfo.member
         if (member !is KtNamedFunction && member !is KtProperty && member !is KtParameter) return defaultIcon
 
-        return when (memberInfo.getOverrides()) {
+        return when (memberInfo.overrides) {
             true -> AllIcons.General.OverridingMethod
             false -> AllIcons.General.ImplementingMethod
             else -> defaultIcon

@@ -7,16 +7,16 @@ End of files
 Compiling files:
   src/a.kt
 End of files
+Marked as dirty by Kotlin:
+  src/a1Usage.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/usage/A1UsageKt.class
-  out/production/module/usage/A2UsageKt.class
 End of files
 Compiling files:
   src/a1Usage.kt
-  src/a2Usage.kt
 End of files
 Exit code: OK
 ------------------------------------------

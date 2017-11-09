@@ -1,6 +1,12 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 
-import kotlin.reflect.*
+import kotlin.reflect.KProperty
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.*
 
 object Delegate {
@@ -16,7 +22,7 @@ object Delegate {
             // OK
         }
 
-        property.accessible = true
+        property.isAccessible = true
         property.set(thiz, "")
 
         return "OK"

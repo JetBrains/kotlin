@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,74 +16,76 @@
 
 package org.jetbrains.kotlin.cli.common;
 
-import com.sampullara.cli.Argument;
+import com.intellij.util.containers.ContainerUtil;
+import kotlin.jvm.JvmClassMappingKt;
+import kotlin.reflect.KCallable;
+import kotlin.reflect.KClass;
+import kotlin.reflect.KProperty1;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.kotlin.cli.common.arguments.ValueDescription;
+import org.jetbrains.kotlin.cli.common.arguments.Argument;
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments;
+import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
 
-import java.io.PrintStream;
-import java.lang.reflect.Field;
-
-class Usage {
+public class Usage {
     // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
     private static final int OPTION_NAME_PADDING_WIDTH = 29;
 
-    public static void print(@NotNull PrintStream target, @NotNull CommonCompilerArguments arguments, boolean extraHelp) {
-        target.println("Usage: " + arguments.executableScriptFileName() + " <options> <source files>");
-        target.println("where " + (extraHelp ? "advanced" : "possible") + " options include:");
-        for (Class<?> clazz = arguments.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
-            for (Field field : clazz.getDeclaredFields()) {
-                String usage = fieldUsage(field, extraHelp);
-                if (usage != null) {
-                    target.println(usage);
-                }
-            }
+    @NotNull
+    public static <A extends CommonToolArguments> String render(@NotNull CLITool<A> tool, @NotNull A arguments) {
+        StringBuilder sb = new StringBuilder();
+        appendln(sb, "Usage: " + tool.executableScriptFileName() + " <options> <source files>");
+        appendln(sb, "where " + (arguments.getExtraHelp() ? "advanced" : "possible") + " options include:");
+        KClass<? extends CommonToolArguments> kClass = JvmClassMappingKt.getKotlinClass(arguments.getClass());
+        for (KCallable<?> callable : kClass.getMembers()) {
+            if (!(callable instanceof KProperty1)) continue;
+            propertyUsage(sb, (KProperty1) callable, arguments.getExtraHelp());
         }
 
-        if (extraHelp) {
-            target.println();
-            target.println("Advanced options are non-standard and may be changed or removed without any notice.");
+        if (arguments.getExtraHelp()) {
+            appendln(sb, "");
+            appendln(sb, "Advanced options are non-standard and may be changed or removed without any notice.");
         }
+
+        return sb.toString();
     }
 
-    @Nullable
-    private static String fieldUsage(@NotNull Field field, boolean extraHelp) {
-        Argument argument = field.getAnnotation(Argument.class);
-        if (argument == null) return null;
-        ValueDescription description = field.getAnnotation(ValueDescription.class);
+    private static void propertyUsage(@NotNull StringBuilder sb, @NotNull KProperty1 property, boolean extraHelp) {
+        Argument argument = ContainerUtil.findInstance(property.getAnnotations(), Argument.class);
+        if (argument == null) return;
 
-        String value = argument.value();
-        boolean extraOption = value.startsWith("X") && value.length() > 1;
-        if (extraHelp != extraOption) return null;
+        if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return;
 
-        String prefix = argument.prefix();
+        int startLength = sb.length();
+        sb.append("  ");
+        sb.append(argument.value());
 
-        StringBuilder sb = new StringBuilder("  ");
-        sb.append(prefix);
-        sb.append(value);
-        if (!argument.alias().isEmpty()) {
+        if (!argument.shortName().isEmpty()) {
             sb.append(" (");
-            sb.append(prefix);
-            sb.append(argument.alias());
+            sb.append(argument.shortName());
             sb.append(")");
         }
-        if (description != null) {
-            sb.append(" ");
-            sb.append(description.value());
+
+        if (!argument.valueDescription().isEmpty()) {
+            sb.append(ParseCommandLineArgumentsKt.isAdvanced(argument) ? "=" : " ");
+            sb.append(argument.valueDescription());
         }
 
-        int width = OPTION_NAME_PADDING_WIDTH - 1;
-        if (sb.length() >= width + 5) { // Break the line if it's too long
+        int margin = startLength + OPTION_NAME_PADDING_WIDTH - 1;
+        if (sb.length() >= margin + 5) { // Break the line if it's too long
             sb.append("\n");
-            width += sb.length();
+            margin += sb.length() - startLength;
         }
-        while (sb.length() < width) {
+        while (sb.length() < margin) {
             sb.append(" ");
         }
 
         sb.append(" ");
-        sb.append(argument.description());
-        return sb.toString();
+        appendln(sb, argument.description().replace("\n", "\n" + StringsKt.repeat(" ", OPTION_NAME_PADDING_WIDTH)));
+    }
+
+    private static void appendln(@NotNull StringBuilder sb, @NotNull String string) {
+        sb.append(string);
+        StringsKt.appendln(sb);
     }
 }

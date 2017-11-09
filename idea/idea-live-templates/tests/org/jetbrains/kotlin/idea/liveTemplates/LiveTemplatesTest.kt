@@ -21,7 +21,6 @@ import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.codeInsight.template.impl.TemplateState
 import com.intellij.ide.DataManager
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.testFramework.LightProjectDescriptor
@@ -85,7 +84,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testSoutv() {
         start()
 
-        assertStringItems("ASSERTIONS_ENABLED", "args", "defaultBlockSize", "defaultBufferSize", "minimumBlockSize", "x", "y")
+        assertStringItems("DEFAULT_BUFFER_SIZE", "args", "x", "y")
         typeAndNextTab("y")
 
         checkAfter()
@@ -190,7 +189,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testIter() {
         start()
 
-        assertStringItems("args", "myList", "o", "str", "stream")
+        assertStringItems("args", "myList", "o", "str")
         type("args")
         nextTab(2)
 
@@ -209,6 +208,14 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         start()
 
         typeAndNextTab("Thread")
+
+        checkAfter()
+    }
+
+    fun testObject_ForClass() {
+        start()
+
+        typeAndNextTab("A")
 
         checkAfter()
     }
@@ -272,7 +279,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
             CommandProcessor.getInstance().executeCommand(
                     project,
                     {
-                        ApplicationManager.getApplication().runWriteAction { templateState!!.nextTab() }
+                        templateState!!.nextTab()
                     },
                     "nextTab",
                     null)

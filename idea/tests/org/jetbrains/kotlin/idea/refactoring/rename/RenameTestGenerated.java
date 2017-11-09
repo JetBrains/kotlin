@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class RenameTestGenerated extends AbstractRenameTest {
     public void testAllFilesPresentInRename() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
     @TestMetadata("ambiguousClassFunImportRenameClass/ambiguousClassFunImportRenameClass.test")
@@ -191,9 +192,135 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
-    @TestMetadata("fileNotUnderSourceRootWithNamesakeUnderSourceRoot/fileNotUnderSourceRootWithNamesakeUnderSourceRoot.test")
-    public void testFileNotUnderSourceRootWithNamesakeUnderSourceRoot_FileNotUnderSourceRootWithNamesakeUnderSourceRoot() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/fileNotUnderSourceRootWithNamesakeUnderSourceRoot/fileNotUnderSourceRootWithNamesakeUnderSourceRoot.test");
+    @TestMetadata("companionShortRef/companionShortRef.test")
+    public void testCompanionShortRef_CompanionShortRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/companionShortRef/companionShortRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("funTextOccurrences/funTextOccurrences.test")
+    public void testFunTextOccurrences_FunTextOccurrences() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/funTextOccurrences/funTextOccurrences.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("funWithLabeledReturns/funWithLabeledReturns.test")
+    public void testFunWithLabeledReturns_FunWithLabeledReturns() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/funWithLabeledReturns/funWithLabeledReturns.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("importAlias/importAlias.test")
+    public void testImportAlias_ImportAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/importAlias/importAlias.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("importAliasByRef/importAliasByRef.test")
+    public void testImportAliasByRef_ImportAliasByRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/importAliasByRef/importAliasByRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("javaClassImportAliasByRef/javaClassImportAliasByRef.test")
+    public void testJavaClassImportAliasByRef_JavaClassImportAliasByRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/javaClassImportAliasByRef/javaClassImportAliasByRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledAnonymousFunByLabel/labeledLambdaByLabel.test")
+    public void testLabeledAnonymousFunByLabel_LabeledLambdaByLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledAnonymousFunByLabel/labeledLambdaByLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabel/labeledLambdaByLabel.test")
+    public void testLabeledLambdaByLabel_LabeledLambdaByLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabel/labeledLambdaByLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelRef/labeledLambdaByLabelRef.test")
+    public void testLabeledLambdaByLabelRef_LabeledLambdaByLabelRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelRef/labeledLambdaByLabelRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelRefAfterLabel/labeledLambdaByLabelRefAfterLabel.test")
+    public void testLabeledLambdaByLabelRefAfterLabel_LabeledLambdaByLabelRefAfterLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelRefAfterLabel/labeledLambdaByLabelRefAfterLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelRefBeforeLabel/labeledLambdaByLabelRefBeforeLabel.test")
+    public void testLabeledLambdaByLabelRefBeforeLabel_LabeledLambdaByLabelRefBeforeLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelRefBeforeLabel/labeledLambdaByLabelRefBeforeLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelWithParens/labeledLambdaByLabelWithParens.test")
+    public void testLabeledLambdaByLabelWithParens_LabeledLambdaByLabelWithParens() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelWithParens/labeledLambdaByLabelWithParens.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelWithSameName/labeledLambdaByLabelWithSameName.test")
+    public void testLabeledLambdaByLabelWithSameName_LabeledLambdaByLabelWithSameName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelWithSameName/labeledLambdaByLabelWithSameName.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaWithMultipleLabels/labeledLambdaWithMultipleLabels.test")
+    public void testLabeledLambdaWithMultipleLabels_LabeledLambdaWithMultipleLabels() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaWithMultipleLabels/labeledLambdaWithMultipleLabels.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLoopByLabel/labeledLoopByLabel.test")
+    public void testLabeledLoopByLabel_LabeledLoopByLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLoopByLabel/labeledLoopByLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLoopByLabelRefInBreak/labeledLoopByLabelRefInBreak.test")
+    public void testLabeledLoopByLabelRefInBreak_LabeledLoopByLabelRefInBreak() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLoopByLabelRefInBreak/labeledLoopByLabelRefInBreak.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLoopByLabelRefInContinue/labeledLoopByLabelRefInContinue.test")
+    public void testLabeledLoopByLabelRefInContinue_LabeledLoopByLabelRefInContinue() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLoopByLabelRefInContinue/labeledLoopByLabelRefInContinue.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInAnonymousFun/labeledReturnInAnonymousFun.test")
+    public void testLabeledReturnInAnonymousFun_LabeledReturnInAnonymousFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInAnonymousFun/labeledReturnInAnonymousFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInAnonymousFunBeforeWhitespace/labeledReturnInAnonymousFunBeforeWhitespace.test")
+    public void testLabeledReturnInAnonymousFunBeforeWhitespace_LabeledReturnInAnonymousFunBeforeWhitespace() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInAnonymousFunBeforeWhitespace/labeledReturnInAnonymousFunBeforeWhitespace.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInLambda/labeledReturnInLambda.test")
+    public void testLabeledReturnInLambda_LabeledReturnInLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInLambda/labeledReturnInLambda.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInLambdaAfterLabel/labeledReturnInLambdaAfterLabel.test")
+    public void testLabeledReturnInLambdaAfterLabel_LabeledReturnInLambdaAfterLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInLambdaAfterLabel/labeledReturnInLambdaAfterLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInLambdaBeforeLabel/labeledReturnInLambdaBeforeLabel.test")
+    public void testLabeledReturnInLambdaBeforeLabel_LabeledReturnInLambdaBeforeLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInLambdaBeforeLabel/labeledReturnInLambdaBeforeLabel.test");
         doTest(fileName);
     }
 
@@ -245,6 +372,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("nonPrivateTopLevelDeclarationsConflict/nonPrivateTopLevelDeclarationsNoConflict.test")
+    public void testNonPrivateTopLevelDeclarationsConflict_NonPrivateTopLevelDeclarationsNoConflict() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/nonPrivateTopLevelDeclarationsConflict/nonPrivateTopLevelDeclarationsNoConflict.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("nonQuotedToQuoted/nonQuotedToQuoted.test")
+    public void testNonQuotedToQuoted_NonQuotedToQuoted() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/nonQuotedToQuoted/nonQuotedToQuoted.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("noShadowingConflictForSiblingDeclarations/noShadowingConflictForSiblingDeclarations.test")
     public void testNoShadowingConflictForSiblingDeclarations_NoShadowingConflictForSiblingDeclarations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/noShadowingConflictForSiblingDeclarations/noShadowingConflictForSiblingDeclarations.test");
@@ -263,9 +402,39 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("objectFunctionImportAliasByRef/objectFunctionImportAliasByRef.test")
+    public void testObjectFunctionImportAliasByRef_ObjectFunctionImportAliasByRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/objectFunctionImportAliasByRef/objectFunctionImportAliasByRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("objectPropertyImportAliasByRef/objectPropertyImportAliasByRef.test")
+    public void testObjectPropertyImportAliasByRef_ObjectPropertyImportAliasByRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/objectPropertyImportAliasByRef/objectPropertyImportAliasByRef.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("paramererAsReceiverWithNewNameAsSelector/parameterAsReceiverWithNewNameAsSelector.test")
     public void testParamererAsReceiverWithNewNameAsSelector_ParameterAsReceiverWithNewNameAsSelector() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/paramererAsReceiverWithNewNameAsSelector/parameterAsReceiverWithNewNameAsSelector.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("parameterHierarchyLeaf/parameterHierarchyLeaf.test")
+    public void testParameterHierarchyLeaf_ParameterHierarchyLeaf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterHierarchyLeaf/parameterHierarchyLeaf.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("parameterHierarchyMiddle/parameterHierarchyMiddle.test")
+    public void testParameterHierarchyMiddle_ParameterHierarchyMiddle() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterHierarchyMiddle/parameterHierarchyMiddle.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("parameterHierarchyRoot/parameterHierarchyRoot.test")
+    public void testParameterHierarchyRoot_ParameterHierarchyRoot() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/parameterHierarchyRoot/parameterHierarchyRoot.test");
         doTest(fileName);
     }
 
@@ -290,6 +459,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("primaryConstructorParameterRedeclaration/primaryConstructorParameterRedeclaration.test")
     public void testPrimaryConstructorParameterRedeclaration_PrimaryConstructorParameterRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/primaryConstructorParameterRedeclaration/primaryConstructorParameterRedeclaration.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("privateAndNonPrivateTopLevelDeclarationsNoConflict/privateAndNonPrivateTopLevelDeclarationsNoConflict.test")
+    public void testPrivateAndNonPrivateTopLevelDeclarationsNoConflict_PrivateAndNonPrivateTopLevelDeclarationsNoConflict() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/privateAndNonPrivateTopLevelDeclarationsNoConflict/privateAndNonPrivateTopLevelDeclarationsNoConflict.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("privateTopLevelDeclarationsNoConflict/privateTopLevelDeclarationsNoConflict.test")
+    public void testPrivateTopLevelDeclarationsNoConflict_PrivateTopLevelDeclarationsNoConflict() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/privateTopLevelDeclarationsNoConflict/privateTopLevelDeclarationsNoConflict.test");
         doTest(fileName);
     }
 
@@ -326,6 +507,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("propertyRedeclaredByPropertyParameter/propertyRedeclaredByPropertyParameter.test")
     public void testPropertyRedeclaredByPropertyParameter_PropertyRedeclaredByPropertyParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/propertyRedeclaredByPropertyParameter/propertyRedeclaredByPropertyParameter.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("quotedToNonQuoted/quotedToNonQuoted.test")
+    public void testQuotedToNonQuoted_QuotedToNonQuoted() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/quotedToNonQuoted/quotedToNonQuoted.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("quotedToNonQuotedCaretAtTheEnd/quotedToNonQuotedCaretAtTheEnd.test")
+    public void testQuotedToNonQuotedCaretAtTheEnd_QuotedToNonQuotedCaretAtTheEnd() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/quotedToNonQuotedCaretAtTheEnd/quotedToNonQuotedCaretAtTheEnd.test");
         doTest(fileName);
     }
 
@@ -1025,6 +1218,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renamePackageFqNameStarImport/renamePackageFqNameStarImport.test")
+    public void testRenamePackageFqNameStarImport_RenamePackageFqNameStarImport() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renamePackageFqNameStarImport/renamePackageFqNameStarImport.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renamePackageWithQuotation/renamePackageWithQuotation.test")
     public void testRenamePackageWithQuotation_RenamePackageWithQuotation() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renamePackageWithQuotation/renamePackageWithQuotation.test");
@@ -1106,6 +1305,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("topLevelPropertyRedeclaration/topLevelPropertyRedeclaration.test")
     public void testTopLevelPropertyRedeclaration_TopLevelPropertyRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/topLevelPropertyRedeclaration/topLevelPropertyRedeclaration.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("valTextOccurrences/valTextOccurrences.test")
+    public void testValTextOccurrences_ValTextOccurrences() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/valTextOccurrences/valTextOccurrences.test");
         doTest(fileName);
     }
 

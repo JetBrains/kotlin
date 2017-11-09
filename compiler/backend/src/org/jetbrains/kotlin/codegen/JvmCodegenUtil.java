@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +30,8 @@ import org.jetbrains.kotlin.codegen.context.RootContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.*;
 import org.jetbrains.kotlin.psi.Call;
@@ -61,15 +62,12 @@ public class JvmCodegenUtil {
     private JvmCodegenUtil() {
     }
 
-    public static boolean isAnnotationOrJvm6Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isAnnotationOrJvm6Interface(descriptor, state.isJvm8Target());
+    public static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        return isInterfaceWithoutDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
     }
 
-    public static boolean isAnnotationOrJvm6Interface(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target) {
-        if (!isJvmInterface(descriptor)) {
-            return false;
-        }
-        if (ANNOTATION_CLASS == ((ClassDescriptor) descriptor).getKind()) return true;
+    private static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
+        if (!DescriptorUtils.isInterface(descriptor)) return false;
 
         if (descriptor instanceof DeserializedClassDescriptor) {
             SourceElement source = ((DeserializedClassDescriptor) descriptor).getSource();
@@ -77,23 +75,35 @@ public class JvmCodegenUtil {
                 KotlinJvmBinaryClass binaryClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
                 assert binaryClass instanceof FileBasedKotlinClass :
                         "KotlinJvmBinaryClass should be subclass of FileBasedKotlinClass, but " + binaryClass;
-                return ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
+                /*TODO need add some flags to compiled code*/
+                return true || ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
             }
         }
-        return !isJvm8Target;
+        return !isJvm8TargetWithDefaults;
     }
 
-    public static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isJvm8Interface(descriptor, state.isJvm8Target());
+    public static boolean isJvm8InterfaceWithDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        return isJvm8InterfaceWithDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
     }
 
-    public static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target) {
-        return DescriptorUtils.isInterface(descriptor) && !isAnnotationOrJvm6Interface(descriptor, isJvm8Target);
+    public static boolean isJvm8InterfaceWithDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
+        return DescriptorUtils.isInterface(descriptor) && !isInterfaceWithoutDefaults(descriptor, isJvm8Target, isJvm8TargetWithDefaults);
     }
 
-    public static boolean isJvm8InterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
+    public static boolean isJvm8InterfaceWithDefaultsMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
         DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
-        return isJvm8Interface(declaration, state);
+        return isJvm8InterfaceWithDefaults(declaration, state);
+    }
+
+    public static boolean isNonDefaultInterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
+        if (!isJvmInterface(descriptor.getContainingDeclaration())) {
+            return false;
+        }
+        if (descriptor instanceof JavaCallableMemberDescriptor) {
+            return descriptor.getModality() == Modality.ABSTRACT;
+        }
+
+        return !isJvm8InterfaceWithDefaultsMember(descriptor, state);
     }
 
     public static boolean isJvmInterface(DeclarationDescriptor descriptor) {
@@ -112,7 +122,7 @@ public class JvmCodegenUtil {
         return closure.getCaptureThis() == null &&
                     closure.getCaptureReceiverType() == null &&
                     closure.getCaptureVariables().isEmpty() &&
-                    !closure.isCoroutine();
+                    !closure.isSuspend();
     }
 
     private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {
@@ -162,14 +172,10 @@ public class JvmCodegenUtil {
     }
 
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
-        return CollectionsKt.any(DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope()),
-                                 new Function1<DeclarationDescriptor, Boolean>() {
-                                     @Override
-                                     public Boolean invoke(DeclarationDescriptor descriptor) {
-                                         return descriptor instanceof CallableMemberDescriptor &&
-                                                ((CallableMemberDescriptor) descriptor).getModality() == ABSTRACT;
-                                     }
-                                 }
+        return CollectionsKt.any(
+                DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope()),
+                descriptor -> descriptor instanceof CallableMemberDescriptor &&
+                              ((CallableMemberDescriptor) descriptor).getModality() == ABSTRACT
         );
     }
 
@@ -181,8 +187,11 @@ public class JvmCodegenUtil {
             @NotNull PropertyDescriptor property,
             boolean forGetter,
             boolean isDelegated,
-            @NotNull MethodContext contextBeforeInline
+            @NotNull MethodContext contextBeforeInline,
+            boolean shouldInlineConstVals
     ) {
+        if (shouldInlineConstVals && property.isConst()) return true;
+
         if (KotlinTypeMapper.isAccessor(property)) return false;
 
         CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
@@ -262,9 +271,7 @@ public class JvmCodegenUtil {
 
     @NotNull
     public static CallableMemberDescriptor getDirectMember(@NotNull CallableMemberDescriptor descriptor) {
-        return descriptor instanceof PropertyAccessorDescriptor
-               ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
-               : descriptor;
+        return DescriptorUtils.getDirectMember(descriptor);
     }
 
     public static boolean isArgumentWhichWillBeInlined(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor) {
@@ -284,8 +291,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isInlinedJavaConstProperty(VariableDescriptor descriptor) {
-        if (!(descriptor instanceof JavaPropertyDescriptor)) return false;
-        return descriptor.isConst();
+        return descriptor instanceof JavaPropertyDescriptor && descriptor.isConst();
     }
 
     @Nullable
@@ -302,5 +308,9 @@ public class JvmCodegenUtil {
             }
         }
         return null;
+    }
+
+    public static boolean isDelegatedLocalVariable(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor instanceof LocalVariableDescriptor && ((LocalVariableDescriptor) descriptor).isDelegated();
     }
 }

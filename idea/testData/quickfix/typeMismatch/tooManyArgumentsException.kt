@@ -4,6 +4,7 @@
 // ACTION: Create function 'join'
 // ACTION: Flip ','
 // ACTION: Introduce local variable
+// ACTION: Put arguments on separate lines
 
 //this test checks that there is no ArrayIndexOutOfBoundsException when there are more arguments than parameters
 fun <T> array1(vararg a : T) = a

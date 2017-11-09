@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 fun CallableDescriptor.fuzzyReturnType() = returnType?.toFuzzyType(typeParameters)
@@ -182,7 +181,7 @@ class FuzzyType(
                         valueTransform = {
                             val typeProjection = TypeProjectionImpl(Variance.INVARIANT, it.defaultType)
                             val substitutedProjection = substitutorToKeepCapturedTypes.substitute(typeProjection)
-                            substitutedProjection?.check { !ErrorUtils.containsUninferredParameter(it.type) } ?: typeProjection
+                            substitutedProjection?.takeUnless { ErrorUtils.containsUninferredParameter(it.type) } ?: typeProjection
                         })
         return TypeConstructorSubstitution.createByConstructorsMap(substitutionMap, approximateCapturedTypes = true).buildSubstitutor()
     }

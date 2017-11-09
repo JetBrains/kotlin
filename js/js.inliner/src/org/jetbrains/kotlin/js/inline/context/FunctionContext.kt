@@ -16,27 +16,25 @@
 
 package org.jetbrains.kotlin.js.inline.context
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.descriptor
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.isCallableReference
+import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.FunctionReader
 import org.jetbrains.kotlin.js.inline.util.*
+import org.jetbrains.kotlin.js.translate.context.Namer
 
-abstract class FunctionContext(
-        private val function: JsFunction,
-        private val functionReader: FunctionReader
-) {
-    protected abstract fun lookUpStaticFunction(functionName: JsName?): JsFunction?
+abstract class FunctionContext(private val functionReader: FunctionReader, private val config: JsConfig) {
+    protected abstract fun lookUpStaticFunction(functionName: JsName?): FunctionWithWrapper?
 
-    fun getFunctionDefinition(call: JsInvocation): JsFunction {
+    protected abstract fun lookUpStaticFunctionByTag(functionTag: String): FunctionWithWrapper?
+
+    fun getFunctionDefinition(call: JsInvocation): FunctionWithWrapper {
         return getFunctionDefinitionImpl(call)!!
     }
 
     fun hasFunctionDefinition(call: JsInvocation): Boolean {
         return getFunctionDefinitionImpl(call) != null
-    }
-
-    fun getScope(): JsScope {
-        return function.scope
     }
 
     /**
@@ -69,9 +67,12 @@ abstract class FunctionContext(
      * 5. Qualifier can be JsNameRef with ref to case [3]
      *    in case of local function with closure.
      */
-    private fun getFunctionDefinitionImpl(call: JsInvocation): JsFunction? {
+    private fun getFunctionDefinitionImpl(call: JsInvocation): FunctionWithWrapper? {
         val descriptor = call.descriptor
-        if (descriptor != null && descriptor in functionReader) return functionReader[descriptor]
+        if (descriptor != null) {
+            if (descriptor in functionReader) return functionReader[descriptor]
+            lookUpStaticFunctionByTag(Namer.getFunctionTag(descriptor, config))?.let { return it }
+        }
 
         /** remove ending `()` */
         val callQualifier: JsExpression = if (isCallInvocation(call)) {
@@ -84,10 +85,22 @@ abstract class FunctionContext(
         /** process cases 2, 3 */
         val qualifier = callQualifier.transitiveStaticRef
         return when (qualifier) {
-            is JsInvocation -> lookUpStaticFunction(getSimpleName(qualifier)!!)?.let { if (isFunctionCreator(it)) it else null }
+            is JsInvocation -> {
+                tryExtractCallableReference(qualifier) ?: getSimpleName(qualifier)?.let { simpleName ->
+                    lookUpStaticFunction(simpleName)?.let { if (isFunctionCreator(it.function)) it else null }
+                }
+            }
             is JsNameRef -> lookUpStaticFunction(qualifier.name)
-            is JsFunction -> qualifier
+            is JsFunction -> FunctionWithWrapper(qualifier, null)
             else -> null
         }
+    }
+
+    private fun tryExtractCallableReference(invocation: JsInvocation): FunctionWithWrapper? {
+        if (invocation.isCallableReference) {
+            val arg = invocation.arguments[1]
+            if (arg is JsFunction) return FunctionWithWrapper(arg, null)
+        }
+        return null
     }
 }

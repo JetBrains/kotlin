@@ -1,4 +1,4 @@
-JetFile: withoutPackageWithSimpleAnnotation.kt
+KtFile: withoutPackageWithSimpleAnnotation.kt
   FILE_ANNOTATION_LIST
     ANNOTATION_ENTRY
       PsiElement(AT)('@')
@@ -35,9 +35,9 @@ JetFile: withoutPackageWithSimpleAnnotation.kt
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
-        PsiErrorElement:@file annotations are only allowed before package declaration
+        ANNOTATION_TARGET
           PsiElement(file)('file')
-          PsiElement(COLON)(':')
+        PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE

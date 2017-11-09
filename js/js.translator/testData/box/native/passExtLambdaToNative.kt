@@ -1,10 +1,13 @@
+// TODO: Unmute when extension functions are supported in external declarations.
+// IGNORE_BACKEND: JS
+
 package foo
 
-@native
-class A(val v: String)
+external class A(v: String) {
+    val v: String
+}
 
-@native
-fun bar(a: A, extLambda: A.(Int, String) -> String): String = noImpl
+external fun bar(a: A, extLambda: A.(Int, String) -> String): String = definedExternally
 
 fun box(): String {
     val a = A("test")

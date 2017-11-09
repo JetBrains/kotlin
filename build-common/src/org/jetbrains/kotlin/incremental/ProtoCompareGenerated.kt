@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.utils.Interner
 import java.util.*
 
@@ -46,9 +47,28 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
+        if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) return false
+        if (old.hasVersionRequirementTable()) {
+            if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) return false
+        }
+
         if (old.hasExtension(JvmProtoBuf.packageModuleName) != new.hasExtension(JvmProtoBuf.packageModuleName)) return false
         if (old.hasExtension(JvmProtoBuf.packageModuleName)) {
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.packageModuleName), new.getExtension(JvmProtoBuf.packageModuleName))) return false
+        }
+
+        if (old.getExtensionCount(JvmProtoBuf.packageLocalVariable) != new.getExtensionCount(JvmProtoBuf.packageLocalVariable)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JvmProtoBuf.packageLocalVariable) - 1) {
+                if (!checkEquals(old.getExtension(JvmProtoBuf.packageLocalVariable, i), new.getExtension(JvmProtoBuf.packageLocalVariable, i))) return false
+            }
+        }
+
+        if (old.hasExtension(JsProtoBuf.packageFqName) != new.hasExtension(JsProtoBuf.packageFqName)) return false
+        if (old.hasExtension(JsProtoBuf.packageFqName)) {
+            if (old.getExtension(JsProtoBuf.packageFqName) != new.getExtension(JsProtoBuf.packageFqName)) return false
         }
 
         return true
@@ -58,7 +78,10 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         PROPERTY_LIST,
         TYPE_ALIAS_LIST,
         TYPE_TABLE,
-        PACKAGE_MODULE_NAME
+        VERSION_REQUIREMENT_TABLE,
+        JVM_EXT_PACKAGE_MODULE_NAME,
+        JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST,
+        JS_EXT_PACKAGE_FQ_NAME
     }
 
     fun difference(old: ProtoBuf.Package, new: ProtoBuf.Package): EnumSet<ProtoBufPackageKind> {
@@ -75,9 +98,28 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufPackageKind.TYPE_TABLE)
         }
 
-        if (old.hasExtension(JvmProtoBuf.packageModuleName) != new.hasExtension(JvmProtoBuf.packageModuleName)) result.add(ProtoBufPackageKind.PACKAGE_MODULE_NAME)
+        if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) result.add(ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE)
+        if (old.hasVersionRequirementTable()) {
+            if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) result.add(ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE)
+        }
+
+        if (old.hasExtension(JvmProtoBuf.packageModuleName) != new.hasExtension(JvmProtoBuf.packageModuleName)) result.add(ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME)
         if (old.hasExtension(JvmProtoBuf.packageModuleName)) {
-            if (!checkStringEquals(old.getExtension(JvmProtoBuf.packageModuleName), new.getExtension(JvmProtoBuf.packageModuleName))) result.add(ProtoBufPackageKind.PACKAGE_MODULE_NAME)
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.packageModuleName), new.getExtension(JvmProtoBuf.packageModuleName))) result.add(ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME)
+        }
+
+        if (old.getExtensionCount(JvmProtoBuf.packageLocalVariable) != new.getExtensionCount(JvmProtoBuf.packageLocalVariable)) {
+            result.add(ProtoBufPackageKind.JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST)
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JvmProtoBuf.packageLocalVariable) - 1) {
+                if (!checkEquals(old.getExtension(JvmProtoBuf.packageLocalVariable, i), new.getExtension(JvmProtoBuf.packageLocalVariable, i))) result.add(ProtoBufPackageKind.JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST)
+            }
+        }
+
+        if (old.hasExtension(JsProtoBuf.packageFqName) != new.hasExtension(JsProtoBuf.packageFqName)) result.add(ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME)
+        if (old.hasExtension(JsProtoBuf.packageFqName)) {
+            if (old.getExtension(JsProtoBuf.packageFqName) != new.getExtension(JsProtoBuf.packageFqName)) result.add(ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME)
         }
 
         return result
@@ -114,14 +156,49 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsClassEnumEntry(old, new)) return false
 
+        if (!checkEqualsClassSealedSubclassFqName(old, new)) return false
+
         if (old.hasTypeTable() != new.hasTypeTable()) return false
         if (old.hasTypeTable()) {
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) return false
+        }
+
+        if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) return false
+        if (old.hasVersionRequirementTable()) {
+            if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) return false
+        }
+
         if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) return false
         if (old.hasExtension(JvmProtoBuf.classModuleName)) {
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.classModuleName), new.getExtension(JvmProtoBuf.classModuleName))) return false
+        }
+
+        if (old.getExtensionCount(JvmProtoBuf.classLocalVariable) != new.getExtensionCount(JvmProtoBuf.classLocalVariable)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JvmProtoBuf.classLocalVariable) - 1) {
+                if (!checkEquals(old.getExtension(JvmProtoBuf.classLocalVariable, i), new.getExtension(JvmProtoBuf.classLocalVariable, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(JsProtoBuf.classAnnotation) != new.getExtensionCount(JsProtoBuf.classAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.classAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.classAnnotation, i), new.getExtension(JsProtoBuf.classAnnotation, i))) return false
+            }
+        }
+
+        if (old.hasExtension(JsProtoBuf.classContainingFileId) != new.hasExtension(JsProtoBuf.classContainingFileId)) return false
+        if (old.hasExtension(JsProtoBuf.classContainingFileId)) {
+            if (old.getExtension(JsProtoBuf.classContainingFileId) != new.getExtension(JsProtoBuf.classContainingFileId)) return false
         }
 
         return true
@@ -139,8 +216,14 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         PROPERTY_LIST,
         TYPE_ALIAS_LIST,
         ENUM_ENTRY_LIST,
+        SEALED_SUBCLASS_FQ_NAME_LIST,
         TYPE_TABLE,
-        CLASS_MODULE_NAME
+        VERSION_REQUIREMENT,
+        VERSION_REQUIREMENT_TABLE,
+        JVM_EXT_CLASS_MODULE_NAME,
+        JVM_EXT_CLASS_LOCAL_VARIABLE_LIST,
+        JS_EXT_CLASS_ANNOTATION_LIST,
+        JS_EXT_CLASS_CONTAINING_FILE_ID
     }
 
     fun difference(old: ProtoBuf.Class, new: ProtoBuf.Class): EnumSet<ProtoBufClassKind> {
@@ -176,14 +259,49 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsClassEnumEntry(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_LIST)
 
+        if (!checkEqualsClassSealedSubclassFqName(old, new)) result.add(ProtoBufClassKind.SEALED_SUBCLASS_FQ_NAME_LIST)
+
         if (old.hasTypeTable() != new.hasTypeTable()) result.add(ProtoBufClassKind.TYPE_TABLE)
         if (old.hasTypeTable()) {
             if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufClassKind.TYPE_TABLE)
         }
 
-        if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) result.add(ProtoBufClassKind.CLASS_MODULE_NAME)
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) result.add(ProtoBufClassKind.VERSION_REQUIREMENT)
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) result.add(ProtoBufClassKind.VERSION_REQUIREMENT)
+        }
+
+        if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_TABLE)
+        if (old.hasVersionRequirementTable()) {
+            if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_TABLE)
+        }
+
+        if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) result.add(ProtoBufClassKind.JVM_EXT_CLASS_MODULE_NAME)
         if (old.hasExtension(JvmProtoBuf.classModuleName)) {
-            if (!checkStringEquals(old.getExtension(JvmProtoBuf.classModuleName), new.getExtension(JvmProtoBuf.classModuleName))) result.add(ProtoBufClassKind.CLASS_MODULE_NAME)
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.classModuleName), new.getExtension(JvmProtoBuf.classModuleName))) result.add(ProtoBufClassKind.JVM_EXT_CLASS_MODULE_NAME)
+        }
+
+        if (old.getExtensionCount(JvmProtoBuf.classLocalVariable) != new.getExtensionCount(JvmProtoBuf.classLocalVariable)) {
+            result.add(ProtoBufClassKind.JVM_EXT_CLASS_LOCAL_VARIABLE_LIST)
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JvmProtoBuf.classLocalVariable) - 1) {
+                if (!checkEquals(old.getExtension(JvmProtoBuf.classLocalVariable, i), new.getExtension(JvmProtoBuf.classLocalVariable, i))) result.add(ProtoBufClassKind.JVM_EXT_CLASS_LOCAL_VARIABLE_LIST)
+            }
+        }
+
+        if (old.getExtensionCount(JsProtoBuf.classAnnotation) != new.getExtensionCount(JsProtoBuf.classAnnotation)) {
+            result.add(ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST)
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.classAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.classAnnotation, i), new.getExtension(JsProtoBuf.classAnnotation, i))) result.add(ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST)
+            }
+        }
+
+        if (old.hasExtension(JsProtoBuf.classContainingFileId) != new.hasExtension(JsProtoBuf.classContainingFileId)) result.add(ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID)
+        if (old.hasExtension(JsProtoBuf.classContainingFileId)) {
+            if (old.getExtension(JsProtoBuf.classContainingFileId) != new.getExtension(JsProtoBuf.classContainingFileId)) result.add(ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID)
         }
 
         return result
@@ -231,9 +349,33 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) return false
+        }
+
+        if (old.hasContract() != new.hasContract()) return false
+        if (old.hasContract()) {
+            if (!checkEquals(old.contract, new.contract)) return false
+        }
+
         if (old.hasExtension(JvmProtoBuf.methodSignature) != new.hasExtension(JvmProtoBuf.methodSignature)) return false
         if (old.hasExtension(JvmProtoBuf.methodSignature)) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.methodSignature), new.getExtension(JvmProtoBuf.methodSignature))) return false
+        }
+
+        if (old.getExtensionCount(JsProtoBuf.functionAnnotation) != new.getExtensionCount(JsProtoBuf.functionAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.functionAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.functionAnnotation, i), new.getExtension(JsProtoBuf.functionAnnotation, i))) return false
+            }
+        }
+
+        if (old.hasExtension(JsProtoBuf.functionContainingFileId) != new.hasExtension(JsProtoBuf.functionContainingFileId)) return false
+        if (old.hasExtension(JsProtoBuf.functionContainingFileId)) {
+            if (old.getExtension(JsProtoBuf.functionContainingFileId) != new.getExtension(JsProtoBuf.functionContainingFileId)) return false
         }
 
         return true
@@ -289,9 +431,33 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.setterFlags != new.setterFlags) return false
         }
 
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) return false
+        }
+
         if (old.hasExtension(JvmProtoBuf.propertySignature) != new.hasExtension(JvmProtoBuf.propertySignature)) return false
         if (old.hasExtension(JvmProtoBuf.propertySignature)) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.propertySignature), new.getExtension(JvmProtoBuf.propertySignature))) return false
+        }
+
+        if (old.getExtensionCount(JsProtoBuf.propertyAnnotation) != new.getExtensionCount(JsProtoBuf.propertyAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.propertyAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.propertyAnnotation, i), new.getExtension(JsProtoBuf.propertyAnnotation, i))) return false
+            }
+        }
+
+        if (old.hasExtension(JsProtoBuf.compileTimeValue) != new.hasExtension(JsProtoBuf.compileTimeValue)) return false
+        if (old.hasExtension(JsProtoBuf.compileTimeValue)) {
+            if (!checkEquals(old.getExtension(JsProtoBuf.compileTimeValue), new.getExtension(JsProtoBuf.compileTimeValue))) return false
+        }
+
+        if (old.hasExtension(JsProtoBuf.propertyContainingFileId) != new.hasExtension(JsProtoBuf.propertyContainingFileId)) return false
+        if (old.hasExtension(JsProtoBuf.propertyContainingFileId)) {
+            if (old.getExtension(JsProtoBuf.propertyContainingFileId) != new.getExtension(JsProtoBuf.propertyContainingFileId)) return false
         }
 
         return true
@@ -329,6 +495,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsTypeAliasAnnotation(old, new)) return false
 
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) return false
+        }
+
         return true
     }
 
@@ -339,6 +510,12 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasFirstNullable()) {
             if (old.firstNullable != new.firstNullable) return false
         }
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.VersionRequirementTable, new: ProtoBuf.VersionRequirementTable): Boolean {
+        if (!checkEqualsVersionRequirementTableRequirement(old, new)) return false
 
         return true
     }
@@ -362,10 +539,22 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsTypeParameterUpperBoundId(old, new)) return false
 
-        if (old.getExtensionCount(JvmProtoBuf.typeParameterAnnotation) != new.getExtensionCount(JvmProtoBuf.typeParameterAnnotation)) return false
+        if (old.getExtensionCount(JvmProtoBuf.typeParameterAnnotation) != new.getExtensionCount(JvmProtoBuf.typeParameterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JvmProtoBuf.typeParameterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JvmProtoBuf.typeParameterAnnotation, i), new.getExtension(JvmProtoBuf.typeParameterAnnotation, i))) return false
+            }
+        }
 
-        for(i in 0..old.getExtensionCount(JvmProtoBuf.typeParameterAnnotation) - 1) {
-            if (!checkEquals(old.getExtension(JvmProtoBuf.typeParameterAnnotation, i), new.getExtension(JvmProtoBuf.typeParameterAnnotation, i))) return false
+        if (old.getExtensionCount(JsProtoBuf.typeParameterAnnotation) != new.getExtensionCount(JsProtoBuf.typeParameterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.typeParameterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.typeParameterAnnotation, i), new.getExtension(JsProtoBuf.typeParameterAnnotation, i))) return false
+            }
         }
 
         return true
@@ -434,15 +623,32 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.abbreviatedTypeId != new.abbreviatedTypeId) return false
         }
 
-        if (old.getExtensionCount(JvmProtoBuf.typeAnnotation) != new.getExtensionCount(JvmProtoBuf.typeAnnotation)) return false
+        if (old.hasFlags() != new.hasFlags()) return false
+        if (old.hasFlags()) {
+            if (old.flags != new.flags) return false
+        }
 
-        for(i in 0..old.getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {
-            if (!checkEquals(old.getExtension(JvmProtoBuf.typeAnnotation, i), new.getExtension(JvmProtoBuf.typeAnnotation, i))) return false
+        if (old.getExtensionCount(JvmProtoBuf.typeAnnotation) != new.getExtensionCount(JvmProtoBuf.typeAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JvmProtoBuf.typeAnnotation, i), new.getExtension(JvmProtoBuf.typeAnnotation, i))) return false
+            }
         }
 
         if (old.hasExtension(JvmProtoBuf.isRaw) != new.hasExtension(JvmProtoBuf.isRaw)) return false
         if (old.hasExtension(JvmProtoBuf.isRaw)) {
             if (old.getExtension(JvmProtoBuf.isRaw) != new.getExtension(JvmProtoBuf.isRaw)) return false
+        }
+
+        if (old.getExtensionCount(JsProtoBuf.typeAnnotation) != new.getExtensionCount(JsProtoBuf.typeAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.typeAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.typeAnnotation, i), new.getExtension(JsProtoBuf.typeAnnotation, i))) return false
+            }
         }
 
         return true
@@ -456,9 +662,23 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsConstructorValueParameter(old, new)) return false
 
+        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
+        if (old.hasVersionRequirement()) {
+            if (old.versionRequirement != new.versionRequirement) return false
+        }
+
         if (old.hasExtension(JvmProtoBuf.constructorSignature) != new.hasExtension(JvmProtoBuf.constructorSignature)) return false
         if (old.hasExtension(JvmProtoBuf.constructorSignature)) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.constructorSignature), new.getExtension(JvmProtoBuf.constructorSignature))) return false
+        }
+
+        if (old.getExtensionCount(JsProtoBuf.constructorAnnotation) != new.getExtensionCount(JsProtoBuf.constructorAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.constructorAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.constructorAnnotation, i), new.getExtension(JsProtoBuf.constructorAnnotation, i))) return false
+            }
         }
 
         return true
@@ -469,6 +689,23 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasName()) {
             if (!checkStringEquals(old.name, new.name)) return false
         }
+
+        if (old.getExtensionCount(JsProtoBuf.enumEntryAnnotation) != new.getExtensionCount(JsProtoBuf.enumEntryAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.enumEntryAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.enumEntryAnnotation, i), new.getExtension(JsProtoBuf.enumEntryAnnotation, i))) return false
+            }
+        }
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.Annotation, new: ProtoBuf.Annotation): Boolean {
+        if (!checkClassIdEquals(old.id, new.id)) return false
+
+        if (!checkEqualsAnnotationArgument(old, new)) return false
 
         return true
     }
@@ -500,6 +737,21 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasVarargElementTypeId()) {
             if (old.varargElementTypeId != new.varargElementTypeId) return false
         }
+
+        if (old.getExtensionCount(JsProtoBuf.parameterAnnotation) != new.getExtensionCount(JsProtoBuf.parameterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.parameterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.parameterAnnotation, i), new.getExtension(JsProtoBuf.parameterAnnotation, i))) return false
+            }
+        }
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.Contract, new: ProtoBuf.Contract): Boolean {
+        if (!checkEqualsContractEffect(old, new)) return false
 
         return true
     }
@@ -538,55 +790,6 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasSetter()) {
             if (!checkEquals(old.setter, new.setter)) return false
         }
-
-        return true
-    }
-
-    open fun checkEquals(old: ProtoBuf.Annotation, new: ProtoBuf.Annotation): Boolean {
-        if (!checkClassIdEquals(old.id, new.id)) return false
-
-        if (!checkEqualsAnnotationArgument(old, new)) return false
-
-        return true
-    }
-
-    open fun checkEquals(old: ProtoBuf.Type.Argument, new: ProtoBuf.Type.Argument): Boolean {
-        if (old.hasProjection() != new.hasProjection()) return false
-        if (old.hasProjection()) {
-            if (old.projection != new.projection) return false
-        }
-
-        if (old.hasType() != new.hasType()) return false
-        if (old.hasType()) {
-            if (!checkEquals(old.type, new.type)) return false
-        }
-
-        if (old.hasTypeId() != new.hasTypeId()) return false
-        if (old.hasTypeId()) {
-            if (old.typeId != new.typeId) return false
-        }
-
-        return true
-    }
-
-    open fun checkEquals(old: JvmProtoBuf.JvmFieldSignature, new: JvmProtoBuf.JvmFieldSignature): Boolean {
-        if (old.hasName() != new.hasName()) return false
-        if (old.hasName()) {
-            if (!checkStringEquals(old.name, new.name)) return false
-        }
-
-        if (old.hasDesc() != new.hasDesc()) return false
-        if (old.hasDesc()) {
-            if (!checkStringEquals(old.desc, new.desc)) return false
-        }
-
-        return true
-    }
-
-    open fun checkEquals(old: ProtoBuf.Annotation.Argument, new: ProtoBuf.Annotation.Argument): Boolean {
-        if (!checkStringEquals(old.nameId, new.nameId)) return false
-
-        if (!checkEquals(old.value, new.value)) return false
 
         return true
     }
@@ -633,6 +836,135 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         }
 
         if (!checkEqualsAnnotationArgumentValueArrayElement(old, new)) return false
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.VersionRequirement, new: ProtoBuf.VersionRequirement): Boolean {
+        if (old.hasVersion() != new.hasVersion()) return false
+        if (old.hasVersion()) {
+            if (old.version != new.version) return false
+        }
+
+        if (old.hasVersionFull() != new.hasVersionFull()) return false
+        if (old.hasVersionFull()) {
+            if (old.versionFull != new.versionFull) return false
+        }
+
+        if (old.hasLevel() != new.hasLevel()) return false
+        if (old.hasLevel()) {
+            if (old.level != new.level) return false
+        }
+
+        if (old.hasErrorCode() != new.hasErrorCode()) return false
+        if (old.hasErrorCode()) {
+            if (old.errorCode != new.errorCode) return false
+        }
+
+        if (old.hasMessage() != new.hasMessage()) return false
+        if (old.hasMessage()) {
+            if (!checkStringEquals(old.message, new.message)) return false
+        }
+
+        if (old.hasVersionKind() != new.hasVersionKind()) return false
+        if (old.hasVersionKind()) {
+            if (old.versionKind != new.versionKind) return false
+        }
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.Type.Argument, new: ProtoBuf.Type.Argument): Boolean {
+        if (old.hasProjection() != new.hasProjection()) return false
+        if (old.hasProjection()) {
+            if (old.projection != new.projection) return false
+        }
+
+        if (old.hasType() != new.hasType()) return false
+        if (old.hasType()) {
+            if (!checkEquals(old.type, new.type)) return false
+        }
+
+        if (old.hasTypeId() != new.hasTypeId()) return false
+        if (old.hasTypeId()) {
+            if (old.typeId != new.typeId) return false
+        }
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.Annotation.Argument, new: ProtoBuf.Annotation.Argument): Boolean {
+        if (!checkStringEquals(old.nameId, new.nameId)) return false
+
+        if (!checkEquals(old.value, new.value)) return false
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.Effect, new: ProtoBuf.Effect): Boolean {
+        if (old.hasEffectType() != new.hasEffectType()) return false
+        if (old.hasEffectType()) {
+            if (old.effectType != new.effectType) return false
+        }
+
+        if (!checkEqualsEffectEffectConstructorArgument(old, new)) return false
+
+        if (old.hasConclusionOfConditionalEffect() != new.hasConclusionOfConditionalEffect()) return false
+        if (old.hasConclusionOfConditionalEffect()) {
+            if (!checkEquals(old.conclusionOfConditionalEffect, new.conclusionOfConditionalEffect)) return false
+        }
+
+        if (old.hasKind() != new.hasKind()) return false
+        if (old.hasKind()) {
+            if (old.kind != new.kind) return false
+        }
+
+        return true
+    }
+
+    open fun checkEquals(old: JvmProtoBuf.JvmFieldSignature, new: JvmProtoBuf.JvmFieldSignature): Boolean {
+        if (old.hasName() != new.hasName()) return false
+        if (old.hasName()) {
+            if (!checkStringEquals(old.name, new.name)) return false
+        }
+
+        if (old.hasDesc() != new.hasDesc()) return false
+        if (old.hasDesc()) {
+            if (!checkStringEquals(old.desc, new.desc)) return false
+        }
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.Expression, new: ProtoBuf.Expression): Boolean {
+        if (old.hasFlags() != new.hasFlags()) return false
+        if (old.hasFlags()) {
+            if (old.flags != new.flags) return false
+        }
+
+        if (old.hasValueParameterReference() != new.hasValueParameterReference()) return false
+        if (old.hasValueParameterReference()) {
+            if (old.valueParameterReference != new.valueParameterReference) return false
+        }
+
+        if (old.hasConstantValue() != new.hasConstantValue()) return false
+        if (old.hasConstantValue()) {
+            if (old.constantValue != new.constantValue) return false
+        }
+
+        if (old.hasIsInstanceType() != new.hasIsInstanceType()) return false
+        if (old.hasIsInstanceType()) {
+            if (!checkEquals(old.isInstanceType, new.isInstanceType)) return false
+        }
+
+        if (old.hasIsInstanceTypeId() != new.hasIsInstanceTypeId()) return false
+        if (old.hasIsInstanceTypeId()) {
+            if (old.isInstanceTypeId != new.isInstanceTypeId) return false
+        }
+
+        if (!checkEqualsExpressionAndArgument(old, new)) return false
+
+        if (!checkEqualsExpressionOrArgument(old, new)) return false
 
         return true
     }
@@ -757,6 +1089,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsClassSealedSubclassFqName(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.sealedSubclassFqNameCount != new.sealedSubclassFqNameCount) return false
+
+        for(i in 0..old.sealedSubclassFqNameCount - 1) {
+            if (!checkClassIdEquals(old.getSealedSubclassFqName(i), new.getSealedSubclassFqName(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsFunctionTypeParameter(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
@@ -817,6 +1159,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsVersionRequirementTableRequirement(old: ProtoBuf.VersionRequirementTable, new: ProtoBuf.VersionRequirementTable): Boolean {
+        if (old.requirementCount != new.requirementCount) return false
+
+        for(i in 0..old.requirementCount - 1) {
+            if (!checkEquals(old.getRequirement(i), new.getRequirement(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsTypeParameterUpperBound(old: ProtoBuf.TypeParameter, new: ProtoBuf.TypeParameter): Boolean {
         if (old.upperBoundCount != new.upperBoundCount) return false
 
@@ -867,11 +1219,51 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsContractEffect(old: ProtoBuf.Contract, new: ProtoBuf.Contract): Boolean {
+        if (old.effectCount != new.effectCount) return false
+
+        for(i in 0..old.effectCount - 1) {
+            if (!checkEquals(old.getEffect(i), new.getEffect(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsAnnotationArgumentValueArrayElement(old: ProtoBuf.Annotation.Argument.Value, new: ProtoBuf.Annotation.Argument.Value): Boolean {
         if (old.arrayElementCount != new.arrayElementCount) return false
 
         for(i in 0..old.arrayElementCount - 1) {
             if (!checkEquals(old.getArrayElement(i), new.getArrayElement(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsEffectEffectConstructorArgument(old: ProtoBuf.Effect, new: ProtoBuf.Effect): Boolean {
+        if (old.effectConstructorArgumentCount != new.effectConstructorArgumentCount) return false
+
+        for(i in 0..old.effectConstructorArgumentCount - 1) {
+            if (!checkEquals(old.getEffectConstructorArgument(i), new.getEffectConstructorArgument(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsExpressionAndArgument(old: ProtoBuf.Expression, new: ProtoBuf.Expression): Boolean {
+        if (old.andArgumentCount != new.andArgumentCount) return false
+
+        for(i in 0..old.andArgumentCount - 1) {
+            if (!checkEquals(old.getAndArgument(i), new.getAndArgument(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsExpressionOrArgument(old: ProtoBuf.Expression, new: ProtoBuf.Expression): Boolean {
+        if (old.orArgumentCount != new.orArgumentCount) return false
+
+        for(i in 0..old.orArgumentCount - 1) {
+            if (!checkEquals(old.getOrArgument(i), new.getOrArgument(i))) return false
         }
 
         return true
@@ -927,8 +1319,20 @@ fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) 
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasVersionRequirementTable()) {
+        hashCode = 31 * hashCode + versionRequirementTable.hashCode(stringIndexes, fqNameIndexes)
+    }
+
     if (hasExtension(JvmProtoBuf.packageModuleName)) {
         hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.packageModuleName))
+    }
+
+    for(i in 0..getExtensionCount(JvmProtoBuf.packageLocalVariable) - 1) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.packageLocalVariable, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JsProtoBuf.packageFqName)) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.packageFqName)
     }
 
     return hashCode
@@ -983,12 +1387,36 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + getEnumEntry(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    for(i in 0..sealedSubclassFqNameCount - 1) {
+        hashCode = 31 * hashCode + fqNameIndexes(getSealedSubclassFqName(i))
+    }
+
     if (hasTypeTable()) {
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasVersionRequirement()) {
+        hashCode = 31 * hashCode + versionRequirement
+    }
+
+    if (hasVersionRequirementTable()) {
+        hashCode = 31 * hashCode + versionRequirementTable.hashCode(stringIndexes, fqNameIndexes)
+    }
+
     if (hasExtension(JvmProtoBuf.classModuleName)) {
         hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.classModuleName))
+    }
+
+    for(i in 0..getExtensionCount(JvmProtoBuf.classLocalVariable) - 1) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.classLocalVariable, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.classAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.classAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JsProtoBuf.classContainingFileId)) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.classContainingFileId)
     }
 
     return hashCode
@@ -1035,8 +1463,24 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasVersionRequirement()) {
+        hashCode = 31 * hashCode + versionRequirement
+    }
+
+    if (hasContract()) {
+        hashCode = 31 * hashCode + contract.hashCode(stringIndexes, fqNameIndexes)
+    }
+
     if (hasExtension(JvmProtoBuf.methodSignature)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.methodSignature).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.functionAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.functionAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JsProtoBuf.functionContainingFileId)) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.functionContainingFileId)
     }
 
     return hashCode
@@ -1087,8 +1531,24 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + setterFlags
     }
 
+    if (hasVersionRequirement()) {
+        hashCode = 31 * hashCode + versionRequirement
+    }
+
     if (hasExtension(JvmProtoBuf.propertySignature)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.propertySignature).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.propertyAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertyAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JsProtoBuf.compileTimeValue)) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.compileTimeValue).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JsProtoBuf.propertyContainingFileId)) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertyContainingFileId)
     }
 
     return hashCode
@@ -1127,6 +1587,10 @@ fun ProtoBuf.TypeAlias.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
         hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasVersionRequirement()) {
+        hashCode = 31 * hashCode + versionRequirement
+    }
+
     return hashCode
 }
 
@@ -1139,6 +1603,16 @@ fun ProtoBuf.TypeTable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
 
     if (hasFirstNullable()) {
         hashCode = 31 * hashCode + firstNullable
+    }
+
+    return hashCode
+}
+
+fun ProtoBuf.VersionRequirementTable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    for(i in 0..requirementCount - 1) {
+        hashCode = 31 * hashCode + getRequirement(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1169,6 +1643,10 @@ fun ProtoBuf.TypeParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: 
 
     for(i in 0..getExtensionCount(JvmProtoBuf.typeParameterAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.typeParameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.typeParameterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.typeParameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1229,12 +1707,20 @@ fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> 
         hashCode = 31 * hashCode + abbreviatedTypeId
     }
 
+    if (hasFlags()) {
+        hashCode = 31 * hashCode + flags
+    }
+
     for(i in 0..getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.typeAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     if (hasExtension(JvmProtoBuf.isRaw)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.isRaw).hashCode()
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.typeAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.typeAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1251,8 +1737,16 @@ fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasVersionRequirement()) {
+        hashCode = 31 * hashCode + versionRequirement
+    }
+
     if (hasExtension(JvmProtoBuf.constructorSignature)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.constructorSignature).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.constructorAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.constructorAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1263,6 +1757,22 @@ fun ProtoBuf.EnumEntry.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
 
     if (hasName()) {
         hashCode = 31 * hashCode + stringIndexes(name)
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.enumEntryAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.enumEntryAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    return hashCode
+}
+
+fun ProtoBuf.Annotation.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    hashCode = 31 * hashCode + fqNameIndexes(id)
+
+    for(i in 0..argumentCount - 1) {
+        hashCode = 31 * hashCode + getArgument(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1291,6 +1801,20 @@ fun ProtoBuf.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes:
 
     if (hasVarargElementTypeId()) {
         hashCode = 31 * hashCode + varargElementTypeId
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.parameterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.parameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    return hashCode
+}
+
+fun ProtoBuf.Contract.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    for(i in 0..effectCount - 1) {
+        hashCode = 31 * hashCode + getEffect(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1332,60 +1856,6 @@ fun JvmProtoBuf.JvmPropertySignature.hashCode(stringIndexes: (Int) -> Int, fqNam
     return hashCode
 }
 
-fun ProtoBuf.Annotation.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
-    var hashCode = 1
-
-    hashCode = 31 * hashCode + fqNameIndexes(id)
-
-    for(i in 0..argumentCount - 1) {
-        hashCode = 31 * hashCode + getArgument(i).hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    return hashCode
-}
-
-fun ProtoBuf.Type.Argument.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
-    var hashCode = 1
-
-    if (hasProjection()) {
-        hashCode = 31 * hashCode + projection.hashCode()
-    }
-
-    if (hasType()) {
-        hashCode = 31 * hashCode + type.hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    if (hasTypeId()) {
-        hashCode = 31 * hashCode + typeId
-    }
-
-    return hashCode
-}
-
-fun JvmProtoBuf.JvmFieldSignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
-    var hashCode = 1
-
-    if (hasName()) {
-        hashCode = 31 * hashCode + stringIndexes(name)
-    }
-
-    if (hasDesc()) {
-        hashCode = 31 * hashCode + stringIndexes(desc)
-    }
-
-    return hashCode
-}
-
-fun ProtoBuf.Annotation.Argument.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
-    var hashCode = 1
-
-    hashCode = 31 * hashCode + stringIndexes(nameId)
-
-    hashCode = 31 * hashCode + value.hashCode(stringIndexes, fqNameIndexes)
-
-    return hashCode
-}
-
 fun ProtoBuf.Annotation.Argument.Value.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
@@ -1423,6 +1893,134 @@ fun ProtoBuf.Annotation.Argument.Value.hashCode(stringIndexes: (Int) -> Int, fqN
 
     for(i in 0..arrayElementCount - 1) {
         hashCode = 31 * hashCode + getArrayElement(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    return hashCode
+}
+
+fun ProtoBuf.VersionRequirement.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    if (hasVersion()) {
+        hashCode = 31 * hashCode + version
+    }
+
+    if (hasVersionFull()) {
+        hashCode = 31 * hashCode + versionFull
+    }
+
+    if (hasLevel()) {
+        hashCode = 31 * hashCode + level.hashCode()
+    }
+
+    if (hasErrorCode()) {
+        hashCode = 31 * hashCode + errorCode
+    }
+
+    if (hasMessage()) {
+        hashCode = 31 * hashCode + stringIndexes(message)
+    }
+
+    if (hasVersionKind()) {
+        hashCode = 31 * hashCode + versionKind.hashCode()
+    }
+
+    return hashCode
+}
+
+fun ProtoBuf.Type.Argument.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    if (hasProjection()) {
+        hashCode = 31 * hashCode + projection.hashCode()
+    }
+
+    if (hasType()) {
+        hashCode = 31 * hashCode + type.hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasTypeId()) {
+        hashCode = 31 * hashCode + typeId
+    }
+
+    return hashCode
+}
+
+fun ProtoBuf.Annotation.Argument.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    hashCode = 31 * hashCode + stringIndexes(nameId)
+
+    hashCode = 31 * hashCode + value.hashCode(stringIndexes, fqNameIndexes)
+
+    return hashCode
+}
+
+fun ProtoBuf.Effect.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    if (hasEffectType()) {
+        hashCode = 31 * hashCode + effectType.hashCode()
+    }
+
+    for(i in 0..effectConstructorArgumentCount - 1) {
+        hashCode = 31 * hashCode + getEffectConstructorArgument(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasConclusionOfConditionalEffect()) {
+        hashCode = 31 * hashCode + conclusionOfConditionalEffect.hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasKind()) {
+        hashCode = 31 * hashCode + kind.hashCode()
+    }
+
+    return hashCode
+}
+
+fun JvmProtoBuf.JvmFieldSignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    if (hasName()) {
+        hashCode = 31 * hashCode + stringIndexes(name)
+    }
+
+    if (hasDesc()) {
+        hashCode = 31 * hashCode + stringIndexes(desc)
+    }
+
+    return hashCode
+}
+
+fun ProtoBuf.Expression.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    if (hasFlags()) {
+        hashCode = 31 * hashCode + flags
+    }
+
+    if (hasValueParameterReference()) {
+        hashCode = 31 * hashCode + valueParameterReference
+    }
+
+    if (hasConstantValue()) {
+        hashCode = 31 * hashCode + constantValue.hashCode()
+    }
+
+    if (hasIsInstanceType()) {
+        hashCode = 31 * hashCode + isInstanceType.hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasIsInstanceTypeId()) {
+        hashCode = 31 * hashCode + isInstanceTypeId
+    }
+
+    for(i in 0..andArgumentCount - 1) {
+        hashCode = 31 * hashCode + getAndArgument(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..orArgumentCount - 1) {
+        hashCode = 31 * hashCode + getOrArgument(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode

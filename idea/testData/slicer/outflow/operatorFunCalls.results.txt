@@ -1,0 +1,3 @@
+4 operator fun <bold>plus(n: Int) = this</bold>
+8 	val x = <bold>A() + 2</bold>
+8 		val <bold>x = A() + 2</bold>

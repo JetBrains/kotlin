@@ -22,32 +22,40 @@ import static com.android.SdkConstants.CLASS_CONTEXT;
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.ClassContext;
 import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.JavaPsiScanner;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
+import com.intellij.psi.PsiAnonymousClass;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiParameterList;
+import com.intellij.psi.PsiType;
+
+import org.jetbrains.uast.UClass;
+import org.jetbrains.org.objectweb.asm.tree.ClassNode;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-
 /**
  * Looks for custom views that do not define the view constructors needed by UI builders
  */
-public class ViewConstructorDetector extends Detector implements UastScanner {
+public class ViewConstructorDetector extends Detector implements Detector.UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "ViewConstructor", //$NON-NLS-1$
             "Missing View constructors for XML inflation",
 
-            "Some layout tools (such as the Android layout editor for Studio & Eclipse) needs to " +
+            "Some layout tools (such as the Android layout editor) need to " +
             "find a constructor with one of the following signatures:\n" +
             "* `View(Context context)`\n" +
             "* `View(Context context, AttributeSet attrs)`\n" +
@@ -63,70 +71,68 @@ public class ViewConstructorDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     ViewConstructorDetector.class,
-                    Scope.SOURCE_FILE_SCOPE));
+                    Scope.JAVA_FILE_SCOPE));
 
     /** Constructs a new {@link ViewConstructorDetector} check */
     public ViewConstructorDetector() {
     }
 
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
+    // ---- Implements JavaScanner ----
 
-    // ---- Implements UastScanner ----
-
-    private static boolean isXmlConstructor(UFunction method) {
+    private static boolean isXmlConstructor(
+            @NonNull JavaEvaluator evaluator,
+            @NonNull PsiMethod method) {
         // Accept
         //   android.content.Context
         //   android.content.Context,android.util.AttributeSet
         //   android.content.Context,android.util.AttributeSet,int
-        List<UVariable> valueParameters = method.getValueParameters();
-        int valueParameterCount = valueParameters.size();
-        if (valueParameterCount == 0 || valueParameterCount > 3) {
+        PsiParameterList parameterList = method.getParameterList();
+        int argumentCount = parameterList.getParametersCount();
+        if (argumentCount == 0 || argumentCount > 3) {
             return false;
         }
-
-        if (!valueParameters.get(0).getType().matchesFqName(CLASS_CONTEXT)) {
+        PsiParameter[] parameters = parameterList.getParameters();
+        if (!evaluator.typeMatches(parameters[0].getType(), CLASS_CONTEXT)) {
             return false;
         }
-        if (valueParameterCount == 1) {
+        if (argumentCount == 1) {
             return true;
         }
-        if (!valueParameters.get(1).getType().matchesFqName(CLASS_ATTRIBUTE_SET)) {
+        if (!evaluator.typeMatches(parameters[1].getType(), CLASS_ATTRIBUTE_SET)) {
             return false;
         }
         //noinspection SimplifiableIfStatement
-        if (valueParameterCount == 2) {
+        if (argumentCount == 2) {
             return true;
         }
-        return valueParameters.get(2).getType().isInt();
+        return PsiType.INT.equals(parameters[2].getType());
     }
 
     @Nullable
     @Override
-    public List<String> getApplicableSuperClasses() {
+    public List<String> applicableSuperClasses() {
         return Collections.singletonList(SdkConstants.CLASS_VIEW);
     }
 
     @Override
-    public void visitClass(UastAndroidContext context, UClass node) {
-        // Only applies to concrete and not abstract classes
-        UastClassKind kind = node.getKind();
-        if (kind != UastClassKind.CLASS || node.hasModifier(UastModifier.ABSTRACT)) {
+    public void checkClass(@NonNull JavaContext context, @NonNull UClass declaration) {
+        // Only applies to concrete classes
+        JavaEvaluator evaluator = context.getEvaluator();
+        if (evaluator.isAbstract(declaration) || declaration instanceof PsiAnonymousClass) {
+            // Ignore abstract classes
             return;
         }
 
-        if (UastUtils.getContainingClass(node) != null && !node.hasModifier(UastModifier.STATIC)) {
+        if (declaration.getContainingClass() != null &&
+                !evaluator.isStatic(declaration)) {
             // Ignore inner classes that aren't static: we can't create these
             // anyway since we'd need the outer instance
             return;
         }
 
         boolean found = false;
-        for (UFunction constructor : node.getConstructors()) {
-            if (isXmlConstructor(constructor)) {
+        for (PsiMethod constructor : declaration.getConstructors()) {
+            if (isXmlConstructor(evaluator, constructor)) {
                 found = true;
                 break;
             }
@@ -134,12 +140,12 @@ public class ViewConstructorDetector extends Detector implements UastScanner {
 
         if (!found) {
             String message = String.format(
-              "Custom view `%1$s` is missing constructor used by tools: "
-              + "`(Context)` or `(Context,AttributeSet)` "
-              + "or `(Context,AttributeSet,int)`",
-              node.getFqName());
-            Location location = context.getLocation(node.getNameElement());
-            context.report(ISSUE, node, location, message  /*data*/);
+                    "Custom view `%1$s` is missing constructor used by tools: "
+                            + "`(Context)` or `(Context,AttributeSet)` "
+                            + "or `(Context,AttributeSet,int)`",
+                    declaration.getName());
+            Location location = context.getUastNameLocation(declaration);
+            context.reportUast(ISSUE, declaration, location, message  /*data*/);
         }
     }
 }

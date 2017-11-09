@@ -1,0 +1,101 @@
+FILE /stringTemplates.kt
+  FUN public fun foo(): kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='foo(): String'
+        CONST String type=kotlin.String value=''
+  PROPERTY public val x: kotlin.Int = 42
+    FIELD PROPERTY_BACKING_FIELD public val x: kotlin.Int = 42
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='42'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-x>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-x>(): Int'
+          GET_FIELD 'x: Int' type=kotlin.Int origin=null
+  PROPERTY public val test1: kotlin.String = ""
+    FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.String = ""
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=''
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): String'
+          GET_FIELD 'test1: String' type=kotlin.String origin=null
+  PROPERTY public val test2: kotlin.String = "abc"
+    FIELD PROPERTY_BACKING_FIELD public val test2: kotlin.String = "abc"
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value='abc'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): String'
+          GET_FIELD 'test2: String' type=kotlin.String origin=null
+  PROPERTY public val test3: kotlin.String = ""
+    FIELD PROPERTY_BACKING_FIELD public val test3: kotlin.String = ""
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=''
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test3>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test3>(): String'
+          GET_FIELD 'test3: String' type=kotlin.String origin=null
+  PROPERTY public val test4: kotlin.String = "abc"
+    FIELD PROPERTY_BACKING_FIELD public val test4: kotlin.String = "abc"
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value='abc'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test4>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test4>(): String'
+          GET_FIELD 'test4: String' type=kotlin.String origin=null
+  PROPERTY public val test5: kotlin.String = "
+abc
+"
+    FIELD PROPERTY_BACKING_FIELD public val test5: kotlin.String = "
+abc
+"
+      EXPRESSION_BODY
+        STRING_CONCATENATION type=kotlin.String
+          CONST String type=kotlin.String value='
+'
+          CONST String type=kotlin.String value='abc'
+          CONST String type=kotlin.String value='
+'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test5>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test5>(): String'
+          GET_FIELD 'test5: String' type=kotlin.String origin=null
+  PROPERTY public val test6: kotlin.String
+    FIELD PROPERTY_BACKING_FIELD public val test6: kotlin.String
+      EXPRESSION_BODY
+        STRING_CONCATENATION type=kotlin.String
+          CALL '<get-test1>(): String' type=kotlin.String origin=GET_PROPERTY
+          CONST String type=kotlin.String value=' '
+          CALL 'foo(): String' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test6>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test6>(): String'
+          GET_FIELD 'test6: String' type=kotlin.String origin=null
+  PROPERTY public val test7: kotlin.String = ""
+    FIELD PROPERTY_BACKING_FIELD public val test7: kotlin.String = ""
+      EXPRESSION_BODY
+        STRING_CONCATENATION type=kotlin.String
+          CALL '<get-test1>(): String' type=kotlin.String origin=GET_PROPERTY
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test7>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test7>(): String'
+          GET_FIELD 'test7: String' type=kotlin.String origin=null
+  PROPERTY public val test8: kotlin.String
+    FIELD PROPERTY_BACKING_FIELD public val test8: kotlin.String
+      EXPRESSION_BODY
+        STRING_CONCATENATION type=kotlin.String
+          CALL 'foo(): String' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test8>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test8>(): String'
+          GET_FIELD 'test8: String' type=kotlin.String origin=null
+  PROPERTY public val test9: kotlin.String = "42"
+    FIELD PROPERTY_BACKING_FIELD public val test9: kotlin.String = "42"
+      EXPRESSION_BODY
+        STRING_CONCATENATION type=kotlin.String
+          CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test9>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test9>(): String'
+          GET_FIELD 'test9: String' type=kotlin.String origin=null
+

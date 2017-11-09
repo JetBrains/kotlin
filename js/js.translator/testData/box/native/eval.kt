@@ -1,3 +1,4 @@
+// SKIP_MINIFICATION
 package foo
 
 val top = "TOP LEVEL"
@@ -9,7 +10,7 @@ fun box(): String {
 
     assertEquals(5, eval("3 + 2"))
 
-    val PACKAGE = "kotlin.modules.JS_TESTS.foo"
+    val PACKAGE = "JS_TESTS.foo"
     assertEquals(top, eval("$PACKAGE.top"))
 
     return "OK"

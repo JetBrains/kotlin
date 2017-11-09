@@ -23,10 +23,14 @@ import kotlin.collections.MutableMap.MutableEntry
 
 /**
  * A simple wrapper around JavaScript Map for key type is string.
+ *
+ * Though this map is instantiated only with K=String, the K type is not fixed to String statically,
+ * because we want to have it erased to Any? in order not to generate type-safe override bridges for
+ * [get], [contains], [remove] etc, if they ever are generated.
  */
 internal class InternalStringMap<K, V>(override val equality: EqualityComparator) : InternalMap<K, V> {
 
-    private var backingMap: dynamic = js("Object.create(null)")
+    private var backingMap: dynamic = createJsMap()
     override var size: Int = 0
         private set
 
@@ -46,7 +50,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
     override operator fun get(key: K): V? {
         if (key !is String) return null
         val value = backingMap[key]
-        return if (value !== undefined) value as V else null
+        return if (value !== undefined) value.unsafeCast<V>() else null
     }
 
 
@@ -55,14 +59,14 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
         val oldValue = backingMap[key]
         backingMap[key] = value
 
-        if (oldValue == undefined) {
+        if (oldValue === undefined) {
             size++
 //            structureChanged(host)
             return null
         }
         else {
 //            valueMod++
-            return oldValue as V
+            return oldValue.unsafeCast<V>()
         }
     }
 
@@ -73,7 +77,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
             deleteProperty(backingMap, key)
             size--
 //            structureChanged(host)
-            return value as V
+            return value.unsafeCast<V>()
         }
         else {
 //            valueMod++
@@ -83,7 +87,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
 
 
     override fun clear() {
-        backingMap = js("Object.create(null)")
+        backingMap = createJsMap()
         size = 0
     }
 
@@ -99,10 +103,12 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
             override fun next(): MutableEntry<K, V> {
                 val key = iterator.next()
                 lastKey = key
+                @Suppress("UNCHECKED_CAST")
                 return newMapEntry(key as K)
             }
 
             override fun remove() {
+                @Suppress("UNCHECKED_CAST")
                 this@InternalStringMap.remove(checkNotNull(lastKey) as K)
             }
         }
@@ -110,9 +116,9 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
 
     private fun newMapEntry(key: K): MutableEntry<K, V> = object : MutableEntry<K, V> {
         override val key: K get() = key
-        override val value: V get() = this@InternalStringMap[key] as V
+        override val value: V get() = this@InternalStringMap[key].unsafeCast<V>()
 
-        override fun setValue(newValue: V): V = this@InternalStringMap.put(key, newValue) as V
+        override fun setValue(newValue: V): V = this@InternalStringMap.put(key, newValue).unsafeCast<V>()
 
         override fun hashCode(): Int = AbstractMap.entryHashCode(this)
         override fun toString(): String = AbstractMap.entryToString(this)

@@ -13,9 +13,4 @@ public interface InheritedSameAdapters {
     public interface Super2 {
         public abstract fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
     }
-
-    // Static members
-    public final /*synthesized*/ fun Sub(/*0*/ function: (java.lang.Runnable!) -> kotlin.Unit): test.InheritedSameAdapters.Sub
-    public final /*synthesized*/ fun Super1(/*0*/ function: (java.lang.Runnable!) -> kotlin.Unit): test.InheritedSameAdapters.Super1
-    public final /*synthesized*/ fun Super2(/*0*/ function: (java.lang.Runnable!) -> kotlin.Unit): test.InheritedSameAdapters.Super2
 }

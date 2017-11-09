@@ -23,7 +23,7 @@ package kotlin
  * See [Kotlin language documentation](http://kotlinlang.org/docs/reference/basic-types.html#arrays)
  * for more information on arrays.
  */
-public class Array<T> : Cloneable {
+public class Array<T> {
     /**
      * Creates a new array with the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -57,9 +57,4 @@ public class Array<T> : Cloneable {
      * Creates an iterator for iterating over the elements of the array.
      */
     public operator fun iterator(): Iterator<T>
-
-    /**
-     * Creates a shallow copy of the array.
-     */
-    public override fun clone(): Array<T>
 }

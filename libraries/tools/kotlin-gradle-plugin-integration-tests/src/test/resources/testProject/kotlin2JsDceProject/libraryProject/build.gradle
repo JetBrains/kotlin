@@ -1,0 +1,31 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin2js'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+}
+
+compileKotlin2Js.kotlinOptions.outputFile = "${buildDir}/examplelib.js"
+compileKotlin2Js.kotlinOptions.sourceMap = true
+
+jar {
+    from buildDir
+    include "**/*.js"
+    include "**/*.js.map"
+}
+
+jar.dependsOn(compileKotlin2Js)

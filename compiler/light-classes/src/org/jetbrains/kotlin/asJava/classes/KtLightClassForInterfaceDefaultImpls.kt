@@ -17,17 +17,13 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
-import com.intellij.psi.stubs.StubElement
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
+import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-class KtLightClassForInterfaceDefaultImpls(
-        classOrObject: KtClassOrObject)
-: KtLightClassForSourceDeclaration(classOrObject){
+class KtLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject)
+    : KtLightClassForSourceDeclaration(classOrObject) {
     override fun getQualifiedName(): String? = containingClass?.qualifiedName?.let { it + ".${JvmAbi.DEFAULT_IMPLS_CLASS_NAME}" }
 
     override fun getName() = JvmAbi.DEFAULT_IMPLS_CLASS_NAME
@@ -37,17 +33,14 @@ class KtLightClassForInterfaceDefaultImpls(
         return KtLightClassForInterfaceDefaultImpls(classOrObject.copy() as KtClassOrObject)
     }
 
-    override fun findDelegateClass(javaFileStub: PsiJavaFileStub): PsiClass? {
-        val interfaceClass = LightClassUtil.findClass(javaFileStub) {
-            ClsWrapperStubPsiFactory.getOriginalElement(it as StubElement<*>) == classOrObject
-        }
-        return interfaceClass?.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false)
+    override fun findLightClassData(): LightClassData {
+        return getLightClassDataHolder().findDataForDefaultImpls(classOrObject)
     }
 
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
 
-    override fun computeModifiers(): Array<String> = arrayOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)
+    override fun computeModifiers() = publicStaticFinal
 
     override fun isInterface(): Boolean = false
     override fun isDeprecated(): Boolean = false
@@ -65,3 +58,5 @@ class KtLightClassForInterfaceDefaultImpls(
 
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
 }
+
+private val publicStaticFinal = setOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)

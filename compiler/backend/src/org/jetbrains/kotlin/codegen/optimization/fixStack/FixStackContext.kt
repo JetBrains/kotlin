@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.codegen.optimization.fixStack
 
 import com.intellij.util.SmartList
 import com.intellij.util.containers.Stack
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.isAfterInlineMarker
+import org.jetbrains.kotlin.codegen.inline.isBeforeInlineMarker
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.pseudoInsns.parsePseudoInsnOrNull
@@ -33,14 +34,13 @@ internal class FixStackContext(val methodNode: MethodNode) {
     val fakeAlwaysFalseIfeqMarkers = arrayListOf<AbstractInsnNode>()
 
     val isThereAnyTryCatch: Boolean
-    val saveStackMarkerForRestoreMarker: Map<AbstractInsnNode, AbstractInsnNode>
+    val saveStackMarkerForRestoreMarker = insertTryCatchBlocksMarkers(methodNode)
     val restoreStackMarkersForSaveMarker = hashMapOf<AbstractInsnNode, MutableList<AbstractInsnNode>>()
 
     val openingInlineMethodMarker = hashMapOf<AbstractInsnNode, AbstractInsnNode>()
     var consistentInlineMarkers: Boolean = true; private set
 
     init {
-        saveStackMarkerForRestoreMarker = insertTryCatchBlocksMarkers(methodNode)
         isThereAnyTryCatch = saveStackMarkerForRestoreMarker.isNotEmpty()
         for ((restore, save) in saveStackMarkerForRestoreMarker) {
             restoreStackMarkersForSaveMarker.getOrPut(save) { SmartList() }.add(restore)
@@ -57,10 +57,10 @@ internal class FixStackContext(val methodNode: MethodNode) {
                     visitFakeAlwaysTrueIfeq(insnNode)
                 pseudoInsn == PseudoInsn.FAKE_ALWAYS_FALSE_IFEQ ->
                     visitFakeAlwaysFalseIfeq(insnNode)
-                InlineCodegenUtil.isBeforeInlineMarker(insnNode) -> {
+                isBeforeInlineMarker(insnNode) -> {
                     inlineMarkersStack.push(insnNode)
                 }
-                InlineCodegenUtil.isAfterInlineMarker(insnNode) -> {
+                isAfterInlineMarker(insnNode) -> {
                     assert(inlineMarkersStack.isNotEmpty()) { "Mismatching after inline method marker at ${indexOf(insnNode)}" }
                     openingInlineMethodMarker[insnNode] = inlineMarkersStack.pop()
                 }

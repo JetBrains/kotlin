@@ -1,6 +1,6 @@
-// "Change function signature to 'fun next(p0: Int): Int'" "true"
+// "Change function signature to 'fun next(bits: Int): Int'" "true"
 import java.util.Random
 
 class MyRandom : Random() {
-    <caret>override fun next(p0: Int): Int = 4
+    override fun next(bits: Int): Int = 4
 }

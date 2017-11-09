@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 class C{
     private var v : Int = 0
 
@@ -22,6 +23,10 @@ class C{
             v = v + 1
         }
     }
+}
+
+interface Runnable {
+    fun run(): Unit
 }
 
 fun box() = if (C().foo() == 3) "OK" else "NOT OK"

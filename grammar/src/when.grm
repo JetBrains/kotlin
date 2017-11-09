@@ -1,5 +1,5 @@
 /**
-#### Pattern matching
+#### When-expression
 
 See [When-expression](control-flow.html#when-expression)
 */
@@ -10,7 +10,6 @@ when
     "}"
   ;
 
-// TODO : consider empty after ->
 whenEntry
   : whenCondition{","} "->" controlStructureBody SEMI
   : "else" "->" controlStructureBody SEMI
@@ -19,5 +18,5 @@ whenEntry
 whenCondition
   : expression
   : ("in" | "!in") expression
-  : ("is" | "!is") isRHS
+  : ("is" | "!is") type
   ;

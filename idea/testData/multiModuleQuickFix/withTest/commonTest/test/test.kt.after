@@ -1,0 +1,6 @@
+// "Create actual function for platform JVM" "true"
+// TEST
+
+package test
+
+expect fun testHelper()

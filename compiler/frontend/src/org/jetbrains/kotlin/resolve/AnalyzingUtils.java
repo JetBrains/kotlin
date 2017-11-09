@@ -51,7 +51,7 @@ public class AnalyzingUtils {
     }
     
     public static List<PsiErrorElement> getSyntaxErrorRanges(@NotNull PsiElement root) {
-        final List<PsiErrorElement> r = new ArrayList<PsiErrorElement>();
+        List<PsiErrorElement> r = new ArrayList<>();
         root.acceptChildren(new PsiErrorElementVisitor() {
             @Override
             public void visitErrorElement(@NotNull PsiErrorElement element) {

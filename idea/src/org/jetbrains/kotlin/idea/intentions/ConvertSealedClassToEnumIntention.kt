@@ -24,8 +24,8 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -43,7 +43,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
         val nameIdentifier = element.nameIdentifier ?: return null
         val sealedKeyword = element.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: return null
 
-        val classDescriptor = element.resolveToDescriptor() as ClassDescriptor
+        val classDescriptor = element.resolveToDescriptorIfAny() as? ClassDescriptor ?: return null
         if (classDescriptor.getSuperClassNotAny() != null) return null
 
         return TextRange(sealedKeyword.startOffset, nameIdentifier.endOffset)
@@ -57,7 +57,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
         } ?: return
 
         val inconvertibleSubclasses = subclasses.filter {
-            it !is KtObjectDeclaration || it.containingClassOrObject != element || it.getSuperTypeListEntries().size != 1
+            it !is KtObjectDeclaration || it.containingClassOrObject != element || it.superTypeListEntries.size != 1
         }
         if (inconvertibleSubclasses.isNotEmpty()) {
             val message = buildString {
@@ -75,14 +75,14 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
         val comma = psiFactory.createComma()
         val semicolon = psiFactory.createSemicolon()
 
-        val constructorCallNeeded = element.hasExplicitPrimaryConstructor() || element.getSecondaryConstructors().isNotEmpty()
+        val constructorCallNeeded = element.hasExplicitPrimaryConstructor() || element.secondaryConstructors.isNotEmpty()
         val entriesToAdd = subclasses.mapIndexed { i, subclass ->
             subclass as KtObjectDeclaration
 
             val entryText = buildString {
                 append(subclass.name)
                 if (constructorCallNeeded) {
-                    append((subclass.getSuperTypeListEntries().firstOrNull() as? KtSuperTypeCallEntry)?.valueArgumentList?.text ?: "()")
+                    append((subclass.superTypeListEntries.firstOrNull() as? KtSuperTypeCallEntry)?.valueArgumentList?.text ?: "()")
                 }
             }
             val entry = psiFactory.createEnumEntry(entryText)

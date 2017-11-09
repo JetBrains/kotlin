@@ -7,7 +7,7 @@
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-project</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Kotlin</name>
@@ -46,11 +46,12 @@
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.16</surefire-version>
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
-        <selenium.version>2.37.1</selenium.version>
+        <selenium.version>2.52.0</selenium.version>
+        <htmlunit.version>2.24</htmlunit.version>
 
         <kotlin-dist>${project-root}/dist</kotlin-dist>
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
-        <kotlin.compiler.jdkHome>${env.JDK_16}</kotlin.compiler.jdkHome>
+        <kotlin.compiler.jdkHome>${env.JDK_18}</kotlin.compiler.jdkHome>
 
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
@@ -72,52 +73,26 @@
     </distributionManagement>
 
     <modules>
-        <module>tools/kotlin-compiler</module>
-        <module>tools/kotlin-compiler-embeddable</module>
-        <module>tools/kotlin-daemon-client</module>
-        <module>tools/kotlin-build-common</module>
-        <module>tools/kotlin-build-common-test</module>
         <module>tools/kotlin-maven-plugin</module>
 
-        <module>tools/runtime</module>
-        <module>kotlin.test</module>
-        <module>stdlib</module>
-        <module>stdlib/jre7</module>
-        <module>stdlib/jre8</module>
-        <module>tools/kotlin-reflect</module>
         <module>tools/kotlin-osgi-bundle</module>
 
         <module>tools/maven-archetypes</module>
 
-        <module>tools/binary-compatibility-validator</module>
 
-        <!--NB! kotlin-js-library should be built before kotlin-gradle-plugin-integration-tests-->
-        <!--because it is used in tests but cannot be added as test-dependency-->
-        <!--(kotlin-gradle-plugin module will be recognized as kotlin-js module)-->
         <module>tools/idl2k</module>
-        <module>tools/kotlin-js-library</module>
-        <module>tools/kotlin-js-tests</module>
-        <module>tools/kotlin-js-tests-junit</module>
-        <module>tools/kotlin-annotation-processing</module>
+        <module>tools/kotlin-annotation-processing-maven</module>
+        <module>tools/kotlin-maven-allopen</module>
+        <module>tools/kotlin-maven-noarg</module>
+        <module>tools/kotlin-maven-sam-with-receiver</module>
 
-        <module>tools/kotlin-gradle-plugin</module>
-        <module>tools/kotlin-gradle-plugin-api</module>
-        <module>tools/kotlin-android-extensions</module>
         <module>tools/kotlin-maven-plugin-test</module>
-        <module>tools/kotlin-script-util</module>
 
-        <module>examples/annotation-processor-example</module>
         <module>examples/kotlin-java-example</module>
         <module>examples/js-example</module>
         <module>examples/kotlin-js-library-example</module>
-        <module>examples/kotlin-gradle-subplugin-example</module>
         <module>examples/browser-example</module>
         <module>examples/browser-example-with-library</module>
-        <module>examples/kotlin-jsr223-local-example</module>
-        <module>examples/kotlin-jsr223-daemon-local-eval-example</module>
-        <module>examples/kotlin-jsr223-daemon-remote-eval-example</module>
-
-        <module>tools/kotlin-gradle-plugin-integration-tests</module>
     </modules>
 
     <dependencies>
@@ -160,6 +135,11 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.6</version>
                 </plugin>
             </plugins>
         </pluginManagement>

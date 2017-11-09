@@ -1,7 +1,5 @@
 // WITH_RUNTIME
 
-import java.util.ArrayList
-
 fun sparse(x: Int): Int {
     return when ((x % 4) * 100) {
         100 -> 1

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.kotlin.reflect
 
-import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.java.structure.reflect.desc
 import org.jetbrains.kotlin.load.java.structure.reflect.isEnumClassOrSpecializedEnumEntryClass
@@ -61,11 +60,11 @@ class ReflectKotlinClass private constructor(
     override val classId: ClassId
         get() = klass.classId
 
-    override fun loadClassAnnotations(visitor: KotlinJvmBinaryClass.AnnotationVisitor) {
+    override fun loadClassAnnotations(visitor: KotlinJvmBinaryClass.AnnotationVisitor, cachedContents: ByteArray?) {
         ReflectClassStructure.loadClassAnnotations(klass, visitor)
     }
 
-    override fun visitMembers(visitor: KotlinJvmBinaryClass.MemberVisitor) {
+    override fun visitMembers(visitor: KotlinJvmBinaryClass.MemberVisitor, cachedContents: ByteArray?) {
         ReflectClassStructure.visitMembers(klass, visitor)
     }
 
@@ -73,7 +72,7 @@ class ReflectKotlinClass private constructor(
 
     override fun hashCode() = klass.hashCode()
 
-    override fun toString() = javaClass.name + ": " + klass
+    override fun toString() = this::class.java.name + ": " + klass
 }
 
 private object ReflectClassStructure {
@@ -170,13 +169,22 @@ private object ReflectClassStructure {
             annotationType: Class<*>
     ) {
         for (method in annotationType.declaredMethods) {
-            processAnnotationArgumentValue(visitor, Name.identifier(method.name), method(annotation)!!)
+            val value = try {
+                method(annotation)!!
+            }
+            catch (e: IllegalAccessException) {
+                // This is possible if the annotation class is package local. In this case, we can't read the value into descriptor.
+                // However, this might be OK, because we do not use any data from AnnotationDescriptor in KAnnotatedElement implementations
+                // anyway; we use the source element and the underlying physical Annotation object to implement the needed API
+                continue
+            }
+            processAnnotationArgumentValue(visitor, Name.identifier(method.name), value)
         }
         visitor.visitEnd()
     }
 
     private fun processAnnotationArgumentValue(visitor: KotlinJvmBinaryClass.AnnotationArgumentVisitor, name: Name, value: Any) {
-        val clazz = value.javaClass
+        val clazz = value::class.java
         when {
             clazz in TYPES_ELIGIBLE_FOR_SIMPLE_VISIT -> {
                 visitor.visit(name, value)

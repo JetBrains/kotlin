@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: Replace '==' with 'Arrays.equals'
+// INTENTION_TEXT: Replace '==' with 'contentEquals'
 fun foo() {
     val a = arrayOf("a", "b", "c")
     val b = arrayOf("a", "b", "c")

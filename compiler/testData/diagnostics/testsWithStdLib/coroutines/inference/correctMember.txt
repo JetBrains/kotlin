@@ -1,0 +1,14 @@
+package
+
+public val test1: kotlin.String
+public val test2: kotlin.Int
+public fun </*0*/ S> generate(/*0*/ g: suspend Controller<S>.() -> kotlin.Unit): S
+
+public interface Controller</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun </*0*/ Z> generidFun(/*0*/ t: Z): Z
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun justString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open suspend fun yield(/*0*/ t: T): kotlin.Unit
+}

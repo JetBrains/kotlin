@@ -24,29 +24,52 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.PackageData
+import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import kotlin.reflect.KCallable
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 
-internal class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl() {
+internal class KPackageImpl(
+        override val jClass: Class<*>,
+        @Suppress("unused") val usageModuleName: String? = null // may be useful for debug
+) : KDeclarationContainerImpl() {
     private inner class Data : KDeclarationContainerImpl.Data() {
+        private val kotlinClass: ReflectKotlinClass? by ReflectProperties.lazySoft {
+            // TODO: do not read ReflectKotlinClass multiple times
+            ReflectKotlinClass.create(jClass)
+        }
+
         val descriptor: PackageViewDescriptor by ReflectProperties.lazySoft {
             with(moduleData) {
-                packageFacadeProvider.registerModule(moduleName)
+                kotlinClass?.packageModuleName?.let(packagePartProvider::registerModule)
                 module.getPackage(jClass.classId.packageFqName)
             }
         }
 
         val methodOwner: Class<*> by ReflectProperties.lazy {
-            val facadeName = ReflectKotlinClass.create(jClass)?.classHeader?.multifileClassName
+            val facadeName = kotlinClass?.classHeader?.multifileClassName
             // We need to check isNotEmpty because this is the value read from the annotation which cannot be null.
             // The default value for 'xs' is empty string, as declared in kotlin.Metadata
-            // TODO: do not read ReflectKotlinClass multiple times, obtain facade name from descriptor
             if (facadeName != null && facadeName.isNotEmpty()) {
                 jClass.classLoader.loadClass(facadeName.replace('/', '.'))
             }
             else {
                 jClass
+            }
+        }
+
+        val metadata: PackageData? by ReflectProperties.lazy {
+            kotlinClass?.classHeader?.let { header ->
+                val data = header.data
+                val strings = header.strings
+                if (data != null && strings != null) {
+                    JvmProtoBufUtil.readPackageDataFrom(data, strings)
+                }
+                else null
             }
         }
 
@@ -76,6 +99,13 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
             scope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
+
+    override fun getLocalProperty(index: Int): PropertyDescriptor? {
+        return data().metadata?.let { (nameResolver, packageProto) ->
+            val proto = packageProto.getExtension(JvmProtoBuf.packageLocalVariable, index)
+            deserializeToDescriptor(jClass, proto, nameResolver, TypeTable(packageProto.typeTable), MemberDeserializer::loadProperty)
+        }
+    }
 
     override fun equals(other: Any?): Boolean =
             other is KPackageImpl && jClass == other.jClass

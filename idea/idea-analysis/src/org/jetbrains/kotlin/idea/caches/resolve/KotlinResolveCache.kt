@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
@@ -33,6 +32,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.jvmTarget
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.*
@@ -67,7 +68,7 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
     }
 
     fun getAnalysisResults(element: KtElement): AnalysisResult {
-        assert (element.getContainingKtFile() == file) { "Wrong file. Expected $file, but was ${element.getContainingKtFile()}" }
+        assert (element.containingKtFile == file) { "Wrong file. Expected $file, but was ${element.containingKtFile}" }
 
         val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
 
@@ -141,11 +142,13 @@ private object KotlinResolveDataProvider {
         }
         // Primary constructor should never be returned
         if (analyzableElement is KtPrimaryConstructor) return analyzableElement.getContainingClassOrObject()
+        // Class initializer should be replaced by containing class to provide full analysis
+        if (analyzableElement is KtClassInitializer) return analyzableElement.containingDeclaration
         return analyzableElement
                     // if none of the above worked, take the outermost declaration
                     ?: PsiTreeUtil.getTopmostParentOfType(element, KtDeclaration::class.java)
                     // if even that didn't work, take the whole file
-                    ?: element.getContainingKtFile()
+                    ?: element.containingKtFile
     }
 
     fun analyze(project: Project, componentProvider: ComponentProvider, analyzableElement: KtElement): AnalysisResult {
@@ -155,16 +158,10 @@ private object KotlinResolveDataProvider {
                 return AnalysisResult.success(analyzeExpressionCodeFragment(componentProvider, analyzableElement), module)
             }
 
-            val file = analyzableElement.getContainingKtFile()
-            if (file.getModuleInfo() is LibrarySourceInfo) {
-                // Library sources: mark file to skip
-                file.putUserData(LibrarySourceHacks.SKIP_TOP_LEVEL_MEMBERS, true)
-            }
-
             val resolveSession = componentProvider.get<ResolveSession>()
-            val trace = DelegatingBindingTrace(resolveSession.bindingContext, "Trace for resolution of " + analyzableElement)
+            val trace = DelegatingBindingTrace(resolveSession.bindingContext, "Trace for resolution of " + analyzableElement, allowSliceRewrite = true)
 
-            val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.getContainingKtFile())
+            val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
 
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
                     //TODO: should get ModuleContext
@@ -173,7 +170,8 @@ private object KotlinResolveDataProvider {
                     trace,
                     targetPlatform,
                     componentProvider.get<BodyResolveCache>(),
-                    LanguageVersionSettingsImpl.DEFAULT // TODO: see KT-12410
+                    analyzableElement.jvmTarget,
+                    analyzableElement.languageVersionSettings
             ).get<LazyTopDownAnalyzer>()
 
             lazyTopDownAnalyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(analyzableElement))

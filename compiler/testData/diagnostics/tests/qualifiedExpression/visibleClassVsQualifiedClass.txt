@@ -39,10 +39,6 @@ package some {
 package
 
 package a {
-
-    public final class b {
-        // -- Module: <m1> --
-    }
 }
 
 package other {
@@ -77,8 +73,4 @@ package other2 {
 
 package some {
     public fun test(/*0*/ _ab: some.a.b): kotlin.Unit
-
-    public final class a {
-        // -- Module: <m2> --
-    }
 }

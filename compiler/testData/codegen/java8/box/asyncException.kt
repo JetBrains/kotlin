@@ -2,6 +2,8 @@
 // FULL_JDK
 
 import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 fun exception(v: String): CompletableFuture<String> = CompletableFuture.supplyAsync { throw RuntimeException(v) }
 
@@ -40,29 +42,28 @@ fun box(): String {
     return "No exception"
 }
 
-fun <T> async(coroutine c: FutureController<T>.() -> Continuation<Unit>): CompletableFuture<T> {
-    val controller = FutureController<T>()
-    c(controller).resume(Unit)
-    return controller.future
+fun <T> async(c: suspend () -> T): CompletableFuture<T> {
+    val future = CompletableFuture<T>()
+    c.startCoroutine(object : Continuation<T> {
+        override val context = EmptyCoroutineContext
+
+        override fun resume(data: T) {
+            future.complete(data)
+        }
+
+        override fun resumeWithException(exception: Throwable) {
+            future.completeExceptionally(exception)
+        }
+    })
+    return future
 }
 
-class FutureController<T> {
-    val future = CompletableFuture<T>()
-
-    suspend fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>) {
-        f.whenComplete { value, throwable ->
-            if (throwable == null)
-                machine.resume(value)
-            else
-                machine.resumeWithException(throwable)
-        }
+suspend fun <V> await(f: CompletableFuture<V>) = suspendCoroutineOrReturn<V> { machine ->
+    f.whenComplete { value, throwable ->
+        if (throwable == null)
+            machine.resume(value)
+        else
+            machine.resumeWithException(throwable)
     }
-
-    operator fun handleResult(value: T, c: Continuation<Nothing>) {
-        future.complete(value)
-    }
-
-    operator fun handleException(t: Throwable, c: Continuation<Nothing>) {
-        future.completeExceptionally(t)
-    }
+    COROUTINE_SUSPENDED
 }

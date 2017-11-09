@@ -1,4 +1,4 @@
-JetFile: ValWithNoNameBeforeNextDeclarationWithModifiers.kt
+KtFile: ValWithNoNameBeforeNextDeclarationWithModifiers.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

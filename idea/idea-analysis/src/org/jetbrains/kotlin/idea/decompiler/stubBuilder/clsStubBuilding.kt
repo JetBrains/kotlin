@@ -46,9 +46,10 @@ fun createTopLevelClassStub(
         classId: ClassId,
         classProto: ProtoBuf.Class,
         source: SourceElement?,
-        context: ClsStubBuilderContext
+        context: ClsStubBuilderContext,
+        isScript: Boolean
 ): KotlinFileStubImpl {
-    val fileStub = createFileStub(classId.packageFqName)
+    val fileStub = createFileStub(classId.packageFqName, isScript)
     createClassStub(fileStub, classProto, context.nameResolver, classId, source, context)
     return fileStub
 }
@@ -58,7 +59,7 @@ fun createPackageFacadeStub(
         packageFqName: FqName,
         c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forFile(packageFqName, isScript = false)
     setupFileStub(fileStub, packageFqName)
     createDeclarationsStubs(
             fileStub, c, ProtoContainer.Package(packageFqName, c.nameResolver, c.typeTable, source = null), packageProto)
@@ -71,7 +72,7 @@ fun createFileFacadeStub(
         c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
-    val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName)
     setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer.Package(
             packageFqName, c.nameResolver, c.typeTable, JvmPackagePartSource(JvmClassName.byClassId(ClassId.topLevel(facadeFqName)), null)
@@ -88,7 +89,7 @@ fun createMultifileClassStub(
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
     val partNames = header.data?.asList()?.map { it.substringAfterLast('/') }
-    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, partNames, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, partNames)
     setupFileStub(fileStub, packageFqName)
     for (partFile in partFiles) {
         val partHeader = partFile.classHeader
@@ -101,10 +102,10 @@ fun createMultifileClassStub(
     return fileStub
 }
 
-fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT)
+fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT, isScript = false)
 
-fun createFileStub(packageFqName: FqName): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
+fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl {
+    val fileStub = KotlinFileStubForIde.forFile(packageFqName, isScript)
     setupFileStub(fileStub, packageFqName)
     return fileStub
 }
@@ -141,10 +142,12 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
 fun createStubForTypeName(
         typeClassId: ClassId,
         parent: StubElement<out PsiElement>,
-        onUserTypeLevel: (KotlinUserTypeStub, Int) -> Unit = { x, y -> }
+        bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { _, _ -> }
 ): KotlinUserTypeStub {
+    val substituteWithAny = typeClassId.isLocal
+
     val fqName =
-            if (typeClassId.isLocal) KotlinBuiltIns.FQ_NAMES.any
+            if (substituteWithAny) KotlinBuiltIns.FQ_NAMES.any
             else typeClassId.asSingleFqName().toUnsafe()
     val segments = fqName.pathSegments().asReversed()
     assert(segments.isNotEmpty())
@@ -156,7 +159,9 @@ fun createStubForTypeName(
             recCreateStubForType(userTypeStub, level + 1)
         }
         KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref())
-        onUserTypeLevel(userTypeStub, level)
+        if (!substituteWithAny) {
+            bindTypeArguments(userTypeStub, level)
+        }
         return userTypeStub
     }
 

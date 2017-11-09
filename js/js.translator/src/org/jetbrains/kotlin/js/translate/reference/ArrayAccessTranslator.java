@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -112,7 +112,7 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
     @NotNull
     @Override
     public AccessTranslator getCached() {
-        Map<KtExpression, JsExpression> aliases = new HashMap<KtExpression, JsExpression>();
+        Map<KtExpression, JsExpression> aliases = new HashMap<>();
 
         JsExpression arrayExpression = context().cacheExpressionIfNeeded(getArrayExpression());
         aliases.put(expression.getArrayExpression(), arrayExpression);

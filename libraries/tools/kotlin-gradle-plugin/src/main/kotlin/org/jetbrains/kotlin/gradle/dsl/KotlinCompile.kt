@@ -19,7 +19,12 @@ package org.jetbrains.kotlin.gradle.dsl
 import groovy.lang.Closure
 import org.gradle.api.Task
 
-interface KotlinCompile<T> : Task {
+interface CompilerArgumentAware {
+    val serializedCompilerArguments: List<String>
+    val defaultSerializedCompilerArguments: List<String>
+}
+
+interface KotlinCompile<T : KotlinCommonOptions> : Task, CompilerArgumentAware {
     val kotlinOptions: T
 
     fun kotlinOptions(fn: T.() -> Unit) {
@@ -35,3 +40,22 @@ interface KotlinCompile<T> : Task {
 interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>
 
 interface KotlinJvmCompile : KotlinCompile<KotlinJvmOptions>
+
+interface KotlinCommonCompile : KotlinCompile<KotlinMultiplatformCommonOptions>
+
+interface KotlinJsDce : Task {
+    val dceOptions: KotlinJsDceOptions
+
+    val keep: MutableList<String>
+
+    fun dceOptions(fn: KotlinJsDceOptions.() -> Unit) {
+        dceOptions.fn()
+    }
+
+    fun dceOptions(fn: Closure<*>) {
+        fn.delegate = dceOptions
+        fn.call()
+    }
+
+    fun keep(vararg fqn: String)
+}

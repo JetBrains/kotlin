@@ -47,7 +47,7 @@ object DescriptorEquivalenceForOverrides {
     private fun areTypeParametersEquivalent(
             a: TypeParameterDescriptor,
             b: TypeParameterDescriptor,
-            equivalentCallables: (DeclarationDescriptor?, DeclarationDescriptor?) -> Boolean = {x, y -> false}
+            equivalentCallables: (DeclarationDescriptor?, DeclarationDescriptor?) -> Boolean = { _, _ -> false}
     ): Boolean {
         if (a == b) return true
         if (a.containingDeclaration == b.containingDeclaration) return false
@@ -69,7 +69,7 @@ object DescriptorEquivalenceForOverrides {
         // Distinct locals are not equivalent
         if (DescriptorUtils.isLocal(a) || DescriptorUtils.isLocal(b)) return false
 
-        if (!ownersEquivalent(a, b, {x, y -> false})) return false
+        if (!ownersEquivalent(a, b, { _, _ -> false})) return false
 
         val overridingUtil = OverridingUtil.createWithEqualityAxioms eq@ {
             c1, c2 ->
@@ -98,11 +98,11 @@ object DescriptorEquivalenceForOverrides {
 
         // This check is needed when we call areTypeParametersEquivalent() from areCallableMemberDescriptorsEquivalent:
         // if the type parameter owners are, e.g.,  functions, we'll go into infinite recursion here
-        if (aOwner is CallableMemberDescriptor || bOwner is CallableMemberDescriptor) {
-            return equivalentCallables(aOwner, bOwner)
+        return if (aOwner is CallableMemberDescriptor || bOwner is CallableMemberDescriptor) {
+            equivalentCallables(aOwner, bOwner)
         }
         else {
-            return areEquivalent(aOwner, bOwner)
+            areEquivalent(aOwner, bOwner)
         }
     }
 

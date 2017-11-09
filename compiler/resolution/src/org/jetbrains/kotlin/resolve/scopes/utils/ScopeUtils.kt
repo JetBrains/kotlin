@@ -50,15 +50,19 @@ fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<Declaration
 // Result is guaranteed to be filtered by kind and name.
 fun HierarchicalScope.collectDescriptorsFiltered(
         kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
-        nameFilter: (Name) -> Boolean = { true }
+        nameFilter: (Name) -> Boolean = { true },
+        changeNamesForAliased: Boolean = false
 ): Collection<DeclarationDescriptor> {
     if (kindFilter.kindMask == 0) return listOf()
-    return collectAllFromMeAndParent { it.getContributedDescriptors(kindFilter, nameFilter) }
-            .filter { kindFilter.accepts(it) && nameFilter(it.name) }
+    return collectAllFromMeAndParent {
+        if (it is ImportingScope)
+            it.getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased)
+        else
+            it.getContributedDescriptors(kindFilter, nameFilter)
+    }.filter { kindFilter.accepts(it) && nameFilter(it.name) }
 }
 
-
-@Deprecated("Use getOwnProperties instead") fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
+@Deprecated("Use getContributedProperties instead") fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
     return findFirstFromMeAndParent {
         when {
             it is LexicalScopeWrapper -> it.delegate.findLocalVariable(name)
@@ -103,7 +107,7 @@ fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is LexicalWri
 private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: MemberScope) : ImportingScope {
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean, changeNamesForAliased: Boolean)
             = memberScope.getContributedDescriptors(kindFilter, nameFilter)
 
     override fun getContributedClassifier(name: Name, location: LookupLocation) = memberScope.getContributedClassifier(name, location)
@@ -116,10 +120,12 @@ private class MemberScopeToImportingScopeAdapter(override val parent: ImportingS
 
     override fun hashCode() = memberScope.hashCode()
 
-    override fun toString() = "${javaClass.simpleName} for $memberScope"
+    override fun toString() = "${this::class.java.simpleName} for $memberScope"
+
+    override fun computeImportedNames() = memberScope.computeAllNames()
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName)
+        p.println(this::class.java.simpleName)
         p.pushIndent()
 
         memberScope.printScopeStructure(p.withholdIndentOnce())
@@ -180,7 +186,7 @@ fun LexicalScope.addImportingScopes(importScopes: List<ImportingScope>): Lexical
     val lastLexicalScope = parentsWithSelf.last { it is LexicalScope }
     val firstImporting = lastLexicalScope.parent as ImportingScope
     val newFirstImporting = chainImportingScopes(importScopes, firstImporting)
-    return LexicalScopeWrapper(this, newFirstImporting!!)
+    return replaceImportingScopes(newFirstImporting)
 }
 
 fun LexicalScope.addImportingScope(importScope: ImportingScope): LexicalScope
@@ -199,6 +205,14 @@ fun LexicalScope.replaceImportingScopes(importingScopeChain: ImportingScope?): L
         return LexicalScopeWrapper(this.delegate, newImportingScopeChain)
     }
     return LexicalScopeWrapper(this, newImportingScopeChain)
+}
+
+fun LexicalScope.createScopeForDestructuring(newReceiver: ReceiverParameterDescriptor?): LexicalScope {
+    return LexicalScopeImpl(
+            parent, ownerDescriptor, isOwnerDescriptorAccessibleByLabel,
+            newReceiver,
+            LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING
+    )
 }
 
 private class LexicalScopeWrapper(val delegate: LexicalScope, val newImportingScopeChain: ImportingScope): LexicalScope by delegate {

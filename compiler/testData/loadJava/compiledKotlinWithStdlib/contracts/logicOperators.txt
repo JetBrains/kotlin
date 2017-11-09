@@ -1,0 +1,15 @@
+package test
+
+public fun andSequence(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?, /*2*/ b: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> x is A && x is B && y is A && b
+
+public fun orSequence(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?, /*2*/ b: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> x is String || y is Int || (!b)
+
+public final class A {
+    /*primary*/ public constructor A()
+}
+
+public final class B {
+    /*primary*/ public constructor B()
+}

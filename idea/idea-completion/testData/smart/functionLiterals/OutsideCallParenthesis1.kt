@@ -1,8 +1,10 @@
-fun foo(p: Int, handler: (String, Char) -> Unit){}
+fun foo(p: Int, handler: (String, xx: Char) -> Unit){}
 
 fun bar(handler: (String, Char) -> Unit) {
     foo(1)<caret>
 }
 
-// EXIST: "{ String, Char -> ... }"
+// WITH_ORDER
+// EXIST: "{ s, xx -> ... }"
+// EXIST: "{ s: String, xx: Char -> ... }"
 // ABSENT: handler

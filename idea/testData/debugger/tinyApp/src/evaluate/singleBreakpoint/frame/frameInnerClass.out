@@ -1,0 +1,50 @@
+LineBreakpoint created at frameInnerClass.kt:17
+Run Java
+Connected to the target VM
+frameInnerClass.kt:17
+Compile bytecode for prop1
+Compile bytecode for prop2
+Compile bytecode for myFun1()
+Compile bytecode for myFun2()
+package frameInnerClass
+
+fun main(args: Array<String>) {
+    A().Inner().test()
+}
+
+class A {
+    val prop1 = 1
+    fun myFun1() = 1
+
+    inner class Inner {
+        val prop2 = 1
+        fun myFun2() = 1
+
+        fun test() {
+            //Breakpoint!
+            prop1 + prop2
+        }
+    }
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: prop1
+// RESULT: 1: I
+
+// EXPRESSION: prop2
+// RESULT: 1: I
+
+// EXPRESSION: myFun1()
+// RESULT: 1: I
+
+// EXPRESSION: myFun2()
+// RESULT: 1: I
+ frame    = test:17, A$Inner {frameInnerClass}
+   this     = this = {frameInnerClass.A$Inner@uniqueID}
+     field    = prop2: int = 1 (sp = frameInnerClass.kt, 12)
+     field    = this$0: frameInnerClass.A = {frameInnerClass.A@uniqueID} (sp = null)
+       field    = prop1: int = 1 (sp = frameInnerClass.kt, 8)
+Disconnected from the target VM
+
+Process finished with exit code 0

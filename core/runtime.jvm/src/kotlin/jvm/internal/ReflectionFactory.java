@@ -16,6 +16,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.SinceKotlin;
 import kotlin.reflect.*;
 
 public class ReflectionFactory {
@@ -30,7 +31,7 @@ public class ReflectionFactory {
     }
 
     public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
-        return null;
+        return new PackageReference(javaClass, moduleName);
     }
 
     public KClass getOrCreateKotlinClass(Class javaClass) {
@@ -41,6 +42,7 @@ public class ReflectionFactory {
         return new ClassReference(javaClass);
     }
 
+    @SinceKotlin(version = "1.1")
     public String renderLambdaToString(Lambda lambda) {
         String result = lambda.getClass().getGenericInterfaces()[0].toString();
         return result.startsWith(KOTLIN_JVM_FUNCTIONS) ? result.substring(KOTLIN_JVM_FUNCTIONS.length()) : result;

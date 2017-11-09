@@ -32,12 +32,12 @@ class ReflectJavaClassifierType(public override val reflectType: Type) : Reflect
             is Class<*> -> ReflectJavaClass(type)
             is TypeVariable<*> -> ReflectJavaTypeParameter(type)
             is ParameterizedType -> ReflectJavaClass(type.rawType as Class<*>)
-            else -> throw IllegalStateException("Not a classifier type (${type.javaClass}): $type")
+            else -> throw IllegalStateException("Not a classifier type (${type::class.java}): $type")
         }
         classifier
     }
 
-    override val canonicalText: String
+    override val classifierQualifiedName: String
         get() = throw UnsupportedOperationException("Type not found: $reflectType")
 
     override val presentableText: String

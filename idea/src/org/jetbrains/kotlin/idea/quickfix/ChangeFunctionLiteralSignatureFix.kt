@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
@@ -40,6 +40,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
     override fun getText() = "Change the signature of lambda expression"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         runChangeSignature(
                 project,
                 functionDescriptor,
@@ -58,7 +59,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
                     override fun performSilently(affectedFunctions: Collection<PsiElement>) = false
                     override fun forcePerformForSelectedFunctionOnly() = false
                 },
-                context,
+                element,
                 text)
     }
 
@@ -71,7 +72,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
         }
 
         override fun extractFixData(element: KtFunctionLiteral, diagnostic: Diagnostic): Data? {
-            val descriptor = element.resolveToDescriptor() as? FunctionDescriptor ?: return null
+            val descriptor = element.resolveToDescriptorIfAny() as? FunctionDescriptor ?: return null
             val parameterTypes = Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic).b
             return Data(descriptor, parameterTypes)
         }

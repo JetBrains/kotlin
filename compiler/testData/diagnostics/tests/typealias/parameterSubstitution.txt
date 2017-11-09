@@ -1,7 +1,7 @@
 package
 
 public val ca1: CA<kotlin.Int> /* = C<kotlin.Int> */
-public val ca2: CA<CA<kotlin.Int> /* = C<kotlin.Int> */> /* = C<CA<kotlin.Int> /* = C<kotlin.Int> */> */
+public val ca2: CA<CA<kotlin.Int> /* = C<kotlin.Int> */> /* = C<C<kotlin.Int>> */
 public val ca3: CA<C<kotlin.Int>> /* = C<C<kotlin.Int>> */
 public val ca4: CA<kotlin.Int?> /* = C<kotlin.Int?> */
 

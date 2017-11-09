@@ -1,0 +1,19 @@
+package
+
+public val testProperty1: @A AInt /* = @A @A kotlin.Int */ = 0
+public val testProperty2: @A AI /* = @A @A kotlin.Int */ = 0
+public fun testFunction1(/*0*/ x: @A AInt /* = @A @A kotlin.Int */): @A AInt /* = @A @A kotlin.Int */
+public fun testFunction2(/*0*/ x: @A AI /* = @A @A kotlin.Int */): @A AI /* = @A @A kotlin.Int */
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class A : kotlin.Annotation {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias AI = AInt
+public typealias AInt = @A kotlin.Int
+public typealias Test1 = @A AInt
+public typealias Test2 = @A AI
+public typealias Test3 = kotlin.collections.List<@A AInt>
+public typealias Test4 = kotlin.collections.List<@A AI>

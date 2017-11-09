@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight.generate;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenerateHashCodeAndEqualsActionTest {
     public void testAllFilesPresentInEqualsWithHashCode() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/generate/equalsWithHashCode"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/generate/equalsWithHashCode"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("annotation.kt")
@@ -56,6 +57,12 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
     @TestMetadata("dataClass.kt")
     public void testDataClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/dataClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("dataClassHasArrayProperty.kt")
+    public void testDataClassHasArrayProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/dataClassHasArrayProperty.kt");
         doTest(fileName);
     }
 
@@ -89,9 +96,27 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
         doTest(fileName);
     }
 
+    @TestMetadata("keepQuotes.kt")
+    public void testKeepQuotes() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/keepQuotes.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("multipleVars.kt")
     public void testMultipleVars() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVars.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("multipleVarsCommon.kt")
+    public void testMultipleVarsCommon() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsCommon.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("multipleVarsJS.kt")
+    public void testMultipleVarsJS() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsJS.kt");
         doTest(fileName);
     }
 
@@ -119,15 +144,21 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
         doTest(fileName);
     }
 
-    @TestMetadata("noVarsForced.kt")
-    public void testNoVarsForced() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsForced.kt");
+    @TestMetadata("noVarsCommon.kt")
+    public void testNoVarsCommon() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsCommon.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("noVarsForcedWithSuperClass.kt")
-    public void testNoVarsForcedWithSuperClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsForcedWithSuperClass.kt");
+    @TestMetadata("noVarsJS.kt")
+    public void testNoVarsJS() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsJS.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noVarsWithSuperClass.kt")
+    public void testNoVarsWithSuperClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsWithSuperClass.kt");
         doTest(fileName);
     }
 

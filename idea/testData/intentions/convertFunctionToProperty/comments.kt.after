@@ -1,0 +1,9 @@
+annotation class X(val s: String)
+
+// 1
+@X("") // 2
+/* 3 */ val foo<caret>: String
+    get() {
+        // 4
+        return ""
+    }

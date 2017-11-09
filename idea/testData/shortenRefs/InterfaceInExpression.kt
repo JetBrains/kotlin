@@ -1,3 +1,7 @@
+package fq
+
+interface Iface
+
 fun foo() {
-    <selection>java.util.List</selection>
+    <selection>fq.Iface</selection>
 }

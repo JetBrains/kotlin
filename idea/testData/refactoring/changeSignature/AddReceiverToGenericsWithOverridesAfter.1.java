@@ -1,4 +1,4 @@
-<caret>import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 interface J<A> extends T<A> {
     @Override

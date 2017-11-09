@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.IOException
@@ -29,13 +31,11 @@ import java.net.URLClassLoader
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.jar.Manifest
-import java.util.logging.Level
-import java.util.logging.LogManager
-import java.util.logging.Logger
+import java.util.logging.*
 import kotlin.concurrent.schedule
 
 val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
-
+val DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS = 60000L
 
 class LogStream(name: String) : OutputStream() {
 
@@ -54,7 +54,6 @@ class LogStream(name: String) : OutputStream() {
     }
 }
 
-
 object KotlinCompileDaemon {
 
     init {
@@ -69,8 +68,8 @@ object KotlinCompileDaemon {
                 "java.util.logging.FileHandler.limit     = ${if (fileIsGiven) 0 else (1 shl 20)}\n" + // if file is provided - disabled, else - 1Mb
                 "java.util.logging.FileHandler.count     = ${if (fileIsGiven) 1 else 3}\n" +
                 "java.util.logging.FileHandler.append    = $fileIsGiven\n" +
-                "java.util.logging.FileHandler.pattern   = ${if (fileIsGiven) logPath else (logPath + File.separator + "${COMPILE_DAEMON_DEFAULT_FILES_PREFIX}.$logTime.%u%g.log")}\n" +
-                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s\\n\n"
+                "java.util.logging.FileHandler.pattern   = ${if (fileIsGiven) logPath else (logPath + File.separator + "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log")}\n" +
+                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
 
         LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
     }
@@ -91,16 +90,23 @@ object KotlinCompileDaemon {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        ensureServerHostnameIsSetUp()
+
+        val jvmArguments = ManagementFactory.getRuntimeMXBean().inputArguments
 
         log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
-        log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
+        log.info("daemon JVM args: " + jvmArguments.joinToString(" "))
         log.info("daemon args: " + args.joinToString(" "))
+
+        setIdeaIoUseFallback()
 
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
 
         try {
-            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
+            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true,
+                                                             inheritOtherJvmOptions = true,
+                                                             inheritAdditionalProperties = true)
 
             val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
@@ -125,9 +131,11 @@ object KotlinCompileDaemon {
             val compilerSelector = object : CompilerSelector {
                 private val jvm by lazy { K2JVMCompiler() }
                 private val js by lazy { K2JSCompiler() }
+                private val metadata by lazy { K2MetadataCompiler() }
                 override fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*> = when (targetPlatform) {
                     CompileService.TargetPlatform.JVM -> jvm
                     CompileService.TargetPlatform.JS -> js
+                    CompileService.TargetPlatform.METADATA -> metadata
                 }
             }
             // timer with a daemon thread, meaning it should not prevent JVM to exit normally
@@ -153,8 +161,8 @@ object KotlinCompileDaemon {
                                                          }
                                                      })
 
-            if (daemonOptions.runFilesPath.isNotEmpty())
-                println(daemonOptions.runFilesPath)
+            println(COMPILE_DAEMON_IS_READY_MESSAGE)
+            log.info("daemon is listening on port: $port")
 
             // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
             // TODO: implement more reliable scheme

@@ -6,17 +6,8 @@ End of files
 Compiling files:
   src/b.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Compiling files:
   src/Usage.java
 End of files
-Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/test/AKt.class
-End of files
-Compiling files:
-  src/a.kt
-End of files
-Exit code: OK
-------------------------------------------

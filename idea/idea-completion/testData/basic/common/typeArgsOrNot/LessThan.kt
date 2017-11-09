@@ -8,6 +8,6 @@ fun foo() {
 }
 
 // EXIST: String
-// EXIST: java
+// EXIST: kotlin
 // EXIST: v
 // EXIST: f

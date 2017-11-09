@@ -1,0 +1,117 @@
+KtFile: CollectionLiterals.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        COLLECTION_LITERAL_EXPRESSION
+          PsiElement(LBRACKET)('[')
+          PsiElement(RBRACKET)(']')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        COLLECTION_LITERAL_EXPRESSION
+          PsiElement(LBRACKET)('[')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(RBRACKET)(']')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        COLLECTION_LITERAL_EXPRESSION
+          PsiElement(LBRACKET)('[')
+          PsiElement(RBRACKET)(']')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        COLLECTION_LITERAL_EXPRESSION
+          PsiElement(LBRACKET)('[')
+          PsiElement(RBRACKET)(']')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        COLLECTION_LITERAL_EXPRESSION
+          PsiElement(LBRACKET)('[')
+          PsiElement(RBRACKET)(']')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        COLLECTION_LITERAL_EXPRESSION
+          PsiElement(LBRACKET)('[')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          COLLECTION_LITERAL_EXPRESSION
+            PsiElement(LBRACKET)('[')
+            PsiElement(RBRACKET)(']')
+          PsiElement(RBRACKET)(']')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n     ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n    ')
+      COLLECTION_LITERAL_EXPRESSION
+        PsiElement(LBRACKET)('[')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n     ')
+        COLLECTION_LITERAL_EXPRESSION
+          PsiElement(LBRACKET)('[')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('2')
+          PsiElement(RBRACKET)(']')
+        PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

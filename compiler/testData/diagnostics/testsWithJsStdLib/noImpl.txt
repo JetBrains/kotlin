@@ -1,0 +1,23 @@
+package
+
+public val prop: kotlin.String
+public val prop2: kotlin.String
+public fun foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin.Unit
+
+public open class A {
+    public constructor A(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class B : A {
+    public constructor B()
+    public constructor B(/*0*/ y: kotlin.String)
+    public constructor B(/*0*/ y: kotlin.String, /*1*/ z: kotlin.String)
+    public final override /*1*/ /*fake_override*/ val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

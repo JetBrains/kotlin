@@ -1,4 +1,4 @@
-JetFile: IfWithoutLPar.kt
+KtFile: IfWithoutLPar.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

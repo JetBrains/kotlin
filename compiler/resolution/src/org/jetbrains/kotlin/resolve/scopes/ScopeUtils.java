@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.scopes;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
@@ -30,19 +29,16 @@ public final class ScopeUtils {
 
     public static LexicalScope makeScopeForPropertyHeader(
             @NotNull LexicalScope parent,
-            @NotNull final PropertyDescriptor propertyDescriptor
+            @NotNull PropertyDescriptor propertyDescriptor
     ) {
         return new LexicalScopeImpl(parent, propertyDescriptor, false, null, LexicalScopeKind.PROPERTY_HEADER,
                                     // redeclaration on type parameters should be reported early, see: DescriptorResolver.resolvePropertyDescriptor()
                                     LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
-                                    new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
-                                        @Override
-                                        public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                                            for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
-                                                handler.addClassifierDescriptor(typeParameterDescriptor);
-                                            }
-                                            return Unit.INSTANCE;
+                                    handler -> {
+                                        for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
+                                            handler.addClassifierDescriptor(typeParameterDescriptor);
                                         }
+                                        return Unit.INSTANCE;
                                     });
     }
 

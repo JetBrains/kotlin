@@ -24,10 +24,11 @@ import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.highlighter.markers.expectedDescriptor
 import org.jetbrains.kotlin.idea.util.getAllAccessibleFunctions
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -62,16 +63,20 @@ class AutomaticOverloadsRenamer(function: KtNamedFunction, newName: String) : Au
 private fun KtNamedFunction.getOverloads(): Collection<FunctionDescriptor> {
     val name = nameAsName ?: return emptyList()
     val resolutionFacade = getResolutionFacade()
-    val descriptor = resolutionFacade.resolveToDescriptor(this) as CallableDescriptor
+    val descriptor = this.unsafeResolveToDescriptor() as FunctionDescriptor
     val context = resolutionFacade.analyze(this, BodyResolveMode.FULL)
     val scope = getResolutionScope(context, resolutionFacade)
     val extensionReceiverClass = descriptor.extensionReceiverParameter?.type?.constructor?.declarationDescriptor as? ClassDescriptor
 
-    val overloadsFromFunctionScope = scope.getAllAccessibleFunctions(name)
-    if (extensionReceiverClass == null) return overloadsFromFunctionScope
+    if (descriptor.isActual && descriptor.expectedDescriptor() != null) return emptyList()
 
-    val overloadsFromExtensionReceiver = extensionReceiverClass.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
-    return overloadsFromFunctionScope + overloadsFromExtensionReceiver
+    val result = LinkedHashSet<FunctionDescriptor>()
+    result += scope.getAllAccessibleFunctions(name)
+    if (extensionReceiverClass != null) {
+        result += extensionReceiverClass.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
+    }
+
+    return result
 }
 
 class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {

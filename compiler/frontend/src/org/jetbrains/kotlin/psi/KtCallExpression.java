@@ -68,7 +68,7 @@ public class KtCallExpression extends KtExpressionImpl implements KtCallElement,
     @NotNull
     public List<KtValueArgument> getValueArguments() {
         KtValueArgumentList list = getValueArgumentList();
-        List<KtValueArgument> valueArgumentsInParentheses = list != null ? list.getArguments() : Collections.<KtValueArgument>emptyList();
+        List<KtValueArgument> valueArgumentsInParentheses = list != null ? list.getArguments() : Collections.emptyList();
         List<KtLambdaArgument> functionLiteralArguments = getLambdaArguments();
         if (functionLiteralArguments.isEmpty()) {
             return valueArgumentsInParentheses;
@@ -83,6 +83,6 @@ public class KtCallExpression extends KtExpressionImpl implements KtCallElement,
     @NotNull
     public List<KtTypeProjection> getTypeArguments() {
         KtTypeArgumentList list = getTypeArgumentList();
-        return list != null ? list.getArguments() : Collections.<KtTypeProjection>emptyList();
+        return list != null ? list.getArguments() : Collections.emptyList();
     }
 }

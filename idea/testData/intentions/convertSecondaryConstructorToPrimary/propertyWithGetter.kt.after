@@ -1,0 +1,11 @@
+fun log(s: String) {
+}
+
+class A(x: String) {
+    var x: String = x
+        get() {
+            log(field)
+            return field
+        }
+
+}

@@ -16,36 +16,69 @@
 
 package org.jetbrains.kotlin.cfg
 
+import javaslang.Tuple2
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import java.util.*
 
-open class ControlFlowInfo<D> internal constructor(protected val map: MutableMap<VariableDescriptor, D> = hashMapOf()) :
-        MutableMap<VariableDescriptor, D> by map {
-    open fun copy() = ControlFlowInfo(HashMap(map))
+typealias ImmutableMap<K, V> = javaslang.collection.Map<K, V>
+typealias ImmutableHashMap<K, V> = javaslang.collection.HashMap<K, V>
 
-    fun retainAll(predicate: (VariableDescriptor) -> Boolean): ControlFlowInfo<D> {
-        map.keys.retainAll(predicate)
-        return this
+abstract class ControlFlowInfo<S : ControlFlowInfo<S, D>, D : Any>
+internal constructor(
+        protected val map: ImmutableMap<VariableDescriptor, D> = ImmutableHashMap.empty()
+) : ImmutableMap<VariableDescriptor, D> by map, ReadOnlyControlFlowInfo<D> {
+    abstract protected fun copy(newMap: ImmutableMap<VariableDescriptor, D>): S
+
+    override fun put(key: VariableDescriptor, value: D): S = put(key, value, this[key].getOrElse(null as D?))
+
+    /**
+     * This overload exists just for sake of optimizations: in some cases we've just retrieved the old value,
+     * so we don't need to scan through the peristent hashmap again
+     */
+    fun put(key: VariableDescriptor, value: D, oldValue: D?): S {
+        @Suppress("UNCHECKED_CAST")
+        // Avoid a copy instance creation if new value is the same
+        if (value == oldValue) return this as S
+        return copy(map.put(key, value))
     }
 
-    override fun equals(other: Any?) = map == (other as? ControlFlowInfo<*>)?.map
+    override fun getOrNull(variableDescriptor: VariableDescriptor): D? = this[variableDescriptor].getOrElse(null as D?)
+    override fun asMap() = this
+
+    fun retainAll(predicate: (VariableDescriptor) -> Boolean): S = copy(map.removeAll(map.keySet().filterNot(predicate)))
+
+    override fun equals(other: Any?) = map == (other as? ControlFlowInfo<*, *>)?.map
 
     override fun hashCode() = map.hashCode()
 
     override fun toString() = map.toString()
 }
 
-class InitControlFlowInfo(map: MutableMap<VariableDescriptor, VariableControlFlowState> = hashMapOf()) :
-        ControlFlowInfo<VariableControlFlowState>(map) {
-    override fun copy() = InitControlFlowInfo(HashMap(map))
+operator fun <T> Tuple2<T, *>.component1(): T = _1()
+operator fun <T> Tuple2<*, T>.component2(): T = _2()
+
+interface ReadOnlyControlFlowInfo<D : Any> {
+    fun getOrNull(variableDescriptor: VariableDescriptor): D?
+    // Only used in tests
+    fun asMap(): ImmutableMap<VariableDescriptor, D>
+}
+
+interface ReadOnlyInitControlFlowInfo : ReadOnlyControlFlowInfo<VariableControlFlowState> {
+    fun checkDefiniteInitializationInWhen(merge: ReadOnlyInitControlFlowInfo): Boolean
+}
+
+typealias ReadOnlyUseControlFlowInfo = ReadOnlyControlFlowInfo<VariableUseState>
+
+class InitControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableControlFlowState> = ImmutableHashMap.empty()) :
+        ControlFlowInfo<InitControlFlowInfo, VariableControlFlowState>(map), ReadOnlyInitControlFlowInfo {
+    override fun copy(newMap: ImmutableMap<VariableDescriptor, VariableControlFlowState>) = InitControlFlowInfo(newMap)
 
     // this = output of EXHAUSTIVE_WHEN_ELSE instruction
     // merge = input of MergeInstruction
     // returns true if definite initialization in when happens here
-    fun checkDefiniteInitializationInWhen(merge: InitControlFlowInfo): Boolean {
-        for ((key, value) in entries) {
+    override fun checkDefiniteInitializationInWhen(merge: ReadOnlyInitControlFlowInfo): Boolean {
+        for ((key, value) in iterator()) {
             if (value.initState == InitState.INITIALIZED_EXHAUSTIVELY &&
-                merge[key]?.initState == InitState.INITIALIZED) {
+                merge.getOrNull(key)?.initState == InitState.INITIALIZED) {
                 return true
             }
         }
@@ -53,9 +86,9 @@ class InitControlFlowInfo(map: MutableMap<VariableDescriptor, VariableControlFlo
     }
 }
 
-class UseControlFlowInfo(map: MutableMap<VariableDescriptor, VariableUseState> = hashMapOf()) :
-        ControlFlowInfo<VariableUseState>(map) {
-    override fun copy() = UseControlFlowInfo(HashMap(map))
+class UseControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableUseState> = ImmutableHashMap.empty()) :
+        ControlFlowInfo<UseControlFlowInfo, VariableUseState>(map), ReadOnlyUseControlFlowInfo {
+    override fun copy(newMap: ImmutableMap<VariableDescriptor, VariableUseState>) = UseControlFlowInfo(newMap)
 }
 
 enum class InitState(private val s: String) {
@@ -82,13 +115,9 @@ enum class InitState(private val s: String) {
 
 class VariableControlFlowState private constructor(val initState: InitState, val isDeclared: Boolean) {
 
-    fun definitelyInitialized(): Boolean {
-        return initState == InitState.INITIALIZED
-    }
+    fun definitelyInitialized(): Boolean = initState == InitState.INITIALIZED
 
-    fun mayBeInitialized(): Boolean {
-        return initState != InitState.NOT_INITIALIZED
-    }
+    fun mayBeInitialized(): Boolean = initState != InitState.NOT_INITIALIZED
 
     override fun toString(): String {
         if (initState == InitState.NOT_INITIALIZED && !isDeclared) return "-"
@@ -114,17 +143,14 @@ class VariableControlFlowState private constructor(val initState: InitState, val
                 InitState.NOT_INITIALIZED -> if (isDeclared) VS_NT else VS_NF
             }
 
-        fun createInitializedExhaustively(isDeclared: Boolean): VariableControlFlowState {
-            return create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared)
-        }
+        fun createInitializedExhaustively(isDeclared: Boolean): VariableControlFlowState =
+                create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared)
 
-        fun create(isInitialized: Boolean, isDeclared: Boolean = false): VariableControlFlowState {
-            return create(if (isInitialized) InitState.INITIALIZED else InitState.NOT_INITIALIZED, isDeclared)
-        }
+        fun create(isInitialized: Boolean, isDeclared: Boolean = false): VariableControlFlowState =
+                create(if (isInitialized) InitState.INITIALIZED else InitState.NOT_INITIALIZED, isDeclared)
 
-        fun create(isDeclaredHere: Boolean, mergedEdgesData: VariableControlFlowState?): VariableControlFlowState {
-            return create(true, isDeclaredHere || mergedEdgesData != null && mergedEdgesData.isDeclared)
-        }
+        fun create(isDeclaredHere: Boolean, mergedEdgesData: VariableControlFlowState?): VariableControlFlowState =
+                create(true, isDeclaredHere || mergedEdgesData != null && mergedEdgesData.isDeclared)
     }
 }
 
@@ -142,9 +168,7 @@ enum class VariableUseState(private val priority: Int) {
     companion object {
 
         @JvmStatic
-        fun isUsed(variableUseState: VariableUseState?): Boolean {
-            return variableUseState != null && variableUseState != UNUSED
-        }
+        fun isUsed(variableUseState: VariableUseState?): Boolean = variableUseState != null && variableUseState != UNUSED
     }
 }
 

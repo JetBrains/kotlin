@@ -1,6 +1,5 @@
 package
 
-public /*synthesized*/ fun J(/*0*/ function: (kotlin.Int!) -> java.lang.Void!): J
 public fun jj(): kotlin.Unit
 public fun useJ(/*0*/ j: J): kotlin.Unit
 

@@ -25,16 +25,9 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStub<? extends KtSuperTypeListEntry>> {
-
     private static final KtSuperTypeListEntry[] EMPTY_ARRAY = new KtSuperTypeListEntry[0];
 
-    public static ArrayFactory<KtSuperTypeListEntry> ARRAY_FACTORY = new ArrayFactory<KtSuperTypeListEntry>() {
-        @NotNull
-        @Override
-        public KtSuperTypeListEntry[] create(int count) {
-            return count == 0 ? EMPTY_ARRAY : new KtSuperTypeListEntry[count];
-        }
-    };
+    public static ArrayFactory<KtSuperTypeListEntry> ARRAY_FACTORY = count -> count == 0 ? EMPTY_ARRAY : new KtSuperTypeListEntry[count];
 
     public KtSuperTypeListEntry(@NotNull ASTNode node) {
         super(node);

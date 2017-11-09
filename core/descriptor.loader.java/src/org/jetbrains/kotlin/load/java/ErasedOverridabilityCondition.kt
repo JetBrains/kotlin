@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
     override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor, subClassDescriptor: ClassDescriptor?): Result {
@@ -36,7 +35,7 @@ class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
 
         val signatureTypes = subDescriptor.valueParameters.asSequence().map { it.type } +
                              subDescriptor.returnType!! +
-                             subDescriptor.extensionReceiverParameter?.type.singletonOrEmptyList()
+                             listOfNotNull(subDescriptor.extensionReceiverParameter?.type)
 
         if (signatureTypes.any { it.arguments.isNotEmpty() && it.unwrap() !is RawTypeImpl }) return Result.UNKNOWN
 

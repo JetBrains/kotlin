@@ -46,11 +46,11 @@ fun runProcess(
     return ProcessRunResult(cmd, workingDir, exitCode, sb.toString())
 }
 
-fun createGradleCommand(tailParameters: List<String>): List<String> {
+fun createGradleCommand(wrapperDir: File, tailParameters: List<String>): List<String> {
     return if (isWindows())
-        listOf("cmd", "/C", "gradlew.bat") + tailParameters
+        listOf("cmd", "/C", "${wrapperDir.absolutePath}/gradlew.bat") + tailParameters
     else
-        listOf("/bin/bash", "./gradlew") + tailParameters
+        listOf("/bin/bash", "${wrapperDir.absolutePath}/gradlew") + tailParameters
 }
 
 private fun isWindows(): Boolean = System.getProperty("os.name")!!.contains("Windows")

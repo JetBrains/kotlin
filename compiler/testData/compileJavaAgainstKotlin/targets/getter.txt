@@ -1,5 +1,0 @@
-package test
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY_GETTER}) public final annotation class getter : kotlin.Annotation {
-    public constructor getter()
-}

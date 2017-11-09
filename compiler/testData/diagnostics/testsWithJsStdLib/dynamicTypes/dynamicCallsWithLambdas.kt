@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 // !CHECK_TYPE
 
 fun test(d: dynamic) {

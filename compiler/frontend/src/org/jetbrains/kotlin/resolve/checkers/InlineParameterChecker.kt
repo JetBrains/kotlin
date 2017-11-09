@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -35,9 +37,14 @@ object InlineParameterChecker : SimpleDeclarationChecker {
             val inline = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
             for (parameter in declaration.valueParameters) {
                 val parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, parameter)
-                if (!inline || (parameterDescriptor != null && !parameterDescriptor.type.isFunctionType)) {
+                if (!inline || (parameterDescriptor != null && !parameterDescriptor.type.isBuiltinFunctionalType)) {
                     parameter.reportIncorrectInline(KtTokens.NOINLINE_KEYWORD, diagnosticHolder)
                     parameter.reportIncorrectInline(KtTokens.CROSSINLINE_KEYWORD, diagnosticHolder)
+                }
+
+                if (inline && !parameter.hasModifier(KtTokens.NOINLINE_KEYWORD) &&
+                    parameterDescriptor?.type?.isSuspendFunctionType == true) {
+                    diagnosticHolder.report(Errors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.on(parameter))
                 }
             }
         }

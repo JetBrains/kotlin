@@ -1,0 +1,44 @@
+description 'Kotlin Script Runtime'
+
+apply plugin: 'kotlin'
+
+configureJvm6Project(project)
+configurePublishing(project)
+
+dependencies {
+    compileOnly project(':kotlin-stdlib')
+}
+
+configurations {
+    mainJar
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir "${rootDir}/core/script.runtime/src"
+        }
+    }
+}
+
+jar {
+    manifestAttributes(manifest, project, 'Main')
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+    mainJar jar
+}
+
+dist {
+    from (jar, sourcesJar)
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-Xnormalize-constructor-calls=enable",
+            "-module-name", project.name
+    ]
+}

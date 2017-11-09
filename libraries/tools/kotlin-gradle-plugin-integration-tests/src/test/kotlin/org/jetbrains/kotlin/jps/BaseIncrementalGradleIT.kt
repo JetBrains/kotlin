@@ -2,8 +2,8 @@ package org.jetbrains.kotlin.jps
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.incremental.BuildStep
-import org.jetbrains.kotlin.gradle.incremental.parseTestBuildLog
+import org.jetbrains.kotlin.incremental.BuildStep
+import org.jetbrains.kotlin.incremental.parseTestBuildLog
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.junit.Assume
 import java.io.File
@@ -20,7 +20,6 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
             srcDir.mkdirs()
             val sourceMapping = copyTestSources(resourcesRoot, srcDir, filePrefix = "")
             mapWorkingToOriginalFile.putAll(sourceMapping)
-            copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
             copyDirRecursively(File(resourcesRootFile, "incrementalGradleProject"), projectDir)
         }
     }

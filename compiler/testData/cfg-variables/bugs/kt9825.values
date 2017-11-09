@@ -10,15 +10,15 @@ fun test5() {
     a.hashCode()
 }
 ---------------------
-3                                                             <v0>: Int                      NEW: r(3) -> <v0>
+3                                                             <v0>: Int        NEW: r(3) -> <v0>
 a = 3                                                         !<v1>: *
-{ a = 3 }                                                     !<v1>: *                       COPY
-5                                                             <v2>: Int                      NEW: r(5) -> <v2>
+{ a = 3 }                                                     !<v1>: *         COPY
+5                                                             <v2>: Int        NEW: r(5) -> <v2>
 a = 5                                                         !<v3>: *
-{ a = 5 }                                                     !<v3>: *                       COPY
-try { a = 3 } finally { a = 5 }                               <v4>: *                        NEW: merge(try { a = 3 } finally { a = 5 }|!<v1>) -> <v4>
-a                                                             <v5>: OR{{<: Any}, {<: Any}}   NEW: r(a) -> <v5>
-hashCode()                                                    <v6>: *                        NEW: call(hashCode(), hashCode|<v5>) -> <v6>
-a.hashCode()                                                  <v6>: *                        COPY
-{ var a: Int try { a = 3 } finally { a = 5 } a.hashCode() }   <v6>: *                        COPY
+{ a = 5 }                                                     !<v3>: *         COPY
+try { a = 3 } finally { a = 5 }                               <v4>: *          NEW: merge(try { a = 3 } finally { a = 5 }|!<v1>) -> <v4>
+a                                                             <v5>: {<: Any}   NEW: r(a) -> <v5>
+hashCode()                                                    <v6>: *          NEW: call(hashCode(), hashCode|<v5>) -> <v6>
+a.hashCode()                                                  <v6>: *          COPY
+{ var a: Int try { a = 3 } finally { a = 5 } a.hashCode() }   <v6>: *          COPY
 =====================

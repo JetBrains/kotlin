@@ -20,19 +20,19 @@ fun test(d: dynamic) {
 
     d.<!DEBUG_INFO_DYNAMIC!>onStringVar<!> = 1
 
-    d.onDynamicVar = 1
+    d.<!DEBUG_INFO_DYNAMIC!>onDynamicVar<!> = 1
 
-    d?.onDynamicVar = 1
+    d?.<!DEBUG_INFO_DYNAMIC!>onDynamicVar<!> = 1
 
     (d as String).onStringVar
     (d as Any).onAnyVar
     (d as Any?).onNullableAnyVar
-    (d as Any).onDynamicVar
+    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVar<!>
 
     (d as String).onStringVar = 1
     (d as Any).onAnyVar = 1
     (d as Any?).onNullableAnyVar = 1
-    (d as Any).onDynamicVar = 1
+    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVar<!> = 1
 }
 
 var Any.onAnyVar: Int
@@ -47,7 +47,7 @@ var String.onStringVar: Int
     get() = 1
     set(v) {}
 
-var dynamic.onDynamicVar: Int
+var <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.onDynamicVar: Int
     get() = 1
     set(v) {}
 

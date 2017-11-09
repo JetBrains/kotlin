@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.highlighter;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class HighlightingTestGenerated extends AbstractHighlightingTest {
     public void testAllFilesPresentInHighlighter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("Annotations.kt")
@@ -65,6 +66,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("InvokeCall.kt")
+    public void testInvokeCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/InvokeCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaTypes.kt")
     public void testJavaTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/JavaTypes.kt");
@@ -74,6 +81,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
     @TestMetadata("KDoc.kt")
     public void testKDoc() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/KDoc.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("KotlinInjection.kt")
+    public void testKotlinInjection() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/KotlinInjection.kt");
         doTest(fileName);
     }
 
@@ -130,7 +143,7 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Deprecated extends AbstractHighlightingTest {
         public void testAllFilesPresentInDeprecated() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Class.kt")
@@ -142,6 +155,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         @TestMetadata("ClassObject.kt")
         public void testClassObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/ClassObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Constructor.kt")
+        public void testConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Constructor.kt");
             doTest(fileName);
         }
 

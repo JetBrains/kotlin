@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 // FILE: J.java
 
@@ -15,7 +18,7 @@ public class J {
 
 // FILE: K.kt
 
-import kotlin.reflect.*
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.*
 import kotlin.test.*
 

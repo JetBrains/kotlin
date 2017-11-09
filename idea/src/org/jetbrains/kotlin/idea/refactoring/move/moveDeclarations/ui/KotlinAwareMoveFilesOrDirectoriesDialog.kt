@@ -143,7 +143,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         this.helpID = helpID
 
         with (updatePackageDirectiveCb) {
-            val jetFiles = psiElements.filterIsInstance<KtFile>().filter { it.isInJavaSourceRoot() }
+            val jetFiles = psiElements.filterIsInstance<KtFile>().filter(KtFile::isInJavaSourceRoot)
             if (jetFiles.isEmpty()) {
                 parent.remove(updatePackageDirectiveCb)
                 return
@@ -157,7 +157,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     override fun doHelpAction() = HelpManager.getInstance().invokeHelp(helpID)
 
-    fun isOpenInEditor(): Boolean {
+    private fun isOpenInEditor(): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) return false
         return PropertiesComponent.getInstance().getBoolean(MOVE_FILES_OPEN_IN_EDITOR, false)
     }

@@ -1,11 +1,18 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
 class Controller {
-    suspend fun <T> suspendHere(v: T, x: Continuation<T>) {
+    suspend fun <T> suspendHere(v: T): T = suspendCoroutineOrReturn { x ->
         x.resume(v)
+        COROUTINE_SUSPENDED
     }
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: suspend Controller.() -> Unit) {
+    c.startCoroutine(Controller(), EmptyContinuation)
 }
 
 var result: Any = ""

@@ -54,9 +54,9 @@ object EmptyKotlinMoveTarget: KotlinMoveTarget {
 }
 
 class KotlinMoveTargetForExistingElement(val targetElement: KtElement): KotlinMoveTarget {
-    override val targetContainerFqName = targetElement.getContainingKtFile().packageFqName
+    override val targetContainerFqName = targetElement.containingKtFile.packageFqName
 
-    override val targetFile: VirtualFile? = targetElement.getContainingKtFile().virtualFile
+    override val targetFile: VirtualFile? = targetElement.containingKtFile.virtualFile
 
     override fun getOrCreateTargetPsi(originalPsi: PsiElement) = targetElement
 
@@ -67,14 +67,14 @@ class KotlinMoveTargetForExistingElement(val targetElement: KtElement): KotlinMo
 }
 
 class KotlinMoveTargetForCompanion(val targetClass: KtClass): KotlinMoveTarget {
-    override val targetContainerFqName = targetClass.getCompanionObjects().firstOrNull()?.fqName
+    override val targetContainerFqName = targetClass.companionObjects.firstOrNull()?.fqName
                                          ?: targetClass.fqName!!.child(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
 
-    override val targetFile: VirtualFile? = targetClass.getContainingKtFile().virtualFile
+    override val targetFile: VirtualFile? = targetClass.containingKtFile.virtualFile
 
     override fun getOrCreateTargetPsi(originalPsi: PsiElement) = targetClass.getOrCreateCompanionObject()
 
-    override fun getTargetPsiIfExists(originalPsi: PsiElement) = targetClass.getCompanionObjects().firstOrNull()
+    override fun getTargetPsiIfExists(originalPsi: PsiElement) = targetClass.companionObjects.firstOrNull()
 
     // No additional verification is needed
     override fun verify(file: PsiFile): String? = null
@@ -97,4 +97,17 @@ class KotlinMoveTargetForDeferredFile(
 
     // No additional verification is needed
     override fun verify(file: PsiFile): String? = null
+}
+
+class KotlinDirectoryMoveTarget(
+        override val targetContainerFqName: FqName,
+        override val directory: PsiDirectory
+) : KotlinDirectoryBasedMoveTarget {
+    override val targetFile: VirtualFile? = directory.virtualFile
+
+    override fun getOrCreateTargetPsi(originalPsi: PsiElement) = originalPsi.containingFile as? KtFile
+
+    override fun getTargetPsiIfExists(originalPsi: PsiElement) = null
+
+    override fun verify(file: PsiFile) = null
 }

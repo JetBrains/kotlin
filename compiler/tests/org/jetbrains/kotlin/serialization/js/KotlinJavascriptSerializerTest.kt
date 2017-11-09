@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
@@ -50,7 +52,7 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
 
         val configuration = KotlinTestUtils.newConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB)
+        configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
 
         configuration.addKotlinSourceRoots(srcDirs.map { it.path })
 
@@ -69,7 +71,7 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         try {
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val files = environment.getSourceFiles()
-            val config = LibrarySourcesConfig(environment.project, environment.configuration)
+            val config = JsConfig(environment.project, environment.configuration)
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
             val description = JsModuleDescriptor(
                     name = KotlinTestUtils.TEST_MODULE_NAME,
@@ -77,7 +79,9 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
                     imported = listOf(),
                     data = analysisResult.moduleDescriptor
             )
-            FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(description))
+            FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(
+                    analysisResult.bindingContext, description, configuration.languageVersionSettings
+            ))
         }
         finally {
             Disposer.dispose(rootDisposable)
@@ -85,12 +89,12 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
     }
 
     private fun deserialize(metaFile: File): ModuleDescriptorImpl {
-        val module = KotlinTestUtils.createEmptyModule("<${KotlinTestUtils.TEST_MODULE_NAME}>", JsPlatform, JsPlatform.builtIns)
+        val module = KotlinTestUtils.createEmptyModule("<${KotlinTestUtils.TEST_MODULE_NAME}>", JsPlatform.builtIns)
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile)
         assert(metadata.size == 1)
 
         val provider = KotlinJavascriptSerializationUtil.readModule(
-                metadata.single().body, LockBasedStorageManager(), module, DeserializationConfiguration.Default
+                metadata.single().body, LockBasedStorageManager(), module, DeserializationConfiguration.Default, LookupTracker.DO_NOTHING
         ).data.sure { "No package fragment provider was created" }
 
         module.initialize(provider)

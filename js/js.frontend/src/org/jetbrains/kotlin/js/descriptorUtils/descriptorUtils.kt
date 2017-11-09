@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,18 @@
 package org.jetbrains.kotlin.js.descriptorUtils
 
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 val KotlinType.nameIfStandardType: Name?
-    get() {
-        return constructor.declarationDescriptor
-                ?.check { descriptor ->
-                    descriptor.builtIns.isBuiltInPackageFragment(descriptor.containingDeclaration as? PackageFragmentDescriptor)
-                }
-                ?.name
-    }
+    get() = constructor.declarationDescriptor?.takeIf(KotlinBuiltIns::isBuiltIn)?.name
 
 fun KotlinType.getJetTypeFqName(printTypeArguments: Boolean): String {
     val declaration = requireNotNull(constructor.declarationDescriptor)
@@ -42,17 +37,30 @@ fun KotlinType.getJetTypeFqName(printTypeArguments: Boolean): String {
     }
 
     val typeArguments = arguments
-    val typeArgumentsAsString: String
-
-    if (printTypeArguments && !typeArguments.isEmpty()) {
+    val typeArgumentsAsString = if (printTypeArguments && !typeArguments.isEmpty()) {
         val joinedTypeArguments = StringUtil.join(typeArguments, { projection -> projection.type.getJetTypeFqName(false) }, ", ")
 
-        typeArgumentsAsString = "<" + joinedTypeArguments + ">"
-    } else {
-        typeArgumentsAsString = ""
+        "<$joinedTypeArguments>"
+    }
+    else {
+        ""
     }
 
     return DescriptorUtils.getFqName(declaration).asString() + typeArgumentsAsString
 }
 
 fun ClassDescriptor.hasPrimaryConstructor(): Boolean = unsubstitutedPrimaryConstructor != null
+
+val DeclarationDescriptor.isCoroutineLambda: Boolean
+    get() = this is AnonymousFunctionDescriptor && isSuspend
+
+
+fun DeclarationDescriptor.shouldBeExported(config: JsConfig): Boolean =
+        this !is DeclarationDescriptorWithVisibility || effectiveVisibility(visibility, true).shouldBeExported(config) ||
+        AnnotationsUtils.getJsNameAnnotation(this) != null
+
+private fun EffectiveVisibility.shouldBeExported(config: JsConfig): Boolean {
+    if (publicApi) return true
+    if (config.configuration.getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return false
+    return toVisibility() == Visibilities.INTERNAL
+}

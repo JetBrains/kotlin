@@ -18,8 +18,11 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
@@ -33,14 +36,28 @@ class ExternalFunChecker : SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (descriptor !is FunctionDescriptor || !descriptor.isExternal) return
+        if (descriptor !is MemberDescriptor || !descriptor.isExternal) return
+
+        if (descriptor !is FunctionDescriptor) {
+            val target = when (descriptor) {
+                is PropertyDescriptor -> "property"
+                is ClassDescriptor -> "class"
+                else -> "non-function declaration"
+            }
+            diagnosticHolder.report(Errors.WRONG_MODIFIER_TARGET.on(declaration, KtTokens.EXTERNAL_KEYWORD, target))
+            return
+        }
 
         if (DescriptorUtils.isInterface(descriptor.containingDeclaration)) {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE.on(declaration))
         }
-        else if (descriptor is CallableMemberDescriptor &&
-                 descriptor.modality == Modality.ABSTRACT) {
-            diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
+        else if (descriptor.modality == Modality.ABSTRACT) {
+            if (declaration is KtPropertyAccessor) {
+                diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration.property))
+            }
+            else {
+                diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
+            }
         }
 
         if (descriptor !is ConstructorDescriptor && declaration is KtDeclarationWithBody && declaration.hasBody()) {

@@ -17,64 +17,32 @@
 package org.jetbrains.kotlin.idea.decompiler.js
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.FileViewProvider
-import com.intellij.psi.PsiManager
-import com.intellij.psi.compiled.ClassFileDecompilers
-import com.intellij.psi.compiled.ClsStubBuilder
-import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils
-import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
-import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
-import java.util.*
+import org.jetbrains.kotlin.idea.decompiler.common.FileWithMetadata
+import org.jetbrains.kotlin.idea.decompiler.common.KotlinMetadataDecompiler
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
+import org.jetbrains.kotlin.serialization.js.JsProtoBuf
+import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
+import org.jetbrains.kotlin.utils.JsMetadataVersion
+import java.io.ByteArrayInputStream
 
-class KotlinJavaScriptMetaFileDecompiler : ClassFileDecompilers.Full() {
-    private val stubBuilder = KotlinJavaScriptStubBuilder()
+class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler<JsMetadataVersion>(
+        KotlinJavaScriptMetaFileType, JsPlatform, JsSerializerProtocol, DynamicTypeDeserializer,
+        JsMetadataVersion.INSTANCE, JsMetadataVersion.INVALID_VERSION, KotlinStubVersions.JS_STUB_VERSION
+) {
+    override fun readFile(bytes: ByteArray, file: VirtualFile): FileWithMetadata? {
+        val stream = ByteArrayInputStream(bytes)
 
-    override fun accepts(file: VirtualFile): Boolean {
-        return file.name.endsWith("." + KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION)
-    }
-
-    override fun getStubBuilder(): ClsStubBuilder {
-        return stubBuilder
-    }
-
-    override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): FileViewProvider {
-        return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
-            if (JsMetaFileUtils.isKotlinJavaScriptInternalCompiledFile(file)) {
-                null
-            }
-            else {
-                KtDecompiledFile(provider) { file -> buildDecompiledTextFromJsMetadata(file) }
-            }
+        val version = JsMetadataVersion.readFrom(stream)
+        if (!version.isCompatible()) {
+            return FileWithMetadata.Incompatible(version)
         }
+
+        JsProtoBuf.Header.parseDelimitedFrom(stream)
+
+        val proto = ProtoBuf.PackageFragment.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
+        return FileWithMetadata.Compatible(proto, JsSerializerProtocol)
     }
 }
-
-private val decompilerRendererForJS = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
-
-fun buildDecompiledTextFromJsMetadata(
-        classFile: VirtualFile,
-        resolver: ResolverForDecompiler = KotlinJavaScriptDeserializerForDecompiler(classFile)
-): DecompiledText {
-    val packageFqName = JsMetaFileUtils.getPackageFqName(classFile)
-    val isPackageHeader = JsMetaFileUtils.isPackageHeader(classFile)
-
-    if (isPackageHeader) {
-        return buildDecompiledText(packageFqName,
-                                   resolveDeclarationsInPackage(packageFqName, resolver),
-                                   decompilerRendererForJS)
-    }
-    else {
-        val classId = JsMetaFileUtils.getClassId(classFile)
-        return buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), decompilerRendererForJS)
-    }
-}
-
-private fun resolveDeclarationsInPackage(packageFqName: FqName, resolver: ResolverForDecompiler) =
-        ArrayList(resolver.resolveDeclarationsInFacade(OldPackageFacadeClassUtils.getPackageClassFqName(packageFqName)))

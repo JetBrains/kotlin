@@ -48,9 +48,9 @@ class AddReifiedToTypeParameterOfFunctionFix(
         val function: KtNamedFunction
 ) : AddModifierFix(typeParameter, KtTokens.REIFIED_KEYWORD) {
 
-    val inlineFix = AddInlineToFunctionWithReifiedFix(function)
+    private val inlineFix = AddInlineToFunctionWithReifiedFix(function)
 
-    override fun getText() = "Make ${getElementName(element)} reified and ${getElementName(function)} inline"
+    override fun getText() = element?.let { "Make ${getElementName(it)} reified and ${getElementName(function)} inline" } ?: ""
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         super.invoke(project, editor, file)

@@ -17,19 +17,23 @@
 package org.jetbrains.kotlin.resolve.descriptorUtil
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 private val NO_INFER_ANNOTATION_FQ_NAME = FqName("kotlin.internal.NoInfer")
 private val EXACT_ANNOTATION_FQ_NAME = FqName("kotlin.internal.Exact")
-val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME = FqName("kotlin.internal.LowPriorityInOverloadResolution")
+private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME = FqName("kotlin.internal.LowPriorityInOverloadResolution")
 private val HIDES_MEMBERS_ANNOTATION_FQ_NAME = FqName("kotlin.internal.HidesMembers")
 private val ONLY_INPUT_TYPES_FQ_NAME = FqName("kotlin.internal.OnlyInputTypes")
+private val DYNAMIC_EXTENSION_FQ_NAME = FqName("kotlin.internal.DynamicExtension")
+private val RESTRICTS_SUSPENSION_FQ_NAME = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("RestrictsSuspension"))
 
 // @HidesMembers annotation only has effect for members with these names
 val HIDES_MEMBERS_NAME_LIST = setOf(Name.identifier("forEach"))
@@ -46,21 +50,19 @@ fun FqName.isInternalAnnotationForResolve() = this == NO_INFER_ANNOTATION_FQ_NAM
 fun CallableDescriptor.hasLowPriorityInOverloadResolution(): Boolean = annotations.hasAnnotation(LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME)
 
 fun CallableDescriptor.hasHidesMembersAnnotation(): Boolean = annotations.hasAnnotation(HIDES_MEMBERS_ANNOTATION_FQ_NAME)
+fun CallableDescriptor.hasDynamicExtensionAnnotation(): Boolean = annotations.hasAnnotation(DYNAMIC_EXTENSION_FQ_NAME)
+fun ClassifierDescriptor.hasRestrictsSuspensionAnnotation(): Boolean = annotations.hasAnnotation(RESTRICTS_SUSPENSION_FQ_NAME)
 
 fun TypeParameterDescriptor.hasOnlyInputTypesAnnotation(): Boolean = annotations.hasAnnotation(ONLY_INPUT_TYPES_FQ_NAME)
 
 fun getExactInAnnotations(): Annotations = AnnotationsWithOnly(EXACT_ANNOTATION_FQ_NAME)
 
 private class AnnotationsWithOnly(val presentAnnotation: FqName): Annotations {
-    override fun iterator(): Iterator<AnnotationDescriptor> = listOf<AnnotationDescriptor>().iterator()
+    override fun iterator(): Iterator<AnnotationDescriptor> = emptyList<AnnotationDescriptor>().iterator()
 
     override fun isEmpty(): Boolean = false
 
     override fun hasAnnotation(fqName: FqName): Boolean = fqName == this.presentAnnotation
-
-    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? = null
-
-    override fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor? = null
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 

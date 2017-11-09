@@ -31,9 +31,9 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
     private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS, EXCLEXCL);
-    private final Stack<Boolean> joinComplexTokens = new Stack<Boolean>();
+    private final Stack<Boolean> joinComplexTokens = new Stack<>();
 
-    private final Stack<Boolean> newlinesEnabled = new Stack<Boolean>();
+    private final Stack<Boolean> newlinesEnabled = new Stack<>();
 
     private final PsiBuilderImpl delegateImpl;
 

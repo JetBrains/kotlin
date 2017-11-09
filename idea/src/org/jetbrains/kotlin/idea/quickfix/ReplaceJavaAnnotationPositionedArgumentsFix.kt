@@ -34,6 +34,7 @@ class ReplaceJavaAnnotationPositionedArgumentsFix(element: KtAnnotationEntry)
     override fun getFamilyName(): String = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return
         val psiFactory = KtPsiFactory(project)
 

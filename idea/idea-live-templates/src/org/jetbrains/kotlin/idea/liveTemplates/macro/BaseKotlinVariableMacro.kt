@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.idea.liveTemplates.macro
 
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.template.*
+import com.intellij.codeInsight.template.Expression
+import com.intellij.codeInsight.template.ExpressionContext
+import com.intellij.codeInsight.template.Result
+import com.intellij.codeInsight.template.TextResult
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.BasicLookupElementFactory
 import org.jetbrains.kotlin.idea.completion.InsertHandlerProvider
+import org.jetbrains.kotlin.idea.core.NotPropertiesService
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
@@ -38,7 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
-abstract class BaseKotlinVariableMacro<TState> : Macro() {
+abstract class BaseKotlinVariableMacro<TState> : KotlinMacro() {
     private fun getVariables(params: Array<Expression>, context: ExpressionContext): Collection<VariableDescriptor> {
         if (params.size != 0) return emptyList()
 
@@ -60,7 +64,7 @@ abstract class BaseKotlinVariableMacro<TState> : Macro() {
 
         val state = initState(contextElement, bindingContext)
 
-        val helper = ReferenceVariantsHelper(bindingContext, resolutionFacade, resolutionFacade.moduleDescriptor, ::isVisible)
+        val helper = ReferenceVariantsHelper(bindingContext, resolutionFacade, resolutionFacade.moduleDescriptor, ::isVisible, NotPropertiesService.getNotProperties(contextElement))
         return helper
                 .getReferenceVariants(contextElement, CallTypeAndReceiver.DEFAULT, DescriptorKindFilter.VARIABLES, { true })
                 .map { it as VariableDescriptor }

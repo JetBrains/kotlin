@@ -24,10 +24,10 @@
         <description>Use destructuring declaration</description>
     </problem>
     <problem>
-        <file>last.kt</file>
+        <file>twoOfThree.kt</file>
         <line>6</line>
         <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="temp:///src/last.kt" />
+        <entry_point TYPE="file" FQNAME="temp:///src/twoOfThree.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
         <description>Use destructuring declaration</description>
     </problem>
@@ -60,6 +60,22 @@
         <line>5</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/variables.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>mapIndexedExceptFirst.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/mapIndexedExceptFirst.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>visible.kt</file>
+        <line>7</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/visible.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
         <description>Use destructuring declaration</description>
     </problem>

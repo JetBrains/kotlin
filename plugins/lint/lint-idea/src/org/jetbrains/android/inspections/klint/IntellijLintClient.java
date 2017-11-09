@@ -7,18 +7,19 @@ import com.android.ide.common.repository.ResourceVisibilityLookup;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceFile;
 import com.android.ide.common.res2.ResourceItem;
-import com.android.tools.idea.rendering.AppResourceRepository;
-import com.android.tools.idea.rendering.LocalResourceRepository;
+import com.android.sdklib.repository.AndroidSdkHandler;
+import com.android.tools.idea.gradle.util.Projects;
+import com.android.tools.idea.project.AndroidProjectInfo;
+import com.android.tools.idea.res.AppResourceRepository;
+import com.android.tools.idea.res.LocalResourceRepository;
 import com.android.tools.idea.sdk.IdeSdks;
-import com.android.tools.klint.client.api.*;
+import com.android.tools.idea.welcome.install.AndroidSdk;
 import com.android.tools.klint.checks.ApiLookup;
-import com.android.tools.klint.detector.api.Context;
-import com.android.tools.klint.detector.api.DefaultPosition;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.Location;
-import com.android.tools.klint.detector.api.Position;
-import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.TextFormat;
+import com.android.tools.klint.client.api.*;
+import com.android.tools.klint.detector.api.*;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -45,24 +46,24 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.HashMap;
+import com.intellij.util.lang.UrlClassLoader;
 import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
+import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.sdk.AndroidSdkType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.uast.UastLanguagePlugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.android.tools.klint.detector.api.TextFormat.RAW;
+import static org.jetbrains.android.inspections.klint.IntellijLintIssueRegistry.CUSTOM_ERROR;
+import static org.jetbrains.android.inspections.klint.IntellijLintIssueRegistry.CUSTOM_WARNING;
 
 /**
  * Implementation of the {@linkplain LintClient} API for executing lint within the IDE:
@@ -74,12 +75,9 @@ public class IntellijLintClient extends LintClient implements Disposable {
   @NonNull protected Project myProject;
   @Nullable protected Map<com.android.tools.klint.detector.api.Project, Module> myModuleMap;
 
-  @NonNull
-  private List<UastLanguagePlugin> myPlugins;
-
-  protected IntellijLintClient(@NonNull Project project) {
+  public IntellijLintClient(@NonNull Project project) {
+    super(CLIENT_STUDIO);
     myProject = project;
-    myPlugins = LintLanguageExtension.getPlugins(project);
   }
 
   /** Creates a lint client for batch inspections */
@@ -126,8 +124,9 @@ public class IntellijLintClient extends LintClient implements Disposable {
     myModuleMap = moduleMap;
   }
 
+  @NonNull
   @Override
-  public Configuration getConfiguration(@NonNull com.android.tools.klint.detector.api.Project project) {
+  public Configuration getConfiguration(@NonNull com.android.tools.klint.detector.api.Project project, @Nullable final LintDriver driver) {
     if (project.isGradleProject() && project.isAndroidProject() && !project.isLibrary()) {
       AndroidProject model = project.getGradleProjectModel();
       if (model != null) {
@@ -157,7 +156,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
                 }
 
                 // This is a LIST lookup. I should make this faster!
-                if (!getIssues().contains(issue)) {
+                if (!getIssues().contains(issue) && (driver == null || !driver.isCustomIssue(issue))) {
                   return Severity.IGNORE;
                 }
 
@@ -173,7 +172,11 @@ public class IntellijLintClient extends LintClient implements Disposable {
     return new DefaultConfiguration(this, project, null) {
       @Override
       public boolean isEnabled(@NonNull Issue issue) {
-        return getIssues().contains(issue) && super.isEnabled(issue);
+        if (getIssues().contains(issue) && super.isEnabled(issue)) {
+          return true;
+        }
+
+        return driver != null && driver.isCustomIssue(issue);
       }
     };
   }
@@ -182,7 +185,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
   public void report(@NonNull Context context,
                      @NonNull Issue issue,
                      @NonNull Severity severity,
-                     @Nullable Location location,
+                     @NonNull Location location,
                      @NonNull String message,
                      @NonNull TextFormat format) {
     assert false : message;
@@ -241,6 +244,12 @@ public class IntellijLintClient extends LintClient implements Disposable {
     return new DomPsiParser(this);
   }
 
+  @Nullable
+  @Override
+  public JavaParser getJavaParser(@Nullable com.android.tools.klint.detector.api.Project project) {
+    return new IdeaJavaParser(this, myProject);
+  }
+
   @NonNull
   @Override
   public List<File> getJavaClassFolders(@NonNull com.android.tools.klint.detector.api.Project project) {
@@ -250,7 +259,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
   @NonNull
   @Override
-  public List<File> getJavaLibraries(@NonNull com.android.tools.klint.detector.api.Project project) {
+  public List<File> getJavaLibraries(@NonNull com.android.tools.klint.detector.api.Project project, boolean includeProvided) {
     // todo: implement
     return Collections.emptyList();
   }
@@ -290,7 +299,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
     Module module = getModule();
     if (module != null) {
       Sdk moduleSdk = ModuleRootManager.getInstance(module).getSdk();
-      if (moduleSdk != null) {
+      if (moduleSdk != null && moduleSdk.getSdkType() instanceof AndroidSdkType) {
         String path = moduleSdk.getHomePath();
         if (path != null) {
           File home = new File(path);
@@ -321,15 +330,15 @@ public class IntellijLintClient extends LintClient implements Disposable {
       }
     }
 
-    return IdeSdks.getAndroidSdkPath();
+    return IdeSdks.getInstance().getAndroidSdkPath();
   }
 
   @Nullable
   @Override
-  public SdkWrapper getSdk() {
+  public AndroidSdkHandler getSdk() {
     if (mSdk == null) {
       Module module = getModule();
-      SdkWrapper sdk = getLocalSdk(module);
+      AndroidSdkHandler sdk = getLocalSdk(module);
       if (sdk != null) {
         mSdk = sdk;
       } else {
@@ -351,11 +360,14 @@ public class IntellijLintClient extends LintClient implements Disposable {
   }
 
   @Nullable
-  private static SdkWrapper getLocalSdk(@Nullable Module module) {
+  private static AndroidSdkHandler getLocalSdk(@Nullable Module module) {
     if (module != null) {
       AndroidFacet facet = AndroidFacet.getInstance(module);
       if (facet != null) {
-        return IntellijLintUtils.getModelFacade(facet).getLocalSdk();
+        AndroidSdkData sdkData = facet.getSdkData();
+        if (sdkData != null) {
+          return sdkData.getSdkHandler();
+        }
       }
     }
 
@@ -367,19 +379,9 @@ public class IntellijLintClient extends LintClient implements Disposable {
     Module module = getModule();
     if (module != null) {
       AndroidFacet facet = AndroidFacet.getInstance(module);
-      return facet != null && IntellijLintUtils.isGradleModule(facet);
+      return facet != null && facet.requiresAndroidModel();
     }
-    return false;
-  }
-
-  @Override
-  public Project getProject() {
-    return myProject;
-  }
-
-  @Override
-  public List<UastLanguagePlugin> getLanguagePlugins() {
-    return myPlugins;
+    return AndroidProjectInfo.getInstance(this.myProject).requiresAndroidModel();
   }
 
   // Overridden such that lint doesn't complain about missing a bin dir property in the event
@@ -416,6 +418,37 @@ public class IntellijLintClient extends LintClient implements Disposable {
     return new File(dir, Project.DIRECTORY_STORE_FOLDER).exists();
   }
 
+  private static List<Issue> ourReportedCustomIssues;
+
+  private static void recordCustomIssue(@NonNull Issue issue) {
+    if (ourReportedCustomIssues == null) {
+      ourReportedCustomIssues = Lists.newArrayList();
+    } else if (ourReportedCustomIssues.contains(issue)) {
+      return;
+    }
+    ourReportedCustomIssues.add(issue);
+  }
+
+  @Nullable
+  public static Issue findCustomIssue(@NonNull String errorMessage) {
+    if (ourReportedCustomIssues != null) {
+      // We stash the original id into the error message such that we can
+      // find it later
+      int begin = errorMessage.lastIndexOf('[');
+      int end = errorMessage.lastIndexOf(']');
+      if (begin < end && begin != -1) {
+        String id = errorMessage.substring(begin + 1, end);
+        for (Issue issue : ourReportedCustomIssues) {
+          if (id.equals(issue.getId())) {
+            return issue;
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
   /**
    * A lint client used for in-editor single file lint analysis (e.g. background checking while user is editing.)
    * <p>
@@ -446,12 +479,20 @@ public class IntellijLintClient extends LintClient implements Disposable {
     public void report(@NonNull Context context,
                        @NonNull Issue issue,
                        @NonNull Severity severity,
-                       @Nullable Location location,
+                       @NonNull Location location,
                        @NonNull String message,
                        @NonNull TextFormat format) {
       if (location != null) {
         final File file = location.getFile();
         final VirtualFile vFile = LocalFileSystem.getInstance().findFileByIoFile(file);
+
+        if (context.getDriver().isCustomIssue(issue)) {
+          // Record original issue id in the message (such that we can find
+          // it later, in #findCustomIssue)
+          message += " [" + issue.getId() + "]";
+          recordCustomIssue(issue);
+          issue = Severity.WARNING.compareTo(severity) <= 0 ? CUSTOM_WARNING : CUSTOM_ERROR;
+        }
 
         if (myState.getMainFile().equals(vFile)) {
           final Position start = location.getStart();
@@ -479,8 +520,12 @@ public class IntellijLintClient extends LintClient implements Disposable {
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByIoFile(file);
 
       if (vFile == null) {
-        LOG.debug("Cannot find file " + file.getPath() + " in the VFS");
-        return "";
+        try {
+          return Files.toString(file, Charsets.UTF_8);
+        } catch (IOException ioe) {
+          LOG.debug("Cannot find file " + file.getPath() + " in the VFS");
+          return "";
+        }
       }
       final String content = getFileContent(vFile);
 
@@ -503,6 +548,10 @@ public class IntellijLintClient extends LintClient implements Disposable {
         public String compute() {
           final Module module = myState.getModule();
           final Project project = module.getProject();
+          if (project.isDisposed()) {
+            return null;
+          }
+
           final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
 
           if (psiFile == null) {
@@ -584,7 +633,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
     public void report(@NonNull Context context,
                        @NonNull Issue issue,
                        @NonNull Severity severity,
-                       @Nullable Location location,
+                       @NonNull Location location,
                        @NonNull String message,
                        @NonNull TextFormat format) {
       VirtualFile vFile = null;
@@ -616,7 +665,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
         if (myScope.getScopeType() == AnalysisScope.PROJECT) {
           inScope = true;
         } else if (myScope.getScopeType() == AnalysisScope.MODULE ||
-                   myScope.getScopeType() == AnalysisScope.MODULES) {
+          myScope.getScopeType() == AnalysisScope.MODULES) {
           final Module module = findModuleForLintProject(myProject, context.getProject());
           if (module != null && myScope.containsModule(module)) {
             inScope = true;
@@ -625,6 +674,14 @@ public class IntellijLintClient extends LintClient implements Disposable {
       }
 
       if (inScope) {
+        if (context.getDriver().isCustomIssue(issue)) {
+          // Record original issue id in the message (such that we can find
+          // it later, in #findCustomIssue)
+          message += " [" + issue.getId() + "]";
+          recordCustomIssue(issue);
+          issue = Severity.WARNING.compareTo(severity) <= 0 ? CUSTOM_WARNING : CUSTOM_ERROR;
+        }
+
         file = new File(PathUtil.getCanonicalPath(file.getPath()));
 
         Map<File, List<ProblemData>> file2ProblemList = myProblemMap.get(issue);
@@ -717,6 +774,11 @@ public class IntellijLintClient extends LintClient implements Disposable {
   @Override
   public URLConnection openConnection(@NonNull URL url) throws IOException {
     return HttpConfigurable.getInstance().openConnection(url.toExternalForm());
+  }
+
+  @Override
+  public ClassLoader createUrlClassLoader(@NonNull URL[] urls, @NonNull ClassLoader parent) {
+    return UrlClassLoader.build().parent(parent).urls(urls).get();
   }
 
   @NonNull

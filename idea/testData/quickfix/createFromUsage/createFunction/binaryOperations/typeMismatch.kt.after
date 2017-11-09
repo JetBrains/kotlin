@@ -1,0 +1,12 @@
+// "Create extension function 'A.times'" "true"
+class A
+
+operator fun A.times(i: Int) = this
+
+fun test() {
+    A() * "1"
+}
+
+private operator fun A.times(s: String) {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+}

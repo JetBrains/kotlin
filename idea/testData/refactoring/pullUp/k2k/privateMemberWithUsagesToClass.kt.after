@@ -1,0 +1,9 @@
+open class A {
+    // INFO: {checked: "true"}
+    protected fun privateFun() = 0
+}
+
+class Foo : A() {
+
+    fun refer() = privateFun()
+}

@@ -1,2 +1,2 @@
-[propertyFileUsagesByRef.0.kt] Usage in string constants 5 public fun message(@PropertyKey(resourceBundle = "idea.testData.findUsages.kotlin.propertyFiles.propertyFileUsagesByRef.2") key: String) = key
-[propertyFileUsagesByRef.1.java] Method parameter declaration 4 static String message(@PropertyKey(resourceBundle = "idea.testData.findUsages.kotlin.propertyFiles.propertyFileUsagesByRef.2") String key, Object... args) {
+[propertyFileUsagesByRef.0.kt] Usage in string constants 5 public fun message(@PropertyKey(resourceBundle = "propertyFileUsagesByRef.2") key: String) = key
+[propertyFileUsagesByRef.1.java] Method parameter declaration 4 static String message(@PropertyKey(resourceBundle = "propertyFileUsagesByRef.2") String key, Object... args) {

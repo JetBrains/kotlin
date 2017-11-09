@@ -33,7 +33,7 @@ class DelegatedPropertyFieldDescriptor(
         project: Project,
         objectRef: ObjectReference,
         val delegate: Field,
-        val renderDelegatedProperty: Boolean
+        private val renderDelegatedProperty: Boolean
 ) : FieldDescriptorImpl(project, objectRef, delegate) {
 
     override fun calcValue(evaluationContext: EvaluationContextImpl?): Value? {

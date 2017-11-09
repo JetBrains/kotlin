@@ -1,0 +1,18 @@
+package
+
+public fun foo(/*0*/ x: kotlin.collections.List<kotlin.String>, /*1*/ y: A): kotlin.Unit
+
+public interface A : kotlin.collections.Collection<kotlin.String> {
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: kotlin.String): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.Iterator<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun parallelStream(): java.util.stream.Stream<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.String!>
+    public open override /*1*/ fun stream(): java.util.stream.Stream<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

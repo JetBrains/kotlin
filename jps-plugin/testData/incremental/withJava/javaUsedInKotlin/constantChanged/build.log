@@ -9,7 +9,6 @@ Compiling files:
   src/JavaClass.java
 End of files
 Cleaning output files:
-  out/production/module/JavaClass.class
   out/production/module/Usage.class
 End of files
 Compiling files:
@@ -17,6 +16,3 @@ Compiling files:
 End of files
 Exit code: OK
 ------------------------------------------
-Compiling files:
-  src/JavaClass.java
-End of files

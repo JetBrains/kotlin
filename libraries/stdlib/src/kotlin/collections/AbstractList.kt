@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,13 @@
 
 package kotlin.collections
 
+/**
+ * Provides a skeletal implementation of the read-only [List] interface.
+ *
+ * This class is intended to help implementing read-only lists so it doesn't support concurrent modification tracking.
+ *
+ * @param E the type of elements contained in the list. The list is covariant on its element type.
+ */
 @SinceKotlin("1.1")
 public abstract class AbstractList<out E> protected constructor() : AbstractCollection<E>(), List<E> {
     abstract override val size: Int
@@ -37,7 +44,7 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
 
     override fun subList(fromIndex: Int, toIndex: Int): List<E> = SubList(this, fromIndex, toIndex)
 
-    internal open class SubList<out E>(private val list: AbstractList<E>, private val fromIndex: Int, toIndex: Int) : AbstractList<E>() {
+    private class SubList<out E>(private val list: AbstractList<E>, private val fromIndex: Int, toIndex: Int) : AbstractList<E>(), RandomAccess {
         private var _size: Int = 0
 
         init {
@@ -54,6 +61,11 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
         override val size: Int get() = _size
     }
 
+    /**
+     * Compares this list with other list instance with the ordered structural equality.
+     *
+     * @return true, if [other] instance is a [List] of the same size, which contains the same elements in the same order.
+     */
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is List<*>) return false
@@ -61,6 +73,9 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
         return orderedEquals(this, other)
     }
 
+    /**
+     * Returns the hash code value for this list.
+     */
     override fun hashCode(): Int = orderedHashCode(this)
 
     private open inner class IteratorImpl : Iterator<E> {
@@ -76,7 +91,7 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
     }
 
     /**
-     * Implementation of `MutableListIterator` for abstract lists.
+     * Implementation of [ListIterator] for abstract lists.
      */
     private open inner class ListIteratorImpl(index: Int) : IteratorImpl(), ListIterator<E> {
 
@@ -110,12 +125,12 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
             }
         }
 
-        internal fun checkRangeIndexes(start: Int, end: Int, size: Int) {
-            if (start < 0 || end > size) {
-                throw IndexOutOfBoundsException("fromIndex: $start, toIndex: $end, size: $size")
+        internal fun checkRangeIndexes(fromIndex: Int, toIndex: Int, size: Int) {
+            if (fromIndex < 0 || toIndex > size) {
+                throw IndexOutOfBoundsException("fromIndex: $fromIndex, toIndex: $toIndex, size: $size")
             }
-            if (start > end) {
-                throw IllegalArgumentException("fromIndex: $start > toIndex: $end")
+            if (fromIndex > toIndex) {
+                throw IllegalArgumentException("fromIndex: $fromIndex > toIndex: $toIndex")
             }
         }
 
@@ -123,7 +138,6 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
             var hashCode = 1
             for (e in c) {
                 hashCode = 31 * hashCode + (e?.hashCode() ?: 0)
-                hashCode = hashCode or 0 // make sure we don't overflow
             }
             return hashCode
         }

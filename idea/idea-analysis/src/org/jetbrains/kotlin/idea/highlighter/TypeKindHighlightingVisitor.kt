@@ -51,11 +51,11 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
                     highlightAnnotation(expression)
                 }
                 else {
-                    holder.highlightName(expression, textAttributesKeyForClass(referenceTarget))
+                    highlightName(expression, textAttributesKeyForClass(referenceTarget))
                 }
             }
             else if (referenceTarget is TypeParameterDescriptor) {
-                holder.highlightName(expression, TYPE_PARAMETER)
+                highlightName(expression, TYPE_PARAMETER)
             }
         }
     }
@@ -74,11 +74,11 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
             }
         }
 
-        holder.highlightName(range, ANNOTATION)
+        highlightName(range, ANNOTATION)
     }
 
     override fun visitTypeParameter(parameter: KtTypeParameter) {
-        parameter.nameIdentifier?.let { holder.highlightName(it, TYPE_PARAMETER) }
+        parameter.nameIdentifier?.let { highlightName(it, TYPE_PARAMETER) }
         super.visitTypeParameter(parameter)
     }
 
@@ -86,7 +86,8 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
         val identifier = classOrObject.nameIdentifier
         val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
         if (identifier != null && classDescriptor != null) {
-            holder.highlightName(identifier, textAttributesKeyForClass(classDescriptor))
+            if (applyHighlighterExtensions(identifier, classDescriptor)) return
+            highlightName(identifier, textAttributesKeyForClass(classDescriptor))
         }
         super.visitClassOrObject(classOrObject)
     }
@@ -95,16 +96,11 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
         // Do nothing: 'dynamic' is highlighted as a keyword
     }
 
-    private fun textAttributesKeyForClass(descriptor: ClassDescriptor): TextAttributesKey {
-        when (descriptor.kind) {
-            ClassKind.INTERFACE -> return TRAIT
-            ClassKind.ANNOTATION_CLASS -> return ANNOTATION
-            ClassKind.OBJECT -> return OBJECT
-            ClassKind.ENUM_ENTRY -> return ENUM_ENTRY
-            else -> return if (descriptor.modality === Modality.ABSTRACT)
-                ABSTRACT_CLASS
-            else
-                CLASS
-        }
+    private fun textAttributesKeyForClass(descriptor: ClassDescriptor): TextAttributesKey = when (descriptor.kind) {
+        ClassKind.INTERFACE -> TRAIT
+        ClassKind.ANNOTATION_CLASS -> ANNOTATION
+        ClassKind.OBJECT -> OBJECT
+        ClassKind.ENUM_ENTRY -> ENUM_ENTRY
+        else -> if (descriptor.modality === Modality.ABSTRACT) ABSTRACT_CLASS else CLASS
     }
 }

@@ -6,3 +6,4 @@ doStuff(c1, c2)
 
 doStuff(c1, <error>3</error>)
 
+// DEPENDENCIES: classpath:lib-classes; imports:custom.library.*

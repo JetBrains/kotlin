@@ -1,0 +1,4 @@
+{
+  "intentionClass": "org.jetbrains.kotlin.android.intention.KotlinAndroidAddStringResource",
+  "isApplicable": false
+}

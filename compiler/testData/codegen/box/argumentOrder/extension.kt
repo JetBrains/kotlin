@@ -1,6 +1,6 @@
 fun box(): String {
     var invokeOrder = "";
-    val expectedResult = "1.0_0_1_L"
+    val expectedResult = "1_0_1_L"
     val expectedInvokeOrder = "1_0_L"
     var l = 1L
     var i = 0
@@ -26,5 +26,5 @@ fun box(): String {
 }
 
 fun Double.test(a: Int, b: Long, c: () -> String): String {
-    return "${this}_${a}_${b}_${c()}"
+    return "${this.toInt()}_${a}_${b}_${c()}"
 }

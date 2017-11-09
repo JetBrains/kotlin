@@ -1,1 +1,1 @@
-val sss = Array(5) { Array<Array<String>>(5) { arrayOfNulls<String>(5) } }
+val sss = Array(5) { Array<Array<String>>(5) { arrayOfNulls(5) } }

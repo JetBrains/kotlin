@@ -16,11 +16,18 @@
 
 package org.jetbrains.kotlin.idea.kdoc
 
+import com.intellij.openapi.components.ServiceManager
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
+import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
@@ -29,29 +36,97 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
+import org.jetbrains.kotlin.resolve.scopes.utils.*
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 
-fun resolveKDocLink(context: BindingContext,
-                    resolutionFacade: ResolutionFacade,
-                    fromDescriptor: DeclarationDescriptor,
-                    fromSubjectOfTag: KDocTag?,
-                    qualifiedName: List<String>): Collection<DeclarationDescriptor> {
+fun resolveKDocLink(
+        context: BindingContext,
+        resolutionFacade: ResolutionFacade,
+        fromDescriptor: DeclarationDescriptor,
+        fromSubjectOfTag: KDocTag?,
+        qualifiedName: List<String>
+): Collection<DeclarationDescriptor> =
+        when (fromSubjectOfTag?.knownTag) {
+            KDocKnownTag.PARAM -> resolveParamLink(fromDescriptor, qualifiedName)
+            KDocKnownTag.SAMPLE -> resolveKDocSampleLink(context, resolutionFacade, fromDescriptor, qualifiedName)
+            else -> resolveDefaultKDocLink(context, resolutionFacade, fromDescriptor, qualifiedName)
+        }
 
-    if (fromSubjectOfTag?.knownTag == KDocKnownTag.PARAM) {
-        return resolveParamLink(fromDescriptor, qualifiedName)
+
+fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<DeclarationDescriptor> {
+    // TODO resolve parameters of functions passed as parameters
+    when (fromDescriptor) {
+        is CallableDescriptor -> {
+            return fromDescriptor.valueParameters + fromDescriptor.typeParameters
+        }
+
+        is ClassifierDescriptor -> {
+            val typeParams = fromDescriptor.typeConstructor.parameters
+            if (fromDescriptor is ClassDescriptor) {
+                val constructorDescriptor = fromDescriptor.unsubstitutedPrimaryConstructor
+                if (constructorDescriptor != null) {
+                    return typeParams + constructorDescriptor.valueParameters
+                }
+            }
+            return typeParams
+        }
+
+        else -> {
+            return emptyList()
+        }
     }
+}
 
-    val scope = getKDocLinkResolutionScope(resolutionFacade, fromDescriptor)
+private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedName: List<String>): List<DeclarationDescriptor> {
+    val name = qualifiedName.singleOrNull() ?: return emptyList()
+    return getParamDescriptors(fromDescriptor).filter { it.name.asString() == name }
+}
+
+fun resolveKDocSampleLink(
+        context: BindingContext,
+        resolutionFacade: ResolutionFacade,
+        fromDescriptor: DeclarationDescriptor,
+        qualifiedName: List<String>
+): Collection<DeclarationDescriptor> {
+
+    val resolvedViaService = SampleResolutionService.resolveSample(context, fromDescriptor, resolutionFacade, qualifiedName)
+    if (resolvedViaService.isNotEmpty()) return resolvedViaService
+
+    return resolveDefaultKDocLink(context, resolutionFacade, fromDescriptor, qualifiedName)
+}
+
+private fun resolveDefaultKDocLink(
+        context: BindingContext,
+        resolutionFacade: ResolutionFacade,
+        fromDescriptor: DeclarationDescriptor,
+        qualifiedName: List<String>
+): Collection<DeclarationDescriptor> {
+
+    val contextScope = getKDocLinkResolutionScope(resolutionFacade, fromDescriptor)
 
     if (qualifiedName.size == 1) {
-        val descriptorsByName = scope.collectDescriptorsFiltered(nameFilter = { it.asString() == qualifiedName.single() })
-        // Try to find a matching local descriptor (parameter or type parameter) first.
+        val shortName = Name.identifier(qualifiedName.single())
+
+        val descriptorsByName = SmartList<DeclarationDescriptor>()
+        descriptorsByName.addIfNotNull(contextScope.findClassifier(shortName, NoLookupLocation.FROM_IDE))
+        descriptorsByName.addIfNotNull(contextScope.findPackage(shortName))
+        descriptorsByName.addAll(contextScope.collectFunctions(shortName, NoLookupLocation.FROM_IDE))
+        descriptorsByName.addAll(contextScope.collectVariables(shortName, NoLookupLocation.FROM_IDE))
+
+        if (fromDescriptor is FunctionDescriptor && fromDescriptor.isExtension && shortName.asString() == "this") {
+            return listOfNotNull(fromDescriptor.extensionReceiverParameter)
+        }
+
+        // Try to find a matching local descriptor (parameter or type parameter) first
         val localDescriptors = descriptorsByName.filter { it.containingDeclaration == fromDescriptor }
         if (localDescriptors.isNotEmpty()) return localDescriptors
+
         return descriptorsByName
     }
 
@@ -63,38 +138,15 @@ fun resolveKDocLink(context: BindingContext,
     // TODO escape identifiers
     val codeFragment = factory.createExpressionCodeFragment(qualifiedName.joinToString("."), contextElement)
     val qualifiedExpression = codeFragment.findElementAt(codeFragment.textLength - 1)?.getStrictParentOfType<KtQualifiedExpression>() ?: return emptyList()
-    val (descriptor, memberName) = qualifiedExpressionResolver.resolveClassOrPackageInQualifiedExpression(qualifiedExpression, scope, context)
+    val (descriptor, memberName) = qualifiedExpressionResolver.resolveClassOrPackageInQualifiedExpression(qualifiedExpression, contextScope, context)
     if (descriptor == null) return emptyList()
     if (memberName != null) {
-        val memberScope = getKDocLinkResolutionScope(resolutionFacade, descriptor)
-        return memberScope.collectDescriptorsFiltered(nameFilter = { it == memberName })
+        val memberScope = getKDocLinkMemberScope(descriptor, contextScope)
+        return memberScope.getContributedFunctions(memberName, NoLookupLocation.FROM_IDE) +
+               memberScope.getContributedVariables(memberName, NoLookupLocation.FROM_IDE) +
+               listOfNotNull(memberScope.getContributedClassifier(memberName, NoLookupLocation.FROM_IDE))
     }
     return listOf(descriptor)
-}
-
-fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<DeclarationDescriptor> {
-    // TODO resolve parameters of functions passed as parameters
-    when (fromDescriptor) {
-        is CallableDescriptor ->
-            return fromDescriptor.valueParameters + fromDescriptor.typeParameters
-        is ClassifierDescriptor -> {
-            val typeParams = fromDescriptor.typeConstructor.parameters
-            if (fromDescriptor is ClassDescriptor) {
-                val constructorDescriptor = fromDescriptor.unsubstitutedPrimaryConstructor
-                if (constructorDescriptor != null) {
-                    return typeParams + constructorDescriptor.valueParameters
-                }
-            }
-            return typeParams
-        }
-    }
-
-    return listOf()
-}
-
-private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedName: List<String>): List<DeclarationDescriptor> {
-    val name = qualifiedName.singleOrNull() ?: return listOf()
-    return getParamDescriptors(fromDescriptor).filter { it.name.asString() == name }
 }
 
 private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): MemberScope {
@@ -105,58 +157,110 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
 
     val headerScope = LexicalScopeImpl(outerScope, descriptor, false, descriptor.thisAsReceiverParameter,
                                        LexicalScopeKind.SYNTHETIC) {
-        for (typeParameter in descriptor.declaredTypeParameters) {
-            addClassifierDescriptor(typeParameter)
-        }
-        for (constructor in descriptor.constructors) {
-            addFunctionDescriptor(constructor)
-        }
+        descriptor.declaredTypeParameters.forEach { addClassifierDescriptor(it) }
+        descriptor.constructors.forEach { addFunctionDescriptor(it) }
     }
 
-    val scopeChain = arrayListOf(descriptor.defaultType.memberScope,
-                                 descriptor.staticScope)
-
-    descriptor.companionObjectDescriptor?.let {
-        scopeChain.add(it.defaultType.memberScope)
-    }
-
-    return LexicalChainedScope(headerScope, descriptor, false, null,
-                               LexicalScopeKind.SYNTHETIC,
-                               scopeChain)
+    val scopeChain = listOfNotNull(
+            descriptor.defaultType.memberScope,
+            descriptor.staticScope,
+            descriptor.companionObjectDescriptor?.defaultType?.memberScope
+    )
+    return LexicalChainedScope(headerScope, descriptor, false, null, LexicalScopeKind.SYNTHETIC, scopeChain)
 }
 
-fun getKDocLinkResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {
-    return when (descriptor) {
-        is PackageFragmentDescriptor ->
-            LexicalScope.Empty(getPackageInnerScope(descriptor).memberScopeAsImportingScope(), descriptor)
-
-        is PackageViewDescriptor ->
-            LexicalScope.Empty(descriptor.memberScope.memberScopeAsImportingScope(), descriptor)
-
+fun getKDocLinkResolutionScope(resolutionFacade: ResolutionFacade, contextDescriptor: DeclarationDescriptor): LexicalScope {
+    return when (contextDescriptor) {
         is ClassDescriptor ->
-            getClassInnerScope(getOuterScope(descriptor, resolutionFacade), descriptor)
+            getClassInnerScope(getOuterScope(contextDescriptor, resolutionFacade), contextDescriptor)
 
         is FunctionDescriptor ->
-            FunctionDescriptorUtil.getFunctionInnerScope(getOuterScope(descriptor, resolutionFacade),
-                                                         descriptor, LocalRedeclarationChecker.DO_NOTHING)
+            FunctionDescriptorUtil.getFunctionInnerScope(getOuterScope(contextDescriptor, resolutionFacade),
+                                                         contextDescriptor, LocalRedeclarationChecker.DO_NOTHING)
 
         is PropertyDescriptor ->
-            ScopeUtils.makeScopeForPropertyHeader(getOuterScope(descriptor, resolutionFacade), descriptor)
+            ScopeUtils.makeScopeForPropertyHeader(getOuterScope(contextDescriptor, resolutionFacade), contextDescriptor)
 
         is DeclarationDescriptorNonRoot ->
-            getOuterScope(descriptor, resolutionFacade)
+            getOuterScope(contextDescriptor, resolutionFacade)
 
-        else -> throw IllegalArgumentException("Cannot find resolution scope for root $descriptor")
+        else -> throw IllegalArgumentException("Cannot find resolution scope for root $contextDescriptor")
     }
 }
 
 private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, resolutionFacade: ResolutionFacade): LexicalScope {
-    val parent = descriptor.containingDeclaration
+    val parent = descriptor.containingDeclaration!!
     if (parent is PackageFragmentDescriptor) {
         val containingFile = (descriptor.source as? PsiSourceElement)?.psi?.containingFile as? KtFile
-        if (containingFile != null) {
-            return resolutionFacade.getFileResolutionScope(containingFile)
-        }
+                             ?: return LexicalScope.Base(ImportingScope.Empty, parent)
+        val kotlinCacheService = ServiceManager.getService(containingFile.project, KotlinCacheService::class.java)
+        val facadeToUse = kotlinCacheService?.getResolutionFacade(listOf(containingFile)) ?: resolutionFacade
+        return facadeToUse.getFileResolutionScope(containingFile)
     }
-    return getKDocLinkResolutionScope(resolutionFacade, parent!!)
+    else {
+        return getKDocLinkResolutionScope(resolutionFacade, parent)
+    }
+}
+
+fun getKDocLinkMemberScope(descriptor: DeclarationDescriptor, contextScope: LexicalScope): MemberScope {
+    return when (descriptor) {
+        is PackageFragmentDescriptor -> getPackageInnerScope(descriptor)
+
+        is PackageViewDescriptor -> descriptor.memberScope
+
+        is ClassDescriptor -> {
+            ChainedMemberScope("Member scope for KDoc resolve", listOfNotNull(
+                    descriptor.unsubstitutedMemberScope,
+                    descriptor.staticScope,
+                    descriptor.companionObjectDescriptor?.unsubstitutedMemberScope,
+                    ExtensionsScope(descriptor, contextScope)
+            ))
+        }
+
+        else -> MemberScope.Empty
+    }
+}
+
+private class ExtensionsScope(
+        private val receiverClass: ClassDescriptor,
+        private val contextScope: LexicalScope
+) : MemberScope {
+    private val receiverTypes = listOf(receiverClass.defaultType)
+
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
+        return contextScope.collectFunctions(name, location)
+                .flatMap { if (it is SimpleFunctionDescriptor && it.isExtension) it.substituteExtensionIfCallable(receiverTypes, CallType.DOT) else emptyList() }
+    }
+
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+        return contextScope.collectVariables(name, location)
+                .flatMap { if (it is PropertyDescriptor && it.isExtension) it.substituteExtensionIfCallable(receiverTypes, CallType.DOT) else emptyList() }
+    }
+
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        if (DescriptorKindExclude.Extensions in kindFilter.excludes) return emptyList()
+        return contextScope.collectDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.NonExtensions, nameFilter, changeNamesForAliased = true)
+                .flatMap { if (it is CallableDescriptor && it.isExtension) it.substituteExtensionIfCallable(receiverTypes, CallType.DOT) else emptyList() }
+    }
+
+    override fun getFunctionNames(): Set<Name> {
+        return getContributedDescriptors(kindFilter = DescriptorKindFilter.FUNCTIONS)
+                .map { it.name }
+                .toSet()
+    }
+
+    override fun getVariableNames(): Set<Name> {
+        return getContributedDescriptors(kindFilter = DescriptorKindFilter.VARIABLES)
+                .map { it.name }
+                .toSet()
+    }
+
+    override fun getClassifierNames() = null
+
+    override fun printScopeStructure(p: Printer) {
+        p.println("Extensions for ${receiverClass.name} in:")
+        contextScope.printStructure(p)
+    }
 }

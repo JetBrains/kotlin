@@ -1,20 +1,20 @@
 // !forceNotNullTypes: false
 // !specifyLocalVariableTypeByDefault: true
 internal class Library {
-    fun call() {
-    }
 
-    val string: String?
+    val string: String
         get() = ""
+
+    fun call() {}
 }
 
 internal class User {
     fun main() {
         val lib: Library = Library()
         lib.call()
-        lib.string!!.isEmpty()
+        lib.string.isEmpty()
 
         Library().call()
-        Library().string!!.isEmpty()
+        Library().string.isEmpty()
     }
 }

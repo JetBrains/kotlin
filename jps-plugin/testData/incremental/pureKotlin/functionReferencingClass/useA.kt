@@ -1,0 +1,1 @@
+fun useA(a: A) { a.x }

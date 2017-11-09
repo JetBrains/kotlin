@@ -1,6 +1,6 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with '...flatMap{}.filterNot{}.mapTo(){}'"
-// INTENTION_TEXT_2: "Replace with 'asSequence()...flatMap{}.filterNot{}.mapTo(){}'"
+// INTENTION_TEXT: "Replace with '...flatMap{}.filter{}.mapTo(){}'"
+// INTENTION_TEXT_2: "Replace with 'asSequence()...flatMap{}.filter{}.mapTo(){}'"
 fun foo(list: List<String>, target: MutableCollection<String>) {
     var i = 0
     <caret>for (s in list) {

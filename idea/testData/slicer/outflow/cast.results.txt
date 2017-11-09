@@ -1,0 +1,5 @@
+3 fun test(<bold>o: Any</bold>) {
+4 	val x = <bold>o as String</bold>
+4 		val <bold>x = o as String</bold>
+5 	val y = <bold>o as? String</bold>
+5 		val <bold>y = o as? String</bold>

@@ -13,3 +13,28 @@ class Hi {
 
     var badNoType get() = 1
 }
+
+class EmptyProperties {
+    var newline: String
+        get() {
+            return ""
+        }
+        set(value) {}
+}
+
+class EmptyProperties {
+    /**
+     *
+     */
+    var newline: String
+        /**
+         *
+         */
+        get() {
+            return ""
+        }
+        /**
+         *
+         */
+        set(value) {}
+}

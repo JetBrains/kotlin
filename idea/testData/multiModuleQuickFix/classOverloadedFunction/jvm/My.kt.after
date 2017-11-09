@@ -1,0 +1,9 @@
+// "Add missing actual members" "true"
+// DISABLE-ERRORS
+
+actual class My {
+    fun foo(param: String) = 42
+    actual fun foo(param: Int): Int {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}

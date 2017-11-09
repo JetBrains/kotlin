@@ -1,4 +1,4 @@
-[javaPropertyUsagesKK.0.kt] Value read 19 val t = AA().p
-[javaPropertyUsagesKK.0.kt] Value write 20 AA().p = 1
+[javaPropertyUsagesKK.0.kt] Value read 20 val t = AA().p
+[javaPropertyUsagesKK.0.kt] Value write 21 AA().p = 1
 [javaPropertyUsagesKK.1.java] Unclassified usage 18 new AA().getP();
 [javaPropertyUsagesKK.1.java] Unclassified usage 19 new AA().setP(1);

@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1116
 package foo
 
 fun run(a: A, arg: String, funRef:(A, String) -> String): String {

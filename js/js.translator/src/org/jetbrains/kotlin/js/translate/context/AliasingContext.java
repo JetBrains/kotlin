@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.context;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import gnu.trove.THashMap;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -27,12 +26,13 @@ import java.util.Collections;
 import java.util.Map;
 
 public class AliasingContext {
+    @NotNull
     public static AliasingContext getCleanContext() {
         return new AliasingContext(null, null, null);
     }
 
     @Nullable
-    private Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors;
+    private final Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors;
 
     @Nullable
     private final Map<KtExpression, JsExpression> aliasesForExpressions;
@@ -70,47 +70,18 @@ public class AliasingContext {
         return new AliasingContext(this, aliases, null);
     }
 
-
     @Nullable
-    final public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+    public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         // these aliases cannot be shared and applicable only in current context
-        return getAliasForDescriptor(descriptor, false);
-    }
-
-    @Nullable
-    protected JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor, boolean fromChild) {
-        JsExpression alias = aliasesForDescriptors == null ? null : aliasesForDescriptors.get(descriptor.getOriginal());
-        return alias != null || parent == null ? alias : parent.getAliasForDescriptor(descriptor, true);
+        JsExpression alias = aliasesForDescriptors != null ? aliasesForDescriptors.get(descriptor.getOriginal()) : null;
+        JsExpression result = alias != null || parent == null ? alias : parent.getAliasForDescriptor(descriptor);
+        return result != null ? result.deepCopy() : null;
     }
 
     @Nullable
     public JsExpression getAliasForExpression(@NotNull KtExpression element) {
-        JsExpression alias = aliasesForExpressions == null ? null : aliasesForExpressions.get(element);
-        return alias != null || parent == null ? alias : parent.getAliasForExpression(element);
-    }
-
-    /**
-     * Usages:
-     * 1) Local variable captured in closure. If captured in closure, any modification in closure should affect captured variable.
-     * So, "var count = n" wrapped as "var count = {v: n}". descriptor wil be property descriptor, alias will be JsObjectLiteral
-     *
-     * 2) Local named function.
-     */
-    public void registerAlias(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression alias) {
-        if (aliasesForDescriptors == null) {
-            aliasesForDescriptors = Collections.singletonMap(descriptor, alias);
-        }
-        else {
-            if (aliasesForDescriptors.size() == 1) {
-                Map<DeclarationDescriptor, JsExpression> singletonMap = aliasesForDescriptors;
-                aliasesForDescriptors = new THashMap<DeclarationDescriptor, JsExpression>();
-                aliasesForDescriptors.put(singletonMap.keySet().iterator().next(), singletonMap.values().iterator().next());
-            }
-            JsExpression prev = aliasesForDescriptors.put(descriptor, alias);
-            assert prev == null : "Alias for descriptor already registered." +
-                                  " Descriptor: " + descriptor +
-                                  " prev alias: " + prev +
-                                  " new alias: " + alias;
-        }
+        JsExpression alias = aliasesForExpressions != null ? aliasesForExpressions.get(element) : null;
+        JsExpression result = alias != null || parent == null ? alias : parent.getAliasForExpression(element);
+        return result != null ? result.deepCopy() : null;
     }
 }

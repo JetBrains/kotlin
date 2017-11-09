@@ -1,7 +1,8 @@
+// EXPECTED_REACHABLE_NODES: 1119
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test_0
-// CHECK_VARS_COUNT: function=test_0 count=0
+// CHECK_CONTAINS_NO_CALLS: test except=SumHolder_getInstance
+// CHECK_VARS_COUNT: function=test count=2
 
 object SumHolder {
     var sum = 0

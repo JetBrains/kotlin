@@ -68,7 +68,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         this.defaultType = storageManager.createLazyValue(new Function0<SimpleType>() {
             @Override
             public SimpleType invoke() {
-                return KotlinTypeFactory.simpleType(
+                return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                         Annotations.Companion.getEMPTY(),
                         getTypeConstructor(), Collections.<TypeProjection>emptyList(), false,
                         new LazyScopeAdapter(storageManager.createLazyValue(
@@ -134,13 +134,6 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         return (TypeParameterDescriptor) super.getOriginal();
     }
 
-    @NotNull
-    @Override
-    @Deprecated
-    public TypeParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        throw new UnsupportedOperationException("Don't call substitute() on type parameters");
-    }
-
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitTypeParameterDescriptor(this, data);
@@ -181,12 +174,6 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         @Override
         public ClassifierDescriptor getDeclarationDescriptor() {
             return AbstractTypeParameterDescriptor.this;
-        }
-
-        @NotNull
-        @Override
-        public Annotations getAnnotations() {
-            return AbstractTypeParameterDescriptor.this.getAnnotations();
         }
 
         @NotNull

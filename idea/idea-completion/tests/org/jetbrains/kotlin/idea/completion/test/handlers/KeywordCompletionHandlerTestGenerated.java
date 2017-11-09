@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.completion.test.handlers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -38,7 +39,7 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
     }
 
     public void testAllFilesPresentInKeywords() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/keywords"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/keywords"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("Break.kt")
@@ -62,6 +63,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
     @TestMetadata("Constructor.kt")
     public void testConstructor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Constructor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ConstructorPrimary.kt")
+    public void testConstructorPrimary() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ConstructorPrimary.kt");
         doTest(fileName);
     }
 
@@ -110,6 +117,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
     @TestMetadata("IfLParenth.kt")
     public void testIfLParenth() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/IfLParenth.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfParansOnNextLine.kt")
+    public void testIfParansOnNextLine() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/IfParansOnNextLine.kt");
         doTest(fileName);
     }
 

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-@SuppressWarnings("unchecked")
 /**
  * A class loader which loads classes and resources from the given map.
  *
@@ -29,6 +28,7 @@ import java.util.*;
  * Therefore if you need to be able to find classes via findResource(), you should pass a fallback
  * class loader which is able to do that at any point of time.
  */
+@SuppressWarnings("unchecked")
 public class MemoryBasedClassLoader extends ClassLoader {
     private final ClassCondition classesToLoadByParent;
     private final ClassLoader parent;

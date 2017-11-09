@@ -83,7 +83,7 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
                 it!!.node.elementType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
             }
             if (previousElement != null && previousElement is KtExpression) {
-                previousElement.parent!!.addAfter(psiFactory.createSemicolon(), previousElement)
+                previousElement.parent.addAfter(psiFactory.createSemicolon(), previousElement)
             }
         }
     }

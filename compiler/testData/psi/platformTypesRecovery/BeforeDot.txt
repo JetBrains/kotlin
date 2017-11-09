@@ -1,4 +1,4 @@
-JetFile: BeforeDot.kt
+KtFile: BeforeDot.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

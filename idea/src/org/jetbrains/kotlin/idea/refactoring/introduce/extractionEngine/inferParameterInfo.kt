@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.SingleType
 import org.jetbrains.kotlin.cfg.pseudocode.getElementValuesRecursively
@@ -36,12 +38,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasBothReceivers
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
-import org.jetbrains.kotlin.resolve.calls.util.createFunctionType
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
@@ -59,13 +60,14 @@ import java.util.*
 internal class ParametersInfo {
     var errorMessage: AnalysisResult.ErrorMessage? = null
     val originalRefToParameter = MultiMap.create<KtSimpleNameExpression, MutableParameter>()
-    val parameters = HashSet<MutableParameter>()
+    val parameters = LinkedHashSet<MutableParameter>()
     val typeParameters = HashSet<TypeParameter>()
     val nonDenotableTypes = HashSet<KotlinType>()
     val replacementMap = MultiMap.create<KtSimpleNameExpression, Replacement>()
 }
 
 internal fun ExtractionData.inferParametersInfo(
+        virtualBlock: KtBlockExpression,
         commonParent: PsiElement,
         pseudocode: Pseudocode,
         bindingContext: BindingContext,
@@ -74,9 +76,9 @@ internal fun ExtractionData.inferParametersInfo(
 ): ParametersInfo {
     val info = ParametersInfo()
 
-    val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, MutableParameter>()
+    val extractedDescriptorToParameter = LinkedHashMap<DeclarationDescriptor, MutableParameter>()
 
-    for (refInfo in getBrokenReferencesInfo(createTemporaryCodeBlock())) {
+    for (refInfo in getBrokenReferencesInfo(virtualBlock)) {
         val ref = refInfo.refExpr
 
         val selector = (ref.parent as? KtCallExpression) ?: ref
@@ -93,15 +95,16 @@ internal fun ExtractionData.inferParametersInfo(
         }
         else {
             extensionReceiver
-        }) as? ReceiverValue
+        })
 
         val twoReceivers = resolvedCall != null && resolvedCall.hasBothReceivers()
         val dispatchReceiverDescriptor = (resolvedCall?.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor
-        if (twoReceivers
+        if (options.canWrapInWith
+            && twoReceivers
             && resolvedCall!!.extensionReceiver is ExpressionReceiver
-            && DescriptorUtils.isCompanionObject(dispatchReceiverDescriptor)) {
+            && DescriptorUtils.isObject(dispatchReceiverDescriptor)) {
             info.replacementMap.putValue(refInfo.resolveResult.originalRefExpr,
-                                         WrapCompanionInWithReplacement(dispatchReceiverDescriptor as ClassDescriptor))
+                                         WrapObjectInWithReplacement(dispatchReceiverDescriptor as ClassDescriptor))
             continue
         }
 
@@ -134,7 +137,7 @@ internal fun ExtractionData.inferParametersInfo(
         }
     }
 
-    for (typeToCheck in info.typeParameters.flatMapTo(HashSet<KotlinType>()) { it.collectReferencedTypes(bindingContext) }) {
+    for (typeToCheck in info.typeParameters.flatMapTo(HashSet()) { it.collectReferencedTypes(bindingContext) }) {
         typeToCheck.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options, targetScope)
     }
 
@@ -177,7 +180,7 @@ private fun ExtractionData.extractReceiver(
             is ConstructorDescriptor -> it.containingDeclaration
 
             else -> null
-        } as? ClassifierDescriptor
+        }
     }
 
     if (referencedClassifierDescriptor != null) {
@@ -188,8 +191,8 @@ private fun ExtractionData.extractReceiver(
         if (options.canWrapInWith
             && resolvedCall != null
             && resolvedCall.hasBothReceivers()
-            && DescriptorUtils.isCompanionObject(referencedClassifierDescriptor)) {
-            info.replacementMap.putValue(originalRef, WrapCompanionInWithReplacement(referencedClassifierDescriptor as ClassDescriptor))
+            && DescriptorUtils.isObject(referencedClassifierDescriptor)) {
+            info.replacementMap.putValue(originalRef, WrapObjectInWithReplacement(referencedClassifierDescriptor as ClassDescriptor))
         } else if (referencedClassifierDescriptor is ClassDescriptor) {
             info.replacementMap.putValue(originalRef, FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe))
         }
@@ -252,7 +255,10 @@ private fun ExtractionData.extractReceiver(
             }
 
             if (!extractThis) {
-                parameter.currentName = originalDeclaration.nameIdentifier?.text
+                parameter.currentName = when (originalDeclaration) {
+                    is PsiNameIdentifierOwner -> originalDeclaration.nameIdentifier?.text
+                    else -> null
+                }
             }
 
             parameter.refCount++
@@ -319,7 +325,7 @@ private fun suggestParameterType(
 
                receiverToExtract is ImplicitReceiver -> {
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
-                       val dataFlowInfo = bindingContext.getDataFlowInfo(resolvedCall!!.call.callElement)
+                       val dataFlowInfo = bindingContext.getDataFlowInfoAfter(resolvedCall!!.call.callElement)
                        val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))
                        if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                    } else null

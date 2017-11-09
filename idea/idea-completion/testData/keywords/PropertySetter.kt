@@ -26,11 +26,11 @@ class Some {
 // EXIST:  var
 // EXIST:  constructor
 // EXIST:  init
-// EXIST:  companion object
+// EXIST: { itemText: "companion object", tailText: " {...}" }
 // EXIST:  operator
 // EXIST:  infix
-// EXIST:  sealed
-// EXIST:  lateinit
+// EXIST:  sealed class
+// EXIST:  lateinit var
 // EXIST:  data
 // EXIST:  inline
 // EXIST:  tailrec
@@ -39,4 +39,6 @@ class Some {
 // EXIST:  const
 // EXIST:  suspend
 // EXIST:  typealias
+// EXIST:  expect
+// EXIST:  actual
 // NOTHING_ELSE

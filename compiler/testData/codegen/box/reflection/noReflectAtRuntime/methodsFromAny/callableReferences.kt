@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 // WITH_RUNTIME
 
 import kotlin.reflect.KCallable
@@ -8,7 +11,10 @@ class M {
     val bar = 1
 }
 
-fun checkEquals(x: KCallable<*>, y: KCallable<*>) {
+fun topLevelFun() {}
+val topLevelProp = ""
+
+fun <T> checkEquals(x: KCallable<T>, y: KCallable<T>) {
     assertEquals(x, y)
     assertEquals(y, x)
     assertEquals(x.hashCode(), y.hashCode())
@@ -23,9 +29,15 @@ fun box(): String {
     checkEquals(M::bar, M::bar)
     checkEquals(::M, ::M)
 
+    checkEquals(::topLevelFun, ::topLevelFun)
+    checkEquals(::topLevelProp, ::topLevelProp)
+
     checkToString(M::foo, "function foo")
     checkToString(M::bar, "property bar")
     checkToString(::M, "constructor")
+
+    checkToString(::topLevelFun, "function topLevelFun")
+    checkToString(::topLevelProp, "property topLevelProp")
 
     return "OK"
 }

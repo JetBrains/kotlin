@@ -33,7 +33,7 @@ import java.util.Map;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 /*package*/ abstract class AbstractKotlinParsing {
-    private static final Map<String, KtKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<String, KtKeywordToken>();
+    private static final Map<String, KtKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<>();
 
     static {
         for (IElementType type : KtTokens.SOFT_KEYWORDS.getTypes()) {
@@ -92,22 +92,21 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         return false;
     }
 
-    protected boolean expectNoAdvance(KtToken expectation, String message) {
+    protected void expectNoAdvance(KtToken expectation, String message) {
         if (at(expectation)) {
             advance(); // expectation
-            return true;
+            return;
         }
 
         error(message);
-
-        return false;
     }
 
     protected void errorWithRecovery(String message, TokenSet recoverySet) {
         IElementType tt = tt();
-        if (recoverySet == null || recoverySet.contains(tt) || tt == LBRACE || tt == RBRACE
-                || (recoverySet.contains(EOL_OR_SEMICOLON)
-                        && (eof() || tt == SEMICOLON || myBuilder.newlineBeforeCurrentToken()))) {
+        if (recoverySet == null ||
+            recoverySet.contains(tt) ||
+            tt == LBRACE || tt == RBRACE ||
+            (recoverySet.contains(EOL_OR_SEMICOLON) && (eof() || tt == SEMICOLON || myBuilder.newlineBeforeCurrentToken()))) {
             error(message);
         }
         else {
@@ -115,15 +114,14 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         }
     }
 
-    protected boolean errorAndAdvance(String message) {
-        return errorAndAdvance(message, 1);
+    protected void errorAndAdvance(String message) {
+        errorAndAdvance(message, 1);
     }
 
-    protected boolean errorAndAdvance(String message, int advanceTokenCount) {
+    protected void errorAndAdvance(String message, int advanceTokenCount) {
         PsiBuilder.Marker err = mark();
         advance(advanceTokenCount);
         err.error(message);
-        return false;
     }
 
     protected boolean eof() {
@@ -198,7 +196,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
     /**
      * Side-effect-free version of atSet()
      */
-    protected boolean _atSet(TokenSet set) {
+    private boolean _atSet(TokenSet set) {
         IElementType token = tt();
         if (set.contains(token)) return true;
         if (set.contains(EOL_OR_SEMICOLON)) {
@@ -239,8 +237,12 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         return myBuilder.lookAhead(k);
     }
 
-    protected void consumeIf(KtToken token) {
-        if (at(token)) advance(); // token
+    protected boolean consumeIf(KtToken token) {
+        if (at(token)) {
+            advance(); // token
+            return true;
+        }
+        return false;
     }
 
     // TODO: Migrate to predicates
@@ -300,7 +302,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
     protected int matchTokenStreamPredicate(TokenStreamPattern pattern) {
         PsiBuilder.Marker currentPosition = mark();
-        Stack<IElementType> opens = new Stack<IElementType>();
+        Stack<IElementType> opens = new Stack<>();
         int openAngleBrackets = 0;
         int openBraces = 0;
         int openParentheses = 0;

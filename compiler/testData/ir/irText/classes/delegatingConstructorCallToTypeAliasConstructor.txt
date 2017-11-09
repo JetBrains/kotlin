@@ -1,0 +1,65 @@
+FILE /delegatingConstructorCallToTypeAliasConstructor.kt
+  CLASS CLASS Cell
+    $this: VALUE_PARAMETER this@Cell: Cell<T>
+    TYPE_PARAMETER <T>
+    CONSTRUCTOR public constructor Cell<T>(value: T)
+      VALUE_PARAMETER value-parameter value: T
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Cell'
+    PROPERTY public final val value: T
+      FIELD PROPERTY_BACKING_FIELD public final val value: T
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter value: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): T
+        $this: VALUE_PARAMETER this@Cell: Cell<T>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-value>(): T'
+            GET_FIELD 'value: T' type=T origin=null
+              receiver: GET_VAR 'this@Cell: Cell<T>' type=Cell<T> origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  TYPEALIAS typealias CT = Cell<T> type=Cell<T>
+  TYPEALIAS typealias CStr = Cell<String> type=Cell<kotlin.String>
+  CLASS CLASS C1
+    $this: VALUE_PARAMETER this@C1: C1
+    CONSTRUCTOR public constructor C1()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
+          <T>: null
+          value: CONST String type=kotlin.String value='O'
+        INSTANCE_INITIALIZER_CALL classDescriptor='C1'
+    PROPERTY FAKE_OVERRIDE public final override val value: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-value>(): kotlin.String
+        $this: VALUE_PARAMETER this@Cell: Cell<String>
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS CLASS C2
+    $this: VALUE_PARAMETER this@C2: C2
+    CONSTRUCTOR public constructor C2()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
+          <T>: null
+          value: CONST String type=kotlin.String value='K'
+        INSTANCE_INITIALIZER_CALL classDescriptor='C2'
+    PROPERTY FAKE_OVERRIDE public final override val value: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-value>(): kotlin.String
+        $this: VALUE_PARAMETER this@Cell: Cell<String>
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

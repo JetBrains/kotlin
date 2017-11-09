@@ -2,22 +2,24 @@
     <import file="build.xml" optional="false"/>
 
     <property name="build.number" value="snapshot"/>
-    <property name="jdk16.home" value="${java.home}"/>
     <property name="fail.on.plugin.verifier.error" value="true"/>
 
     <property name="version_substitute_dir" value="${basedir}/versions_temp/"/>
 
-    <property name="artifact.output.path" value="${basedir}/out/artifacts"/>
+    <property name="artifact.output.path" value="${basedir}/dist/artifacts"/>
     <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
     <property name="plugin.xml.bk" value="${version_substitute_dir}/plugin.xml.bk"/>
     <property name="plugin.xml.versioned" value="${plugin.xml}.versioned"/>
     <property name="plugin.xml.version.number" value="${build.number}"/>
 
-    <property name="compiler.version.java" value="compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/KotlinVersion.java"/>
-    <property name="compiler.version.java.bk" value="${version_substitute_dir}/KotlinVersion.java.bk"/>
+    <property name="compiler.version.java" value="core/util.runtime/src/org/jetbrains/kotlin/config/KotlinCompilerVersion.java"/>
+    <property name="compiler.version.java.bk" value="${version_substitute_dir}/KotlinCompilerVersion.java.bk"/>
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned"/>
+    <property name="compiler.version.number" value="${build.number}"/>
+    <property name="compiler.ant.fork.jvmargs" value="-Xmx1024m"/>
 
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip"/>
+    <property name="pluginArtifactDir" value="Kotlin" />
 
     <macrodef name="echoprop">
         <attribute name="prop"/>
@@ -72,23 +74,20 @@
         </sequential>
     </macrodef>
 
-    <target name="writeVersionToTemplateFiles">
+    <target name="writeCompilerVersionToTemplateFile">
+        <!-- empty, version is written in gradle build -->
+    </target>
+
+    <target name="writePluginVersionToTemplateFile">
         <mkdir dir="${version_substitute_dir}"/>
 
         <substituteVersionInFile
-                target.file="${plugin.xml}"
-                target.file.bk="${plugin.xml.bk}"
-                target.file.versioned="${plugin.xml.versioned}"
-                test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"
-                version="${plugin.xml.version.number}"/>
-
-        <substituteVersionInFile
-                target.file="${compiler.version.java}"
-                target.file.bk="${compiler.version.java.bk}"
-                target.file.versioned="${compiler.version.java.versioned}"
-                test.string="public static final String VERSION = &quot;@snapshot@&quot;;"/>
-
-        </target>
+            target.file="${plugin.xml}"
+            target.file.bk="${plugin.xml.bk}"
+            target.file.versioned="${plugin.xml.versioned}"
+            test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"
+            version="${plugin.xml.version.number}"/>
+    </target>
 
     <target name="revertTemplateFiles">
         <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
@@ -97,26 +96,26 @@
         <delete dir="${version_substitute_dir}" quiet="true"/>
     </target>
 
-    <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts"/>
+    <target name="pre_build" depends="writeCompilerVersionToTemplateFile, writePluginVersionToTemplateFile, cleanupArtifacts"/>
 
     <target name="zipArtifacts">
         <macrodef name="zipPlugin">
             <attribute name="filename"/>
+            <attribute name="prefix" />
             <attribute name="dir"/>
 
             <sequential>
                 <zip destfile="@{filename}">
-                    <zipfileset prefix="@{dir}" dir="${artifact.output.path}/@{dir}" excludes="kotlinc/bin/*"/>
-                    <zipfileset prefix="@{dir}/kotlinc/bin" dir="${artifact.output.path}/@{dir}/kotlinc/bin" includes="*.bat"
+                    <zipfileset prefix="@{prefix}" dir="@{dir}" excludes="kotlinc/bin/*"/>
+                    <zipfileset prefix="@{prefix}/kotlinc/bin" dir="@{dir}/kotlinc/bin" includes="*.bat"
                                 filemode="644"/>
-                    <zipfileset prefix="@{dir}/kotlinc/bin" dir="${artifact.output.path}/@{dir}/kotlinc/bin" excludes="*.bat"
+                    <zipfileset prefix="@{prefix}/kotlinc/bin" dir="@{dir}/kotlinc/bin" excludes="*.bat"
                                 filemode="755"/>
                 </zip>
-                <delete dir="${artifact.output.path}/@{dir}" quiet="true"/>
             </sequential>
         </macrodef>
 
-        <zipPlugin filename="${plugin.zip}" dir="Kotlin"/>
+        <zipPlugin filename="${plugin.zip}" prefix="Kotlin" dir="${artifact.output.path}/${pluginArtifactDir}"/>
     </target>
 
     <macrodef name="print-statistic">
@@ -140,13 +139,13 @@
     </macrodef>
 
     <target name="printStatistics">
-        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-runtime.jar"/>
+        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-stdlib.jar"/>
         <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-reflect.jar"/>
 
-        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-jslib.jar"/>
+        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-stdlib-js.jar"/>
         <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="kotlin.js"/>
-        <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="${compiled.stdlib.meta.js}"/>
-        <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="${compiled.stdlib.js}"/>
+        <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="kotlin-test.js"/>
+        <print-file-size-statistic path="${basedir}/libraries/stdlib/js/build/classes/main" file-name="kotlin.meta.js"/>
     </target>
 
     <target name="post_build" depends="zipArtifacts, revertTemplateFiles, printStatistics, remove_internal_artifacts, dont_remove_internal_artifacts"/>

@@ -1,4 +1,4 @@
-JetFile: EnumEntryCommaInlineMember.kt
+KtFile: EnumEntryCommaInlineMember.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

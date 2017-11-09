@@ -15,12 +15,6 @@ class CacheVersionChangedIT : BaseGradleIT() {
     fun testNormalCacheVersionChanged() {
         compileIncrementallyWithChangedVersion("format-version.txt")
     }
-
-    @Test
-    fun testExperimentalCacheVersionChanged() {
-        compileIncrementallyWithChangedVersion("experimental-format-version.txt")
-    }
-
     @Test
     fun testDataContainerCacheVersionChanged() {
         compileIncrementallyWithChangedVersion("data-container-format-version.txt")

@@ -6,7 +6,7 @@ class A {
     fun foo() = 42
 }
 
-fun A.foo() {}
+fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() {}
 
 fun main() {
     val x = A::foo

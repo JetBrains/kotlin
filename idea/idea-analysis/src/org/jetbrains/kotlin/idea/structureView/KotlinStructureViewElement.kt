@@ -25,7 +25,9 @@ import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 
@@ -79,7 +81,7 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
 
             return runReadAction {
                 if (!DumbService.isDumb(element.getProject())) {
-                    return@runReadAction element.resolveToDescriptor()
+                    return@runReadAction element.resolveToDescriptorIfAny()
                 }
                 null
             }
@@ -90,7 +92,7 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
             is KtFile -> element.declarations
             is KtClass -> element.getStructureDeclarations()
             is KtClassOrObject -> element.declarations
-            is KtFunction, is KtClassInitializer -> element.collectLocalDeclarations()
+            is KtFunction, is KtClassInitializer, is KtProperty -> element.collectLocalDeclarations()
             else -> emptyList()
         }
 
@@ -109,7 +111,10 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
 
         return result
     }
+
+    val isPublic: Boolean
+        get() = (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
 }
 
-fun KtClassOrObject.getStructureDeclarations() = getPrimaryConstructorParameters().filter { it.hasValOrVar() } + declarations
+fun KtClassOrObject.getStructureDeclarations() = primaryConstructorParameters.filter { it.hasValOrVar() } + declarations
 

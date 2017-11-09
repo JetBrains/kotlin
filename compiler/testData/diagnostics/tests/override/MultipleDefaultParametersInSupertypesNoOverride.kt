@@ -7,9 +7,9 @@ interface Y {
 }
 
 class Z : X, Y {
-    <!VIRTUAL_MEMBER_HIDDEN!>fun foo(a : Int)<!> {}
+    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>(a : Int) {}
 }
 
 object ZO : X, Y {
-    <!VIRTUAL_MEMBER_HIDDEN!>fun foo(a : Int)<!> {}
+    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>(a : Int) {}
 }

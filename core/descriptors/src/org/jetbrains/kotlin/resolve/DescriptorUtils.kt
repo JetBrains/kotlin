@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -28,14 +29,19 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.getContainingClass
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = companionObjectDescriptor ?: this
 
@@ -65,35 +71,47 @@ fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName, location:
     return getPackage(topLevelClassFqName.parent()).memberScope.getContributedClassifier(topLevelClassFqName.shortName(), location) as? ClassDescriptor
 }
 
-val ClassDescriptor.classId: ClassId
-    get() {
-        val owner = containingDeclaration
-        if (owner is PackageFragmentDescriptor) {
-            return ClassId(owner.fqName, name)
-        }
-        else if (owner is ClassDescriptor) {
-            return owner.classId.createNestedClassId(name)
-        }
-        throw IllegalStateException("Illegal container: $owner")
+val ClassifierDescriptorWithTypeParameters.denotedClassDescriptor: ClassDescriptor?
+    get() = when (this) {
+        is ClassDescriptor -> this
+        is TypeAliasDescriptor -> classDescriptor
+        else -> throw UnsupportedOperationException("Unexpected descriptor kind: $this")
     }
 
-val ClassDescriptor.hasCompanionObject: Boolean get() = companionObjectDescriptor != null
+val ClassifierDescriptorWithTypeParameters.classId: ClassId?
+    get() = containingDeclaration.let { owner ->
+        when (owner) {
+            is PackageFragmentDescriptor -> ClassId(owner.fqName, name)
+            is ClassifierDescriptorWithTypeParameters -> owner.classId?.createNestedClassId(name)
+            else -> null
+        }
+    }
+
+val ClassifierDescriptorWithTypeParameters.hasCompanionObject: Boolean
+    get() = denotedClassDescriptor?.companionObjectDescriptor != null
 
 val ClassDescriptor.hasClassValueDescriptor: Boolean get() = classValueDescriptor != null
 
-val ClassDescriptor.classValueDescriptor: ClassDescriptor?
-    get() = if (kind.isSingleton) this else companionObjectDescriptor
+val ClassifierDescriptorWithTypeParameters.classValueDescriptor: ClassDescriptor?
+    get() = denotedClassDescriptor?.let {
+        if (it.kind.isSingleton)
+            it
+        else
+            it.companionObjectDescriptor
+    }
 
-val ClassDescriptor.classValueTypeDescriptor: ClassDescriptor?
-    get() = when (kind) {
-        OBJECT -> this
-        ENUM_ENTRY -> {
-            // enum entry has the type of enum class
-            val container = this.containingDeclaration
-            assert(container is ClassDescriptor && container.kind == ENUM_CLASS)
-            container as ClassDescriptor
+val ClassifierDescriptorWithTypeParameters.classValueTypeDescriptor: ClassDescriptor?
+    get() = denotedClassDescriptor?.let {
+        when (it.kind) {
+            OBJECT -> it
+            ENUM_ENTRY -> {
+                // enum entry has the type of enum class
+                val container = this.containingDeclaration
+                assert(container is ClassDescriptor && container.kind == ENUM_CLASS)
+                container as ClassDescriptor
+            }
+            else -> it.companionObjectDescriptor
         }
-        else -> companionObjectDescriptor
     }
 
 /** If a literal of this class can be used as a value, returns the type of this value */
@@ -109,7 +127,7 @@ val DeclarationDescriptorWithVisibility.isEffectivelyPrivateApi: Boolean
 
 val DeclarationDescriptor.isInsidePrivateClass: Boolean
     get() {
-        var parent = containingDeclaration as? ClassDescriptor
+        val parent = containingDeclaration as? ClassDescriptor
         return parent != null && Visibilities.isPrivate(parent.visibility)
     }
 
@@ -181,6 +199,14 @@ fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     )
 }
 
+fun FunctionDescriptor.hasOrInheritsParametersWithDefaultValue(): Boolean = DFS.ifAny(
+        listOf(this),
+        { current -> current.overriddenDescriptors.map { it.original } },
+        { it.hasOwnParametersWithDefaultValue() }
+)
+
+fun FunctionDescriptor.hasOwnParametersWithDefaultValue() = original.valueParameters.any { it.declaresDefaultValue() }
+
 fun Annotated.isRepeatableAnnotation(): Boolean =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.repeatable) != null
 
@@ -188,10 +214,10 @@ fun Annotated.isDocumentedAnnotation(): Boolean =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) != null
 
 fun Annotated.getAnnotationRetention(): KotlinRetention? {
-    val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention) ?: return null
-    val retentionArgumentValue = annotationEntryDescriptor.allValueArguments.entries.firstOrNull {
-        it.key.name.asString() == "value"
-    }?.value as? EnumValue ?: return null
+    val retentionArgumentValue = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention)
+                                         ?.allValueArguments
+                                         ?.get(Name.identifier("value"))
+                                         as? EnumValue ?: return null
     return KotlinRetention.valueOf(retentionArgumentValue.value.name.asString())
 }
 
@@ -204,7 +230,7 @@ val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
 val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
     get() = if (this is PropertyAccessorDescriptor) correspondingProperty else this
 
-fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
+fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.takeIf { it.isSafe }?.toSafe()
 
 fun CallableMemberDescriptor.firstOverridden(
         useOriginal: Boolean = false,
@@ -322,3 +348,88 @@ val DeclarationDescriptor.isExtensionProperty: Boolean
 
 fun ClassDescriptor.getAllSuperclassesWithoutAny() =
         generateSequence(getSuperClassNotAny(), ClassDescriptor::getSuperClassNotAny).toCollection(SmartList<ClassDescriptor>())
+
+fun ClassifierDescriptor.getAllSuperClassifiers(): Sequence<ClassifierDescriptor> {
+    val set = hashSetOf<ClassifierDescriptor>()
+
+    fun ClassifierDescriptor.doGetAllSuperClassesAndInterfaces(): Sequence<ClassifierDescriptor> =
+        if (original in set) {
+            emptySequence()
+        }
+        else {
+            set += original
+            sequenceOf(original) + typeConstructor.supertypes.asSequence().flatMap { it.constructor.declarationDescriptor?.doGetAllSuperClassesAndInterfaces() ?: sequenceOf() }
+        }
+
+    return doGetAllSuperClassesAndInterfaces()
+}
+
+// Note this is a generic and slow implementation which would work almost for any subclass of ClassDescriptor.
+// Please avoid using it in new code.
+// TODO: do something more clever instead at call sites of this function
+fun computeSealedSubclasses(sealedClass: ClassDescriptor): Collection<ClassDescriptor> {
+    if (sealedClass.modality != Modality.SEALED) return emptyList()
+
+    val result = linkedSetOf<ClassDescriptor>()
+
+    fun collectSubclasses(scope: MemberScope, collectNested: Boolean) {
+        for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)) {
+            if (descriptor !is ClassDescriptor) continue
+
+            if (DescriptorUtils.isDirectSubclass(descriptor, sealedClass)) {
+                result.add(descriptor)
+            }
+
+            if (collectNested) {
+                collectSubclasses(descriptor.unsubstitutedInnerClassesScope, collectNested)
+            }
+        }
+    }
+
+    val container = sealedClass.containingDeclaration
+    if (container is PackageFragmentDescriptor) {
+        collectSubclasses(container.getMemberScope(), collectNested = false)
+    }
+    collectSubclasses(sealedClass.unsubstitutedInnerClassesScope, collectNested = true)
+    return result
+}
+
+fun ClassDescriptor.getNoArgsConstructor(): ClassConstructorDescriptor? =
+        constructors.find { it.valueParameters.isEmpty() }
+
+fun ClassDescriptor.getConstructorForEmptyArgumentsList(): List<ClassConstructorDescriptor> =
+        constructors.filter { it.valueParameters.all { it.hasDefaultValue() || it.varargElementType != null } }
+
+fun DeclarationDescriptor.isPublishedApi(): Boolean {
+    val descriptor = if (this is CallableMemberDescriptor) DescriptorUtils.getDirectMember(this) else this
+    return descriptor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)
+}
+
+fun DeclarationDescriptor.isAncestorOf(descriptor: DeclarationDescriptor, strict: Boolean): Boolean
+        = DescriptorUtils.isAncestor(this, descriptor, strict)
+
+fun DeclarationDescriptor.isCompanionObject(): Boolean = DescriptorUtils.isCompanionObject(this)
+
+fun ClassDescriptor.isSubclassOf(superclass: ClassDescriptor): Boolean = DescriptorUtils.isSubclass(this, superclass)
+
+val AnnotationDescriptor.annotationClass: ClassDescriptor?
+    get() = type.constructor.declarationDescriptor as? ClassDescriptor
+
+fun AnnotationDescriptor.firstArgumentValue() = allValueArguments.values.firstOrNull()?.value
+
+fun MemberDescriptor.isEffectivelyExternal(): Boolean {
+    if (isExternal) return true
+
+    if (this is PropertyAccessorDescriptor) {
+        val variableDescriptor = correspondingProperty
+        if (variableDescriptor.isEffectivelyExternal()) return true
+    }
+
+    if (this is PropertyDescriptor) {
+        if (getter?.isExternal == true &&
+            (!isVar || setter?.isExternal == true)) return true
+    }
+
+    val containingClass = getContainingClass(this)
+    return containingClass != null && containingClass.isEffectivelyExternal()
+}

@@ -106,7 +106,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 }
             }
 
-            return ClassBody(null, null, convertedMembers.values.toList(), emptyList(), lBrace, rBrace, classKind)
+            return ClassBody(null, null, null, convertedMembers.values.toList(), emptyList(), lBrace, rBrace, classKind)
         }
 
         val useCompanionObject = shouldGenerateCompanionObject(convertedMembers)
@@ -114,11 +114,13 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         val members = ArrayList<Member>()
         val companionObjectMembers = ArrayList<Member>()
         var primaryConstructorSignature: PrimaryConstructorSignature? = null
+        var primaryConstructor: PrimaryConstructor? = null
         for ((psiMember, member) in convertedMembers) {
             if (member is PrimaryConstructor) {
+                primaryConstructor = member
                 assert(primaryConstructorSignature == null)
-                primaryConstructorSignature = member.createSignature(converter)
-                members.add(member.initializer())
+                primaryConstructorSignature = primaryConstructor.createSignature(converter)
+                members.add(primaryConstructor.initializer)
             }
             else if (useCompanionObject && member !is Class && psiMember !is PsiEnumConstant && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
                 companionObjectMembers.add(member)
@@ -131,7 +133,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             }
         }
 
-        if (primaryConstructorSignature != null
+        if (primaryConstructor != null
+            && primaryConstructorSignature != null
             && classKind != ClassKind.ANONYMOUS_OBJECT
             && primaryConstructorSignature.annotations.isEmpty
             && primaryConstructorSignature.accessModifier == null
@@ -141,7 +144,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             primaryConstructorSignature = null // no "()" after class name is needed in this case
         }
 
-        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace, classKind)
+        return ClassBody(primaryConstructor, primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace, classKind)
     }
 
     private fun convertMember(
@@ -181,11 +184,11 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         val members = convertedMembers.keys.filter { !it.isConstructor() }
         val companionObjectMembers = members.filter { it !is PsiClass && it !is PsiEnumConstant && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance<PsiClass>().filter { it.hasModifierProperty(PsiModifier.STATIC) }
-        if (companionObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
-            return nestedClasses.any { nestedClass -> companionObjectMembers.any { converter.referenceSearcher.findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
+        return if (companionObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
+            nestedClasses.any { nestedClass -> companionObjectMembers.any { converter.referenceSearcher.findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
         }
         else {
-            return true
+            true
         }
     }
 }

@@ -1,5 +1,3 @@
-// See KT-12995
-
 fun box(): String {
     var state = 0
     val name = (state++)::toString.name

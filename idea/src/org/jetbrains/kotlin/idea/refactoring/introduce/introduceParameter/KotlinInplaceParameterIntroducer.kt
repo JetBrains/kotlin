@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.awt.Color
 import java.util.*
 import javax.swing.JCheckBox
@@ -57,7 +56,7 @@ class KotlinInplaceParameterIntroducer(
         null,
         originalDescriptor.originalRange.elements.single() as KtExpression,
         originalDescriptor.occurrencesToReplace
-                .mapNotNull { it.elements.single() as KtExpression }
+                .map { it.elements.single() as KtExpression }
                 .toTypedArray(),
         INTRODUCE_PARAMETER,
         project,
@@ -109,7 +108,7 @@ class KotlinInplaceParameterIntroducer(
 
         init {
             val templateState = TemplateManagerImpl.getTemplateState(myEditor)
-            val currentType = if (templateState != null && templateState.template != null) {
+            val currentType = if (templateState?.template != null) {
                 templateState
                         .getVariableValue(KotlinInplaceVariableIntroducer.TYPE_REFERENCE_VARIABLE_NAME)
                         ?.text
@@ -175,7 +174,7 @@ class KotlinInplaceParameterIntroducer(
 
     init {
         initFormComponents {
-            addComponent(getPreviewComponent())
+            addComponent(previewComponent)
 
             val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
             defaultValueCheckBox.isSelected = descriptor.withDefaultValue
@@ -261,7 +260,7 @@ class KotlinInplaceParameterIntroducer(
         val originalRange = expr.toRange()
         return descriptor.copy(
                 originalRange = originalRange,
-                occurrencesToReplace = if (replaceAll) occurrences.map { it.toRange() } else originalRange.singletonList(),
+                occurrencesToReplace = if (replaceAll) occurrences.map { it.toRange() } else listOf(originalRange),
                 argumentValue = expr!!
         )
     }

@@ -45,10 +45,10 @@ fun test(a: Any) {
     .0f<!UNSUPPORTED!>in<!> a
     .0<!UNSUPPORTED, UNRESOLVED_REFERENCE!>din<!> a
 
-    1<!UNSUPPORTED!>is<!> Any
+    <!USELESS_IS_CHECK!>1<!UNSUPPORTED!>is<!> Any<!>
     1<!UNSUPPORTED!>as<!> Any
     1<!UNSUPPORTED!>as?<!> Any
 
-    1<!UNSUPPORTED!>!is<!> Any
+    <!USELESS_IS_CHECK!>1<!UNSUPPORTED!>!is<!> Any<!>
     1<!UNSUPPORTED!>!in<!> a
 }

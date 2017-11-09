@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptorKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -61,8 +62,8 @@ public final class BindingUtils {
 
     @NotNull
     public static ClassDescriptor getClassDescriptor(@NotNull BindingContext context,
-            @NotNull KtClassOrObject declaration) {
-        return BindingContextUtils.getNotNull(context, BindingContext.CLASS, declaration);
+            @NotNull KtPureClassOrObject declaration) {
+        return SyntheticClassOrObjectDescriptorKt.findClassDescriptor(declaration, context);
     }
 
     @NotNull
@@ -84,7 +85,7 @@ public final class BindingUtils {
         return (KtParameter) result;
     }
 
-    public static boolean hasAncestorClass(@NotNull BindingContext context, @NotNull KtClassOrObject classDeclaration) {
+    public static boolean hasAncestorClass(@NotNull BindingContext context, @NotNull KtPureClassOrObject classDeclaration) {
         ClassDescriptor classDescriptor = getClassDescriptor(context, classDeclaration);
         List<ClassDescriptor> superclassDescriptors = DescriptorUtils.getSuperclassDescriptors(classDescriptor);
         return (JsDescriptorUtils.findAncestorClass(superclassDescriptors) != null);
@@ -123,7 +124,7 @@ public final class BindingUtils {
         if (descriptor instanceof TypeAliasDescriptor) {
             ClassDescriptor classDescriptor = ((TypeAliasDescriptor) descriptor).getClassDescriptor();
             assert classDescriptor != null : "Class descriptor must be non-null in resolved typealias: " + descriptor;
-            if (classDescriptor.getKind() != ClassKind.OBJECT) {
+            if (classDescriptor.getKind() != ClassKind.OBJECT && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
                 classDescriptor = classDescriptor.getCompanionObjectDescriptor();
                 assert classDescriptor != null : "Resolved typealias must have non-null class descriptor: " + descriptor;
             }
@@ -231,7 +232,7 @@ public final class BindingUtils {
 
     @Nullable
     @SuppressWarnings("unchecked")
-    public static ResolvedCall<FunctionDescriptor> getSuperCall(@NotNull BindingContext context, KtClassOrObject classDeclaration) {
+    public static ResolvedCall<FunctionDescriptor> getSuperCall(@NotNull BindingContext context, KtPureClassOrObject classDeclaration) {
         for (KtSuperTypeListEntry specifier : classDeclaration.getSuperTypeListEntries()) {
             if (specifier instanceof KtSuperTypeCallEntry) {
                 KtSuperTypeCallEntry superCall = (KtSuperTypeCallEntry) specifier;

@@ -22,12 +22,9 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupEvent
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.openapi.application.Result
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.test.KotlinTestUtils
 
 abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCase() {
     protected val fixture: JavaCodeInsightTestFixture
@@ -108,8 +105,6 @@ abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCa
         return foundElement
     }
 
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
-
     protected fun selectItem(item: LookupElement?, completionChar: Char) {
         val lookup = (fixture.lookup as LookupImpl)
         if (lookup.currentItem != item) { // do not touch selection if not changed - important for char filter tests
@@ -117,14 +112,7 @@ abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCa
         }
         lookup.focusDegree = LookupImpl.FocusDegree.FOCUSED
         if (LookupEvent.isSpecialCompletionChar(completionChar)) {
-            (object : WriteCommandAction.Simple<Any>(project) {
-                override fun run(result: Result<Any>) {
-                    run()
-                }
-                override fun run() {
-                    lookup.finishLookup(completionChar)
-                }
-            }).execute().throwException()
+            lookup.finishLookup(completionChar)
         }
         else {
             fixture.type(completionChar)

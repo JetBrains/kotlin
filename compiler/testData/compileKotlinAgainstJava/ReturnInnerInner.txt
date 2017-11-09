@@ -1,0 +1,18 @@
+package test
+
+public fun getInnerInner(): test.ReturnInnerInner.InnerFirst.InnerSecond!
+
+public open class ReturnInnerInner {
+    public constructor ReturnInnerInner()
+
+    public open inner class InnerFirst {
+        public constructor InnerFirst()
+
+        public open inner class InnerSecond {
+            public constructor InnerSecond()
+        }
+    }
+
+    // Static members
+    public open fun getInnerInner(): test.ReturnInnerInner.InnerFirst.InnerSecond!
+}

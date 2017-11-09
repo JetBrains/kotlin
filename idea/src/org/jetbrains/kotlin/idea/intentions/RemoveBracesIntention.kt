@@ -55,7 +55,7 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
         val block = element.findChildBlock() ?: return
         val statement = block.statements.single()
 
-        val container = block.parent!!
+        val container = block.parent
         val construct = container.parent as KtExpression
         handleComments(construct, block)
 
@@ -76,8 +76,8 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
                 if (construct.prevSibling is PsiWhiteSpace) {
                     construct.prevSibling!!.replace(psiFactory.createNewLine())
                 }
-                val commentElement = construct.parent!!.addBefore(sibling, construct.prevSibling)
-                construct.parent!!.addBefore(psiFactory.createNewLine(), commentElement)
+                val commentElement = construct.parent.addBefore(sibling, construct.prevSibling)
+                construct.parent.addBefore(psiFactory.createNewLine(), commentElement)
             }
             sibling = sibling.nextSibling
         }

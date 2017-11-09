@@ -1,0 +1,5 @@
+// "Remove redundant 'if' statement" "true"
+fun bar(p: Int) {
+    var v2 = false
+    v2 = p <= 0
+}

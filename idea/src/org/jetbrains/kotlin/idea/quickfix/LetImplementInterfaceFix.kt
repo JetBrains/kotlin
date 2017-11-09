@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.containsStarProjections
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -47,7 +48,11 @@ class LetImplementInterfaceFix(
 
     private val prefix: String
 
-    private val validExpectedType: Boolean
+    private val validExpectedType = with (expectedType) {
+        isInterface() &&
+        !containsStarProjections() &&
+        constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::constructor)
+    }
 
     init {
         val expectedTypeNotNullable = TypeUtils.makeNotNullable(expectedType)
@@ -58,11 +63,6 @@ class LetImplementInterfaceFix(
         val typeDescription = if (element.isObjectLiteral()) "the anonymous object" else "'${expressionType.renderShort()}'"
         prefix = "Let $typeDescription $verb"
 
-        validExpectedType = with (expectedType) {
-            isInterface() &&
-            !containsStarProjections() &&
-            constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::constructor)
-        }
     }
 
     override fun getFamilyName() = "Let type implement interface"
@@ -71,10 +71,15 @@ class LetImplementInterfaceFix(
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) =
             super.isAvailable(project, editor, file) && validExpectedType
 
+    override fun startInWriteAction() = false
+
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val superTypeEntry = KtPsiFactory(element).createSuperTypeEntry(expectedTypeNameSourceCode)
-        val entryElement = element.addSuperTypeListEntry(superTypeEntry)
-        ShortenReferences.DEFAULT.process(entryElement)
+        runWriteAction {
+            val entryElement = element.addSuperTypeListEntry(superTypeEntry)
+            ShortenReferences.DEFAULT.process(entryElement)
+        }
 
         val implementMembersHandler = ImplementMembersHandler()
         if (implementMembersHandler.collectMembersToGenerate(element).isEmpty()) return

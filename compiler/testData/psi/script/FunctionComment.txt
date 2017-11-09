@@ -1,0 +1,26 @@
+KtFile: FunctionComment.kts
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  SCRIPT
+    BLOCK
+      FUN
+        KDoc
+          PsiElement(KDOC_START)('/**')
+          KDOC_SECTION
+            PsiElement(KDOC_TEXT)(' Comment ')
+          PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace('\n')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('test')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      PsiComment(EOL_COMMENT)('// Some other comment')

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 object CreateLocalVariableActionFactory: KotlinSingleIntentionActionFactory() {
@@ -72,7 +71,7 @@ object CreateLocalVariableActionFactory: KotlinSingleIntentionActionFactory() {
                 )
                 val propertyInfo = PropertyInfo(propertyName, TypeInfo.Empty, typeInfo, varExpected, Collections.singletonList(actualContainer))
 
-                with (CallableBuilderConfiguration(propertyInfo.singletonOrEmptyList(), originalElement, file, editor).createBuilder()) {
+                with (CallableBuilderConfiguration(listOfNotNull(propertyInfo), originalElement, file, editor).createBuilder()) {
                     placement = CallablePlacement.NoReceiver(actualContainer)
                     project.executeCommand(text) { build() }
                 }

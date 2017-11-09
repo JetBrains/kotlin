@@ -1,7 +1,5 @@
 package test
 
-public /*synthesized*/ fun </*0*/ T : test.GenericInterfaceParameterWithSelfBound<T!>!> GenericInterfaceParameterWithSelfBound(/*0*/ function: (T!) -> T!): test.GenericInterfaceParameterWithSelfBound<T>
-
 public interface GenericInterfaceParameterWithSelfBound</*0*/ T : test.GenericInterfaceParameterWithSelfBound<T!>!> {
     public abstract fun method(/*0*/ p0: T!): T!
 }

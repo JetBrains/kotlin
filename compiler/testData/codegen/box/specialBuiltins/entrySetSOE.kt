@@ -1,4 +1,4 @@
-import java.util.*
+// IGNORE_BACKEND: NATIVE
 
 open class Map1 : HashMap<String, Any?>()
 class Map2 : Map1()

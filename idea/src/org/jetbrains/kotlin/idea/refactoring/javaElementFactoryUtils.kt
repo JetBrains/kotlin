@@ -32,5 +32,6 @@ fun PsiElementFactory.createReferenceListWithRole(
         Role.EXTENDS_LIST -> createClassFromText("class Foo extends $refListText {}", null).innerClasses[0].extendsList
         Role.IMPLEMENTS_LIST -> createClassFromText("class Foo implements $refListText {}", null).innerClasses[0].implementsList
         Role.EXTENDS_BOUNDS_LIST -> createTypeParameterFromText("T extends $refListText", null).extendsList
+        else -> throw UnsupportedOperationException("Unsupported role $role")
     }
 }

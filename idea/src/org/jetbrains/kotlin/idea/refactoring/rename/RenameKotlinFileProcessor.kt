@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.KtFile
 
-class RenameKotlinFileProcessor() : RenamePsiFileProcessor() {
+class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
     override fun canProcessElement(element: PsiElement) = element is KtFile && ProjectRootsUtil.isInProjectSource(element)
 
     override fun prepareRenaming(element: PsiElement?,

@@ -61,23 +61,6 @@ public class FrameworksCompatibilityUtils {
                           "Framework Conflict");
     }
 
-    public static void suggestRemoveOldJsLibrary(@NotNull ModifiableRootModel rootModel) {
-        List<OrderEntry> oldJsLibraries = new ArrayList<OrderEntry>();
-        for (OrderEntry entry : rootModel.getOrderEntries()) {
-            if (!(entry instanceof LibraryOrderEntry)) continue;
-            Library library = ((LibraryOrderEntry)entry).getLibrary();
-            if (library == null) continue;
-
-            if (JSLibraryStdPresentationProvider.detectOld(library)) {
-                oldJsLibraries.add(entry);
-            }
-        }
-
-        removeWithConfirm(rootModel, oldJsLibraries,
-                          "Current module is configured with old js library.\nDo you want to remove it?",
-                          "Old JS Library");
-    }
-
     private static void removeWithConfirm(ModifiableRootModel rootModel, List<OrderEntry> orderEntries, String message, String title) {
         if (!orderEntries.isEmpty()) {
             int result = Messages.showYesNoDialog(message, title, Messages.getWarningIcon());

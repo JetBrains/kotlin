@@ -18,18 +18,15 @@ package test.collections
 
 import test.collections.behaviors.listBehavior
 import test.collections.compare
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import org.junit.Test as test
+import kotlin.test.*
 
 class ReversedViewsTest {
 
-    @test fun testNullToString() {
+    @Test fun testNullToString() {
         assertEquals("[null]", listOf<String?>(null).asReversed().toString())
     }
 
-    @test fun testBehavior() {
+    @Test fun testBehavior() {
         val original = listOf(2L, 3L, Long.MAX_VALUE)
         val reversed = original.reversed()
         compare(reversed, original.asReversed()) {
@@ -37,12 +34,12 @@ class ReversedViewsTest {
         }
     }
 
-    @test fun testSimple() {
+    @Test fun testSimple() {
         assertEquals(listOf(3, 2, 1), listOf(1, 2, 3).asReversed())
         assertEquals(listOf(3, 2, 1), listOf(1, 2, 3).asReversed().toList())
     }
 
-    @test fun testRandomAccess() {
+    @Test fun testRandomAccess() {
         val reversed = listOf(1, 2, 3).asReversed()
 
         assertEquals(3, reversed[0])
@@ -50,40 +47,54 @@ class ReversedViewsTest {
         assertEquals(1, reversed[2])
     }
 
-    @test fun testDoubleReverse() {
+    @Test fun testDoubleReverse() {
         assertEquals(listOf(1, 2, 3), listOf(1, 2, 3).asReversed().asReversed())
         assertEquals(listOf(2, 3), listOf(1, 2, 3, 4).asReversed().subList(1, 3).asReversed())
     }
 
-    @test fun testEmpty() {
+    @Test fun testEmpty() {
         assertEquals(emptyList<Int>(), emptyList<Int>().asReversed())
     }
 
-    @test fun testReversedSubList() {
+    @Test fun testReversedSubList() {
         val reversed = (1..10).toList().asReversed()
         assertEquals(listOf(9, 8, 7), reversed.subList(1, 4))
     }
 
-    @test fun testMutableSimple() {
+    @Test fun testMutableSubList() {
+        val original = arrayListOf(1, 2, 3, 4)
+        val reversedSubList = original.asReversed().subList(1, 3)
+
+        assertEquals(listOf(3, 2), reversedSubList)
+        reversedSubList.clear()
+        assertEquals(emptyList<Int>(), reversedSubList)
+        assertEquals(listOf(1, 4), original)
+
+        reversedSubList.add(100)
+        assertEquals(listOf(100), reversedSubList)
+        assertEquals(listOf(1, 100, 4), original)
+    }
+
+    @Test fun testMutableSimple() {
         assertEquals(listOf(3, 2, 1), mutableListOf(1, 2, 3).asReversed())
         assertEquals(listOf(3, 2, 1), mutableListOf(1, 2, 3).asReversed().toList())
     }
 
-    @test fun testMutableDoubleReverse() {
+    @Test fun testMutableDoubleReverse() {
         assertEquals(listOf(1, 2, 3), mutableListOf(1, 2, 3).asReversed().asReversed())
         assertEquals(listOf(2, 3), mutableListOf(1, 2, 3, 4).asReversed().subList(1, 3).asReversed())
     }
 
-    @test fun testMutableEmpty() {
+    @Test fun testMutableEmpty() {
         assertEquals(emptyList<Int>(), mutableListOf<Int>().asReversed())
     }
 
-    @test fun testMutableReversedSubList() {
+    @Test fun testMutableReversedSubList() {
         val reversed = (1..10).toMutableList().asReversed()
         assertEquals(listOf(9, 8, 7), reversed.subList(1, 4))
     }
 
-    @test fun testMutableAdd() {
+    @Test fun testMutableAdd() {
         val original = mutableListOf(1, 2, 3)
         val reversed = original.asReversed()
 
@@ -96,7 +107,7 @@ class ReversedViewsTest {
         assertEquals(listOf(0, 1, 2, 3, 4), original)
     }
 
-    @test fun testMutableSet() {
+    @Test fun testMutableSet() {
         val original = mutableListOf(1, 2, 3)
         val reversed = original.asReversed()
 
@@ -108,7 +119,7 @@ class ReversedViewsTest {
         assertEquals(listOf(300, 200, 100), reversed)
     }
 
-    @test fun testMutableRemove() {
+    @Test fun testMutableRemove() {
         val original = mutableListOf("a", "b", "c")
         val reversed = original.asReversed()
 
@@ -123,7 +134,7 @@ class ReversedViewsTest {
         assertEquals(emptyList<String>(), original)
     }
 
-    @test fun testMutableRemoveByObj() {
+    @Test fun testMutableRemoveByObj() {
         val original = mutableListOf("a", "b", "c")
         val reversed = original.asReversed()
 
@@ -132,7 +143,7 @@ class ReversedViewsTest {
         assertEquals(listOf("b", "a"), reversed)
     }
 
-    @test fun testMutableClear() {
+    @Test fun testMutableClear() {
         val original = mutableListOf(1, 2, 3)
         val reversed = original.asReversed()
 
@@ -142,17 +153,17 @@ class ReversedViewsTest {
         assertEquals(emptyList<Int>(), original)
     }
 
-    @test fun testContains() {
+    @Test fun testContains() {
         assertTrue { 1 in listOf(1, 2, 3).asReversed() }
         assertTrue { 1 in mutableListOf(1, 2, 3).asReversed() }
     }
 
-    @test fun testIndexOf() {
+    @Test fun testIndexOf() {
         assertEquals(2, listOf(1, 2, 3).asReversed().indexOf(1))
         assertEquals(2, mutableListOf(1, 2, 3).asReversed().indexOf(1))
     }
 
-    @test fun testBidirectionalModifications() {
+    @Test fun testBidirectionalModifications() {
         val original = mutableListOf(1, 2, 3, 4)
         val reversed = original.asReversed()
 
@@ -165,7 +176,7 @@ class ReversedViewsTest {
         assertEquals(listOf(3, 2), reversed)
     }
 
-    @test fun testGetIOOB() {
+    @Test fun testGetIOOB() {
         val success = try {
             listOf(1, 2, 3).asReversed().get(3)
             true
@@ -176,7 +187,7 @@ class ReversedViewsTest {
         assertFalse(success)
     }
 
-    @test fun testSetIOOB() {
+    @Test fun testSetIOOB() {
         val success = try {
             mutableListOf(1, 2, 3).asReversed().set(3, 0)
             true
@@ -187,7 +198,7 @@ class ReversedViewsTest {
         assertFalse(success)
     }
 
-    @test fun testAddIOOB() {
+    @Test fun testAddIOOB() {
         val success = try {
             mutableListOf(1, 2, 3).asReversed().add(4, 0)
             true
@@ -198,7 +209,7 @@ class ReversedViewsTest {
         assertFalse(success)
     }
 
-    @test fun testRemoveIOOB() {
+    @Test fun testRemoveIOOB() {
         val success = try {
             mutableListOf(1, 2, 3).asReversed().removeAt(3)
             true

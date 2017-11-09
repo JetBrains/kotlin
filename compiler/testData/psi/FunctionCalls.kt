@@ -32,4 +32,9 @@ fun foo() {
   v(fred<a, *, b>(a))
   w(plugh<a, "", b>(a))
   xyzzy<*>()
+  1._foo()
+  1.__foo()
+  1_1._foo()
+  1._1foo()
+  1._1_foo()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.spring.tests.gutter;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,12 +33,18 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class SpringClassAnnotatorTestGenerated extends AbstractSpringClassAnnotatorTest {
     public void testAllFilesPresentInGutter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("ultimate/testData/spring/core/gutter"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("ultimate/testData/spring/core/gutter"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
     @TestMetadata("autowiredBeanCandidates/autowiredBeanCandidates.test")
     public void testAutowiredBeanCandidates_AutowiredBeanCandidates() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/gutter/autowiredBeanCandidates/autowiredBeanCandidates.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("autowiredConstructor/autowiredConstructor.test")
+    public void testAutowiredConstructor_AutowiredConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("ultimate/testData/spring/core/gutter/autowiredConstructor/autowiredConstructor.test");
         doTest(fileName);
     }
 

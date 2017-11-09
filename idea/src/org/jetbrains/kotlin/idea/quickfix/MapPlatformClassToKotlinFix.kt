@@ -105,7 +105,7 @@ class MapPlatformClassToKotlinFix(
         val replacedElements = ArrayList<PsiElement>()
         for (usage in usages) {
             val typeArguments = usage.typeArgumentList
-            val typeArgumentsString = if (typeArguments == null) "" else typeArguments.text
+            val typeArgumentsString = typeArguments?.text ?: ""
             val replacementType = KtPsiFactory(project).createType(replacementClassName + typeArgumentsString)
             val replacementTypeElement = replacementType.typeElement!!
             val replacedElement = usage.replace(replacementTypeElement)

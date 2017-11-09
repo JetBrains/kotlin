@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.psi.KtPsiUtil;
+import org.jetbrains.kotlin.psi.KtValueArgumentList;
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl;
 import org.jetbrains.kotlin.name.Name;
@@ -41,7 +42,8 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
     public KotlinAnnotationEntryStub createStub(@NotNull KtAnnotationEntry psi, StubElement parentStub) {
         Name shortName = KtPsiUtil.getShortName(psi);
         String resultName = shortName != null ? shortName.asString() : psi.getText();
-        boolean hasValueArguments = psi.getValueArgumentList() != null;
+        KtValueArgumentList valueArgumentList = psi.getValueArgumentList();
+        boolean hasValueArguments = valueArgumentList != null && !valueArgumentList.getArguments().isEmpty();
         return new KotlinAnnotationEntryStubImpl(parentStub, StringRef.fromString(resultName), hasValueArguments);
     }
 

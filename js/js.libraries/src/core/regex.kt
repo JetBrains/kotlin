@@ -16,7 +16,7 @@
 
 package kotlin.text
 
-import kotlin.text.js.*
+import kotlin.js.RegExp
 
 /**
  * Provides enumeration values to use to set regular expression options.
@@ -52,7 +52,7 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
     private val nativePattern: RegExp = RegExp(pattern, options.map { it.value }.joinToString(separator = "") + "g")
 
     /** Indicates whether the regular expression matches the entire [input]. */
-    public fun matches(input: CharSequence): Boolean {
+    public infix fun matches(input: CharSequence): Boolean {
         nativePattern.reset()
         val match = nativePattern.exec(input.toString())
         return match != null && match.index == 0 && nativePattern.lastIndex == input.length
@@ -64,9 +64,6 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
         return nativePattern.test(input.toString())
     }
 
-    @Deprecated("Use containsMatchIn() or 'in' operator instead.", ReplaceWith("this in input"))
-    public fun hasMatch(input: CharSequence): Boolean = containsMatchIn(input)
-
     /** Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
      *
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
@@ -74,15 +71,9 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
      */
     public fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.findNext(input.toString(), startIndex)
 
-    @Deprecated("Use find() instead.", ReplaceWith("find(input, startIndex)"))
-    public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = find(input, startIndex)
-
     /** Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
     public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, { match -> match.next() })
-
-    @Deprecated("Use findAll() instead.", ReplaceWith("findAll(input, startIndex)"))
-    public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = findAll(input, startIndex)
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.
@@ -121,7 +112,8 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
             sb.append(transform(foundMatch))
             lastStart = foundMatch.range.endInclusive + 1
             match = foundMatch.next()
-        } while (lastStart < length && match != null)
+        }
+        while (lastStart < length && match != null)
 
         if (lastStart < length) {
             sb.append(input, lastStart, length)
@@ -197,15 +189,9 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
         override val value: String
             get() = match[0]!!
 
-        override val groups: MatchGroupCollection = object : MatchGroupCollection {
+        override val groups: MatchGroupCollection = object : MatchGroupCollection, AbstractCollection<MatchGroup?>() {
             override val size: Int get() = match.length
-            override fun isEmpty(): Boolean = size == 0
-
-            override fun contains(element: MatchGroup?): Boolean = this.any { it == element }
-            override fun containsAll(elements: Collection<MatchGroup?>): Boolean = elements.all { contains(it) }
-
             override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()
-
             override fun get(index: Int): MatchGroup? = match[index]?.let { MatchGroup(it) }
         }
 

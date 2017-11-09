@@ -1,0 +1,13 @@
+package
+
+public fun route(/*0*/ s: kotlin.String): kotlin.Any?
+
+public final class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun </*0*/ T : () -> kotlin.Any?> installRoute(/*0*/ handler: T): kotlin.Unit where T : kotlin.reflect.KCallable<*>
+    public final fun </*0*/ T : (kotlin.String) -> kotlin.Any?> installRoute(/*0*/ handler: T): kotlin.Unit where T : kotlin.reflect.KCallable<*>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

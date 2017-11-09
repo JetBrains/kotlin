@@ -1,4 +1,3 @@
-import java.util.HashMap
 
 fun box() : String {
     if (!testIteratingOverMap1()) return "fail 1"

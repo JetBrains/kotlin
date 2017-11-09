@@ -39,7 +39,7 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
         val runConfiguration = createConfigurationFromElement(script) as KotlinStandaloneScriptRunConfiguration
 
         Assert.assertEquals(script.containingFile.virtualFile.canonicalPath, runConfiguration.filePath)
-        Assert.assertEquals("SimpleScript", runConfiguration.name)
+        Assert.assertEquals("simpleScript.kts", runConfiguration.name)
 
         val javaParameters = getJavaRunParameters(runConfiguration)
         val programParametersList = javaParameters.programParametersList.list
@@ -53,7 +53,7 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
         val script = KotlinScriptFqnIndex.instance.get("foo.SimpleScript", project, project.allScope()).single()
         val runConfiguration = createConfigurationFromElement(script, save = true) as KotlinStandaloneScriptRunConfiguration
 
-        Assert.assertEquals("SimpleScript", runConfiguration.name)
+        Assert.assertEquals("simpleScript.kts", runConfiguration.name)
         val scriptVirtualFileBefore = script.containingFile.virtualFile
         val originalPath = scriptVirtualFileBefore.canonicalPath
         val originalWorkingDirectory = scriptVirtualFileBefore.parent.canonicalPath
@@ -62,7 +62,7 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
 
         RefactoringFactory.getInstance(project).createRename(script.containingFile, "renamedScript.kts").run()
 
-        Assert.assertEquals("RenamedScript", runConfiguration.name)
+        Assert.assertEquals("renamedScript.kts", runConfiguration.name)
         val scriptVirtualFileAfter = script.containingFile.virtualFile
 
         assertEquals(scriptVirtualFileAfter.canonicalPath, runConfiguration.filePath)
@@ -77,7 +77,7 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
         val script = KotlinScriptFqnIndex.instance.get("foo.Script", project, project.allScope()).single()
         val runConfiguration = createConfigurationFromElement(script, save = true) as KotlinStandaloneScriptRunConfiguration
 
-        Assert.assertEquals("Script", runConfiguration.name)
+        Assert.assertEquals("script.kts", runConfiguration.name)
         val scriptVirtualFileBefore = script.containingFile.virtualFile
         val originalPath = scriptVirtualFileBefore.canonicalPath
         val originalWorkingDirectory = scriptVirtualFileBefore.parent.canonicalPath
@@ -86,7 +86,7 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
 
         moveScriptFile(script.containingFile)
 
-        Assert.assertEquals("Script", runConfiguration.name)
+        Assert.assertEquals("script.kts", runConfiguration.name)
         val scriptVirtualFileAfter = script.containingFile.virtualFile
 
         assertEquals(scriptVirtualFileAfter.canonicalPath, runConfiguration.filePath)
@@ -101,7 +101,7 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
         val script = KotlinScriptFqnIndex.instance.get("foo.Script", project, project.allScope()).single()
         val runConfiguration = createConfigurationFromElement(script, save = true) as KotlinStandaloneScriptRunConfiguration
 
-        Assert.assertEquals("Script", runConfiguration.name)
+        Assert.assertEquals("script.kts", runConfiguration.name)
         runConfiguration.workingDirectory = runConfiguration.workingDirectory + "/customWorkingDirectory"
         val scriptVirtualFileBefore = script.containingFile.virtualFile
         val originalPath = scriptVirtualFileBefore.canonicalPath
@@ -112,7 +112,7 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
 
         moveScriptFile(script.containingFile)
 
-        Assert.assertEquals("Script", runConfiguration.name)
+        Assert.assertEquals("script.kts", runConfiguration.name)
         val scriptVirtualFileAfter = script.containingFile.virtualFile
 
         assertEquals(scriptVirtualFileAfter.canonicalPath, runConfiguration.filePath)

@@ -1,0 +1,22 @@
+@kotlin.Metadata
+public final class PrimitiveArraysKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public synthetic static method checkExactArrayType$default(p0: java.lang.Object, p1: boolean, p2: boolean, p3: boolean, p4: boolean, p5: boolean, p6: boolean, p7: boolean, p8: boolean, p9: boolean, p10: int, p11: java.lang.Object): boolean
+    public final static method checkExactArrayType(@org.jetbrains.annotations.Nullable p0: java.lang.Object, p1: boolean, p2: boolean, p3: boolean, p4: boolean, p5: boolean, p6: boolean, p7: boolean, p8: boolean, p9: boolean): boolean
+    public final static @org.jetbrains.annotations.NotNull method customBooleanArrayOf(@org.jetbrains.annotations.NotNull p0: boolean[]): boolean[]
+    public final static @org.jetbrains.annotations.NotNull method customByteArrayOf(@org.jetbrains.annotations.NotNull p0: byte[]): byte[]
+    public final static @org.jetbrains.annotations.NotNull method customCharArrayOf(@org.jetbrains.annotations.NotNull p0: char[]): char[]
+    public final static @org.jetbrains.annotations.NotNull method customDoubleArrayOf(@org.jetbrains.annotations.NotNull p0: double[]): double[]
+    public final static @org.jetbrains.annotations.NotNull method customFloatArrayOf(@org.jetbrains.annotations.NotNull p0: float[]): float[]
+    public final static @org.jetbrains.annotations.NotNull method customIntArrayOf(@org.jetbrains.annotations.NotNull p0: int[]): int[]
+    public final static @org.jetbrains.annotations.NotNull method customLongArrayOf(@org.jetbrains.annotations.NotNull p0: long[]): long[]
+    public final static @org.jetbrains.annotations.NotNull method customShortArrayOf(@org.jetbrains.annotations.NotNull p0: short[]): short[]
+    public final static method eqBoolean(@org.jetbrains.annotations.NotNull p0: boolean[], @org.jetbrains.annotations.NotNull p1: boolean[]): boolean
+    public final static method eqByte(@org.jetbrains.annotations.NotNull p0: byte[], @org.jetbrains.annotations.NotNull p1: byte[]): boolean
+    public final static method eqChar(@org.jetbrains.annotations.NotNull p0: char[], @org.jetbrains.annotations.NotNull p1: char[]): boolean
+    public final static method eqDouble(@org.jetbrains.annotations.NotNull p0: double[], @org.jetbrains.annotations.NotNull p1: double[]): boolean
+    public final static method eqFloat(@org.jetbrains.annotations.NotNull p0: float[], @org.jetbrains.annotations.NotNull p1: float[]): boolean
+    public final static method eqInt(@org.jetbrains.annotations.NotNull p0: int[], @org.jetbrains.annotations.NotNull p1: int[]): boolean
+    public final static method eqLong(@org.jetbrains.annotations.NotNull p0: long[], @org.jetbrains.annotations.NotNull p1: long[]): boolean
+    public final static method eqShort(@org.jetbrains.annotations.NotNull p0: short[], @org.jetbrains.annotations.NotNull p1: short[]): boolean
+}

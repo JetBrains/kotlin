@@ -1,10 +1,6 @@
 open class A {
     private val a = B()
 
-    protected class B {
-        private val c = C()
-    }
-
     protected class C()
 }
 

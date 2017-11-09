@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,11 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
+import org.jetbrains.kotlin.contracts.EffectSystem;
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -36,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.*;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -55,19 +59,25 @@ public class DataFlowAnalyzer {
     private final KotlinBuiltIns builtIns;
     private final SmartCastManager smartCastManager;
     private final ExpressionTypingFacade facade;
+    private final LanguageVersionSettings languageVersionSettings;
+    private final EffectSystem effectSystem;
 
     public DataFlowAnalyzer(
             @NotNull Iterable<AdditionalTypeChecker> additionalTypeCheckers,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
             @NotNull KotlinBuiltIns builtIns,
             @NotNull SmartCastManager smartCastManager,
-            @NotNull ExpressionTypingFacade facade
+            @NotNull ExpressionTypingFacade facade,
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull EffectSystem effectSystem
     ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.builtIns = builtIns;
         this.smartCastManager = smartCastManager;
         this.facade = facade;
+        this.languageVersionSettings = languageVersionSettings;
+        this.effectSystem = effectSystem;
     }
 
     // NB: use this method only for functions from 'Any'
@@ -115,12 +125,12 @@ public class DataFlowAnalyzer {
 
     @NotNull
     public DataFlowInfo extractDataFlowInfoFromCondition(
-            @Nullable final KtExpression condition,
-            final boolean conditionValue,
-            final ExpressionTypingContext context
+            @Nullable KtExpression condition,
+            boolean conditionValue,
+            ExpressionTypingContext context
     ) {
         if (condition == null) return context.dataFlowInfo;
-        final Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(null);
+        Ref<DataFlowInfo> result = new Ref<>(null);
         condition.accept(new KtVisitorVoid() {
             @Override
             public void visitIsExpression(@NotNull KtIsExpression expression) {
@@ -150,7 +160,7 @@ public class DataFlowAnalyzer {
                     }
                     result.set(dataFlowInfo);
                 }
-                else  {
+                else {
                     DataFlowInfo expressionFlowInfo = facade.getTypeInfo(expression, context).getDataFlowInfo();
                     KtExpression left = expression.getLeft();
                     if (left == null) return;
@@ -172,14 +182,26 @@ public class DataFlowAnalyzer {
                     else if (operationToken == KtTokens.EXCLEQ || operationToken == KtTokens.EXCLEQEQEQ) {
                         equals = false;
                     }
+                    else if (operationToken == KtTokens.ELVIS &&
+                             languageVersionSettings.supportsFeature(LanguageFeature.BooleanElvisBoundSmartCasts) &&
+                             right instanceof KtConstantExpression &&
+                             KotlinBuiltIns.isBoolean(rhsType)) {
+                        // ?: false is equivalent to == true, ?: true is equivalent to != false
+                        equals = KtPsiUtil.isFalseConstant(right);
+                    }
                     if (equals != null) {
                         if (equals == conditionValue) { // this means: equals && conditionValue || !equals && !conditionValue
-                            boolean byIdentity = operationToken == KtTokens.EQEQEQ || operationToken == KtTokens.EXCLEQEQEQ ||
-                                                 typeHasEqualsFromAny(lhsType, condition);
-                            result.set(context.dataFlowInfo.equate(leftValue, rightValue, byIdentity).and(expressionFlowInfo));
+                            boolean identityEquals = operationToken == KtTokens.EQEQEQ ||
+                                                     operationToken == KtTokens.EXCLEQEQEQ ||
+                                                     typeHasEqualsFromAny(lhsType, condition);
+                            result.set(context.dataFlowInfo
+                                               .equate(leftValue, rightValue, identityEquals, languageVersionSettings)
+                                               .and(expressionFlowInfo));
                         }
                         else {
-                            result.set(context.dataFlowInfo.disequate(leftValue, rightValue).and(expressionFlowInfo));
+                            result.set(context.dataFlowInfo
+                                               .disequate(leftValue, rightValue, languageVersionSettings)
+                                               .and(expressionFlowInfo));
                         }
                     }
                     else {
@@ -216,10 +238,16 @@ public class DataFlowAnalyzer {
                 }
             }
         });
+
+        DataFlowInfo infoFromEffectSystem = effectSystem.extractDataFlowInfoFromCondition(
+                condition, conditionValue, context.trace, DescriptorUtils.getContainingModule(context.scope.getOwnerDescriptor())
+        );
+
         if (result.get() == null) {
-            return context.dataFlowInfo;
+            return context.dataFlowInfo.and(infoFromEffectSystem);
         }
-        return context.dataFlowInfo.and(result.get());
+
+        return context.dataFlowInfo.and(result.get()).and(infoFromEffectSystem);
     }
 
     @Nullable
@@ -317,7 +345,8 @@ public class DataFlowAnalyzer {
 
     @Nullable
     public KotlinType checkStatementType(@NotNull KtExpression expression, @NotNull ResolutionContext context) {
-        if (!noExpectedType(context.expectedType) && !KotlinBuiltIns.isUnit(context.expectedType) && !context.expectedType.isError()) {
+        if (!noExpectedType(context.expectedType) && !KotlinBuiltIns.isUnit(context.expectedType) &&
+            !KotlinTypeKt.isError(context.expectedType)) {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }
@@ -335,13 +364,21 @@ public class DataFlowAnalyzer {
     @NotNull
     public static Collection<KotlinType> getAllPossibleTypes(
             @NotNull KtExpression expression,
-            @NotNull DataFlowInfo dataFlowInfo,
             @NotNull KotlinType type,
             @NotNull ResolutionContext c
     ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, c);
+        return getAllPossibleTypes(type, c, dataFlowValue);
+    }
+
+    @NotNull
+    public static Collection<KotlinType> getAllPossibleTypes(
+            @NotNull KotlinType type,
+            @NotNull ResolutionContext c,
+            @NotNull DataFlowValue dataFlowValue
+    ) {
         Collection<KotlinType> possibleTypes = Sets.newHashSet(type);
-        possibleTypes.addAll(dataFlowInfo.getStableTypes(dataFlowValue));
+        possibleTypes.addAll(c.dataFlowInfo.getStableTypes(dataFlowValue));
         return possibleTypes;
     }
 

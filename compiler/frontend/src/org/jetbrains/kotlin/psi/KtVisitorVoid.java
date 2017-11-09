@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
 
     public void visitScript(@NotNull KtScript script) {
         super.visitScript(script, null);
+    }
+
+    public void visitImportAlias(@NotNull KtImportAlias importAlias) {
+        super.visitImportAlias(importAlias, null);
     }
 
     public void visitImportDirective(@NotNull KtImportDirective importDirective) {
@@ -227,6 +231,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
 
     public void visitWhenExpression(@NotNull KtWhenExpression expression) {
         super.visitWhenExpression(expression, null);
+    }
+
+    public void visitCollectionLiteralExpression(@NotNull KtCollectionLiteralExpression expression) {
+        super.visitCollectionLiteralExpression(expression, null);
     }
 
     public void visitTryExpression(@NotNull KtTryExpression expression) {

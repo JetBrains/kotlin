@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1124
 package foo
 
 @JsName("AA") object A {
@@ -9,12 +10,12 @@ package foo
 }
 
 fun testA() = js("""
-var a = Kotlin.modules.JS_TESTS.foo.AA;
+var a = JS_TESTS.foo.AA;
 return a.foo();
 """)
 
 fun testB() = js("""
-var b = new Kotlin.modules.JS_TESTS.foo.BB();
+var b = new JS_TESTS.foo.BB();
 return b.foo();
 """)
 

@@ -16,17 +16,28 @@
 
 package org.jetbrains.kotlin.idea.refactoring.safeDelete
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class SafeDeleteImportDirectiveUsageInfo(
-        importDirective: KtImportDirective, declaration: KtDeclaration
+        importDirective: KtImportDirective, declaration: PsiElement
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(importDirective, declaration, importDirective.isSafeToDelete(declaration))
 
-private fun KtImportDirective.isSafeToDelete(declaration: KtDeclaration): Boolean {
+private fun KtImportDirective.isSafeToDelete(element: PsiElement): Boolean {
     val referencedDescriptor = targetDescriptors().singleOrNull() ?: return false
-    return referencedDescriptor == declaration.resolveToDescriptor()
+    val unwrappedElement = element.unwrapped
+    val declarationDescriptor = when (unwrappedElement) {
+        is KtDeclaration -> unwrappedElement.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+        is PsiMember -> unwrappedElement.getJavaMemberDescriptor()
+        else -> return false
+    }
+    return referencedDescriptor == declarationDescriptor
 }

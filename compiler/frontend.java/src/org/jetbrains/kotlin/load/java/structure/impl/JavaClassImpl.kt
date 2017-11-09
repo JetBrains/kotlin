@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,28 @@
 package org.jetbrains.kotlin.load.java.structure.impl
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiTypeParameter
+import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtPsiUtil
 
-class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass), JavaClass, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
+class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass), VirtualFileBoundJavaClass, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
     init {
         assert(psiClass !is PsiTypeParameter) { "PsiTypeParameter should be wrapped in JavaTypeParameter, not JavaClass: use JavaClassifier.create()" }
     }
 
-    override val innerClasses: Collection<JavaClass>
-        get() = classes(psi.innerClasses)
+    override val innerClassNames: Collection<Name>
+        get() = psi.innerClasses.mapNotNull { it.name?.takeIf(Name::isValidIdentifier)?.let(Name::identifier) }
+
+    override fun findInnerClass(name: Name): JavaClass? {
+        return psi.findInnerClassByName(name.asString(), false)?.let(::JavaClassImpl)
+    }
 
     override val fqName: FqName?
         get() {
@@ -41,7 +47,7 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
         }
 
     override val name: Name
-        get() = SpecialNames.safeIdentifier(psi.name)
+        get() = KtPsiUtil.safeName(psi.name)
 
     override val isInterface: Boolean
         get() = psi.isInterface
@@ -105,13 +111,18 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
     override val lightClassOriginKind: LightClassOriginKind?
         get() = (psi as? KtLightClassMarker)?.originKind
 
+    override val virtualFile: VirtualFile?
+        get() =  psi.containingFile?.virtualFile
+
+    override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = psi.containingFile.virtualFile in scope
+
     override fun getAnnotationOwnerPsi() = psi.modifierList
 
     private fun assertNotLightClass() {
         val psiClass = psi
         if (psiClass !is KtLightClassMarker) return
 
-        val message = "Querying members of JavaClass created for $psiClass of type ${psiClass.javaClass} defined in file ${psiClass.containingFile?.virtualFile?.canonicalPath}"
+        val message = "Querying members of JavaClass created for $psiClass of type ${psiClass::class.java} defined in file ${psiClass.containingFile?.virtualFile?.canonicalPath}"
         LOGGER.error(message)
     }
 

@@ -19,21 +19,16 @@ package org.jetbrains.kotlin.codegen.state
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.`when`.MappingsClassesForWhenByEnum
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.RootContext
-import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerClassBuilderFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -44,13 +39,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.BindingTraceFilter
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 
 class GenerationState @JvmOverloads constructor(
@@ -61,6 +56,7 @@ class GenerationState @JvmOverloads constructor(
         val files: List<KtFile>,
         val configuration: CompilerConfiguration,
         val generateDeclaredClassFilter: GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
+        val codegenFactory: CodegenFactory = DefaultCodegenFactory,
         // For incremental compilation
         val targetId: TargetId? = null,
         moduleName: String? = configuration.get(CommonConfigurationKeys.MODULE_NAME),
@@ -74,8 +70,9 @@ class GenerationState @JvmOverloads constructor(
     abstract class GenerateClassFilter {
         abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
         abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
-        abstract fun shouldGeneratePackagePart(jetFile: KtFile): Boolean
+        abstract fun shouldGeneratePackagePart(ktFile: KtFile): Boolean
         abstract fun shouldGenerateScript(script: KtScript): Boolean
+        open fun shouldGenerateClassMembers(processingClassOrObject: KtClassOrObject) = shouldGenerateClass(processingClassOrObject)
 
         companion object {
             @JvmField val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
@@ -85,17 +82,20 @@ class GenerationState @JvmOverloads constructor(
 
                 override fun shouldGenerateScript(script: KtScript): Boolean = true
 
-                override fun shouldGeneratePackagePart(jetFile: KtFile): Boolean = true
+                override fun shouldGeneratePackagePart(ktFile: KtFile): Boolean = true
             }
         }
     }
 
-    val fileClassesProvider: CodegenFileClassesProvider = CodegenFileClassesProvider()
     val inlineCache: InlineCache = InlineCache()
 
     val incrementalCacheForThisTarget: IncrementalCache?
     val packagesWithObsoleteParts: Set<FqName>
     val obsoleteMultifileClasses: List<FqName>
+    val deserializationConfiguration: DeserializationConfiguration =
+            CompilerDeserializationConfiguration(configuration.languageVersionSettings)
+
+    val deprecationProvider = DeprecationResolver(LockBasedStorageManager.NO_LOCKS, configuration.languageVersionSettings)
 
     init {
         val icComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
@@ -116,7 +116,7 @@ class GenerationState @JvmOverloads constructor(
         }
     }
 
-    val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "For extra diagnostics in ${this.javaClass}", false)
+    val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "For extra diagnostics in ${this::class.java}", false)
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
 
@@ -126,7 +126,11 @@ class GenerationState @JvmOverloads constructor(
         extraJvmDiagnosticsTrace.bindingContext.diagnostics
     }
 
-    val isJvm8Target: Boolean = configuration.get(JVMConfigurationKeys.JVM_TARGET) == JvmTarget.JVM_1_8
+    val languageVersionSettings = configuration.languageVersionSettings
+
+    val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
+    val isJvm8Target: Boolean = target == JvmTarget.JVM_1_8
+    val isJvm8TargetWithDefaults: Boolean =  isJvm8Target && configuration.getBoolean(JVMConfigurationKeys.JVM8_TARGET_WITH_DEFAULTS)
     val generateDefaultImplsForJvm8: Boolean = configuration.getBoolean(JVMConfigurationKeys.INTERFACE_COMPATIBILITY)
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
@@ -135,14 +139,17 @@ class GenerationState @JvmOverloads constructor(
                                                             filter = if (wantsDiagnostics) BindingTraceFilter.ACCEPT_ALL else BindingTraceFilter.NO_DIAGNOSTICS)
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
-            this.bindingContext, classBuilderMode, fileClassesProvider, IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
-            this.moduleName, isJvm8Target
+            this.bindingContext, classBuilderMode, IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
+            this.moduleName, isJvm8Target, isJvm8TargetWithDefaults
     )
-    val intrinsics: IntrinsicMethods = IntrinsicMethods()
+    val intrinsics: IntrinsicMethods = run {
+        val shouldUseConsistentEquals = languageVersionSettings.supportsFeature(LanguageFeature.ThrowNpeOnExplicitEqualsForBoxedNull) &&
+                                        !configuration.getBoolean(JVMConfigurationKeys.NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL)
+        IntrinsicMethods(target, shouldUseConsistentEquals)
+    }
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
-    val reflectionTypes: ReflectionTypes = ReflectionTypes(module)
     val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(module)
     val factory: ClassFileFactory
     private lateinit var duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics
@@ -158,6 +165,9 @@ class GenerationState @JvmOverloads constructor(
     }
 
     val isCallAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
+    val isReceiverAssertionsDisabled: Boolean =
+            configuration.getBoolean(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS) ||
+            !languageVersionSettings.supportsFeature(LanguageFeature.NullabilityAssertionOnExtensionReceiver)
     val isParamAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS)
     val isInlineDisabled: Boolean = configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
     val useTypeTableInSerializer: Boolean = configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
@@ -165,16 +175,25 @@ class GenerationState @JvmOverloads constructor(
 
     val rootContext: CodegenContext<*> = RootContext(this)
 
-    val classFileVersion: Int = if (isJvm8Target) Opcodes.V1_8 else Opcodes.V1_6
+    val classFileVersion: Int = target.bytecodeVersion
+
+    val generateParametersMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.PARAMETERS_METADATA)
+
+    val shouldInlineConstVals = languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
+
+    val constructorCallNormalizationMode = configuration.get(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
+                                                             JVMConstructorCallNormalizationMode.DEFAULT)
 
     init {
+        val disableOptimization = configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)
+
         this.interceptedBuilderFactory = builderFactory
                 .wrapWith(
-                    { OptimizationClassBuilderFactory(it, configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)) },
-                    ::CoroutineTransformerClassBuilderFactory,
+                    { OptimizationClassBuilderFactory(it, disableOptimization, constructorCallNormalizationMode) },
                     { BuilderFactoryForDuplicateSignatureDiagnostics(
-                            it, this.bindingContext, diagnostics, fileClassesProvider, this.moduleName
-                      ).apply { duplicateSignatureFactory = this } },
+                            it, this.bindingContext, diagnostics, this.moduleName,
+                            shouldGenerate = { !shouldOnlyCollectSignatures(it) }
+                    ).apply { duplicateSignatureFactory = this } },
                     { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
                     { configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)
                               ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it }
@@ -205,7 +224,12 @@ class GenerationState @JvmOverloads constructor(
     fun destroy() {
         interceptedBuilderFactory.close()
     }
+
+    private fun shouldOnlyCollectSignatures(origin: JvmDeclarationOrigin)
+            = classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && origin.originKind in doNotGenerateInLightClassMode
 }
+
+private val doNotGenerateInLightClassMode = setOf(CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, BRIDGE, COLLECTION_STUB, AUGMENTED_BUILTIN_API)
 
 private class LazyJvmDiagnostics(compute: () -> Diagnostics): Diagnostics {
     private val delegate by lazy(LazyThreadSafetyMode.SYNCHRONIZED, compute)

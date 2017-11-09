@@ -1,0 +1,65 @@
+FILE /localDelegatedProperties.kt
+  FUN public fun test1(): kotlin.Unit
+    BLOCK_BODY
+      LOCAL_DELEGATED_PROPERTY val x: kotlin.Int
+        VAR DELEGATE val `x$delegate`: kotlin.Lazy<kotlin.Int>
+          CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
+            <T>: Int
+            initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='<anonymous>(): Int'
+                    CONST Int type=kotlin.Int value='42'
+              FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
+        FUN DELEGATED_PROPERTY_ACCESSOR local final fun <get-x>(): kotlin.Int
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='<get-x>(): Int'
+              CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
+                <T>: Int
+                $receiver: GET_VAR '`x$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
+                thisRef: CONST Null type=kotlin.Nothing? value='null'
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'x: Int' delegate='`x$delegate`: Lazy<Int>' getter='<get-x>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      CALL 'println(Int): Unit' type=kotlin.Unit origin=null
+        message: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_LOCAL_PROPERTY
+  FUN public fun test2(): kotlin.Unit
+    BLOCK_BODY
+      LOCAL_DELEGATED_PROPERTY var x: kotlin.Int
+        VAR DELEGATE val `x$delegate`: kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */
+          CALL 'hashMapOf(): HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
+            <K>: String
+            <V>: Int
+        FUN DELEGATED_PROPERTY_ACCESSOR local final fun <get-x>(): kotlin.Int
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='<get-x>(): Int'
+              CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int origin=null
+                <V>: Int
+                $receiver: GET_VAR '`x$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
+                thisRef: CONST Null type=kotlin.Nothing? value='null'
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'x: Int' delegate='`x$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' getter='<get-x>(): Int' setter='<set-x>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        FUN DELEGATED_PROPERTY_ACCESSOR local final fun <set-x>(value: kotlin.Int): kotlin.Unit
+          VALUE_PARAMETER value-parameter value: kotlin.Int
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='<set-x>(Int): Unit'
+              CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
+                <V>: Int
+                $receiver: GET_VAR '`x$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
+                thisRef: CONST Null type=kotlin.Nothing? value='null'
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'x: Int' delegate='`x$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' getter='<get-x>(): Int' setter='<set-x>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL '<set-x>(Int): Unit' type=kotlin.Int origin=EQ
+          value: CONST Int type=kotlin.Int value='0'
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        BLOCK type=kotlin.Int origin=POSTFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
+            CALL '<get-x>(): Int' type=kotlin.Int origin=POSTFIX_INCR
+          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            CALL '<set-x>(Int): Unit' type=kotlin.Int origin=POSTFIX_INCR
+              value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
+                $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
+          GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL '<set-x>(Int): Unit' type=kotlin.Int origin=PLUSEQ
+          value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
+            $this: CALL '<get-x>(): Int' type=kotlin.Int origin=PLUSEQ
+            other: CONST Int type=kotlin.Int value='1'

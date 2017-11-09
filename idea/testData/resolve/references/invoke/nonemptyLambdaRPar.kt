@@ -6,4 +6,4 @@ fun test(f: Foo) {
   f() { 1<caret>}
 }
 
-// REF: (in Foo).invoke(Any)
+// REF: (in Foo).invoke(vararg Any)

@@ -38,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
+import org.jetbrains.kotlin.idea.configuration.RepositoryDescription;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
 
 import javax.swing.*;
@@ -55,8 +56,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     private static final String VERSIONS_LIST_URL =
             "http://search.maven.org/solrsearch/select?q=g:%22org.jetbrains.kotlin%22+AND+a:%22kotlin-runtime%22&core=gav&rows=20&wt=json";
 
-    private static final String EAP_VERSIONS_URL =
-            "https://bintray.com/kotlin/kotlin-eap/kotlin/";
+    @NotNull private final String minimumVersion;
 
     private final ChooseModulePanel chooseModulePanel;
 
@@ -70,12 +70,14 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     public ConfigureDialogWithModulesAndVersion(
             @NotNull Project project,
             @NotNull KotlinProjectConfigurator configurator,
-            @NotNull Collection<Module> excludeModules
+            @NotNull Collection<Module> excludeModules,
+            @NotNull String minimumVersion
     ) {
         super(project);
 
-        setTitle("Configure Kotlin in Project");
+        setTitle("Configure Kotlin with " + configurator.getPresentableText());
 
+        this.minimumVersion = minimumVersion;
         init();
 
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Find Kotlin Maven plugin versions", false) {
@@ -121,7 +123,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     private void loadKotlinVersions() {
         Collection<String> items;
         try {
-            items = loadVersions();
+            items = loadVersions(minimumVersion);
             hideLoader();
         }
         catch (Throwable t) {
@@ -169,12 +171,13 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     }
 
     @NotNull
-    protected static Collection<String> loadVersions() throws Exception {
+    protected static Collection<String> loadVersions(String minimumVersion) throws Exception {
         List<String> versions = Lists.newArrayList();
 
-        String bundledRuntimeVersion = KotlinRuntimeLibraryUtilKt.bundledRuntimeVersion(KotlinPluginUtil.getPluginVersion());
-        if (ConfigureKotlinInProjectUtilsKt.isEap(bundledRuntimeVersion)) {
-            HttpURLConnection eapConnection = HttpConfigurable.getInstance().openHttpConnection(EAP_VERSIONS_URL + bundledRuntimeVersion);
+        String bundledRuntimeVersion = KotlinRuntimeLibraryUtilKt.bundledRuntimeVersion();
+        RepositoryDescription repositoryDescription = ConfigureKotlinInProjectUtilsKt.getRepositoryForVersion(bundledRuntimeVersion);
+        if (repositoryDescription != null && repositoryDescription.getBintrayUrl() != null) {
+            HttpURLConnection eapConnection = HttpConfigurable.getInstance().openHttpConnection(repositoryDescription.getBintrayUrl() + bundledRuntimeVersion);
             try {
                 int timeout = (int) TimeUnit.SECONDS.toMillis(30);
                 eapConnection.setConnectTimeout(timeout);
@@ -204,7 +207,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
 
                 for (JsonElement element : docsElements) {
                     String versionNumber = element.getAsJsonObject().get("v").getAsString();
-                    if (VersionComparatorUtil.compare("1.0.0", versionNumber) <= 0) {
+                    if (VersionComparatorUtil.compare(minimumVersion, versionNumber) <= 0) {
                         versions.add(versionNumber);
                     }
                 }
@@ -215,6 +218,13 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
         }
         finally {
             urlConnection.disconnect();
+        }
+        Collections.sort(versions, VersionComparatorUtil.COMPARATOR.reversed());
+
+        // Handle the case when the new version has just been released and the Maven search index hasn't been updated yet
+        if (!ConfigureKotlinInProjectUtilsKt.isEap(bundledRuntimeVersion) && !KotlinPluginUtil.isSnapshotVersion() &&
+            !bundledRuntimeVersion.contains("dev") && !versions.contains(bundledRuntimeVersion)) {
+            versions.add(0, bundledRuntimeVersion);
         }
 
         return versions;

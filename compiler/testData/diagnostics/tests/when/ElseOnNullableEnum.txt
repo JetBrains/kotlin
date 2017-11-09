@@ -2,6 +2,7 @@ package
 
 public fun nullableNothing(): kotlin.Nothing?
 public fun platformType(): kotlin.Int
+public fun platformTypeSmartCast(): kotlin.Int
 public fun test(/*0*/ e: E?): kotlin.Int
 public fun withNull(/*0*/ e: E?): kotlin.Int?
 public fun withNullableNothing(/*0*/ e: E?): kotlin.Int?

@@ -31,9 +31,8 @@ import com.intellij.xdebugger.XSourcePosition
 import com.intellij.xdebugger.impl.XSourcePositionImpl
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
+import org.jetbrains.kotlin.idea.debugger.findElementAtLine
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
-import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -44,7 +43,7 @@ import java.util.*
 fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
     val psiFile = PsiManager.getInstance(project).findFile(file)
 
-    if (psiFile == null || psiFile.virtualFile.fileType != KotlinFileType.INSTANCE) {
+    if (psiFile == null || psiFile.virtualFile?.fileType != KotlinFileType.INSTANCE) {
         return false
     }
 
@@ -68,11 +67,11 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
         }
 
         if (element is KtProperty || element is KtParameter) {
-            if ((element is KtParameter && element.hasValOrVar()) || (element is KtProperty && !element.isLocal)) {
-                result = KotlinFieldBreakpointType::class.java
+            result = if ((element is KtParameter && element.hasValOrVar()) || (element is KtProperty && !element.isLocal)) {
+                KotlinFieldBreakpointType::class.java
             }
             else {
-                result = KotlinLineBreakpointType::class.java
+                KotlinLineBreakpointType::class.java
             }
             return false
         }
@@ -103,12 +102,15 @@ fun computeVariants(
     if (mainMethod != null) {
         result.add(kotlinBreakpointType.KotlinLineBreakpointVariant(
                 XSourcePositionImpl.createByElement(mainMethod),
-                CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset) ?: mainMethod))
+                CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset)))
     }
 
     lambdas.forEachIndexed { ordinal, lambda ->
-        result.add(kotlinBreakpointType.KotlinLambdaBreakpointVariant(
-                XSourcePositionImpl.createByElement(lambda.bodyExpression), lambda, ordinal))
+        val positionImpl = XSourcePositionImpl.createByElement(lambda.bodyExpression)
+
+        if (positionImpl != null) {
+            result.add(kotlinBreakpointType.KotlinLambdaBreakpointVariant(positionImpl, lambda, ordinal))
+        }
     }
 
     val allBreakpoint = (kotlinBreakpointType as JavaLineBreakpointType).JavaBreakpointVariant(position)
@@ -124,34 +126,21 @@ fun getLambdasAtLineIfAny(sourcePosition: SourcePosition): List<KtFunction> {
 }
 
 fun getLambdasAtLineIfAny(file: KtFile, line: Int): List<KtFunction> {
-    var lineStartOffset = file.getLineStartOffset(line) ?: return emptyList()
-    var lineEndOffset = file.getLineEndOffset(line) ?: return emptyList()
+    val lineElement = findElementAtLine(file, line) as? KtElement ?: return emptyList()
 
-    var topMostElement: PsiElement? = null
-    var elementAt: PsiElement?
-    while (topMostElement !is KtElement && lineStartOffset < lineEndOffset) {
-        elementAt = file.findElementAt(lineStartOffset)
-        if (elementAt != null) {
-            topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, lineStartOffset)
-        }
-        lineStartOffset++
-    }
+    val start = lineElement.startOffset
+    val end = lineElement.endOffset
 
-    if (topMostElement !is KtElement) return emptyList()
-
-    val start = topMostElement.startOffset
-    val end = topMostElement.endOffset
-
-    val allInlineFunctionCalls = CodeInsightUtils.
+    val allLiterals = CodeInsightUtils.
             findElementsOfClassInRange(file, start, end, KtFunction::class.java)
-            .filter { KtPsiUtil.getParentCallIfPresent(it as KtExpression) != null }
             .filterIsInstance<KtFunction>()
+            // filter function literals and functional expressions
+            .filter { it is KtFunctionLiteral || it.name == null }
             .toSet()
 
-    return allInlineFunctionCalls.filter {
+    return allLiterals.filter {
         val statement = (it.bodyExpression as? KtBlockExpression)?.statements?.firstOrNull() ?: it
         statement.getLineNumber() == line && statement.getLineNumber(false) == line
     }
 }
-
 

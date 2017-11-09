@@ -1,7 +1,7 @@
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<Int>): Int {
     val inner = javaClass.createInner<String>()
-    return inner.doSomething(1, "") { }
+    return <!TYPE_MISMATCH!>inner.doSomething(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>, "") <!TYPE_MISMATCH!>{ }<!><!>
 }
 
 // FILE: JavaClass.java

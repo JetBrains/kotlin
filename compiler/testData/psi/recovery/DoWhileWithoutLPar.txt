@@ -1,4 +1,4 @@
-JetFile: DoWhileWithoutLPar.kt
+KtFile: DoWhileWithoutLPar.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

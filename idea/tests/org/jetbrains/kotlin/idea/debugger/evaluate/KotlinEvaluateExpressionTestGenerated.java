@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -46,7 +47,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         }
 
         public void testAllFilesPresentInSingleBreakpoint() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("anonymousObjects.kt")
@@ -217,9 +218,27 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("internalFunctionEvaluate.kt")
+        public void testInternalFunctionEvaluate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/internalFunctionEvaluate.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
+        @TestMetadata("internalProperty.kt")
+        public void testInternalProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/internalProperty.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("kt12206BasePropertyWithoutBackingField.kt")
         public void testKt12206BasePropertyWithoutBackingField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt12206BasePropertyWithoutBackingField.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
+        @TestMetadata("kt17514.kt")
+        public void testKt17514() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt17514.kt");
             doSingleBreakpointTest(fileName);
         }
 
@@ -378,7 +397,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CompilingEvaluator extends AbstractKotlinEvaluateExpressionTest {
             public void testAllFilesPresentInCompilingEvaluator() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ceAnonymousObject.kt")
@@ -453,7 +472,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateExpression extends AbstractKotlinEvaluateExpressionTest {
             public void testAllFilesPresentInCreateExpression() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/createExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/createExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("createExpressionCastToBuiltIn.kt")
@@ -480,7 +499,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ExtraVariables extends AbstractKotlinEvaluateExpressionTest {
             public void testAllFilesPresentInExtraVariables() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("evBreakpointOnPropertyDeclaration.kt")
@@ -555,12 +574,24 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Frame extends AbstractKotlinEvaluateExpressionTest {
             public void testAllFilesPresentInFrame() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("catchVariable.kt")
+            public void testCatchVariable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/catchVariable.kt");
+                doSingleBreakpointTest(fileName);
             }
 
             @TestMetadata("delegatedPropertyInClass.kt")
             public void testDelegatedPropertyInClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClass.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("delegatedPropertyInClassWithToString.kt")
+            public void testDelegatedPropertyInClassWithToString() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClassWithToString.kt");
                 doSingleBreakpointTest(fileName);
             }
 
@@ -702,7 +733,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaContext extends AbstractKotlinEvaluateExpressionTest {
             public void testAllFilesPresentInJavaContext() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/javaContext"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("jcBlock.kt")
@@ -747,7 +778,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Labels extends AbstractKotlinEvaluateExpressionTest {
             public void testAllFilesPresentInLabels() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("lCallOnLabeledObj.kt")
@@ -786,7 +817,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Lambdas extends AbstractKotlinEvaluateExpressionTest {
             public void testAllFilesPresentInLambdas() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("destructuringParam.kt")
@@ -804,6 +835,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("inlineLambda.kt")
             public void testInlineLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/inlineLambda.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("lambdaOnReturn.kt")
+            public void testLambdaOnReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/lambdaOnReturn.kt");
                 doSingleBreakpointTest(fileName);
             }
 
@@ -836,6 +873,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/twoLambdasOnOneLineSecond.kt");
                 doSingleBreakpointTest(fileName);
             }
+
+            @TestMetadata("underscoreNames.kt")
+            public void testUnderscoreNames() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/underscoreNames.kt");
+                doSingleBreakpointTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/renderer")
@@ -843,7 +886,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Renderer extends AbstractKotlinEvaluateExpressionTest {
             public void testAllFilesPresentInRenderer() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/renderer"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/renderer"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("toStringRenderer.kt")
@@ -859,7 +902,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultipleBreakpoints extends AbstractKotlinEvaluateExpressionTest {
         public void testAllFilesPresentInMultipleBreakpoints() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("clearCache.kt")
@@ -886,6 +929,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
+        @TestMetadata("extensionMemberFunctionInObject.kt")
+        public void testExtensionMemberFunctionInObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/extensionMemberFunctionInObject.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
         @TestMetadata("extensionMemberProperty.kt")
         public void testExtensionMemberProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/extensionMemberProperty.kt");
@@ -901,6 +950,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("initializer.kt")
         public void testInitializer() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/initializer.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
+        @TestMetadata("invisibleDeclarations.kt")
+        public void testInvisibleDeclarations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/invisibleDeclarations.kt");
             doMultipleBreakpointsTest(fileName);
         }
 
@@ -975,7 +1030,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Library extends AbstractKotlinEvaluateExpressionTest {
             public void testAllFilesPresentInLibrary() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("customLibClassName.kt")

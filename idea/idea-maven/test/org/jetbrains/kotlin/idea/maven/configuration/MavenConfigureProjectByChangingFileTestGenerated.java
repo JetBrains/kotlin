@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.maven.configuration;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMa
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Jvm extends AbstractMavenConfigureProjectByChangingFileTest {
         public void testAllFilesPresentInJvm() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-maven/testData/configurator/jvm"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-maven/testData/configurator/jvm"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("fixExisting")
@@ -78,6 +79,12 @@ public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMa
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/configurator/jvm/simpleProjectSnapshot/");
             doTestWithMaven(fileName);
         }
+
+        @TestMetadata("withJava9ModuleInfo")
+        public void testWithJava9ModuleInfo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/configurator/jvm/withJava9ModuleInfo/");
+            doTestWithMaven(fileName);
+        }
     }
 
     @TestMetadata("idea/idea-maven/testData/configurator/js")
@@ -85,7 +92,7 @@ public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMa
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Js extends AbstractMavenConfigureProjectByChangingFileTest {
         public void testAllFilesPresentInJs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-maven/testData/configurator/js"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-maven/testData/configurator/js"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("libraryMissed")

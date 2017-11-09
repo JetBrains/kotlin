@@ -37,11 +37,11 @@ class NavigateToStdlibSourceTest : KotlinCodeInsightTestCase() {
     }
 
     fun testRefToPrintlnWithJS() {
-        doTest("core.kt", ModuleKind.KOTLIN_JAVASCRIPT)
+        doTest("console.kt", ModuleKind.KOTLIN_JAVASCRIPT)
     }
 
     fun testRefToPrintlnWithJSAndJVM() {
-        doTest("core.kt", ModuleKind.KOTLIN_JAVASCRIPT, ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES)
+        doTest("console.kt", ModuleKind.KOTLIN_JAVASCRIPT, ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES)
     }
 
     private fun doTest(sourceFileName: String, mainModule: ModuleKind, additionalModule: ModuleKind? = null) {

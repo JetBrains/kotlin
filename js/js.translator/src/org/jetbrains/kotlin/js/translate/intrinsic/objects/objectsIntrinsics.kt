@@ -16,30 +16,35 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.objects
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.js.translate.context.Namer
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
-class DefaultClassObjectIntrinsic(val fqName: FqName): ObjectIntrinsic {
-    override fun apply(context: TranslationContext): JsExpression {
-        val nameRef = context.getQualifiedReference(fqName)
-        return JsAstUtils.replaceRootReference(nameRef, Namer.kotlinObject())
-    }
+class DefaultClassObjectIntrinsic( val fqName: FqName): ObjectIntrinsic {
+    override fun apply(context: TranslationContext) = context.getReferenceToIntrinsic(fqName.asString())
 }
 
 class ObjectIntrinsics {
-    fun getIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic {
-        if (!CompanionObjectMapping.isMappedIntrinsicCompanionObject(classDescriptor)) return NO_OBJECT_INTRINSIC
+    private val cache = mutableMapOf<ClassDescriptor, ObjectIntrinsic>()
+
+    fun getIntrinsic(classDescriptor: ClassDescriptor) = cache.getOrPut(classDescriptor) { createIntrinsic(classDescriptor) }
+
+    private fun createIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic {
+        if (classDescriptor.fqNameUnsafe == KotlinBuiltIns.FQ_NAMES._enum ||
+            !CompanionObjectMapping.isMappedIntrinsicCompanionObject(classDescriptor)
+        ) {
+            return NO_OBJECT_INTRINSIC
+        }
 
         val containingDeclaration = classDescriptor.containingDeclaration
         val name = Name.identifier(containingDeclaration.name.asString() + "CompanionObject")
 
-        return DefaultClassObjectIntrinsic(FqName("kotlin.js.internal").child(name));
+        return DefaultClassObjectIntrinsic(FqName("kotlin.js.internal").child(name))
     }
 }
 

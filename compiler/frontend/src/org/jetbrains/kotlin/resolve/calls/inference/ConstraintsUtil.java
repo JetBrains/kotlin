@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.calls.inference;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -67,7 +66,7 @@ public class ConstraintsUtil {
                 context.put(typeVariable.getOriginalTypeParameter().getTypeConstructor(), typeProjection);
             }
         }
-        Collection<TypeSubstitutor> typeSubstitutors = new ArrayList<TypeSubstitutor>(substitutionContexts.size());
+        Collection<TypeSubstitutor> typeSubstitutors = new ArrayList<>(substitutionContexts.size());
         for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
             typeSubstitutors.add(TypeSubstitutor.create(context));
         }
@@ -96,15 +95,8 @@ public class ConstraintsUtil {
         KotlinType type = constraintSystem.getTypeBounds(typeVariable).getValue();
         if (type == null) return true;
 
-        List<TypeParameterDescriptor> typeParametersUsedInSystem = CollectionsKt.map(
-                constraintSystem.getTypeVariables(),
-                new Function1<TypeVariable, TypeParameterDescriptor>() {
-                    @Override
-                    public TypeParameterDescriptor invoke(TypeVariable variable) {
-                        return variable.getOriginalTypeParameter();
-                    }
-                }
-        );
+        List<TypeParameterDescriptor> typeParametersUsedInSystem =
+                CollectionsKt.map(constraintSystem.getTypeVariables(), TypeVariable::getOriginalTypeParameter);
 
         for (KotlinType upperBound : typeParameter.getUpperBounds()) {
             if (!substituteOtherTypeParametersInBound &&
@@ -131,12 +123,7 @@ public class ConstraintsUtil {
                 interestingMethods.add(method);
             }
         }
-        Collections.sort(interestingMethods, new Comparator<Method>() {
-            @Override
-            public int compare(@NotNull Method method1, @NotNull Method method2) {
-                return method1.getName().compareTo(method2.getName());
-            }
-        });
+        interestingMethods.sort(Comparator.comparing(Method::getName));
         for (Iterator<Method> iterator = interestingMethods.iterator(); iterator.hasNext(); ) {
             Method method = iterator.next();
             try {
@@ -145,10 +132,7 @@ public class ConstraintsUtil {
                     sb.append("\n");
                 }
             }
-            catch (IllegalAccessException e) {
-                sb.append(e.getMessage());
-            }
-            catch (InvocationTargetException e) {
+            catch (IllegalAccessException | InvocationTargetException e) {
                 sb.append(e.getMessage());
             }
         }

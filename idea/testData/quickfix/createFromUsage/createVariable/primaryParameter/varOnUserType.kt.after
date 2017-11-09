@@ -1,5 +1,5 @@
 // "Create property 'foo' as constructor parameter" "true"
-// ERROR: No value passed for parameter foo
+// ERROR: No value passed for parameter 'foo'
 
 class A<T>(val n: T, var foo: String)
 

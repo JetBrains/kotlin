@@ -78,11 +78,11 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
         }
 
         val typeParameters = resolvedCall.candidateDescriptor.typeParameters
-        val (inferredTypeParameters, notInferredTypeParameters) = typeParameters.partition { parameter -> parameter.isInferred() }
+        val (inferredTypeParameters, notInferredTypeParameters) = typeParameters.partition(TypeParameterDescriptor::isInferred)
 
         append("<br/>$indent<i>where</i> ")
         if (!notInferredTypeParameters.isEmpty()) {
-            append(notInferredTypeParameters.map { typeParameter -> renderError(typeParameter.name) }.joinToString())
+            append(notInferredTypeParameters.joinToString { typeParameter -> renderError(typeParameter.name) })
             append("<i> cannot be inferred</i>")
             if (!inferredTypeParameters.isEmpty()) {
                 append("; ")
@@ -91,9 +91,9 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
 
         val typeParameterToTypeArgumentMap = resolvedCall.typeArguments
         if (!inferredTypeParameters.isEmpty()) {
-            append(inferredTypeParameters.map { typeParameter ->
+            append(inferredTypeParameters.joinToString { typeParameter ->
                 "${typeParameter.name} = ${typeRenderer.render(typeParameterToTypeArgumentMap[typeParameter]!!, context)}"
-            }.joinToString())
+            })
         }
     }
 
@@ -103,7 +103,7 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
         append(typeRenderer.render(receiverParameter.type, context)).append(".")
     }
     append(HtmlEscapers.htmlEscaper().escape(resultingDescriptor.name.asString())).append("(")
-    append(resultingDescriptor.valueParameters.map { parameter -> renderParameter(parameter) }.joinToString())
+    append(resultingDescriptor.valueParameters.joinToString(transform = ::renderParameter))
     append(if (resolvedCall.hasUnmappedArguments()) renderError(")") else ")")
 
     if (!resolvedCall.candidateDescriptor.typeParameters.isEmpty()) {

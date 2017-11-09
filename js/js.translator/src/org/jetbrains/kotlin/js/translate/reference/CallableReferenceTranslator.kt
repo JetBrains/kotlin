@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,149 +16,246 @@
 
 package org.jetbrains.kotlin.js.translate.reference
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsInvocation
-import com.google.dart.compiler.backend.js.ast.JsLiteral
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils
+import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.js.translate.utils.finalElement
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.ArrayList
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getFunctionResolvedCallWithAssert
+import org.jetbrains.kotlin.resolve.calls.callUtil.getPropertyResolvedCallWithAssert
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
+import org.jetbrains.kotlin.resolve.calls.model.DelegatingResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 
 object CallableReferenceTranslator {
 
     fun translate(expression: KtCallableReferenceExpression, context: TranslationContext): JsExpression {
-        val descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression.callableReference)
+        val referencedFunction = expression.callableReference.getResolvedCallWithAssert(context.bindingContext())
+        val descriptor = referencedFunction.getResultingDescriptor()
+
+        val extensionReceiver = referencedFunction.extensionReceiver
+        val dispatchReceiver = referencedFunction.dispatchReceiver
+        assert(dispatchReceiver == null || extensionReceiver == null) { "Cannot generate reference with both receivers: " + descriptor }
+
+        val receiver = (dispatchReceiver ?: extensionReceiver)?.let {
+            when (it) {
+                is TransientReceiver -> null
+                is ImplicitClassReceiver -> context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForReceiver(it))
+                is ExtensionReceiver -> JsThisRef()
+                is ExpressionReceiver -> Translation.translateAsExpression(it.expression, context)
+                else -> throw UnsupportedOperationException("Unsupported receiver value: " + it)
+            }
+        }
+
         return when (descriptor) {
             is PropertyDescriptor ->
-                translateForProperty(descriptor, context, expression)
+                translateForProperty(descriptor, context, expression, receiver)
             is FunctionDescriptor ->
-                translateForFunction(descriptor, context, expression)
+                translateForFunction(descriptor, context, expression, receiver)
             else ->
                 throw IllegalArgumentException("Expected property or function: $descriptor, expression=${expression.text}")
         }
     }
 
-    private fun reportNotSupported(context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
-        context.bindingTrace().report(ErrorsJs.REFERENCE_TO_BUILTIN_MEMBERS_NOT_SUPPORTED.on(expression, expression))
-        return JsLiteral.NULL
-    }
+    private fun translateForFunction(
+            descriptor: FunctionDescriptor,
+            context: TranslationContext,
+            expression: KtCallableReferenceExpression,
+            receiver: JsExpression?
+    ): JsExpression {
+        val realResolvedCall = expression.callableReference.getFunctionResolvedCallWithAssert(context.bindingContext())
+        val fakeExpression = CodegenUtil.constructFakeFunctionCall(expression.project, descriptor.valueParameters.size)
 
-    private fun translateForFunction(descriptor: FunctionDescriptor, context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
-        return when {
-        // TODO Support for callable reference to builtin functions and members
-            JsDescriptorUtils.isBuiltin(descriptor) ->
-                reportNotSupported(context, expression)
-            isConstructor(descriptor) ->
-                translateForConstructor(descriptor, context)
-            isExtension(descriptor) ->
-                translateForExtensionFunction(descriptor, context)
-            isMember(descriptor) ->
-                translateForMemberFunction(descriptor, context)
-            else ->
-                ReferenceTranslator.translateAsFQReference(descriptor, context)
-        }
-    }
+        val fakeCall = CallMaker.makeCall(fakeExpression, null, null, fakeExpression, fakeExpression.valueArguments)
+        val fakeResolvedCall = object : DelegatingResolvedCall<FunctionDescriptor>(realResolvedCall) {
+            val valueArgumentList = fakeCall.valueArguments.map(::ExpressionValueArgument)
+            val valueArgumentMap = valueArgumentList.withIndex().associate { (index, arg) -> descriptor.valueParameters[index] to arg }
 
-    private fun translateForProperty(descriptor: PropertyDescriptor, context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
-        return when {
-        // TODO Support for callable reference to builtin properties
-            JsDescriptorUtils.isBuiltin(descriptor) ->
-                reportNotSupported(context, expression)
-            isExtension(descriptor) ->
-                translateForExtensionProperty(descriptor, context)
-            isMember(descriptor) ->
-                translateForMemberProperty(descriptor, context)
-            else ->
-                translateForTopLevelProperty(descriptor, context)
-        }
-    }
+            override fun getCall() = fakeCall
 
-    private fun isConstructor(descriptor: CallableDescriptor) = descriptor is ConstructorDescriptor
+            override fun getValueArgumentsByIndex(): List<ResolvedValueArgument> = valueArgumentList
 
-    private fun isExtension(descriptor: CallableDescriptor) = DescriptorUtils.isExtension(descriptor)
+            override fun getValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> = valueArgumentMap
 
-    private fun isMember(descriptor: CallableDescriptor) = JsDescriptorUtils.getContainingDeclaration(descriptor) is ClassDescriptor
-
-    private fun isVar(descriptor: PropertyDescriptor) = if (descriptor.isVar) JsLiteral.TRUE else JsLiteral.FALSE
-
-    private fun translateForTopLevelProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
-        val packageDescriptor = JsDescriptorUtils.getContainingDeclaration(descriptor)
-        assert(packageDescriptor is PackageFragmentDescriptor) { "Expected PackageFragmentDescriptor: $packageDescriptor" }
-
-        val jsPackageNameRef = context.getQualifiedReference(packageDescriptor)
-        val jsPropertyName = context.getNameForDescriptor(descriptor)
-        val jsPropertyNameAsString = context.program().getStringLiteral(jsPropertyName.toString())
-
-        return JsInvocation(context.namer().callableRefForTopLevelPropertyReference(), jsPackageNameRef, jsPropertyNameAsString,
-                            isVar(descriptor))
-    }
-
-    private fun translateForMemberProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
-        val jsPropertyName = context.getNameForDescriptor(descriptor)
-        val jsPropertyNameAsString = context.program().getStringLiteral(jsPropertyName.toString())
-        return JsInvocation(context.namer().callableRefForMemberPropertyReference(), jsPropertyNameAsString, isVar(descriptor))
-    }
-
-    private fun translateForExtensionProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
-        val jsGetterNameRef = context.getQualifiedReference(descriptor.getter!!)
-        val propertyName = descriptor.name
-        val jsPropertyNameAsString = context.program().getStringLiteral(propertyName.asString())
-        val argumentList = ArrayList<JsExpression>(3)
-        argumentList.add(jsPropertyNameAsString)
-        argumentList.add(jsGetterNameRef)
-        if (descriptor.isVar) {
-            val jsSetterNameRef = context.getQualifiedReference(descriptor.setter!!)
-            argumentList.add(jsSetterNameRef)
-        }
-        if (AnnotationsUtils.isNativeObject(descriptor))
-            return translateForMemberProperty(descriptor, context)
-        else
-            return JsInvocation(context.namer().callableRefForExtensionPropertyReference(), argumentList)
-    }
-
-    private fun translateForConstructor(descriptor: FunctionDescriptor, context: TranslationContext): JsExpression {
-        val jsFunctionRef = ReferenceTranslator.translateAsFQReference(descriptor, context)
-        return JsInvocation(context.namer().callableRefForConstructorReference(), jsFunctionRef)
-    }
-
-    private fun translateForExtensionFunction(descriptor: FunctionDescriptor, context: TranslationContext): JsExpression {
-        val receiverParameterDescriptor = descriptor.extensionReceiverParameter
-        assert(receiverParameterDescriptor != null) { "receiverParameter for extension should not be null" }
-
-        val jsFunctionRef = ReferenceTranslator.translateAsFQReference(descriptor, context)
-        if (descriptor.visibility == Visibilities.LOCAL) {
-            return JsInvocation(context.namer().callableRefForLocalExtensionFunctionReference(), jsFunctionRef)
+            override fun getExplicitReceiverKind(): ExplicitReceiverKind {
+                if (receiver != null) {
+                    return if (descriptor.isExtension) ExplicitReceiverKind.EXTENSION_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER
+                }
+                else {
+                    return super.getExplicitReceiverKind()
+                }
+            }
         }
 
-        else if (AnnotationsUtils.isNativeObject(descriptor)) {
-            val jetType = receiverParameterDescriptor!!.type
-            val receiverClassDescriptor = DescriptorUtils.getClassDescriptorForType(jetType)
-            return translateAsMemberFunctionReference(descriptor, receiverClassDescriptor, context)
+        val function = JsFunction(context.scope(), JsBlock(), "")
+        function.source = expression
+        val receiverParam = if (descriptor.dispatchReceiverParameter != null ||
+                                descriptor.extensionReceiverParameter != null ||
+                                receiver != null) {
+            val paramName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
+            function.parameters += JsParameter(paramName)
+            paramName.makeRef()
         }
         else {
-            return JsInvocation(context.namer().callableRefForExtensionFunctionReference(), jsFunctionRef)
+            null
+        }
+
+        val functionDescriptor = realResolvedCall.resultingDescriptor
+        val aliases = mutableMapOf<KtExpression, JsExpression>()
+        for ((index, valueArg) in fakeCall.valueArguments.withIndex()) {
+            val paramName = JsScope.declareTemporaryName(descriptor.valueParameters[index].name.asString())
+            function.parameters += JsParameter(paramName)
+            val paramRef = paramName.makeRef()
+            paramRef.type = context.currentModule.builtIns.anyType
+            val type = functionDescriptor.valueParameters[index].type
+            aliases[valueArg.getArgumentExpression()!!] = TranslationUtils.coerce(context, paramRef, type)
+        }
+        val functionContext = context.innerBlock(function.body).innerContextWithAliasesForExpressions(aliases)
+        val invocation = CallTranslator.translate(functionContext, fakeResolvedCall, receiverParam)
+        function.body.statements += JsReturn(TranslationUtils.coerce(context, invocation, context.currentModule.builtIns.anyType))
+
+        val rawCallableRef = bindIfNecessary(function, receiver)
+        return context.wrapFunctionCallableRef(receiver, expression.callableReference.getReferencedName(), rawCallableRef)
+    }
+
+    private fun translateForProperty(
+            descriptor: PropertyDescriptor,
+            context: TranslationContext,
+            expression: KtCallableReferenceExpression,
+            receiver: JsExpression?
+    ): JsExpression {
+        val realCall = expression.callableReference.getPropertyResolvedCallWithAssert(context.bindingContext())
+
+        val call = object : DelegatingResolvedCall<PropertyDescriptor>(realCall) {
+            override fun getExplicitReceiverKind(): ExplicitReceiverKind {
+                if (receiver != null) {
+                    return if (descriptor.isExtension) ExplicitReceiverKind.EXTENSION_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER
+                }
+                else {
+                    return super.getExplicitReceiverKind()
+                }
+            }
+        }
+
+        val getter = translateForPropertyAccessor(call, expression, descriptor, context, receiver, false) { context, call, _, receiverParam ->
+            CallTranslator.translateGet(context, call, receiverParam)
+        }
+
+        val setter = if (isSetterVisible(descriptor, context)) {
+            translateForPropertyAccessor(call, expression, descriptor, context, receiver, true, CallTranslator::translateSet)
+        }
+        else {
+            null
+        }
+
+        return context.wrapPropertyCallableRef(receiver, descriptor, expression.callableReference.getReferencedName(), getter, setter)
+    }
+
+    private fun isSetterVisible(descriptor: PropertyDescriptor, context: TranslationContext): Boolean {
+        val setter = descriptor.setter ?: return false
+        if (setter.visibility != Visibilities.PRIVATE) return true
+        val classDescriptor = context.classDescriptor ?: return false
+
+        val outerClasses = generateSequence<DeclarationDescriptor>(classDescriptor) { it.containingDeclaration }
+                .filterIsInstance<ClassDescriptor>()
+        return descriptor.containingDeclaration in outerClasses
+    }
+
+    private fun translateForPropertyAccessor(
+            call: ResolvedCall<out PropertyDescriptor>,
+            expression: KtExpression,
+            descriptor: PropertyDescriptor,
+            context: TranslationContext,
+            receiver: JsExpression?,
+            isSetter: Boolean,
+            translator: (TranslationContext, ResolvedCall<out PropertyDescriptor>, JsExpression, JsExpression?) -> JsExpression
+    ): JsExpression {
+        val accessorFunction = JsFunction(context.scope(), JsBlock(), "")
+        accessorFunction.source = expression.finalElement
+        val accessorContext = context.innerBlock(accessorFunction.body)
+        val receiverParam = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
+            val name = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
+            accessorFunction.parameters += JsParameter(name)
+            name.makeRef()
+        }
+        else {
+            null
+        }
+
+        val valueParam = if (isSetter) {
+            val name = JsScope.declareTemporaryName("value")
+            accessorFunction.parameters += JsParameter(name)
+            name.makeRef()
+        }
+        else {
+            JsNullLiteral()
+        }
+
+        val accessorResult = translator(accessorContext, call, valueParam, receiverParam)
+        accessorFunction.body.statements += if (isSetter) accessorResult.makeStmt() else JsReturn(accessorResult)
+        return bindIfNecessary(accessorFunction, receiver)
+    }
+
+    private fun bindIfNecessary(function: JsFunction, receiver: JsExpression?): JsExpression {
+        return if (receiver != null) {
+            JsInvocation(JsNameRef("bind", function), JsNullLiteral(), receiver)
+        }
+        else {
+            function
         }
     }
 
-    private fun translateForMemberFunction(descriptor: FunctionDescriptor, context: TranslationContext): JsExpression {
-        val classDescriptor = JsDescriptorUtils.getContainingDeclaration(descriptor) as? ClassDescriptor ?:
-                              throw IllegalArgumentException("Expected ClassDescriptor: $descriptor")
-        return translateAsMemberFunctionReference(descriptor, classDescriptor, context)
+    private fun TranslationContext.wrapPropertyCallableRef(
+            receiver: JsExpression?,
+            descriptor: PropertyDescriptor,
+            name: String,
+            getter: JsExpression,
+            setter: JsExpression?
+    ): JsExpression {
+        var argCount = if (descriptor.containingDeclaration is ClassDescriptor || descriptor.extensionReceiverParameter != null) 1 else 0
+        if (receiver != null) {
+            argCount--
+        }
+        val nameLiteral = JsStringLiteral(name)
+        val argCountLiteral = JsIntLiteral(argCount)
+        val invokeFun = getReferenceToIntrinsic(Namer.PROPERTY_CALLABLE_REF)
+        val invocation = JsInvocation(invokeFun, nameLiteral, argCountLiteral, getter)
+        if (setter != null) {
+            invocation.arguments += setter
+        }
+        invocation.callableReferenceReceiver = receiver
+        return invocation
     }
 
-    private fun translateAsMemberFunctionReference(
-            descriptor: CallableDescriptor,
-            classDescriptor: ClassDescriptor,
-            context: TranslationContext
+    private fun TranslationContext.wrapFunctionCallableRef(
+            receiver: JsExpression?,
+            name: String,
+            function: JsExpression
     ): JsExpression {
-        val jsClassNameRef = context.getQualifiedReference(classDescriptor)
-        val funName = context.getNameForDescriptor(descriptor)
-        val funNameAsString = context.program().getStringLiteral(funName.toString())
-        return JsInvocation(context.namer().callableRefForMemberFunctionReference(), jsClassNameRef, funNameAsString)
+        val nameLiteral = JsStringLiteral(name)
+        val invokeFun = getReferenceToIntrinsic(Namer.FUNCTION_CALLABLE_REF)
+        invokeFun.sideEffects = SideEffectKind.PURE
+        val invocation = JsInvocation(invokeFun, nameLiteral, function)
+        invocation.isCallableReference = true
+        invocation.sideEffects = SideEffectKind.PURE
+        invocation.callableReferenceReceiver = receiver
+        return invocation
     }
 }

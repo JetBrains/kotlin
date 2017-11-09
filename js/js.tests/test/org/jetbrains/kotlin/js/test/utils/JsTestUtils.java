@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.test.utils;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.JavaScript;
@@ -59,7 +58,7 @@ public final class JsTestUtils {
     public static List<String> getAllFilesInDir(@NotNull String dirName) {
         File dir = new File(dirName);
         assert dir.isDirectory() : dir + " is not a directory.";
-        List<String> fullFilePaths = new ArrayList<String>();
+        List<String> fullFilePaths = new ArrayList<>();
         for (String fileName : dir.list()) {
             fullFilePaths.add(dirName + "/" + fileName);
         }
@@ -74,11 +73,6 @@ public final class JsTestUtils {
 
         List<File> files = FileUtil.findFilesByMask(Pattern.compile(".*\\." + extension + "$"), dir);
 
-        return ContainerUtil.map2List(files, new Function<File, String>() {
-            @Override
-            public String fun(File file) {
-                return file.getAbsolutePath();
-            }
-        });
+        return ContainerUtil.map2List(files, File::getAbsolutePath);
     }
 }

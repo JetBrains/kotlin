@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,6 +106,12 @@ abstract class DescriptorRenderer {
             modifiers = emptySet()
         }
 
+        @JvmField val COMPACT_WITHOUT_SUPERTYPES: DescriptorRenderer = withOptions {
+            withDefinedIn = false
+            modifiers = emptySet()
+            withoutSuperTypes = true
+        }
+
         @JvmField val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             modifiers = emptySet()
             classifierNamePolicy = ClassifierNamePolicy.SHORT
@@ -144,41 +150,62 @@ abstract class DescriptorRenderer {
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        fun getClassKindPrefix(klass: ClassDescriptor): String {
-            if (klass.isCompanionObject) {
-                return "companion object"
-            }
-            return when (klass.kind) {
-                ClassKind.CLASS -> "class"
-                ClassKind.INTERFACE -> "interface"
-                ClassKind.ENUM_CLASS -> "enum class"
-                ClassKind.OBJECT -> "object"
-                ClassKind.ANNOTATION_CLASS -> "annotation class"
-                ClassKind.ENUM_ENTRY -> "enum entry"
-            }
-        }
+        fun getClassifierKindPrefix(classifier: ClassifierDescriptorWithTypeParameters): String =
+                when (classifier) {
+                    is TypeAliasDescriptor ->
+                        "typealias"
+                    is ClassDescriptor ->
+                        if (classifier.isCompanionObject) {
+                            "companion object"
+                        }
+                        else when (classifier.kind) {
+                            ClassKind.CLASS -> "class"
+                            ClassKind.INTERFACE -> "interface"
+                            ClassKind.ENUM_CLASS -> "enum class"
+                            ClassKind.OBJECT -> "object"
+                            ClassKind.ANNOTATION_CLASS -> "annotation class"
+                            ClassKind.ENUM_ENTRY -> "enum entry"
+                        }
+                    else ->
+                        throw AssertionError("Unexpected classifier: $classifier")
+                }
     }
+}
+
+enum class AnnotationArgumentsRenderingPolicy(
+        val includeAnnotationArguments: Boolean = false,
+        val includeEmptyAnnotationArguments: Boolean = false
+) {
+    NO_ARGUMENTS(),
+    UNLESS_EMPTY(true),
+    ALWAYS_PARENTHESIZED(true, true)
 }
 
 interface DescriptorRendererOptions {
     var classifierNamePolicy: ClassifierNamePolicy
     var withDefinedIn: Boolean
+    var withSourceFileForTopLevel: Boolean
     var modifiers: Set<DescriptorRendererModifier>
     var startFromName: Boolean
+    var startFromDeclarationKeyword: Boolean
     var debugMode: Boolean
     var classWithPrimaryConstructor: Boolean
     var verbose: Boolean
     var unitReturnType: Boolean
     var withoutReturnType: Boolean
     var normalizedVisibilities: Boolean
-    var showInternalKeyword: Boolean
+    var renderDefaultVisibility: Boolean
     var uninferredTypeParameterAsName: Boolean
     var overrideRenderingPolicy: OverrideRenderingPolicy
     var valueParametersHandler: DescriptorRenderer.ValueParametersHandler
     var textFormat: RenderingFormat
     var excludedAnnotationClasses: Set<FqName>
     var excludedTypeAnnotationClasses: Set<FqName>
-    var includeAnnotationArguments: Boolean
+
+    var annotationArgumentsRenderingPolicy: AnnotationArgumentsRenderingPolicy
+    val includeAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeAnnotationArguments
+    val includeEmptyAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeEmptyAnnotationArguments
+
     var includePropertyConstant: Boolean
     var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
     var withoutTypeParameters: Boolean
@@ -186,7 +213,7 @@ interface DescriptorRendererOptions {
     var renderCompanionObjectName: Boolean
     var withoutSuperTypes: Boolean
     var typeNormalizer: (KotlinType) -> KotlinType
-    var renderDefaultValues: Boolean
+    var defaultParameterValueRenderer: ((ValueParameterDescriptor) -> String)?
     var secondaryConstructorsAsPrimary: Boolean
     var renderAccessors: Boolean
     var renderDefaultAnnotationArguments: Boolean
@@ -195,32 +222,10 @@ interface DescriptorRendererOptions {
     var renderUnabbreviatedType: Boolean
     var includeAdditionalModifiers: Boolean
     var parameterNamesInFunctionalTypes: Boolean
+    var renderFunctionContracts: Boolean
 }
 
 object ExcludedTypeAnnotations {
-    val annotationsForNullabilityAndMutability = setOf(
-            FqName("org.jetbrains.annotations.ReadOnly"),
-            FqName("org.jetbrains.annotations.Mutable"),
-            FqName("org.jetbrains.annotations.NotNull"),
-            FqName("org.jetbrains.annotations.Nullable"),
-            FqName("android.support.annotation.Nullable"),
-            FqName("android.support.annotation.NonNull"),
-            FqName("com.android.annotations.Nullable"),
-            FqName("com.android.annotations.NonNull"),
-            FqName("org.eclipse.jdt.annotation.Nullable"),
-            FqName("org.eclipse.jdt.annotation.NonNull"),
-            FqName("org.checkerframework.checker.nullness.qual.Nullable"),
-            FqName("org.checkerframework.checker.nullness.qual.NonNull"),
-            FqName("javax.annotation.Nonnull"),
-            FqName("javax.annotation.Nullable"),
-            FqName("javax.annotation.CheckForNull"),
-            FqName("edu.umd.cs.findbugs.annotations.NonNull"),
-            FqName("edu.umd.cs.findbugs.annotations.CheckForNull"),
-            FqName("edu.umd.cs.findbugs.annotations.Nullable"),
-            FqName("edu.umd.cs.findbugs.annotations.PossiblyNull"),
-            FqName("lombok.NonNull")
-    )
-
     val internalAnnotationsForResolve = setOf(
             FqName("kotlin.internal.NoInfer"),
             FqName("kotlin.internal.Exact")
@@ -229,7 +234,7 @@ object ExcludedTypeAnnotations {
 
 enum class RenderingFormat {
     PLAIN {
-        override fun escape(string: String) = string;
+        override fun escape(string: String) = string
     },
     HTML {
         override fun escape(string: String) = string.replace("<", "&lt;").replace(">", "&gt;")
@@ -257,8 +262,9 @@ enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
     ANNOTATIONS(false),
     INNER(true),
     MEMBER_KIND(true),
-    DATA(true)
-
+    DATA(true),
+    EXPECT(true),
+    ACTUAL(true),
     ;
 
     companion object {

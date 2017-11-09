@@ -1,4 +1,5 @@
 // "Replace with 'newFun(*p, x = null)'" "true"
+// WITH_RUNTIME
 
 @Deprecated("", ReplaceWith("newFun(*p, x = null)"))
 fun oldFun(vararg p: Int){

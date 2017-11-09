@@ -3,9 +3,9 @@ Resolve target: value-parameter p: kotlin.String?
 fun foo(p: String?) {
     class LocalClass {
         fun f(): String? {
-            if (p == null) return null
-            print(p.size)
-            return ""
+            /* STATEMENT DELETED: if (p == null) return null */
+            /* STATEMENT DELETED: print(p.size) */
+            /* STATEMENT DELETED: return "" */
         }
     }
 

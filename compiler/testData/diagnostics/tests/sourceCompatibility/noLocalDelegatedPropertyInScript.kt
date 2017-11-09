@@ -8,9 +8,9 @@ class Delegate {
 }
 
 fun foo(): Int {
-    val prop: Int <!LOCAL_VARIABLE_WITH_DELEGATE!>by Delegate()<!>
+    val prop: Int <!UNSUPPORTED_FEATURE!>by Delegate()<!>
 
-    val prop2: Int <!LOCAL_VARIABLE_WITH_DELEGATE!>by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>123<!><!>
+    val prop2: Int <!UNSUPPORTED_FEATURE!>by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>123<!><!>
 
     return prop + prop2
 }

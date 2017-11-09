@@ -28,12 +28,12 @@ object AndroidConst {
         list
     }
 
-    val ANDROID_NAMESPACE: String = "android"
+    val ANDROID_NAMESPACE: String = "http://schemas.android.com/apk/res/android"
     val ID_ATTRIBUTE_NO_NAMESPACE: String = "id"
-    val ID_ATTRIBUTE: String = "$ANDROID_NAMESPACE:$ID_ATTRIBUTE_NO_NAMESPACE"
     val CLASS_ATTRIBUTE_NO_NAMESPACE: String = "class"
 
-    val IDENTIFIER_REGEX = "^@(\\+)?(([A-Za-z0-9_\\.]+)\\:)?id\\/([A-Za-z0-9_]+)$".toRegex()
+    private val IDENTIFIER_WORD_REGEX = "[(?:\\p{L}\\p{M}*)0-9_\\.]+"
+    val IDENTIFIER_REGEX = "^@(\\+)?(($IDENTIFIER_WORD_REGEX)\\:)?id\\/($IDENTIFIER_WORD_REGEX)$".toRegex()
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 
@@ -45,6 +45,7 @@ object AndroidConst {
 
     val ACTIVITY_FQNAME = "android.app.Activity"
     val FRAGMENT_FQNAME = "android.app.Fragment"
+    val DIALOG_FQNAME = "android.app.Dialog"
     val SUPPORT_V4_PACKAGE = "android.support.v4"
     val SUPPORT_FRAGMENT_FQNAME = "$SUPPORT_V4_PACKAGE.app.Fragment"
     val SUPPORT_FRAGMENT_ACTIVITY_FQNAME = "$SUPPORT_V4_PACKAGE.app.FragmentActivity"

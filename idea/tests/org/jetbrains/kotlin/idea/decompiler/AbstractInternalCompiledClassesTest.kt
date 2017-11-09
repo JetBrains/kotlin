@@ -32,10 +32,10 @@ abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtu
     }
 
     protected fun isSyntheticClass(): VirtualFile.() -> Boolean =
-            isFileWithHeader { header, classId -> header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS }
+            isFileWithHeader { header, _ -> header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS }
 
     protected fun doTestNoPsiFilesAreBuiltForLocalClass(): Unit =
-            doTestNoPsiFilesAreBuiltFor("local", isFileWithHeader { header, classId -> classId.isLocal })
+            doTestNoPsiFilesAreBuiltFor("local", isFileWithHeader { _, classId -> classId.isLocal })
 
     protected fun doTestNoPsiFilesAreBuiltForSyntheticClasses(): Unit =
             doTestNoPsiFilesAreBuiltFor("synthetic", isSyntheticClass())

@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ReplaceCallWithComparisonInspection() : IntentionBasedInspection<KtDotQualifiedExpression>(
+class ReplaceCallWithComparisonInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
         ReplaceCallWithBinaryOperatorIntention::class,
         { qualifiedExpression ->
             val calleeExpression = qualifiedExpression.callExpression?.calleeExpression as? KtSimpleNameExpression
@@ -109,7 +109,7 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
 
     private fun operation(calleeExpression: KtSimpleNameExpression): KtSingleValueToken? {
         val identifier = calleeExpression.getReferencedNameAsName()
-        val dotQualified = calleeExpression.parent?.parent as? KtDotQualifiedExpression ?: return null
+        val dotQualified = calleeExpression.parent.parent as? KtDotQualifiedExpression ?: return null
         return when (identifier) {
             OperatorNameConventions.EQUALS -> {
                 val resolvedCall = dotQualified.toResolvedCall(BodyResolveMode.PARTIAL) ?: return null

@@ -1,8 +1,8 @@
 class Foo {
     /**
-     * [<caret>]
+     * [b<caret>]
      */
-    fun xyzzy() {
+    fun baz() {
 
     }
 
@@ -11,8 +11,9 @@ class Foo {
     }
 }
 
-fun Foo.quux() {
+fun Foo.boo() {
 }
 
 // EXIST: bar
-// EXIST: quux
+// EXIST: baz
+// EXIST: boo

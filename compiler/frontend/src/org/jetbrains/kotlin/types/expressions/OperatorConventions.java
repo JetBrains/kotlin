@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,8 +60,13 @@ public class OperatorConventions {
             .put(KtTokens.PLUS, PLUS)
             .put(KtTokens.MINUS, MINUS)
             .put(KtTokens.DIV, DIV)
-            .put(KtTokens.PERC, MOD)
+            .put(KtTokens.PERC, REM)
             .put(KtTokens.RANGE, RANGE_TO)
+            .build();
+
+    public static final ImmutableBiMap<Name, Name> REM_TO_MOD_OPERATION_NAMES = ImmutableBiMap.<Name, Name>builder()
+            .put(REM, MOD)
+            .put(REM_ASSIGN, MOD_ASSIGN)
             .build();
 
     public static final ImmutableSet<KtSingleValueToken> NOT_OVERLOADABLE =
@@ -80,12 +85,12 @@ public class OperatorConventions {
             ImmutableSet.of(KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ);
 
     public static final ImmutableSet<KtSingleValueToken> IN_OPERATIONS =
-            ImmutableSet.<KtSingleValueToken>of(KtTokens.IN_KEYWORD, KtTokens.NOT_IN);
+            ImmutableSet.of(KtTokens.IN_KEYWORD, KtTokens.NOT_IN);
 
     public static final ImmutableBiMap<KtSingleValueToken, Name> ASSIGNMENT_OPERATIONS = ImmutableBiMap.<KtSingleValueToken, Name>builder()
             .put(KtTokens.MULTEQ, TIMES_ASSIGN)
             .put(KtTokens.DIVEQ, DIV_ASSIGN)
-            .put(KtTokens.PERCEQ, MOD_ASSIGN)
+            .put(KtTokens.PERCEQ, REM_ASSIGN)
             .put(KtTokens.PLUSEQ, PLUS_ASSIGN)
             .put(KtTokens.MINUSEQ, MINUS_ASSIGN)
             .build();
@@ -134,6 +139,20 @@ public class OperatorConventions {
         if (COMPARISON_OPERATIONS.contains(token)) return COMPARE_TO;
         if (EQUALS_OPERATIONS.contains(token)) return EQUALS;
         if (IN_OPERATIONS.contains(token)) return CONTAINS;
+        return null;
+    }
+
+    @Nullable
+    public static KtToken getOperationSymbolForName(@NotNull Name name) {
+        if (!isConventionName(name)) return null;
+
+        KtToken token;
+        token = BINARY_OPERATION_NAMES.inverse().get(name);
+        if (token != null) return token;
+        token = UNARY_OPERATION_NAMES.inverse().get(name);
+        if (token != null) return token;
+        token = ASSIGNMENT_OPERATIONS.inverse().get(name);
+        if (token != null) return token;
         return null;
     }
 

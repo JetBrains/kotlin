@@ -10,7 +10,8 @@ fun bar(p: (String) -> Boolean) {
 // ORDER: ::doFilter
 // ORDER: p
 // ORDER: {...}
-// ORDER: { String -> ... }
+// ORDER: { s -> ... }
+// ORDER: { s: String -> ... }
 // ORDER: ::x
 // ORDER: ::TODO
 // ORDER: ::error

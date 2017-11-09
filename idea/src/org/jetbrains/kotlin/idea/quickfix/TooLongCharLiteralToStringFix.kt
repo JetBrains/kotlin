@@ -15,6 +15,7 @@ class TooLongCharLiteralToStringFix(
     override fun getText(): String = "Convert too long character literal to string"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val text = element.text
         if (!(text.startsWith("'") && text.endsWith("'") && text.length >= 2)) {
             return

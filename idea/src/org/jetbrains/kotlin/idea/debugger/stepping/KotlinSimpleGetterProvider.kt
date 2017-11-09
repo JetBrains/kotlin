@@ -46,7 +46,7 @@ class KotlinSimpleGetterProvider : SimplePropertyGetterProvider {
         val property = PsiTreeUtil.getParentOfType(element, KtProperty::class.java)
         // val a = foo()
         if (property != null) {
-            return property.getter == null
+            return property.getter == null && !property.isLocal
         }
 
         return false

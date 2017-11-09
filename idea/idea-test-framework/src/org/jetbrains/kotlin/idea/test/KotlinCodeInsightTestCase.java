@@ -20,6 +20,10 @@ import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
+/**
+ * Please use KotlinLightCodeInsightFixtureTestCase as the base class for all new tests.
+ */
+@Deprecated
 public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
     @Override
     protected void setUp() throws Exception {

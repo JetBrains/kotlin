@@ -19,14 +19,16 @@ package org.jetbrains.eval4j.jdi
 import com.sun.jdi.*
 import org.jetbrains.eval4j.*
 import org.jetbrains.eval4j.Value
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.canBeMangledInternalName
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.internalNameWithoutModuleSuffix
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.reflect.AccessibleObject
 import com.sun.jdi.Type as jdi_Type
 import com.sun.jdi.Value as jdi_Value
 
-val CLASS = Type.getType(Class::class.java)
-val OBJECT = Type.getType(Any::class.java)
-val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
+private val CLASS = Type.getType(Class::class.java)
+private val OBJECT = Type.getType(Any::class.java)
+private val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
 class JDIEval(
         private val vm: VirtualMachine,
@@ -39,7 +41,7 @@ class JDIEval(
             Type.BOOLEAN_TYPE.className to vm.mirrorOf(true).type(),
             Type.BYTE_TYPE.className to vm.mirrorOf(1.toByte()).type(),
             Type.SHORT_TYPE.className to vm.mirrorOf(1.toShort()).type(),
-            Type.INT_TYPE.className to vm.mirrorOf(1.toInt()).type(),
+            Type.INT_TYPE.className to vm.mirrorOf(1).type(),
             Type.CHAR_TYPE.className to vm.mirrorOf('1').type(),
             Type.LONG_TYPE.className to vm.mirrorOf(1L).type(),
             Type.FLOAT_TYPE.className to vm.mirrorOf(1.0f).type(),
@@ -204,17 +206,33 @@ class JDIEval(
     }
 
     private fun findMethod(methodDesc: MethodDescription, _class: ReferenceType = methodDesc.ownerType.asReferenceType()): Method {
+        val methodName = methodDesc.name
         val method = when (_class) {
-            is ClassType -> {
-                val m = _class.concreteMethodByName(methodDesc.name, methodDesc.desc)
-                if (m == null) listOf() else listOf(m)
+            is ClassType ->
+                _class.concreteMethodByName(methodName, methodDesc.desc)
+            else ->
+                _class.methodsByName(methodName, methodDesc.desc).firstOrNull()
+        }
+
+        if (method != null) {
+            return method
+        }
+
+        // Module name can be different for internal functions during evaluation and compilation
+        val internalNameWithoutSuffix = internalNameWithoutModuleSuffix(methodName)
+        if (internalNameWithoutSuffix != null) {
+            val internalMethods = _class.visibleMethods().filter {
+                val name = it.name()
+                name.startsWith(internalNameWithoutSuffix) && canBeMangledInternalName(name) && it.signature() == methodDesc.desc
             }
-            else -> _class.methodsByName(methodDesc.name, methodDesc.desc)
+
+            if (!internalMethods.isEmpty()) {
+                return internalMethods.singleOrNull() ?:
+                       throwBrokenCodeException(IllegalArgumentException("Several internal methods found for $methodDesc"))
+            }
         }
-        if (method.isEmpty()) {
-            throwBrokenCodeException(NoSuchMethodError("Method not found: $methodDesc"))
-        }
-        return method[0]
+
+        throwBrokenCodeException(NoSuchMethodError("Method not found: $methodDesc"))
     }
 
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
@@ -241,7 +259,15 @@ class JDIEval(
         val field = findField(fieldDesc)
         val obj = instance.jdiObj.checkNull()
 
-        return mayThrow { obj.getValue(field) }.ifFail(field, obj).asValue()
+        return mayThrow {
+            try {
+                obj.getValue(field)
+            } catch (e: IllegalArgumentException) {
+                throw IllegalArgumentException("Possibly incompatible types: " +
+                                               "field declaring type = ${field.declaringType()}, " +
+                                               "instance type = ${obj.referenceType()}")
+            }
+        }.ifFail(field, obj).asValue()
     }
 
     override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
@@ -309,13 +335,13 @@ class JDIEval(
         }
 
         val obj = instance.jdiObj.checkNull()
-        if (invokespecial) {
+        return if (invokespecial) {
             val method = findMethod(methodDesc)
-            return doInvokeMethod(obj, method, invokePolicy or ObjectReference.INVOKE_NONVIRTUAL)
+            doInvokeMethod(obj, method, invokePolicy or ObjectReference.INVOKE_NONVIRTUAL)
         }
         else {
             val method = findMethod(methodDesc, obj.referenceType() ?: methodDesc.ownerType.asReferenceType())
-            return doInvokeMethod(obj, method, invokePolicy)
+            doInvokeMethod(obj, method, invokePolicy)
         }
     }
 
@@ -404,6 +430,7 @@ class JDIEval(
     }
 }
 
+@Suppress("unused")
 private sealed class JdiOperationResult<T> {
     class Fail<T>(val cause: Exception): JdiOperationResult<T>()
     class OK<T>(val value: T): JdiOperationResult<T>()

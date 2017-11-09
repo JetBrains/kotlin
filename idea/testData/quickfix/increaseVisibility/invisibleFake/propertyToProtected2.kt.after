@@ -1,0 +1,13 @@
+// "Make 'foo' protected" "true"
+
+open class A {
+    protected val foo = 1
+}
+
+open class B : A()
+
+class C : B() {
+    fun bar() {
+        foo
+    }
+}

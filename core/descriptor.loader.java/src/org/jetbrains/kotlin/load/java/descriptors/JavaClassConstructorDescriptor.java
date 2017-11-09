@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.load.java.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
@@ -117,7 +120,7 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
     @NotNull
     public JavaClassConstructorDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
-            @NotNull List<KotlinType> enhancedValueParametersTypes,
+            @NotNull List<ValueParameterData> enhancedValueParametersData,
             @NotNull KotlinType enhancedReturnType
     ) {
         JavaClassConstructorDescriptor enhanced = createSubstitutedCopy(
@@ -127,7 +130,7 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
                 enhancedReceiverType,
                 getDispatchReceiverParameter(),
                 getTypeParameters(),
-                UtilKt.copyValueParameters(enhancedValueParametersTypes, getValueParameters(), enhanced),
+                UtilKt.copyValueParameters(enhancedValueParametersData, getValueParameters(), enhanced),
                 enhancedReturnType,
                 getModality(),
                 getVisibility()
@@ -135,5 +138,4 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
 
         return enhanced;
     }
-
 }

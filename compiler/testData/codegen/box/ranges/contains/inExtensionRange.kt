@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 // WITH_RUNTIME
 
 operator fun Int.rangeTo(right: String): ClosedRange<Int> = this..this + 1

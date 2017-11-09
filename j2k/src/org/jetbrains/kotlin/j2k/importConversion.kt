@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.j2k.ast.Import
 import org.jetbrains.kotlin.j2k.ast.ImportList
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 fun Converter.convertImportList(importList: PsiImportList): ImportList {
     val imports = importList.allImportStatements
@@ -50,7 +50,7 @@ fun Converter.convertImport(anImport: PsiImportStatementBase, dumpConversion: Bo
     }
     else {
         convertImport(fqName, reference, onDemand, anImport is PsiImportStaticStatement)
-                .map { Import(it) }
+                .map(::Import)
     }
     return convertedImports.map { it.assignPrototype(anImport) }
 }
@@ -59,22 +59,27 @@ private fun Converter.convertImport(fqName: FqName, ref: PsiJavaCodeReferenceEle
     if (!isOnDemand) {
         if (annotationConverter.isImportNotRequired(fqName)) return emptyList()
 
-        // If imported class has a kotlin analog, drop the import
-        if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName, DefaultBuiltIns.Instance).isEmpty()) return emptyList()
+
+        val mapped = JavaToKotlinClassMap.mapJavaToKotlin(fqName)
+        mapped?.let {
+            // If imported class has a kotlin analog, drop the import if it is not nested
+            if (!it.isNestedClass) return emptyList()
+            return convertNonStaticImport(it.asSingleFqName(), false, null)
+        }
     }
 
     //TODO: how to detect compiled Kotlin here?
     val target = ref.resolve()
-    if (isImportStatic) {
+    return if (isImportStatic) {
         if (isOnDemand) {
-            return convertStaticImportOnDemand(fqName, target)
+            convertStaticImportOnDemand(fqName, target)
         }
         else {
-            return convertStaticExplicitImport(fqName, target)
+            convertStaticExplicitImport(fqName, target)
         }
     }
     else {
-        return convertNonStaticImport(fqName, isOnDemand, target)
+        convertNonStaticImport(fqName, isOnDemand, target)
     }
 }
 
@@ -129,7 +134,7 @@ private fun convertStaticExplicitImport(fqName: FqName, target: PsiElement?): Li
                 is KtClassBody -> {
                     val parentClass = originParent.parent as KtClassOrObject
                     if (parentClass is KtObjectDeclaration && parentClass.isCompanion()) {
-                        return parentClass.getFqName()?.child(nameToImport)?.render().singletonOrEmptyList()
+                        return listOfNotNull(parentClass.getFqName()?.child(nameToImport)?.render())
                     }
                 }
             }
@@ -156,9 +161,9 @@ private fun convertNonStaticImport(fqName: FqName, isOnDemand: Boolean, target: 
 private fun renderImportName(fqName: FqName, isOnDemand: Boolean)
         = if (isOnDemand) fqName.render() + ".*" else fqName.render()
 
-private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatform.defaultImports
-        .filter { it.isAllUnder }
-        .map { it.fqnPart() }
-        .toSet()
+private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatform.getDefaultImports(
+        // TODO: use the correct LanguageVersionSettings instance here
+        LanguageVersionSettingsImpl.DEFAULT.supportsFeature(LanguageFeature.DefaultImportOfPackageKotlinComparisons)
+).filter { it.isAllUnder }.map { it.fqName }.toSet()
 
 private fun isImportedByDefault(c: KtLightClass) = c.qualifiedName?.let { FqName(it).parent() } in DEFAULT_IMPORTS_SET

@@ -60,7 +60,7 @@ package foobar {
     package foobar.a {
         public val a: java.util.List<kotlin.Int>? = null
         public val a2: [ERROR : util.List<Int>]<kotlin.Int>?
-        public val a3: [ERROR : ArrayList<Int>]<kotlin.Int>?
+        public val a3: [ERROR : LinkedList<Int>]<kotlin.Int>?
         public val b: kotlin.collections.List<kotlin.Int>? = null
         public val b1: [ERROR : util.List<Int>]<kotlin.Int>?
     }

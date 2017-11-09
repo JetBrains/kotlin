@@ -43,7 +43,7 @@ class KotlinIntroducePropertyHandler(
 ): RefactoringActionHandler {
     object InteractiveExtractionHelper : ExtractionEngineHelper(INTRODUCE_PROPERTY) {
         private fun getExtractionTarget(descriptor: ExtractableCodeDescriptor) =
-                propertyTargets.filter { it.isAvailable(descriptor) }.firstOrNull()
+                propertyTargets.firstOrNull { it.isAvailable(descriptor) }
 
         override fun validate(descriptor: ExtractableCodeDescriptor) =
                 descriptor.validate(getExtractionTarget(descriptor) ?: ExtractionTarget.FUNCTION)
@@ -73,8 +73,8 @@ class KotlinIntroducePropertyHandler(
                 file,
                 "Select target code block",
                 listOf(CodeInsightUtils.ElementKind.EXPRESSION),
-                { elements, parent ->
-                    parent.getExtractionContainers(strict = true, includeAll = true).filter { it is KtClassBody || (it is KtFile && !it.isScript) }
+                { _, parent ->
+                    parent.getExtractionContainers(strict = true, includeAll = true).filter { it is KtClassBody || (it is KtFile && !it.isScript()) }
                 },
                 continuation
         )

@@ -2,7 +2,7 @@ val flag = true
 
 // type of a was checked by txt
 val a/*: () -> Any*/ = l@ {
-    <!INVALID_IF_AS_EXPRESSION!>if (flag) return@l 4<!>
+    <!INVALID_IF_AS_EXPRESSION!>if<!> (flag) return@l 4
 }
 
 val b/*: () -> Int */ = l@ {

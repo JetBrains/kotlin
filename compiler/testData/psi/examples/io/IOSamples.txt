@@ -1,4 +1,4 @@
-JetFile: IOSamples.kt
+KtFile: IOSamples.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,6 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1114
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: add_0
+// CHECK_CONTAINS_NO_CALLS: add
 
 internal inline fun run(action: () -> Int): Int {
     return action()

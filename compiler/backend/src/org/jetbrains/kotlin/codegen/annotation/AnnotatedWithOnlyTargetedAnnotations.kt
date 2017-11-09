@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.name.FqName
 
 interface WrappedAnnotated : Annotated {
     val originalAnnotated: Annotated
@@ -33,10 +32,6 @@ class AnnotatedWithOnlyTargetedAnnotations(original: Annotated) : Annotated {
 
     private class UseSiteTargetedAnnotations(private val additionalAnnotations: Annotations) : Annotations {
         override fun isEmpty() = true
-
-        override fun findAnnotation(fqName: FqName) = null
-
-        override fun findExternalAnnotation(fqName: FqName) = null
 
         override fun getUseSiteTargetedAnnotations() = getAdditionalTargetedAnnotations()
 

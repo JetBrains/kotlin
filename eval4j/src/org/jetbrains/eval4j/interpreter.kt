@@ -181,13 +181,10 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
 
             CHECKCAST -> {
                 val targetType = Type.getObjectType((insn as TypeInsnNode).desc)
-                if (value == NULL_VALUE) {
-                    NULL_VALUE
-                } else if (eval.isInstanceOf(value, targetType)) {
-                    ObjectValue(value.obj(), targetType)
-                }
-                else {
-                    throwEvalException(ClassCastException("${value.asmType.className} cannot be cast to ${targetType.className}"))
+                when {
+                    value == NULL_VALUE -> NULL_VALUE
+                    eval.isInstanceOf(value, targetType) -> ObjectValue(value.obj(), targetType)
+                    else -> throwEvalException(ClassCastException("${value.asmType.className} cannot be cast to ${targetType.className}"))
                 }
             }
 
@@ -341,7 +338,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
         return when (insn.opcode) {
             MULTIANEWARRAY -> {
                 val node = insn as MultiANewArrayInsnNode
-                eval.newMultiDimensionalArray(Type.getType(node.desc), values.map { v -> v.int })
+                eval.newMultiDimensionalArray(Type.getType(node.desc), values.map(Value::int))
             }
 
             INVOKEVIRTUAL, INVOKESPECIAL, INVOKEINTERFACE -> {

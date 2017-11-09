@@ -1,0 +1,10 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>10</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'copy' method of data class is called without named arguments</problem_class>
+        <description>'copy' method of data class is called without named arguments</description>
+    </problem>
+</problems>

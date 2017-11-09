@@ -24,7 +24,6 @@ import com.intellij.spring.model.highlighting.SpringAutowireUtil
 import com.intellij.spring.model.jam.qualifiers.SpringJamQualifier
 import com.intellij.spring.model.utils.SpringModelSearchers
 import com.intellij.spring.references.SpringQualifierReference
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.asJava.toLightElements
@@ -50,8 +49,6 @@ class KtSpringQualifierReference(element: KtStringTemplateExpression) : SpringQu
     class StringTemplatePsiLiteralWrapper(
             val element: KtStringTemplateExpression
     ) : PsiElement by element, PsiLiteralExpression, KtLightElement<KtStringTemplateExpression, KtStringTemplateExpression>, PsiCompiledElement {
-        override fun getName() = null
-        override fun setName(newName: String) = throw IncorrectOperationException()
 
         override fun getValue() = element.plainContent
         override fun getType() = PsiType.getJavaLangString(element.manager, element.project.allScope())

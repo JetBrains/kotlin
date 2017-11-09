@@ -1,7 +1,8 @@
+// EXPECTED_REACHABLE_NODES: 1114
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: multiplyInline_0
-// CHECK_NOT_CALLED: runNoinline_0
+// CHECK_CONTAINS_NO_CALLS: multiplyInline except=imul
+// CHECK_NOT_CALLED: runNoinline
 
 internal inline fun multiply(a: Int, b: Int) = a * b
 

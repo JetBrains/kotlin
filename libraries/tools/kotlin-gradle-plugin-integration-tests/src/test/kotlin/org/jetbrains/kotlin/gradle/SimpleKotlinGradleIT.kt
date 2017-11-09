@@ -1,6 +1,10 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
+import java.io.File
+import kotlin.test.assertTrue
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
 
@@ -14,6 +18,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
+            assertContains("Finished executing kotlin compiler using daemon strategy")
             assertReportExists("build/reports/tests/classes/demo.TestSource.html")
             assertContains(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
         }
@@ -31,7 +36,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertContains(":compileKotlin")
-            assertNotContains("w:")
+            assertNotContains("""w: [^\r\n]*?\.kt""".toRegex())
         }
     }
 
@@ -97,6 +102,99 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         Project("destinationDirReferencedDuringEvaluation", GRADLE_VERSION).build("build") {
             assertSuccessful()
             assertContains("GreeterTest PASSED")
+        }
+    }
+
+    @Test
+    fun testAllOpenPlugin() {
+        Project("allOpenSimple", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+
+            val classesDir = File(project.projectDir, "build/classes/main")
+            val openClass = File(classesDir, "test/OpenClass.class")
+            val closedClass = File(classesDir, "test/ClosedClass.class")
+            assertTrue(openClass.exists())
+            assertTrue(closedClass.exists())
+
+            checkBytecodeContains(openClass,
+                    "public class test/OpenClass {",
+                    "public method()V")
+
+            checkBytecodeContains(closedClass,
+                    "public final class test/ClosedClass {",
+                    "public final method()V")
+        }
+    }
+
+    @Test
+    fun testKotlinSpringPlugin() {
+        Project("allOpenSpring", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+
+            val classesDir = File(project.projectDir, "build/classes/main")
+            val openClass = File(classesDir, "test/OpenClass.class")
+            val closedClass = File(classesDir, "test/ClosedClass.class")
+            assertTrue(openClass.exists())
+            assertTrue(closedClass.exists())
+
+            checkBytecodeContains(openClass,
+                    "public class test/OpenClass {",
+                    "public method()V")
+
+            checkBytecodeContains(closedClass,
+                    "public final class test/ClosedClass {",
+                    "public final method()V")
+        }
+    }
+
+    @Test
+    fun testKotlinJpaPlugin() {
+        Project("noArgJpa", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+
+            val classesDir = File(project.projectDir, "build/classes/main")
+
+            fun checkClass(name: String) {
+                val testClass = File(classesDir, "test/$name.class")
+                assertTrue(testClass.exists())
+                checkBytecodeContains(testClass, "public <init>()V")
+            }
+
+            checkClass("Test")
+            checkClass("Test2")
+        }
+    }
+
+    @Test
+    fun testNoArgKt18668() {
+        Project("noArgKt18668", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testSamWithReceiverSimple() {
+        Project("samWithReceiverSimple", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testBuildDirLazyEvaluation() {
+        val project = Project("kotlinProject", GRADLE_VERSION)
+        project.setupWorkingDir()
+
+        File(project.projectDir, "build").writeText("This file prevents Gradle from using 'build' as a directory")
+
+        // Change the build directory in the end of the build script:
+        val customBuildDirName = "customBuild"
+        File(project.projectDir, "build.gradle").modify {
+            it + "\nbuildDir = '$customBuildDirName'\n"
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertFileExists("$customBuildDirName/classes")
         }
     }
 }

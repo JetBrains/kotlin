@@ -50,10 +50,16 @@ interface LightMemberOrigin : LightElementOrigin {
     override val originalElement: KtDeclaration?
     override val originKind: JvmDeclarationOriginKind
 
+    fun isEquivalentTo(other: LightMemberOrigin?): Boolean
     fun copy(): LightMemberOrigin
 }
 
 data class LightMemberOriginForDeclaration(override val originalElement: KtDeclaration, override val originKind: JvmDeclarationOriginKind) : LightMemberOrigin {
+    override fun isEquivalentTo(other: LightMemberOrigin?): Boolean {
+        if (other !is LightMemberOriginForDeclaration) return false
+        return originalElement.isEquivalentTo(other.originalElement)
+    }
+
     override fun copy(): LightMemberOrigin {
         return LightMemberOriginForDeclaration(originalElement.copy() as KtDeclaration, originKind)
     }

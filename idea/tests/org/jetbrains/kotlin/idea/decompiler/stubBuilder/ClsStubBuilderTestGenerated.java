@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
     public void testAllFilesPresentInStubBuilder() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/stubBuilder"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/stubBuilder"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("AnnotatedFlexibleTypes")
@@ -50,6 +51,24 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
     @TestMetadata("Annotations")
     public void testAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Annotations/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AnnotationsOnNullableTypes")
+    public void testAnnotationsOnNullableTypes() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnnotationsOnNullableTypes/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AnnotationsOnParenthesizedTypes")
+    public void testAnnotationsOnParenthesizedTypes() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnnotationsOnParenthesizedTypes/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AnonymousReturnWithGenericType")
+    public void testAnonymousReturnWithGenericType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnonymousReturnWithGenericType/");
         doTest(fileName);
     }
 
@@ -167,6 +186,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("SuspendLambda")
+    public void testSuspendLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/SuspendLambda/");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopLevelMembersAnnotatedKt")
     public void testTopLevelMembersAnnotatedKt() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TopLevelMembersAnnotatedKt/");
@@ -188,6 +213,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
     @TestMetadata("TypeBoundsAndDelegationSpecifiers")
     public void testTypeBoundsAndDelegationSpecifiers() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TypeBoundsAndDelegationSpecifiers/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TypeModifiers")
+    public void testTypeModifiers() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TypeModifiers/");
         doTest(fileName);
     }
 

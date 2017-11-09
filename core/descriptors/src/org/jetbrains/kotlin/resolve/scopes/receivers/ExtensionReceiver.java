@@ -35,6 +35,12 @@ public class ExtensionReceiver extends AbstractReceiverValue implements Implicit
         return descriptor;
     }
 
+    @NotNull
+    @Override
+    public ReceiverValue replaceType(@NotNull KotlinType newType) {
+        return new ExtensionReceiver(descriptor, newType);
+    }
+
     @Override
     public String toString() {
         return getType() + ": Ext {" + descriptor + "}";

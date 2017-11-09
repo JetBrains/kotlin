@@ -113,7 +113,7 @@ public fun InputStream.copyTo(out: OutputStream, bufferSize: Int = DEFAULT_BUFFE
  * **Note**: It is the caller's responsibility to close this stream.
  */
 public fun InputStream.readBytes(estimatedSize: Int = DEFAULT_BUFFER_SIZE): ByteArray {
-    val buffer = ByteArrayOutputStream(estimatedSize)
+    val buffer = ByteArrayOutputStream(Math.max(estimatedSize, this.available()))
     copyTo(buffer)
     return buffer.toByteArray()
 }

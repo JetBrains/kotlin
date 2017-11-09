@@ -1,5 +1,6 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
+@file:kotlin.jvm.JvmVersion
 
 package kotlin.text
 
@@ -9,9 +10,6 @@ package kotlin.text
 //
 
 import kotlin.comparisons.*
-import java.util.*
-
-import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
  * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence.
@@ -191,6 +189,7 @@ public inline fun CharSequence.single(predicate: (Char) -> Boolean): Char {
         }
     }
     if (!found) throw NoSuchElementException("Char sequence contains no character matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as Char
 }
 
@@ -309,7 +308,7 @@ public inline fun String.filter(predicate: (Char) -> Boolean): String {
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  */
-public inline fun CharSequence.filterIndexed(predicate: (Int, Char) -> Boolean): CharSequence {
+public inline fun CharSequence.filterIndexed(predicate: (index: Int, Char) -> Boolean): CharSequence {
     return filterIndexedTo(StringBuilder(), predicate)
 }
 
@@ -318,7 +317,7 @@ public inline fun CharSequence.filterIndexed(predicate: (Int, Char) -> Boolean):
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  */
-public inline fun String.filterIndexed(predicate: (Int, Char) -> Boolean): String {
+public inline fun String.filterIndexed(predicate: (index: Int, Char) -> Boolean): String {
     return filterIndexedTo(StringBuilder(), predicate).toString()
 }
 
@@ -327,7 +326,7 @@ public inline fun String.filterIndexed(predicate: (Int, Char) -> Boolean): Strin
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  */
-public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, predicate: (Int, Char) -> Boolean): C {
+public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.append(element)
     }
@@ -508,7 +507,6 @@ public inline fun String.reversed(): String {
  * The returned map preserves the entry iteration order of the original char sequence.
  */
 public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(length).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -522,7 +520,6 @@ public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>)
  * The returned map preserves the entry iteration order of the original char sequence.
  */
 public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K, Char> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(length).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
 }
@@ -535,7 +532,6 @@ public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K,
  * The returned map preserves the entry iteration order of the original char sequence.
  */
 public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(length).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -661,7 +657,7 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destin
  * 
  * The returned map preserves the entry iteration order of the keys produced from the original char sequence.
  * 
- * @sample test.collections.CollectionTest.groupBy
+ * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
     return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
@@ -674,7 +670,7 @@ public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, Lis
  * 
  * The returned map preserves the entry iteration order of the keys produced from the original char sequence.
  * 
- * @sample test.collections.CollectionTest.groupByKeysAndValues
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
     return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
@@ -686,7 +682,7 @@ public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTra
  * 
  * @return The [destination] map.
  * 
- * @sample test.collections.CollectionTest.groupBy
+ * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
@@ -704,7 +700,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.grou
  * 
  * @return The [destination] map.
  * 
- * @sample test.collections.CollectionTest.groupByKeysAndValues
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {
@@ -713,6 +709,20 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequence.grou
         list.add(valueTransform(element))
     }
     return destination
+}
+
+/**
+ * Creates a [Grouping] source from a char sequence to be used later with one of group-and-fold operations
+ * using the specified [keySelector] function to extract a key from each character.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupingByEachCount
+ */
+@SinceKotlin("1.1")
+public inline fun <K> CharSequence.groupingBy(crossinline keySelector: (Char) -> K): Grouping<Char, K> {
+    return object : Grouping<Char, K> {
+        override fun sourceIterator(): Iterator<Char> = this@groupingBy.iterator()
+        override fun keyOf(element: Char): K = keySelector(element)
+    }
 }
 
 /**
@@ -729,7 +739,7 @@ public inline fun <R> CharSequence.map(transform: (Char) -> R): List<R> {
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public inline fun <R> CharSequence.mapIndexed(transform: (Int, Char) -> R): List<R> {
+public inline fun <R> CharSequence.mapIndexed(transform: (index: Int, Char) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(length), transform)
 }
 
@@ -739,7 +749,7 @@ public inline fun <R> CharSequence.mapIndexed(transform: (Int, Char) -> R): List
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (Int, Char) -> R?): List<R> {
+public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (index: Int, Char) -> R?): List<R> {
     return mapIndexedNotNullTo(ArrayList<R>(), transform)
 }
 
@@ -749,7 +759,7 @@ public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (Int, Char
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexedNotNullTo(destination: C, transform: (Int, Char) -> R?): C {
+public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexedNotNullTo(destination: C, transform: (index: Int, Char) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
     return destination
 }
@@ -760,7 +770,7 @@ public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexed
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(destination: C, transform: (index: Int, Char) -> R): C {
     var index = 0
     for (item in this)
         destination.add(transform(index++, item))
@@ -813,8 +823,7 @@ public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
  * Returns `true` if char sequence has at least one character.
  */
 public fun CharSequence.any(): Boolean {
-    for (element in this) return true
-    return false
+    return !isEmpty()
 }
 
 /**
@@ -845,7 +854,7 @@ public inline fun CharSequence.count(predicate: (Char) -> Boolean): Int {
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each character.
  */
-public inline fun <R> CharSequence.fold(initial: R, operation: (R, Char) -> R): R {
+public inline fun <R> CharSequence.fold(initial: R, operation: (acc: R, Char) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
@@ -857,7 +866,7 @@ public inline fun <R> CharSequence.fold(initial: R, operation: (R, Char) -> R): 
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself, and calculates the next accumulator value.
  */
-public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (Int, R, Char) -> R): R {
+public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): R {
     var index = 0
     var accumulator = initial
     for (element in this) accumulator = operation(index++, accumulator, element)
@@ -867,7 +876,7 @@ public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (Int, R, C
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each character and current accumulator value.
  */
-public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, R) -> R): R {
+public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, acc: R) -> R): R {
     var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
@@ -882,7 +891,7 @@ public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, R) ->
  * @param [operation] function that takes the index of a character, the character itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public inline fun <R> CharSequence.foldRightIndexed(initial: R, operation: (Int, Char, R) -> R): R {
+public inline fun <R> CharSequence.foldRightIndexed(initial: R, operation: (index: Int, Char, acc: R) -> R): R {
     var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
@@ -904,7 +913,7 @@ public inline fun CharSequence.forEach(action: (Char) -> Unit): Unit {
  * @param [action] function that takes the index of a character and the character itself
  * and performs the desired action on the character.
  */
-public inline fun CharSequence.forEachIndexed(action: (Int, Char) -> Unit): Unit {
+public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit): Unit {
     var index = 0
     for (item in this) action(index++, item)
 }
@@ -1001,8 +1010,7 @@ public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
  * Returns `true` if the char sequence has no characters.
  */
 public fun CharSequence.none(): Boolean {
-    for (element in this) return false
-    return true
+    return isEmpty()
 }
 
 /**
@@ -1014,9 +1022,17 @@ public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
+ * Performs the given [action] on each character and returns the char sequence itself afterwards.
+ */
+@SinceKotlin("1.1")
+public inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S {
+    return apply { for (element in this) action(element) }
+}
+
+/**
  * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character.
  */
-public inline fun CharSequence.reduce(operation: (Char, Char) -> Char): Char {
+public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Char {
     if (isEmpty())
         throw UnsupportedOperationException("Empty char sequence can't be reduced.")
     var accumulator = this[0]
@@ -1032,7 +1048,7 @@ public inline fun CharSequence.reduce(operation: (Char, Char) -> Char): Char {
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself and calculates the next accumulator value.
  */
-public inline fun CharSequence.reduceIndexed(operation: (Int, Char, Char) -> Char): Char {
+public inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char {
     if (isEmpty())
         throw UnsupportedOperationException("Empty char sequence can't be reduced.")
     var accumulator = this[0]
@@ -1045,7 +1061,7 @@ public inline fun CharSequence.reduceIndexed(operation: (Int, Char, Char) -> Cha
 /**
  * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value.
  */
-public inline fun CharSequence.reduceRight(operation: (Char, Char) -> Char): Char {
+public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char): Char {
     var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty char sequence can't be reduced.")
     var accumulator = get(index--)
@@ -1061,7 +1077,7 @@ public inline fun CharSequence.reduceRight(operation: (Char, Char) -> Char): Cha
  * @param [operation] function that takes the index of a character, the character itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public inline fun CharSequence.reduceRightIndexed(operation: (Int, Char, Char) -> Char): Char {
+public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char {
     var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty char sequence can't be reduced.")
     var accumulator = get(index--)
@@ -1092,6 +1108,72 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
         sum += selector(element)
     }
     return sum
+}
+
+/**
+ * Splits this char sequence into a list of strings each not exceeding the given [size].
+ * 
+ * The last string in the resulting list may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.chunked(size: Int): List<String> {
+    return windowed(size, size, partialWindows = true)
+}
+
+/**
+ * Splits this char sequence into several char sequences each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return list of results of the [transform] applied to an each char sequence.
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * The last char sequence may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.text.Strings.chunkedTransform
+ */
+@SinceKotlin("1.2")
+public fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): List<R> {
+    return windowed(size, size, partialWindows = true, transform = transform)
+}
+
+/**
+ * Splits this char sequence into a sequence of strings each not exceeding the given [size].
+ * 
+ * The last string in the resulting sequence may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.chunkedSequence(size: Int): Sequence<String>  {
+    return chunkedSequence(size) { it.toString() }
+}
+
+/**
+ * Splits this char sequence into several char sequences each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return sequence of results of the [transform] applied to an each char sequence.
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * The last char sequence may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.text.Strings.chunkedTransformToSequence
+ */
+@SinceKotlin("1.2")
+public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R>  {
+    return windowedSequence(size, size, partialWindows = true, transform = transform)
 }
 
 /**
@@ -1131,6 +1213,102 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
 }
 
 /**
+ * Returns a list of snapshots of the window of the given [size]
+ * sliding along this char sequence with the given [step], where each
+ * snapshot is a string.
+ * 
+ * Several last strings may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): List<String> {
+    return windowed(size, step, partialWindows) { it.toString() }
+}
+
+/**
+ * Returns a list of results of applying the given [transform] function to
+ * an each char sequence representing a view over the window of the given [size]
+ * sliding along this char sequence with the given [step].
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last char sequences may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
+@SinceKotlin("1.2")
+public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): List<R> {
+    checkWindowSizeStep(size, step)
+    val thisSize = this.length
+    val result = ArrayList<R>((thisSize + step - 1) / step)
+    var index = 0
+    while (index < thisSize) {
+        val end = index + size
+        val coercedEnd = if (end > thisSize) { if (partialWindows) thisSize else break } else end
+        result.add(transform(subSequence(index, coercedEnd)))
+        index += step
+    }
+    return result
+}
+
+/**
+ * Returns a sequence of snapshots of the window of the given [size]
+ * sliding along this char sequence with the given [step], where each
+ * snapshot is a string.
+ * 
+ * Several last strings may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<String>  {
+    return windowedSequence(size, step, partialWindows) { it.toString() }
+}
+
+/**
+ * Returns a sequence of results of applying the given [transform] function to
+ * an each char sequence representing a view over the window of the given [size]
+ * sliding along this char sequence with the given [step].
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last char sequences may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
+@SinceKotlin("1.2")
+public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): Sequence<R>  {
+    checkWindowSizeStep(size, step)
+    val windows = (if (partialWindows) indices else 0 until length - size + 1) step step
+    return windows.asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
+}
+
+/**
  * Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
  */
 public infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>> {
@@ -1140,13 +1318,44 @@ public infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>> {
 /**
  * Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
  */
-public inline fun <V> CharSequence.zip(other: CharSequence, transform: (Char, Char) -> V): List<V> {
-    val length = Math.min(this.length, other.length)
+public inline fun <V> CharSequence.zip(other: CharSequence, transform: (a: Char, b: Char) -> V): List<V> {
+    val length = minOf(this.length, other.length)
     val list = ArrayList<V>(length)
     for (i in 0..length-1) {
         list.add(transform(this[i], other[i]))
     }
     return list
+}
+
+/**
+ * Returns a list of pairs of each two adjacent characters in this char sequence.
+ * 
+ * The returned list is empty if this char sequence contains less than two characters.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ */
+@SinceKotlin("1.2")
+public fun CharSequence.zipWithNext(): List<Pair<Char, Char>> {
+    return zipWithNext { a, b -> a to b }
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent characters in this char sequence.
+ * 
+ * The returned list is empty if this char sequence contains less than two characters.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ */
+@SinceKotlin("1.2")
+public inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> R): List<R> {
+    val size = length - 1
+    if (size < 1) return emptyList()
+    val result = ArrayList<R>(size)
+    for (index in 0..size - 1) {
+        result.add(transform(this[index], this[index + 1]))
+    }
+    return result
 }
 
 /**

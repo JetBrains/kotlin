@@ -1,6 +1,3 @@
-// TODO enable for JS backend too when KT-7819 will be fixed
-// TARGET_BACKEND: JVM
-
 inline fun run(block: () -> Unit) = block()
 
 class A {

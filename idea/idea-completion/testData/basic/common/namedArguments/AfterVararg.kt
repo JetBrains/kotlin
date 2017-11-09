@@ -4,4 +4,4 @@ fun bar(s: String){
     foo("", "", <caret>)
 }
 
-// EXIST: { lookupString:"option", itemText:"option =" }
+// EXIST: { lookupString:"option =", itemText:"option =" }

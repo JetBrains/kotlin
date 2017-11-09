@@ -1,6 +1,9 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 
-import kotlin.reflect.*
+import kotlin.reflect.full.*
 
 class A(param: String) {
     val int: Int get() = 42
@@ -13,9 +16,7 @@ class A(param: String) {
 }
 
 fun box(): String {
-    val klass = A::class.java.kotlin
-
-    val props = klass.memberProperties
+    val props = A::class.memberProperties
 
     val names = props.map { it.name }.sorted()
     assert(names == listOf("anyVar", "int", "string")) { "Fail names: $props" }

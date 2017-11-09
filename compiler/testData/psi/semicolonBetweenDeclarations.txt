@@ -1,4 +1,4 @@
-JetFile: semicolonBetweenDeclarations.kt
+KtFile: semicolonBetweenDeclarations.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

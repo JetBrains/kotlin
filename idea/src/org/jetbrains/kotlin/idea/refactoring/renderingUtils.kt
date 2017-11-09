@@ -24,7 +24,7 @@ import com.intellij.psi.util.PsiFormatUtilBase
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -94,11 +94,11 @@ fun formatPsiMethod(
 fun formatJavaOrLightMethod(method: PsiMethod): String {
     val originalDeclaration = method.unwrapped
     return if (originalDeclaration is KtDeclaration) {
-        formatFunctionDescriptor(originalDeclaration.resolveToDescriptor())
+        formatFunctionDescriptor(originalDeclaration.unsafeResolveToDescriptor())
     }
     else {
         formatPsiMethod(method, false, false)
     }
 }
 
-fun formatClass(classOrObject: KtClassOrObject) = formatClassDescriptor(classOrObject.resolveToDescriptor() as ClassDescriptor)
+fun formatClass(classOrObject: KtClassOrObject) = formatClassDescriptor(classOrObject.unsafeResolveToDescriptor() as ClassDescriptor)

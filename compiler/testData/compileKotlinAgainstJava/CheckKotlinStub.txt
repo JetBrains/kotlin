@@ -1,0 +1,6 @@
+package test
+
+public open class CheckKotlinStub {
+    public constructor CheckKotlinStub()
+    public open fun getKotlinStub(): test2.KotlinStub!
+}

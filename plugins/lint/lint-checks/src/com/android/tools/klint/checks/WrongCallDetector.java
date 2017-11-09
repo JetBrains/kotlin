@@ -27,23 +27,28 @@ import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.TextFormat;
+import com.intellij.psi.PsiMethod;
+
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.USuperExpression;
+import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-
 /**
  * Checks for cases where the wrong call is being made
  */
-public class WrongCallDetector extends Detector implements UastScanner {
+public class WrongCallDetector extends Detector implements Detector.UastScanner {
     /** Calling the wrong method */
     public static final Issue ISSUE = Issue.create(
             "WrongCall", //$NON-NLS-1$
@@ -57,79 +62,61 @@ public class WrongCallDetector extends Detector implements UastScanner {
             Severity.FATAL,
             new Implementation(
                     WrongCallDetector.class,
-                    Scope.SOURCE_FILE_SCOPE));
+                    Scope.JAVA_FILE_SCOPE));
 
     /** Constructs a new {@link WrongCallDetector} */
     public WrongCallDetector() {
     }
 
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
     // ---- Implements UastScanner ----
 
-
     @Override
-    public List<String> getApplicableFunctionNames() {
+    @Nullable
+    public List<String> getApplicableMethodNames() {
         return Arrays.asList(
-          ON_DRAW,
-          ON_MEASURE,
-          ON_LAYOUT
+                ON_DRAW,
+                ON_MEASURE,
+                ON_LAYOUT
         );
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression node, @NonNull UMethod calledMethod) {
         // Call is only allowed if it is both only called on the super class (invoke special)
         // as well as within the same overriding method (e.g. you can't call super.onLayout
         // from the onMeasure method)
-        if (node.getKind() != UastCallKind.FUNCTION_CALL) {
+        UExpression operand = node.getReceiver();
+        if (!(operand instanceof USuperExpression)) {
+            report(context, node, calledMethod);
             return;
         }
 
-        UElement referenceExpression = node.getParent();
-        if (referenceExpression instanceof UQualifiedExpression) {
-            UExpression operand = ((UQualifiedExpression)referenceExpression).getReceiver();
-            if (!(operand instanceof USuperExpression)) {
-                report(context, node);
-                return;
+        PsiMethod method = UastUtils.getParentOfType(node, UMethod.class, true);
+        if (method != null) {
+            String callName = node.getMethodName();
+            if (callName != null && !callName.equals(method.getName())) {
+                report(context, node, calledMethod);
             }
-        }
-
-        UFunction containingFunction = UastUtils.getContainingFunction(node);
-        if (containingFunction == null) {
-            return;
-        }
-
-        if (containingFunction.getKind() == UastFunctionKind.CONSTRUCTOR || !containingFunction.matchesName(node.getFunctionName())) {
-            report(context, node);
         }
     }
 
-    private static void report(UastAndroidContext context, UCallExpression node) {
+    private static void report(
+            @NonNull JavaContext context,
+            @NonNull UCallExpression node,
+            @NonNull PsiMethod method) {
         // Make sure the call is on a view
-        UFunction resolved = node.resolve(context);
-        if (resolved != null && resolved.getKind() != UastFunctionKind.CONSTRUCTOR) {
-            UClass containingClass = UastUtils.getContainingClass(resolved);
-            if (containingClass == null || !containingClass.isSubclassOf(CLASS_VIEW)) {
-                return;
-            }
-        }
-
-        String name = node.getFunctionName();
-        if (name == null) {
+        if (!context.getEvaluator().isMemberInSubClassOf(method, CLASS_VIEW, false)) {
             return;
         }
 
+        String name = method.getName();
         String suggestion = Character.toLowerCase(name.charAt(2)) + name.substring(3);
         String message = String.format(
                 // Keep in sync with {@link #getOldValue} and {@link #getNewValue} below!
                 "Suspicious method call; should probably call \"`%1$s`\" rather than \"`%2$s`\"",
                 suggestion, name);
-        context.report(ISSUE, node, context.getLocation(node.getFunctionReference()), message);
+        context.report(ISSUE, node, context.getUastNameLocation(node), message);
     }
 
     /**

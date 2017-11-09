@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.test.SingleFileTranslationTest;
-import org.mozilla.javascript.EcmaError;
+
+import javax.script.ScriptException;
 
 /*
 * We can't really check that this examples work in non-browser environment, so we just check that examples compile and
 * running them produce expected error.
 * */
-public final class WebDemoCanvasExamplesTest extends SingleFileTranslationTest {
+public final class WebDemoCanvasExamplesTest extends AbstractWebDemoExamplesTest {
 
     public WebDemoCanvasExamplesTest() {
         super("webDemoCanvasExamples/");
@@ -48,11 +48,11 @@ public final class WebDemoCanvasExamplesTest extends SingleFileTranslationTest {
 
     private void doTest(@NotNull String filename, @NotNull String firstUnknownSymbolEncountered) throws Exception {
         try {
-            checkOutput(filename, "");
+            runMainAndCheckOutput(filename, "");
             fail();
         }
-        catch (EcmaError e) {
-            String expectedErrorMessage = "ReferenceError: \"" + firstUnknownSymbolEncountered + "\" is not defined.";
+        catch (ScriptException e) {
+            String expectedErrorMessage = "ReferenceError: \"" + firstUnknownSymbolEncountered + "\" is not defined";
             assertTrue("Unexpected error when running compiled canvas examples with rhino.\n" +
                        "Expected: " + expectedErrorMessage + "\n" +
                        "Actual: " + e.getMessage(),

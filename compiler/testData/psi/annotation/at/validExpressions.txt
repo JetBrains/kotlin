@@ -1,4 +1,4 @@
-JetFile: validExpressions.kt
+KtFile: validExpressions.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

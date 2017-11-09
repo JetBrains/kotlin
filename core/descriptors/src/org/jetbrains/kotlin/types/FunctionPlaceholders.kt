@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 class FunctionPlaceholders(private val builtIns: KotlinBuiltIns) {
     fun createFunctionPlaceholderType(
@@ -63,10 +62,6 @@ class FunctionPlaceholderTypeConstructor(
 
     override fun getDeclarationDescriptor(): ClassifierDescriptor? {
         return errorTypeConstructor.declarationDescriptor
-    }
-
-    override val annotations: Annotations get(): Annotations {
-        return errorTypeConstructor.annotations
     }
 
     override fun toString(): String {

@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.flatMapClassifierNamesOrNull
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
+import org.jetbrains.kotlin.util.collectionUtils.getFirstClassifierDiscriminateHeaders
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class JvmPackageScope(
         private val c: LazyJavaResolverContext,
@@ -43,25 +43,25 @@ class JvmPackageScope(
     private val kotlinScopes by c.storageManager.createLazyValue {
         packageFragment.binaryClasses.values.mapNotNull { partClass ->
             c.components.deserializedDescriptorResolver.createKotlinPackagePartScope(packageFragment, partClass)
-        }.toReadOnlyList()
+        }.toList()
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        recordLookup(location, name)
+        recordLookup(name, location)
 
         val javaClassifier = javaScope.getContributedClassifier(name, location)
         if (javaClassifier != null) return javaClassifier
 
-        return getFirstMatch(kotlinScopes) { it.getContributedClassifier(name, location) }
+        return getFirstClassifierDiscriminateHeaders(kotlinScopes) { it.getContributedClassifier(name, location) }
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        recordLookup(location, name)
+        recordLookup(name, location)
         return getFromAllScopes(javaScope, kotlinScopes) { it.getContributedVariables(name, location) }
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
-        recordLookup(location, name)
+        recordLookup(name, location)
         return getFromAllScopes(javaScope, kotlinScopes) { it.getContributedFunctions(name, location) }
     }
 
@@ -77,8 +77,12 @@ class JvmPackageScope(
         addAll(javaScope.getVariableNames())
     }
 
+    override fun getClassifierNames(): Set<Name>? = kotlinScopes.flatMapClassifierNamesOrNull()?.apply {
+        addAll(javaScope.getClassifierNames())
+    }
+
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.simpleName, " {")
+        p.println(this::class.java.simpleName, " {")
         p.pushIndent()
 
         p.println("containingDeclaration: $packageFragment")
@@ -92,7 +96,7 @@ class JvmPackageScope(
         p.println("}")
     }
 
-    private fun recordLookup(location: LookupLocation, name: Name) {
+    override fun recordLookup(name: Name, location: LookupLocation) {
         c.components.lookupTracker.record(location, packageFragment, name)
     }
 }

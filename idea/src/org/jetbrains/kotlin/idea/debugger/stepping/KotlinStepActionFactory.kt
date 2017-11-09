@@ -141,7 +141,6 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
                 LOG.info(e)
             }
 
-            hint.isIgnoreFilters = true
             applyThreadFilter(suspendContext, stepThread)
 
             doStep(suspendContext, stepThread, myStepSize, StepRequest.STEP_OVER, hint)

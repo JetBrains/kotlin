@@ -26,11 +26,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class KtDestructuringDeclarationReference(element: KtDestructuringDeclarationEntry) : AbstractKtReference<KtDestructuringDeclarationEntry>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        return context[BindingContext.COMPONENT_RESOLVED_CALL, element]?.candidateDescriptor.singletonOrEmptyList()
+        return listOfNotNull(context[BindingContext.COMPONENT_RESOLVED_CALL, element]?.candidateDescriptor)
     }
 
     override fun getRangeInElement() = TextRange(0, element.textLength)
@@ -47,7 +46,8 @@ class KtDestructuringDeclarationReference(element: KtDestructuringDeclarationEnt
 
     override val resolvesByNames: Collection<Name>
         get() {
-            val componentIndex = (element.parent as KtDestructuringDeclaration).entries.indexOf(element) + 1
+            val destructuringParent = element.parent as? KtDestructuringDeclaration ?: return emptyList()
+            val componentIndex = destructuringParent.entries.indexOf(element) + 1
             return listOf(Name.identifier("component$componentIndex"))
         }
 }

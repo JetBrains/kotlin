@@ -41,7 +41,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.insertMember
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType
@@ -62,7 +62,7 @@ abstract class KotlinGenerateTestSupportActionBase(
     companion object {
         private fun findTargetClass(editor: Editor, file: PsiFile): KtClassOrObject? {
             val elementAtCaret = file.findElementAt(editor.caretModel.offset) ?: return null
-            return elementAtCaret.parentsWithSelf.filterIsInstance<KtClassOrObject>().firstOrNull { !it.isLocal() }
+            return elementAtCaret.parentsWithSelf.filterIsInstance<KtClassOrObject>().firstOrNull { !it.isLocal }
         }
 
         private fun chooseAndPerform(editor: Editor, frameworks: List<TestFramework>, consumer: (TestFramework) -> Unit) {
@@ -71,7 +71,7 @@ abstract class KotlinGenerateTestSupportActionBase(
 
             if (ApplicationManager.getApplication().isUnitTestMode) return consumer(frameworks.first())
 
-            val list = JBList(*frameworks.toTypedArray())
+            val list = JBList<TestFramework>(*frameworks.toTypedArray())
             list.cellRenderer = TestFrameworkListCellRenderer()
 
             PopupChooserBuilder(list)
@@ -127,47 +127,61 @@ abstract class KotlinGenerateTestSupportActionBase(
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
         val klass = findTargetClass(editor, file) ?: return
-        val frameworks = findSuitableFrameworks(klass)
-                .filter { methodKind.getFileTemplateDescriptor(it) != null && isApplicableTo(it, klass) }
-        chooseAndPerform(editor, frameworks) { doGenerate(editor, file, klass, it) }
+
+        if (testFrameworkToUse != null) {
+            val frameworkToUse = findSuitableFrameworks(klass).first { it.name == testFrameworkToUse }
+            if (isApplicableTo(frameworkToUse, klass)) {
+                doGenerate(editor, file, klass, frameworkToUse)
+            }
+        }
+        else {
+            val frameworks = findSuitableFrameworks(klass)
+                    .filter { methodKind.getFileTemplateDescriptor(it) != null && isApplicableTo(it, klass) }
+
+            chooseAndPerform(editor, frameworks) { doGenerate(editor, file, klass, it) }
+        }
     }
+
+    var testFrameworkToUse: String? = null
 
     private val DUMMY_NAME = "__KOTLIN_RULEZZZ__"
 
     private fun doGenerate(editor: Editor, file: PsiFile, klass: KtClassOrObject, framework: TestFramework) {
         val project = file.project
         val commandName = "Generate test function"
-        project.executeWriteCommand(commandName) {
-            try {
+
+        val fileTemplateDescriptor = methodKind.getFileTemplateDescriptor(framework)
+        val fileTemplate = FileTemplateManager.getInstance(project).getCodeTemplate(fileTemplateDescriptor.fileName)
+        var templateText = fileTemplate.text.replace(BODY_VAR, "")
+        var name: String? = null
+        if (templateText.contains(NAME_VAR)) {
+            name = if (templateText.contains("test$NAME_VAR")) "Name" else "name"
+            if (!ApplicationManager.getApplication().isUnitTestMode) {
+                name = Messages.showInputDialog("Choose test name: ", commandName, null, name, NAME_VALIDATOR)
+                       ?: return
+            }
+
+            templateText = fileTemplate.text.replace(NAME_VAR, DUMMY_NAME)
+        }
+
+        try {
+            var errorHint: String? = null
+            project.executeWriteCommand(commandName) {
                 PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-                val fileTemplateDescriptor = methodKind.getFileTemplateDescriptor(framework)
-                val fileTemplate = FileTemplateManager.getInstance(project).getCodeTemplate(fileTemplateDescriptor.fileName)
-                var templateText = fileTemplate.text.replace(BODY_VAR, "")
-                var name: String? = null
-                if (templateText.contains(NAME_VAR)) {
-                    name = if (templateText.contains("test$NAME_VAR")) "Name" else "name"
-                    if (!ApplicationManager.getApplication().isUnitTestMode) {
-                        name = Messages.showInputDialog("Choose test name: ", commandName, null, name, NAME_VALIDATOR)
-                                ?: return@executeWriteCommand
-                    }
-
-                    templateText = fileTemplate.text.replace(NAME_VAR, DUMMY_NAME)
-                }
                 val factory = PsiElementFactory.SERVICE.getInstance(project)
                 val psiMethod = factory.createMethodFromText(templateText, null)
                 psiMethod.throwsList.referenceElements.forEach { it.delete() }
-                var function = psiMethod.j2k() as? KtNamedFunction
-                if (function == null) {
-                    HintManager.getInstance().showErrorHint(editor, "Couldn't convert Java template to Kotlin")
+                var function = psiMethod.j2k() as? KtNamedFunction ?: run {
+                    errorHint = "Couldn't convert Java template to Kotlin"
                     return@executeWriteCommand
                 }
-                if (name != null) {
-                    function = substituteNewName(function, name)
+                name?.let {
+                    function = substituteNewName(function, it)
                 }
                 val functionInPlace = insertMember(editor, klass, function)
 
-                val functionDescriptor = functionInPlace.resolveToDescriptor() as FunctionDescriptor
+                val functionDescriptor = functionInPlace.unsafeResolveToDescriptor() as FunctionDescriptor
                 val overriddenDescriptors = functionDescriptor.overriddenDescriptors
                 val bodyText = when (overriddenDescriptors.size) {
                     0 -> generateUnsupportedOrSuperCall(project, functionDescriptor, BodyType.EMPTY)
@@ -183,9 +197,10 @@ abstract class KotlinGenerateTestSupportActionBase(
 
                 setupEditorSelection(editor, functionInPlace)
             }
-            catch (e: IncorrectOperationException) {
-                HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.message)
-            }
+            errorHint?.let { HintManager.getInstance().showErrorHint(editor, it) }
+        }
+        catch (e: IncorrectOperationException) {
+            HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.message)
         }
     }
 

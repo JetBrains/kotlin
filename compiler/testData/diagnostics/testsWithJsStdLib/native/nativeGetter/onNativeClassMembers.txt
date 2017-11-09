@@ -1,6 +1,6 @@
 package
 
-@kotlin.js.native public final class A {
+public final external class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.js.nativeGetter public final fun foo(/*0*/ a: kotlin.Double): kotlin.String?
@@ -20,16 +20,16 @@ package
     }
 }
 
-@kotlin.js.native public final class B {
+public final external class B {
     public constructor B()
-    @kotlin.js.nativeGetter public final val foo: kotlin.Int = 0
+    @kotlin.js.nativeGetter public final val foo: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.js.nativeGetter public final val foo: kotlin.Int = 0
+        @kotlin.js.nativeGetter public final val foo: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -50,7 +50,7 @@ package
     }
 }
 
-@kotlin.js.native public final class C {
+public final external class C {
     public constructor C()
     @kotlin.js.nativeGetter public final fun bar(/*0*/ a: kotlin.String): kotlin.Int
     @kotlin.js.nativeGetter public final fun baz(/*0*/ a: kotlin.String = ...): kotlin.Int?
@@ -60,17 +60,4 @@ package
     @kotlin.js.nativeGetter public final fun get(/*0*/ a: A): kotlin.Any?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    @kotlin.js.nativeGetter public final fun kotlin.Int.get(/*0*/ a: kotlin.String): kotlin.Int?
-    @kotlin.js.nativeGetter public final fun kotlin.Int.get2(/*0*/ a: kotlin.Number): kotlin.String?
-    @kotlin.js.nativeGetter public final fun kotlin.Int.get3(/*0*/ a: kotlin.Int): kotlin.String?
-
-    public companion object Companion {
-        private constructor Companion()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        @kotlin.js.nativeGetter public final fun kotlin.Int.get(/*0*/ a: kotlin.String): kotlin.Int?
-        @kotlin.js.nativeGetter public final fun kotlin.Int.get2(/*0*/ a: kotlin.Number): kotlin.String?
-        @kotlin.js.nativeGetter public final fun kotlin.Int.get3(/*0*/ a: kotlin.Int): kotlin.String?
-    }
 }

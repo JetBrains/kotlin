@@ -13,7 +13,7 @@
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="package" />
-    <option name="VM_PARAMETERS" value="-ea -XX:+HeapDumpOnOutOfMemoryError -Xmx1200m -XX:MaxPermSize=400m -XX:+UseCodeCacheFlushing -XX:ReservedCodeCacheSize=64m" />
+    <option name="VM_PARAMETERS" value="-ea -XX:+HeapDumpOnOutOfMemoryError -Xmx1200m -XX:+UseCodeCacheFlushing -XX:ReservedCodeCacheSize=64m" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/.." />
     <option name="ENV_VARIABLES" />

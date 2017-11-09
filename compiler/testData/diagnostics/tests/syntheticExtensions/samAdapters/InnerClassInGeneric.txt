@@ -15,7 +15,4 @@ public open class JavaClass</*0*/ T : kotlin.Any!> {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-
-    // Static members
-    public final /*synthesized*/ fun </*0*/ X : kotlin.Any!> Inner(/*0*/ function: (t: T!, x: X!, runnable: java.lang.Runnable!) -> T!): JavaClass.Inner<X>
 }

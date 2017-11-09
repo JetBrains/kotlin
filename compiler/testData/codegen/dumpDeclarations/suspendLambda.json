@@ -1,0 +1,23 @@
+[
+	{
+		"declaration": "final suspend fun kotlin.Any.<anonymous>(): kotlin.Unit defined in invokeCoroutineBuilder",
+		"visibility": "local",
+		"class": "SuspendLambdaKt$invokeCoroutineBuilder$1",
+		"members": [
+			{"visibility": "local",	"declaration": "final fun kotlin.Any.<anonymous>(continuation: kotlin.coroutines.experimental.Continuation<kotlin.Unit>): kotlin.Any?", "name": "invoke", "desc": "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"},
+			{"visibility": "local",	"declaration": "<this>", "name": "p$", "desc": "Ljava/lang/Object;"},
+			{"name": "doResume", "desc": "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;"},
+			{"visibility": "local",	"declaration": "final fun kotlin.Any.<anonymous>(continuation: kotlin.coroutines.experimental.Continuation<kotlin.Unit>): kotlin.Any?", "name": "<init>", "desc": "(Lkotlin/coroutines/experimental/Continuation;)V"},
+			{"name": "create", "desc": "(Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;"},
+			{"name": "invoke", "desc": "(Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;"}
+		]
+	},
+	{
+		"declaration": "package-fragment",
+		"class": "SuspendLambdaKt",
+		"members": [
+			{"visibility": "public",	"declaration": "fun invokeCoroutineBuilder(): kotlin.Unit", "name": "invokeCoroutineBuilder", "desc": "()V"},
+			{"visibility": "public",	"declaration": "fun buildCoroutine(builderAction: suspend kotlin.Any.() -> kotlin.Unit): kotlin.Unit", "name": "buildCoroutine", "desc": "(Lkotlin/jvm/functions/Function2;)V"}
+		]
+	}
+]

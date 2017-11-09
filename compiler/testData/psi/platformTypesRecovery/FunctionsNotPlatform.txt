@@ -1,4 +1,4 @@
-JetFile: FunctionsNotPlatform.kt
+KtFile: FunctionsNotPlatform.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -19,11 +19,8 @@ package org.jetbrains.kotlin.types.typeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
@@ -59,11 +56,7 @@ fun KotlinType.isNullableAny(): Boolean = KotlinBuiltIns.isNullableAny(this)
 fun KotlinType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
 fun KotlinType.isPrimitiveNumberType(): Boolean = KotlinBuiltIns.isPrimitiveType(this) && !isBoolean()
 fun KotlinType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
-fun KotlinType.isThrowable(): Boolean = isConstructedFromClassWithGivenFqName(KotlinBuiltIns.FQ_NAMES.throwable) && !isMarkedNullable
-fun KotlinType.isIterator(): Boolean = isConstructedFromClassWithGivenFqName(KotlinBuiltIns.FQ_NAMES.iterator) && !isMarkedNullable
-
-fun KotlinType.isConstructedFromClassWithGivenFqName(fqName: FqName) =
-        (constructor.declarationDescriptor as? ClassDescriptor)?.fqNameUnsafe == fqName.toUnsafe()
+fun KotlinType.isNotNullThrowable(): Boolean = KotlinBuiltIns.isThrowableOrNullableThrowable(this) && !isMarkedNullable
 
 fun KotlinType.isTypeParameter(): Boolean = TypeUtils.isTypeParameter(this)
 
@@ -104,7 +97,7 @@ fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: KotlinType?):
 
 fun KotlinType.containsError() = ErrorUtils.containsErrorType(this)
 
-fun List<KotlinType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
+fun List<KotlinType>.defaultProjections(): List<TypeProjection> = map(::TypeProjectionImpl)
 
 fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
 
@@ -172,7 +165,7 @@ fun KotlinType.replaceArgumentsWithStarProjections(): KotlinType {
                 unwrapped.upperBound.replaceArgumentsWithStarProjections()
         )
         is SimpleType -> unwrapped.replaceArgumentsWithStarProjections()
-    }
+    }.inheritEnhancement(unwrapped)
 }
 
 private fun SimpleType.replaceArgumentsWithStarProjections(): SimpleType {
@@ -203,3 +196,8 @@ fun KotlinType.requiresTypeAliasExpansion(): Boolean =
             } ?: false
         }
 
+fun KotlinType.containsTypeProjectionsInTopLevelArguments(): Boolean {
+    if (isError) return false
+    val possiblyInnerType = buildPossiblyInnerType() ?: return false
+    return possiblyInnerType.arguments.any { it.isStarProjection || it.projectionKind != Variance.INVARIANT }
+}

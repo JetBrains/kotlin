@@ -26,6 +26,10 @@ interface TransformationInfo {
 
     val nameGenerator: NameGenerator
 
+    val wasAlreadyRegenerated: Boolean
+        get() = false
+
+
     fun shouldRegenerate(sameModule: Boolean): Boolean
 
     fun canRemoveAfterTransformation(): Boolean
@@ -36,7 +40,7 @@ interface TransformationInfo {
 class WhenMappingTransformationInfo(
         override val oldClassName: String,
         parentNameGenerator: NameGenerator,
-        val alreadyRegenerated: Boolean,
+        private val alreadyRegenerated: Boolean,
         val fieldNode: FieldInsnNode
 ) : TransformationInfo {
 
@@ -64,7 +68,8 @@ class AnonymousObjectTransformationInfo internal constructor(
         private val alreadyRegenerated: Boolean,
         val constructorDesc: String?,
         private val isStaticOrigin: Boolean,
-        parentNameGenerator: NameGenerator
+        parentNameGenerator: NameGenerator,
+        private val capturesAnonymousObjectThatMustBeRegenerated: Boolean = false
 ) : TransformationInfo {
 
     override val nameGenerator by lazy {
@@ -77,6 +82,9 @@ class AnonymousObjectTransformationInfo internal constructor(
 
     lateinit var capturedLambdasToInline: Map<String, LambdaInfo>
 
+    override val wasAlreadyRegenerated: Boolean
+        get() = alreadyRegenerated
+
     constructor(
             ownerInternalName: String,
             needReification: Boolean,
@@ -86,7 +94,8 @@ class AnonymousObjectTransformationInfo internal constructor(
     ) : this(ownerInternalName, needReification, hashMapOf(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator)
 
     override fun shouldRegenerate(sameModule: Boolean): Boolean =
-            !alreadyRegenerated && (!lambdasToInline.isEmpty() || !sameModule || capturedOuterRegenerated || needReification)
+            !alreadyRegenerated &&
+            (!lambdasToInline.isEmpty() || !sameModule || capturedOuterRegenerated || needReification || capturesAnonymousObjectThatMustBeRegenerated)
 
     override fun canRemoveAfterTransformation(): Boolean {
         // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda

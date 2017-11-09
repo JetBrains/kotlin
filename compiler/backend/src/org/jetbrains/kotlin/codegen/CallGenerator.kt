@@ -21,9 +21,19 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
-abstract class CallGenerator {
+enum class ValueKind {
+    GENERAL,
+    GENERAL_VARARG,
+    DEFAULT_PARAMETER,
+    DEFAULT_MASK,
+    METHOD_HANDLE_IN_DEFAULT,
+    CAPTURED,
+    DEFAULT_LAMBDA_CAPTURED_PARAMETER
+}
 
-    internal class DefaultCallGenerator(private val codegen: ExpressionCodegen) : CallGenerator() {
+interface CallGenerator {
+
+    class DefaultCallGenerator(private val codegen: ExpressionCodegen) : CallGenerator {
 
         override fun genCallInner(
                 callableMethod: Callable,
@@ -38,14 +48,11 @@ abstract class CallGenerator {
             }
         }
 
-        override fun afterParameterPut(
-                type: Type,
-                stackValue: StackValue?,
-                parameterIndex: Int) {
+        override fun processAndPutHiddenParameters(justProcess: Boolean) {
 
         }
 
-        override fun putHiddenParams() {
+        override fun putHiddenParamsIntoLocals() {
 
         }
 
@@ -63,8 +70,7 @@ abstract class CallGenerator {
             stackValue.put(stackValue.type, codegen.v)
         }
 
-        override fun putValueIfNeeded(
-                parameterType: Type, value: StackValue) {
+        override fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind, parameterIndex: Int) {
             value.put(value.type, codegen.v)
         }
 
@@ -100,28 +106,34 @@ abstract class CallGenerator {
         genCallInner(callableMethod, resolvedCall, callDefault, codegen)
     }
 
-    abstract fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen)
+    fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen)
 
-    abstract fun afterParameterPut(
-            type: Type,
-            stackValue: StackValue?,
-            parameterIndex: Int)
-
-    abstract fun genValueAndPut(
+    fun genValueAndPut(
             valueParameterDescriptor: ValueParameterDescriptor,
             argumentExpression: KtExpression,
             parameterType: Type,
             parameterIndex: Int)
 
-    abstract fun putValueIfNeeded(
+    fun putValueIfNeeded(
             parameterType: Type,
-            value: StackValue)
+            value: StackValue) {
+        putValueIfNeeded(parameterType, value, ValueKind.GENERAL)
+    }
 
-    abstract fun putCapturedValueOnStack(
+    fun putValueIfNeeded(
+            parameterType: Type,
+            value: StackValue,
+            kind: ValueKind = ValueKind.GENERAL,
+            parameterIndex: Int = -1)
+
+    fun putCapturedValueOnStack(
             stackValue: StackValue,
             valueType: Type, paramIndex: Int)
 
-    abstract fun putHiddenParams()
+    fun processAndPutHiddenParameters(justProcess: Boolean)
 
-    abstract fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>)
+    /*should be called if justProcess = true in processAndPutHiddenParameters*/
+    fun putHiddenParamsIntoLocals()
+
+    fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>)
 }

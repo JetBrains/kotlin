@@ -1,4 +1,4 @@
-JetFile: PrimaryConstructorModifiers_ERR.kt
+KtFile: PrimaryConstructorModifiers_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

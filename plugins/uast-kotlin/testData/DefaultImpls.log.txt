@@ -1,0 +1,6 @@
+UFile (package = )
+    UClass (name = Foo)
+        UAnnotationMethod (name = bar)
+            ULiteralExpression (value = "Hello!")
+    UClass (name = Baz)
+        UAnnotationMethod (name = Baz)

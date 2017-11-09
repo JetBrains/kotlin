@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.load.java.structure.impl
 
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class JavaPackageImpl(psiPackage: PsiPackage, private val scope: GlobalSearchScope) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage {
+class JavaPackageImpl(
+        psiPackage: PsiPackage, private val scope: GlobalSearchScope
+) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage, MapBasedJavaAnnotationOwner {
 
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
         val psiClasses = psi.getClasses(scope).filter {
@@ -38,4 +39,9 @@ class JavaPackageImpl(psiPackage: PsiPackage, private val scope: GlobalSearchSco
 
     override val fqName: FqName
         get() = FqName(psi.qualifiedName)
+
+    override val annotations: Collection<JavaAnnotation>
+        get() = org.jetbrains.kotlin.load.java.structure.impl.annotations(psi.annotationList?.annotations.orEmpty())
+
+    override val annotationsByFqName: Map<FqName?, JavaAnnotation> by buildLazyValueForMap()
 }

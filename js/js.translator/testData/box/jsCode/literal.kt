@@ -1,6 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1113
 package foo
 
-@native interface HasName {
+external interface HasName {
     val name: String
 }
 

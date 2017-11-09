@@ -21,13 +21,15 @@ import com.android.annotations.Nullable;
 import com.android.ide.common.blame.SourcePosition;
 import com.android.ide.common.res2.ResourceFile;
 import com.android.ide.common.res2.ResourceItem;
+import com.android.tools.klint.client.api.JavaParser;
 import com.google.common.annotations.Beta;
+import com.intellij.psi.PsiElement;
 
 import java.io.File;
 
 /**
  * Location information for a warning
- * <p/>
+ * <p>
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */
@@ -41,6 +43,13 @@ public class Location {
     private String mMessage;
     private Location mSecondary;
     private Object mClientData;
+
+    /**
+     * Special marker location which means location not available, or not applicable, or filtered out, etc.
+     * For example, the infrastructure may return {@link #NONE} if you ask {@link JavaParser#getLocation(JavaContext, PsiElement)}
+     * for an element which is not in the current file during an incremental lint run in a single file.
+     */
+    public static final Location NONE = new Location(new File("NONE"), null, null);
 
     /**
      * (Private constructor, use one of the factory methods
@@ -355,7 +364,14 @@ public class Location {
                     index = findNextMatch(contents, offset, patternStart, hints);
                     line = adjustLine(contents, line, offset, index);
                 } else {
-                    assert direction == SearchDirection.NEAREST;
+                    assert direction == SearchDirection.NEAREST ||
+                            direction == SearchDirection.EOL_NEAREST;
+
+                    int lineEnd = contents.indexOf('\n', offset);
+                    if (lineEnd == -1) {
+                        lineEnd = contents.length();
+                    }
+                    offset = lineEnd;
 
                     int before = findPreviousMatch(contents, offset, patternStart, hints);
                     int after = findNextMatch(contents, offset, patternStart, hints);
@@ -366,12 +382,27 @@ public class Location {
                     } else if (after == -1) {
                         index = before;
                         line = adjustLine(contents, line, offset, index);
-                    } else if (offset - before < after - offset) {
-                        index = before;
-                        line = adjustLine(contents, line, offset, index);
                     } else {
-                        index = after;
-                        line = adjustLine(contents, line, offset, index);
+                        int newLinesBefore = 0;
+                        for (int i = before; i < offset; i++) {
+                            if (contents.charAt(i) == '\n') {
+                                newLinesBefore++;
+                            }
+                        }
+                        int newLinesAfter = 0;
+                        for (int i = offset; i < after; i++) {
+                            if (contents.charAt(i) == '\n') {
+                                newLinesAfter++;
+                            }
+                        }
+                        if (newLinesBefore < newLinesAfter || newLinesBefore == newLinesAfter
+                                && offset - before < after - offset) {
+                            index = before;
+                            line = adjustLine(contents, line, offset, index);
+                        } else {
+                            index = after;
+                            line = adjustLine(contents, line, offset, index);
+                        }
                     }
                 }
 
@@ -674,6 +705,12 @@ public class Location {
          * the match that is closest
          */
         NEAREST,
+
+        /**
+         * Search both forwards and backwards from the end of the given line, and prefer
+         * the match that is closest
+         */
+        EOL_NEAREST,
     }
 
     /**

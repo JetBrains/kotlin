@@ -11,5 +11,5 @@ public interface MyTrait : java.lang.Object {
     public abstract override /*1*/ fun toString(): kotlin.String
     public abstract override /*1*/ fun wait(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun wait(/*0*/ p0: kotlin.Long): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun wait(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun wait(/*0*/ timeout: kotlin.Long, /*1*/ nanos: kotlin.Int): kotlin.Unit
 }

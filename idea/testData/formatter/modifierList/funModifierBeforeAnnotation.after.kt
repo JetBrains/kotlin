@@ -1,4 +1,5 @@
 public
-@foo fun foo() {
+@foo
+fun foo() {
 }
 

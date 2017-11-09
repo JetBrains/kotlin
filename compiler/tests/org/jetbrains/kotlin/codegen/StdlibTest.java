@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -51,7 +52,12 @@ public class StdlibTest extends KotlinTestWithEnvironment {
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
+        @SuppressWarnings("deprecation")
+        File[] runtimeClasspath = new File[] { ForTestCompileRuntime.runtimeJarForTests() };
+        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_NO_RUNTIME, TestJdkKind.FULL_JDK, runtimeClasspath);
+
+        JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.kotlinTestJarForTests());
+        JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.kotlinTestJunitJarForTests());
 
         File junitJar = new File("libraries/lib/junit-4.11.jar");
         assertTrue(junitJar.exists());
@@ -63,7 +69,14 @@ public class StdlibTest extends KotlinTestWithEnvironment {
                 new PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
         );
 
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+
+        ModuleVisibilityManager moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.getProject());
+        for (File path: runtimeClasspath) {
+            moduleVisibilityManager.addFriendPath(path.getPath());
+        }
+
+        return environment;
     }
 
     public void testStdlib() throws ClassNotFoundException {
@@ -130,11 +143,8 @@ public class StdlibTest extends KotlinTestWithEnvironment {
             return TestCase.class.isAssignableFrom(aClass) ? new TestSuite(aClass) :
                    TestRunnerUtil.isJUnit4TestClass(aClass) ? new JUnit4TestAdapter(aClass) : null;
         }
-        catch (NoSuchMethodException e) {
+        catch (NoSuchMethodException | ClassNotFoundException e) {
             // Ignore test classes we can't instantiate
-            return null;
-        }
-        catch (ClassNotFoundException e) {
             return null;
         }
     }

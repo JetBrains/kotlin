@@ -28,12 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class TranslatorTestCaseBuilder {
-    public static FilenameFilter emptyFilter = new FilenameFilter() {
-        @Override
-        public boolean accept(@NotNull File file, @NotNull String name) {
-            return true;
-        }
-    };
+    private static final FilenameFilter EMPTY_FILTER = (file, name) -> true;
 
     public interface NamedTestFactory {
         @NotNull
@@ -43,7 +38,7 @@ public abstract class TranslatorTestCaseBuilder {
     @NotNull
     public static TestSuite suiteForDirectory(@NotNull String dataPath,
                                               @NotNull NamedTestFactory factory) {
-        return suiteForDirectory(dataPath, true, emptyFilter, factory);
+        return suiteForDirectory(dataPath, true, EMPTY_FILTER, factory);
     }
 
     @NotNull
@@ -56,35 +51,19 @@ public abstract class TranslatorTestCaseBuilder {
     }
 
     public static void appendTestsInDirectory(String dataPath, boolean recursive,
-                                              final FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
-        final String extensionKt = ".kt";
-        final FilenameFilter extensionFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(@NotNull File dir, @NotNull String name) {
-                return name.endsWith(extensionKt);
-            }
-        };
+                                              FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
+        String extensionKt = ".kt";
+        FilenameFilter extensionFilter = (dir, name) -> name.endsWith(extensionKt);
         FilenameFilter resultFilter;
-        if (filter != emptyFilter) {
-            resultFilter = new FilenameFilter() {
-                @Override
-                public boolean accept(@NotNull File file, @NotNull String s) {
-                    return extensionFilter.accept(file, s) && filter.accept(file, s);
-                }
-            };
+        if (filter != EMPTY_FILTER) {
+            resultFilter = (file, s) -> extensionFilter.accept(file, s) && filter.accept(file, s);
         }
         else {
             resultFilter = extensionFilter;
         }
         File dir = new File(dataPath);
-        FileFilter dirFilter = new FileFilter() {
-            @Override
-            public boolean accept(@NotNull File pathname) {
-                return pathname.isDirectory();
-            }
-        };
         if (recursive) {
-            File[] files = dir.listFiles(dirFilter);
+            File[] files = dir.listFiles(File::isDirectory);
             assert files != null : dir;
             List<File> subdirs = Arrays.asList(files);
             Collections.sort(subdirs);

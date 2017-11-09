@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,22 @@
 
 package org.jetbrains.kotlin.js.translate.expression;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsNumberLiteral;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
+import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.KotlinType;
-
-import java.util.Collections;
 
 import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.sum;
@@ -83,14 +82,25 @@ public final class StringTemplateTranslator extends AbstractTranslator {
             assert entryExpression != null :
                     "JetStringTemplateEntryWithExpression must have not null entry expression.";
             JsExpression translatedExpression = Translation.translateAsExpression(entryExpression, context());
-            if (translatedExpression instanceof JsNumberLiteral) {
-                append(context().program().getStringLiteral(translatedExpression.toString()));
-                return;
-            }
 
             KotlinType type = context().bindingContext().getType(entryExpression);
-            if (type == null || type.isMarkedNullable()) {
-                append(TopLevelFIF.TO_STRING.apply((JsExpression) null, Collections.singletonList(translatedExpression), context()));
+
+            if (type != null && KotlinBuiltIns.isCharOrNullableChar(type)) {
+                if (type.isMarkedNullable()) {
+                    TemporaryVariable tmp = context().declareTemporary(translatedExpression, entry);
+                    append(new JsConditional(JsAstUtils.equality(tmp.assignmentExpression(), new JsNullLiteral()),
+                                             new JsNullLiteral(),
+                                             JsAstUtils.charToString(tmp.reference())));
+                }
+                else {
+                    append(JsAstUtils.charToString(translatedExpression));
+                }
+            }
+            else if (translatedExpression instanceof JsNumberLiteral) {
+                append(new JsStringLiteral(translatedExpression.toString()));
+            }
+            else if (type == null || type.isMarkedNullable()) {
+                append(TopLevelFIF.TO_STRING.apply((JsExpression) null, new SmartList<>(translatedExpression), context()));
             }
             else if (mustCallToString(type)) {
                 append(new JsInvocation(new JsNameRef("toString", translatedExpression)));
@@ -102,16 +112,11 @@ public final class StringTemplateTranslator extends AbstractTranslator {
 
         private boolean mustCallToString(@NotNull KotlinType type) {
             Name typeName = DescriptorUtilsKt.getNameIfStandardType(type);
-            if (typeName != null) {
-                //TODO: this is a hacky optimization, should use some generic approach
-                if (NamePredicate.STRING.apply(typeName)) {
-                    return false;
-                }
-                else if (NamePredicate.PRIMITIVE_NUMBERS.apply(typeName)) {
-                    return resultingExpression == null;
-                }
+            //TODO: this is a hacky optimization, should use some generic approach
+            if (typeName != null && NamePredicate.STRING.test(typeName)) {
+                return false;
             }
-            return expressionEntries.length == 1;
+            return resultingExpression == null;
         }
 
         @Override
@@ -125,7 +130,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         }
 
         private void appendText(@NotNull String text) {
-            append(program().getStringLiteral(text));
+            append(new JsStringLiteral(text));
         }
 
         @NotNull

@@ -16,17 +16,22 @@
 
 package org.jetbrains.kotlin.load.kotlin.header
 
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
 
 class KotlinClassHeader(
         val kind: KotlinClassHeader.Kind,
         val metadataVersion: JvmMetadataVersion,
         val bytecodeVersion: JvmBytecodeBinaryVersion,
         val data: Array<String>?,
+        val incompatibleData: Array<String>?,
         val strings: Array<String>?,
         val extraString: String?,
-        val extraInt: Int
+        val extraInt: Int,
+        val packageName: String?
 ) {
     // See kotlin.Metadata
     enum class Kind(val id: Int) {
@@ -45,27 +50,33 @@ class KotlinClassHeader(
         }
     }
 
-    // See kotlin.Metadata
-    enum class MultifileClassKind(val id: Int) {
-        DELEGATING(0),
-        INHERITING(1);
-
-        companion object {
-            private val entryById = values().associateBy(MultifileClassKind::id)
-
-            @JvmStatic
-            fun getById(id: Int) = entryById[id]
-        }
+    enum class MultifileClassKind {
+        DELEGATING,
+        INHERITING;
     }
 
     val multifileClassName: String?
-        get() = if (kind == Kind.MULTIFILE_CLASS_PART) extraString else null
+        get() = extraString.takeIf { kind == Kind.MULTIFILE_CLASS_PART }
 
+    val multifilePartNames: List<String>
+        get() = data.takeIf { kind == Kind.MULTIFILE_CLASS }?.asList().orEmpty()
+
+    // TODO: use in incremental compilation
     val multifileClassKind: MultifileClassKind?
-        get() = if (kind == Kind.MULTIFILE_CLASS || kind == Kind.MULTIFILE_CLASS_PART)
-            MultifileClassKind.getById(extraInt)
+        get() = if (kind == Kind.MULTIFILE_CLASS || kind == Kind.MULTIFILE_CLASS_PART) {
+            if ((extraInt and JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG) != 0)
+                INHERITING
+            else
+                DELEGATING
+        }
         else
             null
+
+    val isPreRelease: Boolean
+        get() = (extraInt and JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG) != 0
+
+    val isScript: Boolean
+        get() = (extraInt and JvmAnnotationNames.METADATA_SCRIPT_FLAG) != 0
 
     override fun toString() = "$kind version=$metadataVersion"
 }

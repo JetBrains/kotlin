@@ -22,6 +22,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
+import org.jetbrains.kotlin.analyzer.ResolverForProjectImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -35,7 +36,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
@@ -64,16 +67,17 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val modules = setupModules(environment, moduleDirs)
         val projectContext = ProjectContext(environment.project)
         val builtIns = JvmBuiltIns(projectContext.storageManager)
-        val resolverForProject = JvmAnalyzerFacade.setupResolverForProject(
+        val resolverForProject = ResolverForProjectImpl(
                 "test",
-                projectContext, modules,
+                projectContext, modules, { JvmAnalyzerFacade },
                 { module -> ModuleContent(module.kotlinFiles, module.javaFilesScope) },
                 JvmPlatformParameters {
                     javaClass ->
                     val moduleName = javaClass.name.asString().toLowerCase().first().toString()
                     modules.first { it._name == moduleName }
                 },
-                builtIns = builtIns
+                builtIns = builtIns,
+                modulePlatforms = { MultiTargetPlatform.Specific("JVM") }
         )
 
         builtIns.initialize(
@@ -155,7 +159,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         }.forEach { checkDescriptor(it, callable) }
 
         callable.annotations.forEach {
-            val annotationClassDescriptor = it.type.constructor.declarationDescriptor as ClassDescriptor
+            val annotationClassDescriptor = it.annotationClass!!
             checkDescriptor(annotationClassDescriptor, callable)
 
             Assert.assertEquals(

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
@@ -32,6 +33,9 @@ class AddModifierFixFactory(val token: KtModifierKeywordToken) : KotlinSingleInt
         val functionDescriptor = (diagnostic as? DiagnosticWithParameters2<*, *, *>)?.a as? FunctionDescriptor ?: return null
         val target = DescriptorToSourceUtilsIde.getAnyDeclaration(diagnostic.psiFile.project, functionDescriptor)
                 as? KtModifierListOwner ?: return null
-        return object : AddModifierFix(target, token), CleanupFix {}
+        if (target.canRefactor()) {
+            return object : AddModifierFix(target, token), CleanupFix {}
+        }
+        return null
     }
 }

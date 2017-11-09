@@ -1,0 +1,7 @@
+package
+
+public val test1f: suspend () -> kotlin.Unit
+public val test2f: suspend kotlin.Any.() -> kotlin.Unit
+public val test3f: suspend kotlin.Any.(kotlin.Int) -> kotlin.Int
+public val test4f: SuspendFn /* = suspend () -> kotlin.Unit */
+public typealias SuspendFn = suspend () -> kotlin.Unit

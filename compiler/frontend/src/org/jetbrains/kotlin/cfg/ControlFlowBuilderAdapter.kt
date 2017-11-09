@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cfg
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -33,63 +34,47 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.loadUnit(expression)
     }
 
-    override fun loadConstant(expression: KtExpression, constant: CompileTimeConstant<*>?): InstructionWithValue {
-        return delegateBuilder.loadConstant(expression, constant)
-    }
+    override fun loadConstant(expression: KtExpression, constant: CompileTimeConstant<*>?): InstructionWithValue =
+            delegateBuilder.loadConstant(expression, constant)
 
-    override fun createAnonymousObject(expression: KtObjectLiteralExpression): InstructionWithValue {
-        return delegateBuilder.createAnonymousObject(expression)
-    }
+    override fun createAnonymousObject(expression: KtObjectLiteralExpression): InstructionWithValue =
+            delegateBuilder.createAnonymousObject(expression)
 
-    override fun createLambda(expression: KtFunction): InstructionWithValue {
-        return delegateBuilder.createLambda(expression)
-    }
+    override fun createLambda(expression: KtFunction): InstructionWithValue = delegateBuilder.createLambda(expression)
 
-    override fun loadStringTemplate(expression: KtStringTemplateExpression, inputValues: List<PseudoValue>): InstructionWithValue {
-        return delegateBuilder.loadStringTemplate(expression, inputValues)
-    }
+    override fun loadStringTemplate(expression: KtStringTemplateExpression, inputValues: List<PseudoValue>): InstructionWithValue =
+            delegateBuilder.loadStringTemplate(expression, inputValues)
 
     override fun magic(
             instructionElement: KtElement,
             valueElement: KtElement?,
             inputValues: List<PseudoValue>,
-            kind: MagicKind): MagicInstruction {
-        return delegateBuilder.magic(instructionElement, valueElement, inputValues, kind)
-    }
+            kind: MagicKind): MagicInstruction = delegateBuilder.magic(instructionElement, valueElement, inputValues, kind)
 
-    override fun merge(expression: KtExpression, inputValues: List<PseudoValue>): MergeInstruction {
-        return delegateBuilder.merge(expression, inputValues)
-    }
+    override fun merge(expression: KtExpression, inputValues: List<PseudoValue>): MergeInstruction =
+            delegateBuilder.merge(expression, inputValues)
 
     override fun readVariable(
             expression: KtExpression,
             resolvedCall: ResolvedCall<*>,
-            receiverValues: Map<PseudoValue, ReceiverValue>): ReadValueInstruction {
-        return delegateBuilder.readVariable(expression, resolvedCall, receiverValues)
-    }
+            receiverValues: Map<PseudoValue, ReceiverValue>): ReadValueInstruction =
+            delegateBuilder.readVariable(expression, resolvedCall, receiverValues)
 
     override fun call(
             valueElement: KtElement,
             resolvedCall: ResolvedCall<*>,
             receiverValues: Map<PseudoValue, ReceiverValue>,
-            arguments: Map<PseudoValue, ValueParameterDescriptor>): CallInstruction {
-        return delegateBuilder.call(valueElement, resolvedCall, receiverValues, arguments)
-    }
+            arguments: Map<PseudoValue, ValueParameterDescriptor>): CallInstruction =
+            delegateBuilder.call(valueElement, resolvedCall, receiverValues, arguments)
 
     override fun predefinedOperation(
             expression: KtExpression,
             operation: ControlFlowBuilder.PredefinedOperation,
-            inputValues: List<PseudoValue>): OperationInstruction {
-        return delegateBuilder.predefinedOperation(expression, operation, inputValues)
-    }
+            inputValues: List<PseudoValue>): OperationInstruction = delegateBuilder.predefinedOperation(expression, operation, inputValues)
 
-    override fun createUnboundLabel(): Label {
-        return delegateBuilder.createUnboundLabel()
-    }
+    override fun createUnboundLabel(): Label = delegateBuilder.createUnboundLabel()
 
-    override fun createUnboundLabel(name: String): Label {
-        return delegateBuilder.createUnboundLabel(name)
-    }
+    override fun createUnboundLabel(name: String): Label = delegateBuilder.createUnboundLabel(name)
 
     override fun bindLabel(label: Label) {
         delegateBuilder.bindLabel(label)
@@ -123,21 +108,13 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.throwException(throwExpression, thrownValue)
     }
 
-    override fun getSubroutineExitPoint(labelElement: KtElement): Label? {
-        return delegateBuilder.getSubroutineExitPoint(labelElement)
-    }
+    override fun getSubroutineExitPoint(labelElement: KtElement): Label? = delegateBuilder.getSubroutineExitPoint(labelElement)
 
-    override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label? {
-        return delegateBuilder.getLoopConditionEntryPoint(loop)
-    }
+    override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label? = delegateBuilder.getLoopConditionEntryPoint(loop)
 
-    override fun getLoopExitPoint(loop: KtLoopExpression): Label? {
-        return delegateBuilder.getLoopExitPoint(loop)
-    }
+    override fun getLoopExitPoint(loop: KtLoopExpression): Label? = delegateBuilder.getLoopExitPoint(loop)
 
-    override fun enterLoop(expression: KtLoopExpression): LoopInfo {
-        return delegateBuilder.enterLoop(expression)
-    }
+    override fun enterLoop(expression: KtLoopExpression): LoopInfo = delegateBuilder.enterLoop(expression)
 
     override fun enterLoopBody(expression: KtLoopExpression) {
         delegateBuilder.enterLoopBody(expression)
@@ -158,13 +135,12 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.exitTryFinally()
     }
 
-    override fun enterSubroutine(subroutine: KtElement) {
-        delegateBuilder.enterSubroutine(subroutine)
+    override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
+        delegateBuilder.enterSubroutine(subroutine, invocationKind)
     }
 
-    override fun exitSubroutine(subroutine: KtElement): Pseudocode {
-        return delegateBuilder.exitSubroutine(subroutine)
-    }
+    override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode =
+            delegateBuilder.exitSubroutine(subroutine, invocationKind)
 
     override val currentSubroutine: KtElement
         get() = delegateBuilder.currentSubroutine
@@ -204,6 +180,10 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.declareFunction(subroutine, pseudocode)
     }
 
+    override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationKind: InvocationKind) {
+        delegateBuilder.declareInlinedFunction(subroutine, pseudocode, invocationKind)
+    }
+
     override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {
         delegateBuilder.declareEntryOrObject(entryOrObject)
     }
@@ -216,17 +196,13 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.mark(element)
     }
 
-    override fun getBoundValue(element: KtElement?): PseudoValue? {
-        return delegateBuilder.getBoundValue(element)
-    }
+    override fun getBoundValue(element: KtElement?): PseudoValue? = delegateBuilder.getBoundValue(element)
 
     override fun bindValue(value: PseudoValue, element: KtElement) {
         delegateBuilder.bindValue(value, element)
     }
 
-    override fun newValue(element: KtElement?): PseudoValue {
-        return delegateBuilder.newValue(element)
-    }
+    override fun newValue(element: KtElement?): PseudoValue = delegateBuilder.newValue(element)
 
     override fun enterBlockScope(block: KtElement) {
         delegateBuilder.enterBlockScope(block)

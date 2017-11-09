@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.idea.references;
 
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -28,20 +26,18 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
+import org.jetbrains.kotlin.idea.navigation.GotoCheck;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.ReferenceUtils;
-import org.junit.Assert;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.test.ReferenceUtils.getFileWithDir;
-import static org.jetbrains.kotlin.test.ReferenceUtils.renderAsGotoImplementation;
+import static org.jetbrains.kotlin.test.util.ReferenceUtils.renderAsGotoImplementation;
 
 public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testAny() throws Exception {
@@ -122,16 +118,11 @@ public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixture
         assertEquals(1, reference.multiResolve(false).length);
 
         String text = myFixture.getFile().getText();
-        String expectedBinaryFile = InTextDirectivesUtils.findStringWithPrefixes(text, "// BINARY:");
-        String expectedSourceFile = InTextDirectivesUtils.findStringWithPrefixes(text, "// SRC:");
-        String expectedTarget = InTextDirectivesUtils.findStringWithPrefixes(text, "// TARGET:");
 
-        assertEquals(expectedBinaryFile, getFileWithDir(resolved));
+        String expectedTarget = InTextDirectivesUtils.findStringWithPrefixes(text, "// TARGET:");
         assertEquals(expectedTarget, renderAsGotoImplementation(resolved));
-        PsiElement srcElement = resolved.getNavigationElement();
-        Assert.assertNotEquals(srcElement, resolved);
-        assertEquals(expectedSourceFile, getFileWithDir(srcElement));
-        assertEquals(expectedTarget, renderAsGotoImplementation(srcElement));
+
+        GotoCheck.assertNavigationElementMatches(resolved, text);
     }
 
     @Override

@@ -1,2 +1,2 @@
-Usage in string constants 3 private val BUNDLE_NAME = "idea.testData.findUsages.propertyFiles.propertyFileUsages.0"
-Usage in string constants 5 public fun message(@PropertyKey(resourceBundle = "idea.testData.findUsages.propertyFiles.propertyFileUsages.0") key: String) = key
+Usage in string constants 3 private val BUNDLE_NAME = "propertyFileUsages.0"
+Usage in string constants 5 public fun message(@PropertyKey(resourceBundle = "propertyFileUsages.0") key: String) = key

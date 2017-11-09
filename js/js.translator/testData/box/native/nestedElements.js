@@ -1,9 +1,9 @@
-var Object = createTestObject("Object", 23);
-extend(Object, {
-    Object: extend(createTestObject("Object.Object", 123), { AnotherClass : createTestClass("Object.Object.Class", 42, 142) }),
-    Class: createTestClass("Object.Class", 42, 142),
-    Trait : createTestObject("Object.Trait", 324),
-    a: createTestObject("Object.a", 34)
+var MyObject = createTestObject("MyObject", 23);
+extend(MyObject, {
+    Object: extend(createTestObject("MyObject.Object", 123), { AnotherClass : createTestClass("MyObject.Object.Class", 42, 142) }),
+    Class: createTestClass("MyObject.Class", 42, 142),
+    Trait : createTestObject("MyObject.Trait", 324),
+    a: createTestObject("MyObject.a", 34)
 });
 
 var SomeClass = function () {};

@@ -1,0 +1,23 @@
+KtFile: ShebangWithPackage.kts
+  PsiComment(SHEBANG_COMMENT)('#!/usr/bin/env kotlin')
+  PsiWhiteSpace('\n\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('test')
+  IMPORT_LIST
+    <empty list>
+  SCRIPT
+    BLOCK
+      PsiWhiteSpace('\n\n')
+      SCRIPT_INITIALIZER
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('println')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('args')
+            PsiElement(RPAR)(')')

@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.TestJdkKind
+
 class Java8MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
+    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
+
     fun testDifferentJdk() {
-        val module1 = module("jdk8", useFullJdk = true)
+        val module1 = module("jdk8", TestJdkKind.FULL_JDK)
         val module2 = module("mockJdk")
 
         module1.addDependency(module2)

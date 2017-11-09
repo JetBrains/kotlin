@@ -17,29 +17,24 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.context.MultifileClassPartContext
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeAlias
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
-import java.util.*
 
 class MultifileClassPartCodegen(
         v: ClassBuilder,
@@ -78,17 +73,21 @@ class MultifileClassPartCodegen(
             }
 
     override fun generate() {
-        if (!state.classBuilderMode.generateBodies) return
+        if (!state.classBuilderMode.generateMultiFileFacadePartClasses) return
 
         super.generate()
 
+        val generateBodies = state.classBuilderMode.generateBodies
+
         if (shouldGeneratePartHierarchy) {
             v.newMethod(OtherOrigin(packageFragment), Opcodes.ACC_PUBLIC, "<init>", "()V", null, null).apply {
-                visitCode()
-                visitVarInsn(Opcodes.ALOAD, 0)
-                visitMethodInsn(Opcodes.INVOKESPECIAL, superClassInternalName, "<init>", "()V", false)
-                visitInsn(Opcodes.RETURN)
-                visitMaxs(1, 1)
+                if (generateBodies) {
+                    visitCode()
+                    visitVarInsn(Opcodes.ALOAD, 0)
+                    visitMethodInsn(Opcodes.INVOKESPECIAL, superClassInternalName, "<init>", "()V", false)
+                    visitInsn(Opcodes.RETURN)
+                    visitMaxs(1, 1)
+                }
                 visitEnd()
             }
         }
@@ -99,24 +98,28 @@ class MultifileClassPartCodegen(
                          CLINIT_SYNC_NAME, "I", null, null)
 
                 newSpecialMethod(packageFragment, CLINIT_TRIGGER_NAME).apply {
-                    visitCode()
-                    visitFieldInsn(Opcodes.GETSTATIC, staticInitClassType.internalName, CLINIT_SYNC_NAME, "I")
-                    visitInsn(Opcodes.RETURN)
-                    visitMaxs(1, 0)
+                    if (generateBodies) {
+                        visitCode()
+                        visitFieldInsn(Opcodes.GETSTATIC, staticInitClassType.internalName, CLINIT_SYNC_NAME, "I")
+                        visitInsn(Opcodes.RETURN)
+                        visitMaxs(1, 0)
+                    }
                     visitEnd()
                 }
 
                 newSpecialMethod(packageFragment, "<clinit>").apply {
-                    visitCode()
-                    visitMethodInsn(Opcodes.INVOKESTATIC, partType.internalName, DEFERRED_PART_CLINIT_NAME, "()V", false)
-                    visitInsn(Opcodes.ICONST_0)
-                    visitFieldInsn(Opcodes.PUTSTATIC, staticInitClassType.internalName, CLINIT_SYNC_NAME, "I")
-                    visitInsn(Opcodes.RETURN)
-                    visitMaxs(1, 0)
+                    if (generateBodies) {
+                        visitCode()
+                        visitMethodInsn(Opcodes.INVOKESTATIC, partType.internalName, DEFERRED_PART_CLINIT_NAME, "()V", false)
+                        visitInsn(Opcodes.ICONST_0)
+                        visitFieldInsn(Opcodes.PUTSTATIC, staticInitClassType.internalName, CLINIT_SYNC_NAME, "I")
+                        visitInsn(Opcodes.RETURN)
+                        visitMaxs(1, 0)
+                    }
                     visitEnd()
                 }
 
-                writeSyntheticClassMetadata(this)
+                writeSyntheticClassMetadata(this, state)
             }
         }
     }
@@ -129,7 +132,7 @@ class MultifileClassPartCodegen(
     }
 
     override fun generateBody() {
-        for (declaration in element.declarations) {
+        for (declaration in CodegenUtil.getActualDeclarations(element)) {
             if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtTypeAlias) {
                 genSimpleMember(declaration)
             }
@@ -155,32 +158,17 @@ class MultifileClassPartCodegen(
     }
 
     override fun generateKotlinMetadataAnnotation() {
-        val members = ArrayList<DeclarationDescriptor>()
-        for (declaration in element.declarations) {
-            when (declaration) {
-                is KtNamedFunction -> {
-                    val functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration)
-                    members.add(functionDescriptor ?: throw AssertionError("Function ${declaration.name} is not bound in ${element.name}"))
-                }
-                is KtProperty -> {
-                    val property = bindingContext.get(BindingContext.VARIABLE, declaration)
-                    members.add(property ?: throw AssertionError("Property ${declaration.name} is not bound in ${element.name}"))
-                }
-            }
-        }
+        val (serializer, packageProto) = PackagePartCodegen.serializePackagePartMembers(this, partType)
 
-        val serializer = DescriptorSerializer.createTopLevel(JvmSerializerExtension(v.serializationBindings, state))
-        val packageProto = serializer.packagePartProto(members).build()
+        val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
 
-        writeKotlinMetadata(v, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART) { av ->
+        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART, extraFlags) { av ->
             AsmUtil.writeAnnotationData(av, serializer, packageProto)
             av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassType.internalName)
-            val multifileClassKind = if (shouldGeneratePartHierarchy) INHERITING else DELEGATING
-            av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_KIND_FIELD_NAME, multifileClassKind.id)
         }
     }
 
-    override fun generateSyntheticParts() {
+    override fun generateSyntheticPartsAfterBody() {
         generateSyntheticAccessors()
     }
 

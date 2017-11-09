@@ -5,7 +5,7 @@
 * Get rid of 23 hardwired physical function classes. One of the problems with them is that they should be effectively duplicated in reflection which means a lot of physical classes in kotlin-runtime.jar.
 * Make extension functions assignable to normal functions (and vice versa), so that it's possible to do `listOfStrings.map(String::length)`
 * Allow functions with more than 23 parameters, theoretically any number of parameters (in practice 255 on JVM).
-* At the same time, allow to implement Kotlin functions easily from Java: `new Function2() { ... }` and overriding `invoke` only would be the best.
+* At the same time, allow implementing Kotlin functions easily from Java: `new Function2() { ... }` and overriding `invoke` only would be the best.
 Enabling SAM conversions on Java 8 would also be terrific.
 
 ## Brief solution overview
@@ -75,7 +75,7 @@ interface Function<out R>
 ```
 
 It's a physical interface, declared in platform-agnostic built-ins, and present in `kotlin-runtime.jar` for example.
-However its declaration is **empty** and should be empty because every physical JVM function class `Function0`, `Function1`, ...
+However, its declaration is **empty** and should be empty because every physical JVM function class `Function0`, `Function1`, ...
 inherits from it (and adds `invoke()`), and we don't want to override anything besides `invoke()` when doing it from Java code.
 
 ## Functions with 0..22 parameters at runtime

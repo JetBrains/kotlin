@@ -1,0 +1,36 @@
+FILE /object.kt
+  CLASS OBJECT Z
+    $this: VALUE_PARAMETER this@Z: Z
+    CONSTRUCTOR private constructor Z()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Z'
+    FUN public final fun test(): kotlin.Unit
+      $this: VALUE_PARAMETER this@Z: Z
+      BLOCK_BODY
+    CLASS CLASS A
+      $this: VALUE_PARAMETER this@A: A
+      CONSTRUCTOR public constructor A()
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='A'
+      FUN public final fun test2(): kotlin.Unit
+        $this: VALUE_PARAMETER this@A: A
+        BLOCK_BODY
+          CALL 'test(): Unit' type=kotlin.Unit origin=null
+            $this: GET_OBJECT 'Z' type=Z
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

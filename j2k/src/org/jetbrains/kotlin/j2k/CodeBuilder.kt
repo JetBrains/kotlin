@@ -102,7 +102,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
         if (commentInfo.isComment) {
             // Original comment was first in line, but there's no line break before the current one
             if (!commentInfo.isPostInsert && commentInfo.isFirstNonWhitespaceElementInLine &&
-                !builder.takeLastWhile { it.isWhitespace() }.contains('\n')) {
+                !builder.takeLastWhile(Char::isWhitespace).contains('\n')) {
                 builder.append('\n')
             }
 
@@ -340,16 +340,16 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
 
     private companion object {
         operator fun <T> List<T>.plus(other: List<T>): List<T> {
-            when {
-                isEmpty() -> return other
+            return when {
+                isEmpty() -> other
 
-                other.isEmpty() -> return this
+                other.isEmpty() -> this
 
                 else -> {
                     val result = ArrayList<T>(size + other.size)
                     result.addAll(this)
                     result.addAll(other)
-                    return result
+                    result
                 }
             }
         }

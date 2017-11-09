@@ -8,8 +8,8 @@ fun dynamic.bar() {
 
 Resolved call:
 
-Resulting descriptor: fun dynamic.foo(): Unit defined in root package
+Resulting descriptor: fun foo(): dynamic defined in bar
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-Dispatch receiver = NO_RECEIVER
-Extension receiver = dynamicExt{fun dynamic.bar(): Unit defined in root package}
+Dispatch receiver = dynamicExt{fun dynamic.bar(): Unit defined in root package}
+Extension receiver = NO_RECEIVER

@@ -1,0 +1,60 @@
+public final class User$Companion : java/lang/Object {
+    private void <init>()
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker p0)
+
+    public final static java.lang.StringBuilder access$getTest$p(User$Companion p0)
+
+    private final java.lang.StringBuilder getTest()
+
+    private static void test$annotations()
+}
+
+public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final java.lang.Object createFromParcel(android.os.Parcel p0)
+
+    public final User[] newArray(int p0)
+}
+
+public final class User : java/lang/Object, android/os/Parcelable {
+    public final static User$Creator CREATOR
+
+    public final static User$Companion Companion
+
+    private final java.lang.String firstName
+
+    private final static java.lang.StringBuilder test
+
+    static void <clinit>() {
+          NEW
+          DUP
+          ACONST_NULL
+          INVOKESPECIAL (User$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          PUTSTATIC (Companion, LUser$Companion;)
+        LABEL (L0)
+        LINENUMBER (12)
+          NEW
+          DUP
+          INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
+          PUTSTATIC (test, Ljava/lang/StringBuilder;)
+          NEW
+          DUP
+          INVOKESPECIAL (User$Creator, <init>, ()V)
+          PUTSTATIC (CREATOR, LUser$Creator;)
+          RETURN
+    }
+
+    public void <init>(java.lang.String p0)
+
+    public final static java.lang.StringBuilder access$getTest$cp()
+
+    public final int describeContents()
+
+    public final java.lang.String getFirstName()
+
+    private final static java.lang.StringBuilder getTest()
+
+    public final void writeToParcel(android.os.Parcel p0, int p1)
+}

@@ -1,0 +1,10 @@
+LineBreakpoint created at doNotSkipConstructors.kt:5
+Run Java
+Connected to the target VM
+doNotSkipConstructors.kt:5
+doNotSkipConstructors.kt:9
+doNotSkipConstructors.kt:11
+doNotSkipConstructors.kt:5
+Disconnected from the target VM
+
+Process finished with exit code 0

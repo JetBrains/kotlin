@@ -17,15 +17,17 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.api.tasks.incremental.InputFileDetails
-import org.jetbrains.kotlin.bytecode.AnnotationsRemover
+import com.intellij.openapi.util.io.FileUtil.isAncestor
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import java.io.*
+import java.io.File
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -54,46 +56,63 @@ import kotlin.properties.Delegates
 internal open class SyncOutputTask : DefaultTask() {
     @get:InputFiles
     var kotlinOutputDir: File by Delegates.notNull()
+
+    @get:InputFiles
+    var kaptClassesDir: File by Delegates.notNull()
+
+    // Marked as input to make Gradle fall back to non-incremental build when it changes.
+    @get:Input
+    private val classesDirs: List<File>
+            get() = listOf(kotlinOutputDir, kaptClassesDir).filter(File::exists)
+
     var javaOutputDir: File by Delegates.notNull()
     var kotlinTask: KotlinCompile by Delegates.notNull()
-    private val sourceAnnotations: Set<String> by lazy {
-        kotlinTask.sourceAnnotationsRegistry?.annotations ?: emptySet()
-    }
-    private val annotationsRemover by lazy {
-        AnnotationsRemover(sourceAnnotations)
-    }
 
     // OutputDirectory needed for task to be incremental
     @get:OutputDirectory
     val workingDir: File by lazy {
-        File(kotlinTask.taskBuildDirectory, "sync").apply { mkdirs() }
+        File(kotlinTask.taskBuildDirectory, "sync")
     }
     private val timestampsFile: File by lazy {
         File(workingDir, TIMESTAMP_FILE_NAME)
     }
     private val timestamps: MutableMap<File, Long> by lazy {
-        readTimestamps(timestampsFile)
+        readTimestamps(timestampsFile, javaOutputDir)
     }
 
-    @Suppress("unused")
-    @get:OutputFiles
-    val kotlinClassesInJavaOutputDir: Collection<File>
-            get() = timestamps.keys
+    init {
+        outputs.upToDateWhen {
+            for ((file, ts) in timestamps) {
+                if (!file.exists()) {
+                    logger.kotlinDebug { "$file does not exist" }
+                    return@upToDateWhen false
+                }
+
+                if (file.lastModified() != ts) {
+                    logger.kotlinDebug { "$file ts is different" }
+                    return@upToDateWhen false
+                }
+            }
+
+            return@upToDateWhen true
+        }
+    }
 
     @Suppress("unused")
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs): Unit {
+        val sourceDirs = classesDirs.joinToString()
         if (inputs.isIncremental) {
-            logger.kotlinDebug { "Incremental copying files from $kotlinOutputDir to $javaOutputDir" }
+            logger.kotlinDebug { "Incremental copying files from $sourceDirs to $javaOutputDir" }
             inputs.outOfDate { processIncrementally(it) }
             inputs.removed { processIncrementally(it) }
         }
         else {
-            logger.kotlinDebug { "Non-incremental copying files from $kotlinOutputDir to $javaOutputDir" }
+            logger.kotlinDebug { "Non-incremental copying files from $sourceDirs to $javaOutputDir" }
             processNonIncrementally()
         }
 
-        saveTimestamps(timestampsFile, timestamps)
+        saveTimestamps(timestampsFile, timestamps, javaOutputDir)
     }
 
     private fun processNonIncrementally() {
@@ -108,14 +127,16 @@ internal open class SyncOutputTask : DefaultTask() {
         timestampsFile.delete()
         timestamps.clear()
 
-        kotlinOutputDir.walkTopDown().forEach {
-            copy(it, it.siblingInJavaDir)
+        for (dir in classesDirs) {
+            dir.walkTopDown().forEach {
+                copy(it, it.siblingInJavaDir(baseDir = dir))
+            }
         }
     }
 
     private fun processIncrementally(input: InputFileDetails) {
         val fileInKotlinDir = input.file
-        val fileInJavaDir = fileInKotlinDir.siblingInJavaDir
+        val fileInJavaDir = fileInKotlinDir.siblingInJavaDir()
 
         if (input.isRemoved) {
             // file was removed in kotlin dir, remove from java as well
@@ -142,13 +163,7 @@ internal open class SyncOutputTask : DefaultTask() {
         if (!fileInKotlinDir.isFile) return
 
         fileInJavaDir.parentFile.mkdirs()
-        if (sourceAnnotations.isNotEmpty() && fileInKotlinDir.extension.toLowerCase() == "class") {
-            logger.kotlinDebug { "Removing source annotations from class: $fileInKotlinDir" }
-            annotationsRemover.transformClassFile(fileInKotlinDir, fileInJavaDir)
-        }
-        else {
-            fileInKotlinDir.copyTo(fileInJavaDir, overwrite = true)
-        }
+        fileInKotlinDir.copyTo(fileInJavaDir, overwrite = true)
 
         timestamps[fileInJavaDir] = fileInJavaDir.lastModified()
 
@@ -157,30 +172,32 @@ internal open class SyncOutputTask : DefaultTask() {
         }
     }
 
-    private val File.siblingInJavaDir: File
-            get() = File(javaOutputDir, this.relativeTo(kotlinOutputDir).path)
+    private fun File.siblingInJavaDir(baseDir: File? = null): File {
+        val base = baseDir ?: classesDirs.find { isAncestor(it, this, true) }!!
+        return File(javaOutputDir, this.relativeTo(base).path)
+    }
 }
 
 private val TIMESTAMP_FILE_NAME = "kotlin-files-in-java-timestamps.bin"
 
-private fun readTimestamps(file: File): MutableMap<File, Long> {
+private fun readTimestamps(tsFile: File, filesBaseDir: File): MutableMap<File, Long> {
     val result = HashMap<File, Long>()
-    if (!file.isFile) return result
+    if (!tsFile.isFile) return result
 
-    ObjectInputStream(file.inputStream()).use { input ->
+    ObjectInputStream(tsFile.inputStream()).use { input ->
         val size = input.readInt()
 
         repeat(size) {
             val path = input.readUTF()
             val timestamp = input.readLong()
-            result[File(path)] = timestamp
+            result[File(filesBaseDir, path)] = timestamp
         }
     }
 
     return result
 }
 
-private fun saveTimestamps(snapshotFile: File, timestamps: Map<File, Long>) {
+private fun saveTimestamps(snapshotFile: File, timestamps: Map<File, Long>, filesBaseDir: File) {
     if (!snapshotFile.exists()) {
         snapshotFile.parentFile.mkdirs()
         snapshotFile.createNewFile()
@@ -193,7 +210,7 @@ private fun saveTimestamps(snapshotFile: File, timestamps: Map<File, Long>) {
         out.writeInt(timestamps.size)
 
         for ((file, timestamp) in timestamps) {
-            out.writeUTF(file.canonicalPath)
+            out.writeUTF(file.relativeTo(filesBaseDir).path)
             out.writeLong(timestamp)
         }
     }

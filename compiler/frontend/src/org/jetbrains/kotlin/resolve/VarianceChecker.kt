@@ -16,30 +16,25 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure.EnrichedProjectionKind.*
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure.*
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
-import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checkTypePosition
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
@@ -58,7 +53,7 @@ class VarianceConflictDiagnosticData(
 )
 
 class VarianceCheckerCore(
-        private val context: BindingContext,
+        val context: BindingContext,
         private val diagnosticSink: DiagnosticSink,
         private val manualVariance: ManualVariance? = null
 ) {
@@ -68,33 +63,17 @@ class VarianceCheckerCore(
         checkMembers(c)
     }
 
-    fun checkClassOrObject(klass: KtClassOrObject): Boolean {
-        if (klass is KtClass) {
-            if (!checkClassHeader(klass)) return false
-        }
-        for (member in klass.declarations + klass.getPrimaryConstructorParameters()) {
-            member as? KtCallableDeclaration ?: continue
-            val descriptor = when (member) {
-                is KtParameter -> context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, member)
-                is KtCallableDeclaration -> context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member)
-                else -> null
-            } as? CallableMemberDescriptor ?: continue
-            if (!checkMember(member, descriptor)) return false
-        }
-        return true
-    }
-
     private fun checkClasses(c: TopDownAnalysisContext) {
-        for (jetClassOrObject in c.declaredClasses!!.keys) {
-            if (jetClassOrObject is KtClass) {
-                checkClassHeader(jetClassOrObject)
+        for (classOrObject in c.declaredClasses!!.keys) {
+            if (classOrObject is KtClass) {
+                checkClassHeader(classOrObject)
             }
         }
     }
 
-    private fun checkClassHeader(klass: KtClass): Boolean {
+    fun checkClassHeader(klass: KtClass): Boolean {
         var noError = true
-        for (specifier in klass.getSuperTypeListEntries()) {
+        for (specifier in klass.superTypeListEntries) {
             noError = noError and specifier.typeReference?.checkTypePosition(context, OUT_VARIANCE)
         }
         return noError and klass.checkTypeParameters(context, OUT_VARIANCE)
@@ -106,11 +85,11 @@ class VarianceCheckerCore(
         }
     }
 
-    private fun checkMember(member: KtCallableDeclaration, descriptor: CallableMemberDescriptor) =
+    fun checkMember(member: KtCallableDeclaration, descriptor: CallableMemberDescriptor) =
             Visibilities.isPrivate(descriptor.visibility) || checkCallableDeclaration(context, member, descriptor)
 
     private fun TypeParameterDescriptor.varianceWithManual() =
-            if (manualVariance != null && this == manualVariance.descriptor) manualVariance.variance else variance
+            if (manualVariance != null && this.original == manualVariance.descriptor) manualVariance.variance else variance
 
     fun recordPrivateToThisIfNeeded(descriptor: CallableMemberDescriptor) {
         if (isIrrelevant(descriptor) || descriptor.visibility != Visibilities.PRIVATE) return
@@ -167,12 +146,9 @@ class VarianceCheckerCore(
         checkTypePosition(
                 position,
                 {   typeParameterDescriptor, typeBinding, errorPosition ->
-                    diagnosticSink.report(
-                            Errors.TYPE_VARIANCE_CONFLICT.on(
-                                    typeBinding.psiElement,
-                                    VarianceConflictDiagnosticData(containingType, typeParameterDescriptor, errorPosition)
-                            )
-                    )
+                    val varianceConflictDiagnosticData = VarianceConflictDiagnosticData(containingType, typeParameterDescriptor, errorPosition)
+                    val diagnostic = if (typeBinding.isInAbbreviation) Errors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else Errors.TYPE_VARIANCE_CONFLICT
+                    diagnosticSink.report(diagnostic.on(typeBinding.psiElement, varianceConflictDiagnosticData))
                 },
                 customVariance = { it.varianceWithManual() }
         )
@@ -193,7 +169,7 @@ class VarianceCheckerCore(
                         (accessor as PropertyAccessorDescriptorImpl).visibility = Visibilities.PRIVATE_TO_THIS
                     }
                 }
-                else -> throw IllegalStateException("Unexpected descriptor type: ${descriptor.javaClass.name}")
+                else -> throw IllegalStateException("Unexpected descriptor type: ${descriptor::class.java.name}")
             }
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,10 +31,10 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl;
-import org.jetbrains.kotlin.utils.FunctionsKt;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -71,23 +73,29 @@ public class OverridingUtil {
      */
     @NotNull
     public static <D extends CallableDescriptor> Set<D> filterOutOverridden(@NotNull Set<D> candidateSet) {
-        return filterOverrides(candidateSet, FunctionsKt.<CallableDescriptor>identity());
+        return filterOverrides(candidateSet, new Function2<D, D, Pair<CallableDescriptor, CallableDescriptor>>() {
+            @Override
+            public Pair<CallableDescriptor, CallableDescriptor> invoke(D a, D b) {
+                return new Pair<CallableDescriptor, CallableDescriptor>(a, b);
+            }
+        });
     }
 
     @NotNull
     public static <D> Set<D> filterOverrides(
             @NotNull Set<D> candidateSet,
-            @NotNull Function1<? super D, ? extends CallableDescriptor> transform
+            @NotNull Function2<? super D, ? super D, Pair<CallableDescriptor, CallableDescriptor>> transformFirst
     ) {
         if (candidateSet.size() <= 1) return candidateSet;
 
         Set<D> result = new LinkedHashSet<D>();
         outerLoop:
         for (D meD : candidateSet) {
-            CallableDescriptor me = transform.invoke(meD);
             for (Iterator<D> iterator = result.iterator(); iterator.hasNext(); ) {
                 D otherD = iterator.next();
-                CallableDescriptor other = transform.invoke(otherD);
+                Pair<CallableDescriptor, CallableDescriptor> meAndOther = transformFirst.invoke(meD, otherD);
+                CallableDescriptor me = meAndOther.component1();
+                CallableDescriptor other = meAndOther.component2();
                 if (overrides(me, other)) {
                     iterator.remove();
                 }
@@ -260,12 +268,17 @@ public class OverridingUtil {
             }
         }
 
+        if (superDescriptor instanceof FunctionDescriptor && subDescriptor instanceof FunctionDescriptor &&
+            ((FunctionDescriptor) superDescriptor).isSuspend() != ((FunctionDescriptor) subDescriptor).isSuspend()) {
+            return OverrideCompatibilityInfo.conflict("Incompatible suspendability");
+        }
+
         if (checkReturnType) {
             KotlinType superReturnType = superDescriptor.getReturnType();
             KotlinType subReturnType = subDescriptor.getReturnType();
 
             if (superReturnType != null && subReturnType != null) {
-                boolean bothErrors = subReturnType.isError() && superReturnType.isError();
+                boolean bothErrors = KotlinTypeKt.isError(subReturnType) && KotlinTypeKt.isError(superReturnType);
                 if (!bothErrors && !typeChecker.isSubtypeOf(subReturnType, superReturnType)) {
                     return OverrideCompatibilityInfo.conflict("Return type mismatch");
                 }
@@ -348,7 +361,7 @@ public class OverridingUtil {
             @NotNull KotlinType typeInSub,
             @NotNull KotlinTypeChecker typeChecker
     ) {
-        boolean bothErrors = typeInSuper.isError() && typeInSub.isError();
+        boolean bothErrors = KotlinTypeKt.isError(typeInSuper) && KotlinTypeKt.isError(typeInSub);
         return bothErrors || typeChecker.equalTypes(typeInSuper, typeInSub);
     }
 
@@ -495,8 +508,8 @@ public class OverridingUtil {
 
         if (!isVisibilityMoreSpecific(a, b)) return false;
 
-        if (a instanceof SimpleFunctionDescriptor) {
-            assert b instanceof SimpleFunctionDescriptor : "b is " + b.getClass();
+        if (a instanceof FunctionDescriptor) {
+            assert b instanceof FunctionDescriptor : "b is " + b.getClass();
 
             return isReturnTypeMoreSpecific(a, aReturnType, b, bReturnType);
         }

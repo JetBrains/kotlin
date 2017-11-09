@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 fun iarr(vararg a : Int) = a
 fun <T> array(vararg a : T) = a
 

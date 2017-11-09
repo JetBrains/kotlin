@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.js.patterns;
 
-import com.google.common.base.Predicate;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 
+import java.util.function.Predicate;
+
 public interface DescriptorPredicate extends Predicate<FunctionDescriptor> {
-    @Override
-    boolean apply(@Nullable FunctionDescriptor descriptor);
 }

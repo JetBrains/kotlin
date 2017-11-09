@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 fun box(): String {
     if ((1 as? Int) == null) return "fail 1"
     if ((1 as? Byte) != null) return "fail 2"

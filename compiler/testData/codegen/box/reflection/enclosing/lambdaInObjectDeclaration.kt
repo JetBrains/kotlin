@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 
 object O {
@@ -11,7 +14,7 @@ fun box(): String {
     if (enclosingMethod != null) return "method: $enclosingMethod"
 
     val enclosingConstructor = javaClass.getEnclosingConstructor()
-    if (enclosingConstructor == null) return "no enclosing constructor"
+    if (enclosingConstructor != null) return "field should be initialized in clInit"
 
     val enclosingClass = javaClass.getEnclosingClass()
     if (enclosingClass?.getName() != "O") return "enclosing class: $enclosingClass"

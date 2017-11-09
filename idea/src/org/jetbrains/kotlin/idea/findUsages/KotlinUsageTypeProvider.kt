@@ -24,57 +24,52 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum.*
 
 object KotlinUsageTypeProvider : UsageTypeProviderEx {
-    override fun getUsageType(element: PsiElement?): UsageType? {
-        return getUsageType(element, UsageTarget.EMPTY_ARRAY)
-    }
+    override fun getUsageType(element: PsiElement?): UsageType? = getUsageType(element, UsageTarget.EMPTY_ARRAY)
 
     override fun getUsageType(element: PsiElement?, targets: Array<out UsageTarget>): UsageType? {
-        val usageType = UsageTypeUtils.getUsageType(element)
-        if (usageType == null) return null
+        val usageType = UsageTypeUtils.getUsageType(element) ?: return null
         return convertEnumToUsageType(usageType)
     }
 
-    fun convertEnumToUsageType(usageType: UsageTypeEnum): UsageType {
-        return when (usageType) {
-            TYPE_CONSTRAINT -> KotlinUsageTypes.TYPE_CONSTRAINT
-            VALUE_PARAMETER_TYPE -> KotlinUsageTypes.VALUE_PARAMETER_TYPE
-            NON_LOCAL_PROPERTY_TYPE -> KotlinUsageTypes.NON_LOCAL_PROPERTY_TYPE
-            FUNCTION_RETURN_TYPE -> KotlinUsageTypes.FUNCTION_RETURN_TYPE
-            SUPER_TYPE -> KotlinUsageTypes.SUPER_TYPE
-            IS -> KotlinUsageTypes.IS
-            CLASS_OBJECT_ACCESS -> KotlinUsageTypes.CLASS_OBJECT_ACCESS
-            COMPANION_OBJECT_ACCESS -> KotlinUsageTypes.COMPANION_OBJECT_ACCESS
-            EXTENSION_RECEIVER_TYPE -> KotlinUsageTypes.EXTENSION_RECEIVER_TYPE
-            SUPER_TYPE_QUALIFIER -> KotlinUsageTypes.SUPER_TYPE_QUALIFIER
-            TYPE_ALIAS -> KotlinUsageTypes.TYPE_ALIAS
+    fun convertEnumToUsageType(usageType: UsageTypeEnum): UsageType = when (usageType) {
+        TYPE_CONSTRAINT -> KotlinUsageTypes.TYPE_CONSTRAINT
+        VALUE_PARAMETER_TYPE -> KotlinUsageTypes.VALUE_PARAMETER_TYPE
+        NON_LOCAL_PROPERTY_TYPE -> KotlinUsageTypes.NON_LOCAL_PROPERTY_TYPE
+        FUNCTION_RETURN_TYPE -> KotlinUsageTypes.FUNCTION_RETURN_TYPE
+        SUPER_TYPE -> KotlinUsageTypes.SUPER_TYPE
+        IS -> KotlinUsageTypes.IS
+        CLASS_OBJECT_ACCESS -> KotlinUsageTypes.CLASS_OBJECT_ACCESS
+        COMPANION_OBJECT_ACCESS -> KotlinUsageTypes.COMPANION_OBJECT_ACCESS
+        EXTENSION_RECEIVER_TYPE -> KotlinUsageTypes.EXTENSION_RECEIVER_TYPE
+        SUPER_TYPE_QUALIFIER -> KotlinUsageTypes.SUPER_TYPE_QUALIFIER
+        TYPE_ALIAS -> KotlinUsageTypes.TYPE_ALIAS
 
-            FUNCTION_CALL -> KotlinUsageTypes.FUNCTION_CALL
-            IMPLICIT_GET -> KotlinUsageTypes.IMPLICIT_GET
-            IMPLICIT_SET -> KotlinUsageTypes.IMPLICIT_SET
-            IMPLICIT_INVOKE -> KotlinUsageTypes.IMPLICIT_INVOKE
-            IMPLICIT_ITERATION -> KotlinUsageTypes.IMPLICIT_ITERATION
-            PROPERTY_DELEGATION -> KotlinUsageTypes.PROPERTY_DELEGATION
+        FUNCTION_CALL -> KotlinUsageTypes.FUNCTION_CALL
+        IMPLICIT_GET -> KotlinUsageTypes.IMPLICIT_GET
+        IMPLICIT_SET -> KotlinUsageTypes.IMPLICIT_SET
+        IMPLICIT_INVOKE -> KotlinUsageTypes.IMPLICIT_INVOKE
+        IMPLICIT_ITERATION -> KotlinUsageTypes.IMPLICIT_ITERATION
+        PROPERTY_DELEGATION -> KotlinUsageTypes.PROPERTY_DELEGATION
 
-            RECEIVER -> KotlinUsageTypes.RECEIVER
-            DELEGATE -> KotlinUsageTypes.DELEGATE
+        RECEIVER -> KotlinUsageTypes.RECEIVER
+        DELEGATE -> KotlinUsageTypes.DELEGATE
 
-            PACKAGE_DIRECTIVE -> KotlinUsageTypes.PACKAGE_DIRECTIVE
-            PACKAGE_MEMBER_ACCESS -> KotlinUsageTypes.PACKAGE_MEMBER_ACCESS
+        PACKAGE_DIRECTIVE -> KotlinUsageTypes.PACKAGE_DIRECTIVE
+        PACKAGE_MEMBER_ACCESS -> KotlinUsageTypes.PACKAGE_MEMBER_ACCESS
 
-            CALLABLE_REFERENCE -> KotlinUsageTypes.CALLABLE_REFERENCE
+        CALLABLE_REFERENCE -> KotlinUsageTypes.CALLABLE_REFERENCE
 
-            READ -> UsageType.READ
-            WRITE -> UsageType.WRITE
-            CLASS_IMPORT -> UsageType.CLASS_IMPORT
-            CLASS_LOCAL_VAR_DECLARATION -> UsageType.CLASS_LOCAL_VAR_DECLARATION
-            TYPE_PARAMETER -> UsageType.TYPE_PARAMETER
-            CLASS_CAST_TO -> UsageType.CLASS_CAST_TO
-            ANNOTATION -> UsageType.ANNOTATION
-            CLASS_NEW_OPERATOR -> UsageType.CLASS_NEW_OPERATOR
-            NAMED_ARGUMENT -> KotlinUsageTypes.NAMED_ARGUMENT
+        READ -> UsageType.READ
+        WRITE -> UsageType.WRITE
+        CLASS_IMPORT -> UsageType.CLASS_IMPORT
+        CLASS_LOCAL_VAR_DECLARATION -> UsageType.CLASS_LOCAL_VAR_DECLARATION
+        TYPE_PARAMETER -> UsageType.TYPE_PARAMETER
+        CLASS_CAST_TO -> UsageType.CLASS_CAST_TO
+        ANNOTATION -> UsageType.ANNOTATION
+        CLASS_NEW_OPERATOR -> UsageType.CLASS_NEW_OPERATOR
+        NAMED_ARGUMENT -> KotlinUsageTypes.NAMED_ARGUMENT
 
-            USAGE_IN_STRING_LITERAL -> UsageType.LITERAL_USAGE
-        }
+        USAGE_IN_STRING_LITERAL -> UsageType.LITERAL_USAGE
     }
 }
 

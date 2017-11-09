@@ -1,6 +1,5 @@
 internal class C {
-    fun foo1(p1: Int, p2: Int) {
-    }
+    fun foo1(p1: Int, p2: Int) {}
 
     fun foo2(
             p1: Int,

@@ -1,4 +1,5 @@
 // "Replace with 'newFun(p, p)'" "true"
+// WITH_RUNTIME
 
 import java.util.*
 

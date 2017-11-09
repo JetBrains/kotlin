@@ -27,7 +27,8 @@ import java.util.regex.Pattern
 //
 // * Windows: download and unpack from here: https://code.google.com/p/protobuf/downloads/list
 // * Ubuntu: install "protobuf-compiler" package
-// * Mac OS: install "protobuf" package from Homebrew or "protobuf-cpp" from MacPorts
+// * macOS:
+//     brew install https://raw.githubusercontent.com/udalov/protobuf261/master/protobuf261.rb
 // * You can also download source and build it yourself (https://code.google.com/p/protobuf/downloads/list)
 //
 // You may need to provide custom path to protoc executable, just modify this constant:
@@ -52,6 +53,7 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
         ProtoPath("core/deserialization/src/descriptors.proto"),
         ProtoPath("core/deserialization/src/builtins.proto"),
         ProtoPath("js/js.serializer/src/js.proto"),
+        ProtoPath("js/js.serializer/src/js-ast.proto"),
         ProtoPath("core/descriptor.loader.java/src/jvm_descriptors.proto"),
         ProtoPath("core/descriptor.loader.java/src/jvm_package_table.proto")
 )
@@ -130,6 +132,8 @@ private fun renamePackages(protoPath: String, outPath: String) {
     javaFile.writeText(
             javaFile.readLines().map { line ->
                 line.replace("com.google.protobuf", "org.jetbrains.kotlin.protobuf")
+                    // Memory footprint optimizations: do not allocate too big bytes buffers that effectively remain unused
+                    .replace("              unknownFieldsOutput);", "              unknownFieldsOutput, 1);")
             }.joinToString(LineSeparator.getSystemLineSeparator().separatorString)
     )
 }

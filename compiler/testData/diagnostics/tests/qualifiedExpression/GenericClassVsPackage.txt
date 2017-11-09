@@ -46,15 +46,7 @@ public fun test2(/*0*/ ab_c: a.b.c): kotlin.Unit
 
 package a {
 
-    public final class b</*0*/ T> {
-        // -- Module: <m2> --
-    }
-
     package a.b {
-
-        public final class c {
-            // -- Module: <m1> --
-        }
     }
 }
 
@@ -100,15 +92,5 @@ package
 public fun test(/*0*/ a_b: a.b): kotlin.Unit
 public fun test2(/*0*/ _ab: a.b): kotlin.Unit
 
-public final class a</*0*/ T> {
-    // -- Module: <top_m2> --
-}
-
 package a {
-
-    public final class b {
-        // -- Module: <top_m1> --
-    }
 }
-
-

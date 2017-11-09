@@ -1,4 +1,4 @@
-JetFile: When.kt
+KtFile: When.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

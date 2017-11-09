@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,16 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
 
     object StringNullDefault : DefaultValues("null")
 
+    object ListEmptyDefault : DefaultValues("<empty list>")
+
     object LanguageVersions : DefaultValues(
-            "\"" + LanguageVersion.LATEST.versionString + "\"",
-            LanguageVersion.values().map { "\"${it.versionString}\"" }
+            "null",
+            LanguageVersion.values().map { "\"${it.description}\"" }
     )
 
     object JvmTargetVersions : DefaultValues(
-            "\"" + JvmTarget.DEFAULT.string + "\"",
-            JvmTarget.values().map { "\"${it.string}\"" }
+            "\"" + JvmTarget.DEFAULT.description + "\"",
+            JvmTarget.values().map { "\"${it.description}\"" }
     )
 
     object JsEcmaVersions : DefaultValues(
@@ -48,8 +50,17 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
             listOf("\"plain\"", "\"amd\"", "\"commonjs\"", "\"umd\"")
     )
 
+    object JsSourceMapContentModes : DefaultValues(
+            "\"${K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING}\"",
+            listOf(
+                    K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER,
+                    K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS,
+                    K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING
+            ).map { "\"$it\""}
+    )
+
     object JsMain : DefaultValues(
-            "\"" + NO_CALL + "\"",
+            "\"" + CALL + "\"",
             listOf("\"" + CALL + "\"", "\"" + NO_CALL + "\"")
     )
 }

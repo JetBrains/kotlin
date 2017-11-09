@@ -1,9 +1,9 @@
+// EXPECTED_REACHABLE_NODES: 1109
 package foo
 
-@native
-class A(b: Int) {
-    fun g(): Int = noImpl
-    fun m(): Int = noImpl
+external class A(b: Int) {
+    fun g(): Int = definedExternally
+    fun m(): Int = definedExternally
 }
 
 

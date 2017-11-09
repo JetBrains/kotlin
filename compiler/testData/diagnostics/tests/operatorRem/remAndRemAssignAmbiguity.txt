@@ -1,0 +1,12 @@
+package
+
+public fun test(): kotlin.Unit
+public operator fun RemAndRemAssign.remAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+
+public object RemAndRemAssign {
+    private constructor RemAndRemAssign()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun rem(/*0*/ x: kotlin.Int): RemAndRemAssign
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

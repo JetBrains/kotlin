@@ -20,7 +20,7 @@ fun Any.getValue(thisRef: Any?, prop: KProperty<*>): String = ":)"
 fun Any.setValue(thisRef: Any?, prop: KProperty<*>, value: String) {
 }
 
-fun Any.propertyDelegated(prop: KProperty<*>) {
+fun Any.provideDelegate(thisRef: Any?, prop: KProperty<*>) {
 }
 
 fun get(<!UNUSED_PARAMETER!>p<!>: Any) {

@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.generators.mockJDK;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -282,24 +282,30 @@ public class GenerateMockJdk {
 
 
 
-    private static void generateFilteredJar(File source, File target, Set<String> entryNamesToInclude, boolean assertAllFound) throws IOException {
+    private static void generateFilteredJar(
+            String jdkPath,
+            String childName,
+            File target,
+            Set<String> entryNamesToInclude,
+            boolean assertAllFound
+    ) throws IOException {
+        File source = new File(jdkPath, childName);
         if (!source.exists()) {
             throw new AssertionError(source + " doesn't exist");
         }
         JarFile sourceJar = new JarFile(source);
         JarOutputStream targetJar = new JarOutputStream(new FileOutputStream(target));
 
-        List<String> foundEntries = Lists.newArrayList();
+        Set<String> foundEntries = Sets.newHashSet();
 
         List<JarEntry> sourceList = Collections.list(sourceJar.entries());
         for (JarEntry entry : sourceList) {
             // For Map$Entry.class we want to check Map.class presense
             String topLevelClassFile = entry.getName().replaceAll("\\$.+\\.class$", ".class");
 
-            if (entryNamesToInclude.contains(topLevelClassFile)) {
+            if (entryNamesToInclude.contains(topLevelClassFile) && foundEntries.add(entry.getName())) {
                 targetJar.putNextEntry(new ZipEntry(entry.getName()));
                 FileUtil.copy(sourceJar.getInputStream(entry), targetJar);
-                foundEntries.add(topLevelClassFile);
             }
         }
 
@@ -307,7 +313,7 @@ public class GenerateMockJdk {
         sourceJar.close();
 
         if (assertAllFound) {
-            HashSet<String> notFound = Sets.newHashSet(entryNamesToInclude);
+            Set<String> notFound = Sets.newHashSet(entryNamesToInclude);
             notFound.removeAll(foundEntries);
             if (!notFound.isEmpty()) {
                 System.err.println("Not found:");
@@ -334,24 +340,42 @@ public class GenerateMockJdk {
     }
 
     public static void main(String[] args) throws IOException {
-        String rtJarPath = System.getProperty("rt.jar");
-        String srcZipPath = System.getProperty("src.zip");
-        if (rtJarPath == null || srcZipPath == null) {
-            throw new AssertionError("Provide path to rt.jar and src.zip in VM options: \"-Drt.jar=... -Dsrc.zip=...\"");
+        String openjdk7Path = System.getProperty("openjdk7");
+        if (openjdk7Path == null) {
+            throw new AssertionError("Provide path to openJDK 7 in VM options: \"-Dopenjdk7=...\"");
         }
 
-        File rtJar = new File(rtJarPath);
-        File srcJar = new File(srcZipPath);
+        Set<String> sourceFileEntries = getSourceFileEntries();
+        try (JarFile sourceJar = new JarFile(new File(openjdk7Path, "src.zip"))) {
+            InputStream stream = sourceJar.getInputStream(sourceJar.getEntry(sourceFileEntries.iterator().next()));
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+                boolean foundOpenJDKLicense = false;
+                while (true) {
+                    String line = reader.readLine();
+                    if (line == null) break;
+                    if (line.contains("\"Classpath\" exception")) {
+                        foundOpenJDKLicense = true;
+                    }
+                }
+
+                if (!foundOpenJDKLicense) {
+                    System.out.println("rt.jar and src.zip should point to OpenJDK installation");
+                    System.exit(1);
+                }
+            }
+        }
 
         generateFilteredJar(
-                rtJar,
+                openjdk7Path,
+                "jre/lib/rt.jar",
                 new File("compiler/testData/mockJDK/jre/lib/rt.jar"),
                 getClassFileEntries(),
                 true);
         generateFilteredJar(
-                srcJar,
+                openjdk7Path    ,
+                "src.zip",
                 new File("compiler/testData/mockJDK/src.zip"),
-                getSourceFileEntries(),
+                sourceFileEntries,
                 false);
     }
 

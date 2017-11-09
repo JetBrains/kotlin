@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
@@ -39,8 +36,15 @@ class LazyPackageMemberScope(
         return computeDescriptorsFromDeclaredElements(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
     }
 
-    override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration)
-            = resolveSession.fileScopeProvider.getFileResolutionScope(declaration.getContainingKtFile())
+    override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration) =
+            resolveSession.fileScopeProvider.getFileResolutionScope(declaration.containingKtFile)
+
+    override fun getScopeForInitializerResolution(declaration: KtDeclaration) =
+            getScopeForMemberDeclarationResolution(declaration)
+
+    override fun getNonDeclaredClasses(name: Name, result: MutableSet<ClassDescriptor>) {
+        // No extra classes
+    }
 
     override fun getNonDeclaredFunctions(name: Name, result: MutableSet<SimpleFunctionDescriptor>) {
         // No extra functions
@@ -53,6 +57,10 @@ class LazyPackageMemberScope(
     override fun recordLookup(name: Name, from: LookupLocation) {
         c.lookupTracker.record(from, thisDescriptor, name)
     }
+
+    override fun getClassifierNames(): Set<Name>? = declarationProvider.getDeclarationNames()
+    override fun getFunctionNames() = declarationProvider.getDeclarationNames()
+    override fun getVariableNames() = declarationProvider.getDeclarationNames()
 
     // Do not add details here, they may compromise the laziness during debugging
     override fun toString() = "lazy scope for package " + thisDescriptor.name

@@ -27,7 +27,7 @@ import com.google.common.annotations.Beta;
 /**
  * Lint configuration for an Android project such as which specific rules to include,
  * which specific rules to exclude, and which specific errors to ignore.
- * <p/>
+ * <p>
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */

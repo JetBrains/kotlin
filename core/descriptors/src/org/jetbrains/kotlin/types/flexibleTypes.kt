@@ -119,7 +119,7 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
         return when(unwrapped) {
             is FlexibleType -> unwrapped
             is SimpleType -> KotlinTypeFactory.flexibleType(unwrapped, unwrapped.makeNullableAsSpecified(true))
-        }
+        }.inheritEnhancement(unwrapped)
     }
 
     override fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType

@@ -1,24 +1,26 @@
-class Controller {
-    var wasHandleResultCalled = false
-    suspend fun suspendHere(x: Continuation<String>) {
-        x.resume("OK")
-    }
+// WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
-    operator fun handleResult(x: Unit, y: Continuation<Nothing>) {
-        wasHandleResultCalled = true
-    }
+suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+    x.resume("OK")
+    COROUTINE_SUSPENDED
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    val controller = Controller()
-    c(controller).resume(Unit)
+fun builder(c: suspend () -> Unit) {
+    var wasHandleResultCalled = false
+    c.startCoroutine(handleResultContinuation {
+        wasHandleResultCalled = true
+    })
 
-    if (!controller.wasHandleResultCalled) throw java.lang.RuntimeException("fail 1")
+    if (!wasHandleResultCalled) throw RuntimeException("fail 1")
 }
 
 var varWithCustomSetter: String = ""
     set(value) {
-        if (field != "") throw java.lang.RuntimeException("fail 2")
+        if (field != "") throw RuntimeException("fail 2")
         field = value
     }
 
@@ -28,7 +30,7 @@ fun box(): String {
     builder {
         result += "O"
 
-        if (suspendHere() != "OK") throw java.lang.RuntimeException("fail 3")
+        if (suspendHere() != "OK") throw RuntimeException("fail 3")
 
         result += "K"
     }
@@ -36,7 +38,7 @@ fun box(): String {
     if (result != "OK") return "fail 4"
 
     builder {
-        if (suspendHere() != "OK") throw java.lang.RuntimeException("fail 5")
+        if (suspendHere() != "OK") throw RuntimeException("fail 5")
 
         varWithCustomSetter = "OK"
     }

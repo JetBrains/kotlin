@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 enum class KotlinValVar(val keywordName: String) {
@@ -43,4 +44,25 @@ fun PsiElement?.toValVar(): KotlinValVar {
         node.elementType == KtTokens.VAR_KEYWORD -> KotlinValVar.Var
         else -> throw IllegalArgumentException("Unknown val/var token: " + text)
     }
+}
+
+fun KtParameter.setValOrVar(valOrVar: KotlinValVar): PsiElement? {
+    val newKeyword = valOrVar.createKeyword(KtPsiFactory(this))
+    val currentKeyword = valOrVarKeyword
+
+    if (currentKeyword != null) {
+        return if (newKeyword == null) {
+            currentKeyword.delete()
+            null
+        }
+        else {
+            currentKeyword.replace(newKeyword)
+        }
+    }
+
+    if (newKeyword == null) return null
+
+    nameIdentifier?.let { return addBefore(newKeyword, it) }
+    modifierList?.let { return addAfter(newKeyword, it) }
+    return addAfter(newKeyword, null)
 }

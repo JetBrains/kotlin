@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.ClassHeaderBuilder
@@ -45,17 +46,16 @@ private const val IMPL_SUFFIX = "Impl"
 class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtClass::class.java, "Create Kotlin subclass") {
 
     override fun applicabilityRange(element: KtClass): TextRange? {
-        val baseClass = element
-        if (baseClass.name == null || baseClass.getParentOfType<KtFunction>(true) != null) {
+        if (element.name == null || element.getParentOfType<KtFunction>(true) != null) {
             // Local / anonymous classes are not supported
             return null
         }
-        if (!baseClass.isInterface() && !baseClass.isSealed() && !baseClass.isAbstract() && !baseClass.hasModifier(KtTokens.OPEN_KEYWORD)) {
+        if (!element.isInterface() && !element.isSealed() && !element.isAbstract() && !element.hasModifier(KtTokens.OPEN_KEYWORD)) {
             return null
         }
-        val primaryConstructor = baseClass.getPrimaryConstructor()
-        if (!baseClass.isInterface() && primaryConstructor != null) {
-            val constructors = baseClass.getSecondaryConstructors() + primaryConstructor
+        val primaryConstructor = element.primaryConstructor
+        if (!element.isInterface() && primaryConstructor != null) {
+            val constructors = element.secondaryConstructors + primaryConstructor
             if (constructors.none() {
                 !it.isPrivate() &&
                 it.getValueParameters().all { it.hasDefaultValue() }
@@ -65,8 +65,8 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
                 return null
             }
         }
-        text = getImplementTitle(baseClass)
-        return TextRange(baseClass.startOffset, baseClass.getBody()?.lBrace?.startOffset ?: baseClass.endOffset)
+        text = getImplementTitle(element)
+        return TextRange(element.startOffset, element.getBody()?.lBrace?.startOffset ?: element.endOffset)
     }
 
     private fun getImplementTitle(baseClass: KtClass) =
@@ -77,15 +77,17 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
                 else /* open class */ -> "Create subclass"
             }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: KtClass, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
+
         val name = element.name ?: throw IllegalStateException("This intention should not be applied to anonymous classes")
-        val baseClass = element
-        if (baseClass.isSealed()) {
-            createSealedSubclass(baseClass, name, editor)
+        if (element.isSealed()) {
+            createSealedSubclass(element, name, editor)
         }
         else {
-            createExternalSubclass(baseClass, name, editor)
+            createExternalSubclass(element, name, editor)
         }
     }
 
@@ -98,10 +100,12 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
 
     private fun createSealedSubclass(sealedClass: KtClass, sealedName: String, editor: Editor) {
         val project = sealedClass.project
-        val builder = buildClassHeader(targetNameWithoutConflicts(sealedName, sealedClass), sealedClass, sealedName)
-        val classFromText = KtPsiFactory(project).createClass(builder.asString())
-        val body = sealedClass.getOrCreateBody()
-        val klass = body.addBefore(classFromText, body.rBrace) as KtClass
+        val klass = runWriteAction {
+            val builder = buildClassHeader(targetNameWithoutConflicts(sealedName, sealedClass), sealedClass, sealedName)
+            val classFromText = KtPsiFactory(project).createClass(builder.asString())
+            val body = sealedClass.getOrCreateBody()
+            body.addBefore(classFromText, body.rBrace) as KtClass
+        }
         runInteractiveRename(klass, project, sealedClass, editor)
         chooseAndImplementMethods(project, klass, editor)
     }
@@ -132,18 +136,23 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         if (container.containingClassOrObject == null && !ApplicationManager.getApplication().isUnitTestMode) {
             val dlg = chooseSubclassToCreate(baseClass, baseName) ?: return
             val targetName = dlg.className
-            val file = getOrCreateKotlinFile("$targetName.kt", dlg.targetDirectory)!!
-            val builder = buildClassHeader(targetName, baseClass, baseClass.fqName!!.asString())
-            file.add(factory.createClass(builder.asString()))
-            val klass = file.getChildOfType<KtClass>()!!
-            ShortenReferences.DEFAULT.process(klass)
+            val (file, klass) = runWriteAction {
+                val file = getOrCreateKotlinFile("$targetName.kt", dlg.targetDirectory)!!
+                val builder = buildClassHeader(targetName, baseClass, baseClass.fqName!!.asString())
+                file.add(factory.createClass(builder.asString()))
+                val klass = file.getChildOfType<KtClass>()!!
+                ShortenReferences.DEFAULT.process(klass)
+                file to klass
+            }
             chooseAndImplementMethods(project, klass, CodeInsightUtil.positionCursor(project, file, klass) ?: editor)
         }
         else {
-            val builder = buildClassHeader(targetNameWithoutConflicts(baseName, baseClass.containingClassOrObject),
-                                           baseClass, name, visibility)
-            val classFromText = factory.createClass(builder.asString())
-            val klass = container.parent.addAfter(classFromText, container) as KtClass
+            val klass = runWriteAction {
+                val builder = buildClassHeader(targetNameWithoutConflicts(baseName, baseClass.containingClassOrObject),
+                                               baseClass, name, visibility)
+                val classFromText = factory.createClass(builder.asString())
+                container.parent.addAfter(classFromText, container) as KtClass
+            }
             runInteractiveRename(klass, project, container, editor)
             chooseAndImplementMethods(project, klass, editor)
         }

@@ -1,0 +1,6 @@
+// "Remove useless is check" "true"
+fun foo(a: String) {
+    if (<caret>false) {
+
+    }
+}

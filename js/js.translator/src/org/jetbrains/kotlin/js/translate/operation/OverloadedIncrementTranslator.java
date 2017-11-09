@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
@@ -38,11 +38,9 @@ public final class OverloadedIncrementTranslator extends IncrementTranslator {
         this.resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
     }
 
-
     @Override
     @NotNull
-    protected JsExpression operationExpression(@NotNull JsExpression receiver) {
-        return CallTranslator.translate(context(), resolvedCall, receiver);
+    protected JsExpression operationExpression(@NotNull TranslationContext context, @NotNull JsExpression receiver) {
+        return CallTranslator.translate(context, resolvedCall, receiver);
     }
-
 }

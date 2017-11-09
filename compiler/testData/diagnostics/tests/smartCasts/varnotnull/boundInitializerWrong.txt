@@ -1,0 +1,15 @@
+package
+
+public fun bar(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun bar2(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun baz(/*0*/ arg: Some?): kotlin.Unit
+public fun foo(): kotlin.Unit
+public fun foo2(): kotlin.Unit
+
+public final class Some {
+    public constructor Some(/*0*/ s: kotlin.String?)
+    public final var s: kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

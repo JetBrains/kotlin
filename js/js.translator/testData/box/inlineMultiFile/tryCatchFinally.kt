@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1127
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/tryCatchFinally/tryCatchFinally.1.kt
@@ -104,4 +105,4 @@ inline fun <T, R> T.performWithFailFinally(job: (T)-> R, failJob : (e: RuntimeEx
     }
 }
 
-inline fun String.toInt2() : Int = parseInt(this)
+inline fun String.toInt2() : Int = this.toInt()

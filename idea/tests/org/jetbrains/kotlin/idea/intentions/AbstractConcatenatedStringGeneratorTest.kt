@@ -18,22 +18,25 @@ package org.jetbrains.kotlin.idea.intentions
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.intentions.copyConcatenatedStringToClipboard.ConcatenatedStringGenerator
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractConcatenatedStringGeneratorTest : KotlinCodeInsightTestCase() {
-
+/**
+ * Compare xxx.kt.result file with the result of ConcatenatedStringGenerator().create(KtBinaryExpression) where KtBinaryExpression is
+ * the last KtBinaryExpression of xxx.kt file
+ */
+abstract class AbstractConcatenatedStringGeneratorTest : KotlinLightCodeInsightFixtureTestCase() {
     @Throws(Exception::class)
     protected fun doTest(path: String) {
-        val mainFile = File(path)
-        val readText = mainFile.readText()
-        val resultFile = File("$path.result")
-        val expectedText = resultFile.readText()
-        val expression = KtPsiFactory(project).createExpression(readText) as? KtBinaryExpression
-        TestCase.assertNotNull("Invalid expression: $readText", expression)
+        myFixture.configureByFile(path)
+        val expression = myFixture.file.collectDescendantsOfType<KtBinaryExpression>().lastOrNull()
+        TestCase.assertNotNull("No binary expression found: $path", expression)
+
         val generatedString = ConcatenatedStringGenerator().create(expression!!)
-        TestCase.assertEquals("mismatch '$expectedText' - '$generatedString'", expectedText, generatedString)
+
+        KotlinTestUtils.assertEqualsToFile(File("$path.result"), generatedString)
     }
 }

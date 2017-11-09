@@ -1,0 +1,22 @@
+package
+
+public const val ONE: kotlin.Int = 1
+public val two: kotlin.Int = 2
+@Foo(a = {1}, b = {"/"}, c = {1.0.toFloat()}) public fun test1(): kotlin.Unit
+@Foo(a = {}, b = {}, c = {}) public fun test2(): kotlin.Unit
+@Foo(a = {1.0.toFloat()}, b = {\u0020 (' ')}, c = {1}) public fun test3(): kotlin.Unit
+@Foo(a = {1}, b = {""}, c = {1.0.toFloat()}) public fun test4(): kotlin.Unit
+@Foo(a = {3}, b = {"Hello, Kotlin"}, c = {Infinity.toFloat()}) public fun test5(): kotlin.Unit
+@Foo(a = {1}, b = {}, c = {}) public fun test6(): kotlin.Unit
+@Foo(a = {3}, b = {}, c = {}) public fun test7(): kotlin.Unit
+@Foo(a = {2}, b = {}, c = {}) public fun test8(): kotlin.Unit
+
+public final annotation class Foo : kotlin.Annotation {
+    public constructor Foo(/*0*/ a: kotlin.IntArray, /*1*/ b: kotlin.Array<kotlin.String>, /*2*/ c: kotlin.FloatArray)
+    public final val a: kotlin.IntArray
+    public final val b: kotlin.Array<kotlin.String>
+    public final val c: kotlin.FloatArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

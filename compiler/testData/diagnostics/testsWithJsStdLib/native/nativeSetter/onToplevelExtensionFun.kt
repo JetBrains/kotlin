@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER, -DEPRECATION
 
 @nativeSetter
 fun Int.set(a: String, v: Int) {}

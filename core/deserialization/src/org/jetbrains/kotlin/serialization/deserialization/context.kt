@@ -19,10 +19,15 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
+import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
+import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirementTable
 import org.jetbrains.kotlin.storage.StorageManager
 
 class DeserializationComponents(
@@ -36,8 +41,9 @@ class DeserializationComponents(
         val errorReporter: ErrorReporter,
         val lookupTracker: LookupTracker,
         val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-        val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
+        val fictitiousClassDescriptorFactories: Iterable<ClassDescriptorFactory>,
         val notFoundClasses: NotFoundClasses,
+        val contractDeserializer: ContractDeserializer,
         val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
         val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All
 ) {
@@ -49,9 +55,10 @@ class DeserializationComponents(
             descriptor: PackageFragmentDescriptor,
             nameResolver: NameResolver,
             typeTable: TypeTable,
-            containerSource: SourceElement?
+            versionRequirementTable: VersionRequirementTable,
+            containerSource: DeserializedContainerSource?
     ): DeserializationContext =
-            DeserializationContext(this, nameResolver, descriptor, typeTable, containerSource,
+            DeserializationContext(this, nameResolver, descriptor, typeTable, versionRequirementTable, containerSource,
                                    parentTypeDeserializer = null, typeParameters = listOf())
 }
 
@@ -61,7 +68,8 @@ class DeserializationContext(
         val nameResolver: NameResolver,
         val containingDeclaration: DeclarationDescriptor,
         val typeTable: TypeTable,
-        val containerSource: SourceElement?,
+        val versionRequirementTable: VersionRequirementTable,
+        val containerSource: DeserializedContainerSource?,
         parentTypeDeserializer: TypeDeserializer?,
         typeParameters: List<ProtoBuf.TypeParameter>
 ) {
@@ -78,7 +86,7 @@ class DeserializationContext(
             nameResolver: NameResolver = this.nameResolver,
             typeTable: TypeTable = this.typeTable
     ) = DeserializationContext(
-            components, nameResolver, descriptor, typeTable, this.containerSource,
+            components, nameResolver, descriptor, typeTable, versionRequirementTable, this.containerSource,
             parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
     )
 }

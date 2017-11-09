@@ -109,7 +109,7 @@ fun generate(): String {
                 parameters.map { it.asString() }.joinToString(", "),
                 ", ",
                 "\"$funcName\"",
-                ", { a, b -> a.${funcName}(b) }, ",
+                ", { a, b -> a.$funcName(b) }, ",
                 renderCheckBinaryOperation(funcName, parameters),
                 ")",
                 if (binaryOperationsMapIterator.hasNext()) "," else ""
@@ -145,6 +145,7 @@ fun renderCheckBinaryOperation(name: String, params: List<KotlinType>): String {
         "div" -> "{ a, b -> a.divide(b) }"
         "times" -> "{ a, b -> a.multiply(b) }"
         "mod",
+        "rem",
         "xor",
         "or",
         "and" -> "{ a, b -> a.$name(b) }"

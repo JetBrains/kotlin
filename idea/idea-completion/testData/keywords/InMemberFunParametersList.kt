@@ -8,7 +8,6 @@ class TestSample() {
 // EXIST: vararg
 // EXIST: noinline
 // EXIST: crossinline
-// EXIST: coroutine
 /* TODO: val&var are not correct */
 // EXIST: val
 // EXIST: var

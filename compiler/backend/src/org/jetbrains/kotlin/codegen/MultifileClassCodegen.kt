@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.util.ArrayUtil
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -29,8 +30,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -51,12 +50,17 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
-class MultifileClassCodegen(
+interface MultifileClassCodegen {
+    fun generate(errorHandler: CompilationErrorHandler)
+    fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>)
+}
+
+class MultifileClassCodegenImpl(
         private val state: GenerationState,
         private val files: Collection<KtFile>,
         private val facadeFqName: FqName,
         private val packagePartRegistry: PackagePartRegistry
-) {
+) : MultifileClassCodegen {
     private val facadeClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(facadeFqName)
 
     private val packageFragment = getOnlyPackageFragment(facadeFqName.parent(), files, state.bindingContext)
@@ -74,9 +78,6 @@ class MultifileClassCodegen(
                     .getContributedDescriptors(DescriptorKindFilter.CALLABLES, MemberScope.ALL_NAME_FILTER)
                     .filterIsInstance<DeserializedCallableMemberDescriptor>()
 
-    private fun KtFile.getFileClassFqName() =
-            state.fileClassesProvider.getFileClassInfo(this).fileClassFqName
-
     private val shouldGeneratePartHierarchy =
             state.inheritMultifileParts
 
@@ -84,7 +85,7 @@ class MultifileClassCodegen(
         val partInternalNamesSet = hashSetOf<String>()
         for (file in files) {
             if (file.hasDeclarationsForPartClass()) {
-                partInternalNamesSet.add(file.getFileClassFqName().toInternalName())
+                partInternalNamesSet.add(JvmFileClassUtil.getFileClassInternalName(file))
             }
         }
         compiledPackageFragment?.let {
@@ -150,7 +151,7 @@ class MultifileClassCodegen(
         }
     }
 
-    fun generate(errorHandler: CompilationErrorHandler) {
+    override fun generate(errorHandler: CompilationErrorHandler) {
         assert(delegateGenerationTasks.isEmpty()) { "generate() is called twice for facade class $facadeFqName" }
 
         generateCodeForSourceFiles(errorHandler)
@@ -194,7 +195,7 @@ class MultifileClassCodegen(
         writeKotlinMultifileFacadeAnnotationIfNeeded()
     }
 
-    fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>) {
+    override fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>) {
         MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null)
     }
 
@@ -202,24 +203,20 @@ class MultifileClassCodegen(
         val packageFragment = this.packageFragment
                               ?: throw AssertionError("File part $file of $facadeFqName: no package fragment")
 
-        val partClassFqName = file.getFileClassFqName()
-        val partInitializerClassFqName = FqName(partClassFqName.asString() + "__Init")
-        val partType = partClassFqName.toAsmType()
-        val partInitializerType = partInitializerClassFqName.toAsmType()
-        val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType, partInitializerType, file)
+        val partType = Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(file))
+        val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType, file)
 
         generateNonPartClassDeclarations(file, partContext)
 
         if (!state.generateDeclaredClassFilter.shouldGeneratePackagePart(file) || !file.hasDeclarationsForPartClass()) return
 
-        val partInternalName = partType.internalName
-        packagePartRegistry.addPart(partInternalName.substring(partInternalName.lastIndexOf('/') + 1))
+        packagePartRegistry.addPart(partType.internalName, facadeClassType.internalName)
 
         val builder = state.factory.newVisitor(MultifileClassPart(file, packageFragment), partType, file)
 
         MultifileClassPartCodegen(
                 builder, file, packageFragment,
-                getSuperClassForPart(partInternalName),
+                getSuperClassForPart(partType.internalName),
                 shouldGeneratePartHierarchy,
                 partContext, state
         ).generate()
@@ -245,7 +242,7 @@ class MultifileClassCodegen(
     private fun addDelegateGenerationTasksForDeclarationsInFile(file: KtFile, packageFragment: PackageFragmentDescriptor, partType: Type) {
         val facadeContext = state.rootContext.intoMultifileClass(packageFragment, facadeClassType, partType)
         val memberCodegen = createCodegenForDelegatesInMultifileFacade(facadeContext)
-        for (declaration in file.declarations) {
+        for (declaration in CodegenUtil.getActualDeclarations(file)) {
             if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtTypeAlias) {
                 val descriptor = state.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                 if (descriptor !is MemberDescriptor) {
@@ -279,7 +276,7 @@ class MultifileClassCodegen(
         if (compiledPackageFragment == null) return
 
         for (callable in previouslyCompiledCallables) {
-            val partFqName = JvmFileClassUtil.getPartFqNameForDeserializedCallable(callable)
+            val partFqName = JvmFileClassUtil.getPartFqNameForDeserialized(callable)
             val partType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(partFqName)
 
             addDelegateGenerationTaskIfNeeded(callable, { generateDelegateToCompiledMember(callable, compiledPackageFragment, partType) })
@@ -320,17 +317,20 @@ class MultifileClassCodegen(
     }
 
     private fun writeKotlinMultifileFacadeAnnotationIfNeeded() {
-        if (!state.classBuilderMode.generateMetadata) return
-        if (files.any { it.isScript }) return
+        if (!state.classBuilderMode.generateMetadata) {
+            classBuilder.ensureGenerated()
+            return
+        }
+        if (files.any { it.isScript() }) return
 
-        writeKotlinMetadata(classBuilder, KotlinClassHeader.Kind.MULTIFILE_CLASS) { av ->
+        val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
+
+        writeKotlinMetadata(classBuilder, state, KotlinClassHeader.Kind.MULTIFILE_CLASS, extraFlags) { av ->
             val arv = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
             for (internalName in partInternalNamesSorted) {
                 arv.visit(null, internalName)
             }
             arv.visitEnd()
-            val multifileClassKind = if (shouldGeneratePartHierarchy) INHERITING else DELEGATING
-            av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_KIND_FIELD_NAME, multifileClassKind.id)
         }
     }
 
@@ -371,13 +371,7 @@ class MultifileClassCodegen(
         }
 
         private fun KtFile.hasDeclarationsForPartClass() =
-                declarations.any { it is KtProperty || it is KtFunction }
-
-        private fun FqName.toInternalName() =
-                AsmUtil.internalNameByFqNameWithoutInnerClasses(this)
-
-        private fun FqName.toAsmType() =
-                AsmUtil.asmTypeByFqNameWithoutInnerClasses(this)
+                CodegenUtil.getActualDeclarations(this).any { it is KtProperty || it is KtFunction || it is KtTypeAlias }
 
         private fun getCompiledPackageFragment(
                 facadeFqName: FqName, state: GenerationState
@@ -394,5 +388,4 @@ class MultifileClassCodegen(
             return incrementalPackageFragment?.getPackageFragmentForMultifileClass(facadeFqName)
         }
     }
-
 }

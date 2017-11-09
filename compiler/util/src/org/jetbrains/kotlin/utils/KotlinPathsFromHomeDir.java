@@ -40,10 +40,10 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
         return new File(homePath, "lib");
     }
 
-    @Override
     @NotNull
-    public File getRuntimePath() {
-        return getLibraryFile(PathUtil.KOTLIN_JAVA_RUNTIME_JAR);
+    @Override
+    public File getStdlibPath() {
+        return getLibraryFile(PathUtil.KOTLIN_JAVA_STDLIB_JAR);
     }
 
     @NotNull
@@ -66,8 +66,8 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
 
     @NotNull
     @Override
-    public File getRuntimeSourcesPath() {
-        return getLibraryFile(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR);
+    public File getStdlibSourcesPath() {
+        return getLibraryFile(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR);
     }
 
     @Override
@@ -84,8 +84,38 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
 
     @NotNull
     @Override
+    public File getJsKotlinTestJarPath() {
+        return getLibraryFile(PathUtil.KOTLIN_TEST_JS_JAR);
+    }
+
+    @NotNull
+    @Override
+    public File getAllOpenPluginJarPath() {
+        return getLibraryFile(PathUtil.ALLOPEN_PLUGIN_JAR_NAME);
+    }
+
+    @NotNull
+    @Override
+    public File getNoArgPluginJarPath() {
+        return getLibraryFile(PathUtil.NOARG_PLUGIN_JAR_NAME);
+    }
+
+    @NotNull
+    @Override
+    public File getSamWithReceiverJarPath() {
+        return getLibraryFile(PathUtil.SAM_WITH_RECEIVER_PLUGIN_JAR_NAME);
+    }
+
+    @NotNull
+    @Override
     public File getCompilerPath() {
         return getLibraryFile(PathUtil.KOTLIN_COMPILER_JAR);
+    }
+
+    @NotNull
+    @Override
+    public File getBuildNumberFile() {
+        return new File(homePath, "build.txt");
     }
 
     @NotNull

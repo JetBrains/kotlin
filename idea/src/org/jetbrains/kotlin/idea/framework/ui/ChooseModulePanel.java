@@ -52,8 +52,8 @@ public class ChooseModulePanel {
 
     public ChooseModulePanel(@NotNull Project project, @NotNull KotlinProjectConfigurator configurator, Collection<Module> excludeModules) {
         this.project = project;
-        this.modules = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project, configurator);
-        this.modulesWithKtFiles = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModulesWithKotlinFiles(project, configurator);
+        this.modules = ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(project, configurator);
+        this.modulesWithKtFiles = ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModulesWithKotlinFiles(project, configurator);
 
         DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
 

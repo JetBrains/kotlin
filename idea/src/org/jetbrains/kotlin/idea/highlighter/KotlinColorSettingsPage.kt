@@ -22,13 +22,15 @@ import com.intellij.openapi.options.OptionsBundle
 import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
+import com.intellij.openapi.options.colors.RainbowColorSettingsPage
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import java.lang.reflect.Modifier
 import java.util.*
 
-class KotlinColorSettingsPage : ColorSettingsPage {
+class KotlinColorSettingsPage : ColorSettingsPage, RainbowColorSettingsPage {
+    override fun getLanguage() = KotlinLanguage.INSTANCE
     override fun getIcon() = KotlinIcons.SMALL_LOGO
     override fun getHighlighter(): SyntaxHighlighter = KotlinHighlighter()
 
@@ -56,6 +58,7 @@ class KotlinColorSettingsPage : ColorSettingsPage {
         <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>
         dyn.<DYNAMIC_FUNCTION_CALL>dynamicCall</DYNAMIC_FUNCTION_CALL>()
         dyn.<DYNAMIC_PROPERTY_CALL>dynamicProp</DYNAMIC_PROPERTY_CALL> = 5
+        val <LOCAL_VARIABLE>klass</LOCAL_VARIABLE> = <CLASS>MyClass</CLASS>::<KEYWORD>class</KEYWORD>
     }
 
     <BUILTIN_ANNOTATION>override</BUILTIN_ANNOTATION> fun hashCode(): Int {
@@ -121,6 +124,8 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
                        OptionsBundle.message("options.java.attribute.descriptor.brackets") to KotlinHighlightingColors.BRACKETS,
                        OptionsBundle.message("options.java.attribute.descriptor.comma") to KotlinHighlightingColors.COMMA,
                        OptionsBundle.message("options.java.attribute.descriptor.semicolon") to KotlinHighlightingColors.SEMICOLON,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.colon") to KotlinHighlightingColors.COLON,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.double.colon") to KotlinHighlightingColors.DOUBLE_COLON,
                        OptionsBundle.message("options.java.attribute.descriptor.dot") to KotlinHighlightingColors.DOT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.safe.access") to KotlinHighlightingColors.SAFE_ACCESS,
                        OptionsBundle.message("options.java.attribute.descriptor.line.comment") to KotlinHighlightingColors.LINE_COMMENT,
@@ -144,6 +149,7 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
                        KotlinBundle.message("options.kotlin.attribute.descriptor.field") to KotlinHighlightingColors.BACKING_FIELD_VARIABLE,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.extension.property") to KotlinHighlightingColors.EXTENSION_PROPERTY,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.dynamic.property") to KotlinHighlightingColors.DYNAMIC_PROPERTY_CALL,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.android.extensions.property") to KotlinHighlightingColors.ANDROID_EXTENSIONS_PROPERTY_CALL,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.it") to KotlinHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.fun") to KotlinHighlightingColors.FUNCTION_DECLARATION,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.fun.call") to KotlinHighlightingColors.FUNCTION_CALL,
@@ -162,4 +168,9 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
 
     override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
     override fun getDisplayName(): String = KotlinLanguage.NAME
+
+    override fun isRainbowType(type: TextAttributesKey): Boolean {
+        return type == KotlinHighlightingColors.LOCAL_VARIABLE ||
+               type == KotlinHighlightingColors.PARAMETER
+    }
 }

@@ -1,19 +1,29 @@
 // WITH_RUNTIME
-class Controller {
-    suspend fun suspendHere(x: Continuation<Unit>) {
-        x.resume(Unit)
-    }
+// WITH_COROUTINES
+import helpers.*
+// TARGET_BACKEND: JVM
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
+suspend fun suspendHere(): Unit = suspendCoroutineOrReturn { x ->
+    x.resume(Unit)
+    COROUTINE_SUSPENDED
 }
 
-fun builder1(coroutine c: Controller.() -> Continuation<Unit>) {
+fun builder1(c: suspend () -> Unit) {
     (c as Continuation<Unit>).resume(Unit)
 }
 
-fun builder2(coroutine c: Controller.() -> Continuation<Unit>) {
-    val continuation = c(Controller())
-    val declaredField = continuation!!.javaClass.getDeclaredField("label")
+fun builder2(c: suspend () -> Unit) {
+    val continuation = c.createCoroutine(EmptyContinuation)
+
+    val delegateField = continuation.javaClass.getDeclaredField("delegate")
+    delegateField.setAccessible(true)
+    val originalContinuation = delegateField.get(continuation)
+
+    val declaredField = originalContinuation.javaClass.superclass.getDeclaredField("label")
     declaredField.setAccessible(true)
-    declaredField.set(continuation, -3)
+    declaredField.set(originalContinuation, -3)
     continuation.resume(Unit)
 }
 
@@ -24,8 +34,7 @@ fun box(): String {
             suspendHere()
         }
         return "fail 1"
-    } catch (e: java.lang.IllegalStateException) {
-        if (e.message != "call to 'resume' before 'invoke' with coroutine") return "fail 2: ${e.message!!}"
+    } catch (e: kotlin.KotlinNullPointerException) {
     }
 
     try {
@@ -35,7 +44,26 @@ fun box(): String {
         return "fail 3"
     } catch (e: java.lang.IllegalStateException) {
         if (e.message != "call to 'resume' before 'invoke' with coroutine") return "fail 4: ${e.message!!}"
-        return "OK"
+    }
+
+    var result = "OK"
+
+    try {
+        builder1 {
+            result = "fail 5"
+        }
+        return "fail 6"
+    } catch (e: kotlin.KotlinNullPointerException) {
+    }
+
+    try {
+        builder2 {
+            result = "fail 8"
+        }
+        return "fail 9"
+    } catch (e: java.lang.IllegalStateException) {
+        if (e.message != "call to 'resume' before 'invoke' with coroutine") return "fail 10: ${e.message!!}"
+        return result
     }
 
     return "fail"

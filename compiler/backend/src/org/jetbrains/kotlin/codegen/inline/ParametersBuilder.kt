@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.org.objectweb.asm.Type
 
-internal class ParametersBuilder private constructor() {
+class ParametersBuilder private constructor() {
 
     private val params = arrayListOf<ParameterInfo>()
 

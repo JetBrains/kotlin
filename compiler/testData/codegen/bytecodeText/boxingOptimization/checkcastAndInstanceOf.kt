@@ -20,4 +20,4 @@ fun bar() {
 // 0 valueOf
 // 0 Value\s\(\)
 // 2 INSTANCEOF
-// 2 CHECKCAST
+// 1 CHECKCAST

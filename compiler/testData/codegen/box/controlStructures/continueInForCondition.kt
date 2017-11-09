@@ -1,6 +1,6 @@
-import java.util.Arrays
+// WITH_RUNTIME
 
-fun foo(): List<String>? = Arrays.asList("abcde")
+fun foo(): List<String>? = listOf("abcde")
 
 fun box(): String {
     for (i in 1..3) {

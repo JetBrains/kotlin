@@ -33,6 +33,6 @@ class KtScriptInfo(
     override fun getTypeParameterList() = null
     override fun getPrimaryConstructorParameters() = listOf<KtParameter>()
     override fun getClassKind() = ClassKind.CLASS
-    override fun getDeclarations() = script.getDeclarations()
+    override fun getDeclarations() = script.declarations
     override fun getDanglingAnnotations() = listOf<KtAnnotationEntry>()
 }

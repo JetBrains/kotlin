@@ -1,4 +1,4 @@
-JetFile: PropertiesWithFunctionReceivers.kt
+KtFile: PropertiesWithFunctionReceivers.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

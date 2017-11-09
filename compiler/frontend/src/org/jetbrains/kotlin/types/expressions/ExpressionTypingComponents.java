@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
+import org.jetbrains.kotlin.contracts.EffectSystem;
+import org.jetbrains.kotlin.contracts.parsing.ContractParsingServices;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
+import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.types.WrappedTypeFactory;
 
 import javax.inject.Inject;
 
@@ -58,6 +62,12 @@ public class ExpressionTypingComponents {
     /*package*/ LookupTracker lookupTracker;
     /*package*/ OverloadChecker overloadChecker;
     /*package*/ LanguageVersionSettings languageVersionSettings;
+    /*package*/ Iterable<RttiExpressionChecker> rttiExpressionCheckers;
+    /*package*/ WrappedTypeFactory wrappedTypeFactory;
+    /*package*/ CollectionLiteralResolver collectionLiteralResolver;
+    /*package*/ DeprecationResolver deprecationResolver;
+    /*package*/ EffectSystem effectSystem;
+    /*package*/ ContractParsingServices contractParsingServices;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -175,7 +185,7 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
-    public void setLocalVariableResolver(@NotNull  LocalVariableResolver localVariableResolver) {
+    public void setLocalVariableResolver(@NotNull LocalVariableResolver localVariableResolver) {
         this.localVariableResolver = localVariableResolver;
     }
 
@@ -192,5 +202,35 @@ public class ExpressionTypingComponents {
     @Inject
     public void setLanguageVersionSettings(@NotNull LanguageVersionSettings languageVersionSettings) {
         this.languageVersionSettings = languageVersionSettings;
+    }
+
+    @Inject
+    public void setRttiExpressionCheckers(@NotNull Iterable<RttiExpressionChecker> rttiExpressionCheckers) {
+        this.rttiExpressionCheckers = rttiExpressionCheckers;
+    }
+
+    @Inject
+    public void setWrappedTypeFactory(WrappedTypeFactory wrappedTypeFactory) {
+        this.wrappedTypeFactory = wrappedTypeFactory;
+    }
+
+    @Inject
+    public void setCollectionLiteralResolver(CollectionLiteralResolver collectionLiteralResolver) {
+        this.collectionLiteralResolver = collectionLiteralResolver;
+    }
+
+    @Inject
+    public void setDeprecationResolver(DeprecationResolver deprecationResolver) {
+        this.deprecationResolver = deprecationResolver;
+    }
+
+    @Inject
+    public void setEffectSystem(@NotNull EffectSystem effectSystem) {
+        this.effectSystem = effectSystem;
+    }
+
+    @Inject
+    public void setContractParsingServices(@NotNull ContractParsingServices contractParsingServices) {
+        this.contractParsingServices = contractParsingServices;
     }
 }

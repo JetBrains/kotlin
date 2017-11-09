@@ -35,7 +35,6 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.util.List;
 
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class ModuleXmlParser {
@@ -53,6 +52,7 @@ public class ModuleXmlParser {
     public static final String JAVA_SOURCE_PACKAGE_PREFIX = "packagePrefix";
     public static final String PATH = "path";
     public static final String CLASSPATH = "classpath";
+    public static final String MODULAR_JDK_ROOT = "modularJdkRoot";
 
     @NotNull
     public static ModuleScriptData parseModuleScript(
@@ -75,7 +75,7 @@ public class ModuleXmlParser {
     }
 
     private final MessageCollector messageCollector;
-    private final List<Module> modules = new SmartList<Module>();
+    private final List<Module> modules = new SmartList<>();
     private DefaultHandler currentState;
 
     private ModuleXmlParser(@NotNull MessageCollector messageCollector) {
@@ -99,14 +99,11 @@ public class ModuleXmlParser {
             });
             return new ModuleScriptData(modules);
         }
-        catch (ParserConfigurationException e) {
+        catch (ParserConfigurationException | IOException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
         }
         catch (SAXException e) {
-            messageCollector.report(ERROR, OutputMessageUtil.renderException(e), NO_LOCATION);
-        }
-        catch (IOException e) {
-            MessageCollectorUtil.reportException(messageCollector, e);
+            messageCollector.report(ERROR, "Build file does not have a valid XML: " + e, null);
         }
         return ModuleScriptData.EMPTY;
     }
@@ -175,6 +172,10 @@ public class ModuleXmlParser {
                 String path = getAttribute(attributes, PATH, qName);
                 String packagePrefix = getNullableAttribute(attributes, JAVA_SOURCE_PACKAGE_PREFIX);
                 moduleBuilder.addJavaSourceRoot(new JavaRootPath(path, packagePrefix));
+            }
+            else if (MODULAR_JDK_ROOT.equalsIgnoreCase(qName)) {
+                String path = getAttribute(attributes, PATH, qName);
+                moduleBuilder.setModularJdkRoot(path);
             }
             else {
                 throw createError(qName);

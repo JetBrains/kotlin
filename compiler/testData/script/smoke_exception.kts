@@ -1,4 +1,4 @@
-@file:DependsOn("@{runtime}")
+@file:DependsOn("@{kotlin-stdlib}")
 
 fun main() {
     error("my error")

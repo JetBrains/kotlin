@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -53,7 +54,8 @@ class CodeFragmentAnalyzer(
 
         when (codeFragmentElement) {
             is KtExpression -> {
-                PreliminaryDeclarationVisitor.createForExpression(codeFragmentElement, trace)
+                PreliminaryDeclarationVisitor.createForExpression(codeFragmentElement, trace,
+                                                                  expressionTypingServices.languageVersionSettings)
                 expressionTypingServices.getTypeInfo(
                         scopeForContextElement,
                         codeFragmentElement,
@@ -91,9 +93,17 @@ class CodeFragmentAnalyzer(
         val scopeForContextElement: LexicalScope?
         val dataFlowInfo: DataFlowInfo
 
+        fun getClassDescriptor(classOrObject: KtClassOrObject): ClassDescriptor? {
+            if (!KtPsiUtil.isLocal(classOrObject)) {
+                return resolveSession.getClassDescriptor(classOrObject, NoLookupLocation.FROM_IDE)
+            }
+
+            return resolveToElement(classOrObject)[BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject] as ClassDescriptor?
+        }
+
         when (context) {
             is KtPrimaryConstructor -> {
-                val descriptor = resolveSession.getClassDescriptor(context.getContainingClassOrObject(), NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
+                val descriptor = (getClassDescriptor(context.getContainingClassOrObject()) as? ClassDescriptorWithResolutionScopes) ?: return null
 
                 scopeForContextElement = descriptor.scopeForInitializerResolution
                 dataFlowInfo = DataFlowInfo.EMPTY
@@ -107,7 +117,7 @@ class CodeFragmentAnalyzer(
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
             is KtClassOrObject -> {
-                val descriptor = resolveSession.getClassDescriptor(context, NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
+                val descriptor = (getClassDescriptor(context) as? ClassDescriptorWithResolutionScopes) ?: return null
 
                 scopeForContextElement = descriptor.scopeForMemberDeclarationResolution
                 dataFlowInfo = DataFlowInfo.EMPTY
@@ -122,7 +132,7 @@ class CodeFragmentAnalyzer(
                 val contextForElement = resolveToElement(correctedContext)
 
                 scopeForContextElement = contextForElement[BindingContext.LEXICAL_SCOPE, correctedContext]
-                dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
+                dataFlowInfo = contextForElement.getDataFlowInfoAfter(correctedContext)
             }
             else -> return null
         }

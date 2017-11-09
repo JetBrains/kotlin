@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.asJava.elements;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
+import java.util.Collections;
 import java.util.List;
 
 public class KtLightParameter extends LightParameter implements KtLightDeclaration<KtParameter, PsiParameter> {
@@ -45,20 +45,15 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     private final KtLightMethod method;
     private KtLightIdentifier lightIdentifier = null;
 
-    public KtLightParameter(final PsiParameter delegate, int index, KtLightMethod method) {
+    public KtLightParameter(PsiParameter delegate, int index, KtLightMethod method) {
         super(getName(delegate, index), delegate.getType(), method, KotlinLanguage.INSTANCE);
 
         this.delegate = delegate;
         this.index = index;
         this.method = method;
 
-        if (method.getLightMethodOrigin() instanceof LightMemberOriginForDeclaration) {
-            this.modifierList = new KtLightModifierListWithExplicitModifiers(this, ArrayUtil.EMPTY_STRING_ARRAY) {
-                @Override
-                public PsiAnnotationOwner getDelegate() {
-                    return delegate.getModifierList();
-                }
-            };
+        if (method.getLightMemberOrigin() instanceof LightMemberOriginForDeclaration) {
+            this.modifierList = new KtLightSimpleModifierList(this, Collections.emptySet());
         }
         else {
             this.modifierList = super.getModifierList();
@@ -144,7 +139,7 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     @Override
     public SearchScope getUseScope() {
         KtParameter origin = getKotlinOrigin();
-        return origin != null ? origin.getUseScope() : GlobalSearchScope.EMPTY_SCOPE;
+        return origin != null ? origin.getUseScope() : new LocalSearchScope(this);
     }
 
     public KtLightMethod getMethod() {
@@ -153,7 +148,8 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
 
     @Override
     public String getText() {
-        return "";
+        KtParameter origin = getKotlinOrigin();
+        return origin != null ? origin.getText() : "";
     }
 
     @Override
@@ -183,5 +179,21 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
             return kotlinOrigin.equals(anotherParam.getKotlinOrigin()) && getClsDelegate().equals(anotherParam.getClsDelegate());
         }
         return super.isEquivalentTo(another);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof PsiElement && isEquivalentTo((PsiElement) obj);
+    }
+
+    @Override
+    public int hashCode() {
+        KtParameter kotlinOrigin = getKotlinOrigin();
+        if (kotlinOrigin != null) {
+            return kotlinOrigin.hashCode();
+        }
+        else {
+            return 0;
+        }
     }
 }

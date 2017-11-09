@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassInfo
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -102,12 +102,11 @@ abstract class TypeInfo(val variance: Variance) {
                 val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
                 if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
             }
-            else -> throw IllegalArgumentException("Unexpected placement: $placement")
         }
         return when (containingElement) {
-            is KtClassOrObject -> (containingElement.resolveToDescriptor() as? ClassDescriptorWithResolutionScopes)?.scopeForMemberDeclarationResolution
+            is KtClassOrObject -> (containingElement.resolveToDescriptorIfAny() as? ClassDescriptorWithResolutionScopes)?.scopeForMemberDeclarationResolution
             is KtBlockExpression -> (containingElement.statements.firstOrNull() ?: containingElement).getResolutionScope()
-            is KtElement -> containingElement.getContainingKtFile().getResolutionScope()
+            is KtElement -> containingElement.containingKtFile.getResolutionScope()
             else -> null
         }
     }
@@ -117,7 +116,7 @@ abstract class TypeInfo(val variance: Variance) {
             return Collections.singletonList(callableBuilder.currentFileModule.builtIns.anyType)
         }
         val scope = getScopeForTypeApproximation(callableBuilder.config, callableBuilder.placement)
-        val approximations = getResolvableApproximations(scope, false)
+        val approximations = getResolvableApproximations(scope, false, true)
         return when (variance) {
             Variance.IN_VARIANCE -> approximations.toList()
             else -> listOf(approximations.firstOrNull() ?: this)
@@ -220,7 +219,8 @@ class PropertyInfo(name: String,
                    val writable: Boolean,
                    possibleContainers: List<KtElement> = Collections.emptyList(),
                    typeParameterInfos: List<TypeInfo> = Collections.emptyList(),
-                   isAbstract: Boolean = false
+                   isAbstract: Boolean = false,
+                   val isLateinitPreferred: Boolean = false
 ) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos, isAbstract) {
     override val kind: CallableKind get() = CallableKind.PROPERTY
     override val parameterInfos: List<ParameterInfo> get() = Collections.emptyList()
@@ -232,6 +232,7 @@ class PropertyInfo(name: String,
             writable,
             possibleContainers,
             typeParameterInfos,
-            isAbstract
+            isAbstract,
+            isLateinitPreferred
     )
 }

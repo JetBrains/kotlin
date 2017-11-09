@@ -6,7 +6,7 @@ fun foo(p: String?) {
     val o = object : Runnable {
         override fun run() {
             if (p == null) return
-            print(p.size)
+            print(p.length)
         }
     }
 
@@ -14,9 +14,9 @@ fun foo(p: String?) {
         override fun f() {
             super.f()
             if (p == null) return
-            print(p.size)
+            print(p.length)
         }
     }
 
-    <caret>p?.size
+    <caret>p?.length
 }

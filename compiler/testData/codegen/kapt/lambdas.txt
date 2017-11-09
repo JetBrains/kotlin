@@ -1,0 +1,5 @@
+@kotlin.Metadata
+public final class LambdasKt {
+    public final static @org.jetbrains.annotations.NotNull method a(): java.lang.String
+    public final static method run(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
+}

@@ -1,6 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1112
 package foo
 
-@native interface Summizer {
+external interface Summizer {
     fun sum(a: Int, b: Int): Int
 }
 

@@ -36,7 +36,7 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
         AfterAnalysisHighlightingVisitor(holder, bindingContext) {
 
     override fun visitNamedFunction(function: KtNamedFunction) {
-        function.nameIdentifier?.let { holder.highlightName(it, FUNCTION_DECLARATION) }
+        function.nameIdentifier?.let { highlightName(it, FUNCTION_DECLARATION) }
 
         super.visitNamedFunction(function)
     }
@@ -45,7 +45,7 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
         val calleeExpression = call.calleeExpression
         val typeElement = calleeExpression.typeReference?.typeElement
         if (typeElement is KtUserType) {
-            typeElement.referenceExpression?.let { holder.highlightName(it, CONSTRUCTOR_CALL) }
+            typeElement.referenceExpression?.let { highlightName(it, CONSTRUCTOR_CALL) }
         }
         super.visitSuperTypeCallEntry(call)
     }
@@ -63,7 +63,7 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
     override fun visitCallExpression(expression: KtCallExpression) {
         val callee = expression.calleeExpression
         val resolvedCall = expression.getResolvedCall(bindingContext)
-        if (callee is KtReferenceExpression && resolvedCall != null) {
+        if (callee is KtReferenceExpression && callee !is KtCallExpression && resolvedCall != null) {
             highlightCall(callee, resolvedCall)
         }
 
@@ -73,20 +73,22 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
     private fun highlightCall(callee: PsiElement, resolvedCall: ResolvedCall<out CallableDescriptor>) {
         val calleeDescriptor = resolvedCall.resultingDescriptor
 
+        if (applyHighlighterExtensions(callee, calleeDescriptor)) return
+
         if (calleeDescriptor.isDynamic()) {
-            holder.highlightName(callee, DYNAMIC_FUNCTION_CALL)
+            highlightName(callee, DYNAMIC_FUNCTION_CALL)
         }
         else if (resolvedCall is VariableAsFunctionResolvedCall) {
             val container = calleeDescriptor.containingDeclaration
             val containedInFunctionClassOrSubclass = container is ClassDescriptor && container.defaultType.isFunctionTypeOrSubtype
-            holder.highlightName(callee, if (containedInFunctionClassOrSubclass)
+            highlightName(callee, if (containedInFunctionClassOrSubclass)
                 VARIABLE_AS_FUNCTION_CALL
             else
                 VARIABLE_AS_FUNCTION_LIKE_CALL)
         }
         else {
             if (calleeDescriptor is ConstructorDescriptor) {
-                holder.highlightName(callee, CONSTRUCTOR_CALL)
+                highlightName(callee, CONSTRUCTOR_CALL)
             }
             else if (calleeDescriptor is FunctionDescriptor) {
                 val attributesKey = when {
@@ -100,7 +102,7 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
                         FUNCTION_CALL
                 }
 
-                holder.highlightName(callee, attributesKey)
+                highlightName(callee, attributesKey)
             }
         }
     }

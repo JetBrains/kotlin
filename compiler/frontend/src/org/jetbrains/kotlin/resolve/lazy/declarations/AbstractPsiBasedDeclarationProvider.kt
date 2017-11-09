@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.Sets
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
@@ -37,6 +37,8 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
         val properties = ArrayListMultimap.create<Name, KtProperty>()
         val classesAndObjects = ArrayListMultimap.create<Name, KtClassLikeInfo>() // order matters here
         val typeAliases = ArrayListMultimap.create<Name, KtTypeAlias>()
+        val destructuringDeclarationsEntries = ArrayListMultimap.create<Name, KtDestructuringDeclarationEntry>()
+        val names = Sets.newHashSet<Name>()
 
         fun putToIndex(declaration: KtDeclaration) {
             if (declaration is KtAnonymousInitializer || declaration is KtSecondaryConstructor) return
@@ -55,13 +57,28 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
                     val scriptInfo = KtScriptInfo(declaration)
                     classesAndObjects.put(scriptInfo.script.nameAsName, scriptInfo)
                 }
-                is KtParameter, is KtDestructuringDeclaration -> {
+                is KtDestructuringDeclaration -> {
+                    for (entry in declaration.entries) {
+                        val name = safeNameForLazyResolve(entry.nameAsName)
+                        destructuringDeclarationsEntries.put(name, entry)
+                        names.add(name)
+                    }
+                }
+                is KtParameter -> {
                     // Do nothing, just put it into allDeclarations is enough
                 }
                 else -> throw IllegalArgumentException("Unknown declaration: " + declaration)
             }
+
+            when (declaration) {
+                is KtNamedDeclaration -> names.add(safeNameForLazyResolve(declaration))
+            }
         }
+
+        override fun toString() = "allDeclarations: " + allDeclarations.mapNotNull { it.name }
     }
+
+    override fun getDeclarationNames() = index().names
 
     private val index = storageManager.createLazyValue<Index> {
         val index = Index()
@@ -71,18 +88,23 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
 
     protected abstract fun doCreateIndex(index: Index)
 
+    internal fun toInfoString() = toString() + ": " + index().toString()
+
     override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration>
             = index().allDeclarations
 
     override fun getFunctionDeclarations(name: Name): List<KtNamedFunction>
-            = index().functions[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()
+            = index().functions[safeNameForLazyResolve(name)].toList()
 
     override fun getPropertyDeclarations(name: Name): List<KtProperty>
-            = index().properties[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()
+            = index().properties[safeNameForLazyResolve(name)].toList()
+
+    override fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry>
+            = index().destructuringDeclarationsEntries[safeNameForLazyResolve(name)].toList()
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
-            = index().classesAndObjects[ResolveSessionUtils.safeNameForLazyResolve(name)]
+            = index().classesAndObjects[safeNameForLazyResolve(name)]
 
     override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias>
-            = index().typeAliases[ResolveSessionUtils.safeNameForLazyResolve(name)]
+            = index().typeAliases[safeNameForLazyResolve(name)]
 }

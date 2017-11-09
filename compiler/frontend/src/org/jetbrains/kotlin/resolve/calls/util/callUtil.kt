@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.callUtil
 
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -32,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.utils.sure
 
 // resolved call
@@ -76,7 +75,7 @@ fun <D : CallableDescriptor> ResolvedCall<D>.usesDefaultArguments(): Boolean {
 fun <C: ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionContext<C>): Boolean {
     val arguments = valueArguments.map { it.getArgumentExpression() }
     return arguments.any (fun (argument: KtExpression?): Boolean {
-        if (argument == null || ArgumentTypeResolver.isFunctionLiteralArgument(argument, context)) return false
+        if (argument == null || ArgumentTypeResolver.isFunctionLiteralOrCallableReference(argument, context)) return false
 
         val resolvedCall = argument.getResolvedCall(context.trace.bindingContext) as MutableResolvedCall<*>?
         if (resolvedCall != null && !resolvedCall.hasInferredReturnType()) return false
@@ -143,9 +142,9 @@ fun KtElement.getCall(context: BindingContext): Call? {
     if (element is KtCallElement && element.calleeExpression == null) return null
 
     val parent = element.parent
-    val reference: KtExpression? = when {
-        parent is KtInstanceExpressionWithLabel -> parent
-        parent is KtUserType -> parent.getParent()?.getParent() as? KtConstructorCalleeExpression
+    val reference: KtExpression? = when (parent) {
+        is KtInstanceExpressionWithLabel -> parent
+        is KtUserType -> parent.parent.parent as? KtConstructorCalleeExpression
         else -> element.getCalleeExpressionIfAny()
     }
     if (reference != null) {
@@ -198,6 +197,24 @@ fun KtExpression.getFunctionResolvedCallWithAssert(context: BindingContext): Res
     }
     @Suppress("UNCHECKED_CAST")
     return resolvedCall as ResolvedCall<out FunctionDescriptor>
+}
+
+fun KtExpression.getPropertyResolvedCallWithAssert(context: BindingContext): ResolvedCall<out PropertyDescriptor> {
+    val resolvedCall = getResolvedCallWithAssert(context)
+    assert(resolvedCall.resultingDescriptor is PropertyDescriptor) {
+        "ResolvedCall for this expression must be ResolvedCall<? extends PropertyDescriptor>: ${this.getTextWithLocation()}"
+    }
+    @Suppress("UNCHECKED_CAST")
+    return resolvedCall as ResolvedCall<out PropertyDescriptor>
+}
+
+fun KtExpression.getVariableResolvedCallWithAssert(context: BindingContext): ResolvedCall<out VariableDescriptor> {
+    val resolvedCall = getResolvedCallWithAssert(context)
+    assert(resolvedCall.resultingDescriptor is VariableDescriptor) {
+        "ResolvedCall for this expression must be ResolvedCall<? extends PropertyDescriptor>: ${this.getTextWithLocation()}"
+    }
+    @Suppress("UNCHECKED_CAST")
+    return resolvedCall as ResolvedCall<out VariableDescriptor>
 }
 
 fun KtExpression.getType(context: BindingContext): KotlinType? {

@@ -25,7 +25,7 @@ object SMAPParser {
         }
 
         val mapping =
-                if (source == null || source.isEmpty())
+                if (source == null || source.isEmpty() || methodStartLine > methodEndLine)
                     FileMapping.SKIP
                 else
                     FileMapping(source, path).apply {

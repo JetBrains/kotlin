@@ -36,7 +36,6 @@ import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
@@ -50,12 +49,11 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
 class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
@@ -101,51 +99,53 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
 
-        val lineNumber = try {
+        val sourceLineNumber = try {
             location.lineNumber() - 1
         }
         catch (e: InternalError) {
             -1
         }
 
-        if (lineNumber < 0) {
+        if (sourceLineNumber < 0) {
             throw NoDataException.INSTANCE
         }
 
-        val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile as KtFile, lineNumber)
+        val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile as KtFile, sourceLineNumber)
         if (lambdaOrFunIfInside != null) {
             return SourcePosition.createFromElement(lambdaOrFunIfInside.bodyExpression!!)
         }
-        val property = getParameterIfInConstructor(location, psiFile, lineNumber)
-        if (property != null) {
-            return SourcePosition.createFromElement(property)
+        val elementInDeclaration = getElementForDeclarationLine(location, psiFile, sourceLineNumber)
+        if (elementInDeclaration != null) {
+            return SourcePosition.createFromElement(elementInDeclaration)
         }
 
-        if (lineNumber > psiFile.getLineCount() && myDebugProcess.isDexDebug()) {
-            val inlinePosition = getOriginalPositionOfInlinedLine(
-                    location.lineNumber(), FqName(location.declaringType().name()), location.sourceName(),
-                    myDebugProcess.project, GlobalSearchScope.allScope(myDebugProcess.project))
-
-            if (inlinePosition != null) {
-                return SourcePosition.createFromLine(inlinePosition.first, inlinePosition.second)
-            }
+        if (sourceLineNumber > psiFile.getLineCount() && myDebugProcess.isDexDebug()) {
+            val (line, ktFile) = ktLocationInfo(location, true, myDebugProcess.project, false, psiFile)
+            return SourcePosition.createFromLine(ktFile ?: psiFile, line - 1)
         }
 
-        return SourcePosition.createFromLine(psiFile, lineNumber)
+        return SourcePosition.createFromLine(psiFile, sourceLineNumber)
     }
 
-    private fun getParameterIfInConstructor(location: Location, file: KtFile, lineNumber: Int): KtParameter? {
+    // Returns a property or a constructor if debugger stops at class declaration
+    private fun getElementForDeclarationLine(location: Location, file: KtFile, lineNumber: Int): KtElement? {
         val lineStartOffset = file.getLineStartOffset(lineNumber) ?: return null
         val elementAt = file.findElementAt(lineStartOffset)
         val contextElement = KotlinCodeFragmentFactory.getContextElement(elementAt)
+
+        if (contextElement !is KtClass) return null
+
         val methodName = location.method().name()
-        if (contextElement is KtClass && JvmAbi.isGetterName(methodName)) {
-            val parameterForGetter = contextElement.getPrimaryConstructor()?.valueParameters?.firstOrNull() {
-                it.hasValOrVar() && it.name != null && JvmAbi.getterName(it.name!!) == methodName
-            } ?: return null
-            return parameterForGetter
+        return when {
+            JvmAbi.isGetterName(methodName) -> {
+                val parameterForGetter = contextElement.primaryConstructor?.valueParameters?.firstOrNull {
+                    it.hasValOrVar() && it.name != null && JvmAbi.getterName(it.name!!) == methodName
+                } ?: return null
+                parameterForGetter
+            }
+            methodName == "<init>" -> contextElement.primaryConstructor
+            else -> null
         }
-        return null
     }
 
     private fun getLambdaOrFunIfInside(location: Location, file: KtFile, lineNumber: Int): KtFunction? {
@@ -161,7 +161,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val elementAt = file.findElementAt(start) ?: return null
         val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(elementAt)
 
-        val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).internalName
+        val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName))
+                .internalName.replace('/', '.')
+
         for (literal in literalsOrFunctions) {
             if (InlineUtil.isInlinedArgument(literal, typeMapper.bindingContext, true)) {
                 if (isInsideInlineArgument(literal, location, myDebugProcess as DebugProcessImpl)) {
@@ -170,7 +172,10 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 continue
             }
 
-            val internalClassNames = DebuggerClassNameProvider(myDebugProcess, scopes).classNamesForPosition(literal.firstChild, true)
+            val internalClassNames = DebuggerClassNameProvider(myDebugProcess, scopes, alwaysReturnLambdaParentClass = false)
+                    .getOuterClassNamesForElement(literal.firstChild)
+                    .classNames
+
             if (internalClassNames.any { it == currentLocationClassName }) {
                 return literal
             }
@@ -221,22 +226,14 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     override fun getAllClasses(sourcePosition: SourcePosition): List<ReferenceType> {
         val psiFile = sourcePosition.file
         if (psiFile is KtFile) {
-            val result = ArrayList<ReferenceType>()
-
-            if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return result
-
-            val names = DebuggerClassNameProvider(myDebugProcess, scopes).classNamesForPosition(sourcePosition, true)
-            for (name in names) {
-                result.addAll(myDebugProcess.virtualMachineProxy.classesByName(name))
-            }
-            return result
+            if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return emptyList()
+            return DebuggerClassNameProvider(myDebugProcess, scopes).getClassesForPosition(sourcePosition)
         }
 
         if (psiFile is ClsFileImpl) {
             val decompiledPsiFile = psiFile.readAction { it.decompiledPsiFile }
             if (decompiledPsiFile is KtClsFile && sourcePosition.line == -1) {
-                val className =
-                        JvmFileClassUtil.getFileClassInfoNoResolve(decompiledPsiFile).fileClassFqName.internalNameWithoutInnerClasses
+                val className = JvmFileClassUtil.getFileClassInternalName(decompiledPsiFile)
                 return myDebugProcess.virtualMachineProxy.classesByName(className)
             }
         }
@@ -244,8 +241,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         throw NoDataException.INSTANCE
     }
 
-    fun originalClassNameForPosition(sourcePosition: SourcePosition): String? {
-        return DebuggerClassNameProvider(myDebugProcess, scopes).classNamesForPosition(sourcePosition, false).firstOrNull()
+    fun originalClassNamesForPosition(position: SourcePosition): List<String> {
+        return DebuggerClassNameProvider(myDebugProcess, scopes, findInlineUseSites = false).getOuterClassNamesForPosition(position)
     }
 
     override fun locationsOfLine(type: ReferenceType, position: SourcePosition): List<Location> {
@@ -254,7 +251,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
         try {
             if (myDebugProcess.isDexDebug()) {
-                val inlineLocations = getLocationsOfInlinedLine(type, position, myDebugProcess.searchScope)
+                val inlineLocations = runReadAction { getLocationsOfInlinedLine(type, position, myDebugProcess.searchScope) }
                 if (!inlineLocations.isEmpty()) {
                     return inlineLocations
                 }
@@ -262,16 +259,12 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
             val line = position.line + 1
 
-            val locations = if (myDebugProcess.virtualMachineProxy.versionHigher("1.4"))
-                type.locationsOfLine(KOTLIN_STRATA_NAME, null, line).filter { it.sourceName(KOTLIN_STRATA_NAME) == position.file.name }
-            else
-                type.locationsOfLine(line)
-
+            val locations = type.locationsOfLine(KOTLIN_STRATA_NAME, null, line)
             if (locations == null || locations.isEmpty()) {
                 throw NoDataException.INSTANCE
             }
 
-            return locations
+            return locations.filter { it.sourceName(KOTLIN_STRATA_NAME) == position.file.name }
         }
         catch (e: AbsentInformationException) {
             throw NoDataException.INSTANCE
@@ -288,9 +281,12 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
 
-        return DebuggerClassNameProvider(myDebugProcess, scopes).classNamesForPosition(position, true).mapNotNull {
-            className ->
-            myDebugProcess.requestsManager.createClassPrepareRequest(requestor, className.replace('/', '.'))
+        val classNames = DebuggerClassNameProvider(myDebugProcess, scopes).getOuterClassNamesForPosition(position)
+        return classNames.flatMap { name ->
+            listOfNotNull(
+                    myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name),
+                    myDebugProcess.requestsManager.createClassPrepareRequest(requestor, "$name$*")
+            )
         }
     }
 

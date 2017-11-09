@@ -69,4 +69,8 @@ public class KtValueArgumentList extends KtElementImpl {
         assert argument.getParent() == this;
         EditCommaSeparatedListHelper.INSTANCE.removeItem(argument);
     }
+
+    public void removeArgument(int index) {
+        removeArgument(getArguments().get(index));
+    }
 }

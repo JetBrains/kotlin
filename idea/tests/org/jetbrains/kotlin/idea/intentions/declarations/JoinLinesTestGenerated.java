@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.declarations;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,118 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     public void testAllFilesPresentInJoinLines() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+    }
+
+    @TestMetadata("idea/testData/joinLines/addSemicolon")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddSemicolon extends AbstractJoinLinesTest {
+        public void testAllFilesPresentInAddSemicolon() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/addSemicolon"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("ClassDeclarations.kt")
+        public void testClassDeclarations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/ClassDeclarations.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCalls.kt")
+        public void testFunctionCalls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionCalls.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCallsAndAComment.kt")
+        public void testFunctionCallsAndAComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionCallsAndAComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCallsAndAMultilineComment.kt")
+        public void testFunctionCallsAndAMultilineComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionCallsAndAMultilineComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCallsAndSeveralComments.kt")
+        public void testFunctionCallsAndSeveralComments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionCallsAndSeveralComments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCallsWithMutlineSeparator.kt")
+        public void testFunctionCallsWithMutlineSeparator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionCallsWithMutlineSeparator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionDeclarations.kt")
+        public void testFunctionDeclarations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/FunctionDeclarations.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InsideBraces.kt")
+        public void testInsideBraces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/InsideBraces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InsideIfBlock.kt")
+        public void testInsideIfBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/InsideIfBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LocalAssingments.kt")
+        public void testLocalAssingments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/LocalAssingments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LocalAssingmentsWithSemicolon.kt")
+        public void testLocalAssingmentsWithSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/LocalAssingmentsWithSemicolon.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LocalClasses.kt")
+        public void testLocalClasses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/LocalClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LocalFunctions.kt")
+        public void testLocalFunctions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/LocalFunctions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MemberFunctions.kt")
+        public void testMemberFunctions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/MemberFunctions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WhileAndACall.kt")
+        public void testWhileAndACall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/WhileAndACall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WhileBlockAndACall.kt")
+        public void testWhileBlockAndACall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/WhileBlockAndACall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WhileBlockAndACall2.kt")
+        public void testWhileBlockAndACall2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/addSemicolon/WhileBlockAndACall2.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/joinLines/declarationAndAssignment")
@@ -40,7 +152,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DeclarationAndAssignment extends AbstractJoinLinesTest {
         public void testAllFilesPresentInDeclarationAndAssignment() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("blankLineBetween.kt")
@@ -151,7 +263,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NestedIfs extends AbstractJoinLinesTest {
         public void testAllFilesPresentInNestedIfs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/nestedIfs"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/nestedIfs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("BlockBody.kt")
@@ -196,7 +308,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveBraces extends AbstractJoinLinesTest {
         public void testAllFilesPresentInRemoveBraces() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/removeBraces"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/removeBraces"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("CommentAfterStatement.kt")
@@ -247,6 +359,12 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             doTest(fileName);
         }
 
+        @TestMetadata("FunctionWithOneLineReturn.kt")
+        public void testFunctionWithOneLineReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/FunctionWithOneLineReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("If.kt")
         public void testIf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/If.kt");
@@ -256,6 +374,24 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         @TestMetadata("IfWithElse.kt")
         public void testIfWithElse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/IfWithElse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfWithElseBlockInAssignment.kt")
+        public void testIfWithElseBlockInAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/IfWithElseBlockInAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfWithPostfixAfterElseBlock.kt")
+        public void testIfWithPostfixAfterElseBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/IfWithPostfixAfterElseBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfWithQualifiedAfterElseBlock.kt")
+        public void testIfWithQualifiedAfterElseBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/IfWithQualifiedAfterElseBlock.kt");
             doTest(fileName);
         }
 

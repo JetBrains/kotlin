@@ -31,11 +31,11 @@ protected constructor(
     fun get(): R {
         val cached = cached.get() ?: return update()
         val (app, extensions) = cached
-        if (app == ApplicationManager.getApplication()) {
-            return extensions
+        return if (app == ApplicationManager.getApplication()) {
+            extensions
         }
         else {
-            return update()
+            update()
         }
     }
 
@@ -45,11 +45,6 @@ protected constructor(
         }
         cached = WeakReference(newVal)
         return newVal.second
-    }
-
-    companion object {
-        @JvmStatic fun <T, R> create(epName: ExtensionPointName<T>, map: (List<T>) -> R): MappedExtensionProvider<T, R>
-                = MappedExtensionProvider(epName, map)
     }
 }
 

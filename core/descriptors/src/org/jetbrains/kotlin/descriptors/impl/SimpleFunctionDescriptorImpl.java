@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl implements SimpleFunctionDescriptor {
     protected SimpleFunctionDescriptorImpl(
@@ -59,8 +61,28 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @Nullable Modality modality,
             @NotNull Visibility visibility
     ) {
+        return initialize(receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
+                          unsubstitutedReturnType, modality, visibility, null);
+    }
+
+    @NotNull
+    public SimpleFunctionDescriptorImpl initialize(
+            @Nullable KotlinType receiverParameterType,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+            @Nullable KotlinType unsubstitutedReturnType,
+            @Nullable Modality modality,
+            @NotNull Visibility visibility,
+            @Nullable Map<? extends UserDataKey<?>, ?> userData
+    ) {
         super.initialize(receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
                          unsubstitutedReturnType, modality, visibility);
+
+        if (userData != null) {
+            userDataMap = new LinkedHashMap<UserDataKey<?>, Object>(userData);
+        }
+
         return this;
     }
 

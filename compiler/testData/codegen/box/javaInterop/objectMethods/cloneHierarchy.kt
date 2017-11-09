@@ -1,4 +1,4 @@
-import java.util.ArrayList
+// TARGET_BACKEND: JVM
 
 open class A : Cloneable {
     public override fun clone(): A = super.clone() as A

@@ -1,4 +1,4 @@
-import java.util.ArrayList
+// TARGET_BACKEND: JVM
 
 operator fun Int.plus(a: Int?) = this + a!!
 

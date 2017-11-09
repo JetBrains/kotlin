@@ -1,4 +1,0 @@
-compiler/testData/cli/js/diagnosticForClassLiteral.kt:6:5: error: cannot translate (not supported yet): 'A::class'
-    A::class
-    ^
-COMPILATION_ERROR

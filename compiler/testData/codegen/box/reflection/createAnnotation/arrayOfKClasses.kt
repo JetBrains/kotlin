@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 
 import kotlin.reflect.KClass
@@ -7,7 +10,7 @@ annotation class Anno(val klasses: Array<KClass<*>> = arrayOf(String::class, Int
 
 fun box(): String {
     val anno = Anno::class.constructors.single().callBy(emptyMap())
-    assertEquals(listOf(String::class, Int::class), (anno.klasses as Array<KClass<*>>).toList() /* TODO: KT-9453 */)
+    assertEquals(listOf(String::class, Int::class), anno.klasses.toList())
     assertEquals("@Anno(klasses=[class java.lang.String, int])", anno.toString())
     return "OK"
 }

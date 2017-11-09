@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.backend.ast.*
 
 internal class DeadCodeElimination(private val root: JsStatement) {
     var hasChanges = false
@@ -56,10 +56,14 @@ internal class DeadCodeElimination(private val root: JsStatement) {
 
         override fun visitBlock(x: JsBlock) {
             canContinue = true
-            for ((index, statement) in x.statements.withIndex()) {
+            visitStatements(x.statements)
+        }
+
+        private fun visitStatements(statements: MutableList<JsStatement>) {
+            for ((index, statement) in statements.withIndex()) {
                 accept(statement)
                 if (!canContinue) {
-                    val removedStatements = x.statements.subList(index + 1, x.statements.size)
+                    val removedStatements = statements.subList(index + 1, statements.size)
                     if (removedStatements.isNotEmpty()) {
                         hasChanges = true
                         removedStatements.clear()
@@ -74,7 +78,7 @@ internal class DeadCodeElimination(private val root: JsStatement) {
 
             visitLoop(x.body) {
                 val condition = x.condition
-                condition !is JsLiteral.JsBooleanLiteral || !condition.value
+                condition !is JsBooleanLiteral || !condition.value
             }
         }
 
@@ -174,7 +178,7 @@ internal class DeadCodeElimination(private val root: JsStatement) {
 
             for (caseBlock in x.cases) {
                 canContinue = true
-                caseBlock.statements.forEach { accept(it) }
+                visitStatements(caseBlock.statements)
 
                 if (!canContinue && localBreakExists) {
                     canContinue = true

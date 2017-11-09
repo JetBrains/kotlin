@@ -5,6 +5,6 @@ class Foo {
         @JvmStatic fun foo() {
         }
 
-        val CONST = 111
+        @JvmField val CONST = 111
     }
 }

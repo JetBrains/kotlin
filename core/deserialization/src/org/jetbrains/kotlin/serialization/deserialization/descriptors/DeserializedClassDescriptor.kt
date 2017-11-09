@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.computeSealedSubclasses
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
@@ -37,8 +38,6 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 class DeserializedClassDescriptor(
@@ -46,7 +45,7 @@ class DeserializedClassDescriptor(
         val classProto: ProtoBuf.Class,
         nameResolver: NameResolver,
         private val sourceElement: SourceElement
-) : ClassDescriptor, AbstractClassDescriptor(
+) : AbstractClassDescriptor(
         outerContext.storageManager,
         nameResolver.getClassId(classProto.fqName).shortClassName
 ) {
@@ -67,18 +66,22 @@ class DeserializedClassDescriptor(
     private val primaryConstructor = c.storageManager.createNullableLazyValue { computePrimaryConstructor() }
     private val constructors = c.storageManager.createLazyValue { computeConstructors() }
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
+    private val sealedSubclasses = c.storageManager.createLazyValue { computeSubclassesForSealedClass() }
 
     internal val thisAsProtoContainer: ProtoContainer.Class = ProtoContainer.Class(
             classProto, c.nameResolver, c.typeTable, sourceElement,
             (containingDeclaration as? DeserializedClassDescriptor)?.thisAsProtoContainer
     )
 
+    val versionRequirement: VersionRequirement?
+        get() = VersionRequirement.create(classProto, c.nameResolver, c.versionRequirementTable)
+
     override val annotations =
             if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
                 Annotations.EMPTY
             }
-            else DeserializedAnnotations(c.storageManager) {
-                c.components.annotationAndConstantLoader.loadClassAnnotations(thisAsProtoContainer)
+            else NonEmptyDeserializedAnnotations(c.storageManager) {
+                c.components.annotationAndConstantLoader.loadClassAnnotations(thisAsProtoContainer).toList()
             }
 
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration
@@ -94,6 +97,12 @@ class DeserializedClassDescriptor(
     override fun isInner() = Flags.IS_INNER.get(classProto.flags)
 
     override fun isData() = Flags.IS_DATA.get(classProto.flags)
+
+    override fun isExpect() = Flags.IS_EXPECT_CLASS.get(classProto.flags)
+
+    override fun isActual() = false
+
+    override fun isExternal() = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
 
     override fun getUnsubstitutedMemberScope(): MemberScope = memberScope
 
@@ -116,7 +125,7 @@ class DeserializedClassDescriptor(
     override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = primaryConstructor()
 
     private fun computeConstructors(): Collection<ClassConstructorDescriptor> =
-            computeSecondaryConstructors() + unsubstitutedPrimaryConstructor.singletonOrEmptyList() +
+            computeSecondaryConstructors() + listOfNotNull(unsubstitutedPrimaryConstructor) +
             c.components.additionalClassPartsProvider.getConstructors(this)
 
     private fun computeSecondaryConstructors(): List<ClassConstructorDescriptor> =
@@ -137,6 +146,22 @@ class DeserializedClassDescriptor(
 
     internal fun hasNestedClass(name: Name): Boolean =
             name in memberScope.classNames
+
+    private fun computeSubclassesForSealedClass(): Collection<ClassDescriptor> {
+        if (modality != Modality.SEALED) return emptyList()
+
+        val fqNames = classProto.sealedSubclassFqNameList
+        if (fqNames.isNotEmpty()) {
+            return fqNames.mapNotNull { index ->
+                c.components.deserializeClass(c.nameResolver.getClassId(index))
+            }
+        }
+
+        // This is needed because classes compiled with Kotlin 1.0 did not contain the sealed_subclass_fq_name field
+        return computeSealedSubclasses(this)
+    }
+
+    override fun getSealedSubclasses() = sealedSubclasses()
 
     override fun toString() = "deserialized class $name" // not using descriptor render to preserve laziness
 
@@ -161,22 +186,18 @@ class DeserializedClassDescriptor(
             if (unresolved.isNotEmpty()) {
                 c.components.errorReporter.reportIncompleteHierarchy(
                         this@DeserializedClassDescriptor,
-                        unresolved.map { it.classId.asSingleFqName().asString() }
+                        unresolved.map { it.classId?.asSingleFqName()?.asString() ?: it.name.asString() }
                 )
             }
 
-            return result.toReadOnlyList()
+            return result.toList()
         }
 
         override fun getParameters() = parameters()
 
-        override fun isFinal(): Boolean = isFinalClass
-
         override fun isDenotable() = true
 
         override fun getDeclarationDescriptor() = this@DeserializedClassDescriptor
-
-        override val annotations: Annotations get() = Annotations.EMPTY // TODO
 
         override fun toString() = name.toString()
 
@@ -271,8 +292,8 @@ class DeserializedClassDescriptor(
             result.addAll(classDescriptor.enumEntries?.all().orEmpty())
         }
 
-        private fun recordLookup(name: Name, from: LookupLocation) {
-            c.components.lookupTracker.record(from, classDescriptor, name)
+        override fun recordLookup(name: Name, location: LookupLocation) {
+            c.components.lookupTracker.record(location, classDescriptor, name)
         }
     }
 
@@ -286,7 +307,7 @@ class DeserializedClassDescriptor(
                 EnumEntrySyntheticClassDescriptor.create(
                         c.storageManager, this@DeserializedClassDescriptor, name, enumMemberNames,
                         DeserializedAnnotations(c.storageManager) {
-                            c.components.annotationAndConstantLoader.loadEnumEntryAnnotations(thisAsProtoContainer, proto)
+                            c.components.annotationAndConstantLoader.loadEnumEntryAnnotations(thisAsProtoContainer, proto).toList()
                         },
                         SourceElement.NO_SOURCE
                 )

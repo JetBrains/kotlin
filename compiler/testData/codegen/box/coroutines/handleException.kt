@@ -1,26 +1,33 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
 class Controller {
     var exception: Throwable? = null
-    val postponedActions = java.util.ArrayList<() -> Unit>()
+    val postponedActions = ArrayList<() -> Unit>()
 
-    suspend fun suspendWithValue(v: String, x: Continuation<String>) {
+    suspend fun suspendWithValue(v: String): String = suspendCoroutineOrReturn { x ->
         postponedActions.add {
             x.resume(v)
         }
+
+        COROUTINE_SUSPENDED
     }
 
-    suspend fun suspendWithException(e: Exception, x: Continuation<String>) {
+    suspend fun suspendWithException(e: Exception): String = suspendCoroutineOrReturn { x ->
         postponedActions.add {
             x.resumeWithException(e)
         }
+
+        COROUTINE_SUSPENDED
     }
 
-    operator fun handleException(t: Throwable, c: Continuation<Nothing>) {
-        exception = t
-    }
-
-    fun run(c: Controller.() -> Continuation<Unit>) {
-        c(this).resume(Unit)
+    fun run(c: suspend Controller.() -> Unit) {
+        c.startCoroutine(this, handleExceptionContinuation {
+            exception = it
+        })
         while (postponedActions.isNotEmpty()) {
             postponedActions[0]()
             postponedActions.removeAt(0)
@@ -28,7 +35,7 @@ class Controller {
     }
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
+fun builder(c: suspend Controller.() -> Unit) {
     val controller = Controller()
     controller.run(c)
 

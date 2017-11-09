@@ -12,19 +12,25 @@ L0:
     r(2) -> <v1>
     mark(1..2)
     call(1..2, rangeTo|<v0>, <v1>) -> <v2>
+    mark(1..2)
+    call(1..2, iterator|<v2>) -> <v3>
     v(i)
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3)                                          NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>]    PREV:[v(i), jmp(L2)]
-    magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>
-    w(i|<v3>)
+    mark(1..2)                                        PREV:[v(i), jmp(L2)]
+    call(1..2, hasNext) -> <v4>
+    jmp?(L3)                                          NEXT:[read (Unit), mark(1..2)]
+    mark(1..2)
+    call(1..2, next) -> <v5>
+    magic[LOOP_RANGE_ITERATION](1..2|<v5>) -> <v6>
+    w(i|<v6>)
     mark(for (i in 1..2) { doSmth(i) })
 L4 [body entry point]:
   4 mark({ doSmth(i) })
-    r(i) -> <v4>
+    r(i) -> <v7>
     mark(doSmth(i))
-    call(doSmth(i), doSmth|<v4>) -> <v5>
-  3 jmp(L2)                                           NEXT:[jmp?(L3)]
+    call(doSmth(i), doSmth|<v7>) -> <v8>
+  3 jmp(L2)                                           NEXT:[mark(1..2)]
 L3 [loop exit point]:
 L5 [body exit point]:
     read (Unit)                                       PREV:[jmp?(L3)]

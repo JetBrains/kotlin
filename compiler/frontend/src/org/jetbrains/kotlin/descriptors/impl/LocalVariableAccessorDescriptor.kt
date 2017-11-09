@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.descriptors.impl
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 sealed class LocalVariableAccessorDescriptor(
         final override val correspondingVariable: LocalVariableDescriptor,
@@ -41,12 +38,16 @@ sealed class LocalVariableAccessorDescriptor(
 
     init {
         val valueParameters =
-                if (isGetter) emptyList() else createValueParameter(Name.identifier("value"), correspondingVariable.type).singletonList()
-        initialize(null, null, emptyList(), valueParameters, correspondingVariable.type, null, Visibilities.LOCAL)
+                if (isGetter) emptyList() else listOf(createValueParameter(Name.identifier("value"), correspondingVariable.type))
+        val returnType =
+                if (isGetter) correspondingVariable.type else correspondingVariable.builtIns.unitType
+        @Suppress("LeakingThis")
+        initialize(null, null, emptyList(), valueParameters, returnType, Modality.FINAL, Visibilities.LOCAL)
     }
 
     private fun createValueParameter(name: Name, type: KotlinType): ValueParameterDescriptorImpl {
         return ValueParameterDescriptorImpl(this, null, 0, Annotations.EMPTY, name, type,
-                                            false, false, false, false, null, SourceElement.NO_SOURCE)
+                                            false, false, false, null, SourceElement.NO_SOURCE)
     }
+
 }

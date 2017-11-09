@@ -3,7 +3,7 @@ Buildfile: [TestData]/build.xml
 
 build:
   [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
-  [kotlinc] info: Kotlin Compiler version [KotlinVersion]
+  [kotlinc] info: kotlinc-jvm [KotlinVersion] (JRE [JREVersion])
 
 BUILD SUCCESSFUL
 Total time: [time]

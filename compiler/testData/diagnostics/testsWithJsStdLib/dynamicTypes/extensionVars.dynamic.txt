@@ -22,6 +22,12 @@ public final var onNullableAnyVar: dynamic
 public final var onStringVar: dynamic
     public final fun <get-onStringVar>(): dynamic
     public final fun <set-onStringVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var onDynamicVar: dynamic
+    public final fun <get-onDynamicVar>(): dynamic
+    public final fun <set-onDynamicVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var onDynamicVar: dynamic
+    public final fun <get-onDynamicVar>(): dynamic
+    public final fun <set-onDynamicVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
 public final var memberVar: dynamic
     public final fun <get-memberVar>(): dynamic
     public final fun <set-memberVar>(/*0*/ <set-?>: dynamic): kotlin.Unit

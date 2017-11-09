@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 // WITH_RUNTIME
 
 import java.util.concurrent.locks.ReentrantReadWriteLock

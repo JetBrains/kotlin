@@ -100,12 +100,10 @@ fun extractClassMembers(
                 .mapTo(result) { KotlinMemberInfo(it as KtNamedDeclaration, isCompanionMember = isCompanion) }
     }
 
-    if (aClass !is KtClassOrObject) return emptyList()
-
     val result = ArrayList<KotlinMemberInfo>()
 
     if (collectSuperTypeEntries) {
-        aClass.getSuperTypeListEntries()
+        aClass.superTypeListEntries
                 .filterIsInstance<KtSuperTypeEntry>()
                 .mapNotNull {
                     val typeReference = it.typeReference ?: return@mapNotNull null
@@ -122,13 +120,13 @@ fun extractClassMembers(
         .mapTo(result) { KotlinMemberInfo(it, true) }
     }
 
-    aClass.getPrimaryConstructor()
+    aClass.primaryConstructor
             ?.valueParameters
             ?.filter { it.hasValOrVar() }
             ?.mapTo(result) { KotlinMemberInfo(it) }
 
     aClass.extractFromClassBody(filter, false, result)
-    (aClass as? KtClass)?.getCompanionObjects()?.firstOrNull()?.extractFromClassBody(filter, true, result)
+    (aClass as? KtClass)?.companionObjects?.firstOrNull()?.extractFromClassBody(filter, true, result)
 
     return result
 }

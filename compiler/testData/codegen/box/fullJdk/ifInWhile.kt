@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 // FULL_JDK
 
 fun box() : String {

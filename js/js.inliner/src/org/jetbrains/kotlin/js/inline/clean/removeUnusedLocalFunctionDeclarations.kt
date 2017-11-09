@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.staticRef
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 
 import org.jetbrains.kotlin.js.inline.util.collectUsedNames
 import org.jetbrains.kotlin.js.inline.util.transitiveStaticRef
@@ -55,19 +55,17 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
         tracker.addCandidateForRemoval(name, currentStatement!!)
 
         val references = collectUsedNames(x)
-        references.filterNotNull()
-                .forEach { tracker.addRemovableReference(name, it) }
+        references.forEach { tracker.addRemovableReference(name, it) }
 
         return false
     }
 
     override fun visit(x: JsNameRef, ctx: JsContext<*>): Boolean {
-        val name = x.name
-
-        if (name != null) {
-            tracker.markReachable(name)
+        var q: JsNameRef? = x
+        while (q != null) {
+            q.name?.let { tracker.markReachable(it) }
+            q = q.qualifier as? JsNameRef
         }
-
         return false
     }
 

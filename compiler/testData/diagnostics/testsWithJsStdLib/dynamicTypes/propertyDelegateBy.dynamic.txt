@@ -1,0 +1,4 @@
+public final fun getValue(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
+public final fun setValue(/*0*/ p0: dynamic, /*1*/ p1: dynamic, /*2*/ p2: dynamic): dynamic
+public final fun getValue(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
+public final fun getValue(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic

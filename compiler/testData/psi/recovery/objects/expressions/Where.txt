@@ -1,4 +1,4 @@
-JetFile: Where.kt
+KtFile: Where.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

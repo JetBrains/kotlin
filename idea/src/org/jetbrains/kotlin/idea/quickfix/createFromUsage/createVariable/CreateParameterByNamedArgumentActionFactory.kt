@@ -65,6 +65,6 @@ object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFact
                 defaultValueForCall = argumentExpression
         )
 
-        return CreateParameterData(context, parameterInfo, element)
+        return CreateParameterData(parameterInfo, element)
     }
 }

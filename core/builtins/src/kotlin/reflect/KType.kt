@@ -71,7 +71,7 @@ public interface KType {
  * for more information.
  */
 @SinceKotlin("1.1")
-public data class KTypeProjection private constructor(
+public data class KTypeProjection constructor(
         /**
          * The use-site variance specified in the projection, or `null` if this is a star projection.
          */

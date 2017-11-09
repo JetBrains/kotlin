@@ -1,4 +1,4 @@
-JetFile: IPushPop.kt
+KtFile: IPushPop.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

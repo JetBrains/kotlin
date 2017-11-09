@@ -19,17 +19,20 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtTypeAlias
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.asSimpleType
+import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.types.*
 
 class LazyTypeAliasDescriptor(
-        private val storageManager: StorageManager,
+        override val storageManager: StorageManager,
         private val trace: BindingTrace,
         containingDeclaration: DeclarationDescriptor,
         annotations: Annotations,
@@ -38,12 +41,22 @@ class LazyTypeAliasDescriptor(
         visibility: Visibility
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, sourceElement, visibility),
         TypeAliasDescriptor {
+    override val constructors: Collection<TypeAliasConstructorDescriptor> by storageManager.createLazyValue {
+        getTypeAliasConstructors()
+    }
 
     private lateinit var underlyingTypeImpl: NotNullLazyValue<SimpleType>
     private lateinit var expandedTypeImpl: NotNullLazyValue<SimpleType>
+    private lateinit var defaultTypeImpl: NotNullLazyValue<SimpleType>
+    private lateinit var classDescriptorImpl: NullableLazyValue<ClassDescriptor>
+    private val isActual = (source.getPsi() as? KtTypeAlias)?.hasActualModifier() == true
 
     override val underlyingType: SimpleType get() = underlyingTypeImpl()
     override val expandedType: SimpleType get() = expandedTypeImpl()
+    override val classDescriptor: ClassDescriptor? get() = classDescriptorImpl()
+    override fun getDefaultType(): SimpleType = defaultTypeImpl()
+
+    override fun isActual(): Boolean = isActual
 
     fun initialize(
             declaredTypeParameters: List<TypeParameterDescriptor>,
@@ -53,10 +66,22 @@ class LazyTypeAliasDescriptor(
         super.initialize(declaredTypeParameters)
         this.underlyingTypeImpl = lazyUnderlyingType
         this.expandedTypeImpl = lazyExpandedType
+        this.defaultTypeImpl = storageManager.createLazyValue { computeDefaultType() }
+        this.classDescriptorImpl = storageManager.createRecursionTolerantNullableLazyValue({ computeClassDescriptor() }, null)
+    }
+
+    private fun computeClassDescriptor(): ClassDescriptor? {
+        if (underlyingType.isError) return null
+        val underlyingTypeDescriptor = underlyingType.constructor.declarationDescriptor
+        return when (underlyingTypeDescriptor) {
+            is ClassDescriptor -> underlyingTypeDescriptor
+            is TypeAliasDescriptor -> underlyingTypeDescriptor.classDescriptor
+            else -> null
+        }
     }
 
     private val lazyTypeConstructorParameters =
-            storageManager.createLazyValue { this.computeConstructorTypeParameters() }
+            storageManager.createRecursionTolerantLazyValue({ this.computeConstructorTypeParameters() }, emptyList())
 
     fun initialize(
             declaredTypeParameters: List<TypeParameterDescriptor>,

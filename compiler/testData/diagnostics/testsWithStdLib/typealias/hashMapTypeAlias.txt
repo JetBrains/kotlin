@@ -1,0 +1,9 @@
+package
+
+public val mutableNamesByTeam1: HM<kotlin.String, kotlin.collections.MutableList<kotlin.String>> /* = java.util.HashMap<kotlin.String, kotlin.collections.MutableList<kotlin.String>> */
+public val mutableNamesByTeam2: java.util.HashMap<kotlin.String, kotlin.collections.MutableList<kotlin.String>>
+public val nameToTeam: kotlin.collections.List<kotlin.Pair<kotlin.String, kotlin.String>>
+public val namesByTeam: kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>>
+public fun test(): kotlin.Unit
+public fun </*0*/ K, /*1*/ V, /*2*/ M : kotlin.collections.MutableMap<in K, kotlin.collections.MutableList<V>>> updateMap(/*0*/ map: M, /*1*/ k: K, /*2*/ v: V): M
+public typealias HM</*0*/ Kt, /*1*/ Vt>  = java.util.HashMap<Kt, Vt>

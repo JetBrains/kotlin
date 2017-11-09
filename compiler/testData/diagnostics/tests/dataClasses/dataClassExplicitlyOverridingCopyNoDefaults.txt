@@ -1,0 +1,19 @@
+package
+
+public final data class Test : WithCopy<kotlin.String> {
+    public constructor Test(/*0*/ str: kotlin.String)
+    public final val str: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public open override /*1*/ fun copy(/*0*/ str: kotlin.String): Test
+    public final override /*1*/ /*synthesized*/ fun copy(/*0*/ str: kotlin.String = ...): Test
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public interface WithCopy</*0*/ T> {
+    public abstract fun copy(/*0*/ str: T): WithCopy<T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

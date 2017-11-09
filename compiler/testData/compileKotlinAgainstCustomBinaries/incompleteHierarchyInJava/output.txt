@@ -1,5 +1,5 @@
 error: supertypes of the following classes cannot be resolved. Please make sure you have the required dependencies in the classpath:
-    class test.Sub, unresolved supertypes: Super
+    class test.Sub, unresolved supertypes: test.Super
 
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyInJava/source.kt:5:22: error: unresolved reference: foo
 fun bar() = SubSub().foo()

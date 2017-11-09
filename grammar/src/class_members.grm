@@ -42,19 +42,15 @@ anonymousInitializer
   ;
 
 companionObject
-  : modifiers "companion" "object"
+  : modifiers "companion" "object" SimpleName? (":" delegationSpecifier{","})? classBody?
   ;
 
 valueParameters
-  : "(" functionParameter{","}? ")" // default values
+  : "(" functionParameter{","}? ")"
   ;
 
 functionParameter
   : modifiers ("val" | "var")? parameter ("=" expression)?
-  ;
-
-initializer
-  : annotations constructorInvocation // type parameters may (must?) be omitted
   ;
 
 block
@@ -62,8 +58,9 @@ block
   ;
 
 function
-  : modifiers "fun" typeParameters?
-      (type "." | annotations/*for receiver type*/)?
+  : modifiers "fun"
+      typeParameters?
+      (type ".")?
       SimpleName
       typeParameters? valueParameters (":" type)?
       typeConstraints
@@ -85,7 +82,8 @@ multipleVariableDeclarations
 
 property
   : modifiers ("val" | "var")
-      typeParameters? (type "." | annotations)?
+      typeParameters?
+      (type ".")?
       (multipleVariableDeclarations | variableDeclarationEntry)
       typeConstraints
       ("by" | "=" expression SEMI?)?
@@ -110,7 +108,7 @@ parameter
   ;
 
 object
-  : "object" SimpleName primaryConstructor? (":" delegationSpecifier{","})? classBody? // Class body can be optional: this is a declaration
+  : "object" SimpleName primaryConstructor? (":" delegationSpecifier{","})? classBody?
 
 secondaryConstructor
   : modifiers "constructor" valueParameters (":" constructorDelegationCall)? block

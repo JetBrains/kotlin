@@ -116,10 +116,10 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
 
         override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
             val info = parameterInfos[rowIndex]
-            when (columnIndex) {
-                AbstractParameterTablePanel.PARAMETER_NAME_COLUMN -> return super.isCellEditable(rowIndex, columnIndex) && !info.isReceiver
-                PARAMETER_TYPE_COLUMN -> return isEnabled && info.isEnabled && info.originalParameter.getParameterTypeCandidates(false).size > 1
-                else -> return super.isCellEditable(rowIndex, columnIndex)
+            return when (columnIndex) {
+                AbstractParameterTablePanel.PARAMETER_NAME_COLUMN -> super.isCellEditable(rowIndex, columnIndex) && !info.isReceiver
+                PARAMETER_TYPE_COLUMN -> isEnabled && info.isEnabled && info.originalParameter.getParameterTypeCandidates(false).size > 1
+                else -> super.isCellEditable(rowIndex, columnIndex)
             }
         }
     }

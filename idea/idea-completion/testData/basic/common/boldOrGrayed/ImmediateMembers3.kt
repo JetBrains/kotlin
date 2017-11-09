@@ -3,12 +3,12 @@ interface T {
 }
 
 fun foo(o: T) {
-    if (o is Runnable) {
+    if (o is Comparable<T>) {
         o.<caret>
     }
 }
 
-// EXIST: { itemText: "run", attributes: "bold" }
+// EXIST: { itemText: "compareTo", attributes: "bold" }
 // EXIST: { itemText: "f", attributes: "bold" }
 // EXIST: { itemText: "hashCode", attributes: "" }
 // EXIST: { itemText: "equals", attributes: "" }

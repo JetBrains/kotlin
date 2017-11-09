@@ -1,7 +1,5 @@
 package d
 
-import java.util.ArrayList
-
 fun box(): String {
     ListTag().test(listOf("a", "b"))
     return "OK"

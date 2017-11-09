@@ -1,0 +1,7 @@
+// "Create actual class for platform JS" "true"
+
+expect sealed class Sealed {
+    object Obj : Sealed
+
+    class Klass(x: Int) : Sealed
+}

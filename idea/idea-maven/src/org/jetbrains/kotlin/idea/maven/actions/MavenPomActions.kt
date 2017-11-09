@@ -29,8 +29,8 @@ import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.kotlin.idea.maven.PomFile
-import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
+import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class GenerateMavenCompileExecutionAction : PomFileActionBase(KotlinMavenExecutionProvider(PomFile.KotlinGoals.Compile, PomFile.DefaultPhases.Compile))
@@ -61,7 +61,7 @@ private class KotlinMavenPluginProvider : AbstractDomGenerateProvider<MavenDomPl
             else -> knownVersion
         }
 
-        val pom = PomFile(DomUtil.getFile(parent))
+        val pom = PomFile.forFileOrNull(DomUtil.getFile(parent)) ?: return null
         return pom.addPlugin(MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID, version))
     }
 
@@ -78,7 +78,7 @@ private class KotlinMavenPluginProvider : AbstractDomGenerateProvider<MavenDomPl
     override fun isAvailableForElement(contextElement: DomElement): Boolean {
         val parent = contextElement.findProject() ?: return false
 
-        return parent.build.plugins.plugins.none { plugin -> plugin.isKotlinMavenPlugin() }
+        return parent.build.plugins.plugins.none(MavenDomPlugin::isKotlinMavenPlugin)
     }
 }
 
@@ -89,7 +89,7 @@ private class KotlinMavenExecutionProvider(val goal: String, val phase: String) 
             return null
         }
 
-        val file = PomFile(DomUtil.getFile(parent))
+        val file = PomFile.forFileOrNull(DomUtil.getFile(parent)) ?: return null
         val execution = file.addExecution(parent, goal, phase, listOf(goal))
 
         if (editor != null) {
@@ -136,4 +136,4 @@ private fun MavenDomPlugin.isKotlinMavenPlugin() = groupId.stringValue == Kotlin
                                                    && artifactId.stringValue == KotlinMavenConfigurator.MAVEN_PLUGIN_ID
 
 private fun MavenDomDependency.isKotlinStdlib() = groupId.stringValue == KotlinMavenConfigurator.GROUP_ID
-                                                  && artifactId.stringValue == KotlinJavaMavenConfigurator.STD_LIB_ID
+                                                  && artifactId.stringValue == MAVEN_STDLIB_ID

@@ -1,0 +1,45 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AllOpen
+
+@kotlin.Metadata
+public class Sealed$C1 {
+    inner class Sealed$C1
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public class Sealed$C2 {
+    inner class Sealed$C2
+    public method <init>(): void
+}
+
+@AllOpen
+@kotlin.Metadata
+public abstract class Sealed {
+    inner class Sealed$C1
+    inner class Sealed$C2
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@AllOpen
+@kotlin.Metadata
+public class Sealed2$C1 {
+    inner class Sealed2$C1
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class Sealed2$C2 {
+    inner class Sealed2$C2
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public abstract class Sealed2 {
+    inner class Sealed2$C1
+    inner class Sealed2$C2
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+}

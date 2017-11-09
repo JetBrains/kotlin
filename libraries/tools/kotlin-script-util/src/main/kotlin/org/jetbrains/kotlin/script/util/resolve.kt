@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,18 @@
 
 package org.jetbrains.kotlin.script.util
 
-import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.script.InvalidScriptResolverAnnotation
 import org.jetbrains.kotlin.script.util.resolvers.DirectResolver
 import org.jetbrains.kotlin.script.util.resolvers.FlatLibDirectoryResolver
 import org.jetbrains.kotlin.script.util.resolvers.MavenResolver
 import org.jetbrains.kotlin.script.util.resolvers.Resolver
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.File
-import java.lang.Exception
-import java.lang.IllegalArgumentException
-import java.net.URL
-import java.net.URLClassLoader
 import java.util.concurrent.Future
-import kotlin.reflect.KClass
+import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.ScriptContents
+import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.dependencies.asFuture
+import kotlin.script.templates.AcceptedAnnotations
 
 open class KotlinAnnotatedScriptDependenciesResolver(val baseClassPath: List<File>, resolvers: Iterable<Resolver>)
     : ScriptDependenciesResolver
@@ -53,13 +52,14 @@ open class KotlinAnnotatedScriptDependenciesResolver(val baseClassPath: List<Fil
     }
 
     private fun resolveFromAnnotations(script: ScriptContents): List<File> {
-        script.annotations.forEach {
-            when (it) {
-                is Repository -> File(it.value).check { it.exists() && it.isDirectory }?.let { resolvers.add(FlatLibDirectoryResolver(it)) }
-                                                ?: throw IllegalArgumentException("Illegal argument for Repository annotation: ${it.value}")
+        script.annotations.forEach { annotation ->
+            when (annotation) {
+                is Repository -> FlatLibDirectoryResolver.tryCreate(annotation)?.apply { resolvers.add(this) }
+                        ?: resolvers.find { it is MavenResolver }?.takeIf { (it as MavenResolver).tryAddRepo(annotation) }
+                        ?: throw IllegalArgumentException("Illegal argument for Repository annotation: $annotation")
                 is DependsOn -> {}
-                is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${it.name}", it.error)
-                else -> throw Exception("Unknown annotation ${it.javaClass}")
+                is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${annotation.name}", annotation.error)
+                else -> throw Exception("Unknown annotation ${annotation.javaClass}")
             }
         }
         return script.annotations.filterIsInstance(DependsOn::class.java).flatMap { dep ->
@@ -69,41 +69,8 @@ open class KotlinAnnotatedScriptDependenciesResolver(val baseClassPath: List<Fil
     }
 }
 
-private fun URL.toFile() =
-        try {
-            File(toURI().schemeSpecificPart)
-        }
-        catch (e: java.net.URISyntaxException) {
-            if (protocol != "file") null
-            else File(file)
-        }
+class LocalFilesResolver :
+        KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver()))
 
-private fun classpathFromClassloader(classLoader: ClassLoader): List<File>? =
-        generateSequence(classLoader) { it.parent }.toList().flatMap { (it as? URLClassLoader)?.urLs?.mapNotNull { it.toFile() } ?: emptyList() }
-
-private fun classpathFromClasspathProperty(): List<File>? =
-        System.getProperty("java.class.path")?.let {
-            it.split(String.format("\\%s", File.pathSeparatorChar).toRegex()).dropLastWhile(String::isEmpty)
-                    .map(::File)
-        }
-
-private fun classpathFromClass(classLoader: ClassLoader, klass: KClass<out Any>): List<File>? {
-    val clp = "${klass.qualifiedName?.replace('.', '/')}.class"
-    val url = classLoader.getResource(clp)
-    return url?.toURI()?.path?.removeSuffix(clp)?.let {
-        listOf(File(it))
-    }
-}
-
-val defaultScriptBaseClasspath: List<File> by lazy {
-    classpathFromClass(Thread.currentThread().contextClassLoader, KotlinAnnotatedScriptDependenciesResolver::class)
-    ?: classpathFromClasspathProperty()
-    ?: classpathFromClassloader(Thread.currentThread().contextClassLoader)
-    ?: emptyList()
-}
-
-class DefaultKotlinResolver() :
-        KotlinAnnotatedScriptDependenciesResolver(defaultScriptBaseClasspath, arrayListOf())
-
-class DefaultKotlinAnnotatedScriptDependenciesResolver :
-        KotlinAnnotatedScriptDependenciesResolver(defaultScriptBaseClasspath, arrayListOf(DirectResolver(), MavenResolver()))
+class FilesAndMavenResolver :
+        KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver(), MavenResolver()))

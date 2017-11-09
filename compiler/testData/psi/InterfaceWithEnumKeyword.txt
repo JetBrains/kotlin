@@ -1,4 +1,4 @@
-JetFile: InterfaceWithEnumKeyword.kt
+KtFile: InterfaceWithEnumKeyword.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

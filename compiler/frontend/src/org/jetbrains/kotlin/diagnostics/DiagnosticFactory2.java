@@ -23,7 +23,7 @@ public class DiagnosticFactory2<E extends PsiElement, A, B> extends DiagnosticFa
 
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b) {
-        return new DiagnosticWithParameters2<E, A, B>(element, a, b, this, getSeverity());
+        return new DiagnosticWithParameters2<>(element, a, b, this, getSeverity());
     }
 
     private DiagnosticFactory2(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
@@ -31,11 +31,11 @@ public class DiagnosticFactory2<E extends PsiElement, A, B> extends DiagnosticFa
     }
 
     public static <T extends PsiElement, A, B> DiagnosticFactory2<T, A, B> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
-        return new DiagnosticFactory2<T, A, B>(severity, positioningStrategy);
+        return new DiagnosticFactory2<>(severity, positioningStrategy);
     }
 
     public static <T extends PsiElement, A, B> DiagnosticFactory2<T, A, B> create(Severity severity) {
-        return new DiagnosticFactory2<T, A, B>(severity, PositioningStrategies.DEFAULT);
+        return new DiagnosticFactory2<>(severity, PositioningStrategies.DEFAULT);
     }
 
 }

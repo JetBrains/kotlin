@@ -35,9 +35,7 @@ class SubroutineSinkInstruction(
         visitor.visitSubroutineSink(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitSubroutineSink(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitSubroutineSink(this)
 
     override fun toString(): String = debugLabel
 

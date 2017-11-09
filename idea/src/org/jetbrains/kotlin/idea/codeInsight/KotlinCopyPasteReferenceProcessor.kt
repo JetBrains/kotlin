@@ -35,16 +35,18 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.conversion.copy.end
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.conversion.copy.start
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -52,6 +54,7 @@ import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -66,7 +69,7 @@ import java.io.IOException
 import java.util.*
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
-class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferenceTransferableData>() {
+class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReferenceTransferableData>() {
     private val LOG = Logger.getInstance(KotlinCopyPasteReferenceProcessor::class.java)
 
     private val IGNORE_REFERENCES_INSIDE: Array<Class<out KtElement>> = arrayOf(
@@ -124,7 +127,9 @@ class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferen
             endOffsets: IntArray
     ): List<KotlinReferenceData> {
         val ranges = toTextRanges(startOffsets, endOffsets)
-        val elementsByRange = ranges.associateBy({ it }, { file.elementsInRange(it).filterIsInstance<KtElement>() })
+        val elementsByRange = ranges.associateBy({ it }, {
+            file.elementsInRange(it).filter { it is KtElement || it is KDocElement }
+        })
 
         val allElementsToResolve = elementsByRange.values.flatMap { it }.flatMap { it.collectDescendantsOfType<KtElement>() }
         val bindingContext = file.getResolutionFacade().analyze(allElementsToResolve, BodyResolveMode.PARTIAL)
@@ -139,7 +144,7 @@ class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferen
     }
 
     private fun MutableCollection<KotlinReferenceData>.addReferenceDataInsideElement(
-            element: KtElement,
+            element: PsiElement,
             file: KtFile,
             startOffset: Int,
             startOffsets: IntArray,
@@ -148,7 +153,7 @@ class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferen
     ) {
         if (PsiTreeUtil.getNonStrictParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
 
-        element.forEachDescendantOfType<KtElement>(canGoInside = { it.javaClass as Class<*> !in IGNORE_REFERENCES_INSIDE }) { element ->
+        element.forEachDescendantOfType<KtElement>(canGoInside = { it::class.java as Class<*> !in IGNORE_REFERENCES_INSIDE }) { element ->
             val reference = element.mainReference ?: return@forEachDescendantOfType
 
             val descriptors = resolveReference(reference, bindingContext)
@@ -156,11 +161,13 @@ class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferen
             if (reference !is KtMultiReference<*> && descriptors.size > 1) return@forEachDescendantOfType
 
             for (descriptor in descriptors) {
-                val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.project, descriptor)
-                val declaration = declarations.singleOrNull()
+                val effectiveReferencedDescriptors = DescriptorToSourceUtils.getEffectiveReferencedDescriptors(descriptor).asSequence()
+                val declaration = effectiveReferencedDescriptors
+                        .map { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
+                        .singleOrNull()
                 if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
 
-                if (!reference.canBeResolvedViaImport(descriptor)) continue
+                if (!reference.canBeResolvedViaImport(descriptor, bindingContext)) continue
 
                 val fqName = descriptor.importableFqName!!
 
@@ -300,28 +307,34 @@ class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferen
         )
 
         val bindingRequests = ArrayList<BindingRequest>()
-        val extensionsToImport = ArrayList<CallableDescriptor>()
+        val descriptorsToImport = ArrayList<DeclarationDescriptor>()
+
         for ((reference, refData) in referencesToRestore) {
             val fqName = FqName(refData.fqName)
 
-            if (!refData.kind.isExtension() && reference is KtSimpleNameReference) {
-                val pointer = smartPointerManager.createSmartPsiElementPointer(reference.element, file)
-                bindingRequests.add(BindingRequest(pointer, fqName))
+            if (!refData.kind.isExtension()) {
+                if (reference is KtSimpleNameReference) {
+                    val pointer = smartPointerManager.createSmartPsiElementPointer(reference.element, file)
+                    bindingRequests.add(BindingRequest(pointer, fqName))
+                }
+                else if (reference is KDocReference) {
+                    descriptorsToImport.addAll(findImportableDescriptors(fqName, file))
+                }
             }
 
             if (refData.kind.isExtension()) {
-                extensionsToImport.addIfNotNull(findCallableToImport(fqName, file))
+                descriptorsToImport.addIfNotNull(findCallableToImport(fqName, file))
             }
         }
 
-        for (descriptor in extensionsToImport) {
+        for (descriptor in descriptorsToImport) {
             importHelper.importDescriptor(file, descriptor)
         }
         for ((pointer, fqName) in bindingRequests) {
             val reference = pointer.element!!.mainReference
             reference.bindToFqName(fqName, KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
         }
-        performDelayedShortening(file.project)
+        performDelayedRefactoringRequests(file.project)
     }
 
     private fun KotlinReferenceData.Kind.isExtension()

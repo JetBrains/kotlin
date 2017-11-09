@@ -59,7 +59,7 @@ sealed class RenderingContext {
                 is DiagnosticWithParameters1<*, *> -> listOf(d.a)
                 is DiagnosticWithParameters2<*, *, *> -> listOf(d.a, d.b)
                 is DiagnosticWithParameters3<*, *, *, *> -> listOf(d.a, d.b, d.c)
-                is ParametrizedDiagnostic<*> -> error("Unexpected diagnostic: ${d.javaClass}")
+                is ParametrizedDiagnostic<*> -> error("Unexpected diagnostic: ${d::class.java}")
                 else -> listOf()
             }
             return Impl(parameters)

@@ -86,6 +86,16 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): Bas
                  }
                  else {
                      addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
+                     if (myDelegate.tokenText == "TODO" ) {
+                         // Heuristics to reduce mismatches between indexer and searcher. The searcher returns only occurrences of TO_DO
+                         // as the callee of a call expression, but we can't tell calls and other usages apart based on limited lexer context,
+                         // so we just exclude occurrences in declaration names (and even that doesn't work precisely because it doesn't handle
+                         // declarations with type parameters)
+                         val prevToken = prevTokens.peekFirst()
+                         if (prevToken != KtTokens.FUN_KEYWORD && prevToken != KtTokens.VAR_KEYWORD && prevToken != KtTokens.VAL_KEYWORD && prevToken != KtTokens.CLASS_KEYWORD) {
+                             advanceTodoItemCountsInToken()
+                         }
+                     }
                  }
             }
 
@@ -125,5 +135,7 @@ class KotlinIdIndexer: LexerBasedIdIndexer() {
 }
 
 class KotlinTodoIndexer: LexerBasedTodoIndexer(), IdAndToDoScannerBasedOnFilterLexer {
-    override fun createLexer(consumer: OccurrenceConsumer): Lexer = KotlinFilterLexer(consumer)
+    override fun getVersion() = 2
+
+    override fun createLexer(consumer: OccurrenceConsumer) = KotlinFilterLexer(consumer)
 }

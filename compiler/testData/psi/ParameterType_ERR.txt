@@ -1,4 +1,4 @@
-JetFile: ParameterType_ERR.kt
+KtFile: ParameterType_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

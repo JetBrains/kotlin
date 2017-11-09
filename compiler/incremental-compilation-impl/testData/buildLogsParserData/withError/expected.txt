@@ -1,0 +1,16 @@
+================ Step #1 =================
+
+Compiling files:
+module1/src/module1_a.kt
+module2/src/module2_b.kt
+End of files
+------------------------------------------
+COMPILATION FAILED
+Cannot access 'FileAnnotation': it is internal in 'a'
+Cannot access 'A': it is internal in 'a'
+Cannot access 'FileAnnotation': it is internal in 'a'
+Cannot access 'ClassAnnotation': it is internal in 'a'
+Cannot access 'ClassAnnotation': it is internal in 'a'
+Function effective visibility 'public' should be the same or less permissive than its parameter type effective visibility 'internal'
+Cannot access 'A': it is internal in 'a'
+Cannot access 'a': it is internal in 'a'

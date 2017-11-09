@@ -29,7 +29,7 @@ interface HierarchicalScope : ResolutionScope {
     fun printStructure(p: Printer)
 }
 
-interface LexicalScope: HierarchicalScope {
+interface LexicalScope : HierarchicalScope {
     override val parent: HierarchicalScope
 
     val ownerDescriptor: DeclarationDescriptor
@@ -39,7 +39,7 @@ interface LexicalScope: HierarchicalScope {
 
     val kind: LexicalScopeKind
 
-    class Empty(
+    class Base(
             parent: HierarchicalScope,
             override val ownerDescriptor: DeclarationDescriptor
     ) : BaseHierarchicalScope(parent), LexicalScope {
@@ -55,8 +55,10 @@ interface LexicalScope: HierarchicalScope {
         override val kind: LexicalScopeKind
             get() = LexicalScopeKind.EMPTY
 
+        override fun definitelyDoesNotContainName(name: Name) = true
+
         override fun printStructure(p: Printer) {
-            p.println("Empty lexical scope with owner = $ownerDescriptor and parent = $parent")
+            p.println("Base lexical scope with owner = $ownerDescriptor and parent = $parent")
         }
     }
 }
@@ -80,6 +82,7 @@ enum class LexicalScopeKind(val withLocalDescriptors: Boolean) {
     PROPERTY_DELEGATE_METHOD(false),
 
     FUNCTION_HEADER(false),
+    FUNCTION_HEADER_FOR_DESTRUCTURING(false),
     FUNCTION_INNER_SCOPE(true),
 
     TYPE_ALIAS_HEADER(false),
@@ -108,10 +111,26 @@ interface ImportingScope : HierarchicalScope {
 
     fun getContributedPackage(name: Name): PackageViewDescriptor?
 
+    fun getContributedDescriptors(
+            kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
+            nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER,
+            changeNamesForAliased: Boolean
+    ): Collection<DeclarationDescriptor>
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        return getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased = false)
+    }
+
+    fun computeImportedNames(): Set<Name>?
+
     object Empty : BaseImportingScope(null) {
         override fun printStructure(p: Printer) {
             p.println("ImportingScope.Empty")
         }
+
+        override fun computeImportedNames() = emptySet<Name>()
+
+        override fun definitelyDoesNotContainName(name: Name) = true
     }
 }
 
@@ -130,4 +149,11 @@ abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalSco
         get() = super.parent as ImportingScope?
 
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        return getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased = false)
+    }
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean, changeNamesForAliased: Boolean): Collection<DeclarationDescriptor>
+            = emptyList()
 }

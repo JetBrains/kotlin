@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.builtins.createFunctionType
+import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.EQUAL
@@ -27,7 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.util.createFunctionType
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.types.*
@@ -92,11 +94,11 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
             }
         }
 
-        for ((descriptor, typeVariable) in typeParameters.zip(typeVariables)) {
+        for ((_, typeVariable) in typeParameters.zip(typeVariables)) {
             allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable))
         }
 
-        for ((typeVariable, typeBounds) in allTypeParameterBounds) {
+        for ((typeVariable, _) in allTypeParameterBounds) {
             for (declaredUpperBound in typeVariable.freshTypeParameter.upperBounds) {
                 if (declaredUpperBound.isDefaultBound()) continue //todo remove this line (?)
                 val context = ConstraintContext(TYPE_BOUND_POSITION.position(typeVariable.originalTypeParameter.index))
@@ -434,7 +436,7 @@ internal fun createTypeForFunctionPlaceholder(
 
     val functionPlaceholderTypeConstructor = functionPlaceholder.constructor as FunctionPlaceholderTypeConstructor
 
-    val isExtension = expectedType.isExtensionFunctionType
+    val isExtension = expectedType.isBuiltinExtensionFunctionalType
     val newArgumentTypes = if (!functionPlaceholderTypeConstructor.hasDeclaredArguments) {
         val typeParamSize = expectedType.constructor.parameters.size
         // the first parameter is receiver (if present), the last one is return type,
@@ -448,5 +450,6 @@ internal fun createTypeForFunctionPlaceholder(
         functionPlaceholderTypeConstructor.argumentTypes
     }
     val receiverType = if (isExtension) DONT_CARE else null
-    return createFunctionType(functionPlaceholder.builtIns, Annotations.EMPTY, receiverType, newArgumentTypes, null, DONT_CARE)
+    return createFunctionType(functionPlaceholder.builtIns, Annotations.EMPTY, receiverType, newArgumentTypes, null, DONT_CARE,
+                              suspendFunction = expectedType.isSuspendFunctionType)
 }

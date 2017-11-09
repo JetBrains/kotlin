@@ -15,7 +15,7 @@ fun f9(a : A?) {
   a<info>?.</info><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
   if (a is B) {
     <info descr="Smart cast to B">a</info>.bar()
-    <info descr="Smart cast to A">a</info>.foo()
+    <info descr="Smart cast to B">a</info>.foo()
   }
   a<info>?.</info>foo()
   a<info>?.</info><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
@@ -30,7 +30,7 @@ fun f9(a : A?) {
     return;
   }
   <info descr="Smart cast to B">a</info>.bar()
-  <info descr="Smart cast to A">a</info>.foo()
+  <info descr="Smart cast to B">a</info>.foo()
 }
 
 fun fAny(a : Any?) {
@@ -49,7 +49,7 @@ fun f10(a : A?) {
   if (!(a is B)) {
     return;
   }
-  if (!(a is B)) {
+  if (!(<warning>a is B</warning>)) {
     return;
   }
 }
@@ -71,7 +71,7 @@ fun f11(a : A?) {
     is B -> <info descr="Smart cast to B">a</info>.bar()
     is A -> <info descr="Smart cast to A">a</info>.foo()
     is Any -> <info descr="Smart cast to A">a</info>.foo()
-    is Any? -> a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
+    <warning>is Any?</warning> -> a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
     else -> a<info>?.</info>foo()
   }
 }
@@ -81,12 +81,12 @@ fun f12(a : A?) {
     is B -> <info descr="Smart cast to B">a</info>.bar()
     is A -> <info descr="Smart cast to A">a</info>.foo()
     is Any -> <info descr="Smart cast to A">a</info>.foo();
-    is Any? -> a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
+    <warning>is Any?</warning> -> a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
     is C -> <info descr="Smart cast to C">a</info>.bar()
     else -> a<info>?.</info>foo()
   }
 
-  if (a is Any?) {
+  if (<warning>a is Any?</warning>) {
     a<info>?.</info><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
   }
   if (a is B) {
@@ -96,7 +96,7 @@ fun f12(a : A?) {
 
 fun f13(a : A?) {
   if (a is B) {
-    <info descr="Smart cast to A">a</info>.foo()
+    <info descr="Smart cast to B">a</info>.foo()
     <info descr="Smart cast to B">a</info>.bar()
   }
   else {
@@ -109,12 +109,12 @@ fun f13(a : A?) {
     a<info>?.</info>foo()
   }
   else {
-    <info descr="Smart cast to A">a</info>.foo()
+    <info descr="Smart cast to B">a</info>.foo()
   }
 
   a<info>?.</info>foo()
-  if (a is B && <info descr="Smart cast to A">a</info>.foo() == Unit) {
-    <info descr="Smart cast to A">a</info>.foo()
+  if (a is B && <info descr="Smart cast to B">a</info>.foo() == Unit) {
+    <info descr="Smart cast to B">a</info>.foo()
     <info descr="Smart cast to B">a</info>.bar()
   }
   else {
@@ -203,7 +203,7 @@ fun mergeSmartCasts(a: Any?) {
   when (a) {
     is String, is Any -> a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: compareTo">compareTo</error>("")
   }
-  if (a is String && a is Any) {
+  if (a is String && <warning>a is Any</warning>) {
     val <warning>i</warning>: Int = <info descr="Smart cast to kotlin.String">a</info>.compareTo("")
   }
   if (a is String && <info descr="Smart cast to kotlin.String">a</info>.compareTo("") == 0) {}

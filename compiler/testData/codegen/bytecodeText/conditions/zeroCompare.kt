@@ -1,5 +1,6 @@
+val a = 1
+
 fun main() {
-    val a = 1
     if (a == 0) {
         "then"
     } else {

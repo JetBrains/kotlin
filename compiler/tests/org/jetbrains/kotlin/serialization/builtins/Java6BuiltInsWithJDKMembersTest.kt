@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
+import org.jetbrains.kotlin.test.TestJdkKind
+
 class Java6BuiltInsWithJDKMembersTest : AbstractBuiltInsWithJDKMembersTest() {
+    override val testJdkKind get() = TestJdkKind.FULL_JDK_6
+
     fun testLoadBuiltIns() {
         doTest("java6")
     }

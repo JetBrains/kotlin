@@ -3,6 +3,7 @@
     <words>
       <w>ctor</w>
       <w>interner</w>
+      <w>kclass</w>
       <w>lookups</w>
       <w>unescape</w>
     </words>

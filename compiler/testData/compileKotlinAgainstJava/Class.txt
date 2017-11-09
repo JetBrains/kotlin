@@ -1,0 +1,8 @@
+package test
+
+public fun useClass(): test.Class
+
+public open class Class {
+    public constructor Class(/*0*/ kotlin.String!)
+    private final val str: kotlin.String!
+}

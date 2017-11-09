@@ -20,12 +20,20 @@
 
 package kotlin.collections
 
+/**
+ * Provides a skeletal implementation of the [MutableMap] interface.
+ *
+ * The implementor is required to implement the [entries] property, which should return mutable set of map entries, and the [put] function.
+ *
+ * @param K the type of map keys. The map is invariant on its key type.
+ * @param V the type of map values. The map is invariant on its value type.
+ */
 public abstract class AbstractMutableMap<K, V> protected constructor() : AbstractMap<K, V>(), MutableMap<K, V> {
 
     /**
      * A mutable [Map.Entry] shared by several [Map] implementations.
      */
-    open class SimpleEntry<K, V>(override val key: K, value: V) : MutableMap.MutableEntry<K, V> {
+    internal open class SimpleEntry<K, V>(override val key: K, value: V) : MutableMap.MutableEntry<K, V> {
         constructor(entry: Map.Entry<K, V>) : this(entry.key, entry.value)
 
         private var _value = value

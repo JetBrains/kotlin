@@ -1,0 +1,12 @@
+package
+
+public operator fun Test.invoke(): kotlin.Unit
+public operator fun Test.invoke(/*0*/ i: kotlin.Int): kotlin.Int
+
+public interface Test {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun invoke(): kotlin.Unit
+    public abstract operator fun invoke(/*0*/ i: kotlin.Int): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

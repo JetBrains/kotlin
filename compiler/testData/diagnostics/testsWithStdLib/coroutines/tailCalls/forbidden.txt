@@ -1,0 +1,6 @@
+package
+
+public suspend fun baz(): kotlin.Int
+public suspend fun foo(): kotlin.Unit
+public fun nonSuspend(): kotlin.Unit
+public suspend fun unitSuspend(): kotlin.Unit

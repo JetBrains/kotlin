@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cfg.TailRecursionKind;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -65,7 +66,7 @@ public class TailRecursionCodegen {
     }
 
     public void generateTailRecursion(ResolvedCall<?> resolvedCall) {
-        CallableDescriptor fd = resolvedCall.getResultingDescriptor();
+        CallableDescriptor fd = CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(resolvedCall.getResultingDescriptor());
         assert fd instanceof FunctionDescriptor : "Resolved call doesn't refer to the function descriptor: " + fd;
         CallableMethod callable = (CallableMethod) codegen.resolveToCallable((FunctionDescriptor) fd, false, resolvedCall);
 
@@ -73,6 +74,11 @@ public class TailRecursionCodegen {
         if (arguments == null) {
             throw new IllegalStateException("Failed to arrange value arguments by index: " + fd);
         }
+
+        if (((FunctionDescriptor) fd).isSuspend()) {
+            AsmUtil.pop(v, callable.getValueParameters().get(callable.getValueParameters().size() - 1).getAsmType());
+        }
+
         assignParameterValues(fd, callable, arguments);
         if (callable.getExtensionReceiverType() != null) {
             if (resolvedCall.getExtensionReceiver() != fd.getExtensionReceiverParameter().getValue()) {

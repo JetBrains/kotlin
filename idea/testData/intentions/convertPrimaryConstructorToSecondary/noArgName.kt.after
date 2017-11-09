@@ -1,0 +1,4 @@
+
+class My {
+    constructor(: Int)
+}

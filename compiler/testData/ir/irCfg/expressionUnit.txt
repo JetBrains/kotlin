@@ -1,0 +1,14 @@
+// FILE: /expressionUnit.kt
+// FUN: foo
+BB 0
+CONTENT
+      1 FUN public fun foo(): kotlin.Unit
+      2 GET_OBJECT 'Unit' type=kotlin.Unit
+      3 RETURN type=kotlin.Nothing from='foo(): Unit'
+OUTGOING -> NONE
+    Function exit: FUN public fun foo(): kotlin.Unit
+
+// END FUN: foo
+
+// END FILE: /expressionUnit.kt
+

@@ -1,0 +1,9 @@
+FILE /javaEnum.kt
+  PROPERTY public val test: JEnum
+    FIELD PROPERTY_BACKING_FIELD public val test: JEnum
+      EXPRESSION_BODY
+        GET_ENUM 'ONE' type=JEnum
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test>(): JEnum
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test>(): JEnum'
+          GET_FIELD 'test: JEnum' type=JEnum origin=null

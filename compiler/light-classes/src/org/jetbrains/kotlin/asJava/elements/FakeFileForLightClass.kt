@@ -23,16 +23,19 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.stubs.PsiClassHolderFileStub
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 
 open class FakeFileForLightClass(
-        protected val ktFile: KtFile,
+        val ktFile: KtFile,
         private val lightClass: () -> KtLightClass,
         private val stub: () -> PsiClassHolderFileStub<*>,
         private val packageFqName: FqName = ktFile.packageFqName
-) : ClsFileImpl(ClassFileViewProvider(ktFile.manager, ktFile.virtualFile)) {
+) : ClsFileImpl(ClassFileViewProvider(ktFile.manager, ktFile.virtualFile ?:
+                                                      ktFile.originalFile.virtualFile ?:
+                                                      ktFile.viewProvider.virtualFile)) {
     override fun getPackageName() = packageFqName.asString()
 
     override fun getStub() = stub()
@@ -69,4 +72,15 @@ open class FakeFileForLightClass(
     }
 
     override fun isEquivalentTo(another: PsiElement?) = this == another
+
+    override fun setPackageName(packageName: String) {
+        if (lightClass() is KtLightClassForFacade) {
+            ktFile.packageDirective?.fqName = FqName(packageName)
+        }
+        else {
+            super.setPackageName(packageName)
+        }
+    }
+
+    override fun isPhysical() = false
 }

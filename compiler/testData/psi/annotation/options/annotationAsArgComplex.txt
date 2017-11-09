@@ -1,4 +1,4 @@
-JetFile: annotationAsArgComplex.kt
+KtFile: annotationAsArgComplex.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

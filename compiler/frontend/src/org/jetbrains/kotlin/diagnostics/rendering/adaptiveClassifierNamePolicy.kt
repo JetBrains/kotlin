@@ -16,18 +16,14 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.getAbbreviation
 import org.jetbrains.kotlin.types.typeUtil.contains
 import java.util.*
 
@@ -40,7 +36,9 @@ private class AdaptiveClassifierNamePolicy(private val ambiguousNames: List<Name
     override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
         return when {
             hasUniqueName(classifier) -> ClassifierNamePolicy.SHORT.renderClassifier(classifier, renderer)
-            classifier is ClassDescriptor -> ClassifierNamePolicy.FULLY_QUALIFIED.renderClassifier(classifier, renderer)
+            classifier is ClassDescriptor ||
+            classifier is TypeAliasDescriptor ->
+                ClassifierNamePolicy.FULLY_QUALIFIED.renderClassifier(classifier, renderer)
             classifier is TypeParameterDescriptor -> {
                 val name = classifier.name
                 val typeParametersWithSameName = renderedParameters.getOrPut(name) { LinkedHashSet() }
@@ -48,7 +46,7 @@ private class AdaptiveClassifierNamePolicy(private val ambiguousNames: List<Name
                 val index = typeParametersWithSameName.indexOf(classifier)
                 renderer.renderAmbiguousTypeParameter(classifier, index + 1, isFirstOccurence)
             }
-            else -> error("Unexpected classifier: ${classifier.javaClass}")
+            else -> error("Unexpected classifier: ${classifier::class.java}")
         }
     }
 
@@ -80,10 +78,15 @@ private fun collectClassifiersFqNames(objectsToRender: Collection<Any?>): Set<Fq
 }
 
 private fun collectMentionedClassifiersFqNames(contextObjects: Collection<Any?>, result: MutableSet<FqNameUnsafe>) {
+    fun KotlinType.addMentionedTypeConstructor() {
+        constructor.declarationDescriptor?.let { result.add(it.fqNameUnsafe) }
+    }
+
     contextObjects.filterIsInstance<KotlinType>().forEach { diagnosticType ->
         diagnosticType.contains {
             innerType ->
-            innerType.constructor.declarationDescriptor?.let { result.add(it.fqNameUnsafe) }
+            innerType.addMentionedTypeConstructor()
+            innerType.getAbbreviation()?.addMentionedTypeConstructor()
             false
         }
     }

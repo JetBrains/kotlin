@@ -18,7 +18,6 @@ package com.android.tools.klint.client.api;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.annotations.VisibleForTesting;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
@@ -27,8 +26,16 @@ import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Registry which provides a list of checks to be performed on an Android project
@@ -38,8 +45,8 @@ import java.util.*;
  */
 @Beta
 public abstract class IssueRegistry {
-    private static List<Category> sCategories;
-    private static Map<String, Issue> sIdToIssue;
+    private static volatile List<Category> sCategories;
+    private static volatile Map<String, Issue> sIdToIssue;
     private static Map<EnumSet<Scope>, List<Issue>> sScopeIssues = Maps.newHashMap();
 
     /**
@@ -265,19 +272,31 @@ public abstract class IssueRegistry {
      *
      * @return an iterator for all the categories, never null
      */
+    @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     @NonNull
     public List<Category> getCategories() {
-        if (sCategories == null) {
-            final Set<Category> categories = new HashSet<Category>();
-            for (Issue issue : getIssues()) {
-                categories.add(issue.getCategory());
+        List<Category> categories = sCategories;
+        if (categories == null) {
+            synchronized (IssueRegistry.class) {
+                categories = sCategories;
+                if (categories == null) {
+                    sCategories = categories = Collections.unmodifiableList(createCategoryList());
+                }
             }
-            List<Category> sorted = new ArrayList<Category>(categories);
-            Collections.sort(sorted);
-            sCategories = Collections.unmodifiableList(sorted);
         }
 
-        return sCategories;
+        return categories;
+    }
+
+    @NonNull
+    private List<Category> createCategoryList() {
+        Set<Category> categorySet = Sets.newHashSetWithExpectedSize(20);
+        for (Issue issue : getIssues()) {
+            categorySet.add(issue.getCategory());
+        }
+        List<Category> sorted = new ArrayList<Category>(categorySet);
+        Collections.sort(sorted);
+        return sorted;
     }
 
     /**
@@ -286,27 +305,39 @@ public abstract class IssueRegistry {
      * @param id the id to be checked
      * @return the corresponding issue, or null
      */
+    @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     @Nullable
     public final Issue getIssue(@NonNull String id) {
-        if (sIdToIssue == null) {
-            List<Issue> issues = getIssues();
-            sIdToIssue = new HashMap<String, Issue>(issues.size());
-            for (Issue issue : issues) {
-                sIdToIssue.put(issue.getId(), issue);
+        Map<String, Issue> map = sIdToIssue;
+        if (map == null) {
+            synchronized (IssueRegistry.class) {
+                map = sIdToIssue;
+                if (map == null) {
+                    map = createIdToIssueMap();
+                    sIdToIssue = map;
+                }
             }
-
-            sIdToIssue.put(PARSER_ERROR.getId(), PARSER_ERROR);
-            sIdToIssue.put(LINT_ERROR.getId(), LINT_ERROR);
         }
-        return sIdToIssue.get(id);
+
+        return map.get(id);
+    }
+
+    @NonNull
+    private Map<String, Issue> createIdToIssueMap() {
+        List<Issue> issues = getIssues();
+        Map<String, Issue> map = Maps.newHashMapWithExpectedSize(issues.size() + 2);
+        for (Issue issue : issues) {
+            map.put(issue.getId(), issue);
+        }
+
+        map.put(PARSER_ERROR.getId(), PARSER_ERROR);
+        map.put(LINT_ERROR.getId(), LINT_ERROR);
+        return map;
     }
 
     /**
      * Reset the registry such that it recomputes its available issues.
-     * <p>
-     * NOTE: This is only intended for testing purposes.
      */
-    @VisibleForTesting
     protected static void reset() {
         sIdToIssue = null;
         sCategories = null;

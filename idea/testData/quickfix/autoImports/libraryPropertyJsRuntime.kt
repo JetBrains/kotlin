@@ -1,4 +1,5 @@
 // "Import" "true"
+// JS
 
 package test
 

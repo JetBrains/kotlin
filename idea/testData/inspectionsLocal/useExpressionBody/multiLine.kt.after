@@ -1,0 +1,4 @@
+// HIGHLIGHT: INFORMATION
+
+fun Int?.orZero(): Int = this
+       ?: 0

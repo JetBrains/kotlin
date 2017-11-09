@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 fun box(): String {
     val o = "O"
     var result = ""

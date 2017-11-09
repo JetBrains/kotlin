@@ -1,6 +1,5 @@
 package test
 
 public open class Constructor {
-    public /*synthesized*/ constructor Constructor(/*0*/ p0: (() -> kotlin.Unit)!)
     public constructor Constructor(/*0*/ p0: java.lang.Runnable!)
 }

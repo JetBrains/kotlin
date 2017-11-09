@@ -1,21 +1,21 @@
+@file:kotlin.jvm.JvmVersion
 package test.exceptions
 
 import kotlin.test.*
 import test.collections.assertArrayNotSameButEquals
 
-import org.junit.Test  as test
 import java.io.PrintWriter
 import java.io.*
 import java.nio.charset.Charset
 
 class ExceptionJVMTest {
 
-    @test fun printStackTraceOnRuntimeException() {
+    @Test fun printStackTraceOnRuntimeException() {
         assertPrintStackTrace(RuntimeException("Crikey!"))
         assertPrintStackTraceStream(RuntimeException("Crikey2"))
     }
 
-    @test fun printStackTraceOnError() {
+    @Test fun printStackTraceOnError() {
         assertPrintStackTrace(Error("Oh dear"))
         assertPrintStackTraceStream(Error("Oh dear2"))
     }
@@ -54,7 +54,7 @@ class ExceptionJVMTest {
         }
     }
 
-    @test fun changeStackTrace() {
+    @Test fun changeStackTrace() {
         val exception = RuntimeException("Fail")
         var stackTrace = exception.stackTrace
         stackTrace = stackTrace.dropLast(1).toTypedArray()

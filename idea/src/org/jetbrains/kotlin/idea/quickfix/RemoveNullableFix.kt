@@ -40,6 +40,7 @@ class RemoveNullableFix(element: KtNullableType,
     override fun getText() = typeOfError.message
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val type = element.innerType ?: error("No inner type " + element.text + ", should have been rejected in createFactory()")
         element.replace(type)
     }
@@ -47,7 +48,7 @@ class RemoveNullableFix(element: KtNullableType,
     class Factory(private val typeOfError: NullableKind) : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtNullableType>? {
             val nullType = diagnostic.psiElement.getNonStrictParentOfType<KtNullableType>()
-            if (nullType == null || nullType.innerType == null) return null
+            if (nullType?.innerType == null) return null
             return RemoveNullableFix(nullType, typeOfError)
         }
     }

@@ -20,11 +20,11 @@ import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION
 import org.jetbrains.kotlin.diagnostics.reportOnDeclaration
-import org.jetbrains.kotlin.diagnostics.reportOnDeclarationOrFail
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -78,14 +78,17 @@ class DeclarationResolver(
         for ((fqName, declarationsOrPackageDirectives) in topLevelFqNames.asMap()) {
             if (fqName.isRoot) continue
 
-            val descriptors = getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            // TODO: report error on expected class and actual val, or vice versa
+            val (expected, actual) =
+                    getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
+                    .partition { it is MemberDescriptor && it.isExpect }
 
-            if (descriptors.size > 1) {
-                for (declarationOrPackageDirective in declarationsOrPackageDirectives) {
-                    val reportAt =
-                            if (declarationOrPackageDirective is KtPackageDirective) declarationOrPackageDirective.getNameIdentifier()
-                            else declarationOrPackageDirective
-                    trace.report(Errors.PACKAGE_OR_CLASSIFIER_REDECLARATION.on(reportAt!!, fqName.shortName().asString()))
+            for (descriptors in listOf(expected, actual)) {
+                if (descriptors.size > 1) {
+                    for (directive in declarationsOrPackageDirectives) {
+                        val reportAt = (directive as? KtPackageDirective)?.nameIdentifier ?: directive
+                        trace.report(Errors.PACKAGE_OR_CLASSIFIER_REDECLARATION.on(reportAt, fqName.shortName().asString()))
+                    }
                 }
             }
         }

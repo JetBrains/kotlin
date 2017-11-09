@@ -4,6 +4,5 @@ public open class SeveralSamParameters {
     public constructor SeveralSamParameters()
 
     // Static members
-    public final /*synthesized*/ fun findMaxAndInvokeCallback(/*0*/ p0: ((kotlin.String!, kotlin.String!) -> kotlin.Int)!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.String!, /*3*/ p3: (() -> kotlin.Unit)!): kotlin.String!
     public open fun findMaxAndInvokeCallback(/*0*/ p0: java.util.Comparator<kotlin.String!>!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.String!, /*3*/ p3: java.lang.Runnable!): kotlin.String!
 }

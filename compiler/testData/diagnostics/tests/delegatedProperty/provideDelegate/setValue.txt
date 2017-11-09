@@ -1,0 +1,17 @@
+package
+
+public var test1: kotlin.String
+public var test2: kotlin.String
+public var test3: kotlin.String
+public var test4: kotlin.String
+public var test5: kotlin.String
+public operator fun Delegate<*>.getValue(/*0*/ receiver: kotlin.Any?, /*1*/ p: kotlin.Any): kotlin.String
+public operator fun </*0*/ T> kotlin.String.provideDelegate(/*0*/ receiver: kotlin.Any?, /*1*/ p: kotlin.Any): Delegate<T>
+public operator fun </*0*/ T> Delegate<T>.setValue(/*0*/ receiver: kotlin.Any?, /*1*/ p: kotlin.Any, /*2*/ value: T): kotlin.Unit
+
+public final class Delegate</*0*/ T> {
+    public constructor Delegate</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

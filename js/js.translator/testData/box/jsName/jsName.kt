@@ -1,23 +1,32 @@
+// EXPECTED_REACHABLE_NODES: 1118
 package foo
 
-@JsName("bar") @native fun foo(): Int = noImpl
+@JsName("bar")
+external fun foo(): Int = definedExternally
 
-@JsName("baz") @native val prop: Int get() = noImpl
+@JsName("baz")
+external val prop: Int get() = definedExternally
 
-@JsName("B") @native class A {
-    @JsName("g") fun f(): Int = noImpl
+@JsName("B")
+external class A {
+    @JsName("g")
+    fun f(): Int = definedExternally
 
-    @JsName("q") val p: Int get() = noImpl
+    @JsName("q")
+    val p: Int get() = definedExternally
 
     companion object {
-        @JsName("g") fun f(): Int = noImpl
+        @JsName("g")
+        fun f(): Int = definedExternally
 
-        @JsName("q") val p: Int get() = noImpl
+        @JsName("q")
+        val p: Int get() = definedExternally
     }
 }
 
-@JsName("P") @native object O {
-    fun f(): Int = noImpl
+@JsName("P")
+external object O {
+    fun f(): Int = definedExternally
 }
 
 fun box(): String {

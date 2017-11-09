@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kotlin-project</artifactId>
         <groupId>org.jetbrains.kotlin</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -41,7 +41,7 @@
                         <configuration>
                             <includeScope>compile</includeScope>
                             <includeGroupIds>${project.parent.groupId}</includeGroupIds>
-                            <outputDirectory>${build.outputDirectory}</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <excludes>**/MANIFEST.MF</excludes>
                         </configuration>
                     </execution>

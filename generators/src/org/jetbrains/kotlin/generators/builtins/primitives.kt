@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.generators.builtins.ranges
 
 import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.io.PrintWriter
 
 class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
@@ -26,7 +27,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             "minus" to "Subtracts the other value from this value.",
             "times" to "Multiplies this value by the other value.",
             "div" to "Divides this value by the other value.",
-            "mod" to "Calculates the remainder of dividing this value by the other value."
+            "mod" to "Calculates the remainder of dividing this value by the other value.",
+            "rem" to "Calculates the remainder of dividing this value by the other value."
     )
     private val unaryOperators: Map<String, String> = mapOf(
             "inc" to "Increments this value.",
@@ -65,7 +67,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (kind in PrimitiveType.onlyNumeric) {
             val className = kind.capitalized
             generateDoc(kind)
-            out.println("public class $className private () : Number, Comparable<$className> {")
+            out.println("public class $className private constructor() : Number(), Comparable<$className> {")
 
             out.print("    companion object ")
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {
@@ -95,8 +97,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
          * A constant holding the "not a number" value of $className.
          */
         public val NaN: $className
-    }
-""")
+    }""")
             }
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.SHORT || kind == PrimitiveType.BYTE) {
                 val (minValue, maxValue) = primitiveConstants(kind)
@@ -110,8 +111,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
          * A constant holding the maximum value an instance of $className can have.
          */
         public const val MAX_VALUE: $className = $maxValue
-    }
-""")
+    }""")
             }
 
             generateCompareTo(kind)
@@ -121,10 +121,13 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             generateRangeTo(kind)
 
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG) {
-                generateBitwiseOperators(className)
+                generateBitShiftOperators(className)
+            }
+            if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG /* || kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT */) {
+                generateBitwiseOperators(className, since = if (kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT) "1.1" else null)
             }
 
-            generateConversions(kind)
+            generateConversions()
 
             out.println("}\n")
         }
@@ -139,11 +142,12 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     private fun generateCompareTo(thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.onlyNumeric) {
-            out.println("/**")
-            out.println(" * Compares this value with the specified value for order.")
-            out.println(" * Returns zero if this value is equal to the specified other value, a negative number if its less than other, ")
-            out.println(" * or a positive number if its greater than other.")
-            out.println(" */")
+            out.println("""
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
+     */""")
             out.print("    public ")
             if (otherKind == thisKind) out.print("override ")
             out.println("operator fun compareTo(other: ${otherKind.capitalized}): Int")
@@ -160,7 +164,15 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateOperator(name: String, doc: String, thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.onlyNumeric) {
             val returnType = getOperatorReturnType(thisKind, otherKind)
+
             out.println("    /** $doc */")
+            when (name) {
+                OperatorNameConventions.REM.asString() ->
+                    out.println("    @SinceKotlin(\"1.1\")")
+
+                OperatorNameConventions.MOD.asString() ->
+                    out.println("    @Deprecated(\"Use rem(other) instead\", ReplaceWith(\"rem(other)\"), DeprecationLevel.WARNING)")
+            }
             out.println("    public operator fun $name(other: ${otherKind.capitalized}): ${returnType.capitalized}")
         }
         out.println()
@@ -190,21 +202,25 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         out.println()
     }
 
-    private fun generateBitwiseOperators(className: String) {
+    private fun generateBitShiftOperators(className: String) {
         for ((name, doc) in shiftOperators) {
             out.println("    /** $doc */")
             out.println("    public infix fun $name(bitCount: Int): $className")
         }
+    }
+    private fun generateBitwiseOperators(className: String, since: String?) {
         for ((name, doc) in bitwiseOperators) {
             out.println("    /** $doc */")
+            since?.let { out.println("    @SinceKotlin(\"$it\")") }
             out.println("    public infix fun $name(other: $className): $className")
         }
-        out.println("    /** Inverts the bits in this value/ */")
+        out.println("    /** Inverts the bits in this value. */")
+        since?.let { out.println("    @SinceKotlin(\"$it\")") }
         out.println("    public fun inv(): $className")
         out.println()
     }
 
-    private fun generateConversions(kind: PrimitiveType) {
+    private fun generateConversions() {
         for (otherKind in PrimitiveType.exceptBoolean) {
             val name = otherKind.capitalized
             out.println("    public override fun to$name(): $name")

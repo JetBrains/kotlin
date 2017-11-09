@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,33 +32,31 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils.resolveOverridesForNonStaticMembers
 import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.copyValueParameters
+import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.child
+import org.jetbrains.kotlin.load.java.lazy.childForMethod
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.load.java.typeEnhancement.enhanceSignatures
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.utils.*
-import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 class LazyJavaClassMemberScope(
@@ -83,12 +81,12 @@ class LazyJavaClassMemberScope(
         for (constructor in constructors) {
             val descriptor = resolveConstructor(constructor)
             result.add(descriptor)
-            result.addIfNotNull(c.components.samConversionResolver.resolveSamAdapter(descriptor))
         }
 
-        enhanceSignatures(
-                result.ifEmpty { emptyOrSingletonList(createDefaultConstructor()) }
-        ).toReadOnlyList()
+        c.components.signatureEnhancement.enhanceSignatures(
+                c,
+                result.ifEmpty { listOfNotNull(createDefaultConstructor()) }
+        ).toList()
     }
 
     override fun JavaMethodDescriptor.isVisibleAsFunction(): Boolean {
@@ -192,8 +190,7 @@ class LazyJavaClassMemberScope(
         val overriddenBuiltinProperty = getter?.getOverriddenBuiltinWithDifferentJvmName()
         val specialGetterName = overriddenBuiltinProperty?.getBuiltinSpecialPropertyGetterName()
         if (specialGetterName != null
-                && !this@LazyJavaClassMemberScope.ownerDescriptor.hasRealKotlinSuperClassWithOverrideOf(
-                overriddenBuiltinProperty!!)
+            && !this@LazyJavaClassMemberScope.ownerDescriptor.hasRealKotlinSuperClassWithOverrideOf(overriddenBuiltinProperty)
         ) {
             return findGetterByName(specialGetterName, functions)
         }
@@ -209,7 +206,7 @@ class LazyJavaClassMemberScope(
             descriptor ->
             if (descriptor.valueParameters.size != 0) return@factory null
 
-            descriptor.check { KotlinTypeChecker.DEFAULT.isSubtypeOf(descriptor.returnType ?: return@check false, type) }
+            descriptor.takeIf { KotlinTypeChecker.DEFAULT.isSubtypeOf(descriptor.returnType ?: return@takeIf false, type) }
         }
     }
 
@@ -221,7 +218,7 @@ class LazyJavaClassMemberScope(
             if (descriptor.valueParameters.size != 1) return@factory null
 
             if (!KotlinBuiltIns.isUnit(descriptor.returnType ?: return@factory null)) return@factory null
-            descriptor.check { KotlinTypeChecker.DEFAULT.equalTypes(descriptor.valueParameters.single().type, type) }
+            descriptor.takeIf { KotlinTypeChecker.DEFAULT.equalTypes(descriptor.valueParameters.single().type, type) }
         }
     }
 
@@ -360,7 +357,9 @@ class LazyJavaClassMemberScope(
         }?.let {
             override ->
             override.newCopyBuilder().apply {
-                setValueParameters(copyValueParameters(overridden.valueParameters.map { it.type }, override.valueParameters, overridden))
+                setValueParameters(copyValueParameters(
+                        overridden.valueParameters.map { ValueParameterData(it.type, it.hasDefaultValue()) },
+                        override.valueParameters, overridden))
                 setSignatureChange()
                 setPreserveSourceElement()
             }.build()
@@ -426,7 +425,7 @@ class LazyJavaClassMemberScope(
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
         propertyDescriptor.initialize(getter, null)
 
-        val returnType = givenType ?: computeMethodReturnType(method, annotations, c.child(propertyDescriptor, method))
+        val returnType = givenType ?: computeMethodReturnType(method, c.childForMethod(propertyDescriptor, method))
         propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
         getter.initialize(returnType)
 
@@ -447,7 +446,7 @@ class LazyJavaClassMemberScope(
                     null
 
         assert(setterMethod?.let { it.modality == getterMethod.modality } ?: true) {
-            "Different accessors modalities when creating overrides for $overriddenProperty in ${ownerDescriptor}" +
+            "Different accessors modalities when creating overrides for $overriddenProperty in $ownerDescriptor" +
             "for getter is ${getterMethod.modality}, but for setter is ${setterMethod?.modality}"
         }
 
@@ -513,7 +512,7 @@ class LazyJavaClassMemberScope(
         )
 
 
-        val c = c.child(constructorDescriptor, constructor, typeParametersIndexOffset = classDescriptor.declaredTypeParameters.size)
+        val c = c.childForMethod(constructorDescriptor, constructor, typeParametersIndexOffset = classDescriptor.declaredTypeParameters.size)
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.valueParameters)
         val constructorTypeParameters =
                 classDescriptor.declaredTypeParameters +
@@ -562,7 +561,7 @@ class LazyJavaClassMemberScope(
         val methods = jClass.methods
         val result = ArrayList<ValueParameterDescriptor>(methods.size)
 
-        val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false, isForAnnotationParameter = true)
+        val attr = TypeUsage.COMMON.toAttributes(isForAnnotationParameter = true)
 
         val (methodsNamedValue, otherMethods) = methods.
                 partition { it.name == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME }
@@ -608,7 +607,6 @@ class LazyJavaClassMemberScope(
                 method.hasAnnotationParameterDefaultValue,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,
-                /* isCoroutine = */ false,
                 // Nulls are not allowed in annotation arguments in Java
                 varargElementType?.let { TypeUtils.makeNotNullable(it) },
                 c.components.sourceElementFactory.source(method)
@@ -616,7 +614,7 @@ class LazyJavaClassMemberScope(
     }
 
     private val nestedClassIndex = c.storageManager.createLazyValue {
-        jClass.innerClasses.associateBy { c -> c.name }
+        jClass.innerClassNames.toSet()
     }
 
     private val enumEntryIndex = c.storageManager.createLazyValue {
@@ -625,8 +623,7 @@ class LazyJavaClassMemberScope(
 
     private val nestedClasses = c.storageManager.createMemoizedFunctionWithNullableValues {
         name: Name ->
-        val jNestedClass = nestedClassIndex()[name]
-        if (jNestedClass == null) {
+        if (name !in nestedClassIndex()) {
             val field = enumEntryIndex()[name]
             if (field != null) {
                 val enumMemberNames: NotNullLazyValue<Set<Name>> = c.storageManager.createLazyValue {
@@ -640,7 +637,9 @@ class LazyJavaClassMemberScope(
             else null
         }
         else {
-            LazyJavaClassDescriptor(c, ownerDescriptor, jNestedClass)
+            c.components.finder.findClass(ownerDescriptor.classId!!.createNestedClassId(name))?.let {
+                LazyJavaClassDescriptor(c, ownerDescriptor, it)
+            }
         }
     }
 
@@ -663,7 +662,7 @@ class LazyJavaClassMemberScope(
     }
 
     override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
-            = nestedClassIndex().keys + enumEntryIndex().keys
+            = nestedClassIndex() + enumEntryIndex().keys
 
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
         if (jClass.isAnnotationType) return getFunctionNames()
@@ -673,8 +672,8 @@ class LazyJavaClassMemberScope(
         }
     }
 
-    private fun recordLookup(name: Name, from: LookupLocation) {
-        c.components.lookupTracker.record(from, ownerDescriptor, name)
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        c.components.lookupTracker.record(location, ownerDescriptor, name)
     }
 
     override fun toString() = "Lazy Java member scope for " + jClass.fqName

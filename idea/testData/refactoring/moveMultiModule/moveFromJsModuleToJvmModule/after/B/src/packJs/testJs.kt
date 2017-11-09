@@ -1,0 +1,3 @@
+package packJs
+
+class Foo

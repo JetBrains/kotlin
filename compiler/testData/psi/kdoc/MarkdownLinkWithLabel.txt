@@ -1,4 +1,4 @@
-JetFile: MarkdownLinkWithLabel.kt
+KtFile: MarkdownLinkWithLabel.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

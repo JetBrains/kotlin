@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.script;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,13 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScriptConfigurationNavigationTestGenerated extends AbstractScriptConfigurationNavigationTest {
     public void testAllFilesPresentInNavigation() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/navigation"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/navigation"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+    }
+
+    @TestMetadata("conflictingModule")
+    public void testConflictingModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/conflictingModule/");
+        doTest(fileName);
     }
 
     @TestMetadata("customBaseClass")
@@ -50,6 +57,18 @@ public class ScriptConfigurationNavigationTestGenerated extends AbstractScriptCo
     @TestMetadata("javaLibWithSources")
     public void testJavaLibWithSources() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/javaLibWithSources/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlinLib")
+    public void testKotlinLib() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/kotlinLib/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlinLibWithSources")
+    public void testKotlinLibWithSources() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/kotlinLibWithSources/");
         doTest(fileName);
     }
 

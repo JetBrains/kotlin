@@ -53,14 +53,6 @@ public interface KFunction<out R> : KCallable<R>, Function<R> {
     public val isInfix: Boolean
 
     /**
-     * `true` if this function is `tailrec`.
-     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/functions.html#tail-recursive-functions)
-     * for more information.
-     */
-    @SinceKotlin("1.1")
-    public val isTailrec: Boolean
-
-    /**
      * `true` if this is a suspending function.
      */
     @SinceKotlin("1.1")

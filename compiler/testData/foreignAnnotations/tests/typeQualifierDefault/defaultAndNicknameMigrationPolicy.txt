@@ -1,0 +1,35 @@
+package
+
+public fun main(/*0*/ default: PolicyFromDefault, /*1*/ nickname: PolicyFromNickname): kotlin.Unit
+
+@kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @MyNonnull @kotlin.annotations.jvm.UnderMigration(status = MigrationStatus.STRICT) @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD}) public final annotation class MigrationNonNullApi : kotlin.Annotation {
+    public constructor MigrationNonNullApi()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @MyNonnull @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD}) public final annotation class NonNullApi : kotlin.Annotation {
+    public constructor NonNullApi()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@NonNullApi public open class PolicyFromDefault {
+    public constructor PolicyFromDefault()
+    public final var bar: kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ x: kotlin.String!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@MigrationNonNullApi public open class PolicyFromNickname {
+    public constructor PolicyFromNickname()
+    public final var bar: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ x: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

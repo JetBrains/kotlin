@@ -20,17 +20,16 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Trinity;
 import gnu.trove.TObjectIntHashMap;
 import gnu.trove.TObjectIntIterator;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class FrameMap {
-    private final TObjectIntHashMap<DeclarationDescriptor> myVarIndex = new TObjectIntHashMap<DeclarationDescriptor>();
-    private final TObjectIntHashMap<DeclarationDescriptor> myVarSizes = new TObjectIntHashMap<DeclarationDescriptor>();
+    private final TObjectIntHashMap<DeclarationDescriptor> myVarIndex = new TObjectIntHashMap<>();
+    private final TObjectIntHashMap<DeclarationDescriptor> myVarSizes = new TObjectIntHashMap<>();
     private int myMaxIndex = 0;
 
     public int enter(DeclarationDescriptor descriptor, Type type) {
@@ -82,7 +81,7 @@ public class FrameMap {
         }
 
         public void dropTo() {
-            List<DeclarationDescriptor> descriptorsToDrop = new ArrayList<DeclarationDescriptor>();
+            List<DeclarationDescriptor> descriptorsToDrop = new ArrayList<>();
             TObjectIntIterator<DeclarationDescriptor> iterator = myVarIndex.iterator();
             while (iterator.hasNext()) {
                 iterator.advance();
@@ -115,15 +114,7 @@ public class FrameMap {
             descriptors.add(Trinity.create(descriptor, varIndex, varSize));
         }
 
-        Collections.sort(descriptors, new Comparator<Trinity<DeclarationDescriptor, Integer, Integer>>() {
-            @Override
-            public int compare(
-                    Trinity<DeclarationDescriptor, Integer, Integer> left,
-                    Trinity<DeclarationDescriptor, Integer, Integer> right
-            ) {
-                return left.second - right.second;
-            }
-        });
+        descriptors.sort(Comparator.comparingInt(left -> left.second));
 
         sb.append("size=").append(myMaxIndex);
 

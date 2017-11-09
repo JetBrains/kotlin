@@ -1,0 +1,10 @@
+// "Create enum 'Foo'" "true"
+ class Test{
+    fun doSth(){
+        Foo::class.java
+    }
+}
+
+<caret>enum class Foo {
+
+}

@@ -1,4 +1,3 @@
-// this package referenced from testArrayScriptTest
 package test.collections.js
 
 fun testSize(): Int {

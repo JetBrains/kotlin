@@ -60,7 +60,7 @@ public class ForLoopConventionsChecker {
         // Make a fake call loopRange.iterator(), and try to resolve it
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = fakeCallResolver.resolveFakeCall(
                 context, loopRange, OperatorNameConventions.ITERATOR, loopRangeExpression,
-                loopRangeExpression, FakeCallKind.ITERATOR, Collections.<KtExpression>emptyList()
+                loopRangeExpression, FakeCallKind.ITERATOR, Collections.emptyList()
         );
         if (!iteratorResolutionResults.isSuccess()) return null;
 
@@ -108,7 +108,7 @@ public class ForLoopConventionsChecker {
     ) {
         OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = fakeCallResolver.resolveFakeCall(
                 context, new TransientReceiver(iteratorType), name, loopRangeExpression, loopRangeExpression, FakeCallKind.OTHER,
-                Collections.<KtExpression>emptyList()
+                Collections.emptyList()
         );
         if (nextResolutionResults.isAmbiguity()) {
             context.trace.report(ambiguity.on(loopRangeExpression, iteratorType));

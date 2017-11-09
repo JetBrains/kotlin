@@ -43,7 +43,7 @@ public class KotlinParser implements PsiParser {
     @NotNull
     public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder, PsiFile psiFile) {
         KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
-        if (scriptDefinitionProvider != null && scriptDefinitionProvider.isScript(psiFile)
+        if (scriptDefinitionProvider != null && scriptDefinitionProvider.isScript(psiFile.getName())
             || psiFile.getName().endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)) {
             ktParsing.parseScript();
         }

@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
 
 class KotlinMemberInfo @JvmOverloads constructor(
         member: KtNamedDeclaration,
@@ -44,7 +43,7 @@ class KotlinMemberInfo @JvmOverloads constructor(
 ) : MemberInfoBase<KtNamedDeclaration>(member) {
     companion object {
         private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
-            modifiers = DescriptorRendererModifier.INNER.singletonOrEmptySet()
+            modifiers = setOf(DescriptorRendererModifier.INNER)
         }
     }
 

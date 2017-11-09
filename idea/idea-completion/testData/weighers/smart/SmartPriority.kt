@@ -17,7 +17,12 @@ class C {
 // ORDER: this
 // ORDER: local
 // ORDER: nonNullable
+// ORDER: also
 // ORDER: apply
 // ORDER: nullableX
 // ORDER: nullableX
+// ORDER: takeIf
+// ORDER: takeIf
+// ORDER: takeUnless
+// ORDER: takeUnless
 // ORDER: C

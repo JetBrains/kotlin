@@ -20,87 +20,187 @@ import com.intellij.core.CoreJavaFileManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiClassOwner
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiPackage
+import com.intellij.psi.*
 import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
+import gnu.trove.THashMap
+import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
+import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.isNotTopLevelClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceCounter
-import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
-import kotlin.properties.Delegates
 
+// TODO: do not inherit from CoreJavaFileManager to avoid accidental usage of its methods which do not use caches/indices
+// Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
+// which is indirectly invoked from PsiPackage.getSubPackages
 class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
     private val perfCounter = PerformanceCounter.create("Find Java class")
-    private var index: JvmDependenciesIndex by Delegates.notNull()
+    private lateinit var index: JvmDependenciesIndex
+    private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
+    private lateinit var packagePartProviders: List<JvmPackagePartProvider>
+    private val topLevelClassesCache: MutableMap<FqName, VirtualFile?> = THashMap()
     private val allScope = GlobalSearchScope.allScope(myPsiManager.project)
+    private var useFastClassFilesReading = false
 
-    fun initIndex(packagesCache: JvmDependenciesIndex) {
-        this.index = packagesCache
+    fun initialize(
+            index: JvmDependenciesIndex,
+            packagePartProviders: List<JvmPackagePartProvider>,
+            singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
+            useFastClassFilesReading: Boolean
+    ) {
+        this.index = index
+        this.packagePartProviders = packagePartProviders
+        this.singleJavaFileRootsIndex = singleJavaFileRootsIndex
+        this.useFastClassFilesReading = useFastClassFilesReading
     }
 
-    override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
-        return perfCounter.time {
-            val classNameWithInnerClasses = classId.relativeClassName.asString()
+    private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? = perfCounter.time {
+        findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
+    }
+
+    private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
+        val relativeClassName = classId.relativeClassName.asString()
+        return topLevelClassesCache.getOrPut(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
             index.findClass(classId) { dir, type ->
-                findClassGivenPackage(allScope, dir, classNameWithInnerClasses, type)
-            }?.check { it.containingFile.virtualFile in searchScope }
+                findVirtualFileGivenPackage(dir, relativeClassName, type)
+            }
+            ?: singleJavaFileRootsIndex.findJavaSourceClass(classId)
+        }?.takeIf { it in searchScope }
+    }
+
+    private val binaryCache: MutableMap<ClassId, JavaClass?> = THashMap()
+    private val signatureParsingComponent =
+            BinaryClassSignatureParser()
+
+    override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): JavaClass? {
+        val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
+
+        if (useFastClassFilesReading && virtualFile.extension == "class") {
+            // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class
+            return binaryCache.getOrPut(classId) {
+                // Note that currently we implicitly suppose that searchScope for binary classes is constant and we do not use it
+                // as a key in cache
+                // This is a true assumption by now since there are two search scopes in compiler: one for sources and another one for binary
+                // When it become wrong because we introduce the modules into CLI, it's worth to consider
+                // having different KotlinCliJavaFileManagerImpl's for different modules
+                val classContent = virtualFile.contentsToByteArray()
+                if (virtualFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContent)) return@getOrPut null
+                classId.outerClassId?.let { outerClassId ->
+                    val outerClass = findClass(outerClassId, searchScope)
+                    return@getOrPut outerClass?.findInnerClass(classId.shortClassName)
+                }
+
+                val resolver = ClassifierResolutionContext { findClass(it, allScope) }
+
+                BinaryJavaClass(
+                        virtualFile,
+                        classId.asSingleFqName(),
+                        resolver,
+                        signatureParsingComponent,
+                        outerClass = null,
+                        classContent = classContent
+                )
+            }
+        }
+
+        return virtualFile.findPsiClassInVirtualFile(classId.relativeClassName.asString())?.let(::JavaClassImpl)
+    }
+
+    // this method is called from IDEA to resolve dependencies in Java code
+    // which supposedly shouldn't have errors so the dependencies exist in general
+    override fun findClass(qName: String, scope: GlobalSearchScope): PsiClass? {
+        // String cannot be reliably converted to ClassId because we don't know where the package name ends and class names begin.
+        // For example, if qName is "a.b.c.d.e", we should either look for a top level class "e" in the package "a.b.c.d",
+        // or, for example, for a nested class with the relative qualified name "c.d.e" in the package "a.b".
+        // Below, we start by looking for the top level class "e" in the package "a.b.c.d" first, then for the class "d.e" in the package
+        // "a.b.c", and so on, until we find something. Most classes are top level, so most of the times the search ends quickly
+
+        forEachClassId(qName) { classId ->
+            findPsiClass(classId, scope)?.let { return it }
+        }
+
+        return null
+    }
+
+    private inline fun forEachClassId(fqName: String, block: (ClassId) -> Unit) {
+        var classId = fqName.toSafeTopLevelClassId() ?: return
+
+        while (true) {
+            block(classId)
+
+            val packageFqName = classId.packageFqName
+            if (packageFqName.isRoot) break
+
+            classId = ClassId(
+                    packageFqName.parent(),
+                    FqName(packageFqName.shortName().asString() + "." + classId.relativeClassName.asString()),
+                    false
+            )
         }
     }
 
-    override fun findClass(qName: String, scope: GlobalSearchScope): PsiClass? {
-        // this method is called from IDEA to resolve dependencies in Java code
-        // which supposedly shouldn't have errors so the dependencies exist in general
-        // Most classes are top level classes so we will try to find them fast
-        // but we must sometimes fallback to support finding inner/nested classes
-        return qName.toSafeTopLevelClassId()?.let { classId -> findClass(classId, scope) } ?: super.findClass(qName, scope)
-    }
-
-    override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> {
-        return perfCounter.time {
-            val classIdAsTopLevelClass = qName.toSafeTopLevelClassId() ?: return@time super.findClasses(qName, scope)
-
-            val result = ArrayList<PsiClass>()
-            val classNameWithInnerClasses = classIdAsTopLevelClass.relativeClassName.asString()
-            index.traverseDirectoriesInPackage(classIdAsTopLevelClass.packageFqName) { dir, rootType ->
-                val psiClass = findClassGivenPackage(scope, dir, classNameWithInnerClasses, rootType)
+    override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> = perfCounter.time {
+        val result = ArrayList<PsiClass>(1)
+        forEachClassId(qName) { classId ->
+            val relativeClassName = classId.relativeClassName.asString()
+            index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
+                val psiClass =
+                        findVirtualFileGivenPackage(dir, relativeClassName, rootType)
+                            ?.takeIf { it in scope }
+                            ?.findPsiClassInVirtualFile(relativeClassName)
                 if (psiClass != null) {
                     result.add(psiClass)
                 }
                 // traverse all
                 true
             }
-            if (result.isEmpty()) {
-                super.findClasses(qName, scope)
-            }
-            else {
-                result.toTypedArray()
+
+            result.addIfNotNull(
+                    singleJavaFileRootsIndex.findJavaSourceClass(classId)
+                            ?.takeIf { it in scope }
+                            ?.findPsiClassInVirtualFile(relativeClassName)
+            )
+
+            if (result.isNotEmpty()) {
+                return@time result.toTypedArray()
             }
         }
+
+        PsiClass.EMPTY_ARRAY
     }
 
     override fun findPackage(packageName: String): PsiPackage? {
         var found = false
         val packageFqName = packageName.toSafeFqName() ?: return null
-        index.traverseDirectoriesInPackage(packageFqName) { dir, rootType ->
+        index.traverseDirectoriesInPackage(packageFqName) { _, _ ->
             found = true
             //abort on first found
             false
         }
-        if (found) {
-            return PsiPackageImpl(myPsiManager, packageName)
+        if (!found) {
+            found = packagePartProviders.any { it.findPackageParts(packageName).isNotEmpty() }
         }
-        return null
+        if (!found) {
+            found = singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName).isNotEmpty()
+        }
+        return if (found) PsiPackageImpl(myPsiManager, packageName) else null
     }
 
-    private fun findClassGivenPackage(
-            scope: GlobalSearchScope, packageDir: VirtualFile,
-            classNameWithInnerClasses: String, rootType: JavaRoot.RootType
-    ): PsiClass? {
+    private fun findVirtualFileGivenPackage(
+            packageDir: VirtualFile,
+            classNameWithInnerClasses: String,
+            rootType: JavaRoot.RootType
+    ): VirtualFile? {
         val topLevelClassName = classNameWithInnerClasses.substringBefore('.')
 
         val vFile = when (rootType) {
@@ -112,15 +212,45 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             LOG.error("Invalid child of valid parent: ${vFile.path}; ${packageDir.isValid} path=${packageDir.path}")
             return null
         }
-        if (vFile !in scope) {
-            return null
-        }
 
-        val file = myPsiManager.findFile(vFile) as? PsiClassOwner ?: return null
+        return vFile
+    }
+
+    private fun VirtualFile.findPsiClassInVirtualFile(
+            classNameWithInnerClasses: String
+    ): PsiClass? {
+        val file = myPsiManager.findFile(this) as? PsiClassOwner ?: return null
         return findClassInPsiFile(classNameWithInnerClasses, file)
     }
 
-    override fun knownClassNamesInPackage(packageFqName: FqName) = index.collectKnownClassNamesInPackage(packageFqName)
+    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
+        val result = hashSetOf<String>()
+        index.traverseDirectoriesInPackage(packageFqName, continueSearch = {
+            dir, _ ->
+
+            for (child in dir.children) {
+                if (child.extension == "class" || child.extension == "java") {
+                    result.add(child.nameWithoutExtension)
+                }
+            }
+
+            true
+        })
+
+        for (classId in singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName)) {
+            assert(!classId.isNestedClass) { "ClassId of a single .java source class should not be nested: $classId" }
+            result.add(classId.shortClassName.asString())
+        }
+
+        return result
+    }
+
+    override fun findModules(moduleName: String, scope: GlobalSearchScope): Collection<PsiJavaModule> {
+        // TODO
+        return emptySet()
+    }
+
+    override fun getNonTrivialPackagePrefixes(): Collection<String> = emptyList()
 
     companion object {
         private val LOG = Logger.getInstance(KotlinCliJavaFileManagerImpl::class.java)
@@ -147,10 +277,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             var curClass = topLevelClass
             while (segments.hasNext()) {
                 val innerClassName = segments.next()
-                val innerClass = curClass.findInnerClassByName(innerClassName, false)
-                if (innerClass == null) {
-                    return null
-                }
+                val innerClass = curClass.findInnerClassByName(innerClassName, false) ?: return null
                 curClass = innerClass
             }
             return curClass

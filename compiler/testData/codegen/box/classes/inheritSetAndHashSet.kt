@@ -1,4 +1,4 @@
-import java.util.HashSet
+// IGNORE_BACKEND: NATIVE
 
 interface A : Set<String>
 

@@ -18,6 +18,6 @@ public class MyFragment2 : Fragment() {
 
 }
 
-// 2 public onDestroyView\(\)V
+// 0 public onDestroyView\(\)V
 // 1 INVOKEVIRTUAL test/MyFragment\._\$_clearFindViewByIdCache
 // 1 INVOKEVIRTUAL test/MyFragment2\._\$_clearFindViewByIdCache

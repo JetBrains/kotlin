@@ -17,27 +17,26 @@
 package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
-import com.android.tools.klint.client.api.UastLintUtils;
+import com.android.annotations.Nullable;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
+import com.intellij.psi.PsiMethod;
 
-import java.io.File;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
+import org.jetbrains.uast.visitor.UastVisitor;
+
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.AbstractUastVisitor;
-
 /** Detector looking for Toast.makeText() without a corresponding show() call */
-public class ToastDetector extends Detector implements UastScanner {
+public class ToastDetector extends Detector implements Detector.UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "ShowToast", //$NON-NLS-1$
@@ -51,111 +50,99 @@ public class ToastDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     ToastDetector.class,
-                    Scope.SOURCE_FILE_SCOPE));
+                    Scope.JAVA_FILE_SCOPE));
 
 
     /** Constructs a new {@link ToastDetector} check */
     public ToastDetector() {
     }
 
-    @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return true;
-    }
-
-
     // ---- Implements UastScanner ----
 
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList("makeText"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        assert "makeText".equals(node.getFunctionName());
-
-        UElement qualifiedExpression = node.getParent();
-        if (!(qualifiedExpression instanceof UQualifiedExpression)) {
-            return;
-        }
-
-        if (!UastUtils.endsWithQualified(((UQualifiedExpression) qualifiedExpression).getReceiver(), "Toast")) {
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression call, @NonNull UMethod uMethod) {
+        PsiMethod method = uMethod.getPsi();
+        
+        if (!JavaEvaluator.isMemberInClass(method, "android.widget.Toast")) {
             return;
         }
 
         // Make sure you pass the right kind of duration: it's not a delay, it's
         //  LENGTH_SHORT or LENGTH_LONG
         // (see http://code.google.com/p/android/issues/detail?id=3655)
-        List<UExpression> args = node.getValueArguments();
+        List<UExpression> args = call.getValueArguments();
         if (args.size() == 3) {
             UExpression duration = args.get(2);
-            if (duration instanceof ULiteralExpression && ((ULiteralExpression)duration).getValue() instanceof Number) {
-                context.report(ISSUE, duration, context.getLocation(duration),
-                               "Expected duration `Toast.LENGTH_SHORT` or `Toast.LENGTH_LONG`, a custom " +
-                               "duration value is not supported");
+            if (duration instanceof ULiteralExpression) {
+                context.report(ISSUE, duration, context.getUastLocation(duration),
+                        "Expected duration `Toast.LENGTH_SHORT` or `Toast.LENGTH_LONG`, a custom " +
+                                "duration value is not supported");
             }
         }
+        
+        UElement surroundingDeclaration = UastUtils.getParentOfType(
+                call, true,
+                UMethod.class, UBlockExpression.class, ULambdaExpression.class);
 
-        UFunction method = UastUtils.getContainingFunction(node.getParent());
-        if (method == null) {
+        if (surroundingDeclaration == null) {
             return;
         }
 
-        UExpression nodeWithPossibleQualifier = UastUtils.getQualifiedCallElement(node);
-        ShowFinder finder = new ShowFinder(nodeWithPossibleQualifier);
-        method.accept(finder);
+        ShowFinder finder = new ShowFinder(call);
+        surroundingDeclaration.accept(finder);
         if (!finder.isShowCalled()) {
-            context.report(ISSUE, node, context.getLocation(node),
+            context.report(ISSUE, call, context.getUastNameLocation(call),
                            "Toast created but not shown: did you forget to call `show()` ?");
         }
+
     }
 
     private static class ShowFinder extends AbstractUastVisitor {
         /** The target makeText call */
-        private final UExpression mTarget;
+        private final UCallExpression mTarget;
         /** Whether we've found the show method */
         private boolean mFound;
         /** Whether we've seen the target makeText node yet */
         private boolean mSeenTarget;
 
-        private ShowFinder(UExpression target) {
+        private ShowFinder(UCallExpression target) {
             mTarget = target;
         }
 
         @Override
-        public boolean visitCallExpression(@NotNull UCallExpression node) {
+        public boolean visitCallExpression(UCallExpression node) {
             if (node.equals(mTarget)) {
                 mSeenTarget = true;
-            } else if (mSeenTarget && node.matchesFunctionName("show")) { //$NON-NLS-1$
-                // TODO: Do more flow analysis to see whether we're really calling show
-                // on the right type of object?
-                mFound = true;
+            } else {
+                if ((mSeenTarget || mTarget.equals(node.getReceiver()))
+                    && "show".equals(node.getMethodName())) {
+                    // TODO: Do more flow analysis to see whether we're really calling show
+                    // on the right type of object?
+                    mFound = true;
+                }
             }
 
             return super.visitCallExpression(node);
         }
 
         @Override
-        public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
-            if (node == mTarget) {
-                mSeenTarget = true;
-            }
-
-            return super.visitQualifiedExpression(node);
-        }
-
-        @Override
-        public boolean visitReturnExpression(@NotNull UReturnExpression node) {
-            if (UastLintUtils.isChildOfExpression(mTarget, node.getReturnExpression())) {
+        public boolean visitReturnExpression(UReturnExpression node) {
+            if (UastUtils.isChildOf(mTarget, node.getReturnExpression(), true)) {
+                // If you just do "return Toast.makeText(...) don't warn
                 mFound = true;
             }
 
             return super.visitReturnExpression(node);
         }
 
-        boolean isShowCalled() {
-            return mFound && mSeenTarget;
+        private boolean isShowCalled() {
+            return mFound;
         }
     }
 }

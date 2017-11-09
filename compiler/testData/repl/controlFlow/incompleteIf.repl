@@ -1,0 +1,6 @@
+>>> if (false) 42
+>>> if (true) 42
+>>> "" + (if (true) 42)
+error: 'if' must have both main and 'else' branches if used as an expression
+"" + (if (true) 42)
+      ^

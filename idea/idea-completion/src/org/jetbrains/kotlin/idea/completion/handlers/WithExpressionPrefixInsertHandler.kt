@@ -45,7 +45,7 @@ class WithExpressionPrefixInsertHandler(val prefix: String) : InsertHandler<Look
             var parent = expression.getParent()
             if (parent is KtCallExpression && expression == parent.calleeExpression) {
                 expression = parent
-                parent = parent.getParent()
+                parent = parent.parent
             }
             if (parent is KtDotQualifiedExpression && expression == parent.selectorExpression) {
                 expression = parent

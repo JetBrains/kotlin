@@ -5,7 +5,7 @@ public fun foo(/*0*/ s: kotlin.String): kotlin.Unit
 public fun get(/*0*/ p: kotlin.Any): kotlin.Unit
 public fun set(/*0*/ p: kotlin.Any): kotlin.Unit
 public fun kotlin.Any.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>): kotlin.String
-public fun kotlin.Any.propertyDelegated(/*0*/ prop: kotlin.reflect.KProperty<*>): kotlin.Unit
+public fun kotlin.Any.provideDelegate(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>): kotlin.Unit
 public fun kotlin.Any.setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>, /*2*/ value: kotlin.String): kotlin.Unit
 
 public final class C {

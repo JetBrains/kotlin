@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.calls.inference.CallHandle;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl;
-import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
@@ -38,11 +37,11 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getB
 public class TypeIntersector {
 
     public static boolean isIntersectionEmpty(@NotNull KotlinType typeA, @NotNull KotlinType typeB) {
-        return intersectTypes(KotlinTypeChecker.DEFAULT, new LinkedHashSet<KotlinType>(Arrays.asList(typeA, typeB))) == null;
+        return intersectTypes(new LinkedHashSet<>(Arrays.asList(typeA, typeB))) == null;
     }
 
     @Nullable
-    public static KotlinType intersectTypes(@NotNull KotlinTypeChecker typeChecker, @NotNull Collection<KotlinType> types) {
+    public static KotlinType intersectTypes(@NotNull Collection<KotlinType> types) {
         assert !types.isEmpty() : "Attempting to intersect empty collection of types, this case should be dealt with on the call site.";
 
         if (types.size() == 1) {
@@ -53,9 +52,9 @@ public class TypeIntersector {
         //   made nullable is they all were nullable
         KotlinType nothingOrNullableNothing = null;
         boolean allNullable = true;
-        List<KotlinType> nullabilityStripped = new ArrayList<KotlinType>(types.size());
+        List<KotlinType> nullabilityStripped = new ArrayList<>(types.size());
         for (KotlinType type : types) {
-            if (type.isError()) continue;
+            if (KotlinTypeKt.isError(type)) continue;
 
             if (KotlinBuiltIns.isNothingOrNullableNothing(type)) {
                 nothingOrNullableNothing = type;
@@ -73,8 +72,9 @@ public class TypeIntersector {
             return ErrorUtils.createErrorType("Intersection of error types: " + types);
         }
 
+        KotlinTypeChecker typeChecker = KotlinTypeChecker.DEFAULT;
         // Now we remove types that have subtypes in the list
-        List<KotlinType> resultingTypes = new ArrayList<KotlinType>();
+        List<KotlinType> resultingTypes = new ArrayList<>();
         outer:
         for (KotlinType type : nullabilityStripped) {
             if (!TypeUtils.canHaveSubtypes(typeChecker, type)) {
@@ -134,10 +134,10 @@ public class TypeIntersector {
 
         IntersectionTypeConstructor constructor = new IntersectionTypeConstructor(resultingTypes);
 
-        return KotlinTypeFactory.simpleType(
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 Annotations.Companion.getEMPTY(),
                 constructor,
-                Collections.<TypeProjection>emptyList(),
+                Collections.emptyList(),
                 allNullable,
                 constructor.createScopeForKotlinType()
         );
@@ -152,7 +152,7 @@ public class TypeIntersector {
     public static KotlinType getUpperBoundsAsType(@NotNull TypeParameterDescriptor descriptor) {
         List<KotlinType> upperBounds = descriptor.getUpperBounds();
         assert !upperBounds.isEmpty() : "Upper bound list is empty: " + descriptor;
-        KotlinType upperBoundsAsType = intersectTypes(KotlinTypeChecker.DEFAULT, upperBounds);
+        KotlinType upperBoundsAsType = intersectTypes(upperBounds);
         return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(descriptor).getNothingType();
     }
 
@@ -173,21 +173,18 @@ public class TypeIntersector {
 
         private static boolean unify(KotlinType withParameters, KotlinType expected) {
             // T -> how T is used
-            final Map<TypeParameterDescriptor, Variance> parameters = new HashMap<TypeParameterDescriptor, Variance>();
-            Function1<TypeParameterUsage, Unit> processor = new Function1<TypeParameterUsage, Unit>() {
-                @Override
-                public Unit invoke(TypeParameterUsage parameterUsage) {
-                    Variance howTheTypeIsUsedBefore = parameters.get(parameterUsage.typeParameterDescriptor);
-                    if (howTheTypeIsUsedBefore == null) {
-                        howTheTypeIsUsedBefore = Variance.INVARIANT;
-                    }
-                    parameters.put(parameterUsage.typeParameterDescriptor,
-                                   parameterUsage.howTheTypeParameterIsUsed.superpose(howTheTypeIsUsedBefore));
-                    return Unit.INSTANCE;
+            Map<TypeParameterDescriptor, Variance> parameters = new HashMap<>();
+            Function1<TypeParameterUsage, Unit> processor = parameterUsage -> {
+                Variance howTheTypeIsUsedBefore = parameters.get(parameterUsage.typeParameterDescriptor);
+                if (howTheTypeIsUsedBefore == null) {
+                    howTheTypeIsUsedBefore = Variance.INVARIANT;
                 }
+                parameters.put(parameterUsage.typeParameterDescriptor,
+                               parameterUsage.howTheTypeParameterIsUsed.superpose(howTheTypeIsUsedBefore));
+                return Unit.INSTANCE;
             };
-            processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
-            processAllTypeParameters(expected, Variance.INVARIANT, processor);
+            processAllTypeParameters(withParameters, Variance.INVARIANT, processor, parameters::containsKey);
+            processAllTypeParameters(expected, Variance.INVARIANT, processor, parameters::containsKey);
             ConstraintSystem.Builder constraintSystem = new ConstraintSystemBuilderImpl();
             TypeSubstitutor substitutor = constraintSystem.registerTypeVariables(CallHandle.NONE.INSTANCE, parameters.keySet(), false);
             constraintSystem.addSubtypeConstraint(withParameters, substitutor.substitute(expected, Variance.INVARIANT), SPECIAL.position());
@@ -195,14 +192,25 @@ public class TypeIntersector {
             return constraintSystem.build().getStatus().isSuccessful();
         }
 
-        private static void processAllTypeParameters(KotlinType type, Variance howThisTypeIsUsed, Function1<TypeParameterUsage, Unit> result) {
+        private static void processAllTypeParameters(
+                KotlinType type,
+                Variance howThisTypeIsUsed,
+                Function1<TypeParameterUsage, Unit> result,
+                Function1<TypeParameterDescriptor, Boolean> containsParameter
+        ) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof TypeParameterDescriptor) {
+                if (containsParameter.invoke((TypeParameterDescriptor) descriptor)) return;
+
                 result.invoke(new TypeParameterUsage((TypeParameterDescriptor) descriptor, howThisTypeIsUsed));
+
+                for (KotlinType superType : type.getConstructor().getSupertypes()) {
+                    processAllTypeParameters(superType, howThisTypeIsUsed, result, containsParameter);
+                }
             }
             for (TypeProjection projection : type.getArguments()) {
                 if (projection.isStarProjection()) continue;
-                processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result);
+                processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result, containsParameter);
             }
         }
     }

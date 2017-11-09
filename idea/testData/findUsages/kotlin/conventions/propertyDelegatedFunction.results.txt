@@ -1,1 +1,0 @@
-Property delegation 16 var p: String by Delegate()

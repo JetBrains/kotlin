@@ -1,6 +1,3 @@
-// TARGET_BACKEND: JVM
-// Enable when KT-12566 gets fixed
-
 fun box(): String {
     var log = ""
 

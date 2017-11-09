@@ -1,0 +1,6 @@
+package
+
+package foo {
+    @kotlin.js.JsModule(import = 23) public external fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    @kotlin.js.JsModule public external fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+}

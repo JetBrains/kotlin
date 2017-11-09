@@ -28,6 +28,8 @@ interface ExpressionReceiver :  ReceiverValue {
         private open class ExpressionReceiverImpl(
                 override val expression: KtExpression, type: KotlinType
         ): AbstractReceiverValue(type), ExpressionReceiver {
+            override fun replaceType(newType: KotlinType) = ExpressionReceiverImpl(expression, newType)
+
             override fun toString() = "$type {$expression: ${expression.text}}"
         }
 
@@ -35,13 +37,17 @@ interface ExpressionReceiver :  ReceiverValue {
                 override val classDescriptor: ClassDescriptor,
                 expression: KtExpression,
                 type: KotlinType
-        ) : ExpressionReceiverImpl(expression, type), ThisClassReceiver
+        ) : ExpressionReceiverImpl(expression, type), ThisClassReceiver {
+            override fun replaceType(newType: KotlinType) = ThisExpressionClassReceiver(classDescriptor, expression, newType)
+        }
 
         private class SuperExpressionReceiver(
                 override val thisType: KotlinType,
                 expression: KtExpression,
                 type: KotlinType
-        ) : ExpressionReceiverImpl(expression, type), SuperCallReceiverValue
+        ) : ExpressionReceiverImpl(expression, type), SuperCallReceiverValue {
+            override fun replaceType(newType: KotlinType) = SuperExpressionReceiver(thisType, expression, newType)
+        }
 
         fun create(
                 expression: KtExpression,

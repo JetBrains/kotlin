@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
-import org.jetbrains.kotlin.descriptors.annotations.createUnsafeVarianceAnnotation
 import org.jetbrains.kotlin.types.*
 
-internal class UnsafeVarianceTypeSubstitution(kotlinBuiltIns: KotlinBuiltIns) : TypeSubstitution() {
-    private val unsafeVarianceAnnotations = AnnotationsImpl(listOf(kotlinBuiltIns.createUnsafeVarianceAnnotation()))
+internal class UnsafeVarianceTypeSubstitution(builtIns: KotlinBuiltIns) : TypeSubstitution() {
+    private val unsafeVarianceAnnotations = AnnotationsImpl(listOf(
+            BuiltInAnnotationDescriptor(builtIns, KotlinBuiltIns.FQ_NAMES.unsafeVariance, emptyMap())
+    ))
 
     override fun get(key: KotlinType) = null
 
@@ -32,7 +34,7 @@ internal class UnsafeVarianceTypeSubstitution(kotlinBuiltIns: KotlinBuiltIns) : 
         val unsafeVariancePaths = mutableListOf<List<Int>>()
         IndexedTypeHolder(topLevelType).checkTypePosition(
                 position,
-                { typeParameter, indexedTypeHolder, errorPosition ->
+                { _, indexedTypeHolder, _ ->
                     unsafeVariancePaths.add(indexedTypeHolder.argumentIndices)
                 },
                 customVariance = { null })
@@ -45,7 +47,8 @@ internal class UnsafeVarianceTypeSubstitution(kotlinBuiltIns: KotlinBuiltIns) : 
             is FlexibleType ->
                 KotlinTypeFactory.flexibleType(
                         lowerBound.annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 0)),
-                        upperBound.annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 1)))
+                        upperBound.annotatePartsWithUnsafeVariance(subPathsWithIndex(unsafeVariancePaths, 1))
+                    ).inheritEnhancement(this)
             is SimpleType -> annotatePartsWithUnsafeVariance(unsafeVariancePaths)
         }
     }

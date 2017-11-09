@@ -2,3 +2,14 @@ package
 
 public fun takeJ(/*0*/ j: p.J): kotlin.Unit
 public fun test(): kotlin.Unit
+
+package p {
+
+    public open class J {
+        public constructor J()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun j(): p.J!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

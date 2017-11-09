@@ -28,19 +28,19 @@ fun main(args: Array<String>) {
               "<file-path='$filePathDefault'>")
     }
 
-    var versionStr = args[0]
+    val versionStr = args[0]
 
-    val incrementPartStr = versionStr.takeLastWhile { it.isDigit() }
-    val versionPrefix = versionStr.take(versionStr.length - incrementPartStr.length)
+    val incrementPartStr = versionStr.takeLastWhile(Char::isDigit)
     val incrementPart = incrementPartStr.toInt()
+    val versionPrefix = versionStr.take(versionStr.length - incrementPartStr.length)
 
-    var filePath = args.getOrNull(1) ?: filePathDefault
+    val filePath = args.getOrNull(1) ?: filePathDefault
 
     val result = "${versionPrefix}${incrementPart + 1}"
 
     println("prefix=$versionPrefix incrementPart=$incrementPart result=$result filePath=$filePath")
 
-    File("$filePath").writeText("$result")
+    File(filePath).writeText(result)
 }
 
 main(args)

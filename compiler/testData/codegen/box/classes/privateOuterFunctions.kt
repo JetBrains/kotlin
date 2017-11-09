@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 class C {
     private fun String.ext() : String = ""
     private fun f() {}
@@ -26,6 +27,10 @@ class C {
             f()
         }
     }
+}
+
+interface Runnable {
+    fun run(): Unit
 }
 
 fun box() = C().foo()

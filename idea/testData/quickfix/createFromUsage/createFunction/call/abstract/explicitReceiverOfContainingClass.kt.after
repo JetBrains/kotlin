@@ -1,4 +1,4 @@
-// "Create abstract function 'foo'" "true"
+// "Create abstract function 'A.foo'" "true"
 abstract class A {
     fun bar(b: Boolean) {}
 

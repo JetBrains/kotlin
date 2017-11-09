@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.descriptors.impl
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.TypeSubstitutor
 
 class LazyPackageViewDescriptorImpl(
         override val module: ModuleDescriptorImpl,
@@ -64,8 +62,6 @@ class LazyPackageViewDescriptorImpl(
         result = 31 * result + fqName.hashCode()
         return result
     }
-
-    override fun substitute(substitutor: TypeSubstitutor): DeclarationDescriptor? = this
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R = visitor.visitPackageViewDescriptor(this, data)
 }

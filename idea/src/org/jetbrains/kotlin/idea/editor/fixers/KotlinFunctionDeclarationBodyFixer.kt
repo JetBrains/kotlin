@@ -48,6 +48,7 @@ class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.Fixer<K
             endOffset--
         }
 
-        doc.insertString(endOffset, "{}")
+        // Insert '\n' to force a multiline body, otherwise there will be an empty body on one line and a caret on the next one.
+        doc.insertString(endOffset, "{\n}")
     }
 }

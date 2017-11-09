@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,90 +16,58 @@
 
 package org.jetbrains.kotlin.idea.configuration;
 
-import com.intellij.openapi.application.PathMacros;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.RootPolicy;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.testFramework.PlatformTestCase;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.utils.PathUtil;
+import com.intellij.psi.PsiJavaModule;
+import com.intellij.psi.PsiRequiresStatement;
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
+import org.jetbrains.kotlin.idea.facet.FacetUtilsKt;
+import org.jetbrains.kotlin.idea.facet.KotlinFacet;
+import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
+import org.jetbrains.kotlin.idea.project.PlatformKt;
+import org.jetbrains.kotlin.idea.util.Java9StructureUtilKt;
+import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleKt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.stream.StreamSupport;
 
-import static org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState;
-import static org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.LibraryState;
-
-public class ConfigureKotlinTest extends PlatformTestCase {
-    private static final String BASE_PATH = "idea/testData/configuration/";
-
-    private static final KotlinJavaModuleConfigurator JAVA_CONFIGURATOR = new KotlinJavaModuleConfigurator() {
-        @Override
-        protected String getDefaultPathToJarFile(@NotNull Project project) {
-            return getPathRelativeToTemp("default_jvm_lib");
-        }
-    };
-
-    private static final String TEMP_DIR_MACRO_KEY = "TEMP_TEST_DIR";
-
-    private static final KotlinJsModuleConfigurator JS_CONFIGURATOR = new KotlinJsModuleConfigurator() {
-        @Override
-        protected String getDefaultPathToJarFile(@NotNull Project project) {
-            return getPathRelativeToTemp("default_js_lib");
-        }
-    };
-
-    @Override
-    protected void tearDown() throws Exception {
-        PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY);
-
-        super.tearDown();
-    }
-
-    @Override
-    protected void initApplication() throws Exception {
-        super.initApplication();
-
-        File tempLibDir = FileUtil.createTempDirectory("temp", null);
-        PathMacros.getInstance().setMacro(TEMP_DIR_MACRO_KEY, FileUtilRt.toSystemDependentName(tempLibDir.getAbsolutePath()));
-    }
-
+public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     public void testNewLibrary_copyJar() {
-        doTestOneJavaModule(FileState.COPY, LibraryState.NEW_LIBRARY);
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testNewLibrary_doNotCopyJar() {
-        doTestOneJavaModule(FileState.DO_NOT_COPY, LibraryState.NEW_LIBRARY);
-    }
-
-    public void testLibrary_doNotCopyJar() {
-        try {
-            doTestOneJavaModule(FileState.DO_NOT_COPY, LibraryState.LIBRARY);
-        }
-        catch (IllegalStateException e) {
-            return;
-        }
-        fail("Test should throw IllegalStateException");
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     public void testLibraryWithoutPaths_jarExists() {
-        doTestOneJavaModule(FileState.EXISTS, LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testNewLibrary_jarExists() {
-        doTestOneJavaModule(FileState.EXISTS, LibraryState.NEW_LIBRARY);
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testLibraryWithoutPaths_copyJar() {
-        doTestOneJavaModule(FileState.COPY, LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testLibraryWithoutPaths_doNotCopyJar() {
-        doTestOneJavaModule(FileState.DO_NOT_COPY, LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -107,13 +75,13 @@ public class ConfigureKotlinTest extends PlatformTestCase {
         Module[] modules = getModules();
         for (Module module : modules) {
             if (module.getName().equals("module1")) {
-                configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, LibraryState.NEW_LIBRARY, JAVA_CONFIGURATOR);
-                assertConfigured(module, JAVA_CONFIGURATOR);
+                Companion.configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, Companion.getJAVA_CONFIGURATOR());
+                Companion.assertConfigured(module, Companion.getJAVA_CONFIGURATOR());
             }
             else if (module.getName().equals("module2")) {
-                assertNotConfigured(module, JAVA_CONFIGURATOR);
-                configure(module, FileState.EXISTS, LibraryState.LIBRARY, JAVA_CONFIGURATOR);
-                assertConfigured(module, JAVA_CONFIGURATOR);
+                Companion.assertNotConfigured(module, Companion.getJAVA_CONFIGURATOR());
+                Companion.configure(module, KotlinWithLibraryConfigurator.FileState.EXISTS, Companion.getJAVA_CONFIGURATOR());
+                Companion.assertConfigured(module, Companion.getJAVA_CONFIGURATOR());
             }
         }
     }
@@ -124,220 +92,248 @@ public class ConfigureKotlinTest extends PlatformTestCase {
         // Move fake runtime jar to default library path to pretend library is already configured
         FileUtil.copy(
                 new File(getProject().getBasePath() + "/lib/kotlin-runtime.jar"),
-                new File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(getProject()) + "/kotlin-runtime.jar"));
+                new File(Companion.getJAVA_CONFIGURATOR().getDefaultPathToJarFile(getProject()) + "/kotlin-runtime.jar"));
 
-        assertNotConfigured(module, JAVA_CONFIGURATOR);
-        JAVA_CONFIGURATOR.configure(myProject, Collections.<Module>emptyList());
-        assertProperlyConfigured(module, JAVA_CONFIGURATOR);
+        Companion.assertNotConfigured(module, Companion.getJAVA_CONFIGURATOR());
+        Companion.getJAVA_CONFIGURATOR().configure(myProject, Collections.<Module>emptyList());
+        Companion.assertProperlyConfigured(module, Companion.getJAVA_CONFIGURATOR());
     }
 
     public void testTwoModulesWithNonDefaultPath_doNotCopyInDefault() throws IOException {
-        doTestConfigureModulesWithNonDefaultSetup(JAVA_CONFIGURATOR);
+        doTestConfigureModulesWithNonDefaultSetup(Companion.getJAVA_CONFIGURATOR());
+        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, Companion.getJS_CONFIGURATOR()));
     }
 
     public void testTwoModulesWithJSNonDefaultPath_doNotCopyInDefault() throws IOException {
-        doTestConfigureModulesWithNonDefaultSetup(JS_CONFIGURATOR);
+        doTestConfigureModulesWithNonDefaultSetup(Companion.getJS_CONFIGURATOR());
+        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, Companion.getJAVA_CONFIGURATOR()));
     }
 
     public void testNewLibrary_jarExists_js() {
-        doTestOneJsModule(FileState.EXISTS, LibraryState.NEW_LIBRARY);
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testNewLibrary_copyJar_js() {
-        doTestOneJsModule(FileState.COPY, LibraryState.NEW_LIBRARY);
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testNewLibrary_doNotCopyJar_js() {
-        doTestOneJsModule(FileState.DO_NOT_COPY, LibraryState.NEW_LIBRARY);
-    }
-
-    public void testJsLibrary_doNotCopyJar() {
-        try {
-            doTestOneJsModule(FileState.DO_NOT_COPY, LibraryState.LIBRARY);
-        }
-        catch (IllegalStateException e) {
-            return;
-        }
-        fail("Test should throw IllegalStateException");
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     public void testJsLibraryWithoutPaths_jarExists() {
-        doTestOneJsModule(FileState.EXISTS, LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testJsLibraryWithoutPaths_copyJar() {
-        doTestOneJsModule(FileState.COPY, LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testJsLibraryWithoutPaths_doNotCopyJar() {
-        doTestOneJsModule(FileState.DO_NOT_COPY, LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
-    private void doTestConfigureModulesWithNonDefaultSetup(KotlinWithLibraryConfigurator configurator) {
-        assertNoFilesInDefaultPaths();
-
-        Module[] modules = getModules();
-        for (Module module : modules) {
-            assertNotConfigured(module, configurator);
-        }
-
-        configurator.configure(myProject, Collections.<Module>emptyList());
-
-        assertNoFilesInDefaultPaths();
-
-        for (Module module : modules) {
-            assertProperlyConfigured(module, configurator);
-        }
+    public void testJsLibraryWrongKind() {
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
+        assertEquals(1, ModuleRootManager.getInstance(getModule()).orderEntries().process(new LibraryCountingRootPolicy(), 0).intValue());
     }
 
-    private void doTestOneJavaModule(@NotNull FileState jarState, @NotNull LibraryState libraryState) {
-        doTestOneModule(jarState, libraryState, JAVA_CONFIGURATOR);
+    public void testProjectWithoutFacetWithRuntime106WithoutLanguageLevel() {
+        assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
     }
 
-    private void doTestOneJsModule(@NotNull FileState jarState, @NotNull LibraryState libraryState) {
-        doTestOneModule(jarState, libraryState, JS_CONFIGURATOR);
+    public void testProjectWithoutFacetWithRuntime11WithoutLanguageLevel() {
+        assertEquals(LanguageVersion.LATEST_STABLE, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.LATEST_STABLE, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
     }
 
-    private void doTestOneModule(@NotNull FileState jarState, @NotNull LibraryState libraryState, @NotNull KotlinWithLibraryConfigurator configurator) {
+    public void testProjectWithoutFacetWithRuntime11WithLanguageLevel10() {
+        assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
+    }
+
+    public void testProjectWithFacetWithRuntime11WithLanguageLevel10() {
+        assertEquals(LanguageVersion.LATEST_STABLE, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
+    }
+
+    public void testJsLibraryVersion11() {
+        Library jsRuntime = KotlinRuntimeLibraryUtilKt.findAllUsedLibraries(myProject).keySet().iterator().next();
+        String version = JsLibraryStdDetectionUtil.INSTANCE.getJsLibraryStdVersion(jsRuntime);
+        assertEquals("1.1.0", version);
+    }
+
+    public void testJsLibraryVersion106() {
+        Library jsRuntime = KotlinRuntimeLibraryUtilKt.findAllUsedLibraries(myProject).keySet().iterator().next();
+        String version = JsLibraryStdDetectionUtil.INSTANCE.getJsLibraryStdVersion(jsRuntime);
+        assertEquals("1.0.6", version);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void testJvmProjectWithV1FacetConfig() {
+        KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
+        K2JVMCompilerArguments arguments = (K2JVMCompilerArguments) settings.getCompilerArguments();
+        assertEquals(false, settings.getUseProjectSettings());
+        assertEquals("1.1", settings.getLanguageLevel().getDescription());
+        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(TargetPlatformKind.Jvm.Companion.get(JvmTarget.JVM_1_8), settings.getTargetPlatformKind());
+        assertEquals("1.1", arguments.getLanguageVersion());
+        assertEquals("1.0", arguments.getApiVersion());
+        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, CoroutineSupport.byCompilerArguments(arguments));
+        assertEquals("1.7", arguments.getJvmTarget());
+        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void testJsProjectWithV1FacetConfig() {
+        KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
+        K2JSCompilerArguments arguments = (K2JSCompilerArguments) settings.getCompilerArguments();
+        assertEquals(false, settings.getUseProjectSettings());
+        assertEquals("1.1", settings.getLanguageLevel().getDescription());
+        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(TargetPlatformKind.JavaScript.INSTANCE, settings.getTargetPlatformKind());
+        assertEquals("1.1", arguments.getLanguageVersion());
+        assertEquals("1.0", arguments.getApiVersion());
+        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, CoroutineSupport.byCompilerArguments(arguments));
+        assertEquals("amd", arguments.getModuleKind());
+        assertEquals("-version -meta-info", settings.getCompilerSettings().getAdditionalArguments());
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void testJvmProjectWithV2FacetConfig() {
+        KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
+        K2JVMCompilerArguments arguments = (K2JVMCompilerArguments) settings.getCompilerArguments();
+        assertEquals(false, settings.getUseProjectSettings());
+        assertEquals("1.1", settings.getLanguageLevel().getDescription());
+        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(TargetPlatformKind.Jvm.Companion.get(JvmTarget.JVM_1_8), settings.getTargetPlatformKind());
+        assertEquals("1.1", arguments.getLanguageVersion());
+        assertEquals("1.0", arguments.getApiVersion());
+        assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
+        assertEquals("1.7", arguments.getJvmTarget());
+        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void testJsProjectWithV2FacetConfig() {
+        KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
+        K2JSCompilerArguments arguments = (K2JSCompilerArguments) settings.getCompilerArguments();
+        assertEquals(false, settings.getUseProjectSettings());
+        assertEquals("1.1", settings.getLanguageLevel().getDescription());
+        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(TargetPlatformKind.JavaScript.INSTANCE, settings.getTargetPlatformKind());
+        assertEquals("1.1", arguments.getLanguageVersion());
+        assertEquals("1.0", arguments.getApiVersion());
+        assertEquals(LanguageFeature.State.ENABLED_WITH_ERROR, CoroutineSupport.byCompilerArguments(arguments));
+        assertEquals("amd", arguments.getModuleKind());
+        assertEquals("-version -meta-info", settings.getCompilerSettings().getAdditionalArguments());
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void testJvmProjectWithV3FacetConfig() {
+        KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
+        K2JVMCompilerArguments arguments = (K2JVMCompilerArguments) settings.getCompilerArguments();
+        assertEquals(false, settings.getUseProjectSettings());
+        assertEquals("1.1", settings.getLanguageLevel().getDescription());
+        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(TargetPlatformKind.Jvm.Companion.get(JvmTarget.JVM_1_8), settings.getTargetPlatformKind());
+        assertEquals("1.1", arguments.getLanguageVersion());
+        assertEquals("1.0", arguments.getApiVersion());
+        assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
+        assertEquals("1.7", arguments.getJvmTarget());
+        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
+    }
+
+    public void testImplementsDependency() {
+        ModuleManager moduleManager = ModuleManager.getInstance(myProject);
+
+        Module module1 = moduleManager.findModuleByName("module1");
+        assert module1 != null;
+
+        Module module2 = moduleManager.findModuleByName("module2");
+        assert module2 != null;
+
+        assertEquals(KotlinFacet.Companion.get(module1).getConfiguration().getSettings().getImplementedModuleName(), null);
+        assertEquals(KotlinFacet.Companion.get(module2).getConfiguration().getSettings().getImplementedModuleName(), "module1");
+    }
+
+    public void testJava9WithModuleInfo() {
+        checkAddStdlibModule();
+    }
+
+    public void testJava9WithModuleInfoWithStdlibAlready() {
+        checkAddStdlibModule();
+    }
+
+    public void testProjectWithFreeArgs() {
+        assertEquals(
+                Collections.singletonList("true"),
+                KotlinCommonCompilerArgumentsHolder.Companion.getInstance(myProject).getSettings().getFreeArgs()
+        );
+    }
+
+    private void checkAddStdlibModule() {
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
+
         Module module = getModule();
-        assertEquals("Library state loaded from project files should be " + libraryState, libraryState, configurator.getLibraryState(module.getProject()));
+        Sdk moduleSdk = ModuleRootManager.getInstance(getModule()).getSdk();
+        assertNotNull("Module SDK is not defined", moduleSdk);
 
-        assertNotConfigured(module, configurator);
-        configure(module, jarState, libraryState, configurator);
-        assertProperlyConfigured(module, configurator);
+        PsiJavaModule javaModule = Java9StructureUtilKt.findFirstPsiJavaModule(module);
+        assertNotNull(javaModule);
+
+        PsiRequiresStatement stdlibDirective =
+                Java9StructureUtilKt.findRequireDirective(javaModule, JavaModuleKt.KOTLIN_STDLIB_MODULE_NAME);
+        assertNotNull("Require directive for " + JavaModuleKt.KOTLIN_STDLIB_MODULE_NAME + " is expected",
+                      stdlibDirective);
+
+        long numberOfStdlib = StreamSupport.stream(javaModule.getRequires().spliterator(), false)
+                .filter((statement) -> JavaModuleKt.KOTLIN_STDLIB_MODULE_NAME.equals(statement.getModuleName()))
+                .count();
+
+        assertTrue("Only one standard library directive is expected", numberOfStdlib == 1);
     }
 
-    private static void configure(
-            @NotNull List<Module> modules,
-            @NotNull FileState runtimeState,
-            @NotNull LibraryState libraryState,
-            @NotNull KotlinWithLibraryConfigurator configurator,
-            @NotNull String jarFromDist,
-            @NotNull String jarFromTemp
-    ) {
-        Project project = modules.iterator().next().getProject();
-        NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
-        for (Module module : modules) {
-            String pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp);
-            configurator.configureModuleWithLibraryClasses(module, libraryState, runtimeState, pathToJar, collector);
+    private void configureFacetAndCheckJvm(JvmTarget jvmTarget) {
+        IdeModifiableModelsProviderImpl modelsProvider = new IdeModifiableModelsProviderImpl(getProject());
+        try {
+            KotlinFacet facet = FacetUtilsKt.getOrCreateFacet(getModule(), modelsProvider, false, false);
+            TargetPlatformKind.Jvm platformKind = TargetPlatformKind.Jvm.Companion.get(jvmTarget);
+            FacetUtilsKt.configureFacet(
+                    facet,
+                    "1.1",
+                    LanguageFeature.State.ENABLED,
+                    platformKind,
+                    modelsProvider
+            );
+            assertEquals(platformKind, facet.getConfiguration().getSettings().getTargetPlatformKind());
+            assertEquals(jvmTarget.getDescription(),
+                         ((K2JVMCompilerArguments) facet.getConfiguration().getSettings().getCompilerArguments()).getJvmTarget());
         }
-        collector.showNotification();
-    }
-
-    @NotNull
-    private static String getPathToJar(@NotNull FileState runtimeState, @NotNull String jarFromDist, @NotNull String jarFromTemp) {
-        switch (runtimeState) {
-            case EXISTS:
-                return jarFromDist;
-            case COPY:
-                return jarFromTemp;
-            case DO_NOT_COPY:
-                return jarFromDist;
-        }
-        return jarFromDist;
-    }
-
-    private static void configure(@NotNull Module module, @NotNull FileState jarState, @NotNull LibraryState libraryState, @NotNull KotlinProjectConfigurator configurator) {
-        if (configurator instanceof KotlinJavaModuleConfigurator) {
-            configure(Collections.singletonList(module), jarState, libraryState,
-                      (KotlinWithLibraryConfigurator) configurator,
-                      getPathToExistentRuntimeJar(), getPathToNonexistentRuntimeJar());
-        }
-        if (configurator instanceof KotlinJsModuleConfigurator) {
-            configure(Collections.singletonList(module), jarState, libraryState,
-                      (KotlinWithLibraryConfigurator) configurator,
-                      getPathToExistentJsJar(), getPathToNonexistentJsJar());
+        finally {
+            modelsProvider.dispose();
         }
     }
 
-    private static String getPathToNonexistentRuntimeJar() {
-        String pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.KOTLIN_JAVA_RUNTIME_JAR;
-        myFilesToDelete.add(new File(pathToTempKotlinRuntimeJar));
-        return pathToTempKotlinRuntimeJar;
+    @SuppressWarnings("ConstantConditions")
+    public void testJvm8InProjectJvm6InModule() {
+        configureFacetAndCheckJvm(JvmTarget.JVM_1_6);
     }
 
-    private static String getPathToNonexistentJsJar() {
-        String pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.JS_LIB_JAR_NAME;
-        myFilesToDelete.add(new File(pathToTempKotlinRuntimeJar));
-        return pathToTempKotlinRuntimeJar;
+    @SuppressWarnings("ConstantConditions")
+    public void testJvm6InProjectJvm8InModule() {
+        configureFacetAndCheckJvm(JvmTarget.JVM_1_8);
     }
 
-    private static String getPathToExistentRuntimeJar() {
-        return PathUtil.getKotlinPathsForDistDirectory().getRuntimePath().getParent();
+    public void testProjectWithoutFacetWithJvmTarget18() {
+        assertEquals(TargetPlatformKind.Jvm.Companion.get(JvmTarget.JVM_1_8), PlatformKt.getTargetPlatform(getModule()));
     }
 
-    private static String getPathToExistentJsJar() {
-        return PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().getParent();
-    }
-
-    @Override
-    public Module getModule() {
-        Module[] modules = ModuleManager.getInstance(myProject).getModules();
-        assert modules.length == 1 : "One module should be loaded " + modules.length;
-        myModule = modules[0];
-        return super.getModule();
-    }
-
-    public Module[] getModules() {
-        return ModuleManager.getInstance(myProject).getModules();
-    }
-
-    @Override
-    protected File getIprFile() throws IOException {
-        String projectName = getProjectName();
-        String projectFilePath = BASE_PATH + projectName + "/projectFile.ipr";
-        assertTrue("Project file should exists " + projectFilePath, new File(projectFilePath).exists());
-        return new File(projectFilePath);
-    }
-
-    @Override
-    protected Project doCreateProject(@NotNull File projectFile) throws Exception {
-        return myProjectManager.loadProject(projectFile.getPath());
-    }
-
-    private String getProjectName() {
-        String testName = getTestName(true);
-        if (testName.contains("_")) {
-            return testName.substring(0, testName.indexOf("_"));
+    private static class LibraryCountingRootPolicy extends RootPolicy<Integer> {
+        @Override
+        public Integer visitLibraryOrderEntry(LibraryOrderEntry libraryOrderEntry, Integer value) {
+            return value + 1;
         }
-        return testName;
-    }
-
-    @Override
-    protected void setUpModule() {
-    }
-
-    private void assertNoFilesInDefaultPaths() {
-        assertDoesntExist(new File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(getProject())));
-        assertDoesntExist(new File(JS_CONFIGURATOR.getDefaultPathToJarFile(getProject())));
-    }
-
-    private static void assertNotConfigured(Module module, KotlinWithLibraryConfigurator configurator) {
-        assertFalse(
-                String.format("Module %s should not be configured as %s Module", module.getName(), configurator.getPresentableText()),
-                configurator.isConfigured(module));
-    }
-
-    private static void assertConfigured(Module module, KotlinWithLibraryConfigurator configurator) {
-        assertTrue(String.format("Module %s should be configured with configurator '%s'", module.getName(),
-                                 configurator.getPresentableText()),
-                   configurator.isConfigured(module));
-    }
-
-    private static void assertProperlyConfigured(Module module, KotlinWithLibraryConfigurator configurator) {
-        assertConfigured(module, configurator);
-        assertNotConfigured(module, getOppositeConfigurator(configurator));
-    }
-
-    private static KotlinWithLibraryConfigurator getOppositeConfigurator(KotlinWithLibraryConfigurator configurator) {
-        if (configurator == JAVA_CONFIGURATOR) return JS_CONFIGURATOR;
-        if (configurator == JS_CONFIGURATOR) return JAVA_CONFIGURATOR;
-
-        throw new IllegalArgumentException("Only JS_CONFIGURATOR and JAVA_CONFIGURATOR are supported");
-    }
-
-    private static String getPathRelativeToTemp(String relativePath) {
-        String tempPath = PathMacros.getInstance().getValue(TEMP_DIR_MACRO_KEY);
-        return tempPath + '/' + relativePath;
     }
 }

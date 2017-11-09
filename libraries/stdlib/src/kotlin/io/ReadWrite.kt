@@ -43,6 +43,7 @@ public fun Reader.readLines(): List<String> {
  * the processing is complete.
  * @return the value returned by [block].
  */
+@RequireKotlin("1.2", versionKind = RequireKotlinVersionKind.COMPILER_VERSION, message = "Requires newer compiler version to be inlined correctly.")
 public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
         buffered().use { block(it.lineSequence()) }
 
@@ -143,26 +144,3 @@ public inline fun URL.readText(charset: Charset = Charsets.UTF_8): String = read
  */
 public fun URL.readBytes(): ByteArray = openStream().use { it.readBytes() }
 
-/**
- * Executes the given [block] function on this resource and then closes it down correctly whether an exception
- * is thrown or not.
- *
- * @param block a function to process this [Closeable] resource.
- * @return the result of [block] function invoked on this resource.
- */
-@kotlin.internal.InlineOnly
-public inline fun <T : Closeable?, R> T.use(block: (T) -> R): R {
-    var closed = false
-    try {
-        return block(this)
-    } catch (e: Throwable) {
-        closed = true
-        @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-        if (this != null) platformCloseSuppressed(this, e)
-        throw e
-    } finally {
-        if (this != null && !closed) {
-            close()
-        }
-    }
-}

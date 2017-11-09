@@ -1,6 +1,5 @@
+// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
-
-import java.util.*
 
 class Itr : Iterator<String> by ArrayList<String>().iterator()
 class MItr : MutableIterator<String> by ArrayList<String>().iterator()
@@ -43,7 +42,7 @@ inline fun <reified T> reifiedAsFailsWithCCE(x: Any, operation: String) {
     try {
         x as T
     }
-    catch (e: java.lang.ClassCastException) {
+    catch (e: ClassCastException) {
         return
     }
     catch (e: Throwable) {

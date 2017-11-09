@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink.DO_NOTHING
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isError
 
 // Checker for all seven EXPOSED_* errors
 // All functions return true if everything is OK, or false in case of any errors
@@ -32,7 +33,7 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         var result = checkSupertypes(klass, classDescriptor)
         result = result and checkParameterBounds(klass, classDescriptor)
 
-        val constructor = klass.getPrimaryConstructor() ?: return result
+        val constructor = klass.primaryConstructor ?: return result
         val constructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return result
         return result and checkFunction(constructor, constructorDescriptor)
     }
@@ -122,7 +123,7 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
     private fun checkSupertypes(klass: KtClassOrObject, classDescriptor: ClassDescriptor): Boolean {
         val classVisibility = classDescriptor.effectiveVisibility()
         val isInterface = classDescriptor.kind == ClassKind.INTERFACE
-        val delegationList = klass.getSuperTypeListEntries()
+        val delegationList = klass.superTypeListEntries
         var result = true
         classDescriptor.typeConstructor.supertypes.forEachIndexed { i, superType ->
             if (i >= delegationList.size) return result

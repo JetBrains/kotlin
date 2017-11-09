@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 // FILE: J.java
 
@@ -7,7 +10,7 @@ public interface J {
 
 // FILE: K.kt
 
-import kotlin.reflect.withNullability
+import kotlin.reflect.full.withNullability
 import kotlin.test.assertEquals
 
 fun nonNull(): String = ""

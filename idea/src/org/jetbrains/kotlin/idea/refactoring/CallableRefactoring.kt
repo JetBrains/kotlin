@@ -35,8 +35,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
+import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -48,9 +52,12 @@ import java.util.*
 
 abstract class CallableRefactoring<out T: CallableDescriptor>(
         val project: Project,
-        val callableDescriptor: T,
+        callableDescriptor: T,
         val commandName: String) {
     private val LOG = Logger.getInstance(CallableRefactoring::class.java)
+
+    @Suppress("UNCHECKED_CAST")
+    val callableDescriptor = callableDescriptor.liftToExpected() as? T ?: callableDescriptor
 
     private val kind = (callableDescriptor as? CallableMemberDescriptor)?.kind ?: CallableMemberDescriptor.Kind.DECLARATION
 
@@ -69,15 +76,15 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
             else -> {
                 throw IllegalStateException("Unexpected callable kind: $kind")
             }
-        }
+        }.map { it.liftToExpected() as? CallableDescriptor ?: it }
     }
 
     private fun showSuperFunctionWarningDialog(superCallables: Collection<CallableDescriptor>,
                                                callableFromEditor: CallableDescriptor,
                                                options: List<String>): Int {
-        val superString = superCallables.map {
+        val superString = superCallables.joinToString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n") {
             it.containingDeclaration.name.asString()
-        }.joinToString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
+        }
         val message = KotlinBundle.message("x.overrides.y.in.class.list",
                                            DescriptorRenderer.COMPACT.render(callableFromEditor),
                                            callableFromEditor.containingDeclaration.name.asString(), superString,
@@ -121,11 +128,11 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
         }
 
         fun buildDialogOptions(isSingleFunctionSelected: Boolean): List<String> {
-            if (isSingleFunctionSelected) {
-                return arrayListOf(Messages.YES_BUTTON, Messages.NO_BUTTON, Messages.CANCEL_BUTTON)
+            return if (isSingleFunctionSelected) {
+                arrayListOf(Messages.YES_BUTTON, Messages.NO_BUTTON, Messages.CANCEL_BUTTON)
             }
             else {
-                return arrayListOf(Messages.OK_BUTTON, Messages.CANCEL_BUTTON)
+                arrayListOf(Messages.OK_BUTTON, Messages.CANCEL_BUTTON)
             }
         }
 
@@ -142,7 +149,7 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
 
         assert(!closestModifiableDescriptors.isEmpty()) { "Should contain original declaration or some of its super declarations" }
         val deepestSuperDeclarations =
-                (callableDescriptor as? CallableMemberDescriptor)?.let(CallableMemberDescriptor::getDeepestSuperDeclarations)
+                (callableDescriptor as? CallableMemberDescriptor)?.getDeepestSuperDeclarations()
                 ?: listOf(callableDescriptor)
         if (ApplicationManager.getApplication()!!.isUnitTestMode) {
             performRefactoring(deepestSuperDeclarations)
@@ -176,25 +183,32 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
 
 fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): List<PsiElement> {
     val baseCallables = descriptorsForChange.mapNotNull { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-    return baseCallables + baseCallables.flatMap { it.toLightMethods() }.flatMapTo(HashSet<PsiElement>()) { psiMethod ->
-        val overrides = OverridingMethodsSearch.search(psiMethod).findAll()
-        overrides.map { method -> method.namedUnwrappedElement ?: method}
+    return baseCallables + baseCallables.flatMapTo(HashSet<PsiElement>()) { callable ->
+        if (callable is KtDeclaration && callable.isExpectedOrExpectedClassMember()) {
+            callable.actualsForExpected()
+        }
+        else {
+            callable.toLightMethods().flatMap { psiMethod ->
+                val overrides = OverridingMethodsSearch.search(psiMethod).findAll()
+                overrides.map { method -> method.namedUnwrappedElement ?: method}
+            }
+        }
     }
 }
 
 fun DeclarationDescriptor.getContainingScope(): LexicalScope? {
     val declaration = DescriptorToSourceUtils.descriptorToDeclaration(this)
     val block = declaration?.parent as? KtBlockExpression
-    if (block != null) {
+    return if (block != null) {
         val lastStatement = block.statements.last()
         val bindingContext = lastStatement.analyze()
-        return lastStatement.getResolutionScope(bindingContext, lastStatement.getResolutionFacade())
+        lastStatement.getResolutionScope(bindingContext, lastStatement.getResolutionFacade())
     }
     else {
         val containingDescriptor = containingDeclaration ?: return null
-        return when (containingDescriptor) {
+        when (containingDescriptor) {
             is ClassDescriptorWithResolutionScopes -> containingDescriptor.scopeForInitializerResolution
-            is PackageFragmentDescriptor -> LexicalScope.Empty(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
+            is PackageFragmentDescriptor -> LexicalScope.Base(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
             else -> null
         }
     }

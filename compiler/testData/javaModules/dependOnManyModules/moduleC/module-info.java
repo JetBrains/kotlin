@@ -1,0 +1,3 @@
+module moduleC {
+    exports c;
+}

@@ -1,4 +1,4 @@
-JetFile: firstInFunctionalType.kt
+KtFile: firstInFunctionalType.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

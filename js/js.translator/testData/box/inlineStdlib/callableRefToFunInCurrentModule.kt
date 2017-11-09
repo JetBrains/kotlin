@@ -1,9 +1,10 @@
+// EXPECTED_REACHABLE_NODES: 1383
 package foo
 
-// CHECK_NOT_CALLED_IN_SCOPE: scope=test_0 function=even_0
-// CHECK_NOT_CALLED_IN_SCOPE: scope=test_0 function=filter_azvtw4$
+// CHECK_NOT_CALLED_IN_SCOPE: scope=test function=even
+// CHECK_NOT_CALLED_IN_SCOPE: scope=test function=filter
 
-internal fun even(x: Int) = x % 2 == 0
+internal inline fun even(x: Int) = x % 2 == 0
 
 internal fun test(a: List<Int>) = a.filter(::even)
 

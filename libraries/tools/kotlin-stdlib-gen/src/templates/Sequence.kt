@@ -29,7 +29,13 @@ fun sequences(): List<GenericFunction> {
 
     templates add f("asSequence()") {
         include(CharSequences, Maps)
-        doc { f -> "Creates a [Sequence] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated." }
+        doc { f ->
+            """
+            Creates a [Sequence] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated.
+
+            ${if (f in listOf(ArraysOfPrimitives, ArraysOfObjects, Iterables)) "@sample samples.collections.Sequences.Building.sequenceFrom${f.doc.collection.capitalize()}" else ""}
+            """
+        }
         returns("Sequence<T>")
         body { f ->
             """

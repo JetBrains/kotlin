@@ -24,4 +24,8 @@ public interface K2JsArgumentConstants {
     String MODULE_AMD = "amd";
     String MODULE_COMMONJS = "commonjs";
     String MODULE_UMD = "umd";
+
+    String SOURCE_MAP_SOURCE_CONTENT_ALWAYS = "always";
+    String SOURCE_MAP_SOURCE_CONTENT_NEVER = "never";
+    String SOURCE_MAP_SOURCE_CONTENT_INLINING = "inlining";
 }

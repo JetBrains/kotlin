@@ -16,31 +16,77 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.google.common.html.HtmlEscapers
+import com.intellij.codeInsight.documentation.DocumentationManagerUtil
+import com.intellij.codeInsight.javadoc.JavaDocInfoGeneratorFactory
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
 import org.jetbrains.kotlin.idea.kdoc.findKDoc
+import org.jetbrains.kotlin.idea.kdoc.isBoringBuiltinClass
 import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DeprecationResolver
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.deprecatedByAnnotationReplaceWithExpression
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.constant
+
+class HtmlClassifierNamePolicy(val base: ClassifierNamePolicy) : ClassifierNamePolicy {
+    override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
+        if (DescriptorUtils.isAnonymousObject(classifier)) {
+
+            val supertypes = classifier.typeConstructor.supertypes
+            return buildString {
+                append("&lt;anonymous object")
+                if (supertypes.isNotEmpty()) {
+                    append(" : ")
+                    supertypes.joinTo(this) {
+                        val ref = it.constructor.declarationDescriptor
+                        if (ref != null)
+                            renderClassifier(ref, renderer)
+                        else
+                            "&lt;ERROR CLASS&gt;"
+                    }
+                }
+                append("&gt;")
+            }
+        }
+
+        val name = base.renderClassifier(classifier, renderer)
+        if (classifier.isBoringBuiltinClass())
+            return name
+        return buildString {
+            val ref = classifier.fqNameUnsafe.toString()
+            DocumentationManagerUtil.createHyperlink(this, ref, name, true)
+        }
+    }
+}
 
 class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
@@ -57,14 +103,17 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         val bindingContext = navElement.analyze(BodyResolveMode.PARTIAL)
         val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, navElement] ?: return null
         val descriptors = resolveKDocLink(bindingContext, navElement.getResolutionFacade(),
-                                          contextDescriptor, null, StringUtil.split(link, ","))
+                                          contextDescriptor, null, link.split('.'))
         val target = descriptors.firstOrNull() ?: return null
         return DescriptorToSourceUtilsIde.getAnyDeclaration(psiManager.project, target)
     }
 
     override fun getDocumentationElementForLookupItem(psiManager: PsiManager, `object`: Any?, element: PsiElement?): PsiElement? {
         if (`object` is DeclarationLookupObject) {
-            return `object`.psiElement
+            `object`.psiElement?.let { return it }
+            `object`.descriptor?.let { descriptor ->
+                return DescriptorToSourceUtilsIde.getAnyDeclaration(psiManager.project, descriptor)
+            }
         }
         return null
     }
@@ -73,12 +122,93 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         private val LOG = Logger.getInstance(KotlinQuickDocumentationProvider::class.java)
 
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.HTML.withOptions {
-            classifierNamePolicy = ClassifierNamePolicy.SHORT
+            classifierNamePolicy = HtmlClassifierNamePolicy(ClassifierNamePolicy.SHORT)
             renderCompanionObjectName = true
         }
 
+        private fun renderEnumSpecialFunction(element: KtClass, functionDescriptor: FunctionDescriptor, quickNavigation: Boolean): String {
+            var renderedDecl = DESCRIPTOR_RENDERER.render(functionDescriptor)
+
+            if (quickNavigation) return renderedDecl
+
+            val declarationDescriptor = element.resolveToDescriptorIfAny()
+            val enumDescriptor = (declarationDescriptor as? ClassDescriptor)?.getSuperClassNotAny() ?: return renderedDecl
+
+            val enumDeclaration =
+                    DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, enumDescriptor) as? KtDeclaration ?: return renderedDecl
+
+            val enumSource = SourceNavigationHelper.getNavigationElement(enumDeclaration)
+            val functionName = functionDescriptor.fqNameSafe.shortName().asString()
+            val kdoc = enumSource.findDescendantOfType<KDoc> {
+                it.getChildrenOfType<KDocSection>().any { it.findTagByName(functionName) != null }
+            }
+
+            if (kdoc != null) {
+                val renderedComment = KDocRenderer.renderKDoc(kdoc.getDefaultSection())
+                if (renderedComment.startsWith("<p>")) {
+                    renderedDecl += renderedComment
+                }
+                else {
+                    renderedDecl = "$renderedDecl<br/>$renderedComment"
+                }
+            }
+
+            return renderedDecl
+        }
+
+        private fun renderEnum(element: KtClass, originalElement: PsiElement?, quickNavigation: Boolean): String? {
+            val referenceExpression = originalElement?.getNonStrictParentOfType<KtReferenceExpression>()
+            if (referenceExpression != null) {
+                // When caret on special enum function (e.g SomeEnum.values<caret>())
+                // element is not an KtReferenceExpression, but KtClass of enum
+                // so reference extracted from originalElement
+                val context = referenceExpression.analyze(BodyResolveMode.PARTIAL)
+                (context[BindingContext.REFERENCE_TARGET, referenceExpression] ?:
+                 context[BindingContext.REFERENCE_TARGET, referenceExpression.getChildOfType<KtReferenceExpression>()])?.let {
+                    if (it is FunctionDescriptor) // To protect from Some<caret>Enum.values()
+                        return renderEnumSpecialFunction(element, it, quickNavigation)
+                }
+            }
+            return renderKotlinDeclaration(element, quickNavigation)
+        }
+
         private fun getText(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {
-            if (element is KtDeclaration) {
+            if (element is PsiWhiteSpace) {
+                val itElement = findElementWithText(originalElement, "it")
+                val itReference = itElement?.getParentOfType<KtNameReferenceExpression>(false)
+                if (itReference != null) {
+                    return getText(itReference, originalElement, quickNavigation)
+                }
+            }
+
+            if (element is KtTypeReference) {
+                val declaration = element.parent
+                if (declaration is KtCallableDeclaration && declaration.receiverTypeReference == element) {
+                    val thisElement = findElementWithText(originalElement, "this")
+                    if (thisElement != null) {
+                        return getText(declaration, originalElement, quickNavigation)
+                    }
+                }
+            }
+
+            if (element is KtClass && element.isEnum()) {
+                // When caret on special enum function (e.g SomeEnum.values<caret>())
+                // element is not an KtReferenceExpression, but KtClass of enum
+                return renderEnum(element, originalElement, quickNavigation)
+            }
+            else if (element is KtEnumEntry && !quickNavigation) {
+                val ordinal = element.containingClassOrObject?.getBody()?.run { getChildrenOfType<KtEnumEntry>().indexOf(element) }
+
+                return buildString {
+                    append(renderKotlinDeclaration(element, quickNavigation))
+                    ordinal?.let {
+                        wrapTag("b") {
+                            append("Enum constant ordinal: $ordinal")
+                        }
+                    }
+                }
+            }
+            else if (element is KtDeclaration) {
                 return renderKotlinDeclaration(element, quickNavigation)
             }
             else if (element is KtNameReferenceExpression && element.getReferencedName() == "it") {
@@ -115,16 +245,21 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 return "No documentation available"
             }
 
-            return renderKotlin(context, declarationDescriptor, quickNavigation)
+            return renderKotlin(context, declarationDescriptor, quickNavigation, declaration)
         }
 
         private fun renderKotlinImplicitLambdaParameter(element: KtReferenceExpression, quickNavigation: Boolean): String? {
             val context = element.analyze(BodyResolveMode.PARTIAL)
             val target = element.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return null
-            return renderKotlin(context, target, quickNavigation)
+            return renderKotlin(context, target, quickNavigation, element)
         }
 
-        private fun renderKotlin(context: BindingContext, declarationDescriptor: DeclarationDescriptor, quickNavigation: Boolean): String {
+        private fun renderKotlin(
+                context: BindingContext,
+                declarationDescriptor: DeclarationDescriptor,
+                quickNavigation: Boolean,
+                ktElement: KtElement
+        ): String {
             @Suppress("NAME_SHADOWING")
             var declarationDescriptor = declarationDescriptor
             if (declarationDescriptor is ValueParameterDescriptor) {
@@ -134,22 +269,79 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 }
             }
 
-            var renderedDecl = DESCRIPTOR_RENDERER.render(declarationDescriptor)
+            var renderedDecl = DESCRIPTOR_RENDERER.withOptions {
+                withDefinedIn = !DescriptorUtils.isLocal(declarationDescriptor)
+            }.render(declarationDescriptor)
+
             if (!quickNavigation) {
                 renderedDecl = "<pre>$renderedDecl</pre>"
             }
-            val comment = declarationDescriptor.findKDoc()
-            if (comment != null) {
-                val renderedComment = KDocRenderer.renderKDoc(comment)
-                if (renderedComment.startsWith("<p>")) {
-                    renderedDecl += renderedComment
+
+            val deprecationProvider = ktElement.getResolutionFacade().frontendService<DeprecationResolver>()
+            renderedDecl += renderDeprecationInfo(declarationDescriptor, deprecationProvider)
+
+            if (!quickNavigation) {
+                val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
+                if (comment != null) {
+                    val renderedComment = KDocRenderer.renderKDoc(comment)
+                    if (renderedComment.startsWith("<p>")) {
+                        renderedDecl += renderedComment
+                    }
+                    else {
+                        renderedDecl = "$renderedDecl<br/>$renderedComment"
+                    }
                 }
                 else {
-                    renderedDecl = "$renderedDecl<br/>$renderedComment"
+                    if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
+                        val psi = declarationDescriptor.findPsi() as? KtFunction
+                        if (psi != null) {
+                            val lightElement = LightClassUtil.getLightClassMethod(psi) // Light method for super's scan in javadoc info gen
+                            val javaDocInfoGenerator = JavaDocInfoGeneratorFactory.create(psi.project, lightElement)
+                            val builder = StringBuilder()
+                            if (javaDocInfoGenerator.generateDocInfoCore(builder, false))
+                                renderedDecl += builder.toString().substringAfter("</PRE>") // Cut off light method signature
+                        }
+                    }
                 }
             }
 
             return renderedDecl
+        }
+
+        private fun renderDeprecationInfo(
+                declarationDescriptor: DeclarationDescriptor,
+                deprecationResolver: DeprecationResolver
+        ): String {
+            val deprecation = deprecationResolver.getDeprecations(declarationDescriptor).firstOrNull() ?: return ""
+
+            return buildString {
+                wrapTag("DL") {
+                    deprecation.message?.let { message ->
+                        wrapTag("DT") { wrapTag("b") { append("Deprecated:") } }
+                        wrapTag("DD") {
+                            append(message.htmlEscape())
+                        }
+                    }
+                    deprecation.deprecatedByAnnotationReplaceWithExpression()?.let { replaceWith ->
+                        wrapTag("DT") { wrapTag("b") { append("Replace with:") } }
+                        wrapTag("DD") {
+                            wrapTag("code") { append(replaceWith.htmlEscape()) }
+                        }
+                    }
+                }
+            }
+        }
+
+        private fun String.htmlEscape(): String = HtmlEscapers.htmlEscaper().escape(this)
+
+        private inline fun StringBuilder.wrap(prefix: String, postfix: String, crossinline body: () -> Unit) {
+            this.append(prefix)
+            body()
+            this.append(postfix)
+        }
+
+        private inline fun StringBuilder.wrapTag(tag: String, crossinline body: () -> Unit) {
+            wrap("<$tag>", "</$tag>", body)
         }
 
         private fun mixKotlinToJava(declarationDescriptor: DeclarationDescriptor, element: PsiElement, originalElement: PsiElement?): String? {
@@ -160,6 +352,15 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             }
 
             return null
+        }
+
+        private fun findElementWithText(element: PsiElement?, text: String): PsiElement? {
+            return when {
+                element == null -> null
+                element.text == text -> element
+                element.prevLeaf()?.text == text -> element.prevLeaf()
+                else -> null
+            }
         }
     }
 }

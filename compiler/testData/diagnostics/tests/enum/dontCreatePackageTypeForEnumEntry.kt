@@ -1,7 +1,7 @@
 enum class E {
     FIRST,
     SECOND {
-        class A
+        <!NESTED_CLASS_DEPRECATED!>class A<!>
     };
 }
 

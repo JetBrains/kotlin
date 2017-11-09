@@ -21,7 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 
-abstract class MissingConditionFixer<T: PsiElement>() : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+abstract class MissingConditionFixer<T: PsiElement> : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         val workElement = getElement(element) ?: return
 

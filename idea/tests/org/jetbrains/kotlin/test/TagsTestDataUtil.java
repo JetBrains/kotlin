@@ -151,7 +151,7 @@ public class TagsTestDataUtil {
                                          highlightInfo.getDescription());
                 }
                 else {
-                    return String.format("textAttributesKey=\"%s\"", getName());
+                    return String.format("textAttributesKey=\"%s\"", highlightInfo.forcedTextAttributesKey);
                 }
             }
             else {

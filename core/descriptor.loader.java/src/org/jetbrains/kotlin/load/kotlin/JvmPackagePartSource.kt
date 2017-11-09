@@ -16,25 +16,42 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class JvmPackagePartSource(val className: JvmClassName, val facadeClassName: JvmClassName?) : SourceElement {
-    constructor(kotlinClass: KotlinJvmBinaryClass) : this(
+class JvmPackagePartSource(
+        val className: JvmClassName,
+        val facadeClassName: JvmClassName?,
+        override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
+        override val isPreReleaseInvisible: Boolean = false,
+        val knownJvmBinaryClass: KotlinJvmBinaryClass? = null
+) : DeserializedContainerSource {
+    constructor(
+            kotlinClass: KotlinJvmBinaryClass,
+            incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
+            isPreReleaseInvisible: Boolean = false
+    ) : this(
             JvmClassName.byClassId(kotlinClass.classId),
             kotlinClass.classHeader.multifileClassName?.let {
                 if (it.isNotEmpty()) JvmClassName.byInternalName(it) else null
-            }
+            },
+            incompatibility,
+            isPreReleaseInvisible,
+            kotlinClass
     )
+
+    override val presentableString: String
+        get() = "Class '${classId.asSingleFqName().asString()}'"
 
     val simpleName: Name get() = Name.identifier(className.internalName.substringAfterLast('/'))
 
     val classId: ClassId get() = ClassId(className.packageFqName, simpleName)
 
-    override fun toString() = "${javaClass.simpleName}: $className"
+    override fun toString() = "${this::class.java.simpleName}: $className"
 
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }

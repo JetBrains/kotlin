@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 // WITH_RUNTIME
 // FILE: box.kt
 

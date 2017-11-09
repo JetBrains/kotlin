@@ -1,5 +1,5 @@
 // !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 
 fun testReturnType(foo: String) {
     val bar = fun () = foo

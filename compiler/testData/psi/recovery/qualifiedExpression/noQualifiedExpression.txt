@@ -1,4 +1,4 @@
-JetFile: noQualifiedExpression.kt
+KtFile: noQualifiedExpression.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.translate.utils.mutator;
 
-import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.backend.ast.*;
 
 import java.util.List;
 

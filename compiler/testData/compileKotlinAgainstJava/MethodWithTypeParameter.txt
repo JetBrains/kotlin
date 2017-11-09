@@ -1,0 +1,17 @@
+package test
+
+public fun useMethod(): kotlin.Unit
+
+public object Impl : test.KotlinInterface {
+    private constructor Impl()
+}
+
+public interface KotlinInterface {
+}
+
+public open class MethodWithTypeParameter {
+    public constructor MethodWithTypeParameter()
+
+    // Static members
+    public open fun </*0*/ T : test.KotlinInterface!> method(/*0*/ T!): kotlin.Unit
+}

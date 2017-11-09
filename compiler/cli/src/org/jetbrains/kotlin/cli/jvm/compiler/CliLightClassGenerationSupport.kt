@@ -25,11 +25,13 @@ import com.intellij.util.Function
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
+import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -44,7 +46,6 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import kotlin.properties.Delegates
 
 /**
@@ -76,15 +77,33 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         trace.setKotlinCodeAnalyzer(codeAnalyzer)
     }
 
-    override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
+    override fun createDataHolderForClass(
+            classOrObject: KtClassOrObject, builder: LightClassBuilder
+    ): LightClassDataHolder.ForClass {
         //force resolve companion for light class generation
         bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
-        return LightClassConstructionContext(bindingContext, module)
+
+        val (stub, bindingContext, diagnostics) = builder(getContext())
+
+        bindingContext.get(BindingContext.CLASS, classOrObject) ?: return InvalidLightClassDataHolder
+
+        return LightClassDataHolderImpl(
+                stub,
+                diagnostics
+        )
     }
 
-    private fun getContext(): LightClassConstructionContext {
-        return LightClassConstructionContext(bindingContext, module)
+    override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade {
+        val (stub, _, diagnostics) = builder(getContext())
+        return LightClassDataHolderImpl(stub, diagnostics)
     }
+
+    override fun createDataHolderForScript(script: KtScript, builder: LightClassBuilder): LightClassDataHolder.ForScript {
+        val (stub, _, diagnostics) = builder(getContext())
+        return LightClassDataHolderImpl(stub, diagnostics)
+    }
+
+    private fun getContext(): LightClassConstructionContext = LightClassConstructionContext(bindingContext, module)
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
         return ResolveSessionUtils.getClassDescriptorsByFqName(module, fqName).mapNotNull {
@@ -133,9 +152,9 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         })
     }
 
-    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? {
-        return KtLightClassForSourceDeclaration.create(classOrObject)
-    }
+    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? = KtLightClassForSourceDeclaration.create(classOrObject)
+
+    override fun getLightClassForScript(script: KtScript): KtLightClassForScript? = KtLightClassForScript.create(script)
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
         return bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
@@ -143,15 +162,27 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
 
     override fun analyze(element: KtElement) = bindingContext
 
+    override fun analyzeFully(element: KtElement) = bindingContext
+
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         val filesForFacade = findFilesForFacade(facadeFqName, scope)
         if (filesForFacade.isEmpty()) return emptyList()
 
-        return emptyOrSingletonList<PsiClass>(
+        return listOfNotNull<PsiClass>(
                 KtLightClassForFacade.createForFacade(psiManager, facadeFqName, scope, filesForFacade))
     }
 
-    override fun getMultifilePartClasses(partFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+    override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+        if (scriptFqName.isRoot) {
+            return emptyList()
+        }
+
+        return findFilesForPackage(scriptFqName.parent(), scope).mapNotNull { file ->
+            file.script?.takeIf { it.fqName == scriptFqName }?.let { it -> getLightClassForScript(it) }
+        }
+    }
+
+    override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         //
         return emptyList()
     }
@@ -164,17 +195,14 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         }
     }
 
-    override fun getContextForFacade(files: Collection<KtFile>): LightClassConstructionContext {
-        return getContext()
-    }
-
     override fun createTrace(): BindingTraceContext {
         return NoScopeRecordCliBindingTrace()
     }
 
+    // TODO: needs better name + list of keys to skip somewhere
     class NoScopeRecordCliBindingTrace : CliBindingTrace() {
         override fun <K, V> record(slice: WritableSlice<K, V>, key: K, value: V) {
-            if (slice === BindingContext.LEXICAL_SCOPE) {
+            if (slice === BindingContext.LEXICAL_SCOPE || slice == BindingContext.DATA_FLOW_INFO_BEFORE) {
                 // In the compiler there's no need to keep scopes
                 return
             }

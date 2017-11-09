@@ -214,7 +214,7 @@ object PreferGetSetMethodsToPropertyWeigher : LookupElementWeigher("kotlin.prefe
         val prefixMatcher = context.itemMatcher(element)
         if (prefixMatcher.prefixMatches(property.name.asString())) return 0
         val matchedLookupStrings = element.allLookupStrings.filter { prefixMatcher.prefixMatches(it) }
-        if (matchedLookupStrings.all { it.startsWith("get") || it.startsWith("set") }) return 1 else return 0
+        return if (matchedLookupStrings.all { it.startsWith("get") || it.startsWith("set") }) 1 else 0
     }
 }
 
@@ -276,11 +276,10 @@ class SmartCompletionInBasicWeigher(
     private val descriptorsToSkip = smartCompletion.descriptorsToSkip
     private val expectedInfos = smartCompletion.expectedInfos
 
-    private fun fullMatchWeight(nameSimilarity: Int) = (3L shl 32) + nameSimilarity
+    private val PRIORITY_COUNT = SmartCompletionItemPriority.values().size
 
-    private fun ifNotNullMatchWeight(nameSimilarity: Int) = (2L shl 32) + nameSimilarity
-
-    private fun smartCompletionItemWeight(nameSimilarity: Int) = (1L shl 32) + nameSimilarity
+    private fun itemWeight(priority: SmartCompletionItemPriority, nameSimilarity: Int)
+            = (nameSimilarity.toLong() shl 32) + PRIORITY_COUNT - priority.ordinal
 
     private val NAMED_ARGUMENT_WEIGHT = 1L
 
@@ -289,16 +288,13 @@ class SmartCompletionInBasicWeigher(
     private val DESCRIPTOR_TO_SKIP_WEIGHT = -1L // if descriptor is skipped from smart completion then it's probably irrelevant
 
     override fun weigh(element: LookupElement): Long {
-        if (element.getUserData(KEYWORD_VALUE_MATCHED_KEY) != null) {
-            return fullMatchWeight(0)
-        }
-
         if (element.getUserData(NAMED_ARGUMENT_KEY) != null) {
             return NAMED_ARGUMENT_WEIGHT
         }
 
-        if (element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) != null) { // it's an "additional item" came from smart completion, don't match it against expected type
-            return smartCompletionItemWeight(element.getUserData(NAME_SIMILARITY_KEY) ?: 0)
+        val priority = element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY)
+        if (priority != null) { // it's an "additional item" came from smart completion, don't match it against expected type
+            return itemWeight(priority, element.getUserData(NAME_SIMILARITY_KEY) ?: 0)
         }
 
         val o = element.`object`
@@ -334,9 +330,9 @@ class SmartCompletionInBasicWeigher(
         }
 
         return if (matched.any { it.second.isMatch() })
-            fullMatchWeight(nameSimilarity)
+            itemWeight(SmartCompletionItemPriority.DEFAULT, nameSimilarity)
         else
-            ifNotNullMatchWeight(nameSimilarity)
+            itemWeight(SmartCompletionItemPriority.NULLABLE, nameSimilarity)
     }
 }
 

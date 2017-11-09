@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
-import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationAndConstantLoader
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -47,15 +44,15 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val file = content.file
 
-        if (isKotlinInternalCompiledFile(file)) {
+        if (isKotlinInternalCompiledFile(file, content.content)) {
             return null
         }
 
-        return doBuildFileStub(file)
+        return doBuildFileStub(file, content.content)
     }
 
-    fun doBuildFileStub(file: VirtualFile): PsiFileStub<KtFile>? {
-        val kotlinClass = IDEKotlinBinaryClassCache.getKotlinBinaryClass(file)!!
+    private fun doBuildFileStub(file: VirtualFile, fileContent: ByteArray): PsiFileStub<KtFile>? {
+        val kotlinClass = IDEKotlinBinaryClassCache.getKotlinBinaryClass(file, fileContent) ?: error("Can't find binary class for Kotlin file: $file")
         val header = kotlinClass.classHeader
         val classId = kotlinClass.classId
         val packageFqName = classId.packageFqName
@@ -63,7 +60,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
             return createIncompatibleAbiVersionFileStub()
         }
 
-        val components = createStubBuilderComponents(file, packageFqName)
+        val components = createStubBuilderComponents(file, packageFqName, fileContent)
         if (header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS) {
             val partFiles = findMultifileClassParts(file, classId, header)
             return createMultifileClassStub(header, partFiles, classId.asSingleFqName(), components)
@@ -84,21 +81,23 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
                 if (classId.isLocal) return null
                 val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(classProto.typeTable))
-                createTopLevelClassStub(classId, classProto, KotlinJvmBinarySourceElement(kotlinClass), context)
+                createTopLevelClassStub(classId, classProto, KotlinJvmBinarySourceElement(kotlinClass), context, header.isScript)
             }
             KotlinClassHeader.Kind.FILE_FACADE -> {
                 val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
-                createFileFacadeStub(packageProto, classId.asSingleFqName(), context)
+                val fqName = header.packageName?.let { ClassId(FqName(it), classId.relativeClassName, classId.isLocal).asSingleFqName() }
+                             ?: classId.asSingleFqName()
+                createFileFacadeStub(packageProto, fqName, context)
             }
             else -> throw IllegalStateException("Should have processed " + file.path + " with header $header")
         }
     }
 
-    private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName): ClsStubBuilderComponents {
+    private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName, fileContent: ByteArray): ClsStubBuilderComponents {
         val classFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
         val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
-        val annotationLoader = AnnotationLoaderForClassFileStubBuilder(classFinder)
+        val annotationLoader = AnnotationLoaderForClassFileStubBuilder(classFinder, file, fileContent)
         return ClsStubBuilderComponents(classDataFinder, annotationLoader, file)
     }
 
@@ -108,8 +107,17 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
 }
 
 class AnnotationLoaderForClassFileStubBuilder(
-        kotlinClassFinder: KotlinClassFinder
+        kotlinClassFinder: KotlinClassFinder,
+        private val cachedFile: VirtualFile,
+        private val cachedFileContent: ByteArray
 ) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget>(LockBasedStorageManager.NO_LOCKS, kotlinClassFinder) {
+
+    override fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? {
+        if ((kotlinClass as? VirtualFileKotlinClass)?.file == cachedFile) {
+            return cachedFileContent
+        }
+        return null
+    }
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): ClassId =
             nameResolver.getClassId(proto.id)

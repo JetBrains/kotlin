@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.io.ByteArrayInputStream
 
 object JvmProtoBufUtil {
@@ -65,7 +64,7 @@ object JvmProtoBufUtil {
             nameResolver.getString(signature.desc)
         }
         else {
-            val parameterTypes = proto.receiverType(typeTable).singletonOrEmptyList() + proto.valueParameterList.map { it.type(typeTable) }
+            val parameterTypes = listOfNotNull(proto.receiverType(typeTable)) + proto.valueParameterList.map { it.type(typeTable) }
 
             val parametersDesc = parameterTypes.map { mapTypeDefault(it, nameResolver) ?: return null }
             val returnTypeDesc = mapTypeDefault(proto.returnType(typeTable), nameResolver) ?: return null

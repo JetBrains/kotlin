@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.PropertyImportedFromObject;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -42,7 +43,7 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.variableDescripto
 
 public class PseudocodeUtil {
     @NotNull
-    public static Pseudocode generatePseudocode(@NotNull KtDeclaration declaration, @NotNull final BindingContext bindingContext) {
+    public static Pseudocode generatePseudocode(@NotNull KtDeclaration declaration, @NotNull BindingContext bindingContext) {
         BindingTrace mockTrace = new BindingTrace() {
             @NotNull
             @Override
@@ -98,7 +99,12 @@ public class PseudocodeUtil {
     ) {
         if (instruction instanceof AccessValueInstruction) {
             KtElement element = ((AccessValueInstruction) instruction).getElement();
-            return element instanceof KtDeclaration ? null : extractVariableDescriptorIfAny(instruction, bindingContext);
+            if (element instanceof KtDeclaration) return null;
+            VariableDescriptor descriptor = extractVariableDescriptorIfAny(instruction, bindingContext);
+            if (descriptor instanceof PropertyImportedFromObject) {
+                return ((PropertyImportedFromObject) descriptor).getCallableFromObject();
+            }
+            return descriptor;
         }
         return null;
     }

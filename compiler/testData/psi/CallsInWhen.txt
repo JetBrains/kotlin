@@ -1,4 +1,4 @@
-JetFile: CallsInWhen.kt
+KtFile: CallsInWhen.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

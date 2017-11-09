@@ -33,10 +33,9 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
-import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
-import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
@@ -47,8 +46,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.nullability
 import java.util.*
 
 interface Parameter {
@@ -115,7 +116,7 @@ class WrapParameterInWithReplacement(override val parameter: Parameter): WrapInW
     override fun copy(parameter: Parameter) = WrapParameterInWithReplacement(parameter)
 }
 
-class WrapCompanionInWithReplacement(val descriptor: ClassDescriptor): WrapInWithReplacement() {
+class WrapObjectInWithReplacement(val descriptor: ClassDescriptor): WrapInWithReplacement() {
     override val argumentText: String
         get() = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor)
 }
@@ -331,7 +332,7 @@ val ControlFlow.possibleReturnTypes: List<KotlinType>
         return when {
             !returnType.isNullabilityFlexible() ->
                 listOf(returnType)
-            returnType.isAnnotatedNotNull() || returnType.isAnnotatedNullable() ->
+            returnType.nullability() != TypeNullability.FLEXIBLE ->
                 listOf(returnType.approximateFlexibleTypes())
             else ->
                 (returnType.unwrap() as FlexibleType).let { listOf(it.upperBound, it.lowerBound) }
@@ -358,7 +359,8 @@ data class ExtractableCodeDescriptor(
         val typeParameters: List<TypeParameter>,
         val replacementMap: MultiMap<KtSimpleNameExpression, Replacement>,
         val controlFlow: ControlFlow,
-        val returnType: KotlinType
+        val returnType: KotlinType,
+        val modifiers: List<KtKeywordToken> = emptyList()
 ) {
     val name: String get() = suggestedNames.firstOrNull() ?: ""
     val duplicates: List<DuplicateInfo> by lazy { findDuplicates() }
@@ -394,7 +396,8 @@ fun ExtractableCodeDescriptor.copy(
             typeParameters,
             newReplacementMap,
             controlFlow.copy(oldToNewParameters),
-            returnType ?: this.returnType)
+            returnType ?: this.returnType,
+            modifiers)
 }
 
 enum class ExtractionTarget(val targetName: String) {
@@ -538,7 +541,7 @@ class AnalysisResult (
                     }
             )
 
-            return additionalInfo?.let { "$message\n\n${it.map { StringUtil.htmlEmphasize(it) }.joinToString("\n")}" } ?: message
+            return additionalInfo?.let { "$message\n\n${it.joinToString("\n") { StringUtil.htmlEmphasize(it) }}" } ?: message
         }
     }
 }

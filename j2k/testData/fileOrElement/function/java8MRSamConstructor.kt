@@ -8,11 +8,9 @@ internal class Test {
         return 1
     }
 
-    constructor(i: Int) : super() {
-    }
+    constructor(i: Int) : super() {}
 
-    constructor() {
-    }
+    constructor() {}
 
     companion object {
         var field = Java8Class()

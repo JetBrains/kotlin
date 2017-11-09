@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1119
 package foo
 
 fun test(x: Boolean, y: Boolean): Boolean {

@@ -4,7 +4,7 @@ package testing
 import junit.framework.TestCase
 import org.junit.Test
 
-abstract class <lineMarker descr="*"><lineMarker descr="Run Test"></lineMarker>KBase</lineMarker> : TestCase() {
+abstract class <lineMarker descr="*"><lineMarker descr="Run Test">KBase</lineMarker></lineMarker> : TestCase() {
     @Test
     fun testFoo() {
 

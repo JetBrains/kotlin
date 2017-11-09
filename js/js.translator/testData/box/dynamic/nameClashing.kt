@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1123
 package foo
 
 fun assertContains(expectedName: String, f: () -> Unit) {

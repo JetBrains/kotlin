@@ -1,0 +1,29 @@
+package
+
+public val test0: [ERROR : Type for C<Int>.P(1, 1)]
+public val test1: [ERROR : Type for C<Int>.P1<String>("", 1)]
+public val test2: [ERROR : Type for C<Int>.P2<String>(1, "")]
+public val test3: [ERROR : Type for C<Int>.P1("", 1)]
+public val test4: [ERROR : Type for C<Int>.P2(1, "")]
+public val test5: C<T>.P /* = Pair<T, T> */
+public val test6: C<T>.P1<kotlin.String> /* = Pair<kotlin.String, T> */
+public val test7: C<T>.P2<kotlin.String> /* = Pair<T, kotlin.String> */
+
+public final class C</*0*/ T> {
+    public constructor C</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public typealias P /*captured type parameters: /*0*/ T*/ = Pair<T, T>
+    public typealias P1</*0*/ X>  /*captured type parameters: /*1*/ T*/ = Pair<X, T>
+    public typealias P2</*0*/ Y>  /*captured type parameters: /*1*/ T*/ = Pair<T, Y>
+}
+
+public final class Pair</*0*/ X, /*1*/ Y> {
+    public constructor Pair</*0*/ X, /*1*/ Y>(/*0*/ x: X, /*1*/ y: Y)
+    public final val x: X
+    public final val y: Y
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

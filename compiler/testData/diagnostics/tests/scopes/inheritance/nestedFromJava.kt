@@ -46,7 +46,7 @@ class Y: B() {
 
     init {
         B_()
-        B.<!UNRESOLVED_REFERENCE!>B_<!>()
+        B.<!RESOLUTION_TO_CLASSIFIER!>B_<!>()
         Y.<!UNRESOLVED_REFERENCE!>B_<!>()
 
         B_S()
@@ -59,7 +59,7 @@ class Y: B() {
         val b_s: B_S = null!!
 
         init {
-            <!UNRESOLVED_REFERENCE!>B_<!>()
+            <!RESOLUTION_TO_CLASSIFIER!>B_<!>()
             B_S()
         }
     }
@@ -83,7 +83,7 @@ class Z: C() {
 
         init {
             <!UNRESOLVED_REFERENCE!>A_S<!>()
-            <!UNRESOLVED_REFERENCE!>B_<!>()
+            <!RESOLUTION_TO_CLASSIFIER!>B_<!>()
             B_S()
         }
     }

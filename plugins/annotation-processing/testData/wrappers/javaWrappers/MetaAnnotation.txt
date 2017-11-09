@@ -1,6 +1,0 @@
-@java.lang.Deprecated
-@java.lang.annotation.Target(value = { CONSTRUCTOR, FIELD })
-@java.lang.annotation.Retention(value = RUNTIME)
-public abstract @interface MetaAnnotation {
-    public abstract java.lang.String strValue()
-}

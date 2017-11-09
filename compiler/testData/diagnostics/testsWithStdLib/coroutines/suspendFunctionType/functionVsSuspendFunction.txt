@@ -1,0 +1,14 @@
+package
+
+public fun ambiguous(/*0*/ fn: () -> kotlin.Unit): () -> kotlin.Unit
+public fun ambiguous(/*0*/ sfn: suspend () -> kotlin.Unit): suspend () -> kotlin.Unit
+public fun test1(/*0*/ sfn: suspend () -> kotlin.Unit): () -> kotlin.Unit
+public fun test2(/*0*/ fn: () -> kotlin.Unit): suspend () -> kotlin.Unit
+public fun test3(/*0*/ sfn: suspend () -> kotlin.Unit): suspend () -> kotlin.Unit
+public fun test4(): suspend () -> kotlin.Unit
+public fun test5(): suspend () -> kotlin.Unit
+public fun test5(/*0*/ sfn: suspend () -> kotlin.Unit): suspend () -> kotlin.Unit
+public fun test6(/*0*/ fn: () -> kotlin.Unit): () -> kotlin.Unit
+public fun test7(): () -> kotlin.Unit
+public fun useFn(/*0*/ fn: () -> kotlin.Unit): () -> kotlin.Unit
+public fun useSuspendFn(/*0*/ sfn: suspend () -> kotlin.Unit): suspend () -> kotlin.Unit

@@ -28,3 +28,15 @@ fun test() {
 
     test(    fun     test     (    ) = 4   )
 }
+
+fun d = fun(a: Int,
+            b: String) {}
+
+fun e = fun() {
+    val a = 1}
+
+fun f = fun() {foo()}
+
+val g: (String) -> Int = fun(p: String): Unit { /* comment */ /* other comment */ }
+
+fun foo() {}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -101,7 +102,7 @@ fun ImplicitReceiver.asExpression(resolutionScope: LexicalScope, psiFactory: KtP
 
 fun KtImportDirective.targetDescriptors(resolutionFacade: ResolutionFacade = this.getResolutionFacade()): Collection<DeclarationDescriptor> {
     // For codeFragments imports are created in dummy file
-    if (this.getContainingKtFile().doNotAnalyze != null) return emptyList()
+    if (this.containingKtFile.doNotAnalyze != null) return emptyList()
     val nameExpression = importedReference?.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return emptyList()
     return nameExpression.mainReference.resolveToDescriptors(resolutionFacade.analyze(nameExpression))
 }
@@ -116,12 +117,12 @@ fun Call.resolveCandidates(
     val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
     val inDescriptor = resolutionScope.ownerDescriptor
 
-    val dataFlowInfo = bindingContext.getDataFlowInfo(callElement)
+    val dataFlowInfo = bindingContext.getDataFlowInfoBefore(callElement)
     val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
     val callResolutionContext = BasicCallResolutionContext.create(
             bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,
             ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            false
+            false, resolutionFacade.frontendService<LanguageVersionSettings>()
     ).replaceCollectAllCandidates(true)
     val callResolver = resolutionFacade.frontendService<CallResolver>()
 
@@ -154,7 +155,7 @@ private fun expectedType(call: Call, bindingContext: BindingContext): KotlinType
 }
 
 fun KtCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: KtExpression, canChangeTypeToSubtype: Boolean): Boolean {
-    val declaredType = (resolveToDescriptor() as? CallableDescriptor)?.returnType ?: return false
+    val declaredType = (unsafeResolveToDescriptor() as? CallableDescriptor)?.returnType ?: return false
     val bindingContext = initializerOrBodyExpression.analyze()
     val scope = initializerOrBodyExpression.getResolutionScope(bindingContext, initializerOrBodyExpression.getResolutionFacade())
     val expressionType = initializerOrBodyExpression.computeTypeInContext(scope) ?: return false
@@ -167,7 +168,7 @@ fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this))
 fun String.unquote(): String = KtPsiUtil.unquoteIdentifier(this)
 
 fun FqName.quoteSegmentsIfNeeded(): String {
-    return pathSegments().map { it.asString().quoteIfNeeded() }.joinToString(".")
+    return pathSegments().joinToString(".") { it.asString().quoteIfNeeded() }
 }
 
 fun FqName.quoteIfNeeded() = FqName(quoteSegmentsIfNeeded())

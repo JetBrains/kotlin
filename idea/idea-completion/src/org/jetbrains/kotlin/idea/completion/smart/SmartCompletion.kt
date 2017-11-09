@@ -23,26 +23,30 @@ import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
 import java.util.*
 
 interface InheritanceItemsSearcher {
@@ -89,7 +93,7 @@ class SmartCompletion(
     val descriptorFilter: ((DeclarationDescriptor, AbstractLookupElementFactory) -> Collection<LookupElement>)? =
             { descriptor: DeclarationDescriptor, factory: AbstractLookupElementFactory ->
                 filterDescriptor(descriptor, factory).map { postProcess(it) }
-            }.check { expectedInfos.isNotEmpty() }
+            }.takeIf { expectedInfos.isNotEmpty() }
 
     fun additionalItems(lookupElementFactory: LookupElementFactory): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
         val (items, inheritanceSearcher) = additionalItemsNoPostProcess(lookupElementFactory)
@@ -106,7 +110,7 @@ class SmartCompletion(
         return postProcessedItems to postProcessedSearcher
     }
 
-    val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>>(LazyThreadSafetyMode.NONE) {
+    val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>> {
         val parent = expressionWithType.parent
         when (parent) {
             is KtBinaryExpression -> {
@@ -115,14 +119,14 @@ class SmartCompletion(
                     if (operationToken == KtTokens.EQ || operationToken in COMPARISON_TOKENS) {
                         val left = parent.left
                         if (left is KtReferenceExpression) {
-                            return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left].singletonOrEmptySet()
+                            return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left]?.let(::setOf).orEmpty()
                         }
                     }
                 }
             }
 
             is KtWhenConditionWithExpression -> {
-                val entry = parent.getParent() as KtWhenEntry
+                val entry = parent.parent as KtWhenEntry
                 val whenExpression = entry.parent as KtWhenExpression
                 val subject = whenExpression.subjectExpression ?: return@lazy emptySet()
 
@@ -200,12 +204,14 @@ class SmartCompletion(
         }
 
         if (expectedInfos.isNotEmpty()) {
+            items.addArrayLiteralsInAnnotationsCompletions()
+
             if (!forBasicCompletion && (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT || callTypeAndReceiver is CallTypeAndReceiver.UNKNOWN /* after this@ */)) {
                 items.addThisItems(expression, expectedInfos, smartCastCalculator)
             }
 
             if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-                TypeInstantiationItems(resolutionFacade, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion)
+                TypeInstantiationItems(resolutionFacade, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion, indicesHelper)
                         .addTo(items, inheritanceSearchers, expectedInfos)
 
                 if (expression is KtSimpleNameExpression) {
@@ -214,6 +220,10 @@ class SmartCompletion(
                 }
 
                 ClassLiteralItems.addToCollection(items, expectedInfos, lookupElementFactory.basicFactory, isJvmModule)
+
+                items.addNamedArgumentsWithLiteralValueItems(expectedInfos)
+
+                LambdaSignatureItems.addToCollection(items, expressionWithType, bindingContext, resolutionFacade)
 
                 if (!forBasicCompletion) {
                     LambdaItems.addToCollection(items, expectedInfos)
@@ -258,8 +268,8 @@ class SmartCompletion(
             object : LookupElementDecorator<LookupElement>(item) {
                 override fun handleInsert(context: InsertionContext) {
                     if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
-                        val offset = context.offsetMap.getOffset(OLD_ARGUMENTS_REPLACEMENT_OFFSET)
-                        if (offset != -1) {
+                        val offset = context.offsetMap.tryGetOffset(OLD_ARGUMENTS_REPLACEMENT_OFFSET)
+                        if (offset != null) {
                             context.document.deleteString(context.tailOffset, offset)
                         }
                     }
@@ -280,10 +290,51 @@ class SmartCompletion(
                 val types = smartCastCalculator.types(item.receiverParameter).map { it.toFuzzyType(emptyList()) }
                 val matcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
                 addLookupElements(null, expectedInfos, matcher) {
-                    item.createLookupElement().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS).singletonList()
+                    listOf(item.createLookupElement().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS))
                 }
             }
         }
+    }
+
+    private fun MutableCollection<LookupElement>.addNamedArgumentsWithLiteralValueItems(expectedInfos: Collection<ExpectedInfo>) {
+        data class NameAndValue(val name: Name, val value: String, val priority: SmartCompletionItemPriority)
+
+        val nameAndValues = HashMap<NameAndValue, MutableList<ExpectedInfo>>()
+
+        fun addNameAndValue(name: Name, value: String, priority: SmartCompletionItemPriority, expectedInfo: ExpectedInfo) {
+            nameAndValues.getOrPut(NameAndValue(name, value, priority)) { ArrayList() }.add(expectedInfo)
+        }
+
+        for (expectedInfo in expectedInfos) {
+            val argumentData = expectedInfo.additionalData as? ArgumentPositionData.Positional ?: continue
+            if (argumentData.namedArgumentCandidates.isEmpty()) continue
+            val parameters = argumentData.function.valueParameters
+            if (argumentData.argumentIndex >= parameters.size) continue
+            val parameterName = parameters[argumentData.argumentIndex].name
+
+            if (expectedInfo.fuzzyType?.type?.isBooleanOrNullableBoolean() == true) {
+                addNameAndValue(parameterName, "true", SmartCompletionItemPriority.NAMED_ARGUMENT_TRUE, expectedInfo)
+                addNameAndValue(parameterName, "false", SmartCompletionItemPriority.NAMED_ARGUMENT_FALSE, expectedInfo)
+            }
+            if (expectedInfo.fuzzyType?.type?.isMarkedNullable == true) {
+                addNameAndValue(parameterName, "null", SmartCompletionItemPriority.NAMED_ARGUMENT_NULL, expectedInfo)
+            }
+        }
+
+        for ((nameAndValue, infos) in nameAndValues) {
+            var lookupElement = createNamedArgumentWithValueLookupElement(nameAndValue.name, nameAndValue.value, nameAndValue.priority)
+            lookupElement = lookupElement.addTail(mergeTails(infos.map { it.tail }))
+            add(lookupElement)
+        }
+    }
+
+    private fun createNamedArgumentWithValueLookupElement(name: Name, value: String, priority: SmartCompletionItemPriority): LookupElement {
+        val lookupElement = LookupElementBuilder.create("${name.asString()} = $value")
+                .withIcon(KotlinIcons.PARAMETER)
+                .withInsertHandler({ context, _ -> context.document.replaceString(context.startOffset, context.tailOffset, "${name.render()} = $value") })
+        lookupElement.putUserData(SmartCompletionInBasicWeigher.NAMED_ARGUMENT_KEY, Unit)
+        lookupElement.assignSmartCompletionPriority(priority)
+        return lookupElement
     }
 
     private fun calcExpectedInfos(expression: KtExpression): Collection<ExpectedInfo> {
@@ -292,7 +343,7 @@ class SmartCompletion(
         if (declaration != null) {
             val originalDeclaration = toFromOriginalFileMapper.toOriginalFile(declaration)
             if (originalDeclaration != null) {
-                val originalDescriptor = originalDeclaration.resolveToDescriptor() as? CallableDescriptor
+                val originalDescriptor = originalDeclaration.resolveToDescriptorIfAny() as? CallableDescriptor
                 val returnType = originalDescriptor?.returnType
                 if (returnType != null && !returnType.isError) {
                     return listOf(ExpectedInfo(returnType, declaration.name, null))
@@ -366,7 +417,7 @@ class SmartCompletion(
                 if (descriptor.modality != Modality.ABSTRACT && !descriptor.isInner) {
                     descriptor.constructors
                             .filter(visibilityFilter)
-                            .mapNotNullTo(this) { toLookupElement(it) }
+                            .mapNotNullTo(this, ::toLookupElement)
                 }
             }
         }
@@ -390,6 +441,12 @@ class SmartCompletion(
             items.add(lookupElement.addTailAndNameSimilarity(infos))
         }
         return items
+    }
+
+    private fun MutableCollection<LookupElement>.addArrayLiteralsInAnnotationsCompletions() {
+        if (expression.languageVersionSettings.supportsFeature(LanguageFeature.ArrayLiteralsInAnnotations)) {
+            this.addAll(ArrayLiteralsInAnnotationItems.collect(expectedInfos, expression))
+        }
     }
 
     companion object {

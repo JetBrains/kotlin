@@ -18,19 +18,15 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.resolve.BindingTraceFilter
 
-open class BodyResolveMode {
-    open val bindingTraceFilter: BindingTraceFilter = BindingTraceFilter.ACCEPT_ALL
+enum class BodyResolveMode(val bindingTraceFilter: BindingTraceFilter) {
+    FULL(BindingTraceFilter.ACCEPT_ALL),
+    PARTIAL_FOR_COMPLETION(BindingTraceFilter.NO_DIAGNOSTICS),
+    PARTIAL_WITH_DIAGNOSTICS(BindingTraceFilter.ACCEPT_ALL),
+    PARTIAL(BindingTraceFilter.NO_DIAGNOSTICS)
 
-    companion object {
-        @JvmField val FULL = BodyResolveMode()
+    ;
 
-        @JvmField val PARTIAL = object : BodyResolveMode() {
-            override val bindingTraceFilter: BindingTraceFilter
-                get() = BindingTraceFilter.NO_DIAGNOSTICS
-        }
-
-        @JvmField val PARTIAL_WITH_DIAGNOSTICS = BodyResolveMode()
-
-        @JvmField val PARTIAL_FOR_COMPLETION = BodyResolveMode()
+    fun doesNotLessThan(other: BodyResolveMode): Boolean {
+        return this <= other && this.bindingTraceFilter.includesEverythingIn(other.bindingTraceFilter)
     }
 }

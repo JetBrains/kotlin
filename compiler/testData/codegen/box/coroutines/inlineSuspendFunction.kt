@@ -1,24 +1,31 @@
+// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+// WITH_REFLECT
+// CHECK_NOT_CALLED: suspendInline_61zpoe$
+// CHECK_NOT_CALLED: suspendInline_6r51u9$
+// CHECK_NOT_CALLED: suspendInline
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
 class Controller {
     fun withValue(v: String, x: Continuation<String>) {
         x.resume(v)
     }
 
-    suspend inline fun suspendInline(v: String, x: Continuation<String>) {
+    suspend inline fun suspendInline(v: String): String = suspendCoroutineOrReturn { x ->
         withValue(v, x)
+        COROUTINE_SUSPENDED
     }
 
-    suspend inline fun suspendInline(crossinline b: () -> String, x: Continuation<String>) {
-        suspendInline(b(), x)
-    }
+    suspend inline fun suspendInline(crossinline b: () -> String): String = suspendInline(b())
 
-    suspend inline fun <reified T : Any> suspendInline(x: Continuation<String>) {
-        suspendInline({ T::class.java.simpleName }, x)
-    }
+    suspend inline fun <reified T : Any> suspendInline(): String = suspendInline({ T::class.simpleName!! })
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: suspend Controller.() -> Unit) {
+    c.startCoroutine(Controller(), EmptyContinuation)
 }
 
 class OK

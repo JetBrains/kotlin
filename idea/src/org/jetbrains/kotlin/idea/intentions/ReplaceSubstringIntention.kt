@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -30,7 +30,7 @@ abstract class ReplaceSubstringIntention(text: String) : SelfTargetingRangeInten
     protected abstract fun applicabilityRangeInner(element: KtDotQualifiedExpression): TextRange?
 
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
-        if (element.receiverExpression.isStableVariable() && element.isMethodCall("kotlin.text.substring")) {
+        if (element.receiverExpression.isStable() && element.isMethodCall("kotlin.text.substring")) {
             return applicabilityRangeInner(element)
         }
         return null

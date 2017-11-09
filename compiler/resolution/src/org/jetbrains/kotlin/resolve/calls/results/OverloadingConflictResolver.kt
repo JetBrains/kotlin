@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ import gnu.trove.THashSet
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -30,13 +32,13 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
-class OverloadingConflictResolver<C : Any>(
+open class OverloadingConflictResolver<C : Any>(
         private val builtIns: KotlinBuiltIns,
         private val specificityComparator: TypeSpecificityComparator,
         private val getResultingDescriptor: (C) -> CallableDescriptor,
         private val createEmptyConstraintSystem: () -> SimpleConstraintSystem,
         private val createFlatSignature: (C) -> FlatSignature<C>,
-        private val getVariableCandidates: (C) -> C?, // vor variable WithInvoke
+        private val getVariableCandidates: (C) -> C?, // for variable WithInvoke
         private val isFromSources: (CallableDescriptor) -> Boolean
 ) {
 
@@ -55,22 +57,37 @@ class OverloadingConflictResolver<C : Any>(
 
     // if result contains only one element -- it is maximally specific; otherwise we have ambiguity
     fun chooseMaximallySpecificCandidates(
-            candidates: Set<C>,
+            candidates: Collection<C>,
             checkArgumentsMode: CheckArgumentTypesMode,
             discriminateGenerics: Boolean,
             isDebuggerContext: Boolean
     ): Set<C> {
-        if (candidates.size == 1) return candidates
+        candidates.setIfOneOrEmpty()?.let { return it }
 
         val fixedCandidates = if (getVariableCandidates(candidates.first()) != null) {
-            findMaximallySpecificVariableAsFunctionCalls(candidates, isDebuggerContext) ?: return candidates
+            findMaximallySpecificVariableAsFunctionCalls(candidates, isDebuggerContext) ?: return LinkedHashSet(candidates)
         }
         else {
             candidates
         }
 
         val noEquivalentCalls = filterOutEquivalentCalls(fixedCandidates)
-        val noOverrides = OverridingUtil.filterOverrides(noEquivalentCalls) { it.resultingDescriptor }
+        val noOverrides = OverridingUtil.filterOverrides(noEquivalentCalls) { a, b ->
+            val aDescriptor = a.resultingDescriptor
+            val bDescriptor = b.resultingDescriptor
+            // Here we'd like to handle situation when we have two synthetic descriptors as in syntheticSAMExtensions.kt
+
+            // Without this, we'll pick all synthetic descriptors as they don't have overridden descriptors and
+            // then report ambiguity, which isn't very convenient
+            if (aDescriptor is SyntheticMemberDescriptor<*> && bDescriptor is SyntheticMemberDescriptor<*>) {
+                val aBaseDescriptor = aDescriptor.baseDescriptorForSynthetic
+                val bBaseDescriptor = bDescriptor.baseDescriptorForSynthetic
+                if (aBaseDescriptor is CallableMemberDescriptor && bBaseDescriptor is CallableMemberDescriptor) {
+                    return@filterOverrides Pair(aBaseDescriptor, bBaseDescriptor)
+                }
+            }
+            Pair(aDescriptor, bDescriptor)
+        }
         if (noOverrides.size == 1) {
             return noOverrides
         }
@@ -93,8 +110,8 @@ class OverloadingConflictResolver<C : Any>(
     // Sometimes we should compare "copies" from sources and from binary files.
     // But we cannot compare return types for such copies, because it may lead us to recursive problem (see KT-11995).
     // Because of this we compare them without return type and choose descriptor from source if we found duplicate.
-    fun filterOutEquivalentCalls(candidates: Set<C>): Set<C> {
-        if (candidates.size <= 1) return candidates
+    fun filterOutEquivalentCalls(candidates: Collection<C>): Set<C> {
+        candidates.setIfOneOrEmpty()?.let { return it }
 
         val fromSourcesGoesFirst = candidates.sortedBy { if (isFromSources(it.resultingDescriptor)) 0 else 1 }
 
@@ -114,6 +131,12 @@ class OverloadingConflictResolver<C : Any>(
         return result
     }
 
+    private fun Collection<C>.setIfOneOrEmpty() = when(size) {
+        0 -> emptySet()
+        1 -> setOf(single())
+        else -> null
+    }
+
     private fun findMaximallySpecific(
             candidates: Set<C>,
             checkArgumentsMode: CheckArgumentTypesMode,
@@ -124,19 +147,22 @@ class OverloadingConflictResolver<C : Any>(
                 candidates.firstOrNull()
             else when (checkArgumentsMode) {
                 CheckArgumentTypesMode.CHECK_CALLABLE_TYPE ->
-                    uniquifyCandidatesSet(candidates).filter {
-                        isDefinitelyMostSpecific(it, candidates) {
-                            call1, call2 ->
+                    uniquifyCandidatesSet(candidates).singleOrNull {
+                        isDefinitelyMostSpecific(it, candidates) { call1, call2 ->
                             isNotLessSpecificCallableReference(call1.resultingDescriptor, call2.resultingDescriptor)
                         }
-                    }.singleOrNull()
+                    }
 
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
                     findMaximallySpecificCall(candidates, discriminateGenerics, isDebuggerContext)
+                    ?: findMaximallySpecificCall(
+                            candidates.filterNotTo(mutableSetOf()) { createFlatSignature(it).isSyntheticMember },
+                            discriminateGenerics, isDebuggerContext
+                    )
             }
 
     // null means ambiguity between variables
-    private fun findMaximallySpecificVariableAsFunctionCalls(candidates: Set<C>, isDebuggerContext: Boolean): Set<C>? {
+    private fun findMaximallySpecificVariableAsFunctionCalls(candidates: Collection<C>, isDebuggerContext: Boolean): Set<C>? {
         val variableCalls = candidates.mapTo(newResolvedCallSet(candidates.size)) {
             getVariableCandidates(it) ?: throw AssertionError("Regular call among variable-as-function calls: $it")
         }
@@ -219,7 +245,7 @@ class OverloadingConflictResolver<C : Any>(
     }
 
     /**
-     * Returns `true` if `d1` is definitely not less specific than `d2`,
+     * Returns `true` if [call1] is definitely more or equally specific [call2],
      * `false` otherwise.
      */
     private fun compareCallsByUsedArguments(
@@ -236,6 +262,9 @@ class OverloadingConflictResolver<C : Any>(
             // two generics are non-comparable
             if (isGeneric1 && isGeneric2) return false
         }
+
+        if (!call1.isExpect && call2.isExpect) return true
+        if (call1.isExpect && !call2.isExpect) return false
 
         return createEmptyConstraintSystem().isSignatureNotLessSpecific(call1, call2, SpecificityComparisonWithNumerics, specificityComparator)
     }

@@ -35,7 +35,7 @@ enum class Foo(val s: String) {
 Issues
 * Enum literals syntax clash with annotation syntax
     * Option 1.1: Forbid short annotation syntax in enums. **downside**: cannot annotate functions/properties/classes in this enum
-    * Option 1.2: Add a separator between enum constants and members, and forbid short annotation syntax only on enum entriesc themselves. **downside**: separator is not intuitive, hard to think of when doing this for the first time (the error message will be rather clear and instructive, though)
+    * Option 1.2: Add a separator between enum constants and members, and forbid short annotation syntax only on enum entries themselves. **downside**: separator is not intuitive, hard to think of when doing this for the first time (the error message will be rather clear and instructive, though)
     * Option 1.3: prefix each entry with a soft-keyword, e.g. `entry`. **downside**: verbosity
     * Option 1.4 **chosen**: Add a semicolon separator after the last enum constant, **and** a comma separator between different enum constants.
 * How do we specify other supertypes for a constant (if any)

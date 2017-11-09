@@ -5,8 +5,10 @@
  * See libraries/tools/idl2k for details
  */
 
+@file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.dom.url
 
+import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
 import org.w3c.dom.css.*
@@ -20,58 +22,41 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public open class URL(url: String, base: String = noImpl) {
+/**
+ * Exposes the JavaScript [URL](https://developer.mozilla.org/en/docs/Web/API/URL) to Kotlin
+ */
+public external open class URL(url: String, base: String = definedExternally) {
     var href: String
-        get() = noImpl
-        set(value) = noImpl
     open val origin: String
-        get() = noImpl
     var protocol: String
-        get() = noImpl
-        set(value) = noImpl
     var username: String
-        get() = noImpl
-        set(value) = noImpl
     var password: String
-        get() = noImpl
-        set(value) = noImpl
     var host: String
-        get() = noImpl
-        set(value) = noImpl
     var hostname: String
-        get() = noImpl
-        set(value) = noImpl
     var port: String
-        get() = noImpl
-        set(value) = noImpl
     var pathname: String
-        get() = noImpl
-        set(value) = noImpl
     var search: String
-        get() = noImpl
-        set(value) = noImpl
-    var searchParams: URLSearchParams
-        get() = noImpl
-        set(value) = noImpl
+    open val searchParams: URLSearchParams
     var hash: String
-        get() = noImpl
-        set(value) = noImpl
 
     companion object {
-        fun createObjectURL(blob: Blob): String = noImpl
-        fun createFor(blob: Blob): String = noImpl
-        fun revokeObjectURL(url: String): Unit = noImpl
-        fun domainToASCII(domain: String): String = noImpl
-        fun domainToUnicode(domain: String): String = noImpl
+        fun createObjectURL(blob: Blob): String
+        fun createFor(blob: Blob): String
+        fun revokeObjectURL(url: String): Unit
+        fun domainToASCII(domain: String): String
+        fun domainToUnicode(domain: String): String
     }
 }
 
-@native public open class URLSearchParams(init: dynamic = "") {
-    fun append(name: String, value: String): Unit = noImpl
-    fun delete(name: String): Unit = noImpl
-    fun get(name: String): String? = noImpl
-    fun getAll(name: String): Array<String> = noImpl
-    fun has(name: String): Boolean = noImpl
-    fun set(name: String, value: String): Unit = noImpl
+/**
+ * Exposes the JavaScript [URLSearchParams](https://developer.mozilla.org/en/docs/Web/API/URLSearchParams) to Kotlin
+ */
+public external open class URLSearchParams(init: dynamic = definedExternally) {
+    fun append(name: String, value: String): Unit
+    fun delete(name: String): Unit
+    fun get(name: String): String?
+    fun getAll(name: String): Array<String>
+    fun has(name: String): Boolean
+    fun set(name: String, value: String): Unit
 }
 

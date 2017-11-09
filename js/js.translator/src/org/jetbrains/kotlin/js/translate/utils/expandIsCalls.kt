@@ -16,19 +16,23 @@
 
 package org.jetbrains.kotlin.js.translate.utils
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck
-import com.google.dart.compiler.backend.js.ast.metadata.typeCheck
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.TypeCheck
+import org.jetbrains.kotlin.js.backend.ast.metadata.typeCheck
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
-import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import java.util.*
 
-fun expandIsCalls(node: JsNode, context: TranslationContext) {
-    TypeCheckRewritingVisitor(context).accept(node)
+fun expandIsCalls(fragments: List<JsProgramFragment>) {
+    val visitor = TypeCheckRewritingVisitor()
+    for (fragment in fragments) {
+        visitor.accept(fragment.declarationBlock)
+        visitor.accept(fragment.initializerBlock)
+    }
 }
 
-private class TypeCheckRewritingVisitor(private val context: TranslationContext) : JsVisitorWithContextImpl() {
+private class TypeCheckRewritingVisitor : JsVisitorWithContextImpl() {
 
     private val scopes = Stack<JsScope>()
     private val localVars = Stack<MutableSet<JsName>>().apply { push(mutableSetOf()) }
@@ -60,7 +64,7 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
             val replacement = getReplacement(callee, calleeArguments, argument)
 
             if (replacement != null) {
-                ctx.replaceMe(accept(replacement))
+                ctx.replaceMe(accept(replacement).source(x.source))
                 return false
             }
         }
@@ -71,11 +75,6 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
     private fun getReplacement(callee: JsInvocation, calleeArguments: List<JsExpression>, argument: JsExpression): JsExpression? {
         val typeCheck = callee.typeCheck
         return when (typeCheck) {
-            TypeCheck.IS_ANY -> {
-                // `Kotlin.isAny()(argument)` -> `argument != null`
-                if (calleeArguments.isEmpty()) TranslationUtils.isNotNullCheck(argument) else null
-            }
-
             TypeCheck.TYPEOF -> {
                 // `Kotlin.isTypeOf(calleeArgument)(argument)` -> `typeOf argument === calleeArgument`
                 if (calleeArguments.size == 1) typeOfIs(argument, calleeArguments[0] as JsStringLiteral) else null
@@ -83,13 +82,7 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
 
             TypeCheck.INSTANCEOF -> {
                 // `Kotlin.isInstanceOf(calleeArgument)(argument)` -> `argument instanceof calleeArgument`
-                if (calleeArguments.size == 1) context.namer().isInstanceOf(argument, calleeArguments[0]) else null
-            }
-
-            TypeCheck.SAME_AS -> {
-                // `Kotlin.isInstanceOf(calleeArgument)(argument)` -> `argument === calleeArgument`
-                // when it's known at compile time that `argument` represents an object type
-                if (calleeArguments.size == 1) JsAstUtils.equality(argument, calleeArguments[0]) else null
+                if (calleeArguments.size == 1) Namer.isInstanceOf(argument, calleeArguments[0]) else null
             }
 
             TypeCheck.OR_NULL -> {
@@ -141,8 +134,7 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
     }
 
     private fun generateAlias(argument: JsExpression): Pair<JsExpression, JsExpression> {
-        val currentScope = scopes.peek()
-        val tmp = currentScope.declareTemporary()
+        val tmp = JsScope.declareTemporary()
         val statementContext = lastStatementLevelContext
         statementContext.addPrevious(newVar(tmp, null))
         return Pair(assignment(tmp.makeRef(), argument), tmp.makeRef())

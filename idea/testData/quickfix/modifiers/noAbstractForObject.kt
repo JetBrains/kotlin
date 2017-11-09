@@ -2,7 +2,8 @@
 // ACTION: Create test
 // ACTION: Implement members
 // ACTION: Move 'Some' to separate file
-// ERROR: Object 'Some' must be declared abstract or implement abstract member public abstract fun foo(): Unit defined in T
+// ACTION: Rename file to Some.kt
+// ERROR: Object 'Some' is not abstract and does not implement abstract member public abstract fun foo(): Unit defined in T
 interface T {
     fun foo()
 }

@@ -69,7 +69,7 @@ class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
         val targetClass = data.targetClass.unwrapped as? KtClass ?: return null
 
         val project = targetClass.project
-        val targetPackage = targetClass.getContainingKtFile().packageFqName.asString()
+        val targetPackage = targetClass.containingKtFile.packageFqName.asString()
         val dummyFile = PsiFileFactory.getInstance(project).createFileFromText(
                 "dummy.java",
                 JavaFileType.INSTANCE,
@@ -92,7 +92,7 @@ class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
         return outerPsiClasses
                 .drop(1)
                 .plus(dummyTargetClass)
-                .fold(dummyFile.add(outerPsiClasses.first())) { parent, child -> parent.add(child) } as PsiClass
+                .fold(dummyFile.add(outerPsiClasses.first()), PsiElement::add) as PsiClass
     }
 
     override fun createPullUpHelper(data: PullUpData): PullUpHelper<*> {

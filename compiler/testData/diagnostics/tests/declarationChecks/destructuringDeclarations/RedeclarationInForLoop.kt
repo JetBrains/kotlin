@@ -8,7 +8,7 @@ class C {
 }
 
 fun test() {
-    for ((<!REDECLARATION!>x<!>, <!NAME_SHADOWING, REDECLARATION, UNUSED_VARIABLE!>x<!>) in C()) {
+    for ((<!REDECLARATION, UNUSED_VARIABLE!>x<!>, <!NAME_SHADOWING, REDECLARATION, UNUSED_VARIABLE!>x<!>) in C()) {
 
     }
 }

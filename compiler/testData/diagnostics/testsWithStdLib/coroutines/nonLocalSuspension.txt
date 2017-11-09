@@ -1,0 +1,17 @@
+package
+
+public suspend fun </*0*/ T> another(/*0*/ a: T): kotlin.Int
+public fun </*0*/ T> builder(/*0*/ c: suspend () -> kotlin.Unit): kotlin.Unit
+public fun foo(): kotlin.Unit
+public fun noinline(/*0*/ x: () -> kotlin.Unit): kotlin.Unit
+public inline fun run(/*0*/ x: () -> kotlin.Unit): kotlin.Unit
+public inline fun runCross(/*0*/ crossinline x: () -> kotlin.Unit): kotlin.Unit
+public suspend fun suspendHere(): kotlin.Int
+
+public object Host {
+    private constructor Host()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final suspend fun suspendFromObject(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

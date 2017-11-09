@@ -1,0 +1,3 @@
+3 var <bold>foo: Int = 1</bold>
+3 	var foo: Int = <bold>1</bold>
+7 	foo = <bold>2</bold>

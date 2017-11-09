@@ -1,15 +1,13 @@
+@file:kotlin.jvm.JvmVersion
 package test.collections
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
-import kotlin.test.assertEquals
-import kotlin.test.assertFails
-import kotlin.test.expect
-import org.junit.Test as test
+import kotlin.test.*
 import kotlin.comparisons.*
 
 class MapJVMTest {
-    @test fun createSortedMap() {
+    @Test fun createSortedMap() {
         val map = sortedMapOf(Pair("c", 3), Pair("b", 2), Pair("a", 1))
         assertEquals(1, map["a"])
         assertEquals(2, map["b"])
@@ -17,7 +15,7 @@ class MapJVMTest {
         assertEquals(listOf("a", "b", "c"), map.keys.toList())
     }
 
-    @test fun toSortedMap() {
+    @Test fun toSortedMap() {
         val map = mapOf(Pair("c", 3), Pair("b", 2), Pair("a", 1))
         val sorted = map.toSortedMap()
         assertEquals(1, sorted["a"])
@@ -26,7 +24,7 @@ class MapJVMTest {
         assertEquals(listOf("a", "b", "c"), sorted.keys.toList())
     }
 
-    @test fun toSortedMapWithComparator() {
+    @Test fun toSortedMapWithComparator() {
         val map = mapOf(Pair("c", 3), Pair("bc", 2), Pair("bd", 4), Pair("abc", 1))
         val sorted = map.toSortedMap(compareBy<String> { it.length }.thenBy { it })
         assertEquals(listOf("c", "bc", "bd", "abc"), sorted.keys.toList())
@@ -35,7 +33,7 @@ class MapJVMTest {
         assertEquals(3, sorted["c"])
     }
 
-    @test fun toProperties() {
+    @Test fun toProperties() {
         val map = mapOf("a" to "A", "b" to "B")
         val prop = map.toProperties()
         assertEquals(2, prop.size)
@@ -43,7 +41,7 @@ class MapJVMTest {
         assertEquals("B", prop.getProperty("b", "fail"))
     }
 
-    @test fun iterateAndRemove() {
+    @Test fun iterateAndRemove() {
         val map = (1..5).associateByTo(linkedMapOf(), { it }, { 'a' + it })
         val iterator = map.iterator()
         while (iterator.hasNext()) {
@@ -54,7 +52,7 @@ class MapJVMTest {
         assertEquals(listOf('b', 'd', 'f'), map.values.toList())
     }
     
-    @test fun getOrPutFailsOnConcurrentMap() {
+    @Test fun getOrPutFailsOnConcurrentMap() {
         val map = ConcurrentHashMap<String, Int>()
 
         // not an error anymore

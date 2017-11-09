@@ -42,7 +42,7 @@ class ComponentResolveContext(
 
 class ConstructorBinding(val constructor: Constructor<*>, val argumentDescriptors: List<ValueDescriptor>)
 
-class MethodBinding(val method: Method, val argumentDescriptors: List<ValueDescriptor>) {
+class MethodBinding(val method: Method, private val argumentDescriptors: List<ValueDescriptor>) {
     fun invoke(instance: Any) {
         val arguments = computeArguments(argumentDescriptors).toTypedArray()
         method.invoke(instance, *arguments)

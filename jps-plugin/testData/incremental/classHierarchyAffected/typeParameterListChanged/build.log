@@ -51,16 +51,16 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-One type argument expected for class A<T> defined in foo
-One type argument expected for class A<T> defined in foo
-One type argument expected for class A<T> defined in foo
+One type argument expected for class A<T>
+One type argument expected for class A<T>
+One type argument expected for class A<T>
 Type inference failed: Not enough information to infer parameter T in constructor A<T>()
 Please specify it explicitly.
 Type inference failed: Not enough information to infer parameter T in constructor A<T>()
 Please specify it explicitly.
 Type inference failed: Not enough information to infer parameter T in constructor A<T>()
 Please specify it explicitly.
-One type argument expected for class A<T> defined in foo
+One type argument expected for class A<T>
 
 ================ Step #2 =================
 

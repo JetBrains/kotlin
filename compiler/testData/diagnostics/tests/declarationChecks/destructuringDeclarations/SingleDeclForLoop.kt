@@ -7,7 +7,7 @@ class C {
 }
 
 fun test() {
-    for ((x) in C()) {
+    for ((<!UNUSED_VARIABLE!>x<!>) in C()) {
 
     }
 }

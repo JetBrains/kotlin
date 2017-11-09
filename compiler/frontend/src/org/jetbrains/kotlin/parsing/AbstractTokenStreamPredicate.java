@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.parsing;
 public abstract class AbstractTokenStreamPredicate implements TokenStreamPredicate {
 
     @Override
-    public TokenStreamPredicate or(final TokenStreamPredicate other) {
+    public TokenStreamPredicate or(TokenStreamPredicate other) {
         return new AbstractTokenStreamPredicate() {
             @Override
             public boolean matching(boolean topLevel) {

@@ -4,8 +4,7 @@ internal class A {
     private val s = ""
     private val x = 0
 
-    constructor() {
-    }
+    constructor() {}
 
     @JvmOverloads constructor(p: Int, s: String, x: Int = 1) {
         this.s = s

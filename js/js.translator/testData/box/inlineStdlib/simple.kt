@@ -1,6 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1116
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test_0
+// CHECK_CONTAINS_NO_CALLS: test
 
 internal var counter = 0
 

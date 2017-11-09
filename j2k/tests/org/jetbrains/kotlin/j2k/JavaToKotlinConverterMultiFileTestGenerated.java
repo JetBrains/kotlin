@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.j2k;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToKotlinConverterMultiFileTest {
     public void testAllFilesPresentInMultiFile() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("AnnotationWithArrayParameter")
@@ -47,6 +48,12 @@ public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToK
         doTest(fileName);
     }
 
+    @TestMetadata("FunctionalInterfaceAcceptor")
+    public void testFunctionalInterfaceAcceptor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/FunctionalInterfaceAcceptor/");
+        doTest(fileName);
+    }
+
     @TestMetadata("GetterAndSetterUsages")
     public void testGetterAndSetterUsages() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/GetterAndSetterUsages/");
@@ -56,6 +63,12 @@ public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToK
     @TestMetadata("KT11952")
     public void testKT11952() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/KT11952/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NullabilityByDFa")
+    public void testNullabilityByDFa() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/NullabilityByDFa/");
         doTest(fileName);
     }
 

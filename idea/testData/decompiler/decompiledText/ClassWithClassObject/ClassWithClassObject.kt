@@ -25,10 +25,10 @@ class ClassWithClassObject {
             throw RuntimeException()
         }
     }
-}
 
-class B {
-}
+    class B {
+    }
 
-class A {
+    class A {
+    }
 }

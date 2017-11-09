@@ -1,0 +1,4 @@
+4 val <bold>x = 1</bold>
+6 	val <bold>y = x</bold>
+8 	val <bold>z: Int</bold>
+16 	fun bar(<bold>m: Int</bold>) {

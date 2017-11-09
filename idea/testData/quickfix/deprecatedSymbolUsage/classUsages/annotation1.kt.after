@@ -7,4 +7,5 @@ annotation class Foo
 
 annotation class Bar
 
-@Bar class C {}
+@Bar
+class C {}

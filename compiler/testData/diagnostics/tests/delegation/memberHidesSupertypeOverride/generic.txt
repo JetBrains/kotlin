@@ -1,0 +1,25 @@
+package
+
+public fun box(): kotlin.String
+
+public interface Base</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun test(/*0*/ p: T): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Delegate</*0*/ Z> : Derived<Z> {
+    public constructor Delegate</*0*/ Z>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun test(/*0*/ p: Z): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Derived</*0*/ Y> : Base<Y> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun test(/*0*/ p: Y): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

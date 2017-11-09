@@ -122,7 +122,7 @@ class KotlinFieldBreakpoint(
 
         val property = getProperty(sourcePosition) ?: return
 
-        breakpointType = computeBreakpointType(property)
+        breakpointType = (computeBreakpointType(property) ?: return)
 
         val vm = debugProcess.virtualMachineProxy
         try {
@@ -187,7 +187,7 @@ class KotlinFieldBreakpoint(
         }
     }
 
-    private fun computeBreakpointType(property: KtCallableDeclaration): BreakpointType {
+    private fun computeBreakpointType(property: KtCallableDeclaration): BreakpointType? {
         return runReadAction {
             val bindingContext = property.analyze()
             var descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)
@@ -195,11 +195,16 @@ class KotlinFieldBreakpoint(
                 descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)
             }
 
-            if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor)!!) {
-                BreakpointType.FIELD
+            if (descriptor is PropertyDescriptor) {
+                if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor)!!) {
+                    BreakpointType.FIELD
+                }
+                else {
+                    BreakpointType.METHOD
+                }
             }
             else {
-                BreakpointType.METHOD
+                null
             }
         }
     }
@@ -230,10 +235,10 @@ class KotlinFieldBreakpoint(
         }
     }
 
-    inline fun <reified T : EventRequest> findRequest(debugProcess: DebugProcessImpl, requestClass: Class<T>, requestor: Requestor): T? {
+    inline private fun <reified T : EventRequest> findRequest(debugProcess: DebugProcessImpl, requestClass: Class<T>, requestor: Requestor): T? {
         val requests = debugProcess.requestsManager.findRequests(requestor)
         for (eventRequest in requests) {
-            if (eventRequest.javaClass == requestClass) {
+            if (eventRequest::class.java == requestClass) {
                 return eventRequest as T
             }
         }
@@ -248,7 +253,7 @@ class KotlinFieldBreakpoint(
     }
 
     fun matchesEvent(event: LocatableEvent): Boolean {
-        val method = event.location().method()
+        val method = event.location()?.method()
         // TODO check property type
         return method != null && method.name() in getMethodsName()
     }
@@ -259,7 +264,7 @@ class KotlinFieldBreakpoint(
     }
 
     override fun getEventMessage(event: LocatableEvent): String {
-        val location = event.location()
+        val location = event.location()!!
         val locationQName = location.declaringType().name() + "." + location.method().name()
         val locationFileName = try {
             location.sourceName()

@@ -2,13 +2,13 @@
 // WITH_RUNTIME
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
-// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var b: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // SIBLING:
 fun foo(a: Int): Int {
     var b: Int = 1
 
-    val pair = pair(a, b)
+    val pair = pair(b, a)
     b = pair.second
     val t = pair.first
     println(b)
@@ -16,7 +16,7 @@ fun foo(a: Int): Int {
     return t
 }
 
-private fun pair(a: Int, b: Int): Pair<Int, Int> {
+private fun pair(b: Int, a: Int): Pair<Int, Int> {
     var b1 = b
     return Pair({ b1 += a; b1 }(), b1)
 }

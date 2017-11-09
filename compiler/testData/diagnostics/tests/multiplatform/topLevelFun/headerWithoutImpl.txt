@@ -1,0 +1,3 @@
+package
+
+public expect fun foo(): kotlin.Unit

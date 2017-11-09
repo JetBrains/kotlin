@@ -38,5 +38,5 @@ class ReflectJavaValueParameter(
     override val name: Name?
         get() = reflectName?.let(Name::guessByFirstCharacter)
 
-    override fun toString() = javaClass.name + ": " + (if (isVararg) "vararg " else "") + name + ": " + type
+    override fun toString() = this::class.java.name + ": " + (if (isVararg) "vararg " else "") + name + ": " + type
 }

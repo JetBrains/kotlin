@@ -1,9 +1,9 @@
 public class A {
-    public static class X {
-
-    }
 }
 
 public class B {
 
+    private static class X {
+
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,37 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.RangeToIntrinsic;
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 
 public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     INSTANCE;
 
-    private static abstract class BinaryOperationIntrinsicBase extends FunctionIntrinsic {
+    private static abstract class BinaryOperationIntrinsicBase extends FunctionIntrinsicWithReceiverComputed {
         @NotNull
         public abstract JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context);
 
@@ -52,7 +54,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         @Override
         public JsExpression apply(
                 @Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
+                @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context) {
             assert receiver != null;
             assert arguments.size() == 1;
@@ -60,33 +62,24 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         }
     }
 
-    @NotNull
-    private static final BinaryOperationIntrinsicBase RANGE_TO_INTRINSIC = new BinaryOperationIntrinsicBase() {
-        @NotNull
-        @Override
-        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            //TODO: add tests and correct expression for reversed ranges.
-            return JsAstUtils.numberRangeTo(left, right);
-        }
-    };
+    private static final BinaryOperationIntrinsicBase INT_MULTIPLICATION_INTRINSIC = new BinaryOperationIntrinsicBase() {
+        // IEEE 754 mantissa is 52 bits long. Assuming one argument may be up to 2^31, the second argument should be
+        // not greater than 2^21 in order their product don't exceed 2^52. We preserve two extra bits to be more safe.
+        private static final int SAFE_THRESHOLD = 2 << 19;
 
-    @NotNull
-    private static final BinaryOperationIntrinsicBase CHAR_RANGE_TO_INTRINSIC = new BinaryOperationIntrinsicBase() {
         @NotNull
         @Override
         public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            //TODO: add tests and correct expression for reversed ranges.
-            return JsAstUtils.charRangeTo(left, right);
+            if (isSafeConstant(left) || isSafeConstant(right)) {
+                return JsAstUtils.toInt32(JsAstUtils.mul(left, right));
+            }
+            return new JsInvocation(Namer.imul(), left, right);
         }
-    };
 
-    @NotNull
-    private static final BinaryOperationIntrinsicBase INTEGER_DIVISION_INTRINSIC = new BinaryOperationIntrinsicBase() {
-        @NotNull
-        @Override
-        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            JsBinaryOperation div = new JsBinaryOperation(JsBinaryOperator.DIV, left, right);
-            return JsAstUtils.toInt32(div);
+        private boolean isSafeConstant(@NotNull JsExpression expression) {
+            if (!(expression instanceof JsIntLiteral)) return false;
+            int value = ((JsIntLiteral) expression).value;
+            return Math.abs(value) < SAFE_THRESHOLD;
         }
     };
 
@@ -109,15 +102,24 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     };
 
     @NotNull
-    private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorConventions.BINARY_OPERATION_NAMES.values());
+    private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorNameConventions.BINARY_OPERATION_NAMES);
+
+    private static final DescriptorPredicate INT_BINARY_OPERATIONS = pattern("Int.plus|minus(Int)");
+    private static final DescriptorPredicate SIMPLE_INT_MULTIPLICATION = pattern("Byte|Short.times(Byte|Short)");
+    private static final DescriptorPredicate INT_DIVISION = pattern("Byte|Short|Int.div(Byte|Short|Int)");
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_BINARY_OPERATIONS =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, BINARY_OPERATIONS);
 
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, "compareTo");
-    private static final DescriptorPredicate INT_WITH_BIT_OPERATIONS = pattern("Int.or|and|xor|shl|shr|ushr");
+    private static final Predicate<FunctionDescriptor> INT_WITH_BIT_OPERATIONS = pattern("Int.or|and|xor|shl|shr|ushr")
+            .or(pattern("Short|Byte.or|and|xor"));
     private static final DescriptorPredicate BOOLEAN_OPERATIONS = pattern("Boolean.or|and|xor");
     private static final DescriptorPredicate STRING_PLUS = pattern("String.plus");
+    private static final DescriptorPredicate INT_MULTIPLICATION = pattern("Int.times(Int)");
+
+    private static final DescriptorPredicate CHAR_RANGE_TO = pattern("Char.rangeTo(Char)");
+    private static final DescriptorPredicate NUMBER_RANGE_TO = pattern("Byte|Short|Int.rangeTo(Byte|Short|Int)");
 
     private static final ImmutableMap<String, JsBinaryOperator> BINARY_BITWISE_OPERATIONS = ImmutableMap.<String, JsBinaryOperator>builder()
             .put("or", JsBinaryOperator.BIT_OR)
@@ -128,65 +130,79 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             .put("ushr", JsBinaryOperator.SHRU)
             .build();
 
-    private static final Predicate<FunctionDescriptor> PREDICATE = Predicates.or(PRIMITIVE_NUMBERS_BINARY_OPERATIONS, BOOLEAN_OPERATIONS,
-                                                                                 STRING_PLUS, INT_WITH_BIT_OPERATIONS,
-                                                                                 PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS);
+    private static final Predicate<FunctionDescriptor> PREDICATE = PRIMITIVE_NUMBERS_BINARY_OPERATIONS
+            .or(BOOLEAN_OPERATIONS).or(STRING_PLUS).or(INT_WITH_BIT_OPERATIONS).or(PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS);
 
     @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
-        if (pattern("Char.rangeTo(Char)").apply(descriptor)) {
-            return CHAR_RANGE_TO_INTRINSIC;
+        if (CHAR_RANGE_TO.test(descriptor)) {
+            return new RangeToIntrinsic(descriptor);
         }
 
-        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.apply(descriptor)) {
+        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.test(descriptor)) {
             return PRIMITIVE_NUMBER_COMPARE_TO_INTRINSIC;
         }
 
 
-        if (JsDescriptorUtils.isBuiltin(descriptor) && descriptor.getName().equals(OperatorNameConventions.COMPARE_TO)) {
+        if (KotlinBuiltIns.isBuiltIn(descriptor) && descriptor.getName().equals(OperatorNameConventions.COMPARE_TO)) {
             return BUILTINS_COMPARE_TO_INTRINSIC;
         }
 
-        if (!PREDICATE.apply(descriptor)) {
+        if (!PREDICATE.test(descriptor)) {
             return null;
         }
 
-
-        if (pattern("Int|Short|Byte.div(Int|Short|Byte)").apply(descriptor)) {
-            return INTEGER_DIVISION_INTRINSIC;
+        if (INT_MULTIPLICATION.test(descriptor)) {
+            return INT_MULTIPLICATION_INTRINSIC;
         }
-        if (descriptor.getName().equals(Name.identifier("rangeTo"))) {
-            return RANGE_TO_INTRINSIC;
+        if (NUMBER_RANGE_TO.test(descriptor)) {
+            return new RangeToIntrinsic(descriptor);
         }
-        if (INT_WITH_BIT_OPERATIONS.apply(descriptor)) {
+        if (INT_WITH_BIT_OPERATIONS.test(descriptor)) {
             JsBinaryOperator op = BINARY_BITWISE_OPERATIONS.get(descriptor.getName().asString());
             if (op != null) {
-                return new PrimitiveBinaryOperationFunctionIntrinsic(op);
+                return new OptimizedIntBinaryOperationInstrinsic(op);
             }
         }
         JsBinaryOperator operator = getOperator(descriptor);
+        if (INT_BINARY_OPERATIONS.test(descriptor)) {
+            return new AdditiveIntBinaryOperationInstrinsic(operator);
+        }
+        if (SIMPLE_INT_MULTIPLICATION.test(descriptor) || INT_DIVISION.test(descriptor)) {
+            return new IntBinaryOperationFunctionIntrinsic(operator);
+        }
         BinaryOperationIntrinsicBase result = new PrimitiveBinaryOperationFunctionIntrinsic(operator);
 
-        if (pattern("Char.plus|minus(Int)").apply(descriptor)) {
+        if (pattern("Char.plus|minus(Int)").test(descriptor)) {
             return new CharAndIntBinaryOperationFunctionIntrinsic(result);
         }
-        if (pattern("Char.minus(Char)").apply(descriptor)) {
+        if (pattern("Char.minus(Char)").test(descriptor)) {
             return new CharAndCharBinaryOperationFunctionIntrinsic(result);
+        }
+        if (pattern("String.plus(Any)").test(descriptor)) {
+            return new StringAndCharBinaryOperationFunctionIntrinsic(result);
         }
         return result;
     }
 
     @NotNull
     private static JsBinaryOperator getOperator(@NotNull FunctionDescriptor descriptor) {
-        KtToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(descriptor.getName());
-        if (token == null) {
-            token = OperatorConventions.BOOLEAN_OPERATIONS.inverse().get(descriptor.getName());
+        // Temporary hack to get '%' for deprecated 'mod' operator
+        Name descriptorName = descriptor.getName().equals(OperatorNameConventions.MOD) ? OperatorNameConventions.REM : descriptor.getName();
+
+        switch (descriptorName.asString()) {
+            case "or":
+                return JsBinaryOperator.BIT_OR;
+            case "and":
+                return JsBinaryOperator.BIT_AND;
+            case "xor":
+                return JsBinaryOperator.BIT_XOR;
+            default:
+                break;
         }
-        if (token == null) {
-            assert descriptor.getName().asString().equals("xor");
-            return JsBinaryOperator.BIT_XOR;
-        }
+
+        KtToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(descriptorName);
         return OperatorTable.getBinaryOperator(token);
     }
 
@@ -206,6 +222,60 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         }
     }
 
+    private static class IntBinaryOperationFunctionIntrinsic extends PrimitiveBinaryOperationFunctionIntrinsic {
+        private IntBinaryOperationFunctionIntrinsic(@NotNull JsBinaryOperator operator) {
+            super(operator);
+        }
+
+        @NotNull
+        @Override
+        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
+            return JsAstUtils.toInt32(super.doApply(left, right, context));
+        }
+    }
+
+    private static class OptimizedIntBinaryOperationInstrinsic extends PrimitiveBinaryOperationFunctionIntrinsic {
+        public OptimizedIntBinaryOperationInstrinsic(@NotNull JsBinaryOperator operator) {
+            super(operator);
+        }
+
+        @NotNull
+        @Override
+        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
+            left = unwrapAdditive(left);
+            right = unwrapAdditive(right);
+            return super.doApply(left, right, context);
+        }
+
+        @NotNull
+        private static JsExpression unwrapAdditive(@NotNull JsExpression expression) {
+            JsExpression toIntArgument = JsAstUtils.extractToInt32Argument(expression);
+            if (toIntArgument == null) return expression;
+
+            if (!(toIntArgument instanceof JsBinaryOperation)) return expression;
+            JsBinaryOperator operator = ((JsBinaryOperation) toIntArgument).getOperator();
+            switch (operator) {
+                case ADD:
+                case SUB:
+                    return toIntArgument;
+                default:
+                    return expression;
+            }
+        }
+    }
+
+    private static class AdditiveIntBinaryOperationInstrinsic extends OptimizedIntBinaryOperationInstrinsic {
+        public AdditiveIntBinaryOperationInstrinsic(@NotNull JsBinaryOperator operator) {
+            super(operator);
+        }
+
+        @NotNull
+        @Override
+        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
+            return JsAstUtils.toInt32(super.doApply(left, right, context));
+        }
+    }
+
     private static class CharAndIntBinaryOperationFunctionIntrinsic extends BinaryOperationIntrinsicBase {
 
         @NotNull
@@ -218,7 +288,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         @NotNull
         @Override
         public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            return JsAstUtils.toChar(functionIntrinsic.doApply(JsAstUtils.charToInt(left), right, context));
+            return AstUtilsKt.toChar(context, functionIntrinsic.doApply(left, right, context));
         }
     }
 
@@ -234,7 +304,22 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         @NotNull
         @Override
         public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            return functionIntrinsic.doApply(JsAstUtils.charToInt(left), JsAstUtils.charToInt(right), context);
+            return functionIntrinsic.doApply(left, right, context);
+        }
+    }
+    private static class StringAndCharBinaryOperationFunctionIntrinsic extends BinaryOperationIntrinsicBase {
+
+        @NotNull
+        private final BinaryOperationIntrinsicBase functionIntrinsic;
+
+        private StringAndCharBinaryOperationFunctionIntrinsic(@NotNull BinaryOperationIntrinsicBase functionIntrinsic) {
+            this.functionIntrinsic = functionIntrinsic;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
+            return functionIntrinsic.doApply(left, TopLevelFIF.TO_STRING.apply(right, Collections.emptyList(), context), context);
         }
     }
 }

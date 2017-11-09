@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.js.inline.util.rewriters
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.functionDescriptor
-import com.google.dart.compiler.backend.js.ast.metadata.returnTarget
-import com.google.dart.compiler.backend.js.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class ReturnReplacingVisitor(
         private val resultRef: JsNameRef?,
         private val breakLabel: JsNameRef?,
-        private val function: JsFunction
+        private val function: JsFunction,
+        private val isSuspend: Boolean
 ) : JsVisitorWithContextImpl() {
 
     /**
@@ -43,25 +43,37 @@ class ReturnReplacingVisitor(
 
         ctx.removeMe()
 
+        val returnExpression = x.expression
         val returnReplacement = getReturnReplacement(x.expression)
         if (returnReplacement != null) {
-            ctx.addNext(JsExpressionStatement(returnReplacement).apply { synthetic = true })
+            if (returnExpression != null && returnExpression.isTailCallSuspend) {
+                returnReplacement.isSuspend = true
+            }
+            ctx.addNext(JsExpressionStatement(returnReplacement.apply { source = x.source }))
         }
 
         if (breakLabel != null) {
-            ctx.addNext(JsBreak(breakLabel))
+            ctx.addNext(JsBreak(breakLabel).apply { source = x.source })
         }
     }
 
     private fun getReturnReplacement(returnExpression: JsExpression?): JsExpression? {
         return if (returnExpression != null) {
-            val assignment = resultRef?.let {
-                JsAstUtils.assignment(resultRef, returnExpression).apply { synthetic = true }
+            val assignment = resultRef?.let { lhs ->
+                val rhs = processCoroutineResult(returnExpression)!!
+                JsAstUtils.assignment(lhs, rhs).apply { synthetic = true }
             }
-            assignment ?: returnExpression
+            assignment ?: processCoroutineResult(returnExpression)
         }
         else {
-            null
+            processCoroutineResult(null)
         }
+    }
+
+    fun processCoroutineResult(expression: JsExpression?): JsExpression? {
+        if (!isSuspend) return expression
+        if (expression != null && expression.isTailCallSuspend) return expression
+        val lhs = JsNameRef("\$\$coroutineResult\$\$", JsAstUtils.stateMachineReceiver()).apply { coroutineResult = true }
+        return JsAstUtils.assignment(lhs, expression ?: Namer.getUndefinedExpression())
     }
 }

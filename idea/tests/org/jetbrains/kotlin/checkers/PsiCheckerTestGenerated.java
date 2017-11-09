@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.checkers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -40,7 +41,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         }
 
         public void testAllFilesPresentInChecker() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker"), Pattern.compile("^(.+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("AnnotationOnFile.kt")
@@ -220,6 +221,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("Nullability.kt")
         public void testNullability() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/Nullability.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ObjectLiteralInDelegate.kt")
+        public void testObjectLiteralInDelegate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/ObjectLiteralInDelegate.kt");
             doTest(fileName);
         }
 
@@ -409,7 +416,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Regression extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInRegression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/regression"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/regression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AmbiguityOnLazyTypeComputation.kt")
@@ -541,6 +548,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("FunctionTypes.kt")
         public void testFunctionTypes() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/FunctionTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IncompleteClassDelegation.kt")
+        public void testIncompleteClassDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/IncompleteClassDelegation.kt");
             doTest(fileName);
         }
 
@@ -688,7 +701,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Recovery extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInRecovery() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/recovery"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/recovery"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("namelessMembers.kt")
@@ -715,7 +728,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Rendering extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInRendering() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/rendering"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/rendering"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("TypeInferenceError.kt")
@@ -730,7 +743,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Scripts extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInScripts() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/scripts"), Pattern.compile("^(.+)\\.kts$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/scripts"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("if.kts")
@@ -763,7 +776,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DuplicateJvmSignature extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("idea/testData/checker/duplicateJvmSignature/fields")
@@ -771,7 +784,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Fields extends AbstractPsiCheckerTest {
             public void testAllFilesPresentInFields() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/fields"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/fields"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("classObjectCopiedFieldObject.kt")
@@ -786,7 +799,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FunctionAndProperty extends AbstractPsiCheckerTest {
             public void testAllFilesPresentInFunctionAndProperty() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ambiguous.kt")
@@ -855,7 +868,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TraitImpl extends AbstractPsiCheckerTest {
             public void testAllFilesPresentInTraitImpl() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("twoTraits.kt")
@@ -871,7 +884,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Infos extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInInfos() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("CapturedConstructorParameter.kt")
@@ -883,12 +896,6 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("CapturedInInlinedClosure.kt")
         public void testCapturedInInlinedClosure() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/CapturedInInlinedClosure.kt");
-            doTestWithInfos(fileName);
-        }
-
-        @TestMetadata("coroutineApplicability.kt")
-        public void testCoroutineApplicability() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/coroutineApplicability.kt");
             doTestWithInfos(fileName);
         }
 
@@ -922,6 +929,18 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTestWithInfos(fileName);
         }
 
+        @TestMetadata("SmartCastTarget.kt")
+        public void testSmartCastTarget() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCastTarget.kt");
+            doTestWithInfos(fileName);
+        }
+
+        @TestMetadata("SmartCastToEnum.kt")
+        public void testSmartCastToEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCastToEnum.kt");
+            doTestWithInfos(fileName);
+        }
+
         @TestMetadata("SmartCasts.kt")
         public void testSmartCasts() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCasts.kt");
@@ -931,12 +950,6 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("SmartCastsWithSafeAccess.kt")
         public void testSmartCastsWithSafeAccess() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCastsWithSafeAccess.kt");
-            doTestWithInfos(fileName);
-        }
-
-        @TestMetadata("suspendApplicability.kt")
-        public void testSuspendApplicability() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/suspendApplicability.kt");
             doTestWithInfos(fileName);
         }
 
@@ -962,6 +975,57 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         public void testWrapIntoRef() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/WrapIntoRef.kt");
             doTestWithInfos(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/checker/diagnosticsMessage")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DiagnosticsMessage extends AbstractPsiCheckerTest {
+        public void testAllFilesPresentInDiagnosticsMessage() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/diagnosticsMessage"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("fullPackageFQNameOnVisiblityError.kt")
+        public void testFullPackageFQNameOnVisiblityError() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/fullPackageFQNameOnVisiblityError.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incompleteTypeArgumentList.kt")
+        public void testIncompleteTypeArgumentList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/incompleteTypeArgumentList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("instantiationOfInnerClassInQualifiedForm.kt")
+        public void testInstantiationOfInnerClassInQualifiedForm() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/instantiationOfInnerClassInQualifiedForm.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitOfATypeWithNullableUpperBound.kt")
+        public void testLateinitOfATypeWithNullableUpperBound() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/lateinitOfATypeWithNullableUpperBound.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nArgumentsExpectedMessage.kt")
+        public void testNArgumentsExpectedMessage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/nArgumentsExpectedMessage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noSubstitutedTypeParameter.kt")
+        public void testNoSubstitutedTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/noSubstitutedTypeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("operatorCallDiagnosticsOnInOperator.kt")
+        public void testOperatorCallDiagnosticsOnInOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/operatorCallDiagnosticsOnInOperator.kt");
+            doTest(fileName);
         }
     }
 }

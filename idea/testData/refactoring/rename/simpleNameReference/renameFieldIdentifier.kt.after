@@ -1,5 +1,5 @@
 class aClass(){
-    var anotherRenamed: Int = 0;
+    var anotherRenamed: Int = 0
         set(value){
             field=value
         }

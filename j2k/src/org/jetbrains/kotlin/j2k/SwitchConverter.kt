@@ -17,8 +17,12 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
+import com.intellij.psi.controlFlow.ControlFlowFactory
+import com.intellij.psi.controlFlow.ControlFlowUtil
+import com.intellij.psi.controlFlow.LocalsOrMyInstanceFieldsControlFlowPolicy
 import org.jetbrains.kotlin.j2k.ast.*
 import java.util.*
+
 
 class SwitchConverter(private val codeConverter: CodeConverter) {
     fun convert(statement: PsiSwitchStatement): WhenStatement
@@ -33,17 +37,26 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
 
         val result = ArrayList<WhenEntry>()
         var pendingSelectors = ArrayList<WhenEntrySelector>()
+        var defaultSelector: WhenEntrySelector? = null
+        var defaultEntry: WhenEntry? = null
         for ((i, case) in cases.withIndex()) {
             if (case.label == null) { // invalid switch - no case labels
                 result.add(WhenEntry(listOf(ValueWhenEntrySelector(Expression.Empty).assignNoPrototype()), convertCaseStatementsToBody(cases, i)).assignNoPrototype())
                 continue
             }
-            pendingSelectors.add(codeConverter.convertStatement(case.label) as WhenEntrySelector)
+            val sel = codeConverter.convertStatement(case.label) as WhenEntrySelector
+            if (case.label.isDefaultCase) defaultSelector = sel else pendingSelectors.add(sel)
             if (case.statements.isNotEmpty()) {
-                result.add(WhenEntry(pendingSelectors, convertCaseStatementsToBody(cases, i)).assignNoPrototype())
+                val statement = convertCaseStatementsToBody(cases, i)
+                if (pendingSelectors.isNotEmpty())
+                    result.add(WhenEntry(pendingSelectors, statement).assignNoPrototype())
+                if (defaultSelector != null)
+                    defaultEntry = WhenEntry(listOf(defaultSelector), statement).assignNoPrototype()
                 pendingSelectors = ArrayList()
+                defaultSelector = null
             }
         }
+        defaultEntry?.let(result::add)
         return result
     }
 
@@ -94,8 +107,8 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
         }
         else {
             val block = case.statements.singleOrNull() as? PsiBlockStatement
-            val statements = if (block != null) block.codeBlock.statements.toList() else case.statements
-            !statements.any { it is PsiBreakStatement || it is PsiContinueStatement || it is PsiReturnStatement || it is PsiThrowStatement }
+            val statements = block?.codeBlock?.statements?.toList() ?: case.statements
+            statements.fallsThrough()
         }
         return if (fallsThrough) // we fall through into the next case
             convertCaseStatements(case.statements, allowBlock = false) + convertCaseStatements(cases, caseIndex + 1, allowBlock = false)
@@ -112,4 +125,25 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
     }
 
     private fun isSwitchBreak(statement: PsiStatement) = statement is PsiBreakStatement && statement.labelIdentifier == null
+
+    private fun List<PsiStatement>.fallsThrough(): Boolean {
+        for (statement in this) {
+            when (statement) {
+                is PsiBreakStatement -> return false
+                is PsiContinueStatement -> return false
+                is PsiReturnStatement -> return false
+                is PsiThrowStatement -> return false
+                is PsiSwitchStatement -> if (!statement.canCompleteNormally()) return false
+                is PsiIfStatement -> if (!statement.canCompleteNormally()) return false
+            }
+        }
+        return true
+    }
+
+    private fun PsiElement.canCompleteNormally(): Boolean {
+        val controlFlow = ControlFlowFactory.getInstance(project).getControlFlow(this, LocalsOrMyInstanceFieldsControlFlowPolicy.getInstance())
+        val startOffset = controlFlow.getStartOffset(this)
+        val endOffset = controlFlow.getEndOffset(this)
+        return startOffset == -1 || endOffset == -1 || ControlFlowUtil.canCompleteNormally(controlFlow, startOffset, endOffset)
+    }
 }

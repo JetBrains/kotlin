@@ -13,3 +13,17 @@ class Test2 {
         }
     }
 }
+
+class Handler {
+    fun postDelayed(r: Runnable, time: Long) {}
+}
+
+class Test3 {
+    private val handler = Handler()
+
+    private val someRunnable = object : Runnable {
+        override fun run() {
+            handler.postDelayed(this, 1000)
+        }
+    }
+}

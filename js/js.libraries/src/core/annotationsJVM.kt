@@ -23,7 +23,7 @@ package kotlin.jvm
 internal annotation class JvmOverloads
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 internal annotation class JvmName(public val name: String)
 
@@ -31,3 +31,8 @@ internal annotation class JvmName(public val name: String)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 internal annotation class JvmMultifileClass
+
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+internal annotation class JvmField

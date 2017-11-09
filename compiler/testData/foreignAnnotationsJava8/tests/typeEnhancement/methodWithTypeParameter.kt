@@ -1,3 +1,4 @@
+// JAVAC_EXPECTED_FILE
 // FILE: Outer.java
 
 import org.checkerframework.checker.nullness.qual.*;

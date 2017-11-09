@@ -14,105 +14,27 @@
  * limitations under the License.
  */
 
-package com.android.tools.lint.client.api;
+package com.android.tools.klint.client.api;
+
+import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
+import com.android.annotations.VisibleForTesting;
+import com.android.tools.klint.client.api.JavaParser.ResolvedClass;
+import com.android.tools.klint.client.api.JavaParser.ResolvedMethod;
+import com.android.tools.klint.client.api.JavaParser.ResolvedNode;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.JavaScanner;
+import com.android.tools.klint.detector.api.Detector.XmlScanner;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import lombok.ast.*;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+
+import java.util.*;
 
 import static com.android.SdkConstants.ANDROID_PKG;
 import static com.android.SdkConstants.R_CLASS;
-
-import com.android.annotations.NonNull;
-import com.android.tools.lint.client.api.JavaParser.ResolvedClass;
-import com.android.tools.lint.client.api.JavaParser.ResolvedMethod;
-import com.android.tools.lint.client.api.JavaParser.ResolvedNode;
-import com.android.tools.lint.detector.api.Detector;
-import com.android.tools.lint.detector.api.Detector.JavaScanner;
-import com.android.tools.lint.detector.api.Detector.XmlScanner;
-import com.android.tools.lint.detector.api.JavaContext;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import lombok.ast.AlternateConstructorInvocation;
-import lombok.ast.Annotation;
-import lombok.ast.AnnotationDeclaration;
-import lombok.ast.AnnotationElement;
-import lombok.ast.AnnotationMethodDeclaration;
-import lombok.ast.AnnotationValueArray;
-import lombok.ast.ArrayAccess;
-import lombok.ast.ArrayCreation;
-import lombok.ast.ArrayDimension;
-import lombok.ast.ArrayInitializer;
-import lombok.ast.Assert;
-import lombok.ast.AstVisitor;
-import lombok.ast.BinaryExpression;
-import lombok.ast.Block;
-import lombok.ast.BooleanLiteral;
-import lombok.ast.Break;
-import lombok.ast.Case;
-import lombok.ast.Cast;
-import lombok.ast.Catch;
-import lombok.ast.CharLiteral;
-import lombok.ast.ClassDeclaration;
-import lombok.ast.ClassLiteral;
-import lombok.ast.Comment;
-import lombok.ast.CompilationUnit;
-import lombok.ast.ConstructorDeclaration;
-import lombok.ast.ConstructorInvocation;
-import lombok.ast.Continue;
-import lombok.ast.Default;
-import lombok.ast.DoWhile;
-import lombok.ast.EmptyDeclaration;
-import lombok.ast.EmptyStatement;
-import lombok.ast.EnumConstant;
-import lombok.ast.EnumDeclaration;
-import lombok.ast.EnumTypeBody;
-import lombok.ast.Expression;
-import lombok.ast.ExpressionStatement;
-import lombok.ast.FloatingPointLiteral;
-import lombok.ast.For;
-import lombok.ast.ForEach;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Identifier;
-import lombok.ast.If;
-import lombok.ast.ImportDeclaration;
-import lombok.ast.InlineIfExpression;
-import lombok.ast.InstanceInitializer;
-import lombok.ast.InstanceOf;
-import lombok.ast.IntegralLiteral;
-import lombok.ast.InterfaceDeclaration;
-import lombok.ast.KeywordModifier;
-import lombok.ast.LabelledStatement;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Modifiers;
-import lombok.ast.Node;
-import lombok.ast.NormalTypeBody;
-import lombok.ast.NullLiteral;
-import lombok.ast.PackageDeclaration;
-import lombok.ast.Return;
-import lombok.ast.Select;
-import lombok.ast.StaticInitializer;
-import lombok.ast.StringLiteral;
-import lombok.ast.Super;
-import lombok.ast.SuperConstructorInvocation;
-import lombok.ast.Switch;
-import lombok.ast.Synchronized;
-import lombok.ast.This;
-import lombok.ast.Throw;
-import lombok.ast.Try;
-import lombok.ast.TypeReference;
-import lombok.ast.TypeReferencePart;
-import lombok.ast.TypeVariable;
-import lombok.ast.UnaryExpression;
-import lombok.ast.VariableDeclaration;
-import lombok.ast.VariableDefinition;
-import lombok.ast.VariableDefinitionEntry;
-import lombok.ast.VariableReference;
-import lombok.ast.While;
 
 /**
  * Specialized visitor for running detectors on a Java AST.
@@ -285,6 +207,16 @@ public class JavaVisitor {
                 return;
             }
 
+            if (e.getClass().getSimpleName().equals("IndexNotReadyException")) {
+                // Attempting to access PSI during startup before indices are ready; ignore these.
+                // See http://b.android.com/176644 for an example.
+                return;
+            } else if (ExceptionUtilsKt.isProcessCanceledException(e)) {
+                // Cancelling inspections in the IDE
+                context.getDriver().cancel();
+                return;
+            }
+
             // Work around ECJ bugs; see https://code.google.com/p/android/issues/detail?id=172268
             // Don't allow lint bugs to take down the whole build. TRY to log this as a
             // lint error instead!
@@ -293,11 +225,13 @@ public class JavaVisitor {
             sb.append(context.file.getName());
             sb.append(" (this is a bug in lint or one of the libraries it depends on)\n");
 
+            sb.append(e.getClass().getSimpleName());
+            sb.append(':');
             StackTraceElement[] stackTrace = e.getStackTrace();
             int count = 0;
             for (StackTraceElement frame : stackTrace) {
                 if (count > 0) {
-                    sb.append("->");
+                    sb.append("<-");
                 }
 
                 String className = frame.getClassName();
@@ -322,12 +256,53 @@ public class JavaVisitor {
         }
     }
 
+    /**
+     * For testing only: returns the number of exceptions thrown during Java AST analysis
+     *
+     * @return the number of internal errors found
+     */
+    @VisibleForTesting
+    public static int getCrashCount() {
+        return sExceptionCount;
+    }
+
+    /**
+     * For testing only: clears the crash counter
+     */
+    @VisibleForTesting
+    public static void clearCrashCount() {
+        sExceptionCount = 0;
+    }
+
     public void prepare(@NonNull List<JavaContext> contexts) {
         mParser.prepareJavaParse(contexts);
     }
 
     public void dispose() {
         mParser.dispose();
+    }
+
+    @Nullable
+    private static Set<String> getInterfaceNames(
+            @Nullable Set<String> addTo,
+            @NonNull ResolvedClass cls) {
+        Iterable<ResolvedClass> interfaces = cls.getInterfaces();
+        for (ResolvedClass resolvedInterface : interfaces) {
+            String name = resolvedInterface.getName();
+            if (addTo == null) {
+                addTo = Sets.newHashSet();
+            } else if (addTo.contains(name)) {
+                // Superclasses can explicitly implement the same interface,
+                // so keep track of visited interfaces as we traverse up the
+                // super class chain to avoid checking the same interface
+                // more than once.
+                continue;
+            }
+            addTo.add(name);
+            getInterfaceNames(addTo, resolvedInterface);
+        }
+
+        return addTo;
     }
 
     private static class VisitingDetector {
@@ -388,18 +363,37 @@ public class JavaVisitor {
 
             ResolvedClass resolvedClass = (ResolvedClass) resolved;
             ResolvedClass cls = resolvedClass;
+            int depth = 0;
             while (cls != null) {
-                String fqcn = cls.getSignature();
-                if (fqcn != null) {
-                    List<VisitingDetector> list = mSuperClassDetectors.get(fqcn);
-                    if (list != null) {
-                        for (VisitingDetector v : list) {
-                            v.getJavaScanner().checkClass(mContext, node, node, resolvedClass);
+                List<VisitingDetector> list = mSuperClassDetectors.get(cls.getName());
+                if (list != null) {
+                    for (VisitingDetector v : list) {
+                        v.getJavaScanner().checkClass(mContext, node, node, resolvedClass);
+                    }
+                }
+
+                // Check interfaces too
+                Set<String> interfaceNames = getInterfaceNames(null, cls);
+                if (interfaceNames != null) {
+                    for (String name : interfaceNames) {
+                        list = mSuperClassDetectors.get(name);
+                        if (list != null) {
+                            for (VisitingDetector v : list) {
+                                v.getJavaScanner().checkClass(mContext, node, node,
+                                        resolvedClass);
+                            }
                         }
                     }
                 }
 
                 cls = cls.getSuperClass();
+                depth++;
+                if (depth == 500) {
+                    // Shouldn't happen in practice; this prevents the IDE from
+                    // hanging if the user has accidentally typed in an incorrect
+                    // super class which creates a cycle.
+                    break;
+                }
             }
 
             return false;
@@ -409,10 +403,7 @@ public class JavaVisitor {
         public boolean visitConstructorInvocation(ConstructorInvocation node) {
             NormalTypeBody anonymous = node.astAnonymousClassBody();
             if (anonymous != null) {
-                ResolvedNode resolved = mContext.resolve(anonymous);
-                if (resolved instanceof ResolvedMethod) {
-                    resolved = ((ResolvedMethod) resolved).getContainingClass();
-                }
+                ResolvedNode resolved = mContext.resolve(node.astTypeReference());
                 if (!(resolved instanceof ResolvedClass)) {
                     return true;
                 }
@@ -420,13 +411,24 @@ public class JavaVisitor {
                 ResolvedClass resolvedClass = (ResolvedClass) resolved;
                 ResolvedClass cls = resolvedClass;
                 while (cls != null) {
-                    String fqcn = cls.getSignature();
-                    if (fqcn != null) {
-                        List<VisitingDetector> list = mSuperClassDetectors.get(fqcn);
-                        if (list != null) {
-                            for (VisitingDetector v : list) {
-                                v.getJavaScanner().checkClass(mContext, null, anonymous,
-                                        resolvedClass);
+                    List<VisitingDetector> list = mSuperClassDetectors.get(cls.getName());
+                    if (list != null) {
+                        for (VisitingDetector v : list) {
+                            v.getJavaScanner().checkClass(mContext, null, anonymous,
+                                    resolvedClass);
+                        }
+                    }
+
+                    // Check interfaces too
+                    Set<String> interfaceNames = getInterfaceNames(null, cls);
+                    if (interfaceNames != null) {
+                        for (String name : interfaceNames) {
+                            list = mSuperClassDetectors.get(name);
+                            if (list != null) {
+                                for (VisitingDetector v : list) {
+                                    v.getJavaScanner().checkClass(mContext, null, anonymous,
+                                            resolvedClass);
+                                }
                             }
                         }
                     }
@@ -1377,7 +1379,7 @@ public class JavaVisitor {
                             ResolvedNode resolved = mContext.resolve(node);
                             if (resolved instanceof ResolvedMethod) {
                                 ResolvedMethod method = (ResolvedMethod) resolved;
-                                String type = method.getContainingClass().getSignature();
+                                String type = method.getContainingClass().getName();
                                 List<VisitingDetector> list = mConstructorDetectors.get(type);
                                 if (list != null) {
                                     for (VisitingDetector v : list) {

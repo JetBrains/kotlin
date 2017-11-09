@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1113
 package foo
 
 // CHECK_NOT_CALLED: testInline

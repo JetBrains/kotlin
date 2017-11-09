@@ -1,2 +1,1 @@
-fun <U> putU(u: U) {
-}
+fun <U> putU(u: U) {}

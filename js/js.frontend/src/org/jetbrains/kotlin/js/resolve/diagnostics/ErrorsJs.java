@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtElement;
-import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
@@ -39,19 +39,81 @@ public interface ErrorsJs {
     DiagnosticFactory1<KtExpression, JsCallData> JSCODE_WARNING = DiagnosticFactory1.create(WARNING, JsCodePositioningStrategy.INSTANCE);
     DiagnosticFactory0<KtExpression> JSCODE_ARGUMENT_SHOULD_BE_CONSTANT = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory1<KtElement, KtElement> NOT_SUPPORTED = DiagnosticFactory1.create(ERROR, DEFAULT);
-    DiagnosticFactory1<KtElement, KtElement> REFERENCE_TO_BUILTIN_MEMBERS_NOT_SUPPORTED = DiagnosticFactory1.create(ERROR, DEFAULT);
     DiagnosticFactory0<KtExpression> JSCODE_NO_JAVASCRIPT_PRODUCED = DiagnosticFactory0.create(ERROR, DEFAULT);
-    DiagnosticFactory0<KtExpression> NATIVE_INNER_CLASS_PROHIBITED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<KtExpression, String> WRONG_EXTERNAL_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtExpression> EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtExpression> NESTED_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+
     DiagnosticFactory2<KtElement, String, DeclarationDescriptor> JS_NAME_CLASH = DiagnosticFactory2.create(
             ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory3<KtElement, String, DeclarationDescriptor, DeclarationDescriptor> JS_FAKE_NAME_CLASH =
             DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory1<KtElement, String> JS_BUILTIN_NAME_CLASH = DiagnosticFactory1.create(
+            ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<PsiElement> JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JS_NAME_ON_ACCESSOR_AND_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JS_NAME_IS_NOT_ON_ALL_ACCESSORS = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<PsiElement> JS_NAME_PROHIBITED_FOR_OVERRIDE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JS_NAME_PROHIBITED_FOR_NAMED_NATIVE = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory0<PsiElement> NAME_CONTAINS_ILLEGAL_CHARS = DiagnosticFactory0.create(
+            ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+
+    DiagnosticFactory0<KtElement> JS_MODULE_PROHIBITED_ON_VAR = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> JS_MODULE_PROHIBITED_ON_NON_NATIVE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> NESTED_JS_MODULE_PROHIBITED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory1<PsiElement, DeclarationDescriptor> CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM =
+            DiagnosticFactory1.create(ERROR, DEFAULT);
+    DiagnosticFactory1<PsiElement, DeclarationDescriptor> CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM =
+            DiagnosticFactory1.create(ERROR, DEFAULT);
+    DiagnosticFactory0<PsiElement> CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE = DiagnosticFactory0.create(ERROR, DEFAULT);
+
+    DiagnosticFactory1<KtElement, KotlinType> NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE =
+            DiagnosticFactory1.create(ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtValueArgument> WRONG_JS_QUALIFIER = DiagnosticFactory0.create(ERROR, PositioningStrategies.DEFAULT);
+
+    DiagnosticFactory1<PsiElement, KotlinType> CANNOT_CHECK_FOR_EXTERNAL_INTERFACE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> UNCHECKED_CAST_TO_EXTERNAL_INTERFACE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory1<PsiElement, KotlinType> EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> EXTERNAL_INTERFACE_AS_CLASS_LITERAL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtElement> EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE = DiagnosticFactory0.create(
+            ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+
+    DiagnosticFactory1<PsiElement, String> WRONG_OPERATION_WITH_DYNAMIC = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> SPREAD_OPERATOR_IN_DYNAMIC_CALL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> DELEGATION_BY_DYNAMIC = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PROPERTY_DELEGATION_BY_DYNAMIC = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory0<PsiElement> RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(
+            ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<PsiElement> RUNTIME_ANNOTATION_NOT_SUPPORTED = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS =
+            DiagnosticFactory0.create(ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory1<KtElement, FunctionDescriptor> OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE =
+            DiagnosticFactory1.create(ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtClassOrObject> IMPLEMENTING_FUNCTION_INTERFACE = DiagnosticFactory0.create(
+            ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtDeclaration> INLINE_EXTERNAL_DECLARATION = DiagnosticFactory0.create(
+            ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtExpression> NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE = DiagnosticFactory0.create(
+            ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtExpression> NESTED_CLASS_IN_EXTERNAL_INTERFACE = DiagnosticFactory0.create(
+            ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+
+    // Diagnostics about exposing implementation detail in external declarations
+    DiagnosticFactory0<KtExpression> WRONG_BODY_OF_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpression> WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpression> WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtElement> EXTERNAL_DELEGATED_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtElement> EXTERNAL_DELEGATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnonymousInitializer> EXTERNAL_ANONYMOUS_INITIALIZER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtClassBody> EXTERNAL_ENUM_ENTRY_WITH_BODY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtParameter> EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory1<PsiElement, CallableMemberDescriptor> WRONG_MULTIPLE_INHERITANCE =
+            DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

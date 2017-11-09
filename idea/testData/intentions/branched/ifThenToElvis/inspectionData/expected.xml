@@ -8,38 +8,6 @@
     <description>Replace 'if' expression with elvis expression</description>
   </problem>
   <problem>
-    <file>rhsNotEqualsNull.kt</file>
-    <line>9</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/rhsNotEqualsNull.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
-    <description>Replace 'if' expression with elvis expression</description>
-  </problem>
-  <problem>
-    <file>rhsEqualsNull.kt</file>
-    <line>8</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/rhsEqualsNull.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
-    <description>Replace 'if' expression with elvis expression</description>
-  </problem>
-  <problem>
-    <file>lhsNotEqualsNull.kt</file>
-    <line>8</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/lhsNotEqualsNull.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
-    <description>Replace 'if' expression with elvis expression</description>
-  </problem>
-  <problem>
-    <file>lhsEqualsNull.kt</file>
-    <line>8</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/lhsEqualsNull.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
-    <description>Replace 'if' expression with elvis expression</description>
-  </problem>
-  <problem>
     <file>ifAsExpression.kt</file>
     <line>8</line>
     <module>light_idea_test_case</module>
@@ -56,51 +24,11 @@
     <description>Replace 'if' expression with elvis expression</description>
   </problem>
   <problem>
-    <file>ifAndElseNotInBlocks.kt</file>
-    <line>8</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/ifAndElseNotInBlocks.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
-    <description>Replace 'if' expression with elvis expression</description>
-  </problem>
-  <problem>
-    <file>ifAndElseBothInBlocks.kt</file>
-    <line>8</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/ifAndElseBothInBlocks.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
-    <description>Replace 'if' expression with elvis expression</description>
-  </problem>
-  <problem>
-    <file>doesNotinlineValueOutsideOfScope.kt</file>
-    <line>8</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/doesNotinlineValueOutsideOfScope.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
-    <description>Replace 'if' expression with elvis expression</description>
-  </problem>
-  <problem>
     <file>doesNotInlineVariableInMultiDeclaration.kt</file>
     <line>7</line>
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/src/doesNotInlineVariableInMultiDeclaration.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
-    <description>Replace 'if' expression with elvis expression</description>
-  </problem>
-  <problem>
-    <file>doesNotinlineValueIfUsedMoreThanOnce.kt</file>
-    <line>11</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/doesNotinlineValueIfUsedMoreThanOnce.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
-    <description>Replace 'if' expression with elvis expression</description>
-  </problem>
-  <problem>
-    <file>throwsNPEwithArgument.kt</file>
-    <line>4</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/throwsNPEwithArgument.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
     <description>Replace 'if' expression with elvis expression</description>
   </problem>
   <problem>
@@ -116,6 +44,70 @@
     <line>4</line>
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/isCheck.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>isCheckWithSelector.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="isCheckWithSelector.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>isCheckWithSelectorChain.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="isCheckWithSelectorChain.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>nullCheckWithSelector.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="nullCheckWithSelector.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>nullCheckWithSelectorCall.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="nullCheckWithSelectorCall.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>nullCheckWithSelectorCallChain.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="nullCheckWithSelectorCallChain.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>comparisonInElse.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/comparisonInElse.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>implicitReceiver.kt</file>
+    <line>2</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/implicitReceiver.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>kt19666.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/kt19666.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
     <description>Replace 'if' expression with elvis expression</description>
   </problem>

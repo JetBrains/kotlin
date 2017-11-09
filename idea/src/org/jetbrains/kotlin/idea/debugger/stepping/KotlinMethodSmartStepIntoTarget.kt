@@ -3,23 +3,24 @@ package org.jetbrains.kotlin.idea.debugger.stepping
 import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.psi.PsiElement
 import com.intellij.util.Range
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import javax.swing.Icon
 
 class KotlinMethodSmartStepTarget(
-        val resolvedElement: KtElement,
+        val descriptor: CallableMemberDescriptor,
         label: String,
         highlightElement: PsiElement,
         lines: Range<Int>
 ): SmartStepTarget(label, highlightElement, false, lines) {
     override fun getIcon(): Icon? {
         return when {
-            resolvedElement is KtNamedFunction && resolvedElement.receiverTypeReference != null -> KotlinIcons.EXTENSION_FUNCTION
+            descriptor.isExtension -> KotlinIcons.EXTENSION_FUNCTION
             else -> KotlinIcons.FUNCTION
         }
     }
@@ -43,8 +44,19 @@ class KotlinMethodSmartStepTarget(
 
         if (other == null || other !is KotlinMethodSmartStepTarget) return false
 
-        return resolvedElement == other.resolvedElement
+        if (descriptor is FunctionInvokeDescriptor && other.descriptor is FunctionInvokeDescriptor) {
+            // Don't allow to choose several invoke targets in smart step into as we can't distinguish them reliably during debug
+            return true
+        }
+
+        return descriptor == other.descriptor
     }
 
-    override fun hashCode() = resolvedElement.hashCode()
+    override fun hashCode(): Int {
+        if (descriptor is FunctionInvokeDescriptor) {
+            // Predefined value to make all FunctionInvokeDescriptor targets equal
+            return 42
+        }
+        return descriptor.hashCode()
+    }
 }

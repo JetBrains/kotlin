@@ -1,5 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
+
 tailrec fun withWhen(counter : Int, d : Any) : Int =
         when (counter) {
             0 -> counter

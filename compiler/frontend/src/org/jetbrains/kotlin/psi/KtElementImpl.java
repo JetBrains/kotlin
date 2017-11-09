@@ -58,7 +58,7 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     @Override
     public KtFile getContainingKtFile() {
         PsiFile file = getContainingFile();
-        assert file instanceof KtFile : "KtElement not inside KtFile: " + file + " " + file.getText();
+        assert file instanceof KtFile : "KtElement not inside KtFile: " + file + (file == null ? "" : " " + file.getText());
         return (KtFile) file;
     }
 
@@ -89,5 +89,11 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     @Override
     public PsiReference[] getReferences() {
         return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
+    }
+
+    @NotNull
+    @Override
+    public KtElement getPsiOrParent() {
+        return this;
     }
 }

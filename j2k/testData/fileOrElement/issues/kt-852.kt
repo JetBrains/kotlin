@@ -8,9 +8,7 @@ internal class Test {
         if (s1.isEmpty() && s2.isEmpty())
             return "OK"
 
-        if (s1.isEmpty() && s2.isEmpty() && s3.isEmpty())
-            return "OOOK"
+        return if (s1.isEmpty() && s2.isEmpty() && s3.isEmpty()) "OOOK" else ""
 
-        return ""
     }
 }

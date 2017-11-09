@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
+
 open class A {
     open fun foo(s: String = "OK") = s
 }

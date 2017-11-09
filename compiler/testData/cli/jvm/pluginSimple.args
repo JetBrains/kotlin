@@ -1,7 +1,6 @@
 -d
 $TEMP_DIR$
--Xplugin
-dist/kotlinc/lib/android-extensions-compiler.jar
+-Xplugin=dist/kotlinc/lib/android-extensions-compiler.jar
 -P
 plugin\:org.jetbrains.kotlin.android\:package=com.myapp
 -P

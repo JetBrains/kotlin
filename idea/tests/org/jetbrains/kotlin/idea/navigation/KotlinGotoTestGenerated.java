@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.navigation;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GotoClass extends AbstractKotlinGotoTest {
         public void testAllFilesPresentInGotoClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoClass"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("builtInAny.kt")
@@ -109,7 +110,7 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GotoSymbol extends AbstractKotlinGotoTest {
         public void testAllFilesPresentInGotoSymbol() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoSymbol"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoSymbol"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("builtInArrayOfNulls.kt")
@@ -124,6 +125,12 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
             doSymbolTest(fileName);
         }
 
+        @TestMetadata("enumConstants.kt")
+        public void testEnumConstants() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/enumConstants.kt");
+            doSymbolTest(fileName);
+        }
+
         @TestMetadata("functions.kt")
         public void testFunctions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/functions.kt");
@@ -133,6 +140,12 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
         @TestMetadata("javaMethods.kt")
         public void testJavaMethods() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/javaMethods.kt");
+            doSymbolTest(fileName);
+        }
+
+        @TestMetadata("localFunction.kt")
+        public void testLocalFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/localFunction.kt");
             doSymbolTest(fileName);
         }
 

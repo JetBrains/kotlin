@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,17 +30,17 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.render
 import java.util.*
 
-fun KtPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): KtExpression
-        = createByPattern(pattern, *args) { createExpression(it) }
+fun KtPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): KtExpression
+        = createByPattern(pattern, *args, reformat = reformat) { createExpression(it) }
 
-fun KtPsiFactory.createValueArgumentListByPattern(pattern: String, vararg args: Any): KtValueArgumentList
-        = createByPattern(pattern, *args) { createCallArguments(it) }
+fun KtPsiFactory.createValueArgumentListByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): KtValueArgumentList
+        = createByPattern(pattern, *args, reformat = reformat) { createCallArguments(it) }
 
-fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
-        = createByPattern(pattern, *args) { createDeclaration<TDeclaration>(it) }
+fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): TDeclaration
+        = createByPattern(pattern, *args, reformat = reformat) { createDeclaration<TDeclaration>(it) }
 
-fun KtPsiFactory.createDestructuringDeclarationByPattern(pattern: String, vararg args: Any): KtDestructuringDeclaration
-        = createByPattern(pattern, *args) { createDestructuringDeclaration(it) }
+fun KtPsiFactory.createDestructuringDeclarationByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): KtDestructuringDeclaration
+        = createByPattern(pattern, *args, reformat = reformat) { createDestructuringDeclaration(it) }
 
 private abstract class ArgumentType<T : Any>(val klass: Class<T>)
 
@@ -68,11 +68,7 @@ private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<Psi
         val project = placeholder.project
         val codeStyleManager = CodeStyleManager.getInstance(project)
 
-        if (argument.isEmpty) {
-            placeholder.delete()
-            return PsiChildRange.EMPTY
-        }
-        else {
+        return if (!argument.isEmpty) {
             val first = placeholder.parent.addRangeBefore(argument.first!!, argument.last!!, placeholder)
             val last = placeholder.prevSibling
             placeholder.delete()
@@ -81,23 +77,27 @@ private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<Psi
             if (last != first) {
                 codeStyleManager.reformatNewlyAddedElement(last.node.treeParent, last.node)
             }
-            return PsiChildRange(first, last)
+            PsiChildRange(first, last)
+        }
+        else {
+            placeholder.delete()
+            PsiChildRange.EMPTY
         }
     }
 }
 
 private val SUPPORTED_ARGUMENT_TYPES = listOf(
-        PsiElementArgumentType<KtExpression>(KtExpression::class.java),
-        PsiElementArgumentType<KtTypeReference>(KtTypeReference::class.java),
-        PlainTextArgumentType<String>(String::class.java, toPlainText = { it }),
-        PlainTextArgumentType<Name>(Name::class.java, toPlainText = { it.render() }),
+        PsiElementArgumentType(KtExpression::class.java),
+        PsiElementArgumentType(KtTypeReference::class.java),
+        PlainTextArgumentType(String::class.java, toPlainText = { it }),
+        PlainTextArgumentType(Name::class.java, toPlainText = Name::render),
         PsiChildRangeArgumentType
 )
 
-fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
+fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, reformat: Boolean = true, factory: (String) -> TElement): TElement {
     val argumentTypes = args.map { arg ->
         SUPPORTED_ARGUMENT_TYPES.firstOrNull { it.klass.isInstance(arg) }
-            ?: throw IllegalArgumentException("Unsupported argument type: ${arg.javaClass}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.map { it.klass.simpleName }.joinToString()}")
+            ?: throw IllegalArgumentException("Unsupported argument type: ${arg::class.java}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.joinToString { it.klass.simpleName }}")
     }
 
     // convert arguments that can be converted into plain text
@@ -105,7 +105,7 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, fa
     val args = args.zip(argumentTypes).map {
         val (arg, type) = it
         if (type is PlainTextArgumentType)
-            (type.toPlainText as Function1<in Any, String>).invoke(arg) // TODO: see KT-7833
+            (type.toPlainText as Function1<Any, String>).invoke(arg) // TODO: see KT-7833
         else
             arg
     }
@@ -127,10 +127,10 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, fa
         if (arg is String) continue // already in the text
         val expectedElementType = (argumentTypes[n] as PsiElementPlaceholderArgumentType<*, *>).placeholderClass
 
-        for ((range, text) in placeholders) {
+        for ((range, _) in placeholders) {
             val token = resultElement.findElementAt(range.startOffset)!!
             for (element in token.parentsWithSelf) {
-                val elementRange = element.getTextRange().shiftRight(-start)
+                val elementRange = element.textRange.shiftRight(-start)
                 if (elementRange == range && expectedElementType.isInstance(element)) {
                     val pointer = pointerManager.createSmartPsiElementPointer(element)
                     pointers.put(pointer, n)
@@ -146,34 +146,35 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, fa
 
     val codeStyleManager = CodeStyleManager.getInstance(project)
 
-    val stringPlaceholderRanges = allPlaceholders
-            .filter { args[it.key] is String }
-            .flatMap { it.value }
-            .map { it.range }
-            .filterNot { it.isEmpty }
-            .sortedByDescending { it.startOffset }
+    if (reformat) {
+        val stringPlaceholderRanges = allPlaceholders
+                .filter { args[it.key] is String }
+                .flatMap { it.value }
+                .map { it.range }
+                .filterNot { it.isEmpty }
+                .sortedByDescending { it.startOffset }
 
-    // reformat whole text except for String arguments (as they can contain user's formatting to be preserved)
-    if (stringPlaceholderRanges.none()) {
-        resultElement = codeStyleManager.reformat(resultElement, true) as TElement
-    }
-    else {
-        var bound = resultElement.endOffset - 1
-        for (range in stringPlaceholderRanges) {
-            // we extend reformatting range by 1 to the right because otherwise some of spaces are not reformatted
-            resultElement = codeStyleManager.reformatRange(resultElement, range.endOffset + start, bound + 1, true) as TElement
-            bound = range.startOffset + start
+        // reformat whole text except for String arguments (as they can contain user's formatting to be preserved)
+        resultElement = if (stringPlaceholderRanges.none()) {
+            codeStyleManager.reformat(resultElement, true) as TElement
         }
-        resultElement = codeStyleManager.reformatRange(resultElement, start, bound + 1, true) as TElement
+        else {
+            var bound = resultElement.endOffset - 1
+            for (range in stringPlaceholderRanges) {
+                // we extend reformatting range by 1 to the right because otherwise some of spaces are not reformatted
+                resultElement = codeStyleManager.reformatRange(resultElement, range.endOffset + start, bound + 1, true) as TElement
+                bound = range.startOffset + start
+            }
+            codeStyleManager.reformatRange(resultElement, start, bound + 1, true) as TElement
+        }
+
+        // do not reformat the whole expression in PostprocessReformattingAspect
+        CodeEditUtil.setNodeGeneratedRecursively(resultElement.node, false)
     }
-
-    // do not reformat the whole expression in PostprocessReformattingAspect
-    CodeEditUtil.setNodeGeneratedRecursively(resultElement.node, false)
-
     for ((pointer, n) in pointers) {
         var element = pointer.element!!
         if (element is KtFunctionLiteral) {
-            element = element.getParent() as KtLambdaExpression
+            element = element.parent as KtLambdaExpression
         }
         @Suppress("UNCHECKED_CAST")
         val argumentType = argumentTypes[n] as PsiElementPlaceholderArgumentType<in Any, in PsiElement>
@@ -185,7 +186,8 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, fa
         }
     }
 
-    codeStyleManager.adjustLineIndent(resultElement.containingFile, resultElement.textRange)
+    if (reformat)
+        codeStyleManager.adjustLineIndent(resultElement.containingFile, resultElement.textRange)
 
     return resultElement
 }
@@ -208,7 +210,7 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
     val text = buildString {
         var i = 0
         while (i < pattern.length) {
-            var c = pattern[i]
+            val c = pattern[i]
 
             if (c == '$') {
                 val nextChar = charOrNull(++i)
@@ -225,7 +227,7 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
 
                     val arg: Any? = if (n < args.size) args[n] else null /* report wrong number of arguments later */
                     val placeholderText = if (charOrNull(i) != ':' || charOrNull(i + 1) != '\'') {
-                        if (arg is String) arg else "xyz"
+                        arg as? String ?: "xyz"
                     }
                     else {
                         check(arg !is String, "do not specify placeholder text for $$n - plain text argument passed")

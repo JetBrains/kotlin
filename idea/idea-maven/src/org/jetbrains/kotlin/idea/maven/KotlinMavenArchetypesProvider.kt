@@ -90,9 +90,7 @@ class KotlinMavenArchetypesProvider(val kotlinPluginVersion: String, val predefi
                 "v" to version,
                 "p" to packaging
         )
-                .filter { it.second != null }
-                .map { "${it.first}:\"${it.second}\"" }
-                .joinToString(separator = " AND ")
+                .filter { it.second != null }.joinToString(separator = " AND ") { "${it.first}:\"${it.second}\"" }
 
         return "http://search.maven.org/solrsearch/select?q=${q.encodeURL()}&core=gav&rows=$rowsLimit&wt=json"
     }

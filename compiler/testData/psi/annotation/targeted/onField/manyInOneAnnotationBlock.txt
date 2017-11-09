@@ -1,4 +1,4 @@
-JetFile: manyInOneAnnotationBlock.kt
+KtFile: manyInOneAnnotationBlock.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

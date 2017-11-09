@@ -9,7 +9,7 @@ class D {
 }
 
 class E
-: Some
+    : Some
 
 class F
 

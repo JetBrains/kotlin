@@ -1,4 +1,4 @@
-JetFile: MarkdownLinkWithError.kt
+KtFile: MarkdownLinkWithError.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

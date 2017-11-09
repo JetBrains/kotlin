@@ -5,8 +5,10 @@
  * See libraries/tools/idl2k for details
  */
 
+@file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.files
 
+import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
 import org.w3c.dom.css.*
@@ -20,24 +22,25 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public open class Blob() : ImageBitmapSource {
-    constructor(blobParts: Array<dynamic>, options: BlobPropertyBag = noImpl) : this()
+/**
+ * Exposes the JavaScript [Blob](https://developer.mozilla.org/en/docs/Web/API/Blob) to Kotlin
+ */
+public external open class Blob(blobParts: Array<dynamic> = definedExternally, options: BlobPropertyBag = definedExternally) {
     open val size: Int
-        get() = noImpl
     open val type: String
-        get() = noImpl
     open val isClosed: Boolean
-        get() = noImpl
-    fun slice(start: Int = noImpl, end: Int = noImpl, contentType: String = noImpl): Blob = noImpl
-    fun close(): Unit = noImpl
+    fun slice(start: Int = definedExternally, end: Int = definedExternally, contentType: String = definedExternally): Blob
+    fun close(): Unit
 }
 
-@native public interface BlobPropertyBag {
-    var type: String
+public external interface BlobPropertyBag {
+    var type: String? /* = "" */
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
-@Suppress("NOTHING_TO_INLINE")
-public inline fun BlobPropertyBag(type: String = ""): BlobPropertyBag {
+@kotlin.internal.InlineOnly
+public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
     val o = js("({})")
 
     o["type"] = type
@@ -45,76 +48,72 @@ public inline fun BlobPropertyBag(type: String = ""): BlobPropertyBag {
     return o
 }
 
-@native public open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob() {
+/**
+ * Exposes the JavaScript [File](https://developer.mozilla.org/en/docs/Web/API/File) to Kotlin
+ */
+public external open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = definedExternally) : Blob {
     open val name: String
-        get() = noImpl
     open val lastModified: Int
-        get() = noImpl
 }
 
-@native public interface FilePropertyBag {
-    var type: String
-    var lastModified: Int
+public external interface FilePropertyBag : BlobPropertyBag {
+    var lastModified: Int?
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
-@Suppress("NOTHING_TO_INLINE")
-public inline fun FilePropertyBag(type: String = "", lastModified: Int): FilePropertyBag {
+@kotlin.internal.InlineOnly
+public inline fun FilePropertyBag(lastModified: Int? = null, type: String? = ""): FilePropertyBag {
     val o = js("({})")
 
-    o["type"] = type
     o["lastModified"] = lastModified
+    o["type"] = type
 
     return o
 }
 
-@native public interface FileList {
-    val length: Int
-        get() = noImpl
-    fun item(index: Int): File? = noImpl
-    @nativeGetter
-    operator fun get(index: Int): File? = noImpl
+/**
+ * Exposes the JavaScript [FileList](https://developer.mozilla.org/en/docs/Web/API/FileList) to Kotlin
+ */
+public external abstract class FileList : ItemArrayLike<File> {
+    override val length: Int
+    override fun item(index: Int): File?
 }
+@kotlin.internal.InlineOnly inline operator fun FileList.get(index: Int): File? = asDynamic()[index]
 
-@native public open class FileReader : EventTarget {
+/**
+ * Exposes the JavaScript [FileReader](https://developer.mozilla.org/en/docs/Web/API/FileReader) to Kotlin
+ */
+public external open class FileReader : EventTarget {
     open val readyState: Short
-        get() = noImpl
     open val result: dynamic
-        get() = noImpl
     open val error: dynamic
-        get() = noImpl
     var onloadstart: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     var onprogress: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     var onload: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     var onabort: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     var onerror: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     var onloadend: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    fun readAsArrayBuffer(blob: Blob): Unit = noImpl
-    fun readAsText(blob: Blob, label: String = noImpl): Unit = noImpl
-    fun readAsDataURL(blob: Blob): Unit = noImpl
-    fun abort(): Unit = noImpl
+    fun readAsArrayBuffer(blob: Blob): Unit
+    fun readAsBinaryString(blob: Blob): Unit
+    fun readAsText(blob: Blob, label: String = definedExternally): Unit
+    fun readAsDataURL(blob: Blob): Unit
+    fun abort(): Unit
 
     companion object {
-        val EMPTY: Short = 0
-        val LOADING: Short = 1
-        val DONE: Short = 2
+        val EMPTY: Short
+        val LOADING: Short
+        val DONE: Short
     }
 }
 
-@native public open class FileReaderSync {
-    fun readAsArrayBuffer(blob: Blob): ArrayBuffer = noImpl
-    fun readAsText(blob: Blob, label: String = noImpl): String = noImpl
-    fun readAsDataURL(blob: Blob): String = noImpl
+/**
+ * Exposes the JavaScript [FileReaderSync](https://developer.mozilla.org/en/docs/Web/API/FileReaderSync) to Kotlin
+ */
+public external open class FileReaderSync {
+    fun readAsArrayBuffer(blob: Blob): ArrayBuffer
+    fun readAsBinaryString(blob: Blob): String
+    fun readAsText(blob: Blob, label: String = definedExternally): String
+    fun readAsDataURL(blob: Blob): String
 }
 

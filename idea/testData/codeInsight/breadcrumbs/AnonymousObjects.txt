@@ -11,10 +11,10 @@ Crumbs:
 Tooltips:
   property <b><code>v</code></b>
   object : java.lang.Runnable
-  property <b><code>v.&lt;no name provided&gt;.v2</code></b>
+  property <b><code>&lt;no name provided&gt;.v2</code></b>
   object : A, B
-  function <b><code>v.&lt;no name provided&gt;.v2.&lt;no name provided&gt;.f()</code></b>
+  function <b><code>&lt;no name provided&gt;.f()</code></b>
   object : java.io.Serializable, XXX
-  property <b><code>v.&lt;no name provided&gt;.v2.&lt;no name provided&gt;.f.&lt;no name provided&gt;.o</code></b>
+  property <b><code>&lt;no name provided&gt;.o</code></b>
   object
-  function <b><code>v.&lt;no name provided&gt;.v2.&lt;no name provided&gt;.f.&lt;no name provided&gt;.o.&lt;no name provided&gt;.equals(Any?)</code></b>
+  function <b><code>&lt;no name provided&gt;.equals(Any?)</code></b>

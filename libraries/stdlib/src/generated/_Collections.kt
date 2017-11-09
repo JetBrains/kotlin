@@ -1,5 +1,6 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
+@file:kotlin.jvm.JvmVersion
 
 package kotlin.collections
 
@@ -9,9 +10,6 @@ package kotlin.collections
 //
 
 import kotlin.comparisons.*
-import java.util.*
-
-import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
  * Returns 1st *element* from the collection.
@@ -257,6 +255,7 @@ public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T): 
 /**
  * Returns first index of [element], or -1 if the list does not contain element.
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
 public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int {
     return indexOf(element)
 }
@@ -357,6 +356,7 @@ public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
         }
     }
     if (!found) throw NoSuchElementException("Collection contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return last as T
 }
 
@@ -391,6 +391,7 @@ public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: 
 /**
  * Returns last index of [element], or -1 if the list does not contain element.
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
 public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int {
     return lastIndexOf(element)
 }
@@ -488,6 +489,7 @@ public inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean): T {
         }
     }
     if (!found) throw NoSuchElementException("Collection contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as T
 }
 
@@ -619,7 +621,7 @@ public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public inline fun <T> Iterable<T>.filterIndexed(predicate: (Int, T) -> Boolean): List<T> {
+public inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T> {
     return filterIndexedTo(ArrayList<T>(), predicate)
 }
 
@@ -628,7 +630,7 @@ public inline fun <T> Iterable<T>.filterIndexed(predicate: (Int, T) -> Boolean):
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C {
+public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
     }
@@ -743,7 +745,7 @@ public fun <T> List<T>.takeLast(n: Int): List<T> {
         for (index in size - n .. size - 1)
             list.add(this[index])
     } else {
-        for (item in listIterator(n))
+        for (item in listIterator(size - n))
             list.add(item)
     }
     return list
@@ -796,7 +798,7 @@ public fun <T> MutableList<T>.reverse(): Unit {
 public fun <T> Iterable<T>.reversed(): List<T> {
     if (this is Collection && size <= 1) return toList()
     val list = toMutableList()
-    Collections.reverse(list)
+    list.reverse()
     return list
 }
 
@@ -963,7 +965,6 @@ public fun Collection<Short>.toShortArray(): ShortArray {
  * The returned map preserves the entry iteration order of the original collection.
  */
 public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -977,7 +978,6 @@ public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>):
  * The returned map preserves the entry iteration order of the original collection.
  */
 public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
 }
@@ -990,7 +990,6 @@ public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, 
  * The returned map preserves the entry iteration order of the original collection.
  */
 public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -1141,7 +1140,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(dest
  * 
  * The returned map preserves the entry iteration order of the keys produced from the original collection.
  * 
- * @sample test.collections.CollectionTest.groupBy
+ * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
     return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)
@@ -1154,7 +1153,7 @@ public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List
  * 
  * The returned map preserves the entry iteration order of the keys produced from the original collection.
  * 
- * @sample test.collections.CollectionTest.groupByKeysAndValues
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
     return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
@@ -1166,7 +1165,7 @@ public inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueTran
  * 
  * @return The [destination] map.
  * 
- * @sample test.collections.CollectionTest.groupBy
+ * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
@@ -1184,7 +1183,7 @@ public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T>.group
  * 
  * @return The [destination] map.
  * 
- * @sample test.collections.CollectionTest.groupByKeysAndValues
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
@@ -1196,10 +1195,23 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.gr
 }
 
 /**
+ * Creates a [Grouping] source from a collection to be used later with one of group-and-fold operations
+ * using the specified [keySelector] function to extract a key from each element.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupingByEachCount
+ */
+@SinceKotlin("1.1")
+public inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K> {
+    return object : Grouping<T, K> {
+        override fun sourceIterator(): Iterator<T> = this@groupingBy.iterator()
+        override fun keyOf(element: T): K = keySelector(element)
+    }
+}
+
+/**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original collection.
  */
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
     return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
@@ -1210,8 +1222,7 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<R> {
+public inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
 
@@ -1221,7 +1232,7 @@ public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (Int, T) -> R?): List<R> {
+public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R> {
     return mapIndexedNotNullTo(ArrayList<R>(), transform)
 }
 
@@ -1231,7 +1242,7 @@ public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (Int, T)
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C {
+public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
     return destination
 }
@@ -1242,7 +1253,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndex
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
+public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C {
     var index = 0
     for (item in this)
         destination.add(transform(index++, item))
@@ -1360,6 +1371,7 @@ public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
  * Returns `true` if all elements match the given [predicate].
  */
 public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
+    if (this is Collection && isEmpty()) return true
     for (element in this) if (!predicate(element)) return false
     return true
 }
@@ -1368,14 +1380,15 @@ public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
  * Returns `true` if collection has at least one element.
  */
 public fun <T> Iterable<T>.any(): Boolean {
-    for (element in this) return true
-    return false
+    if (this is Collection) return !isEmpty()
+    return iterator().hasNext()
 }
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
+    if (this is Collection && isEmpty()) return false
     for (element in this) if (predicate(element)) return true
     return false
 }
@@ -1384,6 +1397,7 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
  * Returns the number of elements in this collection.
  */
 public fun <T> Iterable<T>.count(): Int {
+    if (this is Collection) return size
     var count = 0
     for (element in this) count++
     return count
@@ -1401,6 +1415,7 @@ public inline fun <T> Collection<T>.count(): Int {
  * Returns the number of elements matching the given [predicate].
  */
 public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
+    if (this is Collection && isEmpty()) return 0
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
@@ -1409,7 +1424,7 @@ public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R {
+public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
@@ -1421,7 +1436,7 @@ public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R {
+public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R {
     var index = 0
     var accumulator = initial
     for (element in this) accumulator = operation(index++, accumulator, element)
@@ -1431,7 +1446,7 @@ public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (Int, R,
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): R {
+public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, acc: R) -> R): R {
     var accumulator = initial
     if (!isEmpty()) {
         val iterator = listIterator(size)
@@ -1448,7 +1463,7 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (Int, T, R) -> R): R {
+public inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R): R {
     var accumulator = initial
     if (!isEmpty()) {
         val iterator = listIterator(size)
@@ -1473,9 +1488,47 @@ public inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit {
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public inline fun <T> Iterable<T>.forEachIndexed(action: (Int, T) -> Unit): Unit {
+public inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit {
     var index = 0
     for (item in this) action(index++, item)
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.1")
+public fun Iterable<Double>.max(): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    if (max.isNaN()) return max
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.1")
+public fun Iterable<Float>.max(): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    if (max.isNaN()) return max
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (max < e) max = e
+    }
+    return max
 }
 
 /**
@@ -1523,6 +1576,44 @@ public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
         if (comparator.compare(max, e) < 0) max = e
     }
     return max
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.1")
+public fun Iterable<Double>.min(): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    if (min.isNaN()) return min
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (min > e) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.1")
+public fun Iterable<Float>.min(): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    if (min.isNaN()) return min
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (min > e) min = e
+    }
+    return min
 }
 
 /**
@@ -1576,22 +1667,31 @@ public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T? {
  * Returns `true` if the collection has no elements.
  */
 public fun <T> Iterable<T>.none(): Boolean {
-    for (element in this) return false
-    return true
+    if (this is Collection) return isEmpty()
+    return !iterator().hasNext()
 }
 
 /**
  * Returns `true` if no elements match the given [predicate].
  */
 public inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean {
+    if (this is Collection && isEmpty()) return true
     for (element in this) if (predicate(element)) return false
     return true
 }
 
 /**
+ * Performs the given [action] on each element and returns the collection itself afterwards.
+ */
+@SinceKotlin("1.1")
+public inline fun <T, C : Iterable<T>> C.onEach(action: (T) -> Unit): C {
+    return apply { for (element in this) action(element) }
+}
+
+/**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
+public inline fun <S, T: S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty collection can't be reduced.")
     var accumulator: S = iterator.next()
@@ -1607,7 +1707,7 @@ public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (Int, S, T) -> S): S {
+public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty collection can't be reduced.")
     var index = 1
@@ -1621,7 +1721,7 @@ public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (Int, S, T) -> 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
+public inline fun <S, T: S> List<T>.reduceRight(operation: (T, acc: S) -> S): S {
     val iterator = listIterator(size)
     if (!iterator.hasPrevious())
         throw UnsupportedOperationException("Empty list can't be reduced.")
@@ -1638,7 +1738,7 @@ public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (Int, T, S) -> S): S {
+public inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S {
     val iterator = listIterator(size)
     if (!iterator.hasPrevious())
         throw UnsupportedOperationException("Empty list can't be reduced.")
@@ -1696,6 +1796,39 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
     }
     @Suppress("UNCHECKED_CAST")
     return this as List<T>
+}
+
+/**
+ * Splits this collection into a list of lists each not exceeding the given [size].
+ * 
+ * The last list in the resulting list may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.chunked(size: Int): List<List<T>> {
+    return windowed(size, size, partialWindows = true)
+}
+
+/**
+ * Splits this collection into several lists each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return list of results of the [transform] applied to an each list.
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * The last list may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
+ * 
+ * @sample samples.text.Strings.chunkedTransform
+ */
+@SinceKotlin("1.2")
+public fun <T, R> Iterable<T>.chunked(size: Int, transform: (List<T>) -> R): List<R> {
+    return windowed(size, size, partialWindows = true, transform = transform)
 }
 
 /**
@@ -1868,6 +2001,83 @@ public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
 }
 
 /**
+ * Returns a list of snapshots of the window of the given [size]
+ * sliding along this collection with the given [step], where each
+ * snapshot is a list.
+ * 
+ * Several last lists may have less elements than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): List<List<T>> {
+    checkWindowSizeStep(size, step)
+    if (this is RandomAccess && this is List) {
+        val thisSize = this.size
+        val result = ArrayList<List<T>>((thisSize + step - 1) / step)
+        var index = 0
+        while (index < thisSize) {
+            val windowSize = size.coerceAtMost(thisSize - index)
+            if (windowSize < size && !partialWindows) break
+            result.add(List(windowSize) { this[it + index] })
+            index += step
+        }
+        return result
+    }
+    val result = ArrayList<List<T>>()
+    windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = false).forEach {
+        result.add(it)
+    }
+    return result
+}
+
+/**
+ * Returns a list of results of applying the given [transform] function to
+ * an each list representing a view over the window of the given [size]
+ * sliding along this collection with the given [step].
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last lists may have less elements than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
+@SinceKotlin("1.2")
+public fun <T, R> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R): List<R> {
+    checkWindowSizeStep(size, step)
+    if (this is RandomAccess && this is List) {
+        val thisSize = this.size
+        val result = ArrayList<R>((thisSize + step - 1) / step)
+        val window = MovingSubList(this)
+        var index = 0
+        while (index < thisSize) {
+            window.move(index, (index + size).coerceAtMost(thisSize))
+            if (!partialWindows && window.size < size) break
+            result.add(transform(window))
+            index += step
+        }
+        return result
+    }
+    val result = ArrayList<R>()
+    windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = true).forEach {
+        result.add(transform(it))
+    }
+    return result
+}
+
+/**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
@@ -1877,10 +2087,9 @@ public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V> {
+public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V> {
     val arraySize = other.size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
+    val list = ArrayList<V>(minOf(collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in this) {
         if (i >= arraySize) break
@@ -1899,15 +2108,48 @@ public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
+public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
+    val list = ArrayList<V>(minOf(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
     return list
+}
+
+/**
+ * Returns a list of pairs of each two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.zipWithNext(): List<Pair<T, T>> {
+    return zipWithNext { a, b -> a to b }
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ */
+@SinceKotlin("1.2")
+public inline fun <T, R> Iterable<T>.zipWithNext(transform: (a: T, b: T) -> R): List<R> {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return emptyList()
+    val result = mutableListOf<R>()
+    var current = iterator.next()
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        result.add(transform(current, next))
+        current = next
+    }
+    return result
 }
 
 /**
@@ -1922,10 +2164,7 @@ public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: CharSequ
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            if (transform != null)
-                buffer.append(transform(element))
-            else
-                buffer.append(if (element == null) "null" else element.toString())
+            buffer.appendElement(element, transform)
         } else break
     }
     if (limit >= 0 && count > limit) buffer.append(truncated)
@@ -1953,27 +2192,11 @@ public inline fun <T> Iterable<T>.asIterable(): Iterable<T> {
 
 /**
  * Creates a [Sequence] instance that wraps the original collection returning its elements when being iterated.
+ * 
+ * @sample samples.collections.Sequences.Building.sequenceFromCollection
  */
 public fun <T> Iterable<T>.asSequence(): Sequence<T> {
     return Sequence { this.iterator() }
-}
-
-/**
- * Returns a list containing all elements that are instances of specified class.
- */
-@kotlin.jvm.JvmVersion
-public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
-    return filterIsInstanceTo(ArrayList<R>(), klass)
-}
-
-/**
- * Appends all elements that are instances of specified class to the given [destination].
- */
-@kotlin.jvm.JvmVersion
-public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
-    @Suppress("UNCHECKED_CAST")
-    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
-    return destination
 }
 
 /**
@@ -1987,7 +2210,7 @@ public fun Iterable<Byte>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -2001,7 +2224,7 @@ public fun Iterable<Short>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -2015,7 +2238,7 @@ public fun Iterable<Int>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -2029,7 +2252,7 @@ public fun Iterable<Long>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -2043,7 +2266,7 @@ public fun Iterable<Float>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -2057,7 +2280,7 @@ public fun Iterable<Double>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -2130,5 +2353,23 @@ public fun Iterable<Double>.sum(): Double {
         sum += element
     }
     return sum
+}
+
+/**
+ * Returns a list containing all elements that are instances of specified class.
+ */
+@kotlin.jvm.JvmVersion
+public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
+    return filterIsInstanceTo(ArrayList<R>(), klass)
+}
+
+/**
+ * Appends all elements that are instances of specified class to the given [destination].
+ */
+@kotlin.jvm.JvmVersion
+public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    @Suppress("UNCHECKED_CAST")
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
+    return destination
 }
 

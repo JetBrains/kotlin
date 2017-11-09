@@ -14,17 +14,94 @@ public final class JvmPackageTable {
 
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> 
         getPackagePartsList();
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getPackageParts(int index);
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     int getPackagePartsCount();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> 
+        getMetadataPartsList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getMetadataParts(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    int getMetadataPartsCount();
+
+    /**
+     * <code>repeated string jvm_package_name = 3;</code>
+     *
+     * <pre>
+     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+     * The names here are dot-separated, e.g. "org.foo.bar"
+     * </pre>
+     */
+    org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getJvmPackageNameList();
+    /**
+     * <code>repeated string jvm_package_name = 3;</code>
+     *
+     * <pre>
+     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+     * The names here are dot-separated, e.g. "org.foo.bar"
+     * </pre>
+     */
+    int getJvmPackageNameCount();
+    /**
+     * <code>repeated string jvm_package_name = 3;</code>
+     *
+     * <pre>
+     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+     * The names here are dot-separated, e.g. "org.foo.bar"
+     * </pre>
+     */
+    java.lang.String getJvmPackageName(int index);
+    /**
+     * <code>repeated string jvm_package_name = 3;</code>
+     *
+     * <pre>
+     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+     * The names here are dot-separated, e.g. "org.foo.bar"
+     * </pre>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getJvmPackageNameBytes(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageTable}
@@ -60,7 +137,7 @@ public final class JvmPackageTable {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput);
+              unknownFieldsOutput, 1);
       try {
         boolean done = false;
         while (!done) {
@@ -84,6 +161,23 @@ public final class JvmPackageTable {
               packageParts_.add(input.readMessage(org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.PARSER, extensionRegistry));
               break;
             }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                metadataParts_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              metadataParts_.add(input.readMessage(org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.PARSER, extensionRegistry));
+              break;
+            }
+            case 26: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                jvmPackageName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              jvmPackageName_.add(bs);
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -94,6 +188,12 @@ public final class JvmPackageTable {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           packageParts_ = java.util.Collections.unmodifiableList(packageParts_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          metadataParts_ = java.util.Collections.unmodifiableList(metadataParts_);
+        }
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          jvmPackageName_ = jvmPackageName_.getUnmodifiableView();
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -124,12 +224,20 @@ public final class JvmPackageTable {
     private java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> packageParts_;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     public java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> getPackagePartsList() {
       return packageParts_;
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     public java.util.List<? extends org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackagePartsOrBuilder> 
         getPackagePartsOrBuilderList() {
@@ -137,26 +245,144 @@ public final class JvmPackageTable {
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     public int getPackagePartsCount() {
       return packageParts_.size();
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getPackageParts(int index) {
       return packageParts_.get(index);
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackagePartsOrBuilder getPackagePartsOrBuilder(
         int index) {
       return packageParts_.get(index);
     }
 
+    public static final int METADATA_PARTS_FIELD_NUMBER = 2;
+    private java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> metadataParts_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> getMetadataPartsList() {
+      return metadataParts_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackagePartsOrBuilder> 
+        getMetadataPartsOrBuilderList() {
+      return metadataParts_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    public int getMetadataPartsCount() {
+      return metadataParts_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getMetadataParts(int index) {
+      return metadataParts_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackagePartsOrBuilder getMetadataPartsOrBuilder(
+        int index) {
+      return metadataParts_.get(index);
+    }
+
+    public static final int JVM_PACKAGE_NAME_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.protobuf.LazyStringList jvmPackageName_;
+    /**
+     * <code>repeated string jvm_package_name = 3;</code>
+     *
+     * <pre>
+     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+     * The names here are dot-separated, e.g. "org.foo.bar"
+     * </pre>
+     */
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getJvmPackageNameList() {
+      return jvmPackageName_;
+    }
+    /**
+     * <code>repeated string jvm_package_name = 3;</code>
+     *
+     * <pre>
+     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+     * The names here are dot-separated, e.g. "org.foo.bar"
+     * </pre>
+     */
+    public int getJvmPackageNameCount() {
+      return jvmPackageName_.size();
+    }
+    /**
+     * <code>repeated string jvm_package_name = 3;</code>
+     *
+     * <pre>
+     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+     * The names here are dot-separated, e.g. "org.foo.bar"
+     * </pre>
+     */
+    public java.lang.String getJvmPackageName(int index) {
+      return jvmPackageName_.get(index);
+    }
+    /**
+     * <code>repeated string jvm_package_name = 3;</code>
+     *
+     * <pre>
+     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+     * The names here are dot-separated, e.g. "org.foo.bar"
+     * </pre>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getJvmPackageNameBytes(int index) {
+      return jvmPackageName_.getByteString(index);
+    }
+
     private void initFields() {
       packageParts_ = java.util.Collections.emptyList();
+      metadataParts_ = java.util.Collections.emptyList();
+      jvmPackageName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -166,6 +392,12 @@ public final class JvmPackageTable {
 
       for (int i = 0; i < getPackagePartsCount(); i++) {
         if (!getPackageParts(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getMetadataPartsCount(); i++) {
+        if (!getMetadataParts(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -180,6 +412,12 @@ public final class JvmPackageTable {
       for (int i = 0; i < packageParts_.size(); i++) {
         output.writeMessage(1, packageParts_.get(i));
       }
+      for (int i = 0; i < metadataParts_.size(); i++) {
+        output.writeMessage(2, metadataParts_.get(i));
+      }
+      for (int i = 0; i < jvmPackageName_.size(); i++) {
+        output.writeBytes(3, jvmPackageName_.getByteString(i));
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -192,6 +430,19 @@ public final class JvmPackageTable {
       for (int i = 0; i < packageParts_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(1, packageParts_.get(i));
+      }
+      for (int i = 0; i < metadataParts_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(2, metadataParts_.get(i));
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < jvmPackageName_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(jvmPackageName_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getJvmPackageNameList().size();
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -289,6 +540,10 @@ public final class JvmPackageTable {
         super.clear();
         packageParts_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000001);
+        metadataParts_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        jvmPackageName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -316,6 +571,16 @@ public final class JvmPackageTable {
           bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.packageParts_ = packageParts_;
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          metadataParts_ = java.util.Collections.unmodifiableList(metadataParts_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.metadataParts_ = metadataParts_;
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          jvmPackageName_ = jvmPackageName_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.jvmPackageName_ = jvmPackageName_;
         return result;
       }
 
@@ -331,6 +596,26 @@ public final class JvmPackageTable {
           }
           
         }
+        if (!other.metadataParts_.isEmpty()) {
+          if (metadataParts_.isEmpty()) {
+            metadataParts_ = other.metadataParts_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureMetadataPartsIsMutable();
+            metadataParts_.addAll(other.metadataParts_);
+          }
+          
+        }
+        if (!other.jvmPackageName_.isEmpty()) {
+          if (jvmPackageName_.isEmpty()) {
+            jvmPackageName_ = other.jvmPackageName_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureJvmPackageNameIsMutable();
+            jvmPackageName_.addAll(other.jvmPackageName_);
+          }
+          
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
@@ -339,6 +624,12 @@ public final class JvmPackageTable {
       public final boolean isInitialized() {
         for (int i = 0; i < getPackagePartsCount(); i++) {
           if (!getPackageParts(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getMetadataPartsCount(); i++) {
+          if (!getMetadataParts(i).isInitialized()) {
             
             return false;
           }
@@ -376,24 +667,40 @@ public final class JvmPackageTable {
 
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> getPackagePartsList() {
         return java.util.Collections.unmodifiableList(packageParts_);
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public int getPackagePartsCount() {
         return packageParts_.size();
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getPackageParts(int index) {
         return packageParts_.get(index);
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder setPackageParts(
           int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
@@ -407,6 +714,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder setPackageParts(
           int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
@@ -417,6 +728,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder addPackageParts(org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
         if (value == null) {
@@ -429,6 +744,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder addPackageParts(
           int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
@@ -442,6 +761,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder addPackageParts(
           org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
@@ -452,6 +775,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder addPackageParts(
           int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
@@ -462,6 +789,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder addAllPackageParts(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> values) {
@@ -473,6 +804,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder clearPackageParts() {
         packageParts_ = java.util.Collections.emptyList();
@@ -482,11 +817,326 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder removePackageParts(int index) {
         ensurePackagePartsIsMutable();
         packageParts_.remove(index);
 
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> metadataParts_ =
+        java.util.Collections.emptyList();
+      private void ensureMetadataPartsIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          metadataParts_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts>(metadataParts_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> getMetadataPartsList() {
+        return java.util.Collections.unmodifiableList(metadataParts_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public int getMetadataPartsCount() {
+        return metadataParts_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getMetadataParts(int index) {
+        return metadataParts_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder setMetadataParts(
+          int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMetadataPartsIsMutable();
+        metadataParts_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder setMetadataParts(
+          int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
+        ensureMetadataPartsIsMutable();
+        metadataParts_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder addMetadataParts(org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMetadataPartsIsMutable();
+        metadataParts_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder addMetadataParts(
+          int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMetadataPartsIsMutable();
+        metadataParts_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder addMetadataParts(
+          org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
+        ensureMetadataPartsIsMutable();
+        metadataParts_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder addMetadataParts(
+          int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
+        ensureMetadataPartsIsMutable();
+        metadataParts_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder addAllMetadataParts(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> values) {
+        ensureMetadataPartsIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, metadataParts_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder clearMetadataParts() {
+        metadataParts_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder removeMetadataParts(int index) {
+        ensureMetadataPartsIsMutable();
+        metadataParts_.remove(index);
+
+        return this;
+      }
+
+      private org.jetbrains.kotlin.protobuf.LazyStringList jvmPackageName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureJvmPackageNameIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          jvmPackageName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(jvmPackageName_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+      /**
+       * <code>repeated string jvm_package_name = 3;</code>
+       *
+       * <pre>
+       * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+       * The names here are dot-separated, e.g. "org.foo.bar"
+       * </pre>
+       */
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
+          getJvmPackageNameList() {
+        return jvmPackageName_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string jvm_package_name = 3;</code>
+       *
+       * <pre>
+       * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+       * The names here are dot-separated, e.g. "org.foo.bar"
+       * </pre>
+       */
+      public int getJvmPackageNameCount() {
+        return jvmPackageName_.size();
+      }
+      /**
+       * <code>repeated string jvm_package_name = 3;</code>
+       *
+       * <pre>
+       * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+       * The names here are dot-separated, e.g. "org.foo.bar"
+       * </pre>
+       */
+      public java.lang.String getJvmPackageName(int index) {
+        return jvmPackageName_.get(index);
+      }
+      /**
+       * <code>repeated string jvm_package_name = 3;</code>
+       *
+       * <pre>
+       * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+       * The names here are dot-separated, e.g. "org.foo.bar"
+       * </pre>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getJvmPackageNameBytes(int index) {
+        return jvmPackageName_.getByteString(index);
+      }
+      /**
+       * <code>repeated string jvm_package_name = 3;</code>
+       *
+       * <pre>
+       * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+       * The names here are dot-separated, e.g. "org.foo.bar"
+       * </pre>
+       */
+      public Builder setJvmPackageName(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureJvmPackageNameIsMutable();
+        jvmPackageName_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string jvm_package_name = 3;</code>
+       *
+       * <pre>
+       * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+       * The names here are dot-separated, e.g. "org.foo.bar"
+       * </pre>
+       */
+      public Builder addJvmPackageName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureJvmPackageNameIsMutable();
+        jvmPackageName_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string jvm_package_name = 3;</code>
+       *
+       * <pre>
+       * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+       * The names here are dot-separated, e.g. "org.foo.bar"
+       * </pre>
+       */
+      public Builder addAllJvmPackageName(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureJvmPackageNameIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, jvmPackageName_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string jvm_package_name = 3;</code>
+       *
+       * <pre>
+       * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+       * The names here are dot-separated, e.g. "org.foo.bar"
+       * </pre>
+       */
+      public Builder clearJvmPackageName() {
+        jvmPackageName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string jvm_package_name = 3;</code>
+       *
+       * <pre>
+       * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+       * The names here are dot-separated, e.g. "org.foo.bar"
+       * </pre>
+       */
+      public Builder addJvmPackageNameBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureJvmPackageNameIsMutable();
+        jvmPackageName_.add(value);
+        
         return this;
       }
 
@@ -520,23 +1170,189 @@ public final class JvmPackageTable {
         getPackageFqNameBytes();
 
     /**
-     * <code>repeated string class_name = 2;</code>
+     * <code>repeated string short_class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * </pre>
      */
     org.jetbrains.kotlin.protobuf.ProtocolStringList
-        getClassNameList();
+        getShortClassNameList();
     /**
-     * <code>repeated string class_name = 2;</code>
+     * <code>repeated string short_class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * </pre>
      */
-    int getClassNameCount();
+    int getShortClassNameCount();
     /**
-     * <code>repeated string class_name = 2;</code>
+     * <code>repeated string short_class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * </pre>
      */
-    java.lang.String getClassName(int index);
+    java.lang.String getShortClassName(int index);
     /**
-     * <code>repeated string class_name = 2;</code>
+     * <code>repeated string short_class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * </pre>
      */
     org.jetbrains.kotlin.protobuf.ByteString
-        getClassNameBytes(int index);
+        getShortClassNameBytes(int index);
+
+    /**
+     * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    java.util.List<java.lang.Integer> getMultifileFacadeShortNameIdList();
+    /**
+     * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    int getMultifileFacadeShortNameIdCount();
+    /**
+     * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    int getMultifileFacadeShortNameId(int index);
+
+    /**
+     * <code>repeated string multifile_facade_short_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getMultifileFacadeShortNameList();
+    /**
+     * <code>repeated string multifile_facade_short_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    int getMultifileFacadeShortNameCount();
+    /**
+     * <code>repeated string multifile_facade_short_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    java.lang.String getMultifileFacadeShortName(int index);
+    /**
+     * <code>repeated string multifile_facade_short_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getMultifileFacadeShortNameBytes(int index);
+
+    /**
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+     *
+     * <pre>
+     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * </pre>
+     */
+    org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getClassWithJvmPackageNameShortNameList();
+    /**
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+     *
+     * <pre>
+     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * </pre>
+     */
+    int getClassWithJvmPackageNameShortNameCount();
+    /**
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+     *
+     * <pre>
+     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * </pre>
+     */
+    java.lang.String getClassWithJvmPackageNameShortName(int index);
+    /**
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+     *
+     * <pre>
+     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * </pre>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getClassWithJvmPackageNameShortNameBytes(int index);
+
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+     * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+     * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+     * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+     * when a bunch of files from the same Kotlin package have the same JVM package name.
+     * </pre>
+     */
+    java.util.List<java.lang.Integer> getClassWithJvmPackageNamePackageIdList();
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+     * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+     * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+     * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+     * when a bunch of files from the same Kotlin package have the same JVM package name.
+     * </pre>
+     */
+    int getClassWithJvmPackageNamePackageIdCount();
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+     * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+     * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+     * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+     * when a bunch of files from the same Kotlin package have the same JVM package name.
+     * </pre>
+     */
+    int getClassWithJvmPackageNamePackageId(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageParts}
@@ -572,7 +1388,7 @@ public final class JvmPackageTable {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput);
+              unknownFieldsOutput, 1);
       try {
         boolean done = false;
         while (!done) {
@@ -597,10 +1413,70 @@ public final class JvmPackageTable {
             case 18: {
               org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
               if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                className_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
+                shortClassName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
                 mutable_bitField0_ |= 0x00000002;
               }
-              className_.add(bs);
+              shortClassName_.add(bs);
+              break;
+            }
+            case 24: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                multifileFacadeShortNameId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              multifileFacadeShortNameId_.add(input.readInt32());
+              break;
+            }
+            case 26: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+                multifileFacadeShortNameId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                multifileFacadeShortNameId_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
+            case 34: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                multifileFacadeShortName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000008;
+              }
+              multifileFacadeShortName_.add(bs);
+              break;
+            }
+            case 42: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+                classWithJvmPackageNameShortName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000010;
+              }
+              classWithJvmPackageNameShortName_.add(bs);
+              break;
+            }
+            case 48: {
+              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+                classWithJvmPackageNamePackageId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000020;
+              }
+              classWithJvmPackageNamePackageId_.add(input.readInt32());
+              break;
+            }
+            case 50: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020) && input.getBytesUntilLimit() > 0) {
+                classWithJvmPackageNamePackageId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000020;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                classWithJvmPackageNamePackageId_.add(input.readInt32());
+              }
+              input.popLimit(limit);
               break;
             }
           }
@@ -612,7 +1488,19 @@ public final class JvmPackageTable {
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-          className_ = className_.getUnmodifiableView();
+          shortClassName_ = shortClassName_.getUnmodifiableView();
+        }
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          multifileFacadeShortNameId_ = java.util.Collections.unmodifiableList(multifileFacadeShortNameId_);
+        }
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+          multifileFacadeShortName_ = multifileFacadeShortName_.getUnmodifiableView();
+        }
+        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+          classWithJvmPackageNameShortName_ = classWithJvmPackageNameShortName_.getUnmodifiableView();
+        }
+        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+          classWithJvmPackageNamePackageId_ = java.util.Collections.unmodifiableList(classWithJvmPackageNamePackageId_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -682,38 +1570,248 @@ public final class JvmPackageTable {
       }
     }
 
-    public static final int CLASS_NAME_FIELD_NUMBER = 2;
-    private org.jetbrains.kotlin.protobuf.LazyStringList className_;
+    public static final int SHORT_CLASS_NAME_FIELD_NUMBER = 2;
+    private org.jetbrains.kotlin.protobuf.LazyStringList shortClassName_;
     /**
-     * <code>repeated string class_name = 2;</code>
+     * <code>repeated string short_class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
-        getClassNameList() {
-      return className_;
+        getShortClassNameList() {
+      return shortClassName_;
     }
     /**
-     * <code>repeated string class_name = 2;</code>
+     * <code>repeated string short_class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * </pre>
      */
-    public int getClassNameCount() {
-      return className_.size();
+    public int getShortClassNameCount() {
+      return shortClassName_.size();
     }
     /**
-     * <code>repeated string class_name = 2;</code>
+     * <code>repeated string short_class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * </pre>
      */
-    public java.lang.String getClassName(int index) {
-      return className_.get(index);
+    public java.lang.String getShortClassName(int index) {
+      return shortClassName_.get(index);
     }
     /**
-     * <code>repeated string class_name = 2;</code>
+     * <code>repeated string short_class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ByteString
-        getClassNameBytes(int index) {
-      return className_.getByteString(index);
+        getShortClassNameBytes(int index) {
+      return shortClassName_.getByteString(index);
     }
+
+    public static final int MULTIFILE_FACADE_SHORT_NAME_ID_FIELD_NUMBER = 3;
+    private java.util.List<java.lang.Integer> multifileFacadeShortNameId_;
+    /**
+     * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    public java.util.List<java.lang.Integer>
+        getMultifileFacadeShortNameIdList() {
+      return multifileFacadeShortNameId_;
+    }
+    /**
+     * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    public int getMultifileFacadeShortNameIdCount() {
+      return multifileFacadeShortNameId_.size();
+    }
+    /**
+     * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    public int getMultifileFacadeShortNameId(int index) {
+      return multifileFacadeShortNameId_.get(index);
+    }
+    private int multifileFacadeShortNameIdMemoizedSerializedSize = -1;
+
+    public static final int MULTIFILE_FACADE_SHORT_NAME_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.protobuf.LazyStringList multifileFacadeShortName_;
+    /**
+     * <code>repeated string multifile_facade_short_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getMultifileFacadeShortNameList() {
+      return multifileFacadeShortName_;
+    }
+    /**
+     * <code>repeated string multifile_facade_short_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    public int getMultifileFacadeShortNameCount() {
+      return multifileFacadeShortName_.size();
+    }
+    /**
+     * <code>repeated string multifile_facade_short_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    public java.lang.String getMultifileFacadeShortName(int index) {
+      return multifileFacadeShortName_.get(index);
+    }
+    /**
+     * <code>repeated string multifile_facade_short_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getMultifileFacadeShortNameBytes(int index) {
+      return multifileFacadeShortName_.getByteString(index);
+    }
+
+    public static final int CLASS_WITH_JVM_PACKAGE_NAME_SHORT_NAME_FIELD_NUMBER = 5;
+    private org.jetbrains.kotlin.protobuf.LazyStringList classWithJvmPackageNameShortName_;
+    /**
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+     *
+     * <pre>
+     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getClassWithJvmPackageNameShortNameList() {
+      return classWithJvmPackageNameShortName_;
+    }
+    /**
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+     *
+     * <pre>
+     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * </pre>
+     */
+    public int getClassWithJvmPackageNameShortNameCount() {
+      return classWithJvmPackageNameShortName_.size();
+    }
+    /**
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+     *
+     * <pre>
+     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * </pre>
+     */
+    public java.lang.String getClassWithJvmPackageNameShortName(int index) {
+      return classWithJvmPackageNameShortName_.get(index);
+    }
+    /**
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+     *
+     * <pre>
+     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getClassWithJvmPackageNameShortNameBytes(int index) {
+      return classWithJvmPackageNameShortName_.getByteString(index);
+    }
+
+    public static final int CLASS_WITH_JVM_PACKAGE_NAME_PACKAGE_ID_FIELD_NUMBER = 6;
+    private java.util.List<java.lang.Integer> classWithJvmPackageNamePackageId_;
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+     * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+     * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+     * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+     * when a bunch of files from the same Kotlin package have the same JVM package name.
+     * </pre>
+     */
+    public java.util.List<java.lang.Integer>
+        getClassWithJvmPackageNamePackageIdList() {
+      return classWithJvmPackageNamePackageId_;
+    }
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+     * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+     * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+     * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+     * when a bunch of files from the same Kotlin package have the same JVM package name.
+     * </pre>
+     */
+    public int getClassWithJvmPackageNamePackageIdCount() {
+      return classWithJvmPackageNamePackageId_.size();
+    }
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+     *
+     * <pre>
+     * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+     * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+     * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+     * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+     * when a bunch of files from the same Kotlin package have the same JVM package name.
+     * </pre>
+     */
+    public int getClassWithJvmPackageNamePackageId(int index) {
+      return classWithJvmPackageNamePackageId_.get(index);
+    }
+    private int classWithJvmPackageNamePackageIdMemoizedSerializedSize = -1;
 
     private void initFields() {
       packageFqName_ = "";
-      className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      shortClassName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      multifileFacadeShortNameId_ = java.util.Collections.emptyList();
+      multifileFacadeShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      classWithJvmPackageNameShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      classWithJvmPackageNamePackageId_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -735,8 +1833,28 @@ public final class JvmPackageTable {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeBytes(1, getPackageFqNameBytes());
       }
-      for (int i = 0; i < className_.size(); i++) {
-        output.writeBytes(2, className_.getByteString(i));
+      for (int i = 0; i < shortClassName_.size(); i++) {
+        output.writeBytes(2, shortClassName_.getByteString(i));
+      }
+      if (getMultifileFacadeShortNameIdList().size() > 0) {
+        output.writeRawVarint32(26);
+        output.writeRawVarint32(multifileFacadeShortNameIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < multifileFacadeShortNameId_.size(); i++) {
+        output.writeInt32NoTag(multifileFacadeShortNameId_.get(i));
+      }
+      for (int i = 0; i < multifileFacadeShortName_.size(); i++) {
+        output.writeBytes(4, multifileFacadeShortName_.getByteString(i));
+      }
+      for (int i = 0; i < classWithJvmPackageNameShortName_.size(); i++) {
+        output.writeBytes(5, classWithJvmPackageNameShortName_.getByteString(i));
+      }
+      if (getClassWithJvmPackageNamePackageIdList().size() > 0) {
+        output.writeRawVarint32(50);
+        output.writeRawVarint32(classWithJvmPackageNamePackageIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < classWithJvmPackageNamePackageId_.size(); i++) {
+        output.writeInt32NoTag(classWithJvmPackageNamePackageId_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -753,12 +1871,58 @@ public final class JvmPackageTable {
       }
       {
         int dataSize = 0;
-        for (int i = 0; i < className_.size(); i++) {
+        for (int i = 0; i < shortClassName_.size(); i++) {
           dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
-            .computeBytesSizeNoTag(className_.getByteString(i));
+            .computeBytesSizeNoTag(shortClassName_.getByteString(i));
         }
         size += dataSize;
-        size += 1 * getClassNameList().size();
+        size += 1 * getShortClassNameList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < multifileFacadeShortNameId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(multifileFacadeShortNameId_.get(i));
+        }
+        size += dataSize;
+        if (!getMultifileFacadeShortNameIdList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        multifileFacadeShortNameIdMemoizedSerializedSize = dataSize;
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < multifileFacadeShortName_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(multifileFacadeShortName_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getMultifileFacadeShortNameList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < classWithJvmPackageNameShortName_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(classWithJvmPackageNameShortName_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getClassWithJvmPackageNameShortNameList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < classWithJvmPackageNamePackageId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(classWithJvmPackageNamePackageId_.get(i));
+        }
+        size += dataSize;
+        if (!getClassWithJvmPackageNamePackageIdList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        classWithJvmPackageNamePackageIdMemoizedSerializedSize = dataSize;
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -856,8 +2020,16 @@ public final class JvmPackageTable {
         super.clear();
         packageFqName_ = "";
         bitField0_ = (bitField0_ & ~0x00000001);
-        className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        shortClassName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
+        multifileFacadeShortNameId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        multifileFacadeShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        classWithJvmPackageNameShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000010);
+        classWithJvmPackageNamePackageId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
         return this;
       }
 
@@ -886,10 +2058,30 @@ public final class JvmPackageTable {
         }
         result.packageFqName_ = packageFqName_;
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          className_ = className_.getUnmodifiableView();
+          shortClassName_ = shortClassName_.getUnmodifiableView();
           bitField0_ = (bitField0_ & ~0x00000002);
         }
-        result.className_ = className_;
+        result.shortClassName_ = shortClassName_;
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          multifileFacadeShortNameId_ = java.util.Collections.unmodifiableList(multifileFacadeShortNameId_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.multifileFacadeShortNameId_ = multifileFacadeShortNameId_;
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          multifileFacadeShortName_ = multifileFacadeShortName_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.multifileFacadeShortName_ = multifileFacadeShortName_;
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          classWithJvmPackageNameShortName_ = classWithJvmPackageNameShortName_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000010);
+        }
+        result.classWithJvmPackageNameShortName_ = classWithJvmPackageNameShortName_;
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+          classWithJvmPackageNamePackageId_ = java.util.Collections.unmodifiableList(classWithJvmPackageNamePackageId_);
+          bitField0_ = (bitField0_ & ~0x00000020);
+        }
+        result.classWithJvmPackageNamePackageId_ = classWithJvmPackageNamePackageId_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -901,13 +2093,53 @@ public final class JvmPackageTable {
           packageFqName_ = other.packageFqName_;
           
         }
-        if (!other.className_.isEmpty()) {
-          if (className_.isEmpty()) {
-            className_ = other.className_;
+        if (!other.shortClassName_.isEmpty()) {
+          if (shortClassName_.isEmpty()) {
+            shortClassName_ = other.shortClassName_;
             bitField0_ = (bitField0_ & ~0x00000002);
           } else {
-            ensureClassNameIsMutable();
-            className_.addAll(other.className_);
+            ensureShortClassNameIsMutable();
+            shortClassName_.addAll(other.shortClassName_);
+          }
+          
+        }
+        if (!other.multifileFacadeShortNameId_.isEmpty()) {
+          if (multifileFacadeShortNameId_.isEmpty()) {
+            multifileFacadeShortNameId_ = other.multifileFacadeShortNameId_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureMultifileFacadeShortNameIdIsMutable();
+            multifileFacadeShortNameId_.addAll(other.multifileFacadeShortNameId_);
+          }
+          
+        }
+        if (!other.multifileFacadeShortName_.isEmpty()) {
+          if (multifileFacadeShortName_.isEmpty()) {
+            multifileFacadeShortName_ = other.multifileFacadeShortName_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureMultifileFacadeShortNameIsMutable();
+            multifileFacadeShortName_.addAll(other.multifileFacadeShortName_);
+          }
+          
+        }
+        if (!other.classWithJvmPackageNameShortName_.isEmpty()) {
+          if (classWithJvmPackageNameShortName_.isEmpty()) {
+            classWithJvmPackageNameShortName_ = other.classWithJvmPackageNameShortName_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+          } else {
+            ensureClassWithJvmPackageNameShortNameIsMutable();
+            classWithJvmPackageNameShortName_.addAll(other.classWithJvmPackageNameShortName_);
+          }
+          
+        }
+        if (!other.classWithJvmPackageNamePackageId_.isEmpty()) {
+          if (classWithJvmPackageNamePackageId_.isEmpty()) {
+            classWithJvmPackageNamePackageId_ = other.classWithJvmPackageNamePackageId_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+          } else {
+            ensureClassWithJvmPackageNamePackageIdIsMutable();
+            classWithJvmPackageNamePackageId_.addAll(other.classWithJvmPackageNamePackageId_);
           }
           
         }
@@ -1019,95 +2251,646 @@ public final class JvmPackageTable {
         return this;
       }
 
-      private org.jetbrains.kotlin.protobuf.LazyStringList className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureClassNameIsMutable() {
+      private org.jetbrains.kotlin.protobuf.LazyStringList shortClassName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureShortClassNameIsMutable() {
         if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-          className_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(className_);
+          shortClassName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(shortClassName_);
           bitField0_ |= 0x00000002;
          }
       }
       /**
-       * <code>repeated string class_name = 2;</code>
+       * <code>repeated string short_class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
-          getClassNameList() {
-        return className_.getUnmodifiableView();
+          getShortClassNameList() {
+        return shortClassName_.getUnmodifiableView();
       }
       /**
-       * <code>repeated string class_name = 2;</code>
+       * <code>repeated string short_class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * </pre>
        */
-      public int getClassNameCount() {
-        return className_.size();
+      public int getShortClassNameCount() {
+        return shortClassName_.size();
       }
       /**
-       * <code>repeated string class_name = 2;</code>
+       * <code>repeated string short_class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * </pre>
        */
-      public java.lang.String getClassName(int index) {
-        return className_.get(index);
+      public java.lang.String getShortClassName(int index) {
+        return shortClassName_.get(index);
       }
       /**
-       * <code>repeated string class_name = 2;</code>
+       * <code>repeated string short_class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ByteString
-          getClassNameBytes(int index) {
-        return className_.getByteString(index);
+          getShortClassNameBytes(int index) {
+        return shortClassName_.getByteString(index);
       }
       /**
-       * <code>repeated string class_name = 2;</code>
+       * <code>repeated string short_class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * </pre>
        */
-      public Builder setClassName(
+      public Builder setShortClassName(
           int index, java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureClassNameIsMutable();
-        className_.set(index, value);
+  ensureShortClassNameIsMutable();
+        shortClassName_.set(index, value);
         
         return this;
       }
       /**
-       * <code>repeated string class_name = 2;</code>
+       * <code>repeated string short_class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * </pre>
        */
-      public Builder addClassName(
+      public Builder addShortClassName(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureClassNameIsMutable();
-        className_.add(value);
+  ensureShortClassNameIsMutable();
+        shortClassName_.add(value);
         
         return this;
       }
       /**
-       * <code>repeated string class_name = 2;</code>
+       * <code>repeated string short_class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * </pre>
        */
-      public Builder addAllClassName(
+      public Builder addAllShortClassName(
           java.lang.Iterable<java.lang.String> values) {
-        ensureClassNameIsMutable();
+        ensureShortClassNameIsMutable();
         org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-            values, className_);
+            values, shortClassName_);
         
         return this;
       }
       /**
-       * <code>repeated string class_name = 2;</code>
+       * <code>repeated string short_class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * </pre>
        */
-      public Builder clearClassName() {
-        className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      public Builder clearShortClassName() {
+        shortClassName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
         
         return this;
       }
       /**
-       * <code>repeated string class_name = 2;</code>
+       * <code>repeated string short_class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * </pre>
        */
-      public Builder addClassNameBytes(
+      public Builder addShortClassNameBytes(
           org.jetbrains.kotlin.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureClassNameIsMutable();
-        className_.add(value);
+  ensureShortClassNameIsMutable();
+        shortClassName_.add(value);
+        
+        return this;
+      }
+
+      private java.util.List<java.lang.Integer> multifileFacadeShortNameId_ = java.util.Collections.emptyList();
+      private void ensureMultifileFacadeShortNameIdIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          multifileFacadeShortNameId_ = new java.util.ArrayList<java.lang.Integer>(multifileFacadeShortNameId_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+      /**
+       * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public java.util.List<java.lang.Integer>
+          getMultifileFacadeShortNameIdList() {
+        return java.util.Collections.unmodifiableList(multifileFacadeShortNameId_);
+      }
+      /**
+       * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public int getMultifileFacadeShortNameIdCount() {
+        return multifileFacadeShortNameId_.size();
+      }
+      /**
+       * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public int getMultifileFacadeShortNameId(int index) {
+        return multifileFacadeShortNameId_.get(index);
+      }
+      /**
+       * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public Builder setMultifileFacadeShortNameId(
+          int index, int value) {
+        ensureMultifileFacadeShortNameIdIsMutable();
+        multifileFacadeShortNameId_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public Builder addMultifileFacadeShortNameId(int value) {
+        ensureMultifileFacadeShortNameIdIsMutable();
+        multifileFacadeShortNameId_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public Builder addAllMultifileFacadeShortNameId(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureMultifileFacadeShortNameIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, multifileFacadeShortNameId_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 multifile_facade_short_name_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public Builder clearMultifileFacadeShortNameId() {
+        multifileFacadeShortNameId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        
+        return this;
+      }
+
+      private org.jetbrains.kotlin.protobuf.LazyStringList multifileFacadeShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureMultifileFacadeShortNameIsMutable() {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          multifileFacadeShortName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(multifileFacadeShortName_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+      /**
+       * <code>repeated string multifile_facade_short_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
+          getMultifileFacadeShortNameList() {
+        return multifileFacadeShortName_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string multifile_facade_short_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public int getMultifileFacadeShortNameCount() {
+        return multifileFacadeShortName_.size();
+      }
+      /**
+       * <code>repeated string multifile_facade_short_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public java.lang.String getMultifileFacadeShortName(int index) {
+        return multifileFacadeShortName_.get(index);
+      }
+      /**
+       * <code>repeated string multifile_facade_short_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getMultifileFacadeShortNameBytes(int index) {
+        return multifileFacadeShortName_.getByteString(index);
+      }
+      /**
+       * <code>repeated string multifile_facade_short_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public Builder setMultifileFacadeShortName(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMultifileFacadeShortNameIsMutable();
+        multifileFacadeShortName_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string multifile_facade_short_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public Builder addMultifileFacadeShortName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMultifileFacadeShortNameIsMutable();
+        multifileFacadeShortName_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string multifile_facade_short_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public Builder addAllMultifileFacadeShortName(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureMultifileFacadeShortNameIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, multifileFacadeShortName_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string multifile_facade_short_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public Builder clearMultifileFacadeShortName() {
+        multifileFacadeShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string multifile_facade_short_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public Builder addMultifileFacadeShortNameBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMultifileFacadeShortNameIsMutable();
+        multifileFacadeShortName_.add(value);
+        
+        return this;
+      }
+
+      private org.jetbrains.kotlin.protobuf.LazyStringList classWithJvmPackageNameShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureClassWithJvmPackageNameShortNameIsMutable() {
+        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+          classWithJvmPackageNameShortName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(classWithJvmPackageNameShortName_);
+          bitField0_ |= 0x00000010;
+         }
+      }
+      /**
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+       *
+       * <pre>
+       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
+          getClassWithJvmPackageNameShortNameList() {
+        return classWithJvmPackageNameShortName_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+       *
+       * <pre>
+       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * </pre>
+       */
+      public int getClassWithJvmPackageNameShortNameCount() {
+        return classWithJvmPackageNameShortName_.size();
+      }
+      /**
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+       *
+       * <pre>
+       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * </pre>
+       */
+      public java.lang.String getClassWithJvmPackageNameShortName(int index) {
+        return classWithJvmPackageNameShortName_.get(index);
+      }
+      /**
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+       *
+       * <pre>
+       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getClassWithJvmPackageNameShortNameBytes(int index) {
+        return classWithJvmPackageNameShortName_.getByteString(index);
+      }
+      /**
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+       *
+       * <pre>
+       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * </pre>
+       */
+      public Builder setClassWithJvmPackageNameShortName(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureClassWithJvmPackageNameShortNameIsMutable();
+        classWithJvmPackageNameShortName_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+       *
+       * <pre>
+       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * </pre>
+       */
+      public Builder addClassWithJvmPackageNameShortName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureClassWithJvmPackageNameShortNameIsMutable();
+        classWithJvmPackageNameShortName_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+       *
+       * <pre>
+       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * </pre>
+       */
+      public Builder addAllClassWithJvmPackageNameShortName(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureClassWithJvmPackageNameShortNameIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, classWithJvmPackageNameShortName_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+       *
+       * <pre>
+       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * </pre>
+       */
+      public Builder clearClassWithJvmPackageNameShortName() {
+        classWithJvmPackageNameShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000010);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
+       *
+       * <pre>
+       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * </pre>
+       */
+      public Builder addClassWithJvmPackageNameShortNameBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureClassWithJvmPackageNameShortNameIsMutable();
+        classWithJvmPackageNameShortName_.add(value);
+        
+        return this;
+      }
+
+      private java.util.List<java.lang.Integer> classWithJvmPackageNamePackageId_ = java.util.Collections.emptyList();
+      private void ensureClassWithJvmPackageNamePackageIdIsMutable() {
+        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+          classWithJvmPackageNamePackageId_ = new java.util.ArrayList<java.lang.Integer>(classWithJvmPackageNamePackageId_);
+          bitField0_ |= 0x00000020;
+         }
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+       * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+       * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+       * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+       * when a bunch of files from the same Kotlin package have the same JVM package name.
+       * </pre>
+       */
+      public java.util.List<java.lang.Integer>
+          getClassWithJvmPackageNamePackageIdList() {
+        return java.util.Collections.unmodifiableList(classWithJvmPackageNamePackageId_);
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+       * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+       * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+       * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+       * when a bunch of files from the same Kotlin package have the same JVM package name.
+       * </pre>
+       */
+      public int getClassWithJvmPackageNamePackageIdCount() {
+        return classWithJvmPackageNamePackageId_.size();
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+       * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+       * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+       * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+       * when a bunch of files from the same Kotlin package have the same JVM package name.
+       * </pre>
+       */
+      public int getClassWithJvmPackageNamePackageId(int index) {
+        return classWithJvmPackageNamePackageId_.get(index);
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+       * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+       * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+       * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+       * when a bunch of files from the same Kotlin package have the same JVM package name.
+       * </pre>
+       */
+      public Builder setClassWithJvmPackageNamePackageId(
+          int index, int value) {
+        ensureClassWithJvmPackageNamePackageIdIsMutable();
+        classWithJvmPackageNamePackageId_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+       * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+       * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+       * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+       * when a bunch of files from the same Kotlin package have the same JVM package name.
+       * </pre>
+       */
+      public Builder addClassWithJvmPackageNamePackageId(int value) {
+        ensureClassWithJvmPackageNamePackageIdIsMutable();
+        classWithJvmPackageNamePackageId_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+       * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+       * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+       * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+       * when a bunch of files from the same Kotlin package have the same JVM package name.
+       * </pre>
+       */
+      public Builder addAllClassWithJvmPackageNamePackageId(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureClassWithJvmPackageNamePackageIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, classWithJvmPackageNamePackageId_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
+       *
+       * <pre>
+       * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+       * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+       * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+       * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+       * when a bunch of files from the same Kotlin package have the same JVM package name.
+       * </pre>
+       */
+      public Builder clearClassWithJvmPackageNamePackageId() {
+        classWithJvmPackageNamePackageId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
         
         return this;
       }

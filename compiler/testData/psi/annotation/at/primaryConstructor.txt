@@ -1,4 +1,4 @@
-JetFile: primaryConstructor.kt
+KtFile: primaryConstructor.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

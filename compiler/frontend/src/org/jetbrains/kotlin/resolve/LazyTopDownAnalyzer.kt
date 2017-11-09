@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ class LazyTopDownAnalyzer(
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val identifierChecker: IdentifierChecker,
         private val languageVersionSettings: LanguageVersionSettings,
+        private val deprecationResolver: DeprecationResolver,
         private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>
 ) {
     fun analyzeDeclarations(
@@ -62,6 +63,7 @@ class LazyTopDownAnalyzer(
         val properties = ArrayList<KtProperty>()
         val functions = ArrayList<KtNamedFunction>()
         val typeAliases = ArrayList<KtTypeAlias>()
+        val destructuringDeclarations = ArrayList<KtDestructuringDeclaration>()
 
         // fill in the context
         for (declaration in declarations) {
@@ -90,7 +92,7 @@ class LazyTopDownAnalyzer(
                     DescriptorResolver.registerFileInPackage(trace, file)
                     registerDeclarations(file.declarations)
                     val packageDirective = file.packageDirective
-                    assert(file.isScript || packageDirective != null) { "No package in a non-script file: " + file }
+                    assert(file.isScript() || packageDirective != null) { "No package in a non-script file: " + file }
                     packageDirective?.accept(this)
                     c.addFile(file)
                     topLevelFqNames.put(file.packageFqName, packageDirective)
@@ -102,7 +104,7 @@ class LazyTopDownAnalyzer(
                 }
 
                 override fun visitImportDirective(importDirective: KtImportDirective) {
-                    val importResolver = fileScopeProvider.getImportResolver(importDirective.getContainingKtFile())
+                    val importResolver = fileScopeProvider.getImportResolver(importDirective.containingKtFile)
                     importResolver.forceResolveImport(importDirective)
                 }
 
@@ -143,7 +145,7 @@ class LazyTopDownAnalyzer(
                 }
 
                 private fun registerPrimaryConstructorParameters(klass: KtClass) {
-                    for (jetParameter in klass.getPrimaryConstructorParameters()) {
+                    for (jetParameter in klass.primaryConstructorParameters) {
                         if (jetParameter.hasValOrVar()) {
                             c.primaryConstructorParameterProperties.put(jetParameter, lazyDeclarationResolver.resolveToDescriptor(jetParameter) as PropertyDescriptor)
                         }
@@ -168,7 +170,9 @@ class LazyTopDownAnalyzer(
                 }
 
                 override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
-                    // Ignore: multi-declarations are only allowed locally
+                    if (destructuringDeclaration.containingKtFile.isScript()) {
+                        destructuringDeclarations.add(destructuringDeclaration)
+                    }
                 }
 
                 override fun visitNamedFunction(function: KtNamedFunction) {
@@ -191,6 +195,8 @@ class LazyTopDownAnalyzer(
 
         createPropertyDescriptors(c, topLevelFqNames, properties)
 
+        createPropertiesFromDestructuringDeclarations(c, topLevelFqNames, destructuringDeclarations)
+
         createTypeAliasDescriptors(c, topLevelFqNames, typeAliases)
 
         resolveAllHeadersInClasses(c)
@@ -210,7 +216,7 @@ class LazyTopDownAnalyzer(
 
         resolveImportsInAllFiles(c)
 
-        ClassifierUsageChecker.check(declarations, trace, languageVersionSettings, classifierUsageCheckers)
+        ClassifierUsageChecker.check(declarations, trace, languageVersionSettings, deprecationResolver, classifierUsageCheckers)
 
         return c
     }
@@ -222,7 +228,7 @@ class LazyTopDownAnalyzer(
     }
 
     private fun resolveImportsInAllFiles(c: TopDownAnalysisContext) {
-        for (file in c.files + c.scripts.keys.map { it.getContainingKtFile() }) {
+        for (file in c.files + c.scripts.keys.map { it.containingKtFile }) {
             fileScopeProvider.getImportResolver(file).forceResolveAllImports()
         }
     }
@@ -254,6 +260,21 @@ class LazyTopDownAnalyzer(
             ForceResolveUtil.forceResolveAllContents(simpleFunctionDescriptor.annotations)
             for (parameterDescriptor in simpleFunctionDescriptor.valueParameters) {
                 ForceResolveUtil.forceResolveAllContents(parameterDescriptor.annotations)
+            }
+        }
+    }
+
+    private fun createPropertiesFromDestructuringDeclarations(
+            c: TopDownAnalysisContext,
+            topLevelFqNames: Multimap<FqName, KtElement>,
+            destructuringDeclarations: List<KtDestructuringDeclaration>) {
+        for (destructuringDeclaration in destructuringDeclarations) {
+            for (entry in destructuringDeclaration.entries) {
+                val descriptor = lazyDeclarationResolver.resolveToDescriptor(entry) as PropertyDescriptor
+
+                c.destructuringDeclarationEntries[entry] = descriptor
+                ForceResolveUtil.forceResolveAllContents(descriptor.annotations)
+                registerTopLevelFqName(topLevelFqNames, entry, descriptor)
             }
         }
     }

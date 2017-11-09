@@ -1,0 +1,46 @@
+FILE /abstractMembers.kt
+  CLASS CLASS AbstractClass
+    $this: VALUE_PARAMETER this@AbstractClass: AbstractClass
+    CONSTRUCTOR public constructor AbstractClass()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='AbstractClass'
+    FUN public abstract fun abstractFun(): kotlin.Unit
+      $this: VALUE_PARAMETER this@AbstractClass: AbstractClass
+    PROPERTY public abstract val abstractVal: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-abstractVal>(): kotlin.Int
+        $this: VALUE_PARAMETER this@AbstractClass: AbstractClass
+    PROPERTY public abstract var abstractVar: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-abstractVar>(): kotlin.Int
+        $this: VALUE_PARAMETER this@AbstractClass: AbstractClass
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <set-abstractVar>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER this@AbstractClass: AbstractClass
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS INTERFACE Interface
+    $this: VALUE_PARAMETER this@Interface: Interface
+    FUN public abstract fun abstractFun(): kotlin.Unit
+      $this: VALUE_PARAMETER this@Interface: Interface
+    PROPERTY public abstract val abstractVal: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-abstractVal>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Interface: Interface
+    PROPERTY public abstract var abstractVar: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-abstractVar>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Interface: Interface
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <set-abstractVar>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER this@Interface: Interface
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

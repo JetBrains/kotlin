@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.completion.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -31,8 +32,44 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest {
+    @TestMetadata("AfterPackageName.kt")
+    public void testAfterPackageName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/AfterPackageName.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInKdoc() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/kdoc"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/kdoc"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+    }
+
+    @TestMetadata("ExtensionsFQLink.kt")
+    public void testExtensionsFQLink() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/ExtensionsFQLink.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExtensionsForNestedClassFQLink.kt")
+    public void testExtensionsForNestedClassFQLink() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/ExtensionsForNestedClassFQLink.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FQLink.kt")
+    public void testFQLink() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/FQLink.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FQLinkInTag1.kt")
+    public void testFQLinkInTag1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/FQLinkInTag1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FQLinkInTag2.kt")
+    public void testFQLinkInTag2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/FQLinkInTag2.kt");
+        doTest(fileName);
     }
 
     @TestMetadata("Link.kt")
@@ -41,9 +78,33 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
         doTest(fileName);
     }
 
+    @TestMetadata("MemberEnumEntryFQLink.kt")
+    public void testMemberEnumEntryFQLink() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/MemberEnumEntryFQLink.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MemberEnumEntryLink.kt")
+    public void testMemberEnumEntryLink() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/MemberEnumEntryLink.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("MemberLink.kt")
     public void testMemberLink() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/MemberLink.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NoCompletionAfterFunName.kt")
+    public void testNoCompletionAfterFunName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/NoCompletionAfterFunName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NoTopLevelForQualified.kt")
+    public void testNoTopLevelForQualified() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/NoTopLevelForQualified.kt");
         doTest(fileName);
     }
 

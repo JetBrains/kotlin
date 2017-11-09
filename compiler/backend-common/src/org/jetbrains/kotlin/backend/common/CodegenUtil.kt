@@ -16,61 +16,21 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isDynamic
-import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
 object CodegenUtil {
-    // class Foo : Bar by baz
-    //   descriptor = Foo
-    //   toInterface = Bar
-    //   delegateExpressionType = typeof(baz)
-    // return Map<member of Foo, corresponding member of typeOf(baz)>
-    @JvmStatic
-    fun getDelegates(
-            descriptor: ClassDescriptor,
-            toInterface: ClassDescriptor,
-            delegateExpressionType: KotlinType? = null
-    ): Map<CallableMemberDescriptor, CallableDescriptor> {
-        if (delegateExpressionType?.isDynamic() ?: false) return emptyMap()
-
-        return descriptor.defaultType.memberScope.getContributedDescriptors().asSequence()
-                .filterIsInstance<CallableMemberDescriptor>()
-                .filter { it.kind == CallableMemberDescriptor.Kind.DELEGATION }
-                .asIterable()
-                .sortedWith(MemberComparator.INSTANCE)
-                .keysToMapExceptNulls { delegatingMember ->
-                    val actualDelegates = DescriptorUtils.getAllOverriddenDescriptors(delegatingMember)
-                            .filter { it.containingDeclaration == toInterface }
-                            .map { overriddenDescriptor ->
-                                val scope = (delegateExpressionType ?: toInterface.defaultType).memberScope
-                                val name = overriddenDescriptor.name
-
-                                // this is the actual member of delegateExpressionType that we are delegating to
-                                (scope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND) +
-                                 scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND))
-                                        .firstOrNull { doesOverride(it, overriddenDescriptor) }
-                             }
-
-                    assert(actualDelegates.size <= 1) { "Many delegates found for $delegatingMember: $actualDelegates" }
-
-                    actualDelegates.firstOrNull()
-                }
-    }
-
-    private fun doesOverride(overrideCandidate: CallableMemberDescriptor, overriddenDescriptor: CallableMemberDescriptor) =
-        (listOf(overrideCandidate.original) + DescriptorUtils.getAllOverriddenDescriptors(overrideCandidate))
-                .contains(overriddenDescriptor.original)
-
     @JvmStatic
     fun getDelegatePropertyIfAny(
             expression: KtExpression, classDescriptor: ClassDescriptor, bindingContext: BindingContext
@@ -132,7 +92,7 @@ object CodegenUtil {
         else if (traitMember is PropertyDescriptor) {
             for (traitAccessor in traitMember.accessors) {
                 for (inheritedAccessor in (copy as PropertyDescriptor).accessors) {
-                    if (inheritedAccessor.javaClass == traitAccessor.javaClass) { // same accessor kind
+                    if (inheritedAccessor::class.java == traitAccessor::class.java) { // same accessor kind
                         result.put(traitAccessor, inheritedAccessor)
                     }
                 }
@@ -142,12 +102,11 @@ object CodegenUtil {
     }
 
     @JvmStatic
-    fun getSuperClassBySuperTypeListEntry(specifier: KtSuperTypeListEntry, bindingContext: BindingContext): ClassDescriptor {
+    fun getSuperClassBySuperTypeListEntry(specifier: KtSuperTypeListEntry, bindingContext: BindingContext): ClassDescriptor? {
         val superType = bindingContext.get(BindingContext.TYPE, specifier.typeReference!!)
                         ?: error("superType should not be null: ${specifier.text}")
 
         return superType.constructor.declarationDescriptor as? ClassDescriptor
-               ?: error("ClassDescriptor of superType should not be null: ${specifier.text}")
     }
 
     @JvmStatic
@@ -165,4 +124,46 @@ object CodegenUtil {
         val document = file.viewProvider.document
         return document?.getLineNumber(if (markEndOffset) statement.textRange.endOffset else statement.textOffset)?.plus(1)
     }
+
+    // Returns the descriptor for a function (whose parameters match the given predicate) which should be generated in the class.
+    // Note that we always generate equals/hashCode/toString in data classes, unless that would lead to a JVM signature clash with
+    // another method, which can only happen if the method is declared in the data class (manually or via delegation).
+    // Also there are no hard asserts or assumptions because such methods are generated for erroneous code as well (in light classes mode).
+    fun getMemberToGenerate(
+            classDescriptor: ClassDescriptor,
+            name: String,
+            isReturnTypeOk: (KotlinType) -> Boolean,
+            areParametersOk: (List<ValueParameterDescriptor>) -> Boolean
+    ): FunctionDescriptor? =
+            classDescriptor.unsubstitutedMemberScope.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
+                    .singleOrNull { function ->
+                        function.kind.let { kind -> kind == CallableMemberDescriptor.Kind.SYNTHESIZED || kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE } &&
+                        function.modality != Modality.FINAL &&
+                        areParametersOk(function.valueParameters) &&
+                        function.returnType != null &&
+                        isReturnTypeOk(function.returnType!!)
+                    }
+
+
+    @JvmStatic
+    fun BindingContext.isExhaustive(whenExpression: KtWhenExpression, isStatement: Boolean): Boolean {
+        val slice = if (isStatement && !whenExpression.isUsedAsExpression(this)) {
+            BindingContext.IMPLICIT_EXHAUSTIVE_WHEN
+        }
+        else {
+            BindingContext.EXHAUSTIVE_WHEN
+        }
+        return this[slice, whenExpression] == true
+    }
+
+    @JvmStatic
+    fun constructFakeFunctionCall(project: Project, arity: Int): KtCallExpression {
+        val fakeFunctionCall =
+                (1..arity).joinToString(prefix = "callableReferenceFakeCall(", separator = ", ", postfix = ")") { "p$it" }
+        return KtPsiFactory(project, markGenerated = false).createExpression(fakeFunctionCall) as KtCallExpression
+    }
+
+    @JvmStatic
+    fun getActualDeclarations(file: KtFile): List<KtDeclaration> =
+            file.declarations.filterNot(KtDeclaration::hasExpectModifier)
 }

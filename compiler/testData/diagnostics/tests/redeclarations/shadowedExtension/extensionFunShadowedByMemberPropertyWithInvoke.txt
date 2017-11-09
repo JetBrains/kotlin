@@ -1,0 +1,24 @@
+package
+
+public fun Test1.test1(): kotlin.Unit
+public fun </*0*/ T : kotlin.Number> Test1.test1(/*0*/ x: T, /*1*/ y: kotlin.Int): kotlin.Unit
+public fun Test1.test1(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.Int): kotlin.Unit
+public fun Test1.test1(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun Test1.test1(/*0*/ s: kotlin.String): kotlin.Unit
+
+public interface Test1 {
+    public abstract val test1: WithInvoke
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface WithInvoke {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract operator fun invoke(): kotlin.Unit
+    public abstract operator fun </*0*/ T> invoke(/*0*/ x: T, /*1*/ y: kotlin.Int): kotlin.Unit
+    public abstract fun invoke(/*0*/ i: kotlin.Int): kotlin.Unit
+    public abstract operator fun invoke(/*0*/ s: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -99,8 +99,8 @@ class IntegerValueTypeConstant(
         }
     }
 
-    val unknownIntegerType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeConstructor, emptyList<TypeProjection>(),
-                                                          false, ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
+    val unknownIntegerType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(Annotations.EMPTY, typeConstructor, emptyList<TypeProjection>(),
+                                                                                   false, ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
     )
 
     fun getType(expectedType: KotlinType): KotlinType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)

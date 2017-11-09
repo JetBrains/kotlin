@@ -16,22 +16,20 @@
 
 package org.jetbrains.kotlin.js.translate.callTranslator
 
-import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
-import org.jetbrains.kotlin.builtins.isExtensionFunctionType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.PredefinedAnnotation
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -75,15 +73,12 @@ object DefaultFunctionCallCase : FunctionCallCase() {
                                         callableDescriptor: CallableDescriptor,
                                         isNative: Boolean,
                                         hasSpreadOperator: Boolean): JsExpression {
+        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
         if (isNative && hasSpreadOperator) {
-            val functionCallRef = Namer.getFunctionApplyRef(JsNameRef(context.getNameForDescriptor(callableDescriptor)))
+            val functionCallRef = Namer.getFunctionApplyRef(functionRef)
             return JsInvocation(functionCallRef, argumentsInfo.translateArguments)
         }
-        if (isNative) {
-            return JsInvocation(JsNameRef(context.getNameForDescriptor(callableDescriptor)), argumentsInfo.translateArguments)
-        }
 
-        val functionRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(it) }
         return JsInvocation(functionRef, argumentsInfo.translateArguments)
     }
 
@@ -103,22 +98,14 @@ object DefaultFunctionCallCase : FunctionCallCase() {
             return JsInvocation(JsNameRef(functionName, extensionReceiver), argumentsInfo.translateArguments)
         }
 
-        val functionRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(it) }
+        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
 
-        val referenceToCall =
-                if (callableDescriptor.visibility == Visibilities.LOCAL) {
-                    Namer.getFunctionCallRef(functionRef)
-                }
-                else {
-                    functionRef
-                }
-
-        return JsInvocation(referenceToCall, argumentsInfo.argsWithReceiver(extensionReceiver!!))
+        return JsInvocation(functionRef, argumentsInfo.argsWithReceiver(extensionReceiver!!))
     }
 
     override fun FunctionCallInfo.bothReceivers(): JsExpression {
         // TODO: think about crazy case: spreadOperator + native
-        val functionRef = JsNameRef(functionName, dispatchReceiver!!)
+        val functionRef = JsAstUtils.pureFqn(functionName, dispatchReceiver!!)
         return JsInvocation(functionRef, argumentsInfo.argsWithReceiver(extensionReceiver!!))
     }
 }
@@ -174,14 +161,7 @@ object InvokeIntrinsic : FunctionCallCase() {
     }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
-        val receiver = resolvedCall.dispatchReceiver!!
-        val jsReceiver = if (receiver.type.isExtensionFunctionType) {
-            pureFqn(Namer.CALL_FUNCTION, dispatchReceiver)
-        }
-        else {
-            dispatchReceiver!!
-        }
-        return JsInvocation(jsReceiver, argumentsInfo.translateArguments)
+        return JsInvocation(dispatchReceiver!!, argumentsInfo.translateArguments)
     }
 
     /**
@@ -198,7 +178,7 @@ object InvokeIntrinsic : FunctionCallCase() {
      *      extLambda.call(obj, some, args)
      */
     override fun FunctionCallInfo.bothReceivers(): JsExpression {
-        return JsInvocation(Namer.getFunctionCallRef(dispatchReceiver!!), argumentsInfo.argsWithReceiver(extensionReceiver!!))
+        return JsInvocation(dispatchReceiver!!, argumentsInfo.argsWithReceiver(extensionReceiver!!))
     }
 }
 
@@ -211,30 +191,34 @@ object ConstructorCallCase : FunctionCallCase() {
 
     override fun FunctionCallInfo.dispatchReceiver() = doTranslate { argsWithReceiver(dispatchReceiver!!) }
 
+    override fun FunctionCallInfo.extensionReceiver() = doTranslate { argsWithReceiver(extensionReceiver!!) }
+
     private inline fun FunctionCallInfo.doTranslate(
             getArguments: CallArgumentTranslator.ArgumentsInfo.() -> List<JsExpression>
     ): JsExpression {
-        val fqName = context.getQualifiedReference(callableDescriptor)
-        val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
-
+        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
         val invocationArguments = mutableListOf<JsExpression>()
 
         val constructorDescriptor = callableDescriptor as ClassConstructorDescriptor
-        if (context.shouldBeDeferred(constructorDescriptor)) {
-            context.deferConstructorCall(constructorDescriptor, invocationArguments)
-        }
-        else {
+
+        if (!context.shouldBeDeferred(constructorDescriptor)) {
             val closure = context.getClassOrConstructorClosure(constructorDescriptor)
             invocationArguments += closure?.map { context.getArgumentForClosureConstructor(it) }.orEmpty()
         }
 
         invocationArguments += argumentsInfo.getArguments()
-        return if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
+        val result = if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
             JsNew(functionRef, invocationArguments)
         }
         else {
             JsInvocation(functionRef, invocationArguments)
         }
+
+        if (context.shouldBeDeferred(constructorDescriptor)) {
+            context.deferConstructorCall(constructorDescriptor, result.arguments)
+        }
+
+        return result
     }
 }
 
@@ -245,9 +229,30 @@ object SuperCallCase : FunctionCallCase() {
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
         // TODO: spread operator
-        val prototypeClass = pureFqn(Namer.getPrototypeName(), calleeOwner)
-        val functionRef = Namer.getFunctionCallRef(JsNameRef(functionName, prototypeClass))
-        return JsInvocation(functionRef, argumentsInfo.argsWithReceiver(dispatchReceiver!!))
+        val prototypeClass = JsAstUtils.prototypeOf(calleeOwner)
+        val arguments = argumentsInfo.translateArguments.toMutableList()
+
+        val descriptor = callableDescriptor.original
+        val shouldCallDefault = descriptor is FunctionDescriptor && TranslationUtils.isOverridableFunctionWithDefaultParameters(descriptor)
+
+        val functionRef = if (shouldCallDefault) {
+            val defaultArgumentCount = descriptor.valueParameters.size - argumentsInfo.valueArguments.size
+            repeat(defaultArgumentCount) {
+                arguments += Namer.getUndefinedExpression()
+            }
+            val callbackName = context.getScopeForDescriptor(descriptor.containingDeclaration)
+                    .declareName(functionName.ident + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
+            val callbackRef = JsAstUtils.invokeBind(dispatchReceiver!!, JsNameRef(callbackName, prototypeClass))
+            arguments += callbackRef
+
+            JsAstUtils.pureFqn(functionName, dispatchReceiver)
+        }
+        else {
+            arguments.add(0, dispatchReceiver!!)
+            Namer.getFunctionCallRef(JsNameRef(functionName, prototypeClass))
+        }
+
+        return JsInvocation(functionRef, arguments)
     }
 }
 
@@ -305,7 +310,7 @@ object DynamicOperatorCallCase : FunctionCallCase() {
                 @Suppress("USELESS_CAST")
                 (JsPostfixOperation(OperatorTable.getUnaryOperator(operationToken), dispatchReceiver) as JsExpression)
             }
-            else -> unsupported("Unsupported callElement type: ${callElement.javaClass}, callElement: $callElement, callInfo: $this")
+            else -> unsupported("Unsupported callElement type: ${callElement::class.java}, callElement: $callElement, callInfo: $this")
         }
     }
 }

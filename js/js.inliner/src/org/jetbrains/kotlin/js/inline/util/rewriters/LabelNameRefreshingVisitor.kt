@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.util.rewriters
 
-import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.backend.ast.*
 import java.util.*
 
 class LabelNameRefreshingVisitor(val functionScope: JsFunctionScope) : JsVisitorWithContextImpl() {
@@ -27,7 +27,7 @@ class LabelNameRefreshingVisitor(val functionScope: JsFunctionScope) : JsVisitor
     override fun endVisit(x: JsBreak, ctx: JsContext<JsNode>) {
         val label = x.label?.name
         if (label != null) {
-            ctx.replaceMe(JsBreak(getSubstitution(label).makeRef()))
+            ctx.replaceMe(JsBreak(getSubstitution(label).makeRef()).source(x.source))
         }
         super.endVisit(x, ctx)
     }
@@ -35,14 +35,14 @@ class LabelNameRefreshingVisitor(val functionScope: JsFunctionScope) : JsVisitor
     override fun endVisit(x: JsContinue, ctx: JsContext<JsNode>) {
         val label = x.label?.name
         if (label != null) {
-            ctx.replaceMe(JsContinue(getSubstitution(label).makeRef()))
+            ctx.replaceMe(JsContinue(getSubstitution(label).makeRef()).source(x.source))
         }
         super.endVisit(x, ctx)
     }
 
     override fun visit(x: JsLabel, ctx: JsContext<JsNode>): Boolean {
         val labelName = x.name
-        val freshName = functionScope.enterLabel(labelName.ident)
+        val freshName = functionScope.enterLabel(labelName.ident, labelName.ident)
         substitutions.getOrPut(labelName) { ArrayDeque() }.push(freshName)
 
         return super.visit(x, ctx)
@@ -57,5 +57,5 @@ class LabelNameRefreshingVisitor(val functionScope: JsFunctionScope) : JsVisitor
         super.endVisit(x, ctx)
     }
 
-    private fun getSubstitution(name: JsName) = substitutions[name]?.let { it.peek() } ?: name
+    private fun getSubstitution(name: JsName) = substitutions[name]?.peek() ?: name
 }

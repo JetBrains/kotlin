@@ -1,14 +1,15 @@
 // FILE: A.kt
-class Foo<out T>(val t: T) {
-    typealias Bar = (T) -> String
+typealias Bar<T> = (T) -> String
 
-    fun baz(b: Bar) = b(t)
+class Foo<out T>(val t: T) {
+
+    fun baz(b: Bar<T>) = b(t)
 }
 
 // FILE: B.kt
 class FooTest {
     fun baz(): String {
-        val b: Foo<String>.Bar = { "OK" }
+        val b: Bar<String> = { "OK" }
         return Foo("").baz(b)
     }
 }

@@ -1,7 +1,6 @@
 //file
 import kotlinApi.*;
 
-//TODO: Formatter works incorrectly
 class A {
     int foo(KotlinClass c) {
         return c.getNullableProperty().length()

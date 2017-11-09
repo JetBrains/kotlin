@@ -16,66 +16,50 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import com.intellij.openapi.module.StdModuleTypes
-import com.intellij.openapi.roots.ModuleRootModificationUtil
-import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
-import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.testFramework.PsiTestUtil
-import java.io.File
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.roots.DependencyScope
-import com.intellij.testFramework.IdeaTestUtil
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.junit.Assert
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
+import org.jetbrains.kotlin.idea.stubs.AbstractMultiHighlightingTest
+import org.jetbrains.kotlin.idea.stubs.createFacet
+import org.jetbrains.kotlin.test.TestJdkKind
 
-abstract class AbstractMultiModuleHighlightingTest : DaemonAnalyzerTestCase() {
+abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTest() {
 
-    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
-
-    protected fun checkHighlightingInAllFiles() {
-        var atLeastOneFile = false
-        PluginJetFilesProvider.allFilesInProject(myProject!!).forEach { file ->
-            atLeastOneFile = true
-            configureByExistingFile(file.virtualFile!!)
+    protected open fun checkHighlightingInAllFiles(
+            shouldCheckFile: () -> Boolean = { !file.text.contains("// !CHECK_HIGHLIGHTING") }
+    ) {
+        checkFiles(shouldCheckFile) {
             checkHighlighting(myEditor, true, false)
         }
-        Assert.assertTrue(atLeastOneFile)
     }
 
-    protected fun module(name: String, hasTestRoot: Boolean = false, useFullJdk: Boolean = false): Module {
-        val srcDir = TEST_DATA_PATH + "${getTestName(true)}/$name"
-        val moduleWithSrcRootSet = createModuleFromTestData(srcDir, "$name", StdModuleTypes.JAVA, true)!!
-        if (hasTestRoot) {
-            setTestRoot(moduleWithSrcRootSet, name)
+    protected fun doMultiPlatformTest(
+            vararg platforms: TargetPlatformKind<*>,
+            withStdlibCommon: Boolean = false,
+            configureModule: (Module, TargetPlatformKind<*>) -> Unit = { _, _ -> },
+            jdk: TestJdkKind = TestJdkKind.MOCK_JDK
+    ) {
+        val commonModuleName = "common"
+        val commonModule = module(commonModuleName, jdk)
+        commonModule.createFacet(TargetPlatformKind.Common, false)
+        if (withStdlibCommon) {
+            commonModule.addLibrary(ForTestCompileRuntime.stdlibCommonForTests(), kind = CommonLibraryKind)
         }
 
-        val jdkToUse = if (useFullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
-        ConfigLibraryUtil.configureSdk(moduleWithSrcRootSet, jdkToUse)
-
-        return moduleWithSrcRootSet
-    }
-
-    protected fun setTestRoot(module: Module, name: String) {
-        val testDir = TEST_DATA_PATH + "${getTestName(true)}/${name}Test"
-        val testRootDirInTestData = File(testDir)
-        val testRootDir = createTempDirectory()!!
-        FileUtil.copyDir(testRootDirInTestData, testRootDir)
-        val testRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(testRootDir)!!
-        object : WriteCommandAction.Simple<Unit>(project) {
-            override fun run() {
-                testRoot.refresh(false, true)
+        for (platform in platforms) {
+            val path = when (platform) {
+                is TargetPlatformKind.Jvm -> "jvm"
+                is TargetPlatformKind.JavaScript -> "js"
+                else -> error("Unsupported platform: $platform")
             }
-        }.execute().throwException()
-        PsiTestUtil.addSourceRoot(module, testRoot, true)
-    }
+            val platformModule = module(path, jdk)
+            platformModule.createFacet(platform, implementedModuleName = commonModuleName)
+            platformModule.enableMultiPlatform()
+            platformModule.addDependency(commonModule)
+            configureModule(platformModule, platform)
+        }
 
-    protected fun Module.addDependency(
-            other: Module,
-            dependencyScope: DependencyScope = DependencyScope.COMPILE,
-            exported: Boolean = false
-    ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
+        checkHighlightingInAllFiles()
+    }
 }

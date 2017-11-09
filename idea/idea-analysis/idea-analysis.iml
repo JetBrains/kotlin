@@ -11,11 +11,7 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="light-classes" />
-    <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="module" module-name="eval4j" />
-    <orderEntry type="library" name="intellij-core-analysis" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -32,5 +28,11 @@
     <orderEntry type="module" module-name="ide-common" exported="" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="idea-core" />
+    <orderEntry type="module" module-name="idea-jps-common" />
+    <orderEntry type="module" module-name="cli-common" />
+    <orderEntry type="module" module-name="descriptors" />
+    <orderEntry type="library" exported="" name="idea-full" level="project" />
+    <orderEntry type="library" name="uast-java" level="project" />
+    <orderEntry type="module" module-name="frontend.script" />
   </component>
 </module>

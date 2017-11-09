@@ -1,0 +1,45 @@
+package-fragment kotlin.coroutines
+
+@kotlin.SinceKotlin(version = "1.1") public interface Continuation</*0*/ in T> {
+    public abstract val context: kotlin.coroutines.CoroutineContext
+        public abstract fun <get-context>(): kotlin.coroutines.CoroutineContext
+    public abstract fun resume(/*0*/ value: T): kotlin.Unit
+    public abstract fun resumeWithException(/*0*/ exception: kotlin.Throwable): kotlin.Unit
+}
+
+@kotlin.SinceKotlin(version = "1.1") public interface ContinuationInterceptor : kotlin.coroutines.CoroutineContext.Element {
+    public abstract override /*1*/ /*fake_override*/ val key: kotlin.coroutines.CoroutineContext.Key<*>
+        public abstract override /*1*/ /*fake_override*/ fun <get-key>(): kotlin.coroutines.CoroutineContext.Key<*>
+    public abstract override /*1*/ /*fake_override*/ fun </*0*/ R> fold(/*0*/ initial: R, /*1*/ operation: (R, kotlin.coroutines.CoroutineContext.Element) -> R): R
+    public abstract override /*1*/ /*fake_override*/ fun </*0*/ E : kotlin.coroutines.CoroutineContext.Element> get(/*0*/ key: kotlin.coroutines.CoroutineContext.Key<E>): E?
+    public abstract fun </*0*/ T> interceptContinuation(/*0*/ continuation: kotlin.coroutines.Continuation<T>): kotlin.coroutines.Continuation<T>
+    public abstract override /*1*/ /*fake_override*/ fun minusKey(/*0*/ key: kotlin.coroutines.CoroutineContext.Key<*>): kotlin.coroutines.CoroutineContext
+    public abstract override /*1*/ /*fake_override*/ fun plus(/*0*/ context: kotlin.coroutines.CoroutineContext): kotlin.coroutines.CoroutineContext
+
+    public companion object Key : kotlin.coroutines.CoroutineContext.Key<kotlin.coroutines.ContinuationInterceptor> {
+        /*primary*/ private constructor Key()
+    }
+}
+
+@kotlin.SinceKotlin(version = "1.1") public interface CoroutineContext {
+    public abstract fun </*0*/ R> fold(/*0*/ initial: R, /*1*/ operation: (R, kotlin.coroutines.CoroutineContext.Element) -> R): R
+    public abstract operator fun </*0*/ E : kotlin.coroutines.CoroutineContext.Element> get(/*0*/ key: kotlin.coroutines.CoroutineContext.Key<E>): E?
+    public abstract fun minusKey(/*0*/ key: kotlin.coroutines.CoroutineContext.Key<*>): kotlin.coroutines.CoroutineContext
+    public abstract operator fun plus(/*0*/ context: kotlin.coroutines.CoroutineContext): kotlin.coroutines.CoroutineContext
+
+    public interface Element : kotlin.coroutines.CoroutineContext {
+        public abstract val key: kotlin.coroutines.CoroutineContext.Key<*>
+            public abstract fun <get-key>(): kotlin.coroutines.CoroutineContext.Key<*>
+        public abstract override /*1*/ /*fake_override*/ fun </*0*/ R> fold(/*0*/ initial: R, /*1*/ operation: (R, kotlin.coroutines.CoroutineContext.Element) -> R): R
+        public abstract override /*1*/ /*fake_override*/ fun </*0*/ E : kotlin.coroutines.CoroutineContext.Element> get(/*0*/ key: kotlin.coroutines.CoroutineContext.Key<E>): E?
+        public abstract override /*1*/ /*fake_override*/ fun minusKey(/*0*/ key: kotlin.coroutines.CoroutineContext.Key<*>): kotlin.coroutines.CoroutineContext
+        public abstract override /*1*/ /*fake_override*/ fun plus(/*0*/ context: kotlin.coroutines.CoroutineContext): kotlin.coroutines.CoroutineContext
+    }
+
+    public interface Key</*0*/ E : kotlin.coroutines.CoroutineContext.Element> {
+    }
+}
+
+@kotlin.SinceKotlin(version = "1.1") @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class RestrictsSuspension : kotlin.Annotation {
+    /*primary*/ public constructor RestrictsSuspension()
+}

@@ -1,12 +1,19 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+// TARGET_BACKEND: JVM
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
 class Controller {
-    suspend fun suspendHere(x: Continuation<Unit>) {
+    suspend fun suspendHere(): Unit = suspendCoroutineOrReturn { x ->
         x.resume(Unit)
+        COROUTINE_SUSPENDED
     }
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: suspend Controller.() -> Unit) {
+    c.startCoroutine(Controller(), EmptyContinuation)
 }
 
 @JvmField

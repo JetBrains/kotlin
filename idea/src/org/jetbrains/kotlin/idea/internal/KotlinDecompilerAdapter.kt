@@ -22,7 +22,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.WritingAccessProvider
 import com.intellij.openapi.vfs.ex.dummy.DummyFileSystem
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
@@ -52,13 +51,3 @@ fun getOrCreateDummyRoot(): VirtualFile =
     VirtualFileManager.getInstance().refreshAndFindFileByUrl(KOTLIN_DECOMPILED_ROOT) ?:
        DummyFileSystem.getInstance().createRoot(KOTLIN_DECOMPILED_FOLDER)
 
-class DecompiledFileWritingAccessProvider : WritingAccessProvider() {
-    override fun isPotentiallyWritable(file: VirtualFile): Boolean {
-        if (file.fileSystem is DummyFileSystem && file.parent?.name == KOTLIN_DECOMPILED_FOLDER) {
-            return false
-        }
-        return true
-    }
-
-    override fun requestWriting(vararg files: VirtualFile): Collection<VirtualFile> = emptyList()
-}

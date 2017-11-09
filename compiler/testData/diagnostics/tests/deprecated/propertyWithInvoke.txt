@@ -1,0 +1,4 @@
+package
+
+@kotlin.Deprecated(message = "No") public val f: () -> kotlin.Unit
+public fun test(): kotlin.Unit

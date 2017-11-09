@@ -1,4 +1,4 @@
-JetFile: IncompleteWhenElse.kt
+KtFile: IncompleteWhenElse.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

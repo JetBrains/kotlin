@@ -1,4 +1,4 @@
-JetFile: WhileWithEmptyCondition.kt
+KtFile: WhileWithEmptyCondition.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

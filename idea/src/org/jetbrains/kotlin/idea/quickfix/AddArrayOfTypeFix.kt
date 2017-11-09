@@ -41,6 +41,7 @@ class AddArrayOfTypeFix(expression: KtExpression, expectedType: KotlinType) : Ko
     override fun getFamilyName() = "Add arrayOf wrapper"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val arrayOfExpression = KtPsiFactory(project).createExpressionByPattern("$0($1)", prefix, element)
         element.replace(arrayOfExpression)
     }

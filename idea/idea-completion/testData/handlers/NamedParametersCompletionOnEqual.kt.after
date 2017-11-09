@@ -4,5 +4,5 @@ fun paramFun() {}
 
 fun test() {
     // Type '=', completion should be finishied
-    foo(paramTest = <caret>)
+    foo(paramTest =<caret>)
 }

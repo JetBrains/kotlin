@@ -1,0 +1,89 @@
+package
+
+public fun Outer.Test1(): kotlin.Unit
+public fun Outer.Test2(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun </*0*/ T> Outer.Test3(/*0*/ x: T): kotlin.Unit
+public fun Outer.Test3(/*0*/ x: kotlin.String): kotlin.Unit
+public fun </*0*/ T : kotlin.Number> Outer.Test4(/*0*/ x: T): kotlin.Unit
+public fun Outer.Test5(): kotlin.Unit
+public fun Outer.Test5(/*0*/ z: kotlin.String): kotlin.Unit
+public fun Outer.TestInternal(): kotlin.Unit
+public fun Outer.TestNested(): kotlin.Unit
+public fun Outer.TestPrivate(): kotlin.Unit
+public fun Outer.TestProtected(): kotlin.Unit
+
+public final class Outer {
+    public constructor Outer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Test1 {
+        public constructor Test1()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final inner class Test2 {
+        public constructor Test2(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final inner class Test3 {
+        public constructor Test3(/*0*/ x: kotlin.Any)
+        public final val x: kotlin.Any
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final inner class Test4</*0*/ T> {
+        public constructor Test4</*0*/ T>(/*0*/ x: T)
+        public final val x: T
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final inner class Test5 {
+        public constructor Test5()
+        public constructor Test5(/*0*/ x: kotlin.Int)
+        private constructor Test5(/*0*/ z: kotlin.String)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class TestInternal {
+        public constructor TestInternal()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class TestNested {
+        public constructor TestNested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    private final class TestPrivate {
+        public constructor TestPrivate()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    protected final class TestProtected {
+        public constructor TestProtected()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

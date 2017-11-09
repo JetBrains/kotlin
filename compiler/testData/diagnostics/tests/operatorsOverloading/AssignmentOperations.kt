@@ -3,7 +3,7 @@ class A {
   operator fun minusAssign(<!UNUSED_PARAMETER!>x<!>: Int) {}
   operator fun timesAssign(<!UNUSED_PARAMETER!>x<!>: Int) {}
   operator fun divAssign(<!UNUSED_PARAMETER!>x<!>: Int) {}
-  operator fun modAssign(<!UNUSED_PARAMETER!>x<!>: Int) {}
+  operator fun remAssign(<!UNUSED_PARAMETER!>x<!>: Int) {}
 }
 
 fun testVal() {
@@ -28,7 +28,7 @@ class B {
   operator fun minus(<!UNUSED_PARAMETER!>x<!>: Int): B = B()
   operator fun times(<!UNUSED_PARAMETER!>x<!>: Int): B = B()
   operator fun div(<!UNUSED_PARAMETER!>x<!>: Int): B = B()
-  operator fun mod(<!UNUSED_PARAMETER!>x<!>: Int): B = B()
+  operator fun rem(<!UNUSED_PARAMETER!>x<!>: Int): B = B()
 }
 
 fun testWrong() {

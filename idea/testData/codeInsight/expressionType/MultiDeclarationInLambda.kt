@@ -6,5 +6,3 @@ fun f(x: List<IntStringPair>) {
 }
 
 // TYPE: first -> <html>Int</html>
-// TYPE: { (first, second) ->     } -> <html>(IntStringPair) &rarr; Unit</html>
-// TYPE:  x.forEach { (first, second) ->     } -> <html>Unit</html>

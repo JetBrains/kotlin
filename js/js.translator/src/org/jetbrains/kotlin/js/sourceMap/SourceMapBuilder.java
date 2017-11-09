@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,8 @@ package org.jetbrains.kotlin.js.sourceMap;
 
 import java.io.File;
 
-public interface SourceMapBuilder {
-    void newLine();
-
+public interface SourceMapBuilder extends SourceMapMappingConsumer {
     void skipLinesAtBeginning(int count);
-
-    void addMapping(String source, int sourceLine, int sourceColumn);
-
-    void processSourceInfo(Object info);
 
     void addLink();
 

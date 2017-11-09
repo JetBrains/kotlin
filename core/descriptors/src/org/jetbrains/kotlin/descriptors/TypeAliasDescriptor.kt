@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeSubstitutor
 
-interface TypeAliasDescriptor : ClassifierDescriptorWithTypeParameters, MemberDescriptor {
+interface TypeAliasDescriptor : ClassifierDescriptorWithTypeParameters {
     /// Right-hand side of the type alias definition.
     /// May contain type aliases.
     val underlyingType: SimpleType
@@ -30,5 +30,7 @@ interface TypeAliasDescriptor : ClassifierDescriptorWithTypeParameters, MemberDe
 
     val classDescriptor: ClassDescriptor?
 
-    override fun substitute(substitutor: TypeSubstitutor): TypeAliasDescriptor
+    override fun getOriginal(): TypeAliasDescriptor
+
+    val constructors: Collection<TypeAliasConstructorDescriptor>
 }

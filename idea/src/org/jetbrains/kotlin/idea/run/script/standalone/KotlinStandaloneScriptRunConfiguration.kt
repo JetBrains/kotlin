@@ -33,10 +33,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.listeners.RefactoringElementAdapter
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import org.jdom.Element
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer.Companion.pathFromPsiElement
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.ScriptNameUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
@@ -100,7 +99,7 @@ class KotlinStandaloneScriptRunConfiguration(
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState = ScriptCommandLineState(environment, this)
 
-    override fun suggestedName() = filePath?.let { ScriptNameUtil.generateNameByFileName(it, KotlinParserDefinition.STD_SCRIPT_EXT) }
+    override fun suggestedName() = filePath?.substringAfterLast('/')
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> {
         val group = SettingsEditorGroup<KotlinStandaloneScriptRunConfiguration>()
@@ -180,19 +179,27 @@ class KotlinStandaloneScriptRunConfiguration(
     }
 }
 
-private class ScriptCommandLineState(environment: ExecutionEnvironment, configuration: KotlinStandaloneScriptRunConfiguration) :
+private class ScriptCommandLineState(
+        environment: ExecutionEnvironment,
+        configuration: KotlinStandaloneScriptRunConfiguration) :
         BaseJavaApplicationCommandLineState<KotlinStandaloneScriptRunConfiguration>(environment, configuration) {
 
     override fun createJavaParameters(): JavaParameters? {
         val params = commonParameters()
 
-        val kotlinPaths = PathUtil.getKotlinPathsForIdeaPlugin()
-        listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
-                .map { it.absolutePath }
-                .forEach { dependencyJar -> params.classPath.add(dependencyJar) }
+        val filePath = configuration.filePath ?: throw CantRunException("Script file was not specified")
+        val scriptVFile = LocalFileSystem.getInstance().findFileByIoFile(File(filePath)) ?:
+                          throw CantRunException("Script file was not found in project")
+
+        params.classPath.add(PathUtil.kotlinPathsForIdeaPlugin.compilerPath)
+
+        val scriptClasspath = ScriptDependenciesManager.getInstance(environment.project).getScriptClasspath(scriptVFile)
+        scriptClasspath.forEach {
+            params.classPath.add(it.presentableUrl)
+        }
 
         params.mainClass = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
-        params.programParametersList.prepend(configuration.filePath ?: throw CantRunException("Script file was not specified"))
+        params.programParametersList.prepend(filePath)
         params.programParametersList.prepend("-script")
 
         return params

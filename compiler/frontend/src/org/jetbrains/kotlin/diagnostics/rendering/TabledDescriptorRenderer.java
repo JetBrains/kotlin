@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class TabledDescriptorRenderer {
     public interface TableOrTextRenderer {}
@@ -68,8 +67,7 @@ public class TabledDescriptorRenderer {
         }
 
         public TableRenderer functionArgumentTypeList(@Nullable KotlinType receiverType, @NotNull List<KotlinType> argumentTypes) {
-
-            return functionArgumentTypeList(receiverType, argumentTypes, Predicates.<ConstraintPosition>alwaysFalse());
+            return functionArgumentTypeList(receiverType, argumentTypes, position -> false);
         }
 
         public TableRenderer functionArgumentTypeList(@Nullable KotlinType receiverType,
@@ -204,9 +202,14 @@ public class TabledDescriptorRenderer {
         result.append("(");
         for (Iterator<KotlinType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
             KotlinType argumentType = iterator.next();
-            String renderedArgument = getTypeRenderer().render(argumentType, context);
+            if (argumentType == null) {
+                result.append("<unknown>");
+            }
+            else {
+                String renderedArgument = getTypeRenderer().render(argumentType, context);
+                result.append(renderedArgument);
+            }
 
-            result.append(renderedArgument);
             if (iterator.hasNext()) {
                 result.append(",");
             }
@@ -222,7 +225,7 @@ public class TabledDescriptorRenderer {
 
     @NotNull
     protected static RenderingContext computeRenderingContext(@NotNull TableRenderer table) {
-        ArrayList<Object> toRender = new ArrayList<Object>();
+        ArrayList<Object> toRender = new ArrayList<>();
         for (TableRow row : table.rows) {
             if (row instanceof DescriptorRow) {
                 toRender.add(((DescriptorRow) row).descriptor);

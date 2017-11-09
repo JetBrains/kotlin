@@ -1,0 +1,7 @@
+fun foo(x: Int, y: Int, comment: String) {
+
+}
+
+fun test() {
+    <spot>foo(x = 24, y = 42, comment = "Hello")</spot>
+}

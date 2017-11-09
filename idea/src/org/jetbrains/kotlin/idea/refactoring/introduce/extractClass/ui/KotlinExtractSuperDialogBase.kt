@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuper
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinUsesAndInterfacesDependencyMemberInfoModel
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.awt.BorderLayout
@@ -51,6 +52,8 @@ abstract class KotlinExtractSuperDialogBase(
         refactoringName: String,
         private val refactoring: (ExtractSuperInfo) -> Unit
 ) : JavaExtractSuperBaseDialog(originalClass.project, originalClass.toLightClass()!!, emptyList(), refactoringName) {
+    private var initComplete: Boolean = false
+
     private lateinit var memberInfoModel: MemberInfoModelBase
 
     val selectedMembers: List<KotlinMemberInfo>
@@ -63,6 +66,18 @@ abstract class KotlinExtractSuperDialogBase(
             val memberInfos: List<KotlinMemberInfo>,
             interfaceContainmentVerifier: (KtNamedDeclaration) -> Boolean
     ) : KotlinUsesAndInterfacesDependencyMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(originalClass, null, false, interfaceContainmentVerifier) {
+        override fun isMemberEnabled(member: KotlinMemberInfo): Boolean {
+            val declaration = member.member ?: return false
+            return !declaration.hasModifier(KtTokens.CONST_KEYWORD)
+        }
+
+        override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
+            val member = memberInfo.member
+            return !(member.hasModifier(KtTokens.INLINE_KEYWORD) ||
+                     member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
+                     member.hasModifier(KtTokens.LATEINIT_KEYWORD))
+        }
+
         override fun isFixedAbstract(memberInfo: KotlinMemberInfo?) = true
     }
 
@@ -73,6 +88,7 @@ abstract class KotlinExtractSuperDialogBase(
         get() = fileNameField.text
 
     private fun resetFileNameField() {
+        if (!initComplete) return
         fileNameField.text = "$extractedSuperName.${KotlinFileType.EXTENSION}"
     }
 
@@ -145,6 +161,8 @@ abstract class KotlinExtractSuperDialogBase(
 
     override fun init() {
         super.init()
+
+        initComplete = true
 
         resetFileNameField()
     }

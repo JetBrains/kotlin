@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.completion.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -43,6 +44,18 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("AfterClasses_LangLevel10.kt")
+    public void testAfterClasses_LangLevel10() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterClasses_LangLevel10.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AfterClasses_LangLevel11.kt")
+    public void testAfterClasses_LangLevel11() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterClasses_LangLevel11.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AfterDot.kt")
     public void testAfterDot() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterDot.kt");
@@ -52,6 +65,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("AfterFuns.kt")
     public void testAfterFuns() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterFuns.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AfterIf.kt")
+    public void testAfterIf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterIf.kt");
         doTest(fileName);
     }
 
@@ -92,7 +111,7 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     }
 
     public void testAllFilesPresentInKeywords() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/keywords"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/keywords"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("BeforeClass.kt")
@@ -137,6 +156,18 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("Else1.kt")
+    public void testElse1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/Else1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Else2.kt")
+    public void testElse2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/Else2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FileKeyword.kt")
     public void testFileKeyword() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/FileKeyword.kt");
@@ -146,6 +177,18 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("GlobalPropertyAccessors.kt")
     public void testGlobalPropertyAccessors() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/GlobalPropertyAccessors.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfTry.kt")
+    public void testIfTry() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/IfTry.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfTryCatch.kt")
+    public void testIfTryCatch() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/IfTryCatch.kt");
         doTest(fileName);
     }
 
@@ -209,6 +252,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("InElse.kt")
+    public void testInElse() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InElse.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InEnumScope1.kt")
     public void testInEnumScope1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InEnumScope1.kt");
@@ -248,6 +297,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("InGetterExpressionBody.kt")
     public void testInGetterExpressionBody() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InGetterExpressionBody.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InIf.kt")
+    public void testInIf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InIf.kt");
         doTest(fileName);
     }
 
@@ -320,6 +375,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("InTopScopeAfterPackage.kt")
     public void testInTopScopeAfterPackage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InTopScopeAfterPackage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InTypePosition.kt")
+    public void testInTypePosition() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InTypePosition.kt");
         doTest(fileName);
     }
 
@@ -530,6 +591,18 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("ReturnSet.kt")
     public void testReturnSet() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnSet.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SuspendInsideTypeArguments.kt")
+    public void testSuspendInsideTypeArguments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/SuspendInsideTypeArguments.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SuspendInsideTypeArguments1.kt")
+    public void testSuspendInsideTypeArguments1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/SuspendInsideTypeArguments1.kt");
         doTest(fileName);
     }
 

@@ -16,39 +16,23 @@
 
 package org.jetbrains.kotlin.idea.navigation;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
-import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
 import com.intellij.ide.util.gotoByName.GotoClassModel2;
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
-import com.intellij.lang.Language;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.UsefulTestCase;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.ReferenceUtils;
-import org.junit.Assert;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static org.jetbrains.kotlin.idea.navigation.GotoCheck.checkGotoDirectives;
 
 public abstract class AbstractKotlinGotoTest extends KotlinLightCodeInsightFixtureTestCase {
     protected void doSymbolTest(String path) {
         myFixture.configureByFile(path);
-        assertGotoSymbol(new GotoSymbolModel2(getProject()), myFixture.getEditor());
+        checkGotoDirectives(new GotoSymbolModel2(getProject()), myFixture.getEditor());
     }
 
     protected void doClassTest(String path) {
         myFixture.configureByFile(path);
-        assertGotoSymbol(new GotoClassModel2(getProject()), myFixture.getEditor());
+        checkGotoDirectives(new GotoClassModel2(getProject()), myFixture.getEditor());
     }
 
     private String dirPath = null;
@@ -74,52 +58,5 @@ public abstract class AbstractKotlinGotoTest extends KotlinLightCodeInsightFixtu
     @Override
     protected String fileName() {
         return getTestName(true) + ".kt";
-    }
-
-    private static void assertGotoSymbol(@NotNull FilteringGotoByModel<Language> model, @NotNull Editor editor) {
-        String documentText = editor.getDocument().getText();
-        List<String> searchTextList = InTextDirectivesUtils.findListWithPrefixes(documentText, "// SEARCH_TEXT:");
-        Assert.assertFalse("There's no search text in test data file given. Use '// SEARCH_TEXT:' directive",
-                           searchTextList.isEmpty());
-
-        List<String> expectedReferences = CollectionsKt.map(
-                InTextDirectivesUtils.findLinesWithPrefixesRemoved(documentText, "// REF:"),
-                new Function1<String, String>() {
-                    @Override
-                    public String invoke(String input) {
-                        return input.trim();
-                    }
-                }
-        );
-        boolean enableCheckbox = InTextDirectivesUtils.isDirectiveDefined(documentText, "// CHECK_BOX");
-
-        String searchText = searchTextList.get(0);
-
-        List<Object> elementsByName = new ArrayList<Object>();
-
-        String[] names = model.getNames(enableCheckbox);
-        for (String name : names) {
-            if (name != null && name.startsWith(searchText)) {
-                elementsByName.addAll(Arrays.asList(model.getElementsByName(name, enableCheckbox, name + "*")));
-            }
-        }
-
-        List<String> renderedElements = Lists.transform(elementsByName, new Function<Object, String>() {
-            @Override
-            public String apply(@Nullable Object element) {
-                Assert.assertNotNull(element);
-                Assert.assertTrue(element instanceof PsiElement);
-                return ReferenceUtils.renderAsGotoImplementation((PsiElement) element);
-            }
-        });
-
-        boolean inexactMatching = InTextDirectivesUtils.isDirectiveDefined(documentText, "// ALLOW_MORE_RESULTS");
-
-        if (inexactMatching) {
-            UsefulTestCase.assertContainsElements(renderedElements, expectedReferences);
-        }
-        else {
-            UsefulTestCase.assertOrderedEquals(Ordering.natural().sortedCopy(renderedElements), expectedReferences);
-        }
     }
 }

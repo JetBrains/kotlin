@@ -1,0 +1,7 @@
+@kotlin.Metadata
+@kotlin.Suppress
+public final class A {
+    private final @org.jetbrains.annotations.NotNull field a: error.NonExistentClass
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getA(): error.NonExistentClass
+}

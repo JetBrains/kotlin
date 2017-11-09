@@ -118,15 +118,17 @@ fun compareDescriptors(project: Project, currentDescriptor: DeclarationDescripto
 
 fun Visibility.toKeywordToken(): KtModifierKeywordToken {
     val normalized = normalize()
-    when (normalized) {
-        Visibilities.PUBLIC -> return KtTokens.PUBLIC_KEYWORD
-        Visibilities.PROTECTED -> return KtTokens.PROTECTED_KEYWORD
-        Visibilities.INTERNAL -> return KtTokens.INTERNAL_KEYWORD
+    return when (normalized) {
+        Visibilities.PUBLIC -> KtTokens.PUBLIC_KEYWORD
+        Visibilities.PROTECTED -> KtTokens.PROTECTED_KEYWORD
+        Visibilities.INTERNAL -> KtTokens.INTERNAL_KEYWORD
         else -> {
             if (Visibilities.isPrivate(normalized)) {
-                return KtTokens.PRIVATE_KEYWORD
+                KtTokens.PRIVATE_KEYWORD
             }
-            error("Unexpected visibility '$normalized'")
+            else {
+                error("Unexpected visibility '$normalized'")
+            }
         }
     }
 }
@@ -147,9 +149,9 @@ fun <D : CallableMemberDescriptor> D.getDirectlyOverriddenDeclarations(): Collec
     return OverridingUtil.filterOutOverridden(result)
 }
 
-fun <D : CallableMemberDescriptor> D.getDeepestSuperDeclarations(): Collection<D> {
+fun <D : CallableMemberDescriptor> D.getDeepestSuperDeclarations(withThis: Boolean = true): Collection<D> {
     val overriddenDeclarations = DescriptorUtils.getAllOverriddenDeclarations(this)
-    if (overriddenDeclarations.isEmpty()) {
+    if (overriddenDeclarations.isEmpty() && withThis) {
         return setOf(this)
     }
 

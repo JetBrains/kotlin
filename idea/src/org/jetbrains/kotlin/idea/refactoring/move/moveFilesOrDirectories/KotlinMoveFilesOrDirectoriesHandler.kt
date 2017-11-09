@@ -16,10 +16,14 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -50,8 +54,20 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
     override fun doMove(project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?) {
         if (!(targetContainer == null || targetContainer is PsiDirectory || targetContainer is PsiDirectoryContainer)) return
 
-        moveFilesOrDirectories(project, adjustForMove(project, elements, targetContainer) ?: return, targetContainer) {
-            callback?.refactoringCompleted()
+        moveFilesOrDirectories(
+                project,
+                adjustForMove(project, elements, targetContainer) ?: return,
+                targetContainer,
+                callback?.let { MoveCallback { it.refactoringCompleted() } }
+        )
+    }
+
+    override fun tryToMove(element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?): Boolean {
+        if (element is KtLightClassForFacade) {
+            doMove(project, element.files.toTypedArray(), dataContext?.getData(LangDataKeys.TARGET_PSI_ELEMENT), null)
+            return true
         }
+
+        return super.tryToMove(element, project, dataContext, reference, editor)
     }
 }

@@ -3,7 +3,7 @@
 class Class<T>(val name: String, val instance: T)
 
 fun <T> test(clazz: Class<T>) {
-    println((<!UNCHECKED_CAST!>clazz as Class<Any><!>).name)
+    println((clazz <!UNCHECKED_CAST!>as Class<Any><!>).name)
 }
 
 fun use() {
@@ -12,22 +12,22 @@ fun use() {
 
 fun checkArrays(): Array<Any> {
     val someArray = arrayOfNulls<Any>(5)
-    <!UNCHECKED_CAST!>someArray as Array<Int><!>
-    return <!UNCHECKED_CAST!>someArray as Array<Any><!>
+    someArray <!UNCHECKED_CAST!>as Array<Int><!>
+    return someArray <!UNCHECKED_CAST!>as Array<Any><!>
 }
 
 class Wrapper<T>(val x: T)
 
 fun checkArrays2(): Array<Wrapper<String>> {
     val someArray = arrayOf(Wrapper(1), Wrapper(2))
-    return <!UNCHECKED_CAST!>someArray as Array<Wrapper<String>><!>
+    return someArray <!UNCHECKED_CAST!>as Array<Wrapper<String>><!>
 }
 
 fun checkArrays3() {
     val someArray = arrayOfNulls<String>(1)
-    <!UNCHECKED_CAST!>someArray as Array<Any><!>
+    someArray <!UNCHECKED_CAST!>as Array<Any><!>
     val intArray = arrayOfNulls<Int>(1)
-    <!UNCHECKED_CAST!>intArray as Array<Any><!>
+    intArray <!UNCHECKED_CAST!>as Array<Any><!>
 }
 
 fun println(s: String) = s

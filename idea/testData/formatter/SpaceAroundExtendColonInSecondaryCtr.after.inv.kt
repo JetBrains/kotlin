@@ -1,15 +1,8 @@
 class A {
-    constructor() {
-    }
-
-    constructor(): this() {
-    }
-
-    constructor(): super() {
-    }
-
-    constructor(): super() {
-    }
+    constructor() {}
+    constructor(): this() {}
+    constructor(): super() {}
+    constructor(): super() {}
 }
 
 // SET_TRUE: SPACE_BEFORE_EXTEND_COLON

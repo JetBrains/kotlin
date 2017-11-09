@@ -22,12 +22,10 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.refactoring.introduce.ExtractableSubstringInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractableSubstringInfo
@@ -39,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
@@ -67,7 +65,7 @@ data class ExtractionOptions(
 
 data class ResolveResult(
         val originalRefExpr: KtSimpleNameExpression,
-        val declaration: PsiNameIdentifierOwner,
+        val declaration: PsiElement,
         val descriptor: DeclarationDescriptor,
         val resolvedCall: ResolvedCall<*>?
 )
@@ -129,14 +127,17 @@ data class ExtractionData(
         return function == null || !function.isInsideOf(physicalElements)
     }
 
-    private tailrec fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiNameIdentifierOwner? {
-        (DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNameIdentifierOwner)?.let { return it }
+    private tailrec fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiElement? {
+        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+        if (declaration is PsiNameIdentifierOwner) {
+            return declaration
+        }
 
         return when {
             isExtractableIt(descriptor, context) -> itFakeDeclaration
             isSynthesizedInvoke(descriptor) -> synthesizedInvokeDeclaration
             descriptor is SyntheticJavaPropertyDescriptor -> getDeclaration(descriptor.getMethod, context)
-            else -> null
+            else -> declaration
         }
     }
 
@@ -179,9 +180,9 @@ data class ExtractionData(
     }
 
     fun getPossibleTypes(expression: KtExpression, resolvedCall: ResolvedCall<*>?, context: BindingContext): Set<KotlinType> {
-        val dataFlowInfo = context.getDataFlowInfo(expression)
+        val dataFlowInfo = context.getDataFlowInfoAfter(expression)
 
-        (resolvedCall?.getImplicitReceiverValue() as? ImplicitReceiver)?.let {
+        resolvedCall?.getImplicitReceiverValue()?.let {
             return dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(it))
         }
 
@@ -196,10 +197,10 @@ data class ExtractionData(
 
         val newReferences = body.collectDescendantsOfType<KtSimpleNameExpression> { it.resolveResult != null }
 
+        val context = body.analyze()
+
         val referencesInfo = ArrayList<ResolvedReferenceInfo>()
-        val refToContextMap = KotlinFileReferencesResolver.resolve(body)
         for (newRef in newReferences) {
-            val context = refToContextMap[newRef] ?: continue
             val originalResolveResult = newRef.resolveResult ?: continue
 
             val smartCast: KotlinType?
@@ -244,7 +245,7 @@ data class ExtractionData(
                     val invokeDeclaration = getDeclaration(invokeDescriptor, context) ?: synthesizedInvokeDeclaration
                     val variableResolveResult = originalResolveResult.copy(resolvedCall = originalVariableCall!!,
                                                                            descriptor = originalVariableCall.resultingDescriptor)
-                    val functionResolveResult = originalResolveResult.copy(resolvedCall = originalFunctionCall!!,
+                    val functionResolveResult = originalResolveResult.copy(resolvedCall = originalFunctionCall,
                                                                            descriptor = originalFunctionCall.resultingDescriptor,
                                                                            declaration = invokeDeclaration)
                     referencesInfo.add(ResolvedReferenceInfo(newRef, variableResolveResult, smartCast, possibleTypes, shouldSkipPrimaryReceiver))
@@ -260,7 +261,7 @@ data class ExtractionData(
     }
 
     override fun dispose() {
-        expressions.forEach { unmarkReferencesInside(it) }
+        expressions.forEach(::unmarkReferencesInside)
     }
 }
 

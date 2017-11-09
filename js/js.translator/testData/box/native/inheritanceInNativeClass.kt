@@ -1,3 +1,5 @@
+// SKIP_MINIFICATION
+// Contains calls from external JS code
 package foo
 
 open class A {
@@ -12,9 +14,9 @@ open class B {
     open fun bar(n: Int) = 142
 }
 
-@native fun createA(): A
+external fun createA(): A
 
-@native fun createB(): B
+external fun createB(): B
 
 fun box(): String {
     val a = createA()

@@ -1,7 +1,7 @@
+// EXPECTED_REACHABLE_NODES: 1112
 package foo
 
-@native
-fun run(i:Int, s:String, funRef: (Int, String) -> String): String = noImpl
+external fun run(i:Int, s:String, funRef: (Int, String) -> String): String = definedExternally
 
 fun funTopLevel(i:Int, s:String): String = "funTopLevel $i $s"
 

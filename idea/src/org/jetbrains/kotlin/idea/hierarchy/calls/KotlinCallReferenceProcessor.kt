@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,15 @@ package org.jetbrains.kotlin.idea.hierarchy.calls
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.call.CallReferenceProcessor
 import com.intellij.ide.hierarchy.call.JavaCallHierarchyData
+import com.intellij.ide.util.treeView.NodeDescriptor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
-import org.jetbrains.kotlin.idea.references.KtReference
 
 class KotlinCallReferenceProcessor : CallReferenceProcessor {
     override fun process(reference: PsiReference, data: JavaCallHierarchyData): Boolean {
-        if (reference !is KtReference) return true
-        val nodeDescriptor = data.nodeDescriptor as? HierarchyNodeDescriptor ?: return true
+        val nodeDescriptor = data.nodeDescriptor as? HierarchyNodeDescriptor ?: return false
         @Suppress("UNCHECKED_CAST")
-        return !KotlinCallerMethodsTreeStructure.defaultQueryProcessor(
-                if (nodeDescriptor is KotlinCallHierarchyNodeDescriptor) nodeDescriptor.javaDelegate else nodeDescriptor,
-                data.resultMap as MutableMap<PsiElement, HierarchyNodeDescriptor>,
-                false,
-                true
-        ).process(reference)
+        KotlinCallerTreeStructure.processReference(reference, reference.element, nodeDescriptor, data.resultMap as MutableMap<PsiElement, NodeDescriptor<*>>, true)
+        return true
     }
 }

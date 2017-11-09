@@ -23,10 +23,9 @@ import com.intellij.ide.hierarchy.MethodHierarchyBrowserBase
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.hierarchy.getCurrentElement
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 
 class KotlinOverrideHierarchyProvider: HierarchyProvider {
@@ -44,8 +43,7 @@ class KotlinOverrideHierarchyProvider: HierarchyProvider {
     }
 
     private fun getOverrideHierarchyElement(element: PsiElement?): PsiElement?
-            = element?.getParentOfTypesAndPredicate() { it.isOverrideHierarchyElement() }
+            = element?.getParentOfTypesAndPredicate { it.isOverrideHierarchyElement() }
 }
 
-fun PsiElement.isOverrideHierarchyElement(): Boolean
-        = this is PsiMethod || this is KtNamedFunction || this is KtProperty
+fun PsiElement.isOverrideHierarchyElement() = this is KtCallableDeclaration && containingClassOrObject != null

@@ -49,6 +49,7 @@ public enum class AnnotationTarget {
     /** File */
     FILE,
     /** Type alias */
+    @SinceKotlin("1.1")
     TYPEALIAS
 }
 

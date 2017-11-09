@@ -16,8 +16,11 @@ class Some() {
   }
 }
 
+class SomePrimary(val testInPrimary: Int)
+
 // SEARCH_TEXT: test
 // REF: (<root>).testGlobal
 // REF: (in Some).testInClass
 // REF: (in Some.Companion).testInClassObject
+// REF: (in SomePrimary).testInPrimary
 // REF: (in SomeTrait).testInTrait

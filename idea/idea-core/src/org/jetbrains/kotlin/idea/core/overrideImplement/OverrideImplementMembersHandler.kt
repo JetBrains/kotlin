@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.overrideImplement
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.ide.util.MemberChooser
 import com.intellij.lang.LanguageCodeInsightActionHandler
@@ -26,7 +27,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.insertMembersAfter
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
 
     fun collectMembersToGenerate(classOrObject: KtClassOrObject): Collection<OverrideMemberChooserObject> {
-        val descriptor = classOrObject.resolveToDescriptor() as? ClassDescriptor ?: return emptySet()
+        val descriptor = classOrObject.resolveToDescriptorIfAny() as? ClassDescriptor ?: return emptySet()
         return collectMembersToGenerate(descriptor, classOrObject.project)
     }
 
@@ -65,6 +66,8 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
     fun invoke(project: Project, editor: Editor, file: PsiFile, implementAll: Boolean) {
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
         val classOrObject = elementAtCaret?.getNonStrictParentOfType<KtClassOrObject>() ?: return
+
+        if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
         val members = collectMembersToGenerate(classOrObject)
         if (members.isEmpty() && !implementAll) {
@@ -103,8 +106,7 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
                 selectedElements: Collection<OverrideMemberChooserObject>,
                 copyDoc: Boolean
         ) {
-            val project = classOrObject.project
-            insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(project, copyDoc) })
+            insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(classOrObject, copyDoc) })
         }
     }
 }

@@ -37,14 +37,12 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
         companion object {
             fun create(element: PsiElement): TreeElement? {
                 val tokenType = element.tokenType
-                val treeElement = when {
+                return when {
                     element is PsiWhiteSpace -> if (element.textContains('\n')) LineBreakTreeElement() else null
                     element is PsiComment -> CommentTreeElement.create(element)
                     tokenType != null -> TokenTreeElement(tokenType)
                     else -> if (element.textLength > 0) StandardTreeElement() else null // don't save empty elements
                 }
-//                treeElement?.debugText = element.getText()
-                return treeElement
             }
         }
 
@@ -285,6 +283,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
             val document = psiDocumentManager.getDocument(file)
             if (document != null) {
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
+                psiDocumentManager.commitDocument(document)
             }
             CodeStyleManager.getInstance(project).adjustLineIndent(file, resultElements.textRange)
         }

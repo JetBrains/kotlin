@@ -20,7 +20,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.analysis.analyzeInContext
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 class OptimizedImportsBuilder(
@@ -91,7 +91,7 @@ class OptimizedImportsBuilder(
                 .mapNotNull { it.importPath }
                 .filter {
                     val aliasName = it.alias
-                    aliasName != null && aliasName != it.fqnPart().shortName()
+                    aliasName != null && aliasName != it.fqName.shortName()
                 }
                 .mapTo(importRules) { ImportRule.Add(it) }
 
@@ -155,8 +155,10 @@ class OptimizedImportsBuilder(
             }
             else {
                 descriptors
+                        .asSequence()
                         .filterIsInstance<ClassDescriptor>()
-                        .mapTo(classNamesToCheck) { it.importableFqName!! }
+                        .map { it.importableFqName!! }
+                        .filterTo(classNamesToCheck) { !isImportedByDefault(it) }
 
                 if (!fqNames.all(this::isImportedByDefault)) {
                     importsToGenerate.add(starImportPath)
@@ -188,7 +190,7 @@ class OptimizedImportsBuilder(
                     val bindingContext = element.analyze()
                     val expressionToAnalyze = getExpressionToAnalyze(element) ?: continue
                     val newScope = element.getResolutionScope(bindingContext, file.getResolutionFacade()).replaceImportingScopes(newFileScope)
-                    val newBindingContext = expressionToAnalyze.analyzeInContext(newScope, expressionToAnalyze)
+                    val newBindingContext = expressionToAnalyze.analyzeAsReplacement(expressionToAnalyze, bindingContext, newScope, trace = BindingTraceContext())
 
                     testLog?.append("Additional checking of reference $ref\n")
 
@@ -210,14 +212,13 @@ class OptimizedImportsBuilder(
         val explicitImportPath = ImportPath(fqName, false)
         val starImportPath = ImportPath(fqName.parent(), true)
         val importPaths = file.importDirectives.map { it.importPath }
-        if (explicitImportPath in importPaths) {
-            importRules.add(ImportRule.Add(explicitImportPath))
-        }
-        else if (starImportPath in importPaths) {
-            importRules.add(ImportRule.Add(starImportPath))
-        }
-        else { // there is no import for this descriptor in the original import list, so do not allow to import it by star-import
-            importRules.add(ImportRule.DoNotAdd(starImportPath))
+        when {
+            explicitImportPath in importPaths ->
+                importRules.add(ImportRule.Add(explicitImportPath))
+            starImportPath in importPaths ->
+                importRules.add(ImportRule.Add(starImportPath))
+            else -> // there is no import for this descriptor in the original import list, so do not allow to import it by star-import
+                importRules.add(ImportRule.DoNotAdd(starImportPath))
         }
     }
 
@@ -275,14 +276,10 @@ class OptimizedImportsBuilder(
         val iterator1 = tower1.iterator()
         val iterator2 = tower2.iterator()
         while (true) {
-            if (!iterator1.hasNext()) {
-                return !iterator2.hasNext()
-            }
-            else if (!iterator2.hasNext()) {
-                return false
-            }
-            else {
-                if (!areTargetsEqual(iterator1.next(), iterator2.next())) return false
+            when {
+                !iterator1.hasNext() -> return !iterator2.hasNext()
+                !iterator2.hasNext() -> return false
+                else -> if (!areTargetsEqual(iterator1.next(), iterator2.next())) return false
             }
         }
     }
@@ -293,7 +290,7 @@ class OptimizedImportsBuilder(
                     names.flatMap { name ->
                         scope.getContributedFunctions(name, NoLookupLocation.FROM_IDE) +
                         scope.getContributedVariables(name, NoLookupLocation.FROM_IDE) +
-                        scope.getContributedClassifier(name, NoLookupLocation.FROM_IDE).singletonOrEmptyList()
+                        listOfNotNull(scope.getContributedClassifier(name, NoLookupLocation.FROM_IDE))
                     }
                 }
                 .filter { it.isNotEmpty() }

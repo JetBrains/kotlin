@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.intentions.setType
+import org.jetbrains.kotlin.idea.core.setType
+import org.jetbrains.kotlin.idea.refactoring.isAbstract
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.lightElementForMemberInfo
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -35,10 +36,14 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 fun KtProperty.mustBeAbstractInInterface() =
         hasInitializer() || hasDelegate() || (!hasInitializer() && !hasDelegate() && accessors.isEmpty())
+
+fun KtNamedDeclaration.isAbstractInInterface(originalClass: KtClassOrObject) =
+        originalClass is KtClass && originalClass.isInterface() && isAbstract()
 
 fun KtNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean {
     return when (this) {
@@ -54,18 +59,21 @@ fun KtNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean 
 }
 
 fun addMemberToTarget(targetMember: KtNamedDeclaration, targetClass: KtClassOrObject): KtNamedDeclaration {
+    if (targetClass is KtClass && targetClass.isInterface()) {
+        targetMember.removeModifier(KtTokens.FINAL_KEYWORD)
+    }
+
     if (targetMember is KtParameter) {
         val parameterList = (targetClass as KtClass).createPrimaryConstructorIfAbsent().valueParameterList!!
         val anchor = parameterList.parameters.firstOrNull { it.isVarArg || it.hasDefaultValue() }
         return parameterList.addParameterBefore(targetMember, anchor)
     }
 
-    val anchor = targetClass.declarations.filterIsInstance(targetMember.javaClass).lastOrNull()
-    val movedMember = when {
+    val anchor = targetClass.declarations.filterIsInstance(targetMember::class.java).lastOrNull()
+    return when {
         anchor == null && targetMember is KtProperty -> targetClass.addDeclarationBefore(targetMember, null)
         else -> targetClass.addDeclarationAfter(targetMember, anchor)
     }
-    return movedMember
 }
 
 private fun KtParameter.needToBeAbstract(targetClass: KtClassOrObject): Boolean {
@@ -105,7 +113,7 @@ fun KtClassOrObject.getSuperTypeEntryByDescriptor(
         descriptor: ClassDescriptor,
         context: BindingContext
 ): KtSuperTypeListEntry? {
-    return getSuperTypeListEntries().firstOrNull {
+    return superTypeListEntries.firstOrNull {
         val referencedType = context[BindingContext.TYPE, it.typeReference]
         referencedType?.constructor?.declarationDescriptor == descriptor
     }

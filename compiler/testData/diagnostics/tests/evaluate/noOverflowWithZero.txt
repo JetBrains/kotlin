@@ -1,0 +1,4 @@
+package
+
+public val zero: kotlin.Int = 0
+public fun test(): kotlin.Unit

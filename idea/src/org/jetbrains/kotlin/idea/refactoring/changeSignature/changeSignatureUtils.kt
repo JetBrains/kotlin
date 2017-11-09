@@ -55,7 +55,7 @@ fun KtNamedDeclaration.getDeclarationBody(): KtElement? {
 }
 
 fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
-    val primaryConstructor = (this as? KtClass)?.getPrimaryConstructor()
+    val primaryConstructor = (this as? KtClass)?.primaryConstructor
     val elementsToSearch = if (primaryConstructor != null) listOf(primaryConstructor, this) else listOf(this)
     return allUsages
             .asSequence()
@@ -101,7 +101,7 @@ private object ForceTypeCopySubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) =
             with(key) {
                 if (isError) return@with asTypeProjection()
-                KotlinTypeFactory.simpleType(annotations, constructor, arguments, isMarkedNullable, memberScope).asTypeProjection()
+                KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations, constructor, arguments, isMarkedNullable, memberScope).asTypeProjection()
             }
 
     override fun isEmpty() = false

@@ -2,8 +2,7 @@ enum class E1 {
     A,
     B;
 
-    fun foo() {
-    }
+    fun foo() {}
 }
 
 enum class E2 {
@@ -11,16 +10,14 @@ enum class E2 {
     B;
 
 
-    fun foo() {
-    }
+    fun foo() {}
 }
 
 enum class E3 {
     A,
     B;
 
-    fun foo() {
-    }
+    fun foo() {}
 }
 
 enum class E4 {
@@ -28,6 +25,5 @@ enum class E4 {
     B
     ;
 
-    fun foo() {
-    }
+    fun foo() {}
 }

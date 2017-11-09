@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -505,17 +505,17 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     }
 
     private void assertIntersection(String expected, String... types) {
-        Set<KotlinType> typesToIntersect = new LinkedHashSet<KotlinType>();
+        Set<KotlinType> typesToIntersect = new LinkedHashSet<>();
         for (String type : types) {
             typesToIntersect.add(makeType(type));
         }
-        KotlinType result = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, typesToIntersect);
+        KotlinType result = TypeIntersector.intersectTypes(typesToIntersect);
 //        assertNotNull("Intersection is null for " + typesToIntersect, result);
         assertEquals(makeType(expected), result);
     }
 
     private void assertCommonSupertype(String expected, String... types) {
-        Collection<KotlinType> subtypes = new ArrayList<KotlinType>();
+        Collection<KotlinType> subtypes = new ArrayList<>();
         for (String type : types) {
             subtypes.add(makeType(type));
         }
@@ -537,14 +537,8 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         Project project = getProject();
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
         KotlinType type = expressionTypingServices.getType(scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfoFactory.EMPTY, KotlinTestUtils.DUMMY_TRACE);
+        assertNotNull(type);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
-    }
-
-    private void assertErrorType(String expression) {
-        Project project = getProject();
-        KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
-        KotlinType type = expressionTypingServices.safeGetType(scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfoFactory.EMPTY, KotlinTestUtils.DUMMY_TRACE);
-        assertTrue("Error type expected but " + type + " returned", type.isError());
     }
 
     private void assertType(String contextType, String expression, String expectedType) {

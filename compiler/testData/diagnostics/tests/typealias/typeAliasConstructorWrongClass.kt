@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+
 abstract class AbstractClass
 typealias Test1 = AbstractClass
 val test1 = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Test1()<!>
@@ -24,9 +26,9 @@ class Outer {
 }
 typealias Test5 = Outer.Inner
 
-val test5 = <!UNRESOLVED_REFERENCE!>Test5<!>()
-val test5a = Outer.<!UNRESOLVED_REFERENCE!>Inner<!>()
-val test5b = Outer.<!UNRESOLVED_REFERENCE!>TestInner<!>()
-val test5c = Outer().<!UNRESOLVED_REFERENCE!>TestInner<!>() // TODO extension type alias constructors?
+val test5 = <!RESOLUTION_TO_CLASSIFIER!>Test5<!>()
+val test5a = Outer.<!RESOLUTION_TO_CLASSIFIER!>Inner<!>()
+val test5b = Outer.<!RESOLUTION_TO_CLASSIFIER!>TestInner<!>()
+val test5c = Outer().<!UNRESOLVED_REFERENCE!>TestInner<!>()
 val test5d = Outer().Inner()
-val test5e = Outer().<!UNRESOLVED_REFERENCE!>Test5<!>() // TODO extension type alias constructors?
+val test5e = Outer().Test5()

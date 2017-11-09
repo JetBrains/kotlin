@@ -37,23 +37,23 @@ abstract class ObjectTransformer<out T : TransformationInfo>(@JvmField val trans
         val classBuilder = state.factory.newVisitor(
                 JvmDeclarationOrigin.NO_ORIGIN,
                 Type.getObjectType(transformationInfo.newClassName),
-                inliningContext.root.callElement.containingFile
+                inliningContext.root.sourceCompilerForInline.callsiteFile!!
         )
 
         return RemappingClassBuilder(
                 classBuilder,
-                AsmTypeRemapper(inliningContext.typeRemapper, inliningContext.root.typeParameterMappings == null, transformationResult)
+                AsmTypeRemapper(inliningContext.typeRemapper, transformationResult)
         )
     }
 
     fun createClassReader(): ClassReader {
-        return InlineCodegenUtil.buildClassReaderByInternalName(state, transformationInfo.oldClassName)
+        return buildClassReaderByInternalName(state, transformationInfo.oldClassName)
     }
 }
 
 class WhenMappingTransformer(
         whenObjectRegenerationInfo: WhenMappingTransformationInfo,
-        val inliningContext: InliningContext
+        private val inliningContext: InliningContext
 ) : ObjectTransformer<WhenMappingTransformationInfo>(whenObjectRegenerationInfo, inliningContext.state) {
 
     override fun doTransform(parentRemapper: FieldRemapper): InlineResult {
@@ -64,9 +64,8 @@ class WhenMappingTransformer(
         /*MAPPING File could contains mappings for several enum classes, we should filter one*/
         val methodNodes = arrayListOf<MethodNode>()
         val fieldNode = transformationInfo.fieldNode
-        classReader.accept(object : ClassVisitor(InlineCodegenUtil.API, classBuilder.visitor) {
+        classReader.accept(object : ClassVisitor(API, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
-                InlineCodegenUtil.assertVersionNotGreaterThanGeneratedOne(version, name, state)
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
             }
 

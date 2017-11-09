@@ -8,10 +8,6 @@ abstract class A {
     fun abstractFlagRemovedFun() {}
     abstract fun abstractFlagUnchangedFun()
 
-    external fun externalFlagAddedFun()
-    fun externalFlagRemovedFun() {}
-    external fun externalFlagUnchangedFun()
-
     final val finalFlagAddedVal = ""
     val finalFlagRemovedVal = ""
     final val finalFlagUnchangedVal = ""

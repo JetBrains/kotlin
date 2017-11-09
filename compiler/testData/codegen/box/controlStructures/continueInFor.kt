@@ -30,7 +30,7 @@ fun for_long_range(): Int {
 }
 
 fun for_int_list(): Int {
-    val a = java.util.ArrayList<Int>()
+    val a = ArrayList<Int>()
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     var c = 0
@@ -42,7 +42,7 @@ fun for_int_list(): Int {
 }
 
 fun for_byte_list(): Int {
-    val a = java.util.ArrayList<Byte>()
+    val a = ArrayList<Byte>()
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     var c = 0
@@ -54,7 +54,7 @@ fun for_byte_list(): Int {
 }
 
 fun for_long_list(): Int {
-    val a = java.util.ArrayList<Long>()
+    val a = ArrayList<Long>()
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     var c = 0
@@ -66,7 +66,7 @@ fun for_long_list(): Int {
 }
 
 fun for_double_list(): Int {
-    val a = java.util.ArrayList<Double>()
+    val a = ArrayList<Double>()
     a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0)
     a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0)
     var c = 0
@@ -78,7 +78,7 @@ fun for_double_list(): Int {
 }
 
 fun for_object_list(): Int {
-    val a = java.util.ArrayList<Any>()
+    val a = ArrayList<Any>()
     a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0)
     a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0)
     var c = 0

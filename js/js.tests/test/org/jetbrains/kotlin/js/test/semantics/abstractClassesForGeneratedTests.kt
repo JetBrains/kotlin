@@ -18,45 +18,48 @@ package org.jetbrains.kotlin.js.test.semantics
 
 import org.jetbrains.kotlin.js.test.BasicBoxTest
 
-abstract class BorrowedTest(relativePath: String) : BasicBoxTest(
-        "compiler/testData/codegen/box/$relativePath",
-        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/jvm/box/$relativePath/"
-) {
-    init {
-        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
-    }
-}
-
 abstract class BorrowedInlineTest(relativePath: String) : BasicBoxTest(
         "compiler/testData/codegen/boxInline/$relativePath",
-        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/jvm/boxInline/$relativePath/"
+        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/codegen/boxInline/$relativePath/"
 ) {
     init {
         additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
     }
 }
-
-abstract class AbstractBoxJsTest() : BasicBoxTest(
-        BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
-        BasicBoxTest.TEST_DATA_DIR_PATH + "out/box/"
-)
-
-abstract class AbstractBridgeTest : BorrowedTest("bridges/")
-
-abstract class AbstractCompanionObjectTest : BorrowedTest("objectIntrinsics/")
-
-abstract class AbstractFunctionExpressionTest : BorrowedTest("functions/functionExpression/")
-
-abstract class AbstractSecondaryConstructorTest : BorrowedTest("secondaryConstructors/")
-
-abstract class AbstractInnerNestedTest : BorrowedTest("innerNested/")
-
-abstract class AbstractClassesTest : BorrowedTest("classes/")
-
-abstract class AbstractSuperTest : BorrowedTest("super/")
-
-abstract class AbstractLocalClassesTest : BorrowedTest("localClasses/")
 
 abstract class AbstractNonLocalReturnsTest : BorrowedInlineTest("nonLocalReturns/")
 
-abstract class AbstractTypeAliasesTests : BorrowedTest("typealias/")
+abstract class AbstractPropertyAccessorsInlineTests : BorrowedInlineTest("property/")
+
+abstract class AbstractNoInlineTests : BorrowedInlineTest("noInline/")
+
+abstract class AbstractCallableReferenceInlineTests : BorrowedInlineTest("callableReference/")
+
+abstract class AbstractEnumValuesInlineTests : BorrowedInlineTest("enum/")
+
+abstract class AbstractInlineDefaultValuesTests : BorrowedInlineTest("defaultValues/")
+
+abstract class AbstractBoxJsTest : BasicBoxTest(
+        BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
+        BasicBoxTest.TEST_DATA_DIR_PATH + "out/box/"
+) {
+    override val runMinifierByDefault: Boolean = true
+}
+
+abstract class AbstractJsCodegenBoxTest : BasicBoxTest(
+        "compiler/testData/codegen/box/",
+        BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/"
+)
+
+abstract class AbstractJsLegacyPrimitiveArraysBoxTest : BasicBoxTest(
+        "compiler/testData/codegen/box/arrays/",
+        BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/arrays-legacy-primitivearrays/",
+        typedArraysEnabled = false
+)
+
+abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
+        BasicBoxTest.TEST_DATA_DIR_PATH + "sourcemap/",
+        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/sourcemap/",
+        generateSourceMap = true,
+        generateNodeJsRunner = false
+)

@@ -1,0 +1,44 @@
+LineBreakpoint created at frameSimple.kt:9
+Run Java
+Connected to the target VM
+frameSimple.kt:9
+Compile bytecode for val1
+Compile bytecode for val2
+Compile bytecode for topVal1
+Compile bytecode for val1 + topVal1
+package frameSimple
+
+val topVal1 = 1
+
+fun main(args: Array<String>) {
+    val val1 = 1
+    val val2 = MyClass()
+    //Breakpoint!
+    val1 + topVal1
+}
+
+class MyClass
+
+// PRINT_FRAME
+
+// EXPRESSION: val1
+// RESULT: 1: I
+
+// EXPRESSION: val2
+// RESULT: instance of frameSimple.MyClass(id=ID): LframeSimple/MyClass;
+
+// EXPRESSION: topVal1
+// RESULT: 1: I
+
+// EXPRESSION: val1 + topVal1
+// RESULT: 2: I
+ frame    = main:9, FrameSimpleKt {frameSimple}
+   static   = static = frameSimple.FrameSimpleKt
+     field    = topVal1: int = 1 (sp = frameSimple.kt, 3)
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameSimple.kt, 5)
+   local    = val1: int = 1 (sp = frameSimple.kt, 6)
+   local    = val2: frameSimple.MyClass = {frameSimple.MyClass@uniqueID} (sp = frameSimple.kt, 7)
+              - Class has no fields
+Disconnected from the target VM
+
+Process finished with exit code 0

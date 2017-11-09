@@ -42,20 +42,19 @@ class CommandExecutor(private val runner: KotlinConsoleRunner) {
     private fun getTrimmedCommandText(): String {
         val consoleView = runner.consoleView
         val document = consoleView.editorDocument
-        val inputText = document.text.trim()
-        return inputText
+        return document.text.trim()
     }
 
     private fun sendCommandToProcess(command: String) {
         val processHandler = runner.processHandler
-        val processInputOS = processHandler.processInput ?: return logError(javaClass, "<p>Broken process stream</p>")
+        val processInputOS = processHandler.processInput ?: return logError(this::class.java, "<p>Broken process stream</p>")
         val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8
 
-        val xmlRes = "$XML_PREAMBLE" +
+        val xmlRes = XML_PREAMBLE +
                      "<input>" +
-                     "${StringUtil.escapeXml(
+                     StringUtil.escapeXml(
                              StringUtil.replace(command, SOURCE_CHARS, XML_REPLACEMENTS)
-                     )}" +
+                     ) +
                      "</input>"
 
         val bytes = ("$xmlRes\n").toByteArray(charset)

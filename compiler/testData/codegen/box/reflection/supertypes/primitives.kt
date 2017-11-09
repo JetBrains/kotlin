@@ -1,6 +1,9 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS, NATIVE
+
 // WITH_REFLECT
 
-import kotlin.reflect.isSubclassOf
+import kotlin.reflect.full.isSubclassOf
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
 

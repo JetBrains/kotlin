@@ -78,8 +78,7 @@ public class WrappedValues {
         if (value instanceof ThrowableWrapper) {
             Throwable originThrowable = ((ThrowableWrapper) value).getThrowable();
 
-            if (throwWrappedProcessCanceledException &&
-                    originThrowable.getClass().getName().equals("com.intellij.openapi.progress.ProcessCanceledException")) {
+            if (throwWrappedProcessCanceledException && ExceptionUtilsKt.isProcessCanceledException(originThrowable)) {
                 throw new WrappedProcessCanceledException(originThrowable);
             }
 

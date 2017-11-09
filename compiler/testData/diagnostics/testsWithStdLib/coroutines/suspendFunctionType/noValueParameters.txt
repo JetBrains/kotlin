@@ -1,0 +1,6 @@
+package
+
+public typealias Test1 = suspend (kotlin.Int) -> kotlin.Unit
+public typealias Test2 = suspend kotlin.Int.(kotlin.Int) -> kotlin.Unit
+public typealias Test3 = kotlin.collections.List<suspend (kotlin.Int) -> kotlin.Unit>
+public typealias Test4 = kotlin.collections.List<suspend kotlin.Int.(kotlin.Int) -> kotlin.Unit>

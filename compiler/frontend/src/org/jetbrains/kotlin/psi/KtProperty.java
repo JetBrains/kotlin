@@ -68,8 +68,13 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     }
 
     public boolean isLocal() {
+        return !isTopLevel() && !isMember();
+    }
+
+    public boolean isMember() {
         PsiElement parent = getParent();
-        return !(parent instanceof KtFile || parent instanceof KtClassBody);
+        return parent instanceof KtClassOrObject || parent instanceof KtClassBody ||
+               parent instanceof KtBlockExpression && parent.getParent() instanceof KtScript;
     }
 
     public boolean isTopLevel() {
@@ -296,6 +301,19 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     @Override
     public boolean shouldChangeModificationCount(PsiElement place) {
         // Suppress Java check for out-of-block
+        return false;
+    }
+
+    public boolean hasBody() {
+        if (hasDelegateExpressionOrInitializer()) return true;
+        KtPropertyAccessor getter = getGetter();
+        if (getter != null && getter.hasBody()) {
+            return true;
+        }
+        KtPropertyAccessor setter = getSetter();
+        if (setter != null && setter.hasBody()) {
+            return true;
+        }
         return false;
     }
 }

@@ -1,4 +1,4 @@
-JetFile: DeclarationAfterIncompleteElvis.kt
+KtFile: DeclarationAfterIncompleteElvis.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

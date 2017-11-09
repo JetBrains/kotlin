@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Parame
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object CreateInvokeFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtCallExpression>() {

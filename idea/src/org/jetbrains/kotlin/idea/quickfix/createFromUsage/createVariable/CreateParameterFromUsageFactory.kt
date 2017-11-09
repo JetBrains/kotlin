@@ -16,24 +16,18 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.BindingContext
 
 data class CreateParameterData<out E : KtElement>(
-        val context: BindingContext,
         val parameterInfo: KotlinParameterInfo,
-        val originalExpression: E
+        val originalExpression: E,
+        val createSilently: Boolean = false,
+        val onComplete: ((Editor?) -> Unit)? = null
 )
 
 abstract class CreateParameterFromUsageFactory<E : KtElement>: KotlinSingleIntentionActionFactoryWithDelegate<E, CreateParameterData<E>>() {
-    override fun createFix(originalElement: E, data: CreateParameterData<E>): IntentionAction? {
-        return CreateParameterFromUsageFix(
-                data.parameterInfo.callableDescriptor as FunctionDescriptor,
-                data.parameterInfo,
-                data.originalExpression)
-    }
+    override fun createFix(originalElement: E, data: CreateParameterData<E>) = CreateParameterFromUsageFix(data)
 }

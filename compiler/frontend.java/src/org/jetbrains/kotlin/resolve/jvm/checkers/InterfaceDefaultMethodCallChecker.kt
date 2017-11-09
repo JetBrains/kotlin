@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,48 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class InterfaceDefaultMethodCallChecker : CallChecker {
+class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker {
+
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        val supportDefaults = jvmTarget == JvmTarget.JVM_1_8
+
+        val descriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
+
+        if (!supportDefaults &&
+            isStaticDeclaration(descriptor) &&
+            isInterface(descriptor.containingDeclaration) &&
+            descriptor is JavaCallableMemberDescriptor) {
+            context.trace.report(ErrorsJvm.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET.on(reportOn))
+        }
+
         if (getSuperCallExpression(resolvedCall.call) == null) return
 
-        val targetDescriptor = resolvedCall.resultingDescriptor.original
-        val containerDescriptor = targetDescriptor.containingDeclaration
+        if (!isInterface(descriptor.original.containingDeclaration)) return
 
-        if (containerDescriptor is JavaClassDescriptor && DescriptorUtils.isInterface(containerDescriptor)) {
-            //is java interface default method called from trait
+        val realDescriptor = unwrapFakeOverride(descriptor)
+        val realDescriptorOwner = realDescriptor.containingDeclaration as? ClassDescriptor ?: return
+
+        if (isInterface(realDescriptorOwner) && realDescriptor is JavaCallableMemberDescriptor) {
             val classifier = DescriptorUtils.getParentOfType(context.scope.ownerDescriptor, ClassifierDescriptor::class.java)
-
+            //is java interface default method called from trait
             if (classifier != null && DescriptorUtils.isInterface(classifier)) {
                 context.trace.report(ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
+            }
+            else if (!supportDefaults) {
+                context.trace.report(ErrorsJvm.DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET.on(reportOn))
             }
         }
     }

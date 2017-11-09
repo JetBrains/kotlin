@@ -20,7 +20,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.UserDataHolder;
+import com.intellij.util.keyFMap.KeyFMap;
 import gnu.trove.THashMap;
 import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
@@ -31,12 +31,13 @@ import java.util.Map;
 
 public class SlicedMapImpl implements MutableSlicedMap {
 
-    public static SlicedMapImpl create() {
-        return new SlicedMapImpl();
-    }
-
-    private final Map<Object, UserDataHolderImpl> map = new THashMap<Object, UserDataHolderImpl>(0);
+    private final boolean alwaysAllowRewrite;
+    private final Map<Object, KeyFMap> map = new THashMap<>(0);
     private Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = null;
+
+    public SlicedMapImpl(boolean alwaysAllowRewrite) {
+        this.alwaysAllowRewrite = alwaysAllowRewrite;
+    }
 
     @Override
     public <K, V> void put(WritableSlice<K, V> slice, K key, V value) {
@@ -44,17 +45,16 @@ public class SlicedMapImpl implements MutableSlicedMap {
             return;
         }
 
-        UserDataHolderImpl holder = map.get(key);
+        KeyFMap holder = map.get(key);
         if (holder == null) {
-            holder = new UserDataHolderImpl();
-            map.put(key, holder);
+            holder = KeyFMap.EMPTY_MAP;
         }
 
         Key<V> sliceKey = slice.getKey();
 
         RewritePolicy rewritePolicy = slice.getRewritePolicy();
-        if (rewritePolicy.rewriteProcessingNeeded(key)) {
-            V oldValue = holder.getUserData(sliceKey);
+        if (!alwaysAllowRewrite && rewritePolicy.rewriteProcessingNeeded(key)) {
+            V oldValue = holder.get(sliceKey);
             if (oldValue != null) {
                 //noinspection unchecked
                 if (!rewritePolicy.processRewrite(slice, key, oldValue, value)) {
@@ -71,7 +71,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
             collectiveSliceKeys.put(slice, key);
         }
 
-        holder.putUserData(sliceKey, value);
+        map.put(key, holder.plus(sliceKey, value));
         slice.afterPut(this, key, value);
     }
 
@@ -83,9 +83,9 @@ public class SlicedMapImpl implements MutableSlicedMap {
 
     @Override
     public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-        UserDataHolderImpl holder = map.get(key);
+        KeyFMap holder = map.get(key);
 
-        V value = holder == null ? null : holder.getUserData(slice.getKey());
+        V value = holder == null ? null : holder.get(slice.getKey());
 
         return slice.computeValue(this, key, value, value == null);
     }
@@ -101,14 +101,14 @@ public class SlicedMapImpl implements MutableSlicedMap {
 
     @Override
     public void forEach(@NotNull Function3<WritableSlice, Object, Object, Void> f) {
-        for (Map.Entry<Object, UserDataHolderImpl> entry : map.entrySet()) {
+        for (Map.Entry<Object, KeyFMap> entry : map.entrySet()) {
             Object key = entry.getKey();
-            UserDataHolderImpl holder = entry.getValue();
+            KeyFMap holder = entry.getValue();
 
             if (holder == null) continue;
 
             for (Key<?> sliceKey : holder.getKeys()) {
-                Object value = holder.getUserData(sliceKey);
+                Object value = holder.get(sliceKey);
 
                 f.invoke(((AbstractWritableSlice) sliceKey).getSlice(), key, value);
             }
@@ -120,11 +120,11 @@ public class SlicedMapImpl implements MutableSlicedMap {
     public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
         ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
 
-        for (Map.Entry<Object, UserDataHolderImpl> entry : map.entrySet()) {
+        for (Map.Entry<Object, KeyFMap> entry : map.entrySet()) {
 
-            UserDataHolder holder = entry.getValue();
+            KeyFMap holder = entry.getValue();
 
-            V value = holder.getUserData(slice.getKey());
+            V value = holder.get(slice.getKey());
 
             if (value != null) {
                 //noinspection unchecked

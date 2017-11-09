@@ -36,7 +36,7 @@ public final class KotlinDescriptorIconProvider {
     private KotlinDescriptorIconProvider() {
     }
 
-    @NotNull
+    @Nullable
     public static Icon getIcon(@NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration, @Iconable.IconFlags int flags) {
         if (declaration != null && !(declaration instanceof KtElement)) {
             return declaration.getIcon(flags);
@@ -84,23 +84,23 @@ public final class KotlinDescriptorIconProvider {
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             if (functionDescriptor.getExtensionReceiverParameter() != null) {
-                return KotlinIcons.EXTENSION_FUNCTION;
+                return Modality.ABSTRACT == functionDescriptor.getModality()
+                       ? KotlinIcons.ABSTRACT_EXTENSION_FUNCTION
+                       : KotlinIcons.EXTENSION_FUNCTION;
             }
 
             if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-                if (Modality.ABSTRACT == functionDescriptor.getModality()) {
-                    return PlatformIcons.ABSTRACT_METHOD_ICON;
-                }
-                else {
-                    return PlatformIcons.METHOD_ICON;
-                }
+                return Modality.ABSTRACT == functionDescriptor.getModality()
+                       ? PlatformIcons.ABSTRACT_METHOD_ICON
+                       : PlatformIcons.METHOD_ICON;
             }
             else {
                 return KotlinIcons.FUNCTION;
             }
         }
         if (descriptor instanceof ClassDescriptor) {
-            switch (((ClassDescriptor) descriptor).getKind()) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            switch (classDescriptor.getKind()) {
                 case INTERFACE:
                     return KotlinIcons.INTERFACE;
                 case ENUM_CLASS:
@@ -112,7 +112,9 @@ public final class KotlinDescriptorIconProvider {
                 case OBJECT:
                     return KotlinIcons.OBJECT;
                 case CLASS:
-                    return KotlinIcons.CLASS;
+                    return Modality.ABSTRACT == classDescriptor.getModality() ?
+                           KotlinIcons.ABSTRACT_CLASS :
+                           KotlinIcons.CLASS;
                 default:
                     LOG.warn("No icon for descriptor: " + descriptor);
                     return null;
@@ -135,7 +137,7 @@ public final class KotlinDescriptorIconProvider {
         }
 
         if (descriptor instanceof TypeAliasDescriptor) {
-            return PlatformIcons.CLASS_ICON;
+            return KotlinIcons.TYPE_ALIAS;
         }
 
         LOG.warn("No icon for descriptor: " + descriptor);

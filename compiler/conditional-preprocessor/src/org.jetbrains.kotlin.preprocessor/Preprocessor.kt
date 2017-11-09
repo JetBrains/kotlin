@@ -20,6 +20,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -51,7 +52,7 @@ class Preprocessor(val logger: Logger = SystemOutLogger) {
 
     init {
         val configuration = CompilerConfiguration()
-        val environment = KotlinCoreEnvironment.createForProduction(Disposable {  }, configuration, emptyList())
+        val environment = KotlinCoreEnvironment.createForProduction(Disposable {  }, configuration, EnvironmentConfigFiles.EMPTY)
 
         val project = environment.project
         jetPsiFactory = KtPsiFactory(project)
@@ -67,7 +68,7 @@ class Preprocessor(val logger: Logger = SystemOutLogger) {
             override fun toString(): String = "Modify(${modifications.size})"
         }
 
-        override fun toString() = this.javaClass.simpleName
+        override fun toString() = this::class.java.simpleName
     }
 
     fun processSources(sourceRoot: File, profile: Profile) {
@@ -114,7 +115,7 @@ class Preprocessor(val logger: Logger = SystemOutLogger) {
             if (targetFile.exists() && targetFile.isDirectory)
                 targetFile.deleteRecursively()
 
-            // if no modifications � copy
+            // if no modifications — copy
             if (result is FileProcessingResult.Copy) {
                 FileUtil.copy(sourceFile, targetFile)
             } else if (result is FileProcessingResult.Modify) {
@@ -122,6 +123,7 @@ class Preprocessor(val logger: Logger = SystemOutLogger) {
                 if (targetFile.exists() && targetFile.isTextEqualTo(resultText))
                     continue
                 logger.info("Rewriting modified $targetFile")
+                targetFile.parentFile!!.mkdirsOrFail()
                 targetFile.writeText(resultText)
             }
         }

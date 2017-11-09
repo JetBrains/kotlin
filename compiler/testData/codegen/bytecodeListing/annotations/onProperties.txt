@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class A {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private @AnnField field p: int
     private final @AnnDelegate @org.jetbrains.annotations.NotNull field s$delegate: CustomDelegate
     private final @AnnField field x: int
@@ -11,11 +11,11 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
     public final method getX(): int
     public final @AnnGetter method getY(): int
-    private synthetic deprecated static @AnnProp @AnnProp2 method p$annotations(): void
-    private synthetic deprecated static @AnnProp @AnnProp2 @AnnDelegate method s$annotations(): void
+    public synthetic deprecated static @AnnProp @AnnProp2 method p$annotations(): void
+    public synthetic deprecated static @AnnProp @AnnProp2 @AnnDelegate method s$annotations(): void
     public final @AnnSetter method setP(@AnnParam p0: int): void
     public final @AnnSetter method setY(p0: int): void
-    private synthetic deprecated static @AnnProp2 method x$annotations(): void
+    public synthetic deprecated static @AnnProp2 method x$annotations(): void
 }
 
 @java.lang.annotation.Retention

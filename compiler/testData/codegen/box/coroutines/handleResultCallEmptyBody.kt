@@ -1,15 +1,16 @@
-class Controller {
+// WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
+
+fun builder(c: suspend () -> Unit): String {
     var ok = false
-
-    operator fun handleResult(u: Unit, v: Continuation<Nothing>) {
+    c.startCoroutine(handleResultContinuation {
         ok = true
-    }
-}
-
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {
-    val controller = Controller()
-    c(controller).resume(Unit)
-    if (!controller.ok) throw java.lang.RuntimeException("Was not called")
+    })
+    if (!ok) throw RuntimeException("Was not called")
     return "OK"
 }
 

@@ -55,9 +55,12 @@ public interface LocalLookup {
                 boolean idx = localLookup != null && localLookup.lookupLocal(vd);
                 if (!idx) return null;
 
-                VariableDescriptor delegateVariableDescriptor = state.getBindingContext().get(LOCAL_VARIABLE_DELEGATE, vd);
+                KotlinType delegateType =
+                        vd instanceof VariableDescriptorWithAccessors
+                        ? JvmCodegenUtil.getPropertyDelegateType((VariableDescriptorWithAccessors) vd, state.getBindingContext())
+                        : null;
                 Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
-                Type localType = state.getTypeMapper().mapType(delegateVariableDescriptor != null ? delegateVariableDescriptor : vd);
+                Type localType = state.getTypeMapper().mapType(delegateType != null ? delegateType : vd.getType());
                 Type type = sharedVarType != null ? sharedVarType : localType;
 
                 String fieldName = "$" + vd.getName();
@@ -67,7 +70,7 @@ public interface LocalLookup {
                 EnclosedValueDescriptor enclosedValueDescriptor;
                 if (sharedVarType != null) {
                     StackValue.Field wrapperValue = StackValue.receiverWithRefWrapper(localType, classType, fieldName, thiz, vd);
-                    innerValue = StackValue.fieldForSharedVar(localType, classType, fieldName, wrapperValue);
+                    innerValue = StackValue.fieldForSharedVar(localType, classType, fieldName, wrapperValue, vd);
                     enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, wrapperValue, type);
                 }
                 else {
@@ -75,7 +78,6 @@ public interface LocalLookup {
                     enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, type);
                 }
 
-                closure.recordField(fieldName, type);
                 closure.captureVariable(enclosedValueDescriptor);
 
                 return innerValue;
@@ -104,18 +106,24 @@ public interface LocalLookup {
                 BindingContext bindingContext = state.getBindingContext();
                 Type localType = asmTypeForAnonymousClass(bindingContext, vd);
 
-                MutableClosure localFunClosure = bindingContext.get(CLOSURE, bindingContext.get(CLASS_FOR_CALLABLE, vd));
+                ClassDescriptor callableClass = bindingContext.get(CLASS_FOR_CALLABLE, vd);
+                assert callableClass != null : "No CLASS_FOR_CALLABLE:" + vd;
+
+                MutableClosure localFunClosure = bindingContext.get(CLOSURE, callableClass);
                 if (localFunClosure != null && JvmCodegenUtil.isConst(localFunClosure)) {
                     // This is an optimization: we can obtain an instance of a const closure simply by GETSTATIC ...$instance
                     // (instead of passing this instance to the constructor and storing as a field)
                     return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true, StackValue.LOCAL_0, vd);
                 }
 
-                String fieldName = "$" + vd.getName();
+                String localFunClassName = callableClass.getName().asString();
+                int localClassIndexStart = localFunClassName.lastIndexOf('$');
+                String localFunSuffix = localClassIndexStart >= 0 ? localFunClassName.substring(localClassIndexStart) : "";
+
+                String fieldName = "$" + vd.getName() + localFunSuffix;
                 StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(localType, classType, fieldName, false,
                                                                                       StackValue.LOCAL_0, vd);
 
-                closure.recordField(fieldName, localType);
                 closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, localType));
 
                 return innerValue;

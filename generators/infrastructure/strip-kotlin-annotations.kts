@@ -19,7 +19,6 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.jar.JarFile
-import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 /**
@@ -64,25 +63,20 @@ fun main(args: Array<String>) {
 
     ZipOutputStream(BufferedOutputStream(FileOutputStream(outFile))).use {
         outJar ->
-        val inJar = JarFile(inFile)
-        try {
+        JarFile(inFile).use { inJar ->
             for (entry in inJar.entries()) {
                 val inBytes = inJar.getInputStream(entry).readBytes()
-                val outBytes = transform(entry.getName(), inBytes)
+                val outBytes = transform(entry.name, inBytes)
 
                 if (inBytes.size < outBytes.size) {
-                    error("Size increased for ${entry.getName()}: was ${inBytes.size} bytes, became ${outBytes.size} bytes")
+                    error("Size increased for ${entry.name}: was ${inBytes.size} bytes, became ${outBytes.size} bytes")
                 }
 
-                entry.setCompressedSize(-1L)
+                entry.compressedSize = -1L
                 outJar.putNextEntry(entry)
                 outJar.write(outBytes)
                 outJar.closeEntry()
             }
-        }
-        finally {
-            // Yes, JarFile does not extend Closeable on JDK 6 so we can't use "use" here
-            inJar.close()
         }
     }
 

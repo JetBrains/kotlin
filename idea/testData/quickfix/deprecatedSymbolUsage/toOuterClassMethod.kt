@@ -1,5 +1,5 @@
 // "Replace with 'newFun(this)'" "true"
-// ERROR: Unresolved reference: newFun
+// ERROR: Unresolved reference: @Outer
 
 class Outer {
     inner class Inner {

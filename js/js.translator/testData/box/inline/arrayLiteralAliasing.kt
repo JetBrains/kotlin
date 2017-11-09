@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1391
 /*
 This tests that variables (aliases) are created for array literals.
 
@@ -28,9 +29,9 @@ package foo
 
 // CHECK_NOT_CALLED: moveTo
 
-@native fun Array<Int>.push(element: Int): Unit = noImpl
+inline fun Array<Int>.push(element: Int): Unit = asDynamic().push(element)
 
-@native fun Array<Int>.splice(index: Int, howMany: Int): Unit = noImpl
+inline fun Array<Int>.splice(index: Int, howMany: Int): Unit = asDynamic().splice(index, howMany)
 
 data class PairArray<T, R>(val fst: Array<T>, val snd: Array<R>)
 

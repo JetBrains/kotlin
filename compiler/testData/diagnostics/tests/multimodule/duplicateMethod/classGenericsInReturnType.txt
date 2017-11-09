@@ -17,10 +17,6 @@ package
 
 package p {
 
-    public interface B</*0*/ T> {
-        // -- Module: <m1> --
-    }
-
     public interface C</*0*/ X> : p.B<X> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public abstract override /*1*/ fun foo(): X
@@ -50,12 +46,4 @@ package
 public fun test(/*0*/ b: p.B<kotlin.String>?): kotlin.Unit
 
 package p {
-
-    public interface B</*0*/ T> {
-        // -- Module: <m3> --
-    }
-
-    public interface C</*0*/ X> : p.B<X> {
-        // -- Module: <m2> --
-    }
 }

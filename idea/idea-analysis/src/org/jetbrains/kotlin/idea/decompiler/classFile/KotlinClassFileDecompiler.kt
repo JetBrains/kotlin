@@ -23,7 +23,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
-import org.jetbrains.kotlin.idea.caches.resolve.BySignatureIndexer
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.BySignatureIndexer
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
@@ -41,20 +42,21 @@ import org.jetbrains.kotlin.types.isFlexible
 class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinClsStubBuilder()
 
-    override fun accepts(file: VirtualFile) = isKotlinJvmCompiledFile(file)
+    override fun accepts(file: VirtualFile) = IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file)
 
     override fun getStubBuilder() = stubBuilder
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): KotlinDecompiledFileViewProvider {
         val project = manager.project
-        return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
+        return KotlinDecompiledFileViewProvider(manager, file, physical) factory@{ provider ->
             val virtualFile = provider.virtualFile
             val fileIndex = ServiceManager.getService(project, FileIndexFacade::class.java)
-            when {
-                !fileIndex.isInLibraryClasses(virtualFile) && fileIndex.isInSource(virtualFile) -> null
-                isKotlinInternalCompiledFile(virtualFile) -> null
-                else -> KtClsFile(provider)
-            }
+            if (!fileIndex.isInLibraryClasses(virtualFile) && fileIndex.isInSource(virtualFile)) return@factory null
+
+            if (isKotlinInternalCompiledFile(virtualFile))
+                null
+            else
+                KtClsFile(provider)
         }
     }
 }
@@ -78,7 +80,8 @@ fun buildDecompiledTextForClassFile(
     }
 
     fun buildText(declarations: List<DeclarationDescriptor>) =
-            buildDecompiledText(classId.packageFqName, declarations, decompilerRendererForClassFiles, listOf(ByDescriptorIndexer, BySignatureIndexer))
+            buildDecompiledText(classHeader.packageName?.let(::FqName) ?: classId.packageFqName,
+                                declarations, decompilerRendererForClassFiles, listOf(ByDescriptorIndexer, BySignatureIndexer))
 
     return when (classHeader.kind) {
         KotlinClassHeader.Kind.FILE_FACADE ->

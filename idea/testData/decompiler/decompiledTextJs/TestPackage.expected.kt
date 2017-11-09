@@ -10,3 +10,12 @@ public val p: kotlin.Int /* compiled code */
 public fun f(): kotlin.Unit { /* compiled code */ }
 
 public fun kotlin.Int.plus(i: kotlin.Int /* = compiled code */): kotlin.Int { /* compiled code */ }
+
+public final class Class public constructor() {
+    public final class Nested public constructor() {
+    }
+}
+
+public interface Interface {
+}
+

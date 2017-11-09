@@ -103,7 +103,45 @@ public annotation class UnsafeVariance
  * @property version the version in the following formats: `<major>.<minor>` or `<major>.<minor>.<patch>`, where major, minor and patch
  * are non-negative integer numbers without leading zeros.
  */
-@Target(CLASS, PROPERTY, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
+@Target(CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 public annotation class SinceKotlin(val version: String)
+
+/**
+ * When applied to annotation class X specifies that X defines a DSL language
+ *
+ * The general rule:
+ * - an implicit receiver may *belong to a DSL @X* if marked with a corresponding DSL marker annotation
+ * - two implicit receivers of the same DSL are not accessible in the same scope
+ * - the closest one wins
+ * - other available receivers are resolved as usual, but if the resulting resolved call binds to such a receiver, it's a compilation error
+ *
+ * Marking rules: an implicit receiver is considered marked with @Ann if
+ * - its type is marked, or
+ * - its type's classifier is marked
+ * - or any of its superclasses/superinterfaces
+ */
+@Target(ANNOTATION_CLASS)
+@Retention(BINARY)
+@MustBeDocumented
+@SinceKotlin("1.1")
+public annotation class DslMarker
+
+
+/**
+ * When applied to a class or a member with internal visibility allows to use it from public inline functions and
+ * makes it effectively public.
+ *
+ * Public inline functions cannot use non-public API, since if they are inlined, those non-public API references
+ * would violate access restrictions at a call site (http://kotlinlang.org/docs/reference/inline-functions.html#public-inline-restrictions).
+ *
+ * To overcome this restriction an `internal` declaration can be annotated with the `@PublishedApi` annotation:
+ * - this allows to call that declaration from public inline functions;
+ * - the declaration becomes effectively public, and this should be considered with respect to binary compatibility maintaining.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@SinceKotlin("1.1")
+public annotation class PublishedApi

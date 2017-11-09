@@ -1,0 +1,13 @@
+package
+
+public fun </*0*/ T : kotlin.Any> kclass(/*0*/ k: kotlin.reflect.KClass<*>, /*1*/ kt: kotlin.reflect.KClass<T>): kotlin.Unit
+public fun testSomeValidCases(/*0*/ p0: kotlin.reflect.KProperty0<kotlin.Int>, /*1*/ pm0: kotlin.reflect.KMutableProperty0<kotlin.String>, /*2*/ f: kotlin.reflect.KFunction<kotlin.String>, /*3*/ p1: kotlin.reflect.KProperty1<kotlin.String, kotlin.Int>, /*4*/ p2: kotlin.reflect.KProperty2<kotlin.String, kotlin.String, kotlin.Int>): kotlin.Unit
+
+public final class Foo {
+    public constructor Foo(/*0*/ prop: kotlin.Any)
+    public final val prop: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun func(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

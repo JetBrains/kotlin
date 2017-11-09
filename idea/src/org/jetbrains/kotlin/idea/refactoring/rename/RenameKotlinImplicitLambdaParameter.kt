@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,15 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
 import org.jetbrains.kotlin.idea.intentions.isAutoCreatedItUsage
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
-class RenameKotlinImplicitLambdaParameter: VariableInplaceRenameHandler() {
+class RenameKotlinImplicitLambdaParameter : VariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
-        val nameExpression = PsiTreeUtil.findElementOfClassAtOffset(
-                file, editor.caretModel.offset, KtNameReferenceExpression::class.java, false)
+        val nameExpression = file.findElementForRename<KtNameReferenceExpression>(editor.caretModel.offset)
 
         return nameExpression != null && isAutoCreatedItUsage(nameExpression)
     }

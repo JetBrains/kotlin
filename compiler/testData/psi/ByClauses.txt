@@ -1,4 +1,4 @@
-JetFile: ByClauses.kt
+KtFile: ByClauses.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ModuleScriptData {
-    public static final ModuleScriptData EMPTY = new ModuleScriptData(Collections.<Module>emptyList());
+    public static final ModuleScriptData EMPTY = new ModuleScriptData(Collections.emptyList());
 
     private final List<Module> modules;
 

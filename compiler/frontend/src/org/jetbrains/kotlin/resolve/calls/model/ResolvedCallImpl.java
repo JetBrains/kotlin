@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve.calls.model;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.SmartList;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -33,6 +35,8 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -53,14 +57,14 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             @NotNull TracingStrategy tracing,
             @NotNull MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        return new ResolvedCallImpl<D>(candidate, trace, tracing, dataFlowInfoForArguments);
+        return new ResolvedCallImpl<>(candidate, trace, tracing, dataFlowInfoForArguments);
     }
 
     private final Call call;
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
     private final ReceiverValue dispatchReceiver; // receiver object of a method
-    private final ReceiverValue extensionReceiver; // receiver of an extension function
+    private ReceiverValue extensionReceiver; // receiver of an extension function
     private final ExplicitReceiverKind explicitReceiverKind;
     private final TypeSubstitutor knownTypeParametersSubstitutor;
 
@@ -79,6 +83,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private Boolean hasInferredReturnType = null;
     private boolean completed = false;
     private KotlinType smartCastDispatchReceiverType = null;
+    private Queue<Function0<Unit>> remainingTasks = null;
 
     private ResolvedCallImpl(
             @NotNull ResolutionCandidate<D> candidate,
@@ -127,23 +132,17 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @NotNull
     private static Map<ValueParameterDescriptor, ResolvedValueArgument> createValueArgumentsMap(CallableDescriptor descriptor) {
-        return descriptor.getValueParameters().isEmpty()
-               ? Collections.<ValueParameterDescriptor, ResolvedValueArgument>emptyMap()
-               : Maps.<ValueParameterDescriptor, ResolvedValueArgument>newLinkedHashMap();
+        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : Maps.newLinkedHashMap();
     }
 
     @NotNull
     private static Map<ValueArgument, ArgumentMatchImpl> createArgumentsToParameterMap(CallableDescriptor descriptor) {
-        return descriptor.getValueParameters().isEmpty()
-               ? Collections.<ValueArgument, ArgumentMatchImpl>emptyMap()
-               : Maps.<ValueArgument, ArgumentMatchImpl>newHashMap();
+        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : Maps.newHashMap();
     }
 
     @NotNull
     private static Map<TypeParameterDescriptor, KotlinType> createTypeArgumentsMap(CallableDescriptor descriptor) {
-        return descriptor.getTypeParameters().isEmpty()
-               ? Collections.<TypeParameterDescriptor, KotlinType>emptyMap()
-               : Maps.<TypeParameterDescriptor, KotlinType>newLinkedHashMap();
+        return descriptor.getTypeParameters().isEmpty() ? Collections.emptyMap() : Maps.newLinkedHashMap();
     }
 
     @Override
@@ -212,7 +211,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         List<ValueParameterDescriptor> substitutedParameters = resultingDescriptor.getValueParameters();
 
         Collection<Map.Entry<ValueParameterDescriptor, ResolvedValueArgument>> valueArgumentsBeforeSubstitution =
-                new SmartList<Map.Entry<ValueParameterDescriptor, ResolvedValueArgument>>(valueArguments.entrySet());
+                new SmartList<>(valueArguments.entrySet());
 
         valueArguments.clear();
 
@@ -223,7 +222,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         }
 
         Collection<Map.Entry<ValueArgument, ArgumentMatchImpl>> unsubstitutedArgumentMappings =
-                new SmartList<Map.Entry<ValueArgument, ArgumentMatchImpl>>(argumentToParameterMap.entrySet());
+                new SmartList<>(argumentToParameterMap.entrySet());
 
         argumentToParameterMap.clear();
         for (Map.Entry<ValueArgument, ArgumentMatchImpl> entry : unsubstitutedArgumentMappings) {
@@ -283,11 +282,11 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     @Nullable
     @Override
     public List<ResolvedValueArgument> getValueArgumentsByIndex() {
-        List<ResolvedValueArgument> arguments = new ArrayList<ResolvedValueArgument>(candidateDescriptor.getValueParameters().size());
+        List<ResolvedValueArgument> arguments = new ArrayList<>(candidateDescriptor.getValueParameters().size());
         for (int i = 0; i < candidateDescriptor.getValueParameters().size(); ++i) {
             arguments.add(null);
         }
-        
+
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : valueArguments.entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument value = entry.getValue();
@@ -303,7 +302,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
                 return null;
             }
         }
-        
+
         return arguments;
     }
 
@@ -357,6 +356,23 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         constraintSystem = null;
         tracing = null;
         completed = true;
+        remainingTasks = null;
+    }
+
+    @Override
+    public void addRemainingTasks(Function0<Unit> task) {
+        if (remainingTasks == null) {
+            remainingTasks = new ArrayDeque<>();
+        }
+        remainingTasks.add(task);
+    }
+
+    @Override
+    public void performRemainingTasks() {
+        if (remainingTasks == null) return;
+        while (!remainingTasks.isEmpty()) {
+            remainingTasks.poll().invoke();
+        }
     }
 
     @Override
@@ -383,5 +399,15 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     @Nullable
     public KotlinType getSmartCastDispatchReceiverType() {
         return smartCastDispatchReceiverType;
+    }
+
+    @Override
+    public void updateExtensionReceiverWithSmartCastIfNeeded(@NotNull KotlinType smartCastExtensionReceiverType) {
+        if (extensionReceiver instanceof ImplicitClassReceiver) {
+            extensionReceiver = new CastImplicitClassReceiver(
+                    ((ImplicitClassReceiver) extensionReceiver).getClassDescriptor(),
+                    smartCastExtensionReceiverType
+            );
+        }
     }
 }

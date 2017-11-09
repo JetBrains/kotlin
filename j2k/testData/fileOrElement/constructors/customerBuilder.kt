@@ -7,11 +7,8 @@ internal class Customer(val firstName: String, val lastName: String) {
         doSmthAfter()
     }
 
-    private fun doSmthBefore() {
-    }
-
-    private fun doSmthAfter() {
-    }
+    private fun doSmthBefore() {}
+    private fun doSmthAfter() {}
 }
 
 internal class CustomerBuilder {

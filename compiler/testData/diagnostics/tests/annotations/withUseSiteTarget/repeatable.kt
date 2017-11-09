@@ -14,7 +14,7 @@ public class A(@param:Ann <!REPEATED_ANNOTATION!>@Ann<!> val x: Int, @param: Rep
     @field:Ann @property:Ann @RepeatableAnn @property:RepeatableAnn
     val a: Int = 0
 
-    @Ann <!REPEATED_ANNOTATION!>@field:Ann<!> <!REPEATED_ANNOTATION!>@property:Ann<!>
+    @Ann @field:Ann <!REPEATED_ANNOTATION!>@property:Ann<!>
     val b: Int = 0
 
     @field:RepeatableAnn @field:RepeatableAnn
@@ -29,14 +29,31 @@ public class A(@param:Ann <!REPEATED_ANNOTATION!>@Ann<!> val x: Int, @param: Rep
     @property:Ann @delegate:Ann
     val f: String by CustomDelegate()
 
-    // Ideally we should not have repeated anotation here and below
-    // (because @Ann should go to the property and the second annotation to its related field)
-    @Ann <!REPEATED_ANNOTATION!>@delegate:Ann<!>
+    @Ann @delegate:Ann
     val g: String by CustomDelegate()
 
-    @Ann <!REPEATED_ANNOTATION!>@field:Ann<!>
+    @Ann @field:Ann
     val h: String = ""
 
     @property:Ann @field:Ann
     val i: String = ""
+}
+
+@Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
+annotation class fieldOrPropAnn
+
+@Target(AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.VALUE_PARAMETER)
+annotation class getSetAndParamAnn
+
+public class B(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:fieldOrPropAnn<!> @fieldOrPropAnn val x: Int,
+               @property:fieldOrPropAnn <!REPEATED_ANNOTATION!>@fieldOrPropAnn<!> val y: Int) {
+    @fieldOrPropAnn @field:fieldOrPropAnn
+    val z: Int = 42
+
+    <!WRONG_ANNOTATION_TARGET!>@getSetAndParamAnn<!>
+    <!REPEATED_ANNOTATION!>@setparam:getSetAndParamAnn<!>
+    var w: Int
+        @getSetAndParamAnn <!REPEATED_ANNOTATION!>@get:getSetAndParamAnn<!> get() = 0
+        // See KT-15470: fake INAPPLICABLE_TARGET_ON_PROPERTY
+        @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY, REPEATED_ANNOTATION!>@set:getSetAndParamAnn<!> set(arg) {}
 }

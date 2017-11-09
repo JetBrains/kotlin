@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -53,7 +53,7 @@ class KotlinCompletionStatistician : CompletionStatistician() {
 class KotlinProximityStatistician : ProximityStatistician() {
     override fun serialize(element: PsiElement, location: ProximityLocation): StatisticsInfo? {
         if (element !is KtDeclaration) return null
-        val descriptor = element.resolveToDescriptor()
+        val descriptor = element.resolveToDescriptorIfAny() ?: return null
         return KotlinStatisticsInfo.forDescriptor(descriptor)
     }
 }
@@ -65,7 +65,7 @@ object KotlinStatisticsInfo {
         startFromName = true
         receiverAfterName = true
         modifiers = emptySet()
-        renderDefaultValues = false
+        defaultParameterValueRenderer = null
         parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
     }
 

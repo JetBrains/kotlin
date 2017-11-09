@@ -1,0 +1,11 @@
+>>> (listOf(1) as List<String>).unresolved()
+error: unresolved reference: unresolved
+(listOf(1) as List<String>).unresolved()
+                            ^
+>>> listOf<String>(1!!)
+error: the integer literal does not conform to the expected type String?
+listOf<String>(1!!)
+               ^
+error: type mismatch: inferred type is Int but String was expected
+listOf<String>(1!!)
+               ^

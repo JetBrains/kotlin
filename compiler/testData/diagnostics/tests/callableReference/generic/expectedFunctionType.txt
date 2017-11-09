@@ -1,0 +1,33 @@
+package
+
+public final class A1 {
+    public constructor A1()
+    public final fun </*0*/ T> a1(/*0*/ t: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test1(): (kotlin.String) -> kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class A2 {
+    public constructor A2()
+    public final fun </*0*/ K, /*1*/ V> a2(/*0*/ key: K): V
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test1(): (kotlin.String) -> kotlin.Unit
+    public final fun </*0*/ T3> test2(): (T3) -> T3
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class A3</*0*/ T> {
+    public constructor A3</*0*/ T>()
+    public final fun </*0*/ V> a3(/*0*/ key: T): V
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test1(): (T) -> kotlin.Int
+    public final fun test2(): (T) -> kotlin.Unit
+    public final fun test3(): (kotlin.Int) -> kotlin.String
+    public final fun </*0*/ R> test4(): (R) -> kotlin.Unit
+    public final fun </*0*/ R> test5(): (T) -> R
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1112
 package foo
 
 class myInt(a: Int) {

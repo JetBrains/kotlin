@@ -1,0 +1,22 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:1:14: error: actual class 'Foo' has no corresponding members for expected class members:
+
+    public constructor Foo(s: String)
+
+    The following declaration is incompatible because parameter types are different:
+        public constructor Foo(s: Array<String>)
+
+actual class Foo {
+             ^
+compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:2:23: error: actual constructor of 'Foo' has no corresponding expected declaration
+The following declaration is incompatible because parameter types are different:
+    public constructor Foo(s: String)
+
+    actual constructor(s: Array<String>)
+                      ^

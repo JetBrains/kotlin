@@ -5,6 +5,5 @@ public open class Basic {
     public open fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
 
     // Static members
-    public final /*synthesized*/ fun bar(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
     public open fun bar(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
 }

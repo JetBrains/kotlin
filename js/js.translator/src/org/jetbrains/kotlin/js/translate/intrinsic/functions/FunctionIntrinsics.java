@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.*;
+import org.jetbrains.kotlin.js.translate.intrinsic.operation.StringPlusCharFIF;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ import java.util.Map;
 public final class FunctionIntrinsics {
 
     @NotNull
-    private final Map<FunctionDescriptor, FunctionIntrinsic> intrinsicCache = new THashMap<FunctionDescriptor, FunctionIntrinsic>();
+    private final Map<FunctionDescriptor, FunctionIntrinsic> intrinsicCache = new THashMap<>();
 
     @NotNull
     private final List<FunctionIntrinsicFactory> factories = Lists.newArrayList();
@@ -42,12 +43,15 @@ public final class FunctionIntrinsics {
     private void registerFactories() {
         register(LongOperationFIF.INSTANCE);
         register(PrimitiveUnaryOperationFIF.INSTANCE);
+        register(StringPlusCharFIF.INSTANCE);
         register(PrimitiveBinaryOperationFIF.INSTANCE);
-        register(StringOperationFIF.INSTANCE);
         register(ArrayFIF.INSTANCE);
         register(TopLevelFIF.INSTANCE);
         register(NumberAndCharConversionFIF.INSTANCE);
-        register(ProgressionCompanionFIF.INSTANCE);
+        register(ThrowableConstructorIntrinsicFactory.INSTANCE);
+        register(ExceptionPropertyIntrinsicFactory.INSTANCE);
+        register(AsDynamicFIF.INSTANCE);
+        register(CoroutineContextFIF.INSTANCE);
     }
 
     private void register(@NotNull FunctionIntrinsicFactory instance) {

@@ -75,12 +75,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull Annotations annotations,
             @NotNull SourceElement source
     ) {
-        super(storageManager, containingClass, name, source);
+        super(storageManager, containingClass, name, source, /* isExternal = */ false);
         assert containingClass.getKind() == ClassKind.ENUM_CLASS;
 
         this.annotations = annotations;
         this.typeConstructor = new ClassTypeConstructorImpl(
-                this, getAnnotations(), true, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(supertype)
+                this, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(supertype)
         );
 
         this.scope = new EnumEntryScope(storageManager);
@@ -154,6 +154,16 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         return false;
     }
 
+    @Override
+    public boolean isExpect() {
+        return false;
+    }
+
+    @Override
+    public boolean isActual() {
+        return false;
+    }
+
     @Nullable
     @Override
     public ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
@@ -174,6 +184,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     @NotNull
     @Override
     public List<TypeParameterDescriptor> getDeclaredTypeParameters() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getSealedSubclasses() {
         return Collections.emptyList();
     }
 
@@ -292,6 +308,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         @Override
         public Set<Name> getFunctionNames() {
             return enumMemberNames.invoke();
+        }
+
+        @NotNull
+        @Override
+        public Set<Name> getClassifierNames() {
+            return Collections.emptySet();
         }
 
         @NotNull

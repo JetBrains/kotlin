@@ -1,5 +1,5 @@
 // FILE: main.before.kt
-// "Import member" "false"
+// "Import" "false"
 // ACTION: Create local variable 'foobar'
 // ACTION: Create object 'foobar'
 // ACTION: Create parameter 'foobar'

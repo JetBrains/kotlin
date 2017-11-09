@@ -1,13 +1,17 @@
 package kotlin.js
 
-// https://developer.mozilla.org/en/DOM/console
-@native public interface Console {
-    @native public fun dir(o: Any): Unit = noImpl
-    @native public fun error(vararg o: Any?): Unit = noImpl
-    @native public fun info(vararg o: Any?): Unit = noImpl
-    @native public fun log(vararg o: Any?): Unit = noImpl
-    @native public fun warn(vararg o: Any?): Unit = noImpl
+/**
+ * Exposes the [console API](https://developer.mozilla.org/en/DOM/console) to Kotlin.
+ */
+external public interface Console {
+    public fun dir(o: Any): Unit
+    public fun error(vararg o: Any?): Unit
+    public fun info(vararg o: Any?): Unit
+    public fun log(vararg o: Any?): Unit
+    public fun warn(vararg o: Any?): Unit
 }
 
-@native
-public val console: Console = noImpl
+/**
+ * Exposes the [console API](https://developer.mozilla.org/en/DOM/console) to Kotlin.
+ */
+public external val console: Console

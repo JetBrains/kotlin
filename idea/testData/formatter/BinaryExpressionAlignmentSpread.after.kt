@@ -1,5 +1,4 @@
-fun some(f: (String) -> Unit) {
-}
+fun some(f: (String) -> Unit) {}
 
 fun test() {
     3 + object {
@@ -8,8 +7,7 @@ fun test() {
         }
     }
 
-    2 ?: some {
-        s ->
+    2 ?: some { s ->
         val a = 12
     }
 }

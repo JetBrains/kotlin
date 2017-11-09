@@ -17,15 +17,13 @@
 package org.jetbrains.kotlin.idea.completion.test.weighers
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
-import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.completion.test.RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
+import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
-import java.io.File
 
 abstract class AbstractCompletionWeigherTest(val completionType: CompletionType, val relativeTestDataPath: String) : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
@@ -33,7 +31,7 @@ abstract class AbstractCompletionWeigherTest(val completionType: CompletionType,
         assert(path.startsWith(pathPrefix))
         val relativePath = path.removePrefix(pathPrefix)
 
-        myFixture.configureWithExtraFile(relativePath, ".Data", ".Data1", ".Data2", ".Data3", ".Data4", ".Data5", ".Data6", relativePaths = true)
+        myFixture.configureWithExtraFile(relativePath, ".Data", ".Data1", ".Data2", ".Data3", ".Data4", ".Data5", ".Data6")
 
         val text = myFixture.editor.document.text
 
@@ -43,8 +41,6 @@ abstract class AbstractCompletionWeigherTest(val completionType: CompletionType,
         myFixture.complete(completionType, InTextDirectivesUtils.getPrefixedInt(text, "// INVOCATION_COUNT:") ?: 1)
         myFixture.assertPreferredCompletionItems(InTextDirectivesUtils.getPrefixedInt(text, "// SELECTED:") ?: 0, *items)
     }
-
-    override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, relativeTestDataPath).path + File.separator
 }
 
 abstract class AbstractBasicCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.BASIC, "weighers/basic") {

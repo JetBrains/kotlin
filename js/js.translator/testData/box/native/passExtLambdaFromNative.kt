@@ -1,14 +1,16 @@
+// EXPECTED_REACHABLE_NODES: 1113
 package foo
 
-@native
-internal class A(val v: String)
+internal external class A(v: String) {
+    val v: String
+}
 
 internal class B {
     fun bar(a: A, extLambda: A.(Int, String) -> String): String = a.extLambda(7, "_rr_")
 }
 
-@native
-internal fun nativeBox(b: B): String = noImpl
+
+internal external fun nativeBox(b: B): String = definedExternally
 
 fun box(): String {
     val r = nativeBox(B())

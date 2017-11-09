@@ -1,0 +1,72 @@
+FILE /lambdaInCAO.kt
+  FUN public operator fun kotlin.Any.plusAssign(lambda: () -> kotlin.Unit): kotlin.Unit
+    $receiver: VALUE_PARAMETER this@plusAssign: Any
+    VALUE_PARAMETER value-parameter lambda: () -> kotlin.Unit
+    BLOCK_BODY
+  FUN public operator fun kotlin.Any.get(index: () -> kotlin.Unit): kotlin.Int
+    $receiver: VALUE_PARAMETER this@get: Any
+    VALUE_PARAMETER value-parameter index: () -> kotlin.Unit
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='get(() -> Unit) on Any: Int'
+        CONST Int type=kotlin.Int value='42'
+  FUN public operator fun kotlin.Any.set(index: () -> kotlin.Unit, value: kotlin.Int): kotlin.Unit
+    $receiver: VALUE_PARAMETER this@set: Any
+    VALUE_PARAMETER value-parameter index: () -> kotlin.Unit
+    VALUE_PARAMETER value-parameter value: kotlin.Int
+    BLOCK_BODY
+  FUN public fun test1(a: kotlin.Any): kotlin.Unit
+    VALUE_PARAMETER value-parameter a: kotlin.Any
+    BLOCK_BODY
+      CALL 'plusAssign(() -> Unit) on Any: Unit' type=kotlin.Unit origin=PLUSEQ
+        $receiver: GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=PLUSEQ
+        lambda: BLOCK type=() -> kotlin.Unit origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                GET_OBJECT 'Unit' type=kotlin.Unit
+          FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+  FUN public fun test2(a: kotlin.Any): kotlin.Unit
+    VALUE_PARAMETER value-parameter a: kotlin.Any
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit origin=PLUSEQ
+        VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.Any
+          GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
+        VAR IR_TEMPORARY_VARIABLE val tmp1_index0: () -> kotlin.Unit
+          BLOCK type=() -> kotlin.Unit origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                  GET_OBJECT 'Unit' type=kotlin.Unit
+            FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+        CALL 'set(() -> Unit, Int) on Any: Unit' type=kotlin.Unit origin=PLUSEQ
+          $receiver: GET_VAR 'tmp0_array: Any' type=kotlin.Any origin=null
+          index: GET_VAR 'tmp1_index0: () -> Unit' type=() -> kotlin.Unit origin=null
+          value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
+            $this: CALL 'get(() -> Unit) on Any: Int' type=kotlin.Int origin=PLUSEQ
+              $receiver: GET_VAR 'tmp0_array: Any' type=kotlin.Any origin=null
+              index: GET_VAR 'tmp1_index0: () -> Unit' type=() -> kotlin.Unit origin=null
+            other: CONST Int type=kotlin.Int value='42'
+  FUN public fun test3(a: kotlin.Any): kotlin.Unit
+    VALUE_PARAMETER value-parameter a: kotlin.Any
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        BLOCK type=kotlin.Int origin=POSTFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.Any
+            GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
+          VAR IR_TEMPORARY_VARIABLE val tmp1_index0: () -> kotlin.Unit
+            BLOCK type=() -> kotlin.Unit origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                    GET_OBJECT 'Unit' type=kotlin.Unit
+              FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+          VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
+            CALL 'get(() -> Unit) on Any: Int' type=kotlin.Int origin=POSTFIX_INCR
+              $receiver: GET_VAR 'tmp0_array: Any' type=kotlin.Any origin=null
+              index: GET_VAR 'tmp1_index0: () -> Unit' type=() -> kotlin.Unit origin=null
+          CALL 'set(() -> Unit, Int) on Any: Unit' type=kotlin.Unit origin=POSTFIX_INCR
+            $receiver: GET_VAR 'tmp0_array: Any' type=kotlin.Any origin=null
+            index: GET_VAR 'tmp1_index0: () -> Unit' type=() -> kotlin.Unit origin=null
+            value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
+          GET_VAR 'tmp2: Int' type=kotlin.Int origin=null

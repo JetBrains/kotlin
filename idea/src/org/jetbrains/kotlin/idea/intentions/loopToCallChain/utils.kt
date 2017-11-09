@@ -18,10 +18,13 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -35,12 +38,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiUtil.isOrdinaryAssignment
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpression): KtLambdaExpression {
@@ -162,7 +163,7 @@ fun KtExpression?.findVariableInitializationBeforeLoop(
     for (statement in prevStatements) {
         val variableInitialization = extractVariableInitialization(statement, variable)
         if (variableInitialization != null) {
-            return variableInitialization.check {
+            return variableInitialization.takeIf {
                 statementsBetween.all { canSwapExecutionOrder(variableInitialization.initializationStatement, it) }
             }
         }
@@ -230,46 +231,54 @@ fun canChangeLocalVariableType(variable: KtProperty, newTypeText: String, loop: 
 
 fun <TExpression : KtExpression> tryChangeAndCheckErrors(
         expressionToChange: TExpression,
-        scopeToExclude: KtElement,
+        scopeToExclude: KtElement? = null,
         performChange: (TExpression) -> Unit
 ): Boolean {
     val bindingContext = expressionToChange.analyze(BodyResolveMode.FULL)
 
-    // analyze the closest block which is not used as expression
+    // analyze the closest block whose value is not used
     val block = expressionToChange.parents
                         .filterIsInstance<KtBlockExpression>()
-                        .firstOrNull { bindingContext[BindingContext.USED_AS_EXPRESSION, it] != true }
+                        .firstOrNull { !it.isUsedAsExpression(bindingContext) }
                 ?: return true
 
     // we declare these keys locally to avoid possible race-condition problems if this code is executed in 2 threads simultaneously
     val EXPRESSION = Key<Unit>("EXPRESSION")
     val SCOPE_TO_EXCLUDE = Key<Unit>("SCOPE_TO_EXCLUDE")
+    val ERRORS_BEFORE = Key<Collection<DiagnosticFactory<*>>>("ERRORS_BEFORE")
 
     expressionToChange.putCopyableUserData(EXPRESSION, Unit)
-    scopeToExclude.putCopyableUserData(SCOPE_TO_EXCLUDE, Unit)
+    scopeToExclude?.putCopyableUserData(SCOPE_TO_EXCLUDE, Unit)
+
+    block.forEachDescendantOfType<PsiElement> { element ->
+        val errors = bindingContext.diagnostics.forElement(element)
+                .filter { it.severity == Severity.ERROR }
+        if (errors.isNotEmpty()) {
+            element.putCopyableUserData(ERRORS_BEFORE, errors.map { it.factory })
+        }
+    }
 
     val blockCopy = block.copied()
     val expressionCopy: TExpression
-    val scopeToExcludeCopy: KtElement
+    val scopeToExcludeCopy: KtElement?
     @Suppress("UNCHECKED_CAST")
     try {
         expressionCopy = blockCopy.findDescendantOfType<KtExpression> { it.getCopyableUserData(EXPRESSION) != null } as TExpression
-        scopeToExcludeCopy = blockCopy.findDescendantOfType<KtElement> { it.getCopyableUserData(SCOPE_TO_EXCLUDE) != null }!!
+        scopeToExcludeCopy = blockCopy.findDescendantOfType<KtElement> { it.getCopyableUserData(SCOPE_TO_EXCLUDE) != null }
     }
     finally {
         expressionToChange.putCopyableUserData(EXPRESSION, null)
-        scopeToExclude.putCopyableUserData(SCOPE_TO_EXCLUDE, null)
+        scopeToExclude?.putCopyableUserData(SCOPE_TO_EXCLUDE, null)
     }
 
     performChange(expressionCopy)
 
-    val resolutionScope = block.getResolutionScope(bindingContext, block.getResolutionFacade())
-    val newBindingContext = blockCopy.analyzeInContext(scope = resolutionScope,
-                                                       contextExpression = block,
-                                                       dataFlowInfo = bindingContext.getDataFlowInfo(block),
-                                                       trace = DelegatingBindingTrace(bindingContext, "Temporary trace"))
-    //TODO: what if there were errors before?
-    return newBindingContext.diagnostics.none { it.severity == Severity.ERROR && !scopeToExcludeCopy.isAncestor(it.psiElement) }
+    val newBindingContext = blockCopy.analyzeAsReplacement(block, bindingContext)
+    return newBindingContext.diagnostics.none {
+        it.severity == Severity.ERROR
+            && !scopeToExcludeCopy.isAncestor(it.psiElement)
+            && it.factory !in (it.psiElement.getCopyableUserData(ERRORS_BEFORE) ?: emptyList())
+    }
 }
 
 private val NO_SIDE_EFFECT_STANDARD_CLASSES = setOf(
@@ -367,15 +376,15 @@ fun KtExpression.countEmbeddedBreaksAndContinues(): Int {
 private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolean {
     if (expression !is KtBreakExpression && expression !is KtContinueExpression) return false
     val parent = expression.parent
-    when (parent) {
-        is KtBlockExpression -> return false
+    return when (parent) {
+        is KtBlockExpression -> false
 
         is KtContainerNode -> {
             val containerExpression = parent.parent as KtExpression
-            return containerExpression.analyze(BodyResolveMode.PARTIAL)[BindingContext.USED_AS_EXPRESSION, containerExpression] == true
+            containerExpression.isUsedAsExpression(containerExpression.analyze(BodyResolveMode.PARTIAL))
         }
 
-        else -> return true
+        else -> true
     }
 }
 

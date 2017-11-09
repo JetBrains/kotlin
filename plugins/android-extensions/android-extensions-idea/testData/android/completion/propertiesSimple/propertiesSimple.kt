@@ -7,4 +7,4 @@ class MyActivity: Activity() {
     val button = this.login<caret>
 }
 
-// EXIST: login
+// EXIST: { lookupString:"login", tailText: " from layout.xml for Activity (Android Extensions)", typeText:"Button!" }

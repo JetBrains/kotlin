@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.utils
 
 import java.util.*
+import kotlin.coroutines.experimental.SequenceBuilder
 
 fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
     return associateBy({ it }, value)
@@ -54,13 +55,15 @@ inline fun <K, V> MutableMap<K, V>.getOrPutNullable(key: K, defaultValue: () -> 
 
 inline fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this
 
-inline fun <T> Array<out T>.ifEmpty(body: () -> Array<out T>): Array<out T> = if (isEmpty()) body() else this
+inline fun <K, V, M: Map<K, V>> M.ifEmpty(body: () -> M): M = if (isEmpty()) body() else this
 
-fun <T: Any> emptyOrSingletonList(item: T?): List<T> = listOfNotNull(item)
+inline fun <T> Array<out T>.ifEmpty(body: () -> Array<out T>): Array<out T> = if (isEmpty()) body() else this
 
 fun <T: Any> MutableCollection<T>.addIfNotNull(t: T?) {
     if (t != null) add(t)
 }
+
+suspend fun <T: Any> SequenceBuilder<T>.yieldIfNotNull(t: T?) = if (t != null) yield(t) else Unit
 
 fun <K, V> newHashMapWithExpectedSize(expectedSize: Int): HashMap<K, V> =
         HashMap(capacity(expectedSize))
@@ -77,22 +80,12 @@ fun <E> newLinkedHashSetWithExpectedSize(expectedSize: Int): LinkedHashSet<E> =
 private fun capacity(expectedSize: Int): Int =
         if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1
 
-fun <T> Collection<T>.toReadOnlyList(): List<T> =
+fun <T> ArrayList<T>.compact(): List<T> =
         when (size) {
             0 -> emptyList()
             1 -> listOf(first())
-            else -> ArrayList(this)
+            else -> apply { trimToSize() }
         }
-
-fun <T> ArrayList<T>.compactIfPossible(): List<T> =
-        when (size) {
-            0 -> emptyList()
-            1 -> listOf(first())
-            else -> apply(ArrayList<T>::trimToSize)
-        }
-
-fun <T: Any> T?.singletonOrEmptyList(): List<T> =
-        if (this != null) listOf(this) else emptyList()
 
 fun <T> List<T>.indexOfFirst(startFrom: Int, predicate: (T) -> Boolean): Int {
     for (index in startFrom..lastIndex) {

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
 
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.ide.util.ClassFilter;
 import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeJavaClassChooserDialog;
@@ -23,9 +24,9 @@ import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaCodeFragment;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.RefactoringBundle;
@@ -34,18 +35,21 @@ import com.intellij.refactoring.classMembers.MemberInfoChange;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandler;
 import com.intellij.refactoring.ui.RefactoringDialog;
-import com.intellij.ui.ReferenceEditorComboWithBrowseButton;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration;
+import org.jetbrains.kotlin.idea.completion.CompletionUtilsKt;
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject;
 import org.jetbrains.kotlin.idea.projectView.KtClassOrObjectTreeNode;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable;
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
+import org.jetbrains.kotlin.idea.refactoring.ui.KotlinTypeReferenceEditorComboWithBrowseButton;
 import org.jetbrains.kotlin.psi.*;
 
 import javax.swing.*;
@@ -57,23 +61,16 @@ import java.util.List;
 
 public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     private static final String RECENTS_KEY = MoveKotlinNestedClassesDialog.class.getName() + ".RECENTS_KEY";
-
-    private static class MemberInfoModelImpl extends AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo> {
-
-    }
-
+    private final KtClassOrObject originalClass;
+    private final MoveCallback moveCallback;
     private JPanel mainPanel;
     private JTextField originalClassField;
     private JPanel membersInfoPanel;
-    private ReferenceEditorComboWithBrowseButton targetClassChooser;
+    private KotlinTypeReferenceEditorComboWithBrowseButton targetClassChooser;
     private JCheckBox openInEditorCheckBox;
     private JPanel targetClassChooserPanel;
     private KotlinMemberSelectionTable memberTable;
-
-    private final KtClassOrObject originalClass;
-    private KtClassOrObject targetClass;
-    private final MoveCallback moveCallback;
-
+    private PsiElement targetClass;
     public MoveKotlinNestedClassesDialog(
             @NotNull Project project,
             @NotNull List<KtClassOrObject> elementsToMove,
@@ -103,7 +100,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         originalClassField.setText(originalClass.getFqName().asString());
 
         //noinspection ConstantConditions
-        targetClassChooser = new ReferenceEditorComboWithBrowseButton(
+        targetClassChooser = new KotlinTypeReferenceEditorComboWithBrowseButton(
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -152,13 +149,30 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                             targetClass = ((KtLightClassForSourceDeclaration) aClass).getKotlinOrigin();
                             targetClassChooser.setText(aClass.getQualifiedName());
                         }
+                        else {
+                            targetClass = aClass;
+                        }
                     }
                 },
                 initialTargetClass.getFqName().asString(),
-                myProject,
-                true,
-                JavaCodeFragment.VisibilityChecker.PROJECT_SCOPE_VISIBLE,
+                originalClass,
                 RECENTS_KEY);
+        KtTypeCodeFragment codeFragment = targetClassChooser.getCodeFragment();
+        if (codeFragment != null) {
+            CompletionUtilsKt.setExtraCompletionFilter(
+                    codeFragment,
+                    new Function1<LookupElement, Boolean>() {
+                        @Override
+                        public Boolean invoke(LookupElement lookupElement) {
+                            Object lookupObject = lookupElement.getObject();
+                            if (!(lookupObject instanceof DeclarationLookupObject)) return false;
+                            PsiElement psiElement = ((DeclarationLookupObject) lookupObject).getPsiElement();
+                            if (!(psiElement instanceof KtClassOrObject)) return false;
+                            return KotlinRefactoringUtilKt.canRefactor(psiElement);
+                        }
+                    }
+            );
+        }
         targetClassChooser.getChildComponent().getDocument().addDocumentListener(
                 new DocumentAdapter() {
                     @Override
@@ -168,7 +182,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                                 .findClass(targetClassChooser.getText(), GlobalSearchScope.projectScope(myProject));
                         targetClass = aClass instanceof KtLightClassForSourceDeclaration
                                       ? ((KtLightClassForSourceDeclaration) aClass).getKotlinOrigin()
-                                      : null;
+                                      : aClass;
                         validateButtons();
                     }
                 }
@@ -183,8 +197,12 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                     @Override
                     public KotlinMemberInfo invoke(KtDeclaration declaration) {
                         if (!(declaration instanceof KtClassOrObject)) return null;
+                        KtClassOrObject classOrObject = (KtClassOrObject) declaration;
 
-                        KotlinMemberInfo memberInfo = new KotlinMemberInfo((KtClassOrObject) declaration, false);
+                        if (classOrObject instanceof KtClass && ((KtClass) classOrObject).isInner()) return null;
+                        if (classOrObject instanceof KtObjectDeclaration && ((KtObjectDeclaration) classOrObject).isCompanion()) return null;
+
+                        KotlinMemberInfo memberInfo = new KotlinMemberInfo(classOrObject, false);
                         memberInfo.setChecked(elementsToMove.contains(declaration));
                         return memberInfo;
                     }
@@ -225,6 +243,8 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     protected void canRun() throws ConfigurationException {
         if (targetClass == null) throw new ConfigurationException("No destination class specified");
 
+        if (!(targetClass instanceof KtClassOrObject)) throw new ConfigurationException("Destination class must be a Kotlin class");
+
         if (originalClass == targetClass) {
             throw new ConfigurationException(RefactoringBundle.message("source.and.destination.classes.should.be.different"));
         }
@@ -239,16 +259,20 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     @Override
     protected void doAction() {
         List<KtClassOrObject> elementsToMove = getSelectedElementsToMove();
-        KotlinMoveTarget target = new KotlinMoveTargetForExistingElement(targetClass);
+        KotlinMoveTarget target = new KotlinMoveTargetForExistingElement((KtClassOrObject) targetClass);
         MoveDeclarationsDelegate.NestedClass delegate = new MoveDeclarationsDelegate.NestedClass();
         MoveDeclarationsDescriptor descriptor = new MoveDeclarationsDescriptor(
-                elementsToMove, target, delegate, false, false, true, false, moveCallback, openInEditorCheckBox.isSelected()
+                myProject, elementsToMove, target, delegate, false, false, false, false, moveCallback, openInEditorCheckBox.isSelected()
         );
-        invokeRefactoring(new MoveKotlinDeclarationsProcessor(myProject, descriptor, Mover.Default.INSTANCE));
+        invokeRefactoring(new MoveKotlinDeclarationsProcessor(descriptor, Mover.Default.INSTANCE));
     }
 
     @Override
     public JComponent getPreferredFocusedComponent() {
         return targetClassChooser.getChildComponent();
+    }
+
+    private static class MemberInfoModelImpl extends AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo> {
+
     }
 }

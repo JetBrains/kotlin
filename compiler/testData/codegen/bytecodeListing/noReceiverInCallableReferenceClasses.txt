@@ -1,0 +1,66 @@
+@kotlin.Metadata
+public final class A {
+    private final field bar: int
+    public method <init>(): void
+    public final method foo(): void
+    public final method getBar(): int
+}
+
+@kotlin.Metadata
+final class NoReceiverInCallableReferenceClassesKt$A_bar$1 {
+    public final static field INSTANCE: kotlin.reflect.KProperty1
+    static method <clinit>(): void
+    method <init>(): void
+    public @org.jetbrains.annotations.Nullable method get(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
+    public method getName(): java.lang.String
+    public method getOwner(): kotlin.reflect.KDeclarationContainer
+    public method getSignature(): java.lang.String
+}
+
+@kotlin.Metadata
+final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
+    public final static field INSTANCE: NoReceiverInCallableReferenceClassesKt$A_foo$1
+    inner class NoReceiverInCallableReferenceClassesKt$A_foo$1
+    static method <clinit>(): void
+    method <init>(): void
+    public final method getName(): java.lang.String
+    public final method getOwner(): kotlin.reflect.KDeclarationContainer
+    public final method getSignature(): java.lang.String
+    public final method invoke(@org.jetbrains.annotations.NotNull p0: A): void
+    public synthetic method invoke(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+final class NoReceiverInCallableReferenceClassesKt$aBar$1 {
+    method <init>(p0: A): void
+    public @org.jetbrains.annotations.Nullable method get(): java.lang.Object
+    public method getName(): java.lang.String
+    public method getOwner(): kotlin.reflect.KDeclarationContainer
+    public method getSignature(): java.lang.String
+}
+
+@kotlin.Metadata
+final class NoReceiverInCallableReferenceClassesKt$aFoo$1 {
+    inner class NoReceiverInCallableReferenceClassesKt$aFoo$1
+    method <init>(p0: A): void
+    public final method getName(): java.lang.String
+    public final method getOwner(): kotlin.reflect.KDeclarationContainer
+    public final method getSignature(): java.lang.String
+    public synthetic method invoke(): java.lang.Object
+    public final method invoke(): void
+}
+
+@kotlin.Metadata
+public final class NoReceiverInCallableReferenceClassesKt {
+    private final static @org.jetbrains.annotations.NotNull field A_bar: kotlin.reflect.KProperty1
+    private final static @org.jetbrains.annotations.NotNull field A_foo: kotlin.reflect.KFunction
+    private final static @org.jetbrains.annotations.NotNull field aBar: kotlin.reflect.KProperty0
+    private final static @org.jetbrains.annotations.NotNull field aFoo: kotlin.reflect.KFunction
+    inner class NoReceiverInCallableReferenceClassesKt$A_foo$1
+    inner class NoReceiverInCallableReferenceClassesKt$aFoo$1
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method getABar(): kotlin.reflect.KProperty0
+    public final static @org.jetbrains.annotations.NotNull method getAFoo(): kotlin.reflect.KFunction
+    public final static @org.jetbrains.annotations.NotNull method getA_bar(): kotlin.reflect.KProperty1
+    public final static @org.jetbrains.annotations.NotNull method getA_foo(): kotlin.reflect.KFunction
+}

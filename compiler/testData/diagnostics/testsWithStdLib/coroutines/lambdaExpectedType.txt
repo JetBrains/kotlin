@@ -1,0 +1,9 @@
+package
+
+public fun builder(/*0*/ c: suspend () -> kotlin.Int): kotlin.Int
+public fun emptyBuilder(/*0*/ c: suspend () -> kotlin.Unit): kotlin.Int
+public fun foo(): kotlin.Unit
+public fun </*0*/ T> genericBuilder(/*0*/ c: suspend () -> T): T
+public fun </*0*/ T> manyArgumentsBuilder(/*0*/ c1: suspend () -> kotlin.Unit, /*1*/ c2: suspend () -> T, /*2*/ c3: suspend () -> kotlin.Int): T
+public fun severalParamsInLambda(/*0*/ c: suspend (kotlin.String, kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun unitBuilder(/*0*/ c: suspend () -> kotlin.Unit): kotlin.Int

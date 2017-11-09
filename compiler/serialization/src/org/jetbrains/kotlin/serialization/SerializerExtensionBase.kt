@@ -17,16 +17,21 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.types.KotlinType
 
 open class KotlinSerializerExtensionBase(private val protocol: SerializerExtensionProtocol) : SerializerExtension() {
-    override final val stringTable = StringTableImpl()
+    override val stringTable = StringTableImpl()
 
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
         for (annotation in descriptor.annotations) {
             proto.addExtension(protocol.classAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
+    }
+
+    override fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
+        proto.setExtension(protocol.packageFqName, stringTable.getPackageFqNameIndex(packageFqName))
     }
 
     override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {

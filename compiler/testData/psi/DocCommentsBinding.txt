@@ -1,4 +1,4 @@
-JetFile: DocCommentsBinding.kt
+KtFile: DocCommentsBinding.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -7,3 +7,4 @@ interface Base<T> {
 class C : Base<Unit> {
     override fun foo(t: Unit) {}
 }
+// LAZINESS:NoLaziness

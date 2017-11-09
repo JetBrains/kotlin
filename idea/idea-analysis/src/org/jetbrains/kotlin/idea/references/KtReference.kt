@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 interface KtReference : PsiPolyVariantReference {
@@ -39,18 +39,14 @@ interface KtReference : PsiPolyVariantReference {
     val resolvesByNames: Collection<Name>
 }
 
-abstract class AbstractKtReference<T : KtElement>(element: T)
-: PsiPolyVariantReferenceBase<T>(element), KtReference {
-
+abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantReferenceBase<T>(element), KtReference {
     val expression: T
         get() = element
 
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
-        return PsiElementResolveResult.createResults(resolveToPsiElements())
-    }
-
-    override fun resolve(): PsiElement? {
-        return resolveToPsiElements().singleOrNull()
+        @Suppress("UNCHECKED_CAST")
+        val kotlinResolver = KOTLIN_RESOLVER as ResolveCache.PolyVariantResolver<AbstractKtReference<T>>
+        return ResolveCache.getInstance(expression.project).resolveWithCaching(this, kotlinResolver, false, incompleteCode)
     }
 
     override fun isReferenceTo(element: PsiElement?): Boolean {
@@ -69,54 +65,64 @@ abstract class AbstractKtReference<T : KtElement>(element: T)
 
     override fun isSoft(): Boolean = false
 
-    private fun resolveToPsiElements(): Collection<PsiElement> {
-        val bindingContext = expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-        return resolveToPsiElements(bindingContext, getTargetDescriptors(bindingContext))
-    }
-
     override fun resolveToDescriptors(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
         return getTargetDescriptors(bindingContext)
     }
 
-    private fun resolveToPsiElements(context: BindingContext, targetDescriptors: Collection<DeclarationDescriptor>): Collection<PsiElement> {
-        if (targetDescriptors.isNotEmpty()) {
-            return targetDescriptors.flatMap { target -> resolveToPsiElements(target) }
-        }
-
-        val labelTargets = getLabelTargets(context)
-        if (labelTargets != null) {
-            return labelTargets
-        }
-
-        return Collections.emptySet()
-    }
-
-    private fun resolveToPsiElements(targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
-        if (targetDescriptor is PackageViewDescriptor) {
-            val psiFacade = JavaPsiFacade.getInstance(expression.project)
-            val fqName = targetDescriptor.fqName.asString()
-            return psiFacade.findPackage(fqName).singletonOrEmptyList()
-        }
-        else {
-            return DescriptorToSourceUtilsIde.getAllDeclarations(expression.project, targetDescriptor)
-        }
-    }
-
     protected abstract fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor>
 
-    private fun getLabelTargets(context: BindingContext): Collection<PsiElement>? {
-        val reference = expression
-        if (reference !is KtReferenceExpression) {
-            return null
-        }
-        val labelTarget = context[BindingContext.LABEL_TARGET, reference]
-        if (labelTarget != null) {
-            return listOf(labelTarget)
-        }
-        return context[BindingContext.AMBIGUOUS_LABEL_TARGET, reference]
-    }
+    override fun toString() = this::class.java.simpleName + ": " + expression.text
 
-    override fun toString() = javaClass.simpleName + ": " + expression.text
+    companion object {
+        class KotlinReferenceResolver : ResolveCache.PolyVariantResolver<AbstractKtReference<KtElement>> {
+            class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
+
+            private fun resolveToPsiElements(ref: AbstractKtReference<KtElement>): Collection<PsiElement> {
+                val bindingContext = ref.expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+                return resolveToPsiElements(ref, bindingContext, ref.getTargetDescriptors(bindingContext))
+            }
+
+            private fun resolveToPsiElements(ref: AbstractKtReference<KtElement>, context: BindingContext, targetDescriptors: Collection<DeclarationDescriptor>): Collection<PsiElement> {
+                if (targetDescriptors.isNotEmpty()) {
+                    return targetDescriptors.flatMap { target -> resolveToPsiElements(ref, target) }.toSet()
+                }
+
+                val labelTargets = getLabelTargets(ref, context)
+                if (labelTargets != null) {
+                    return labelTargets
+                }
+
+                return Collections.emptySet()
+            }
+
+            private fun resolveToPsiElements(ref: AbstractKtReference<KtElement>, targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
+                return if (targetDescriptor is PackageViewDescriptor) {
+                    val psiFacade = JavaPsiFacade.getInstance(ref.expression.project)
+                    val fqName = targetDescriptor.fqName.asString()
+                    listOfNotNull(psiFacade.findPackage(fqName))
+                }
+                else {
+                    DescriptorToSourceUtilsIde.getAllDeclarations(ref.expression.project, targetDescriptor, ref.expression.resolveScope)
+                }
+            }
+
+            private fun getLabelTargets(ref: AbstractKtReference<KtElement>, context: BindingContext): Collection<PsiElement>? {
+                val reference = ref.expression as? KtReferenceExpression ?: return null
+                val labelTarget = context[BindingContext.LABEL_TARGET, reference]
+                if (labelTarget != null) {
+                    return listOf(labelTarget)
+                }
+                return context[BindingContext.AMBIGUOUS_LABEL_TARGET, reference]
+            }
+
+            override fun resolve(ref: AbstractKtReference<KtElement>, incompleteCode: Boolean): Array<ResolveResult> {
+                val resolveToPsiElements = resolveToPsiElements(ref)
+                return resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
+            }
+        }
+
+        val KOTLIN_RESOLVER = KotlinReferenceResolver()
+    }
 }
 
 abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression) {

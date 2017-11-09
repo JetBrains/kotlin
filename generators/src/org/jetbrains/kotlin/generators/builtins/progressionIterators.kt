@@ -36,15 +36,16 @@ fun integerProgressionIterator(kind: ProgressionKind): String {
  * @property step the number by which the value is incremented on each step.
  */
 internal class ${t}ProgressionIterator(first: $t, last: $t, val step: $incrementType) : ${t}Iterator() {
-    private var next = first$toInt
     private val finalElement = last$toInt
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last
+    private var next = if (hasNext) first$toInt else finalElement
 
     override fun hasNext(): Boolean = hasNext
 
     override fun next$t(): $t {
         val value = next
         if (value == finalElement) {
+            if (!hasNext) throw kotlin.NoSuchElementException()
             hasNext = false
         }
         else {

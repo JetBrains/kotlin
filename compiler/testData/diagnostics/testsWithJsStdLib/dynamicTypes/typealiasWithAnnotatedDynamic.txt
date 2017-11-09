@@ -1,0 +1,24 @@
+package
+
+public fun testUseAnnGen1(/*0*/ x: kotlin.collections.List<dynamic>): TestAnnGen1 /* = kotlin.collections.List<dynamic> */
+public fun testUseAnnGen2(/*0*/ x: kotlin.collections.List<dynamic>): TestAnnGen2 /* = kotlin.collections.List<dynamic> */
+public fun useAnnGen1(/*0*/ x: TestAnnGen1 /* = kotlin.collections.List<dynamic> */): TestAnnGen1 /* = kotlin.collections.List<dynamic> */
+public fun useAnnGen2(/*0*/ x: TestAnnGen2 /* = kotlin.collections.List<dynamic> */): TestAnnGen2 /* = kotlin.collections.List<dynamic> */
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Ann1 : kotlin.Annotation {
+    public constructor Ann1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Ann2 : kotlin.Annotation {
+    public constructor Ann2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias AnnGenList</*0*/ T>  = kotlin.collections.List<@Ann1 T>
+public typealias TestAnnGen1 = AnnGenList<dynamic>
+public typealias TestAnnGen2 = AnnGenList<dynamic>
+public typealias TestAnnGen3 = AnnGenList<dynamic>

@@ -27,6 +27,19 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
+interface JavaDataFlowAnalyzerFacade {
+
+    fun variableNullability(variable: PsiVariable, context: PsiElement): Nullability
+
+    fun methodNullability(method: PsiMethod): Nullability
+
+    object Default : JavaDataFlowAnalyzerFacade {
+        override fun methodNullability(method: PsiMethod): Nullability = Nullability.Default
+
+        override fun variableNullability(variable: PsiVariable, context: PsiElement): Nullability = Nullability.Default
+    }
+}
+
 class TypeConverter(val converter: Converter) {
     private val typesBeingConverted = HashSet<PsiType>()
 
@@ -65,7 +78,7 @@ class TypeConverter(val converter: Converter) {
         else {
             convertType(variable.type, variableNullability(variable), variableMutability(variable))
         }
-        return result.assignPrototype(variable.typeElement)
+        return result.assignPrototype(variable.typeElement, CommentsAndSpacesInheritance.NO_SPACES)
     }
 
     fun convertMethodReturnType(method: PsiMethod): Type
@@ -73,6 +86,9 @@ class TypeConverter(val converter: Converter) {
 
     fun variableNullability(variable: PsiVariable): Nullability
             = nullabilityFlavor.forVariableType(variable, true)
+
+    fun variableReferenceNullability(variable: PsiVariable, reference: PsiReferenceExpression): Nullability
+            = nullabilityFlavor.forVariableReference(variable, reference)
 
     fun methodNullability(method: PsiMethod): Nullability
             = nullabilityFlavor.forMethodReturnType(method)
@@ -181,6 +197,8 @@ class TypeConverter(val converter: Converter) {
             return value
         }
 
+        abstract fun fromDataFlowForMethod(method: PsiMethod): T
+
         private fun forMethodReturnTypeNoCache(method: PsiMethod): T {
             val returnType = method.returnType ?: return default
 
@@ -195,6 +213,9 @@ class TypeConverter(val converter: Converter) {
             if (value != default) return value
 
             value = fromTypeHeuristics(returnType)
+            if (value != default) return value
+
+            value = fromDataFlowForMethod(method)
             if (value != default) return value
 
             if (!converter.inConversionScope(method)) return default // do not analyze body and usages of methods out of our conversion scope
@@ -227,6 +248,17 @@ class TypeConverter(val converter: Converter) {
     }
 
     private val nullabilityFlavor = object : TypeFlavor<Nullability>(Nullability.Default) {
+        fun forVariableReference(variable: PsiVariable, reference: PsiReferenceExpression): Nullability {
+            assert(reference.resolve() == variable)
+            val dataFlowUtil = converter.services.javaDataFlowAnalyzerFacade
+
+            return dataFlowUtil.variableNullability(variable, reference).takeIf { it != default } ?:
+                   variableNullability(variable)
+        }
+
+        override fun fromDataFlowForMethod(method: PsiMethod): Nullability =
+                converter.services.javaDataFlowAnalyzerFacade.methodNullability(method)
+
         override val forEnumConstant: Nullability
             get() = Nullability.NotNull
 
@@ -234,12 +266,14 @@ class TypeConverter(val converter: Converter) {
 
         override fun fromAnnotations(owner: PsiModifierListOwner): Nullability {
             val manager = NullableNotNullManager.getInstance(owner.project)
-            return if (manager.isNotNull(owner, false/* we do not check bases because they are checked by callers of this method*/))
-                Nullability.NotNull
-            else if (manager.isNullable(owner, false))
-                Nullability.Nullable
-            else
-                Nullability.Default
+            return when {
+                manager.isNotNull(owner, false/* we do not check bases because they are checked by callers of this method*/) ->
+                    Nullability.NotNull
+                manager.isNullable(owner, false) ->
+                    Nullability.Nullable
+                else ->
+                    Nullability.Default
+            }
         }
 
         override fun forVariableTypeBeforeUsageSearch(variable: PsiVariable): Nullability {
@@ -361,7 +395,9 @@ class TypeConverter(val converter: Converter) {
 
                 is PsiParenthesizedExpression -> expression?.nullability() ?: Nullability.Default
 
+                is PsiCallExpression -> resolveMethod()?.let { methodNullability(it) } ?: Nullability.Default
 
+                is PsiReferenceExpression -> (resolve() as? PsiVariable)?.let { variableReferenceNullability(it, this) } ?: Nullability.Default
             //TODO: some other cases
 
                 else -> Nullability.Default
@@ -370,6 +406,8 @@ class TypeConverter(val converter: Converter) {
     }
 
     private val mutabilityFlavor = object : TypeFlavor<Mutability>(Mutability.Default) {
+        override fun fromDataFlowForMethod(method: PsiMethod): Mutability = Mutability.Default
+
         override val forEnumConstant: Mutability get() = Mutability.NonMutable
 
         override fun fromType(type: PsiType): Mutability {
@@ -400,7 +438,10 @@ class TypeConverter(val converter: Converter) {
         private fun isMutableFromUsage(usage: PsiExpression): Boolean {
             val parent = usage.parent
             if (parent is PsiReferenceExpression && usage == parent.qualifierExpression && parent.parent is PsiMethodCallExpression) {
-                return modificationMethodNames.contains(parent.referenceName as Any?)
+                return if (possibleModificationMethodNames.contains(parent.referenceName))
+                    isMutableFromUsage(parent.parent as PsiExpression)
+                else
+                    modificationMethodNames.contains(parent.referenceName)
             }
             else if (parent is PsiExpressionList) {
                 val call = parent.parent as? PsiCall ?: return false
@@ -434,7 +475,12 @@ class TypeConverter(val converter: Converter) {
         )
 
         private val modificationMethodNames = setOf(
-                "add", "remove", "set", "addAll", "removeAll", "retainAll", "clear", "put", "putAll", "putIfAbsent", "replace", "replaceAll", "merge", "compute", "computeIfAbsent", "computeIfPresent"
+                "add", "remove", "set", "addAll", "removeAll", "retainAll", "clear", "put", "putAll", "putIfAbsent", "replace",
+                "replaceAll", "merge", "compute", "computeIfAbsent", "computeIfPresent", "removeIf"
+        )
+
+        private val possibleModificationMethodNames = setOf(
+                "iterator", "listIterator", "spliterator", "keySet", "entrySet", "values"
         )
 
         private val mutableKotlinClasses = toKotlinMutableTypesMap.values.toSet()

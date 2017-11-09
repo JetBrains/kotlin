@@ -1,4 +1,4 @@
-JetFile: TypeParameterss.kt
+KtFile: TypeParameterss.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST
@@ -7,31 +7,29 @@ JetFile: TypeParameterss.kt
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
-    PsiErrorElement:Type parameters are not allowed for objects
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('R')
-        PsiElement(GT)('>')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('R')
+      PsiElement(GT)('>')
   PsiWhiteSpace('\n\n')
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
-    PsiErrorElement:Type parameters are not allowed for objects
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('R')
-        PsiElement(GT)('>')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('R')
+      PsiElement(GT)('>')
     PsiWhiteSpace(' ')
     CLASS_BODY
       PsiElement(LBRACE)('{')
@@ -41,16 +39,15 @@ JetFile: TypeParameterss.kt
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
-    PsiErrorElement:Type parameters are not allowed for objects
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('R')
-        PsiElement(GT)('>')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('R')
+      PsiElement(GT)('>')
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')

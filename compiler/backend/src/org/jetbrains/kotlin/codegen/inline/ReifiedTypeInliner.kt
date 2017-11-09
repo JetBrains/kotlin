@@ -32,7 +32,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 
 class ReificationArgument(
-        val parameterName: String, val nullable: Boolean, val arrayDepth: Int
+        val parameterName: String, val nullable: Boolean, private val arrayDepth: Int
 ) {
     fun asString() = "[".repeat(arrayDepth) + parameterName + (if (nullable) "?" else "")
     fun combine(replacement: ReificationArgument) =
@@ -59,7 +59,7 @@ class ReificationArgument(
 
 class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) {
     enum class OperationKind {
-        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS;
+        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED;
 
         val id: Int get() = ordinal
     }
@@ -68,7 +68,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
         const val REIFIED_OPERATION_MARKER_METHOD_NAME = "reifiedOperationMarker"
         const val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME = "needClassReification"
 
-        private fun isOperationReifiedMarker(insn: AbstractInsnNode) =
+        fun isOperationReifiedMarker(insn: AbstractInsnNode) =
                 isReifiedMarker(insn) { it == REIFIED_OPERATION_MARKER_METHOD_NAME }
 
         private fun isReifiedMarker(insn: AbstractInsnNode, namePredicate: (String) -> Boolean): Boolean {
@@ -139,6 +139,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
                 OperationKind.SAFE_AS -> processAs(insn, instructions, kotlinType, asmType, safe = true)
                 OperationKind.IS -> processIs(insn, instructions, kotlinType, asmType)
                 OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
+                OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, asmType)
             }) {
                 instructions.remove(insn.previous.previous!!) // PUSH operation ID
                 instructions.remove(insn.previous!!) // PUSH type parameter
@@ -166,7 +167,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
     ) = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
         if (stubCheckcast !is TypeInsnNode) return false
 
-        val newMethodNode = MethodNode(InlineCodegenUtil.API)
+        val newMethodNode = MethodNode(API)
         generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe)
 
         instructions.insert(insn, newMethodNode.instructions)
@@ -186,7 +187,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
     ) = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
         if (stubInstanceOf !is TypeInsnNode) return false
 
-        val newMethodNode = MethodNode(InlineCodegenUtil.API)
+        val newMethodNode = MethodNode(API)
         generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType)
 
         instructions.insert(insn, newMethodNode.instructions)
@@ -219,9 +220,32 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
         next.cst = parameter
         return true
     }
+
+    private fun processSpecialEnumFunction(insn: MethodInsnNode, instructions: InsnList, parameter: Type): Boolean {
+        val next1 = insn.next ?: return false
+        val next2 = next1.next ?: return false
+        if (next1.opcode == Opcodes.ACONST_NULL && next2.opcode == Opcodes.ALOAD) {
+            val next3 = next2.next ?: return false
+            if (next3 is MethodInsnNode && next3.name == "valueOf") {
+                instructions.remove(next1)
+                next3.owner = parameter.internalName
+                next3.desc = getSpecialEnumFunDescriptor(parameter, true)
+                return true
+            }
+        }
+        else if (next1.opcode == Opcodes.ICONST_0 && next2.opcode == Opcodes.ANEWARRAY) {
+            instructions.remove(next1)
+            instructions.remove(next2)
+            val desc = getSpecialEnumFunDescriptor(parameter, false)
+            instructions.insert(insn, MethodInsnNode(Opcodes.INVOKESTATIC, parameter.internalName, "values", desc, false))
+            return true
+        }
+
+        return false
+    }
 }
 
-private val MethodInsnNode.reificationArgument: ReificationArgument?
+val MethodInsnNode.reificationArgument: ReificationArgument?
     get() {
         val prev = previous!!
 
@@ -276,7 +300,7 @@ class TypeParameterMapping(
 )
 
 class ReifiedTypeParametersUsages {
-    val usedTypeParameters: MutableSet<String> = hashSetOf()
+    private val usedTypeParameters: MutableSet<String> = hashSetOf()
 
     fun wereUsedReifiedParameters(): Boolean = usedTypeParameters.isNotEmpty()
 

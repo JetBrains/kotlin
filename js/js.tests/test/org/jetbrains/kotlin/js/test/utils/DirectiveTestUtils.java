@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.js.test.utils;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 
 import java.util.*;
@@ -34,7 +36,7 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler FUNCTION_CONTAINS_NO_CALLS = new DirectiveHandler("CHECK_CONTAINS_NO_CALLS") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            Set<String> exceptNames = new HashSet<String>();
+            Set<String> exceptNames = new HashSet<>();
             String exceptNamesArg = arguments.findNamedArgument("except");
             if (exceptNamesArg != null) {
                 for (String exceptName : exceptNamesArg.split(";")) {
@@ -49,7 +51,42 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler FUNCTION_NOT_CALLED = new DirectiveHandler("CHECK_NOT_CALLED") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            checkFunctionNotCalled(ast, arguments.getFirst());
+            checkFunctionNotCalled(ast, arguments.getFirst(), arguments.findNamedArgument("except"));
+        }
+    };
+
+    private static final DirectiveHandler PROPERTY_NOT_USED = new DirectiveHandler("PROPERTY_NOT_USED") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkPropertyNotUsed(ast, arguments.getFirst(), false, false);
+        }
+    };
+
+    private static final DirectiveHandler PROPERTY_NOT_READ_FROM = new DirectiveHandler("PROPERTY_NOT_READ_FROM") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkPropertyNotUsed(ast, arguments.getFirst(), false, true);
+        }
+    };
+
+    private static final DirectiveHandler PROPERTY_NOT_WRITTEN_TO = new DirectiveHandler("PROPERTY_NOT_WRITTEN_TO") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkPropertyNotUsed(ast, arguments.getFirst(), true, false);
+        }
+    };
+
+    private static final DirectiveHandler PROPERTY_WRITE_COUNT = new DirectiveHandler("PROPERTY_WRITE_COUNT") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkPropertyWriteCount(ast, arguments.getNamedArgument("name"), Integer.parseInt(arguments.getNamedArgument("count")));
+        }
+    };
+
+    private static final DirectiveHandler PROPERTY_READ_COUNT = new DirectiveHandler("PROPERTY_READ_COUNT") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkPropertyReadCount(ast, arguments.getNamedArgument("name"), Integer.parseInt(arguments.getNamedArgument("count")));
         }
     };
 
@@ -68,6 +105,17 @@ public class DirectiveTestUtils {
             // Be more restrictive, check unqualified match by default
             checkNotCalledInScope(ast, arguments.getNamedArgument("function"), arguments.getNamedArgument("scope"),
                                   parseBooleanArgument(arguments, "qualified", false));
+        }
+    };
+
+    private static final DirectiveHandler FUNCTION_CALLED_TIMES = new DirectiveHandler("FUNCTION_CALLED_TIMES") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            int expectedCount = Integer.parseInt(arguments.getNamedArgument("count"));
+            String functionName = arguments.getFirst();
+            CallCounter counter = CallCounter.countCalls(ast);
+            int actualCount = counter.getUnqualifiedCallsCount(functionName);
+            assertEquals("Function " + functionName, expectedCount, actualCount);
         }
     };
 
@@ -94,7 +142,7 @@ public class DirectiveTestUtils {
         @NotNull
         String getFunctionCode(@NotNull JsNode ast, @NotNull String functionName) {
             JsFunction function = AstSearchUtil.getFunction(ast, functionName);
-            return function.toString();
+            return function.getBody().toString();
         }
 
         @NotNull
@@ -151,16 +199,16 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<JsVars.JsVar>("CHECK_VARS_COUNT", JsVars.JsVar.class);
+    private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<>("CHECK_VARS_COUNT", JsVars.JsVar.class);
 
-    private static final DirectiveHandler COUNT_BREAKS = new CountNodesDirective<JsBreak>("CHECK_BREAKS_COUNT", JsBreak.class);
+    private static final DirectiveHandler COUNT_BREAKS = new CountNodesDirective<>("CHECK_BREAKS_COUNT", JsBreak.class);
 
-    private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<JsNullLiteral>("CHECK_NULLS_COUNT", JsNullLiteral.class);
+    private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<>("CHECK_NULLS_COUNT", JsNullLiteral.class);
 
     private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler("CHECK_NOT_REFERENCED") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            final String reference = arguments.getPositionalArgument(0);
+            String reference = arguments.getPositionalArgument(0);
 
             JsVisitor visitor = new RecursiveJsVisitor() {
                 @Override
@@ -202,7 +250,7 @@ public class DirectiveTestUtils {
 
             if (name.getIdent().equals(nameToSearch)) {
                 hasReferences = true;
-                if (!(nameRef.getQualifier() instanceof JsLiteral.JsThisRef)) {
+                if (!(nameRef.getQualifier() instanceof JsThisRef)) {
                     allReferencesQualifiedByThis = false;
                 }
             }
@@ -213,7 +261,7 @@ public class DirectiveTestUtils {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             String functionName = arguments.getPositionalArgument(0);
-            JsExpression property = AstSearchUtil.getProperty(ast, functionName);
+            JsExpression property = AstSearchUtil.getMetadataOrFunction(ast, functionName);
             String message = "Inline metadata has not been generated for function " + functionName;
             assertNotNull(message, InlineMetadata.decompose(property));
         }
@@ -223,15 +271,64 @@ public class DirectiveTestUtils {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             String functionName = arguments.getPositionalArgument(0);
-            JsExpression property = AstSearchUtil.getProperty(ast, functionName);
+            JsExpression property = AstSearchUtil.getMetadataOrFunction(ast, functionName);
             String message = "Inline metadata has been generated for not effectively public function " + functionName;
             assertTrue(message, property instanceof JsFunction);
+        }
+    };
+
+    private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler("HAS_NO_CAPTURED_VARS") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            String functionName = arguments.getNamedArgument("function");
+
+            Set<String> except = new HashSet<>();
+            String exceptString = arguments.findNamedArgument("except");
+            if (exceptString != null) {
+                for (String exceptId : StringUtil.split(exceptString, ";")) {
+                    except.add(exceptId.trim());
+                }
+            }
+
+            JsFunction function = AstSearchUtil.getFunction(ast, functionName);
+            Set<JsName> freeVars = CollectUtilsKt.collectFreeVariables(function);
+            for (JsName freeVar : freeVars) {
+                assertTrue("Function " + functionName + " captures free variable " + freeVar.getIdent(),
+                           except.contains(freeVar.getIdent()));
+            }
+        }
+    };
+
+    private static final DirectiveHandler DECLARES_VARIABLE = new DirectiveHandler("DECLARES_VARIABLE") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            String functionName = arguments.getNamedArgument("function");
+            String varName = arguments.getNamedArgument("name");
+            JsFunction function = AstSearchUtil.getFunction(ast, functionName);
+            boolean[] varDeclared = new boolean[1];
+            function.accept(new RecursiveJsVisitor() {
+                @Override
+                public void visit(@NotNull JsVars.JsVar x) {
+                    super.visit(x);
+                    if (x.getName().getIdent().equals(varName)) {
+                        varDeclared[0] = true;
+                    }
+                }
+            });
+
+            assertTrue("Function " + functionName + " does not declare variable " + varName, varDeclared[0]);
         }
     };
 
     private static final List<DirectiveHandler> DIRECTIVE_HANDLERS = Arrays.asList(
             FUNCTION_CONTAINS_NO_CALLS,
             FUNCTION_NOT_CALLED,
+            FUNCTION_CALLED_TIMES,
+            PROPERTY_NOT_USED,
+            PROPERTY_NOT_READ_FROM,
+            PROPERTY_NOT_WRITTEN_TO,
+            PROPERTY_READ_COUNT,
+            PROPERTY_WRITE_COUNT,
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
             FUNCTIONS_HAVE_SAME_LINES,
@@ -242,7 +339,9 @@ public class DirectiveTestUtils {
             COUNT_NULLS,
             NOT_REFERENCED,
             HAS_INLINE_METADATA,
-            HAS_NO_INLINE_METADATA
+            HAS_NO_INLINE_METADATA,
+            HAS_NO_CAPTURED_VARS,
+            DECLARES_VARIABLE
     );
 
     public static void processDirectives(@NotNull JsNode ast, @NotNull String sourceCode) throws Exception {
@@ -261,12 +360,36 @@ public class DirectiveTestUtils {
         assertEquals(errorMessage, 0, callsCount);
     }
 
-    public static void checkFunctionNotCalled(JsNode node, String functionName) throws Exception {
-        CallCounter counter = CallCounter.countCalls(node);
+    public static void checkPropertyNotUsed(JsNode node, String propertyName, boolean isGetAllowed, boolean isSetAllowed) throws Exception {
+        PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(node);
+        if (!isGetAllowed) {
+            assertFalse("inline property getter for `" + propertyName + "` is called", counter.hasUnqualifiedReads(propertyName));
+        }
+        if (!isSetAllowed) {
+            assertFalse("inline property setter for `" + propertyName + "` is called", counter.hasUnqualifiedWrites(propertyName));
+        }
+    }
+
+    private static void checkPropertyReadCount(JsNode node, String propertyName, int expectedCount) throws Exception {
+        PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(node);
+        assertEquals("Property read count: " + propertyName, expectedCount, counter.unqualifiedReadCount(propertyName));
+    }
+
+    private static void checkPropertyWriteCount(JsNode node, String propertyName, int expectedCount) throws Exception {
+        PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(node);
+        assertEquals("Property write count: " + propertyName, expectedCount, counter.unqualifiedWriteCount(propertyName));
+    }
+
+    public static void checkFunctionNotCalled(@NotNull JsNode node, @NotNull String functionName, @Nullable String exceptFunction)
+            throws Exception {
+        Set<String> excludedScopes = exceptFunction != null ? Collections.singleton(exceptFunction) : Collections.emptySet();
+
+        CallCounter counter = CallCounter.countCallsWithExcludedScopes(node, excludedScopes);
         int functionCalledCount = counter.getQualifiedCallsCount(functionName);
 
         String errorMessage = "inline function `" + functionName + "` is called";
         assertEquals(errorMessage, 0, functionCalledCount);
+        assertEquals("Not all excluded scopes found", excludedScopes.size(), counter.getExcludedScopeOccurrenceCount());
     }
 
     public static void checkCalledInScope(
@@ -345,8 +468,8 @@ public class DirectiveTestUtils {
      * Neither key, nor value should contain spaces.
      */
     private static class ArgumentsHelper {
-        private final List<String> positionalArguments = new ArrayList<String>();
-        private final Map<String, String> namedArguments = new HashMap<String, String>();
+        private final List<String> positionalArguments = new ArrayList<>();
+        private final Map<String, String> namedArguments = new HashMap<>();
         private final String entry;
 
         ArgumentsHelper(@NotNull String directiveEntry) {

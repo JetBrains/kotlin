@@ -1,5 +1,3 @@
-import java.util.*
-
 class Template() {
     val collected = ArrayList<String>()
 

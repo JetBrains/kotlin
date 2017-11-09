@@ -97,7 +97,7 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
         val toolWrappers = loadKotlinInspections()
         val errors = StringBuilder()
         toolWrappers.filter({ toolWrapper -> toolWrapper.extension == null }).forEach { toolWrapper ->
-            errors.append("Please add XML mapping for ").append(toolWrapper.tool.javaClass)
+            errors.append("Please add XML mapping for ").append(toolWrapper.tool::class.java)
         }
 
         UsefulTestCase.assertEmpty(errors.toString())

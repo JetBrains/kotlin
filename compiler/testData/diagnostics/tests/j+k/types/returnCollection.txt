@@ -1,7 +1,5 @@
 package
 
-public/*package*/ /*synthesized*/ fun J(/*0*/ function: () -> kotlin.collections.List<kotlin.String>): J
-
 public/*package*/ interface J : K {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ fun foo(): kotlin.collections.List<kotlin.String>

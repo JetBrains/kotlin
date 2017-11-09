@@ -3,12 +3,12 @@
 
 package kotlin.sequences
 
-import java.util.*
-
 /**
  * Given an [iterator] function constructs a [Sequence] that returns values through the [Iterator]
  * provided by that function.
  * The values are evaluated lazily, and the sequence is potentially infinite.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromIterator
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Sequence(crossinline iterator: () -> Iterator<T>): Sequence<T> = object : Sequence<T> {
@@ -17,18 +17,23 @@ public inline fun <T> Sequence(crossinline iterator: () -> Iterator<T>): Sequenc
 
 /**
  * Creates a sequence that returns all elements from this iterator. The sequence is constrained to be iterated only once.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromIterator
  */
 public fun <T> Iterator<T>.asSequence(): Sequence<T> = Sequence { this }.constrainOnce()
 
 /**
  * Creates a sequence that returns all values from this enumeration. The sequence is constrained to be iterated only once.
+ * @sample samples.collections.Sequences.Building.sequenceFromEnumeration
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun<T> Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
+public inline fun<T> java.util.Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
 
 /**
  * Creates a sequence that returns the specified values.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceOfValues
  */
 public fun <T> sequenceOf(vararg elements: T): Sequence<T> = if (elements.isEmpty()) emptySequence() else elements.asSequence()
 
@@ -45,11 +50,15 @@ private object EmptySequence : Sequence<Nothing>, DropTakeSequence<Nothing> {
 
 /**
  * Returns a sequence of all elements from all sequences in this sequence.
+ *
+ * The operation is _intermediate_ and _stateless_.
  */
 public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
 
 /**
  * Returns a sequence of all elements from all iterables in this sequence.
+ *
+ * The operation is _intermediate_ and _stateless_.
  */
 @kotlin.jvm.JvmName("flattenSequenceOfIterable")
 public fun <T> Sequence<Iterable<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
@@ -65,6 +74,8 @@ private fun <T, R> Sequence<T>.flatten(iterator: (T) -> Iterator<R>): Sequence<R
  * Returns a pair of lists, where
  * *first* list is built from the first values of each pair from this sequence,
  * *second* list is built from the second values of each pair from this sequence.
+ *
+ * The operation is _terminal_.
  */
 public fun <T, R> Sequence<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
     val listT = ArrayList<T>()
@@ -113,6 +124,7 @@ internal class FilteringSequence<T>(private val sequence: Sequence<T>,
             val result = nextItem
             nextItem = null
             nextState = -1
+            @Suppress("UNCHECKED_CAST")
             return result as T
         }
 
@@ -370,6 +382,7 @@ internal class TakeWhileSequence<T>
                 calcNext() // will change nextState
             if (nextState == 0)
                 throw NoSuchElementException()
+            @Suppress("UNCHECKED_CAST")
             val result = nextItem as T
 
             // Clean next to avoid keeping reference on yielded instance
@@ -456,6 +469,7 @@ internal class DropWhileSequence<T>
                 drop()
 
             if (dropState == 1) {
+                @Suppress("UNCHECKED_CAST")
                 val result = nextItem as T
                 nextItem = null
                 dropState = 0
@@ -528,7 +542,10 @@ private class GeneratorSequence<T: Any>(private val getInitialValue: () -> T?, p
 /**
  * Returns a wrapper sequence that provides values of this sequence, but ensures it can be iterated only one time.
  *
+ * The operation is _intermediate_ and _stateless_.
+ *
  * [IllegalStateException] is thrown on iterating the returned sequence from the second time.
+ *
  */
 public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {
     // as? does not work in js
@@ -554,6 +571,9 @@ private class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
  * The returned sequence is constrained to be iterated only once.
  *
  * @see constrainOnce
+ * @see kotlin.coroutines.experimental.buildSequence
+ *
+ * @sample samples.collections.Sequences.Building.generateSequence
  */
 public fun <T : Any> generateSequence(nextFunction: () -> T?): Sequence<T> {
     return GeneratorSequence(nextFunction, { nextFunction() }).constrainOnce()
@@ -567,6 +587,10 @@ public fun <T : Any> generateSequence(nextFunction: () -> T?): Sequence<T> {
  * If [seed] is `null`, an empty sequence is produced.
  *
  * The sequence can be iterated multiple times, each time starting with [seed].
+ *
+ * @see kotlin.coroutines.experimental.buildSequence
+ *
+ * @sample samples.collections.Sequences.Building.generateSequenceWithSeed
  */
 @kotlin.internal.LowPriorityInOverloadResolution
 public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequence<T> =
@@ -583,6 +607,10 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
  * If [seedFunction] returns `null`, an empty sequence is produced.
  *
  * The sequence can be iterated multiple times.
+ *
+ * @see kotlin.coroutines.experimental.buildSequence
+ *
+ * @sample samples.collections.Sequences.Building.generateSequenceWithLazySeed
  */
 public fun <T: Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
         GeneratorSequence(seedFunction, nextFunction)

@@ -1,0 +1,5 @@
+package
+
+public fun box(): kotlin.String
+public fun builder(/*0*/ c: suspend () -> kotlin.Unit): kotlin.Unit
+public suspend fun suspendHere(): kotlin.String

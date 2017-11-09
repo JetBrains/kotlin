@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.internal.KotlinBytecodeToolWindow
 
-class ShowKotlinBytecodeAction(): AnAction() {
+class ShowKotlinBytecodeAction : AnAction() {
     val TOOLWINDOW_ID = "Kotlin Bytecode"
 
     override fun actionPerformed(e: AnActionEvent) {

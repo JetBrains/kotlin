@@ -19,11 +19,14 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -31,26 +34,34 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFixAction<KtParameter>(element) {
-
-    val typeNameShort : String?
+    private val typeNameShort : String?
     val typeName: String?
 
     init {
         val defaultValue = element.defaultValue
-        val type = defaultValue?.getType(defaultValue.analyze(BodyResolveMode.PARTIAL))
+        var type = defaultValue?.getType(defaultValue.analyze(BodyResolveMode.PARTIAL))
+        if (defaultValue is KtCollectionLiteralExpression && type != null && KotlinBuiltIns.isArray(type)) {
+            val builtIns = element.builtIns
+            val elementType = builtIns.getArrayElementType(type)
+            if (KotlinBuiltIns.isPrimitiveType(elementType)) {
+                type = builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(elementType)
+            }
+        }
 
         typeNameShort = type?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }
         typeName = type?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) }
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return element.typeReference == null && typeNameShort != null
     }
 
     override fun getFamilyName() = "Add type annotation"
-    override fun getText() = "Add type '$typeNameShort' to parameter '${element.name}'"
+    override fun getText() = element?.let { "Add type '$typeNameShort' to parameter '${it.name}'" } ?: ""
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         if (typeName != null) {
             element.typeReference = KtPsiFactory(element).createType(typeName)
             ShortenReferences.DEFAULT.process(element)

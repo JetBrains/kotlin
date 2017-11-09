@@ -17,10 +17,14 @@
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import org.jetbrains.kotlin.idea.test.AstAccessControl
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import java.io.File
 
 abstract class AbstractJavaAgainstKotlinBinariesCheckerTest : AbstractJavaAgainstKotlinCheckerTest() {
     override fun setUp() {
@@ -29,16 +33,22 @@ abstract class AbstractJavaAgainstKotlinBinariesCheckerTest : AbstractJavaAgains
         if (KotlinTestUtils.isAllFilesPresentTest(testName)) {
             return
         }
-        val libraryName = "libFor" + testName
-        val libraryJar = MockLibraryUtil.compileLibraryToJar(
+        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
                 PluginTestCaseBase.getTestDataPathBase() + "/kotlinAndJavaChecker/javaAgainstKotlin/" + getTestName(false) + ".kt",
-                libraryName, false, false, false
+                "libFor$testName"
         )
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
         ModuleRootModificationUtil.addModuleLibrary(module, jarUrl)
     }
 
     fun doTest(path: String) {
+        val ktFileText = FileUtil.loadFile(File(path), true)
+        val allowAstForCompiledFile = InTextDirectivesUtils.isDirectiveDefined(ktFileText, AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE)
+
+        if (allowAstForCompiledFile) {
+            allowTreeAccessForAllFiles()
+        }
+
         doTest(true, true, path.replace(".kt", ".java"))
     }
 }

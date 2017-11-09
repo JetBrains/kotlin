@@ -23,18 +23,20 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 abstract class KtClassOrObject :
-        KtTypeParameterListOwnerStub<KotlinClassOrObjectStub<out KtClassOrObject>>, KtDeclarationContainer, KtNamedDeclaration {
+        KtTypeParameterListOwnerStub<KotlinClassOrObjectStub<out KtClassOrObject>>, KtDeclarationContainer, KtNamedDeclaration, KtPureClassOrObject {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinClassOrObjectStub<out KtClassOrObject>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
     fun getSuperTypeList(): KtSuperTypeList? = getStubOrPsiChild(KtStubElementTypes.SUPER_TYPE_LIST)
-    open fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.entries.orEmpty()
+
+    override fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.entries.orEmpty()
 
     fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry {
         getSuperTypeList()?.let {
@@ -42,7 +44,7 @@ abstract class KtClassOrObject :
             if (single != null && single.typeReference?.typeElement == null) {
                 return single.replace(superTypeListEntry) as KtSuperTypeListEntry
             }
-            return EditCommaSeparatedListHelper.addItem(it, getSuperTypeListEntries(), superTypeListEntry)
+            return EditCommaSeparatedListHelper.addItem(it, superTypeListEntries, superTypeListEntry)
         }
 
         val psiFactory = KtPsiFactory(this)
@@ -85,31 +87,39 @@ abstract class KtClassOrObject :
 
     fun isTopLevel(): Boolean = stub?.isTopLevel() ?: (parent is KtFile)
 
-    fun isLocal(): Boolean = stub?.isLocal() ?: KtPsiUtil.isLocal(this)
-    
-    override fun getDeclarations() = getBody()?.declarations.orEmpty()
+    override fun isLocal(): Boolean = stub?.isLocal() ?: KtPsiUtil.isLocal(this)
+
+    override fun getDeclarations(): List<KtDeclaration> = getBody()?.declarations.orEmpty()
 
     override fun getPresentation(): ItemPresentation? = ItemPresentationProviders.getItemPresentation(this)
 
-    fun getPrimaryConstructor(): KtPrimaryConstructor? = getStubOrPsiChild(KtStubElementTypes.PRIMARY_CONSTRUCTOR)
+    override fun getPrimaryConstructor(): KtPrimaryConstructor? = getStubOrPsiChild(KtStubElementTypes.PRIMARY_CONSTRUCTOR)
 
-    fun getPrimaryConstructorModifierList(): KtModifierList? = getPrimaryConstructor()?.modifierList
-    fun getPrimaryConstructorParameterList(): KtParameterList? = getPrimaryConstructor()?.valueParameterList
-    fun getPrimaryConstructorParameters(): List<KtParameter> = getPrimaryConstructorParameterList()?.parameters.orEmpty()
+    override fun getPrimaryConstructorModifierList(): KtModifierList? = primaryConstructor?.modifierList
 
-    fun hasExplicitPrimaryConstructor(): Boolean = getPrimaryConstructor() != null
+    fun getPrimaryConstructorParameterList(): KtParameterList? = primaryConstructor?.valueParameterList
 
-    fun hasPrimaryConstructor(): Boolean = hasExplicitPrimaryConstructor() || !hasSecondaryConstructors()
-    private fun hasSecondaryConstructors(): Boolean = !getSecondaryConstructors().isEmpty()
+    override fun getPrimaryConstructorParameters(): List<KtParameter> = getPrimaryConstructorParameterList()?.parameters.orEmpty()
 
-    fun getSecondaryConstructors(): List<KtSecondaryConstructor> = getBody()?.secondaryConstructors.orEmpty()
+    override fun hasExplicitPrimaryConstructor(): Boolean = primaryConstructor != null
+
+    override fun hasPrimaryConstructor(): Boolean = hasExplicitPrimaryConstructor() || !hasSecondaryConstructors()
+
+    private fun hasSecondaryConstructors(): Boolean = !secondaryConstructors.isEmpty()
+
+    override fun getSecondaryConstructors(): List<KtSecondaryConstructor> = getBody()?.secondaryConstructors.orEmpty()
 
     fun isAnnotation(): Boolean = hasModifier(KtTokens.ANNOTATION_KEYWORD)
+
+    fun getDeclarationKeyword(): PsiElement? =
+            findChildByType(TokenSet.create(
+                    KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
+            ))
 
     override fun delete() {
         CheckUtil.checkWritable(this)
 
-        val file = getContainingKtFile()
+        val file = containingKtFile
         if (!isTopLevel() || file.declarations.size > 1) {
             super.delete()
         }

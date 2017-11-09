@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.idea.actions.generate
 
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -47,15 +48,17 @@ tailrec fun ClassDescriptor.findDeclaredFunction(
 
 fun getPropertiesToUseInGeneratedMember(classOrObject: KtClassOrObject): List<KtNamedDeclaration> {
     return ArrayList<KtNamedDeclaration>().apply {
-        classOrObject.getPrimaryConstructorParameters().filterTo(this) { it.hasValOrVar() }
+        classOrObject.primaryConstructorParameters.filterTo(this) { it.hasValOrVar() }
         classOrObject.declarations.filterIsInstance<KtProperty>().filterTo(this) {
-            val descriptor = it.resolveToDescriptor()
+            val descriptor = it.unsafeResolveToDescriptor()
             when (descriptor) {
                 is ValueParameterDescriptor -> true
                 is PropertyDescriptor -> descriptor.getter?.isDefault ?: true
                 else -> false
             }
         }
+    }.filter {
+        KotlinNameSuggester.isIdentifier(it.name?.quoteIfNeeded())
     }
 }
 
@@ -75,8 +78,8 @@ fun confirmMemberRewrite(targetClass: KtClass, vararg descriptors: FunctionDescr
                                     Messages.getQuestionIcon()) == Messages.YES
 }
 
-fun generateFunctionSkeleton(descriptor: FunctionDescriptor, project: Project): KtNamedFunction {
+fun generateFunctionSkeleton(descriptor: FunctionDescriptor, targetClass: KtClassOrObject): KtNamedFunction {
     return OverrideMemberChooserObject
-            .create(project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY)
-            .generateMember(project, false) as KtNamedFunction
+            .create(targetClass.project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY)
+            .generateMember(targetClass, false) as KtNamedFunction
 }

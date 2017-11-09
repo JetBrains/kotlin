@@ -86,6 +86,7 @@ class KotlinVariableInplaceIntroducer(
             }
 
             if (expressionType != null && !noTypeInference) {
+                val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
                 expressionTypeCheckBox = NonFocusableCheckBox("Specify type explicitly").apply {
                     isSelected = false
                     setMnemonic('t')
@@ -93,11 +94,10 @@ class KotlinVariableInplaceIntroducer(
                         runWriteCommandAndRestart {
                             updateVariableName()
                             if (isSelected) {
-                                val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
-                                addedVariable.setTypeReference(KtPsiFactory(myProject).createType(renderedType))
+                                addedVariable.typeReference = KtPsiFactory(myProject).createType(renderedType)
                             }
                             else {
-                                addedVariable.setTypeReference(null)
+                                addedVariable.typeReference = null
                             }
                         }
                     }

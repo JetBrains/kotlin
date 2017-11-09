@@ -17,21 +17,15 @@
 package org.jetbrains.kotlin.idea.refactoring.move
 
 import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import com.intellij.codeInsight.TargetElementUtilBase
-import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
-import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
+import com.intellij.refactoring.MoveDestination
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.move.MoveHandler
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassToInnerProcessor
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesProcessor
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveDirectoryWithClassesProcessor
-import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
+import com.intellij.refactoring.move.moveClassesOrPackages.*
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
@@ -39,118 +33,53 @@ import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.util.ActionRunner
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
-import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
+import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
+import org.jetbrains.kotlin.idea.refactoring.move.moveClassesOrPackages.KotlinAwareDelegatingMoveDestination
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
-import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
 
-abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
-    protected fun doTest(path: String) {
-        val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
-
-        val action = MoveAction.valueOf(config.getString("type"))
-
-        val testDir = path.substring(0, path.lastIndexOf("/"))
-        val mainFilePath = config.getNullableString("mainFile")!!
-
-        val conflictFile = File(testDir + "/conflicts.txt")
-
-        val withRuntime = config["withRuntime"]?.asBoolean ?: false
-        if (withRuntime) {
-            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
-        }
-        isMultiModule = config["isMultiModule"]?.asBoolean ?: false
-
-        doTest({ rootDir, rootAfter ->
-            val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
-            val mainPsiFile = PsiManager.getInstance(project!!).findFile(mainFile)!!
-            val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
-            val editor = EditorFactory.getInstance()!!.createEditor(document, project!!)!!
-
-            val caretOffset = document.extractMarkerOffset(project)
-            val elementAtCaret = if (caretOffset >= 0) {
-                TargetElementUtilBase.getInstance()!!.findTargetElement(
-                        editor,
-                        TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED,
-                        caretOffset
-                )
-            }
-            else null
-
-            try {
-                action.runRefactoring(rootDir, mainPsiFile, elementAtCaret, config)
-
-                assert(!conflictFile.exists())
-            }
-            catch(e: ConflictsInTestsException) {
-                KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.sorted().joinToString("\n"))
-            }
-            finally {
-                PsiDocumentManager.getInstance(project!!).commitAllDocuments()
-                FileDocumentManager.getInstance().saveAllDocuments()
-
-                EditorFactory.getInstance()!!.releaseEditor(editor)
-
-                if (withRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
-                }
-            }
-        },
-        getTestDirName(true))
-    }
-
-    protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
-        val testName = getTestName(lowercaseFirstLetter)
-        return testName.substring(0, testName.lastIndexOf('_')).replace('_', '/')
-    }
-
-    override fun getTestRoot() : String {
-        return "/refactoring/move/"
-    }
-
-    override fun getTestDataPath() : String {
-        return PluginTestCaseBase.getTestDataPathBase()
+abstract class AbstractMoveTest : AbstractMultifileRefactoringTest() {
+    override fun runRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, project: Project) {
+        runMoveRefactoring(path, config, rootDir, project)
     }
 }
 
-enum class MoveAction {
+fun runMoveRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, project: Project) {
+    runRefactoringTest(path, config, rootDir, project, MoveAction.valueOf(config.getString("type")))
+}
+
+enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
     MOVE_MEMBERS {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
-            val member = elementAtCaret!!.getNonStrictParentOfType<PsiMember>()!!
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
+            val members = elementsAtCaret.map { it.getNonStrictParentOfType<PsiMember>()!! }
             val targetClassName = config.getString("targetClass")
             val visibility = config.getNullableString("visibility")
 
-            val options = MockMoveMembersOptions(targetClassName, arrayOf(member))
+            val options = MockMoveMembersOptions(targetClassName, members.toTypedArray())
             if (visibility != null) {
                 options.memberVisibility = visibility
             }
 
-            MoveMembersProcessor(elementAtCaret.project, options).run()
+            MoveMembersProcessor(mainFile.project, options).run()
         }
     },
 
     MOVE_TOP_LEVEL_CLASSES {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
-            val classToMove = elementAtCaret!!.getNonStrictParentOfType<PsiClass>()!!
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
+            val classesToMove = elementsAtCaret.map { it.getNonStrictParentOfType<PsiClass>()!! }
             val targetPackage = config.getString("targetPackage")
 
             MoveClassesOrPackagesProcessor(
                     mainFile.project,
-                    arrayOf(classToMove),
+                    classesToMove.toTypedArray(),
                     MultipleRootsMoveDestination(PackageWrapper(mainFile.manager, targetPackage)),
                     /* searchInComments = */ false,
                     /* searchInNonJavaFiles = */ true,
@@ -160,15 +89,32 @@ enum class MoveAction {
     },
 
     MOVE_PACKAGES {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
-            val sourcePackage = config.getString("sourcePackage")
-            val targetPackage = config.getString("targetPackage")
+            val sourcePackageName = config.getString("sourcePackage")
+            val targetPackageName = config.getString("targetPackage")
+
+            val sourcePackage = JavaPsiFacade.getInstance(project).findPackage(sourcePackageName)!!
+            val targetPackage = JavaPsiFacade.getInstance(project).findPackage(targetPackageName)
+            val targetDirectory = targetPackage?.directories?.first()
+
+            val targetPackageWrapper = PackageWrapper(mainFile.manager, targetPackageName)
+            val moveDestination = if (targetDirectory != null) {
+                val targetSourceRoot = ProjectRootManager.getInstance(project).fileIndex.getSourceRootForFile(targetDirectory.virtualFile)!!
+                KotlinAwareDelegatingMoveDestination(
+                        AutocreatingSingleSourceRootMoveDestination(targetPackageWrapper, targetSourceRoot),
+                        targetPackage,
+                        targetDirectory
+                )
+            }
+            else {
+                MultipleRootsMoveDestination(targetPackageWrapper)
+            }
 
             MoveClassesOrPackagesProcessor(
                     project,
-                    arrayOf(JavaPsiFacade.getInstance(project).findPackage(sourcePackage)!!),
-                    MultipleRootsMoveDestination(PackageWrapper(mainFile.manager, targetPackage)),
+                    arrayOf(sourcePackage),
+                    moveDestination,
                     /* searchInComments = */ false,
                     /* searchInNonJavaFiles = */ true,
                     /* moveCallback = */ null
@@ -177,15 +123,15 @@ enum class MoveAction {
     },
 
     MOVE_TOP_LEVEL_CLASSES_TO_INNER {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
 
-            val classToMove = elementAtCaret!!.getNonStrictParentOfType<PsiClass>()!!
+            val classesToMove = elementsAtCaret.map { it.getNonStrictParentOfType<PsiClass>()!! }
             val targetClass = config.getString("targetClass")
 
             MoveClassToInnerProcessor(
                     project,
-                    arrayOf(classToMove),
+                    classesToMove.toTypedArray(),
                     JavaPsiFacade.getInstance(project).findClass(targetClass, project.allScope())!!,
                     /* searchInComments = */ false,
                     /* searchInNonJavaFiles = */ true,
@@ -195,10 +141,10 @@ enum class MoveAction {
     },
 
     MOVE_INNER_CLASS {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
 
-            val classToMove = elementAtCaret!!.getNonStrictParentOfType<PsiClass>()!!
+            val classToMove = elementsAtCaret.single().getNonStrictParentOfType<PsiClass>()!!
             val newClassName = config.getNullableString("newClassName") ?: classToMove.name!!
             val outerInstanceParameterName = config.getNullableString("outerInstanceParameterName")
             val targetPackage = config.getString("targetPackage")
@@ -215,16 +161,23 @@ enum class MoveAction {
     },
 
     MOVE_FILES {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
 
             val targetPackage = config.getNullableString("targetPackage")
-            if (targetPackage != null) {
-                ActionRunner.runInsideWriteAction { VfsUtil.createDirectoryIfMissing(rootDir, targetPackage.replace('.', '/')) }
+            val targetDirPath = targetPackage?.replace('.', '/') ?: config.getNullableString("targetDirectory")
+            if (targetDirPath != null) {
+                ActionRunner.runInsideWriteAction { VfsUtil.createDirectoryIfMissing(rootDir, targetDirPath) }
+                val newParent = if (targetPackage != null) {
+                    JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.directories[0]
+                }
+                else {
+                    rootDir.findFileByRelativePath(targetDirPath)!!.toPsiDirectory(project)!!
+                }
                 MoveFilesOrDirectoriesProcessor(
                         project,
                         arrayOf(mainFile),
-                        JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.directories[0],
+                        newParent,
                         /* searchInComments = */ false,
                         /* searchInNonJavaFiles = */ true,
                         /* moveCallback = */ null,
@@ -246,16 +199,18 @@ enum class MoveAction {
     },
 
     MOVE_FILES_WITH_DECLARATIONS {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
-
+            val elementsToMove = config.getAsJsonArray("filesToMove").map {
+                val virtualFile = rootDir.findFileByRelativePath(it.asString)!!
+                if (virtualFile.isDirectory) virtualFile.toPsiDirectory(project)!! else virtualFile.toPsiFile(project)!!
+            }
             val targetDirPath = config.getString("targetDirectory")
             val targetDir = rootDir.findFileByRelativePath(targetDirPath)!!.toPsiDirectory(project)!!
-            MoveFilesWithDeclarationsProcessor(
+            KotlinAwareMoveFilesOrDirectoriesProcessor(
                     project,
-                    listOf(mainFile as KtFile),
+                    elementsToMove,
                     targetDir,
-                    mainFile.name,
                     searchInComments = true,
                     searchInNonJavaFiles = true,
                     moveCallback = null
@@ -264,40 +219,43 @@ enum class MoveAction {
     },
 
     MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
-            val elementToMove = elementAtCaret!!.getNonStrictParentOfType<KtNamedDeclaration>()!!
+            val elementsToMove = elementsAtCaret.map { it.getNonStrictParentOfType<KtNamedDeclaration>()!! }
 
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
                 val targetSourceRootPath = config["targetSourceRoot"]?.asString
-                val moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName))
+                val packageWrapper = PackageWrapper(mainFile.manager, packageName)
+                val moveDestination: MoveDestination = targetSourceRootPath?.let {
+                    AutocreatingSingleSourceRootMoveDestination(packageWrapper, rootDir.findFileByRelativePath(it)!!)
+                } ?: MultipleRootsMoveDestination(packageWrapper)
                 val targetDir = moveDestination.getTargetIfExists(mainFile)
-                val targetSourceRoot = if (targetSourceRootPath != null) {
+                val targetVirtualFile = if (targetSourceRootPath != null) {
                     rootDir.findFileByRelativePath(targetSourceRootPath)!!
                 } else {
                     targetDir?.virtualFile
                 }
 
-                KotlinMoveTargetForDeferredFile(FqName(packageName), targetDir, targetSourceRoot) {
-                    createKotlinFile(guessNewFileName(listOf(elementToMove))!!, moveDestination.getTargetDirectory(mainFile))
+                KotlinMoveTargetForDeferredFile(FqName(packageName), targetDir, targetVirtualFile) {
+                    createKotlinFile(guessNewFileName(elementsToMove)!!, moveDestination.getTargetDirectory(mainFile))
                 }
             } ?: config.getString("targetFile").let { filePath ->
                 KotlinMoveTargetForExistingElement(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as KtFile)
             }
 
-            val options = MoveDeclarationsDescriptor(listOf(elementToMove), moveTarget, MoveDeclarationsDelegate.TopLevel)
-            MoveKotlinDeclarationsProcessor(mainFile.getProject(), options).run()
+            val descriptor = MoveDeclarationsDescriptor(project, elementsToMove, moveTarget, MoveDeclarationsDelegate.TopLevel)
+            MoveKotlinDeclarationsProcessor(descriptor).run()
         }
     },
 
     CHANGE_PACKAGE_DIRECTIVE {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             KotlinChangePackageRefactoring(mainFile as KtFile).run(FqName(config.getString("newPackageName")))
         }
     },
 
     MOVE_DIRECTORY_WITH_CLASSES {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
             val sourceDir = rootDir.findFileByRelativePath(config.getString("sourceDir"))!!.toPsiDirectory(project)!!
             val targetDir = rootDir.findFileByRelativePath(config.getString("targetDir"))!!.toPsiDirectory(project)!!
@@ -306,9 +264,9 @@ enum class MoveAction {
     },
 
     MOVE_KOTLIN_NESTED_CLASS {
-        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
-            val elementToMove = elementAtCaret!!.getNonStrictParentOfType<KtClassOrObject>()!!
+            val elementToMove = elementsAtCaret.single().getNonStrictParentOfType<KtClassOrObject>()!!
             val targetClassName = config.getNullableString("targetClass")
             val targetClass =
                     if (targetClassName != null) {
@@ -329,10 +287,8 @@ enum class MoveAction {
                             createKotlinFile(fileName, targetDir, targetPackageFqName.asString())
                         }
                     }
-            val descriptor = MoveDeclarationsDescriptor(listOf(elementToMove), moveTarget, delegate)
-            MoveKotlinDeclarationsProcessor(project, descriptor).run()
+            val descriptor = MoveDeclarationsDescriptor(project, listOf(elementToMove), moveTarget, delegate)
+            MoveKotlinDeclarationsProcessor(descriptor).run()
         }
     };
-
-    abstract fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject)
 }

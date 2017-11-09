@@ -10,7 +10,7 @@ class Hello {
         this.z = x + y
     }
 
-    val y: String = Storage.hello
+    val y = Storage.hello
 
     val z: String
 }

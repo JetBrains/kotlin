@@ -1,4 +1,4 @@
-JetFile: recoveryEmptyDelegationType.kt
+KtFile: recoveryEmptyDelegationType.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

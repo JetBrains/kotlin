@@ -4,15 +4,40 @@ package org.jetbrains.kotlin.gradle.dsl
 
 internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions {
 
-    private var apiVersionField: kotlin.String? = null
-    override var apiVersion: kotlin.String
-        get() = apiVersionField ?: "1.1"
+    private var allWarningsAsErrorsField: kotlin.Boolean? = null
+    override var allWarningsAsErrors: kotlin.Boolean
+        get() = allWarningsAsErrorsField ?: false
+        set(value) { allWarningsAsErrorsField = value }
+
+    private var suppressWarningsField: kotlin.Boolean? = null
+    override var suppressWarnings: kotlin.Boolean
+        get() = suppressWarningsField ?: false
+        set(value) { suppressWarningsField = value }
+
+    private var verboseField: kotlin.Boolean? = null
+    override var verbose: kotlin.Boolean
+        get() = verboseField ?: false
+        set(value) { verboseField = value }
+
+    private var apiVersionField: kotlin.String?? = null
+    override var apiVersion: kotlin.String?
+        get() = apiVersionField ?: null
         set(value) { apiVersionField = value }
+
+    private var languageVersionField: kotlin.String?? = null
+    override var languageVersion: kotlin.String?
+        get() = languageVersionField ?: null
+        set(value) { languageVersionField = value }
 
     private var includeRuntimeField: kotlin.Boolean? = null
     override var includeRuntime: kotlin.Boolean
         get() = includeRuntimeField ?: false
         set(value) { includeRuntimeField = value }
+
+    private var javaParametersField: kotlin.Boolean? = null
+    override var javaParameters: kotlin.Boolean
+        get() = javaParametersField ?: false
+        set(value) { javaParametersField = value }
 
     private var jdkHomeField: kotlin.String?? = null
     override var jdkHome: kotlin.String?
@@ -23,11 +48,6 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
     override var jvmTarget: kotlin.String
         get() = jvmTargetField ?: "1.6"
         set(value) { jvmTargetField = value }
-
-    private var languageVersionField: kotlin.String? = null
-    override var languageVersion: kotlin.String
-        get() = languageVersionField ?: "1.1"
-        set(value) { languageVersionField = value }
 
     private var noJdkField: kotlin.Boolean? = null
     override var noJdk: kotlin.Boolean
@@ -44,39 +64,33 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         get() = noStdlibField ?: true
         set(value) { noStdlibField = value }
 
-    private var suppressWarningsField: kotlin.Boolean? = null
-    override var suppressWarnings: kotlin.Boolean
-        get() = suppressWarningsField ?: false
-        set(value) { suppressWarningsField = value }
-
-    private var verboseField: kotlin.Boolean? = null
-    override var verbose: kotlin.Boolean
-        get() = verboseField ?: false
-        set(value) { verboseField = value }
-
-    open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments) {
+    internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments) {
+        allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
+        suppressWarningsField?.let { args.suppressWarnings = it }
+        verboseField?.let { args.verbose = it }
         apiVersionField?.let { args.apiVersion = it }
+        languageVersionField?.let { args.languageVersion = it }
         includeRuntimeField?.let { args.includeRuntime = it }
+        javaParametersField?.let { args.javaParameters = it }
         jdkHomeField?.let { args.jdkHome = it }
         jvmTargetField?.let { args.jvmTarget = it }
-        languageVersionField?.let { args.languageVersion = it }
         noJdkField?.let { args.noJdk = it }
         noReflectField?.let { args.noReflect = it }
         noStdlibField?.let { args.noStdlib = it }
-        suppressWarningsField?.let { args.suppressWarnings = it }
-        verboseField?.let { args.verbose = it }
     }
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fillDefaultValues() {
-    apiVersion = "1.1"
+    allWarningsAsErrors = false
+    suppressWarnings = false
+    verbose = false
+    apiVersion = null
+    languageVersion = null
     includeRuntime = false
+    javaParameters = false
     jdkHome = null
     jvmTarget = "1.6"
-    languageVersion = "1.1"
     noJdk = false
     noReflect = true
     noStdlib = true
-    suppressWarnings = false
-    verbose = false
 }

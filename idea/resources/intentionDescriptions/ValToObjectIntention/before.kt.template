@@ -1,0 +1,9 @@
+interface B {
+    fun c()
+}
+
+
+<spot>val a = object: B</spot> {
+    override fun c() {
+    }
+}

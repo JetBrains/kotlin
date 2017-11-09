@@ -1,0 +1,32 @@
+package
+
+public const val ONE: kotlin.Int = 1
+public var mutable: kotlin.String
+public var mutableWithGetter: kotlin.String
+public val readOnly: kotlin.String = ""
+public val twoWithGetter: kotlin.Int
+public val withGetter: kotlin.String
+public fun func(): kotlin.String
+
+public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ a: kotlin.Array<kotlin.String> = ..., /*1*/ b: kotlin.Array<kotlin.String> = ..., /*2*/ c: kotlin.Array<kotlin.String> = ..., /*3*/ d: kotlin.IntArray = ..., /*4*/ e: kotlin.IntArray = ..., /*5*/ f: kotlin.Array<kotlin.String> = ..., /*6*/ g: kotlin.Array<kotlin.String> = ..., /*7*/ h: kotlin.Array<kotlin.reflect.KClass<*>> = ...)
+    public final val a: kotlin.Array<kotlin.String>
+    public final val b: kotlin.Array<kotlin.String>
+    public final val c: kotlin.Array<kotlin.String>
+    public final val d: kotlin.IntArray
+    public final val e: kotlin.IntArray
+    public final val f: kotlin.Array<kotlin.String>
+    public final val g: kotlin.Array<kotlin.String>
+    public final val h: kotlin.Array<kotlin.reflect.KClass<*>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object WithLateinit {
+    private constructor WithLateinit()
+    public final lateinit var kClass: kotlin.reflect.KClass<*>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

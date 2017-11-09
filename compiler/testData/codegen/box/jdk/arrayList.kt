@@ -1,4 +1,3 @@
-import java.util.ArrayList
 
 fun box(): String {
     val a = ArrayList<Int>()

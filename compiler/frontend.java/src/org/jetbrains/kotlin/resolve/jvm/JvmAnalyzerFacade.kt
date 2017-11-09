@@ -19,12 +19,13 @@ package org.jetbrains.kotlin.resolve.jvm
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
@@ -42,26 +43,28 @@ class JvmPlatformParameters(
 ) : PlatformAnalysisParameters
 
 
-object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
+object JvmAnalyzerFacade : AnalyzerFacade() {
     override fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
             moduleDescriptor: ModuleDescriptorImpl,
             moduleContext: ModuleContext,
             moduleContent: ModuleContent,
-            platformParameters: JvmPlatformParameters,
+            platformParameters: PlatformAnalysisParameters,
             targetEnvironment: TargetEnvironment,
             resolverForProject: ResolverForProject<M>,
+            languageSettingsProvider: LanguageSettingsProvider,
             packagePartProvider: PackagePartProvider
     ): ResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
                 project, moduleContext.storageManager, syntheticFiles,
-                if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
+                if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope,
+                moduleInfo
         )
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->
-            val referencedClassModule = platformParameters.moduleByJavaClass(javaClass)
+            val referencedClassModule = (platformParameters as JvmPlatformParameters).moduleByJavaClass(javaClass)
             // We don't have full control over idea resolve api so we allow for a situation which should not happen in Kotlin.
             // For example, type in a java library can reference a class declared in a source root (is valid but rare case)
             // Providing a fallback strategy in this case can hide future problems, so we should at least log to be able to diagnose those
@@ -78,7 +81,11 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
             resolverForModule.componentProvider.get<JavaDescriptorResolver>()
         }
 
+        val jvmTarget = languageSettingsProvider.getTargetPlatform(moduleInfo) as? JvmTarget ?: JvmTarget.JVM_1_6
+        val languageVersionSettings = languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
+
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
+
         val container = createContainerForLazyResolveWithJava(
                 moduleContext,
                 trace,
@@ -88,9 +95,11 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 targetEnvironment,
                 LookupTracker.DO_NOTHING,
                 packagePartProvider,
-                LanguageVersionSettingsImpl.DEFAULT, // TODO: see KT-12410
-                useLazyResolve = true
+                jvmTarget,
+                languageVersionSettings,
+                useBuiltInsProvider = false // TODO: load built-ins from module dependencies in IDE
         )
+
         val resolveSession = container.get<ResolveSession>()
         val javaDescriptorResolver = container.get<JavaDescriptorResolver>()
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPrimaryConstructor(this, data)
 
-    override fun getContainingClassOrObject() = getParent() as KtClassOrObject
+    override fun getContainingClassOrObject() = parent as KtClassOrObject
 
     private fun getOrCreateConstructorKeyword(): PsiElement {
         return getConstructorKeyword() ?: addBefore(KtPsiFactory(this).createConstructorKeyword(), valueParameterList!!)
@@ -59,13 +59,13 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     }
 
     override fun addAnnotationEntry(annotationEntry: KtAnnotationEntry): KtAnnotationEntry {
-        val modifierList = getModifierList()
+        val modifierList = modifierList
         return if (modifierList != null) {
             modifierList.addBefore(annotationEntry, modifierList.firstChild) as KtAnnotationEntry
         }
         else {
-            val parameterList = getValueParameterList()!!
-            val newModifierList = KtPsiFactory(getProject()).createModifierList(annotationEntry.text)
+            val parameterList = valueParameterList!!
+            val newModifierList = KtPsiFactory(project).createModifierList(annotationEntry.text)
             (addBefore(newModifierList, parameterList) as KtModifierList).annotationEntries.first()
         }
     }

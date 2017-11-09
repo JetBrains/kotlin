@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.diagnostics;
 
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.FilteringIterator;
@@ -49,12 +48,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     @NotNull
     @Override
     public Iterator<Diagnostic> iterator() {
-        return new FilteringIterator<Diagnostic, Diagnostic>(diagnostics.iterator(), new Condition<Diagnostic>() {
-            @Override
-            public boolean value(Diagnostic diagnostic) {
-                return kotlinSuppressCache.getFilter().invoke(diagnostic);
-            }
-        });
+        return new FilteringIterator<>(diagnostics.iterator(), kotlinSuppressCache.getFilter()::invoke);
     }
 
     @NotNull

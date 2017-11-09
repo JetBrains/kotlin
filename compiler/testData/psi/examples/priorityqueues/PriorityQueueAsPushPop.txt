@@ -1,4 +1,4 @@
-JetFile: PriorityQueueAsPushPop.kt
+KtFile: PriorityQueueAsPushPop.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

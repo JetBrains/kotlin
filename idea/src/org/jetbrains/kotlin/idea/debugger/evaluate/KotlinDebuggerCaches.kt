@@ -21,6 +21,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.LibraryUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -38,11 +39,17 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.debugger.BinaryCacheKey
+import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
+import org.jetbrains.kotlin.idea.debugger.WeakBytecodeDebugInfoStorage
+import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
+import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -66,6 +73,13 @@ class KotlinDebuggerCaches(project: Project) {
             {
                 CachedValueProvider.Result<MutableMap<PsiElement, KotlinTypeMapper>>(
                         ConcurrentHashMap<PsiElement, KotlinTypeMapper>(),
+                        PsiModificationTracker.MODIFICATION_COUNT)
+            }, false)
+
+    private val debugInfoCache = CachedValuesManager.getManager(project).createCachedValue(
+            {
+                CachedValueProvider.Result<WeakBytecodeDebugInfoStorage>(
+                        WeakBytecodeDebugInfoStorage(),
                         PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
@@ -107,7 +121,9 @@ class KotlinDebuggerCaches(project: Project) {
             return newCompiledData
         }
 
-        fun <T: PsiElement> getOrComputeClassNames(psiElement: T, create: (T) -> ComputedClassNames): List<String> {
+        fun <T : PsiElement> getOrComputeClassNames(psiElement: T?, create: (T) -> ComputedClassNames): List<String> {
+            if (psiElement == null) return Collections.emptyList()
+
             val cache = getInstance(runReadAction { psiElement.project })
 
             val classNamesCache = cache.cachedClassNames.value
@@ -137,33 +153,36 @@ class KotlinDebuggerCaches(project: Project) {
             val cachedValue = typeMappersCache[key]
             if (cachedValue != null) return cachedValue
 
-            if (!isInLibrary) {
-                val newValue = createTypeMapperForSourceFile(file)
-
-                typeMappersCache[file] = newValue
-
-                return newValue
+            val newValue = if (!isInLibrary) {
+                createTypeMapperForSourceFile(file)
             }
             else {
                 val element = getElementToCreateTypeMapperForLibraryFile(psiElement)
-                val newValue = createTypeMapperForLibraryFile(element, file)
-
-                typeMappersCache[psiElement] = newValue
-
-                return newValue
+                createTypeMapperForLibraryFile(element, file)
             }
+
+            typeMappersCache[key] = newValue
+            return newValue
+        }
+
+        fun getOrReadDebugInfoFromBytecode(
+                project: Project,
+                jvmName: JvmClassName,
+                file: VirtualFile): BytecodeDebugInfo? {
+            val cache = getInstance(project)
+            return cache.debugInfoCache.value[BinaryCacheKey(project, jvmName, file)]
         }
 
         private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
-                runReadAction { if (element is KtElement) element else PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
+                runReadAction { element as? KtElement ?: PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
 
         private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): KotlinTypeMapper =
-                runReadAction {
+                runInReadActionWithWriteActionPriorityWithPCE {
                     createTypeMapper(file, element.analyzeAndGetResult())
                 }
 
         private fun createTypeMapperForSourceFile(file: KtFile): KotlinTypeMapper =
-                runReadAction {
+                runInReadActionWithWriteActionPriorityWithPCE {
                     createTypeMapper(file, file.analyzeFullyAndGetResult().apply(AnalysisResult::throwIfError))
                 }
 
@@ -199,8 +218,7 @@ class KotlinDebuggerCaches(project: Project) {
     }
 
     data class CompiledDataDescriptor(
-            val bytecodes: ByteArray,
-            val additionalClasses: List<Pair<String, ByteArray>>,
+            val classes: List<ClassToLoad>,
             val sourcePosition: SourcePosition,
             val parameters: ParametersDescriptor
     )
@@ -217,14 +235,20 @@ class KotlinDebuggerCaches(project: Project) {
 
     data class Parameter(val callText: String, val type: KotlinType, val value: Value? = null)
 
-    sealed class ComputedClassNames(val classNames: List<String>, val shouldBeCached: Boolean) {
-        class CachedClassNames(classNames: List<String>): ComputedClassNames(classNames, true) {
-            constructor(className: String?): this(className.toList())
+    class ComputedClassNames(val classNames: List<String>, val shouldBeCached: Boolean) {
+        companion object {
+            val EMPTY = ComputedClassNames.Cached(emptyList())
+
+            fun Cached(classNames: List<String>) = ComputedClassNames(classNames, true)
+            fun Cached(className: String) = ComputedClassNames(Collections.singletonList(className), true)
+
+            fun NonCached(classNames: List<String>) = ComputedClassNames(classNames, false)
         }
 
-        class NonCachedClassNames(classNames: List<String>): ComputedClassNames(classNames, false) {
-            constructor(className: String?): this(className.toList())
-        }
+        fun distinct() = ComputedClassNames(classNames.distinct(), shouldBeCached)
+
+        operator fun plus(other: ComputedClassNames) = ComputedClassNames(
+                classNames + other.classNames, shouldBeCached && other.shouldBeCached)
     }
 }
 

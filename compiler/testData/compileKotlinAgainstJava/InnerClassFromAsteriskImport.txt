@@ -1,0 +1,8 @@
+package test
+
+public fun getEntry(): kotlin.collections.(Mutable)Map.(Mutable)Entry<(raw) kotlin.Any?, (raw) kotlin.Any?>!
+
+public/*package*/ open class InnerClassFromAsteriskImport {
+    public/*package*/ constructor InnerClassFromAsteriskImport()
+    public open fun getEntry(): kotlin.collections.(Mutable)Map.(Mutable)Entry<(raw) kotlin.Any?, (raw) kotlin.Any?>!
+}

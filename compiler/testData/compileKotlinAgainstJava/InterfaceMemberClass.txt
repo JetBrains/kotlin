@@ -1,0 +1,11 @@
+package test
+
+private fun useInterfaceMemberClass(): kotlin.String!
+
+public/*package*/ interface InterfaceMemberClass {
+
+    public open class MemberClass {
+        public constructor MemberClass()
+        public open fun func(): kotlin.String!
+    }
+}

@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface CalculatedClosure {
+    @NotNull
+    ClassDescriptor getClosureClass();
+
     @Nullable
     ClassDescriptor getCaptureThis();
 
@@ -41,5 +44,7 @@ public interface CalculatedClosure {
     @NotNull
     List<Pair<String, Type>> getRecordedFields();
 
-    boolean isCoroutine();
+    boolean isSuspend();
+
+    boolean isSuspendLambda();
 }

@@ -30,7 +30,7 @@ public class FqNameTest {
 
         for (String name : new String[] { "org", "org.jetbrains", "org.jetbrains.kotlin" }) {
             List<Name> segments = new FqName(name).pathSegments();
-            List<String> segmentsStrings = new ArrayList<String>();
+            List<String> segmentsStrings = new ArrayList<>();
             for (Name segment : segments) {
                 segmentsStrings.add(segment.asString());
             }

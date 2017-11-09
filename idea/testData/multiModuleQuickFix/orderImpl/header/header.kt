@@ -1,0 +1,1 @@
+header fun foo(n: Int): Int

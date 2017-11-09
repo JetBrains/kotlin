@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
 import com.intellij.refactoring.psi.SearchUtils
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.*
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -32,7 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
@@ -41,6 +39,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
 internal operator fun KotlinType.contains(inner: KotlinType): Boolean {
@@ -51,7 +50,15 @@ internal operator fun KotlinType.contains(descriptor: ClassifierDescriptor): Boo
     return constructor.declarationDescriptor == descriptor || arguments.any { descriptor in it.type }
 }
 
-private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
+internal fun KotlinType.decomposeIntersection(): List<KotlinType> {
+    (constructor as? IntersectionTypeConstructor)?.let {
+        return it.supertypes.flatMap { it.decomposeIntersection() }
+    }
+
+    return listOf(this)
+}
+
+private fun KotlinType.renderSingle(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
     val substitution = typeParameterNameMap
             .mapValues {
                 val name = Name.identifier(it.value)
@@ -68,7 +75,14 @@ private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor,
                     override fun getTypeConstructor() = wrappingTypeConstructor
                 }
 
-                val wrappingType = KotlinTypeFactory.simpleType(typeParameter.defaultType, constructor = wrappingTypeConstructor)
+                val defaultType = typeParameter.defaultType
+                val wrappingType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+                        defaultType.annotations,
+                        wrappingTypeConstructor,
+                        defaultType.arguments,
+                        defaultType.isMarkedNullable,
+                        defaultType.memberScope
+                )
                 TypeProjectionImpl(wrappingType)
             }
             .mapKeys { it.key.typeConstructor }
@@ -76,6 +90,10 @@ private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor,
     val typeToRender = TypeSubstitutor.create(substitution).substitute(this, Variance.INVARIANT)!!
     val renderer = if (fq) IdeDescriptorRenderers.SOURCE_CODE else IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES
     return renderer.renderType(typeToRender)
+}
+
+private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): List<String> {
+    return decomposeIntersection().map { it.renderSingle(typeParameterNameMap, fq) }
 }
 
 internal fun KotlinType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
@@ -117,8 +135,11 @@ fun KtExpression.guessTypes(
         context: BindingContext,
         module: ModuleDescriptor,
         pseudocode: Pseudocode? = null,
-        coerceUnusedToUnit: Boolean = true
+        coerceUnusedToUnit: Boolean = true,
+        allowErrorTypes: Boolean = false
 ): Array<KotlinType> {
+    fun isAcceptable(type: KotlinType) = allowErrorTypes || !ErrorUtils.containsErrorType(type)
+
     if (coerceUnusedToUnit
         && this !is KtDeclaration
         && isUsedAsStatement(context)
@@ -126,15 +147,15 @@ fun KtExpression.guessTypes(
 
     // if we know the actual type of the expression
     val theType1 = context.getType(this)
-    if (theType1 != null) {
-        val dataFlowInfo = context.getDataFlowInfo(this)
+    if (theType1 != null && isAcceptable(theType1)) {
+        val dataFlowInfo = context.getDataFlowInfoAfter(this)
         val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module))
         return if (possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
     }
 
     // expression has an expected type
     val theType2 = context[BindingContext.EXPECTED_EXPRESSION_TYPE, this]
-    if (theType2 != null) return arrayOf(theType2)
+    if (theType2 != null && isAcceptable(theType2)) return arrayOf(theType2)
 
     val parent = parent
     return when {
@@ -145,8 +166,7 @@ fun KtExpression.guessTypes(
         }
         parent is KtTypeConstraint -> {
             // expression is on the left side of a type assertion
-            val constraint = parent
-            arrayOf(context[BindingContext.TYPE, constraint.boundTypeReference]!!)
+            arrayOf(context[BindingContext.TYPE, parent.boundTypeReference]!!)
         }
         this is KtDestructuringDeclarationEntry -> {
             // expression is on the lhs of a multi-declaration
@@ -174,15 +194,14 @@ fun KtExpression.guessTypes(
         }
         parent is KtProperty && parent.isLocal -> {
             // the expression is the RHS of a variable assignment with a specified type
-            val variable = parent
-            val typeRef = variable.typeReference
+            val typeRef = parent.typeReference
             if (typeRef != null) {
                 // and has a specified type
                 arrayOf(context[BindingContext.TYPE, typeRef]!!)
             }
             else {
                 // otherwise guess, based on LHS
-                variable.guessType(context)
+                parent.guessType(context)
             }
         }
         parent is KtPropertyDelegate -> {
@@ -198,6 +217,28 @@ fun KtExpression.guessTypes(
         parent is KtStringTemplateEntryWithExpression && parent.expression == this -> {
             arrayOf(module.builtIns.stringType)
         }
+        parent is KtBlockExpression && parent.statements.lastOrNull() == this && parent.parent is KtFunctionLiteral -> {
+            parent.guessTypes(context, module, pseudocode, coerceUnusedToUnit)
+        }
+        parent is KtFunction -> {
+            val functionDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? FunctionDescriptor ?: return arrayOf()
+            val returnType = functionDescriptor.returnType
+            if (returnType != null && isAcceptable(returnType)) return arrayOf(returnType)
+            val functionalExpression: KtExpression? = when {
+                parent is KtFunctionLiteral -> parent.parent as? KtLambdaExpression
+                parent is KtNamedFunction && parent.name == null -> parent
+                else -> null
+            }
+            if (functionalExpression == null) {
+                functionDescriptor.overriddenDescriptors
+                        .mapNotNull { it.returnType }
+                        .firstOrNull { isAcceptable(it) }
+                        ?.let { return arrayOf(it) }
+                return arrayOf()
+            }
+            val lambdaTypes = functionalExpression.guessTypes(context, module, pseudocode?.parent, coerceUnusedToUnit)
+            lambdaTypes.mapNotNull { it.getFunctionType()?.arguments?.lastOrNull()?.type }.toTypedArray()
+        }
         else -> {
             pseudocode?.getElementValue(this)?.let {
                 getExpectedTypePredicate(it, context, module.builtIns).getRepresentativeTypes().toTypedArray()
@@ -205,6 +246,8 @@ fun KtExpression.guessTypes(
         }
     }
 }
+
+private fun KotlinType.getFunctionType() = if (isFunctionType) this else supertypes().firstOrNull { it.isFunctionType }
 
 private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinType> {
     val expectedTypes = SearchUtils.findAllReferences(this, useScope)!!.mapNotNullTo(HashSet<KotlinType>()) { ref ->
@@ -219,13 +262,13 @@ private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinT
     if (expectedTypes.isEmpty() || expectedTypes.any { expectedType -> ErrorUtils.containsErrorType(expectedType) }) {
         return arrayOf()
     }
-    val theType = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, expectedTypes)
-    if (theType != null) {
-        return arrayOf(theType)
+    val theType = TypeIntersector.intersectTypes(expectedTypes)
+    return if (theType != null) {
+        arrayOf(theType)
     }
     else {
         // intersection doesn't exist; let user make an imperfect choice
-        return expectedTypes.toTypedArray()
+        expectedTypes.toTypedArray()
     }
 }
 
@@ -238,19 +281,19 @@ internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, varianc
     val nullable = isMarkedNullable
     val currentType = makeNotNullable()
 
-    if (when (variance) {
+    return if (when (variance) {
         Variance.INVARIANT      -> KotlinTypeChecker.DEFAULT.equalTypes(currentType, substitution.forType)
         Variance.IN_VARIANCE    -> KotlinTypeChecker.DEFAULT.isSubtypeOf(currentType, substitution.forType)
         Variance.OUT_VARIANCE   -> KotlinTypeChecker.DEFAULT.isSubtypeOf(substitution.forType, currentType)
     }) {
-        return TypeUtils.makeNullableAsSpecified(substitution.byType, nullable)
+        TypeUtils.makeNullableAsSpecified(substitution.byType, nullable)
     }
     else {
         val newArguments = arguments.zip(constructor.parameters).map { pair ->
             val (projection, typeParameter) = pair
             TypeProjectionImpl(Variance.INVARIANT, projection.type.substitute(substitution, typeParameter.variance))
         }
-        return KotlinTypeFactory.simpleType(annotations, constructor, newArguments, isMarkedNullable, memberScope)
+        KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations, constructor, newArguments, isMarkedNullable, memberScope)
     }
 }
 

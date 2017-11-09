@@ -39,3 +39,11 @@ fun closeQuietly(closeable: Closeable?) {
         }
     }
 }
+
+fun Throwable.isProcessCanceledException(): Boolean {
+    var klass: Class<out Any?> = this.javaClass
+    while (true) {
+        if (klass.canonicalName == "com.intellij.openapi.progress.ProcessCanceledException") return true
+        klass = klass.superclass ?: return false
+    }
+}

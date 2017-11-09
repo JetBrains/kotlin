@@ -36,7 +36,7 @@ fun test() {
 val Int.abs : Int
   get() = if (this > 0) this else -this;
 
-<!MUST_BE_INITIALIZED!>val <T> T.foo : T<!>
+<!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>val <T> T.foo : T<!>
 
 fun Int.foo() = this
 
@@ -51,7 +51,7 @@ import outer.*
           val foo : Int = 0
         }
 
-        fun Any.equals(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
+        fun Any.<!EXTENSION_SHADOWED_BY_MEMBER!>equals<!>(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
         fun Any?.equals1(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
         fun Any.equals2(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
 

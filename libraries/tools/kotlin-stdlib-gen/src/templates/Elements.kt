@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun elements(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -32,6 +33,7 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
         doc { f -> "Returns first index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
+        annotations(Lists) { """@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases""" }
         returns("Int")
         body { f ->
             """
@@ -81,6 +83,7 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
         doc { f -> "Returns last index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
+        annotations(Lists) { """@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases""" }
         returns("Int")
         body { f ->
             """
@@ -537,6 +540,7 @@ fun elements(): List<GenericFunction> {
                 }
             }
             if (!found) throw NoSuchElementException("${f.doc.collection.capitalize()} contains no ${f.doc.element} matching the predicate.")
+            @Suppress("UNCHECKED_CAST")
             return last as T
             """
         }
@@ -709,6 +713,7 @@ fun elements(): List<GenericFunction> {
                 }
             }
             if (!found) throw NoSuchElementException("${f.doc.collection.capitalize()} contains no ${f.doc.element} matching the predicate.")
+            @Suppress("UNCHECKED_CAST")
             return single as T
             """
         }
@@ -753,5 +758,6 @@ fun elements(): List<GenericFunction> {
         }
     }
 
+    templates.forEach { it.sequenceClassification(terminal) }
     return templates
 }

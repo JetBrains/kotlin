@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
+        jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -12,6 +13,7 @@ apply plugin: "kotlin-kapt"
 
 repositories {
     mavenLocal()
+    jcenter()
 }
 
 dependencies {
@@ -23,5 +25,19 @@ dependencies {
 kapt {
     arguments {
         arg("suffix", "Customized")
+        arg("justColon", ":")
+        arg("justEquals", "=")
+        arg("containsColon", "a:b")
+        arg("containsEquals", "a=b")
+        arg("startsWithColon", ":a")
+        arg("startsWithEquals", "=a")
+        arg("endsWithColon", "a:")
+        arg("endsWithEquals", "a:")
+        arg("withSpace", "a b c") // key doesn't support spaces
+    }
+
+    javacOptions {
+        option("-Xmaxerrs", 500)
+        option("-Xlint:all")
     }
 }

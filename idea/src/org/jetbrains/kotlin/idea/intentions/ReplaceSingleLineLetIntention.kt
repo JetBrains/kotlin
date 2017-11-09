@@ -17,12 +17,9 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 
 class ReplaceSingleLineLetInspection : IntentionBasedInspection<KtCallExpression>(ReplaceSingleLineLetIntention::class) {
     override fun inspectionTarget(element: KtCallExpression) = element.calleeExpression
@@ -33,64 +30,95 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         "Remove redundant '.let' call"
 ) {
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
-        val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return
-        val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return
-        val dotQualifiedExpression = bodyExpression as? KtDotQualifiedExpression ?: return
+        element.lambdaArguments.firstOrNull()?.getLambdaExpression()?.bodyExpression?.children?.singleOrNull()?.let {
+            when (it) {
+                is KtDotQualifiedExpression -> it.applyTo(element)
+                is KtBinaryExpression -> it.applyTo(element)
+            }
+        }
+    }
+
+    private fun KtBinaryExpression.applyTo(element: KtCallExpression) {
+        val left = left ?: return
+        val factory = KtPsiFactory(element.project)
+        val parent = element.parent
+        when (parent) {
+            is KtQualifiedExpression -> {
+                val receiver = parent.receiverExpression
+                val newLeft = when (left) {
+                    is KtDotQualifiedExpression -> left.replaceFirstReceiver(factory, receiver, parent is KtSafeQualifiedExpression)
+                    else -> receiver
+                }
+                val newExpression = factory.createExpressionByPattern("$0 $1 $2", newLeft, operationReference, right!!)
+                parent.replace(newExpression)
+            }
+            else -> {
+                val newLeft = when (left) {
+                    is KtDotQualifiedExpression -> left.deleteFirstReceiver()
+                    else -> factory.createThisExpression()
+                }
+                val newExpression = factory.createExpressionByPattern("$0 $1 $2", newLeft, operationReference, right!!)
+                element.replace(newExpression)
+            }
+        }
+    }
+
+    private fun KtDotQualifiedExpression.applyTo(element: KtCallExpression) {
         val parent = element.parent
         when (parent) {
             is KtQualifiedExpression -> {
                 val factory = KtPsiFactory(element.project)
                 val receiver = parent.receiverExpression
-                parent.replace(dotQualifiedExpression.replaceFirstReceiver(factory, receiver, parent.operationSign == KtTokens.SAFE_ACCESS))
+                parent.replace(replaceFirstReceiver(factory, receiver, parent is KtSafeQualifiedExpression))
             }
             else -> {
-                element.replace(dotQualifiedExpression.deleteFirstReceiver())
+                element.replace(deleteFirstReceiver())
             }
         }
-    }
-
-    private fun KtDotQualifiedExpression.deleteFirstReceiver(): KtExpression {
-        val receiver = receiverExpression
-        when (receiver) {
-            is KtDotQualifiedExpression -> receiver.deleteFirstReceiver()
-            else -> selectorExpression?.let { return this.replace(it) as KtExpression }
-        }
-        return this
-    }
-
-    private fun KtDotQualifiedExpression.replaceFirstReceiver(
-            factory: KtPsiFactory,
-            newReceiver: KtExpression,
-            safeAccess: Boolean = false
-    ): KtExpression {
-        val receiver = receiverExpression
-        when (receiver) {
-            is KtDotQualifiedExpression -> {
-                receiver.replaceFirstReceiver(factory, newReceiver, safeAccess)
-            }
-            else -> {
-                if (safeAccess) {
-                    operationTokenNode.psi.replace(factory.createSafeCallNode().psi)
-                }
-                receiver.replace(newReceiver)
-            }
-        }
-        return this
     }
 
     override fun isApplicableTo(element: KtCallExpression): Boolean {
-        if (!isLetMethod(element)) return false
+        if (!element.isLetMethodCall()) return false
         val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return false
-        val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false
-        val dotQualifiedExpression = bodyExpression as? KtDotQualifiedExpression ?: return false
         val parameterName = lambdaExpression.getParameterName() ?: return false
-        val receiverExpression = dotQualifiedExpression.getLeftMostReceiverExpression()
-        if (receiverExpression.text != parameterName) return false
-        return !dotQualifiedExpression.receiverUsedAsArgument(parameterName)
+        val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false
+
+        return when (bodyExpression) {
+            is KtBinaryExpression -> element.parent !is KtSafeQualifiedExpression && bodyExpression.isApplicable(parameterName)
+            is KtDotQualifiedExpression -> bodyExpression.isApplicable(parameterName)
+            else -> false
+        }
     }
 
-    private fun isLetMethod(element: KtCallExpression) =
-            element.calleeExpression?.text == "let" && element.isMethodCall("kotlin.let")
+    private fun KtBinaryExpression.isApplicable(parameterName: String): Boolean {
+        val left = left ?: return false
+        when (left) {
+            is KtNameReferenceExpression -> if (left.text != parameterName) return false
+            is KtDotQualifiedExpression -> if (!left.isApplicable(parameterName)) return false
+            else -> return false
+        }
+
+        val right = right ?: return false
+        return when (right) {
+            is KtNameReferenceExpression -> right.text != parameterName
+            is KtDotQualifiedExpression -> !right.hasLambdaExpression() && !right.nameUsed(parameterName)
+            is KtConstantExpression -> true
+            else -> false
+        }
+    }
+
+    private fun KtDotQualifiedExpression.isApplicable(parameterName: String) =
+            !hasLambdaExpression() && getLeftMostReceiverExpression().let { receiver ->
+                receiver is KtNameReferenceExpression &&
+                receiver.getReferencedName() == parameterName &&
+                !nameUsed(parameterName, except = receiver)
+            }
+
+    private fun KtDotQualifiedExpression.hasLambdaExpression()
+            = selectorExpression?.anyDescendantOfType<KtLambdaExpression>() ?: false
+
+    private fun KtCallExpression.isLetMethodCall() =
+            calleeExpression?.text == "let" && isMethodCall("kotlin.let")
 
     private fun KtLambdaExpression.getParameterName(): String? {
         val parameters = valueParameters
@@ -98,11 +126,6 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         return if (parameters.size == 1) parameters[0].text else "it"
     }
 
-    private fun KtDotQualifiedExpression.getLeftMostReceiverExpression(): KtExpression =
-            (receiverExpression as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: receiverExpression
-
-    private fun KtDotQualifiedExpression.receiverUsedAsArgument(receiverName: String): Boolean {
-        if ((selectorExpression as? KtCallExpression)?.valueArguments?.firstOrNull { it.text == receiverName } != null) return true
-        return (receiverExpression as? KtDotQualifiedExpression)?.receiverUsedAsArgument(receiverName) ?: false
-    }
+    private fun KtExpression.nameUsed(name: String, except: KtNameReferenceExpression? = null): Boolean =
+            anyDescendantOfType<KtNameReferenceExpression> { it != except && it.getReferencedName() == name }
 }

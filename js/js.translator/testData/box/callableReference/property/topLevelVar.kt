@@ -1,8 +1,12 @@
+// EXPECTED_REACHABLE_NODES: 1119
 package foo
 
 var x = 1
 
 val y = 2
+
+val z: Int
+    get() = 3
 
 fun box(): String {
     var refX = ::x
@@ -15,6 +19,10 @@ fun box(): String {
     var refY = ::y
     assertEquals(2, refY.get())
     assertEquals("y", refY.name)
+
+    var refZ = ::z
+    assertEquals(3, refZ.get())
+    assertEquals("z", refZ.name)
 
     return "OK"
 }

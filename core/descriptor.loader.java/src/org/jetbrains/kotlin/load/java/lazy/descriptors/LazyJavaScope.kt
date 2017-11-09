@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,27 @@
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.child
+import org.jetbrains.kotlin.load.java.lazy.childForMethod
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
-import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeAttributes
+import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
-import org.jetbrains.kotlin.load.java.typeEnhancement.enhanceSignatures
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
+import org.jetbrains.kotlin.resolve.retainMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -46,7 +48,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.toReadOnlyList
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberScopeImpl() {
@@ -67,7 +69,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     protected abstract fun computeMemberIndex(): DeclaredMemberIndex
 
-    // Fake overrides, SAM constructors/adapters, values()/valueOf(), etc.
+    // Fake overrides, values()/valueOf(), etc.
     protected abstract fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name)
 
     protected abstract fun getDispatchReceiverParameter(): ReceiverParameterDescriptor?
@@ -82,14 +84,13 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
             c.components.javaResolverCache.recordMethod(method, descriptor)
             result.add(descriptor)
-            if (method.isStatic) {
-                result.addIfNotNull(c.components.samConversionResolver.resolveSamAdapter(descriptor))
-            }
         }
+
+        result.retainMostSpecificInEachOverridableGroup()
 
         computeNonDeclaredFunctions(result, name)
 
-        enhanceSignatures(result).toReadOnlyList()
+        c.components.signatureEnhancement.enhanceSignatures(c, result).toList()
     }
 
     open protected fun JavaMethodDescriptor.isVisibleAsFunction() = true
@@ -116,12 +117,12 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                 ownerDescriptor, annotations, method.name, c.components.sourceElementFactory.source(method)
         )
 
-        val c = c.child(functionDescriptorImpl, method)
+        val c = c.childForMethod(functionDescriptorImpl, method)
 
         val methodTypeParameters = method.typeParameters.map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
         val valueParameters = resolveValueParameters(c, functionDescriptorImpl, method.valueParameters)
 
-        val returnType = computeMethodReturnType(method, annotations, c)
+        val returnType = computeMethodReturnType(method, c)
 
         val effectiveSignature = resolveMethodSignature(method, methodTypeParameters, returnType, valueParameters.descriptors)
 
@@ -132,7 +133,11 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                 effectiveSignature.valueParameters,
                 effectiveSignature.returnType,
                 Modality.convertFromFlags(method.isAbstract, !method.isFinal),
-                method.visibility
+                method.visibility,
+                if (effectiveSignature.receiverType != null)
+                    mapOf(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER to valueParameters.descriptors.first())
+                else
+                    emptyMap<FunctionDescriptor.UserDataKey<ValueParameterDescriptor>, ValueParameterDescriptor>()
         )
 
         functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames, valueParameters.hasSynthesizedNames)
@@ -144,17 +149,12 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         return functionDescriptorImpl
     }
 
-    protected fun computeMethodReturnType(method: JavaMethod, annotations: Annotations, c: LazyJavaResolverContext): KotlinType {
+    protected fun computeMethodReturnType(method: JavaMethod, c: LazyJavaResolverContext): KotlinType {
         val annotationMethod = method.containingClass.isAnnotationType
-        val returnTypeAttrs = LazyJavaTypeAttributes(
-                TypeUsage.MEMBER_SIGNATURE_COVARIANT, annotations,
-                allowFlexible = !annotationMethod,
+        val returnTypeAttrs = TypeUsage.COMMON.toAttributes(
                 isForAnnotationParameter = annotationMethod
         )
-        return c.typeResolver.transformJavaType(method.returnType, returnTypeAttrs).let {
-            // Annotation arguments are never null in Java
-            if (annotationMethod) TypeUtils.makeNotNullable(it) else it
-        }
+        return c.typeResolver.transformJavaType(method.returnType, returnTypeAttrs)
     }
 
     protected class ResolvedValueParameters(val descriptors: List<ValueParameterDescriptor>, val hasSynthesizedNames: Boolean)
@@ -165,11 +165,16 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             jValueParameters: List<JavaValueParameter>
     ): ResolvedValueParameters {
         var synthesizedNames = false
-        val descriptors = jValueParameters.withIndex().map { pair ->
-            val (index, javaParameter) = pair
+        val usedNames = mutableSetOf<String>()
 
+        val descriptors = jValueParameters.withIndex().map { (index, javaParameter) ->
             val annotations = c.resolveAnnotations(javaParameter)
-            val typeUsage = LazyJavaTypeAttributes(TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, annotations)
+            val typeUsage = TypeUsage.COMMON.toAttributes()
+            val parameterName = annotations
+                    .findAnnotation(JvmAnnotationNames.PARAMETER_NAME_FQ_NAME)
+                    ?.firstArgumentValue()
+                    ?.safeAs<String>()
+
             val (outType, varargElementType) =
                     if (javaParameter.isVararg) {
                         val paramType = javaParameter.type as? JavaArrayType
@@ -183,12 +188,15 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
             val name = if (function.name.asString() == "equals" &&
                            jValueParameters.size == 1 &&
-                           c.module.builtIns.getNullableAnyType() == outType) {
+                           c.module.builtIns.nullableAnyType == outType) {
                 // This is a hack to prevent numerous warnings on Kotlin classes that inherit Java classes: if you override "equals" in such
                 // class without this hack, you'll be warned that in the superclass the name is "p0" (regardless of the fact that it's
                 // "other" in Any)
                 // TODO: fix Java parameter name loading logic somehow (don't always load "p0", "p1", etc.)
                 Name.identifier("other")
+            }
+            else if (parameterName != null && parameterName.isNotEmpty() && usedNames.add(parameterName)) {
+                Name.identifier(parameterName)
             }
             else {
                 // TODO: parameter names may be drawn from attached sources, which is slow; it's better to make them lazy
@@ -207,7 +215,6 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
-                    /* isCoroutine = */ false,
                     varargElementType,
                     c.components.sourceElementFactory.source(javaParameter)
             )
@@ -217,22 +224,26 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     private val functionNamesLazy by c.storageManager.createLazyValue { computeFunctionNames(DescriptorKindFilter.FUNCTIONS, null) }
     private val propertyNamesLazy by c.storageManager.createLazyValue { computePropertyNames(DescriptorKindFilter.VARIABLES, null) }
+    private val classNamesLazy by c.storageManager.createLazyValue { computeClassNames(DescriptorKindFilter.CLASSIFIERS, null) }
 
     override fun getFunctionNames() = functionNamesLazy
     override fun getVariableNames() = propertyNamesLazy
+    override fun getClassifierNames() = classNamesLazy
+
+    override fun definitelyDoesNotContainName(name: Name): Boolean {
+        return name !in functionNamesLazy && name !in propertyNamesLazy && name !in classNamesLazy
+    }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
         if (name !in getFunctionNames()) return emptyList()
         return functions(name)
     }
 
-    protected open fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> =
-            declaredMemberIndex().getMethodNames()
+    protected abstract fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
 
     protected abstract fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>)
 
-    protected open fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> =
-            declaredMemberIndex().getFieldNames()
+    protected abstract fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
 
     private val properties = c.storageManager.createMemoizedFunction {
         name: Name ->
@@ -246,20 +257,20 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         computeNonDeclaredProperties(name, properties)
 
         if (DescriptorUtils.isAnnotationClass(ownerDescriptor))
-            properties.toReadOnlyList()
+            properties.toList()
         else
-            enhanceSignatures(properties).toReadOnlyList()
+            c.components.signatureEnhancement.enhanceSignatures(c, properties).toList()
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
         val propertyDescriptor = createPropertyDescriptor(field)
         propertyDescriptor.initialize(null, null)
 
-        val propertyType = getPropertyType(field, propertyDescriptor.annotations)
+        val propertyType = getPropertyType(field)
 
         propertyDescriptor.setType(propertyType, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
 
-        if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.getType())) {
+        if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.type)) {
             propertyDescriptor.setCompileTimeInitializer(
                     c.storageManager.createNullableLazyValue {
                         c.components.javaPropertyInitializerEvaluator.getInitializerConstant(field, propertyDescriptor)
@@ -284,15 +295,15 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     private val JavaField.isFinalStatic: Boolean
         get() = isFinal && isStatic
 
-    private fun getPropertyType(field: JavaField, annotations: Annotations): KotlinType {
+    private fun getPropertyType(field: JavaField): KotlinType {
         // Fields do not have their own generic parameters.
         // Simple static constants should not have flexible types.
-        val allowFlexible = !(field.isFinalStatic && c.components.javaPropertyInitializerEvaluator.isNotNullCompileTimeConstant(field))
+        val isNotNullable = !(field.isFinalStatic && field.hasConstantNotNullInitializer)
         val propertyType = c.typeResolver.transformJavaType(
                 field.type,
-                LazyJavaTypeAttributes(TypeUsage.MEMBER_SIGNATURE_INVARIANT, annotations, allowFlexible)
+                TypeUsage.COMMON.toAttributes()
         )
-        if (!allowFlexible) {
+        if (!isNotNullable) {
             return TypeUtils.makeNotNullable(propertyType)
         }
 
@@ -338,7 +349,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             }
         }
 
-        return result.toReadOnlyList()
+        return result.toList()
     }
 
     protected abstract fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
@@ -346,7 +357,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     override fun toString() = "Lazy scope for $ownerDescriptor"
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.simpleName, " {")
+        p.println(this::class.java.simpleName, " {")
         p.pushIndent()
 
         p.println("containingDeclaration: $ownerDescriptor")

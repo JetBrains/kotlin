@@ -1,5 +1,5 @@
 val my: Int = 1
     get() {
-        field++
+        <!VAL_REASSIGNMENT_VIA_BACKING_FIELD!>field<!>++
         return field
     }

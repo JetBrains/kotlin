@@ -32,26 +32,23 @@ fun CodeBuilder.appendOperand(expression: Expression, operand: Expression, paren
     return this
 }
 
+fun Element.wrapToBlockIfRequired(): Element = when (this) {
+    is AssignmentExpression -> if (isMultiAssignment()) Block.of(this).assignNoPrototype() else this
+    else -> this
+}
+
+
 private fun Expression.precedence(): Int? {
-    return when(this) {
+    return when (this) {
         is QualifiedExpression, is MethodCallExpression, is ArrayAccessExpression, is PostfixExpression, is BangBangExpression, is StarExpression -> 0
 
         is PrefixExpression -> 1
 
         is TypeCastExpression -> 2
 
-        is BinaryExpression -> when(op.asString()) {
-            "*", "/", "%" -> 3
-            "+", "-" -> 4
-            "?:" -> 7
-            ">", "<", ">=", "<=" -> 9
-            "==", "!=", "===", "!===" -> 10
-            "&&" -> 11
-            "||" -> 12
-            else -> 6 /* simple name */
-        }
+        is BinaryExpression -> op.precedence
 
-        is RangeExpression, is DownToExpression -> 5
+        is RangeExpression, is UntilExpression, is DownToExpression -> 5
 
         is IsOperator -> 8
 

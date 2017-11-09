@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1116
 // Looks similar to KT-7674
 package foo
 

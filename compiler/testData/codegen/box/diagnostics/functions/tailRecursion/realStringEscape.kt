@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
+
 fun escapeChar(c : Char) : String? = when (c) {
     '\\' -> "\\\\"
     '\n' -> "\\n"

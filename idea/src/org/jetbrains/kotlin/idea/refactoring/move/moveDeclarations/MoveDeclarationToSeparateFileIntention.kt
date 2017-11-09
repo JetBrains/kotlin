@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
-import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
-import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -45,7 +43,7 @@ class MoveDeclarationToSeparateFileIntention :
         if (element.name == null) return null
         if (element.parent !is KtFile) return null
         if (element.hasModifier(KtTokens.PRIVATE_KEYWORD)) return null
-        if (element.getContainingKtFile().declarations.size == 1) return null
+        if (element.containingKtFile.declarations.size == 1) return null
 
         val keyword = when (element) {
             is KtClass -> element.getClassOrInterfaceKeyword()
@@ -64,7 +62,7 @@ class MoveDeclarationToSeparateFileIntention :
 
     override fun applyTo(element: KtClassOrObject, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
-        val file = element.getContainingKtFile()
+        val file = element.containingKtFile
         val project = file.project
         val originalOffset = editor.caretModel.offset - element.startOffset
         val directory = file.containingDirectory ?: return
@@ -93,13 +91,13 @@ class MoveDeclarationToSeparateFileIntention :
         val moveTarget = KotlinMoveTargetForDeferredFile(packageName, directory, null) {
             createKotlinFile(targetFileName, directory, packageName.asString())
         }
-        val moveOptions = MoveDeclarationsDescriptor(
+        val descriptor = MoveDeclarationsDescriptor(
+                project = project,
                 elementsToMove = listOf(element),
                 moveTarget = moveTarget,
                 delegate = MoveDeclarationsDelegate.TopLevel,
                 searchInCommentsAndStrings = false,
                 searchInNonCode = false,
-                updateInternalReferences = true,
                 moveCallback = MoveCallback {
                     val newFile = directory.findFile(targetFileName) as KtFile
                     val newDeclaration = newFile.declarations.first()
@@ -108,9 +106,6 @@ class MoveDeclarationToSeparateFileIntention :
                 }
         )
 
-        val move = { MoveKotlinDeclarationsProcessor(project, moveOptions).run() }
-        val optimizeImports = { OptimizeImportsProcessor(project, file).run() }
-
-        move.runRefactoringWithPostprocessing(project, MoveKotlinDeclarationsProcessor.REFACTORING_ID, optimizeImports)
+        MoveKotlinDeclarationsProcessor(descriptor).run()
     }
 }

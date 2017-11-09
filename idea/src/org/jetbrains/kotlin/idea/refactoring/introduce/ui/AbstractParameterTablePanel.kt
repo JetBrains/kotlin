@@ -123,26 +123,14 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "invoke_impl")
         actionMap.put("invoke_impl", object : AbstractAction() {
             override fun actionPerformed(e: ActionEvent) {
-                val editor = table.cellEditor
-                if (editor != null) {
-                    editor.stopCellEditing()
-                }
-                else {
-                    onEnterAction()
-                }
+                table.cellEditor?.stopCellEditing() ?: onEnterAction()
             }
         })
 
         // make ESCAPE work when the table has focus
         actionMap.put("doCancel", object : AbstractAction() {
             override fun actionPerformed(e: ActionEvent) {
-                val editor = table.cellEditor
-                if (editor != null) {
-                    editor.stopCellEditing()
-                }
-                else {
-                    onCancelAction()
-                }
+                table.cellEditor?.stopCellEditing() ?: onCancelAction()
             }
         })
 
@@ -161,6 +149,8 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
     protected open fun onCancelAction() {
 
     }
+
+    protected open fun isCheckMarkColumnEditable() = true
 
     protected open inner class TableModelBase : AbstractTableModel(), EditableModel {
         override fun addRow() = throw IllegalAccessError("Not implemented")
@@ -221,7 +211,7 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
         override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
             val info = parameterInfos[rowIndex]
             return when (columnIndex) {
-                CHECKMARK_COLUMN -> isEnabled
+                CHECKMARK_COLUMN -> isEnabled && isCheckMarkColumnEditable()
                 PARAMETER_NAME_COLUMN -> isEnabled && info.isEnabled
                 else -> false
             }

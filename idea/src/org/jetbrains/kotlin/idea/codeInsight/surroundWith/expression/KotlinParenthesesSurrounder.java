@@ -33,11 +33,6 @@ public class KotlinParenthesesSurrounder extends KotlinExpressionSurrounder {
         return CodeInsightBundle.message("surround.with.parenthesis.template");
     }
 
-    @Override
-    public boolean isApplicable(@NotNull KtExpression expression) {
-        return true;
-    }
-
     @Nullable
     @Override
     public TextRange surroundExpression( @NotNull Project project, @NotNull Editor editor, @NotNull KtExpression expression) {

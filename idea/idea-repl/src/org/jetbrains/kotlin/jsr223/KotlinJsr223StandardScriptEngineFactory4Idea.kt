@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.jsr223
 
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
+import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
+import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import org.jetbrains.kotlin.utils.PathUtil
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
@@ -27,11 +28,11 @@ class KotlinJsr223StandardScriptEngineFactory4Idea : KotlinJsr223JvmScriptEngine
 
     override fun getScriptEngine(): ScriptEngine =
             KotlinJsr223JvmScriptEngine4Idea(
-                    Disposer.newDisposable(),
                     this,
-                    listOf(PathUtil.getKotlinPathsForIdeaPlugin().runtimePath, PathUtil.getKotlinPathsForIdeaPlugin().scriptRuntimePath),
+                    scriptCompilationClasspathFromContext(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR),
                     "kotlin.script.templates.standard.ScriptTemplateWithBindings",
-                    { ctx -> arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)) },
-                    arrayOf(Map::class.java)
+                    { ctx, argTypes -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), argTypes ?: emptyArray()) },
+                    arrayOf(Map::class)
             )
 }
+

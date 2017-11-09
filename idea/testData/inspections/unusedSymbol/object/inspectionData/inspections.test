@@ -1,1 +1,2 @@
 // INSPECTION_CLASS: org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection
+// WITH_RUNTIME

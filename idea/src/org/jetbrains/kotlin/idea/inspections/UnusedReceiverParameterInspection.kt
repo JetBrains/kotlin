@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -23,7 +24,9 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
@@ -32,8 +35,8 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
@@ -46,12 +49,22 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             private fun check(callableDeclaration: KtCallableDeclaration) {
                 val receiverTypeReference = callableDeclaration.receiverTypeReference
                 if (receiverTypeReference == null || receiverTypeReference.textRange.isEmpty) return
-                if (callableDeclaration.isOverridable() || callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+
+                val context = receiverTypeReference.analyze()
+                val receiverType = context[BindingContext.TYPE, receiverTypeReference] ?: return
+                if (DescriptorUtils.isCompanionObject(receiverType.constructor.declarationDescriptor)) return
+
+                if (callableDeclaration.isOverridable() ||
+                    callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) ||
+                    callableDeclaration.hasModifier(KtTokens.OPERATOR_KEYWORD) ||
+                    callableDeclaration.hasModifier(KtTokens.INFIX_KEYWORD)) return
 
                 if (callableDeclaration is KtProperty && callableDeclaration.accessors.isEmpty()) return
                 if (callableDeclaration is KtNamedFunction && !callableDeclaration.hasBody()) return
 
                 val callable = callableDeclaration.descriptor
+
+                if (callable != null && MainFunctionDetector.isMain(callable)) return
 
                 var used = false
                 callableDeclaration.acceptChildren(object : KtVisitorVoid() {
@@ -89,7 +102,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                             receiverTypeReference,
                             KotlinBundle.message("unused.receiver.parameter"),
                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                            MyQuickFix(callableDeclaration)
+                            MyQuickFix()
                     )
                 }
             }
@@ -104,10 +117,8 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class MyQuickFix(val declaration: KtCallableDeclaration): LocalQuickFix {
-        override fun getName(): String {
-            return KotlinBundle.message("unused.receiver.parameter.remove")
-        }
+    private class MyQuickFix : LocalQuickFix {
+        override fun getName(): String = KotlinBundle.message("unused.receiver.parameter.remove")
 
         private fun configureChangeSignature() = object : KotlinChangeSignatureConfiguration {
             override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
@@ -116,6 +127,8 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val element = descriptor.psiElement
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
+
             val function = element.parent as? KtCallableDeclaration ?: return
             val callableDescriptor = function.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? CallableDescriptor ?: return
             runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)

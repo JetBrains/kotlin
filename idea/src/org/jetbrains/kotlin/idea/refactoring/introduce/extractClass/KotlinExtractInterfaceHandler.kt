@@ -33,8 +33,6 @@ object KotlinExtractInterfaceHandler : KotlinExtractSuperHandlerBase(true) {
     }
 
     override fun doInvoke(klass: KtClassOrObject, targetParent: PsiElement, project: Project, editor: Editor?) {
-        if (!CommonRefactoringUtil.checkReadOnlyStatus(project, klass)) return
-
         KotlinExtractInterfaceDialog(
                 originalClass = klass,
                 targetParent = targetParent,

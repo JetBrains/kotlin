@@ -2,4 +2,4 @@ package
 
 public fun box(): kotlin.String
 public fun escapeChar(/*0*/ c: kotlin.Char): kotlin.String?
-public tailrec fun kotlin.String.escape(/*0*/ i: kotlin.Int = ..., /*1*/ result: java.lang.StringBuilder = ...): kotlin.String
+public tailrec fun kotlin.String.escape(/*0*/ i: kotlin.Int = ..., /*1*/ result: kotlin.text.StringBuilder /* = java.lang.StringBuilder */ = ...): kotlin.String

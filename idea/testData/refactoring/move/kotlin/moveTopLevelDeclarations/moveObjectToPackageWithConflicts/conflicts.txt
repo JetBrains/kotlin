@@ -1,4 +1,0 @@
-Method bar() uses object Test which will be inaccessible after move
-Object Test uses class Foo which will be inaccessible after move
-Object Test uses function foo(Foo) which will be inaccessible after move
-Variable t uses object Test which will be inaccessible after move

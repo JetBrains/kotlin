@@ -7,12 +7,10 @@ enum class E private constructor(private val p: Int) {
     },
 
     B(2) {
-        override fun bar() {
-        }
+        override fun bar() {}
     };
 
-    internal fun foo(p: Int) {
-    }
+    internal fun foo(p: Int) {}
 
     internal abstract fun bar()
 }

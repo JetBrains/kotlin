@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
-open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean) {
+open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean, val allowedTypeVariable: Boolean = true) {
     protected var argumentsDepth = 0
 
     private var supertypesLocked = false
@@ -30,7 +29,14 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean) {
 
     open fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType): Boolean? = null
 
-    inline fun <T> runWithArgumentsSettings(subArgument: UnwrappedType, f: TypeCheckerContext.() -> T): T {
+    open fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
+        return a == b
+    }
+
+    open fun getLowerCapturedTypePolicy(subType: SimpleType, superType: NewCapturedType) = LowerCapturedTypePolicy.CHECK_SUBTYPE_AND_LOWER
+    open val sameConstructorPolicy get() = SeveralSupertypesWithSameConstructorPolicy.INTERSECT_ARGUMENTS_AND_CHECK_AGAIN
+
+    internal inline fun <T> runWithArgumentsSettings(subArgument: UnwrappedType, f: TypeCheckerContext.() -> T): T {
         if (argumentsDepth > 100) {
             error("Arguments depth is too high. Some related argument: $subArgument")
         }
@@ -46,7 +52,7 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean) {
         supertypesLocked = true
 
         if (supertypesDeque == null) {
-            supertypesDeque = ArrayDeque()
+            supertypesDeque = ArrayDeque(4)
         }
         if (supertypesSet == null) {
             supertypesSet = SmartSet.create()
@@ -59,11 +65,13 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean) {
         supertypesLocked = false
     }
 
-    internal fun anySupertype(
+    internal inline fun anySupertype(
             start: SimpleType,
             predicate: (SimpleType) -> Boolean,
             supertypesPolicy: (SimpleType) -> SupertypesPolicy
     ): Boolean {
+        if (predicate(start)) return true
+
         initialize()
 
         val deque = supertypesDeque!!
@@ -75,18 +83,17 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean) {
                 error("Too many supertypes for type: $start. Supertypes = ${visitedSupertypes.joinToString()}")
             }
             val current = deque.pop()
+            if (!visitedSupertypes.add(current)) continue
 
-            if (!visitedSupertypes.add(current)) {
-                continue
+            val policy = supertypesPolicy(current).takeIf { it != SupertypesPolicy.None } ?: continue
+            for (supertype in current.constructor.supertypes) {
+                val newType = policy.transformType(supertype)
+                if (predicate(newType)) {
+                    clear()
+                    return true
+                }
+                deque.add(newType)
             }
-
-            if (predicate(current)) {
-                clear()
-                return true
-            }
-
-            val policy = supertypesPolicy(current).check { it != SupertypesPolicy.None } ?: continue
-            for (supertype in current.constructor.supertypes) deque.add(policy.transformType(supertype))
         }
 
         clear()
@@ -113,4 +120,19 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean) {
                     substitutor.safeSubstitute(type.lowerIfFlexible(), Variance.INVARIANT).asSimpleType()
         }
     }
+
+    enum class SeveralSupertypesWithSameConstructorPolicy {
+        TAKE_FIRST_FOR_SUBTYPING,
+        FORCE_NOT_SUBTYPE,
+        CHECK_ANY_OF_THEM,
+        INTERSECT_ARGUMENTS_AND_CHECK_AGAIN
+    }
+
+    enum class LowerCapturedTypePolicy {
+        CHECK_ONLY_LOWER,
+        CHECK_SUBTYPE_AND_LOWER,
+        SKIP_LOWER
+    }
+
+    val UnwrappedType.isAllowedTypeVariable: Boolean get() = allowedTypeVariable && constructor is NewTypeVariableConstructor
 }

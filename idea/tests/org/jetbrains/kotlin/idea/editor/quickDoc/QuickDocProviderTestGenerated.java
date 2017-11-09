@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.editor.quickDoc;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,19 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest {
     public void testAllFilesPresentInQuickDoc() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/quickDoc"), Pattern.compile("^([^_]+)\\.[^\\.]*$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/quickDoc"), Pattern.compile("^([^_]+)\\.[^\\.]*$"), TargetBackend.ANY, true);
+    }
+
+    @TestMetadata("AnonymousObjectLocalVariable.kt")
+    public void testAnonymousObjectLocalVariable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AnonymousObjectLocalVariable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AtConstantWithUnderscore.kt")
+    public void testAtConstantWithUnderscore() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtConstantWithUnderscore.kt");
+        doTest(fileName);
     }
 
     @TestMetadata("AtFunctionParameter.kt")
@@ -41,9 +54,21 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("AtImplicitLambdaParametEnd.kt")
+    public void testAtImplicitLambdaParametEnd() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtImplicitLambdaParametEnd.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AtImplicitLambdaParameter.kt")
     public void testAtImplicitLambdaParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtImplicitLambdaParameter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AtLocalFunction.kt")
+    public void testAtLocalFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtLocalFunction.kt");
         doTest(fileName);
     }
 
@@ -65,9 +90,51 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("DeprecationWithReplaceInfo.kt")
+    public void testDeprecationWithReplaceInfo() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/DeprecationWithReplaceInfo.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("EscapeHtmlInsideCodeBlocks.kt")
+    public void testEscapeHtmlInsideCodeBlocks() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/EscapeHtmlInsideCodeBlocks.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExtensionReceiver.kt")
+    public void testExtensionReceiver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/ExtensionReceiver.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExtensionReceiverEnd.kt")
+    public void testExtensionReceiverEnd() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/ExtensionReceiverEnd.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IndentedCodeBlock.kt")
+    public void testIndentedCodeBlock() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/IndentedCodeBlock.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaClassUsedInKotlin.kt")
     public void testJavaClassUsedInKotlin() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/JavaClassUsedInKotlin.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("JavaDocFromOverridenClass.kt")
+    public void testJavaDocFromOverridenClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/JavaDocFromOverridenClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("JavaDocFromOverridenInterface.kt")
+    public void testJavaDocFromOverridenInterface() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/JavaDocFromOverridenInterface.kt");
         doTest(fileName);
     }
 
@@ -98,6 +165,48 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
     @TestMetadata("OnClassDeclarationWithNoPackage.kt")
     public void testOnClassDeclarationWithNoPackage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnClassDeclarationWithNoPackage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumClassReference.kt")
+    public void testOnEnumClassReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumClassReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumDeclaration.kt")
+    public void testOnEnumDeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumDeclaration.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumEntry.kt")
+    public void testOnEnumEntry() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumEntry.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumEntryUsage.kt")
+    public void testOnEnumEntryUsage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumEntryUsage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumUsage.kt")
+    public void testOnEnumUsage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumUsage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumValueOfFunction.kt")
+    public void testOnEnumValueOfFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumValueOfFunction.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumValuesFunction.kt")
+    public void testOnEnumValuesFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumValuesFunction.kt");
         doTest(fileName);
     }
 
@@ -179,9 +288,21 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("Samples.kt")
+    public void testSamples() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/Samples.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopLevelMethodFromJava.java")
     public void testTopLevelMethodFromJava() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/TopLevelMethodFromJava.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TypeNamesFromStdLibNavigation.kt")
+    public void testTypeNamesFromStdLibNavigation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/TypeNamesFromStdLibNavigation.kt");
         doTest(fileName);
     }
 }

@@ -1,5 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
+
 class B {
     inner class C {
         tailrec fun h(counter : Int) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -960,6 +960,16 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testFunBody9() = doFileTest(
+            """
+            fun test(){<caret>}
+            """,
+            """
+            fun test() {}
+            <caret>
+            """
+    )
+
     fun testInLambda1() = doFunTest(
             """
             some {
@@ -976,13 +986,11 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testInLambda2() = doFunTest(
             """
-            some {
-                p<caret> ->
+            some { p<caret> ->
             }
             """,
             """
-            some {
-                p ->
+            some { p ->
                 <caret>
             }
             """
@@ -990,13 +998,11 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testInLambda3() = doFunTest(
             """
-            some {
-                (<caret>p: Int) : Int ->
+            some { (<caret>p: Int) : Int ->
             }
             """,
             """
-            some {
-                (p: Int) : Int ->
+            some { (p: Int) : Int ->
                 <caret>
             }
             """
@@ -1098,6 +1104,19 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
                 set(v) {
                     <caret>
                 }
+            """
+    )
+
+    fun testSetter7() = doFileTest(
+            """
+            var a : Int = 0
+                set(value){<caret>}
+            """
+            ,
+            """
+            var a : Int = 0
+                set(value) {}
+            <caret>
             """
     )
 
@@ -1206,7 +1225,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 <caret>
             }${" "}
             """
@@ -1220,7 +1239,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(<caret>) {
+            } catch (<caret>) {
             }
             """
     )
@@ -1233,7 +1252,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(<caret>) {
+            } catch (<caret>) {
             }
             """
     )
@@ -1246,7 +1265,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(<caret>) {
+            } catch (<caret>) {
             }
             """
     )
@@ -1259,7 +1278,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 <caret>
             }
             """
@@ -1274,7 +1293,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             ,
             """
             try {
-            } catch(e: Exception) {
+            } catch (e: Exception) {
             } finally {
                 <caret>
             }
@@ -1330,6 +1349,62 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
                     <caret>
                 }
             }
+            """
+    )
+
+    fun testClassBody1() = doFileTest(
+            """
+            class Foo<caret>
+            """
+            ,
+            """
+            class Foo {
+                <caret>
+            }
+            """
+    )
+
+    fun testClassBody2() = doFileTest(
+            """
+            class <caret>Foo
+            """
+            ,
+            """
+            class Foo {
+                <caret>
+            }
+            """
+    )
+
+    fun testObjectExpressionBody1() = doFileTest(
+            """
+            interface I
+            val a = object : I<caret>
+            """
+            ,
+            """
+            interface I
+            val a = object : I {
+                <caret>
+            }
+            """
+    )
+
+    fun testObjectExpressionBody2() = doFileTest(
+            """
+            interface I
+            val a = object : I<caret>
+
+            val b = ""
+            """
+            ,
+            """
+            interface I
+            val a = object : I {
+                <caret>
+            }
+
+            val b = ""
             """
     )
 

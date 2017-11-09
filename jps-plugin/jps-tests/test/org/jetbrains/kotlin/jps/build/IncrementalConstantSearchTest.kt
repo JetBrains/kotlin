@@ -57,11 +57,13 @@ class IncrementalConstantSearchTest : AbstractIncrementalJpsTest() {
             ): Future<Callbacks.ConstantAffection> {
                 // We emulate how constant affection service works in IDEA:
                 // it is able to find Kotlin usages of Java constant, but can't find Java usages of Kotlin constant
-                val affectedFiles = if (ownerClassName == "JavaClass" && fieldName == "CONST") {
-                    listOf(File(workDir, "src/usage.kt"))
-                } else {
-                    emptyList()
-                }
+                val affectedFiles =
+                        when {
+                            ownerClassName == "JavaClass" && fieldName == "CONST" -> listOf(File(workDir, "src/usage.kt"))
+                            ownerClassName == "test.Klass" && fieldName == "CONST" -> listOf(File(workDir, "src/Usage.java"))
+                            else -> emptyList()
+                        }
+
                 return FixedFuture(Callbacks.ConstantAffection(affectedFiles))
             }
         }

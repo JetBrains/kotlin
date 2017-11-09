@@ -38,10 +38,12 @@ import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.text.VersionComparatorUtil
 import java.io.File
+import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.net.URLEncoder
@@ -86,8 +88,9 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
     @Volatile private var checkQueued = false
     @Volatile private var lastUpdateStatus: PluginUpdateStatus? = null
 
-    fun kotlinFileEdited() {
-        if (ApplicationManager.getApplication().isUnitTestMode) return
+    fun kotlinFileEdited(file: VirtualFile) {
+        if (!file.isInLocalFileSystem) return
+        if (ApplicationManager.getApplication().isUnitTestMode || ApplicationManager.getApplication().isHeadlessEnvironment) return
         if (!UpdateSettings.getInstance().isCheckNeeded) return
 
         val lastUpdateTime = java.lang.Long.parseLong(propertiesComponent.getValue(PROPERTY_NAME, "0"))
@@ -132,16 +135,21 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     private fun updateCheck(callback: (PluginUpdateStatus) -> Boolean) {
         var updateStatus: PluginUpdateStatus
-        try {
-            updateStatus = checkUpdatesInMainRepository()
-
-            for (host in RepositoryHelper.getPluginHosts().filterNotNull()) {
-                val customUpdateStatus = checkUpdatesInCustomRepository(host)
-                updateStatus = updateStatus.mergeWith(customUpdateStatus)
-            }
+        if (KotlinPluginUtil.isSnapshotVersion()) {
+            updateStatus = PluginUpdateStatus.LatestVersionInstalled
         }
-        catch(e: Exception) {
-            updateStatus = PluginUpdateStatus.fromException("Kotlin plugin update check failed", e)
+        else {
+            try {
+                updateStatus = checkUpdatesInMainRepository()
+
+                for (host in RepositoryHelper.getPluginHosts().filterNotNull()) {
+                    val customUpdateStatus = checkUpdatesInCustomRepository(host)
+                    updateStatus = updateStatus.mergeWith(customUpdateStatus)
+                }
+            }
+            catch(e: Exception) {
+                updateStatus = PluginUpdateStatus.fromException("Kotlin plugin update check failed", e)
+            }
         }
 
         lastUpdateStatus = updateStatus
@@ -234,7 +242,17 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Downloading plugins", true) {
             override fun run(indicator: ProgressIndicator) {
                 var installed = false
-                if (pluginDownloader.prepareToInstall(indicator)) {
+                var message: String? = null
+                val prepareResult = try {
+                    pluginDownloader.prepareToInstall(indicator)
+                }
+                catch (e: IOException) {
+                    LOG.info(e)
+                    message = e.message
+                    false
+                }
+
+                if (prepareResult) {
                     val pluginDescriptor = pluginDownloader.descriptor
                     if (pluginDescriptor != null) {
                         installed = true
@@ -247,7 +265,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                 }
 
                 if (!installed) {
-                    notifyNotInstalled()
+                    notifyNotInstalled(message)
                 }
             }
 
@@ -257,11 +275,12 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         })
     }
 
-    private fun notifyNotInstalled() {
+    private fun notifyNotInstalled(message: String?) {
+        val fullMessage = message?.let { ": $it" } ?: ""
         ApplicationManager.getApplication().invokeLater {
             val notification = notificationGroup.createNotification(
                     "Kotlin",
-                    "Plugin update was not installed. <a href=\"#\">See the log for more information</a>",
+                    "Plugin update was not installed$fullMessage. <a href=\"#\">See the log for more information</a>",
                     NotificationType.INFORMATION) { notification, event ->
 
                 val logFile = File(PathManager.getLogPath(), "idea.log")

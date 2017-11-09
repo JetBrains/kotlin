@@ -1,2 +1,0 @@
-fun getText(): String = // let's return xxx
-        "xxx"

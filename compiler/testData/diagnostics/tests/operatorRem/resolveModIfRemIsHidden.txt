@@ -1,0 +1,13 @@
+package
+
+public fun takeString(/*0*/ s: kotlin.String): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public object A {
+    private constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun mod(/*0*/ x: kotlin.Int): kotlin.String
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Use mod instead", replaceWith = kotlin.ReplaceWith(expression = "mod", imports = {})) public final operator fun rem(/*0*/ x: kotlin.Int): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

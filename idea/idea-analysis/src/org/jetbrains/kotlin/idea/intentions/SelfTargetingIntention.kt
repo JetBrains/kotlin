@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.daemon.HighlightDisplayKey
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.codeInspection.LocalInspectionEP
+import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -33,9 +31,8 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import java.util.*
-import kotlin.reflect.KClass
 
+@Suppress("EqualsOrHashCode")
 abstract class SelfTargetingIntention<TElement : PsiElement>(
         val elementType: Class<TElement>,
         private var text: String,
@@ -85,25 +82,16 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     protected open fun allowCaretInsideElement(element: PsiElement): Boolean =
             element !is KtBlockExpression
 
-    final override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
-        val target = getTarget(editor, file) ?: return false
-        return !isIntentionBaseInspectionEnabled(project, target)
-    }
+    final override fun isAvailable(project: Project, editor: Editor, file: PsiFile) = getTarget(editor, file) != null
 
-    protected fun isIntentionBaseInspectionEnabled(project: Project, target: TElement): Boolean {
-        val inspection = findInspection(this.javaClass.kotlin) ?: return false
+    var inspection: IntentionBasedInspection<TElement>? = null
+        internal set
 
-        val key = HighlightDisplayKey.find(inspection.shortName)
-        if (!InspectionProjectProfileManager.getInstance(project).getInspectionProfile(target).isToolEnabled(key)) {
-            return false
-        }
-
-        return inspection.intentionInfos.single { it.intention == this.javaClass.kotlin }.additionalChecker(target, inspection)
-    }
-
-    final override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {
+    final override fun invoke(project: Project, editor: Editor?, file: PsiFile) {
+        editor ?: return
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         val target = getTarget(editor, file) ?: return
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(target)) return
         applyTo(target, editor)
     }
 
@@ -111,27 +99,14 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 
     override fun toString(): String = getText()
 
-    companion object {
-        private val intentionBasedInspections = HashMap<KClass<out SelfTargetingIntention<*>>, IntentionBasedInspection<*>?>()
-
-        fun <TElement : PsiElement> findInspection(intentionClass: KClass<out SelfTargetingIntention<TElement>>): IntentionBasedInspection<TElement>? {
-            if (intentionBasedInspections.containsKey(intentionClass)) {
-                @Suppress("UNCHECKED_CAST")
-                return intentionBasedInspections[intentionClass] as IntentionBasedInspection<TElement>?
-            }
-
-            for (extension in Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION)) {
-                val inspection = extension.instance as? IntentionBasedInspection<*> ?: continue
-                if (inspection.intentionInfos.any { it.intention == intentionClass }) {
-                    intentionBasedInspections[intentionClass] = inspection
-                    @Suppress("UNCHECKED_CAST")
-                    return inspection as IntentionBasedInspection<TElement>
-                }
-            }
-
-            return null
-        }
+    override fun equals(other: Any?): Boolean {
+        // Nasty code because IntentionWrapper itself does not override equals
+        if (other is IntentionWrapper) return this == other.action
+        if (other is IntentionBasedInspection<*>.IntentionBasedQuickFix) return this == other.intention
+        return other is SelfTargetingIntention<*> && javaClass == other.javaClass && text == other.text
     }
+
+    // Intentionally missed hashCode (IntentionWrapper does not override it)
 }
 
 abstract class SelfTargetingRangeIntention<TElement : PsiElement>(

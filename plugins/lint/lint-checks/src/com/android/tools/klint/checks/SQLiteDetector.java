@@ -18,26 +18,33 @@ package com.android.tools.klint.checks;
 
 import static com.android.tools.klint.client.api.JavaParser.TYPE_STRING;
 
+import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.ConstantEvaluator;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
+import com.intellij.psi.PsiMethod;
+
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-
 /**
  * Detector which looks for problems related to SQLite usage
  */
-public class SQLiteDetector extends Detector implements UastScanner {
+public class SQLiteDetector extends Detector implements Detector.UastScanner {
     private static final Implementation IMPLEMENTATION = new Implementation(
-          SQLiteDetector.class, Scope.SOURCE_FILE_SCOPE);
+          SQLiteDetector.class, Scope.JAVA_FILE_SCOPE);
 
     /** Using STRING instead of TEXT for columns */
     public static final Issue ISSUE = Issue.create(
@@ -71,36 +78,38 @@ public class SQLiteDetector extends Detector implements UastScanner {
     // ---- Implements Detector.JavaScanner ----
 
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList("execSQL"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        UFunction resolvedFunction = node.resolve(context);
-        UClass containingClass = UastUtils.getContainingClass(resolvedFunction);
-        if (resolvedFunction == null || containingClass == null) {
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression call, @NonNull UMethod uMethod) {
+        PsiMethod method = uMethod.getPsi();
+        JavaEvaluator evaluator = context.getEvaluator();
+        
+        if (!JavaEvaluator.isMemberInClass(method, "android.database.sqlite.SQLiteDatabase")) {
             return;
         }
 
-        if (!containingClass.matchesFqName("android.database.sqlite.SQLiteDatabase")) {
+        int parameterCount = evaluator.getParameterCount(method);
+        if (parameterCount == 0) {
             return;
         }
-
+        if (!evaluator.parameterHasType(method, 0, TYPE_STRING)) {
+            return;
+        }
         // Try to resolve the String and look for STRING keys
-        if (resolvedFunction.getValueParameterCount() > 0
-            && resolvedFunction.getValueParameters().get(0).getType().matchesFqName(TYPE_STRING)
-            && node.getValueArgumentCount() == resolvedFunction.getValueParameterCount()) {
-            UExpression argument = node.getValueArguments().get(0);
-            String sql = argument.evaluateString();
-            if (sql != null && (sql.startsWith("CREATE TABLE") || sql.startsWith("ALTER TABLE"))
+        UExpression argument = call.getValueArguments().get(0);
+        String sql = ConstantEvaluator.evaluateString(context, argument, true);
+        if (sql != null && (sql.startsWith("CREATE TABLE") || sql.startsWith("ALTER TABLE"))
                 && sql.matches(".*\\bSTRING\\b.*")) {
-                String message = "Using column type STRING; did you mean to use TEXT? "
-                                 + "(STRING is a numeric type and its value can be adjusted; for example,"
-                                 + "strings that look like integers can drop leading zeroes. See issue "
-                                 + "explanation for details.)";
-                context.report(ISSUE, node, context.getLocation(node), message);
-            }
+            String message = "Using column type STRING; did you mean to use TEXT? "
+                    + "(STRING is a numeric type and its value can be adjusted; for example, "
+                    + "strings that look like integers can drop leading zeroes. See issue "
+                    + "explanation for details.)";
+            context.report(ISSUE, call, context.getUastLocation(call), message);
         }
+
     }
 }

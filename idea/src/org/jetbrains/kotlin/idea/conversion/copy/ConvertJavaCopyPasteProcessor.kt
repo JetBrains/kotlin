@@ -21,12 +21,15 @@ import com.intellij.codeInsight.editorActions.TextBlockTransferableData
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.*
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.j2k.ConverterSettings
@@ -86,7 +90,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
 
         fun doConversion(): Result {
             val dataForConversion = DataForConversion.prepare(data, project)
-            val result = convertCopiedCodeToKotlin(dataForConversion.elementsAndTexts, project)
+            val result = dataForConversion.elementsAndTexts.convertCodeToKotlin(project)
             val referenceData = buildReferenceData(result.text, result.parseContext, dataForConversion.importsAndPackage, targetFile)
             val text = if (result.textChanged) result.text else null
             return Result(text, referenceData, result.importsToAdd)
@@ -103,9 +107,11 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
 
             KotlinCopyPasteReferenceProcessor().processReferenceData(project, targetFile, bounds.start, referenceData.toTypedArray())
 
-            explicitImports.forEach { fqName ->
-                targetFile.resolveImportReference(fqName).firstOrNull()?.let {
-                    ImportInsertHelper.getInstance(project).importDescriptor(targetFile, it)
+            runWriteAction {
+                explicitImports.forEach { fqName ->
+                    targetFile.resolveImportReference(fqName).firstOrNull()?.let {
+                        ImportInsertHelper.getInstance(project).importDescriptor(targetFile, it)
+                    }
                 }
             }
 
@@ -135,20 +141,22 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             val (text, referenceData, explicitImports) = conversionResult!!
             text!! // otherwise we should get true from doConversionAndInsertImportsIfUnchanged and return above
 
-            runWriteAction {
-                val startOffset = bounds.startOffset
-                document.replaceString(startOffset, bounds.endOffset, text)
+            val boundsAfterReplace =
+                    runWriteAction {
+                        val startOffset = bounds.startOffset
+                        document.replaceString(startOffset, bounds.endOffset, text)
 
-                val endOffsetAfterCopy = startOffset + text.length
-                editor.caretModel.moveToOffset(endOffsetAfterCopy)
+                        val endOffsetAfterCopy = startOffset + text.length
+                        editor.caretModel.moveToOffset(endOffsetAfterCopy)
+                        TextRange(startOffset, endOffsetAfterCopy)
+                    }
 
-                val newBounds = insertImports(TextRange(startOffset, endOffsetAfterCopy), referenceData, explicitImports)
+            val newBounds = insertImports(boundsAfterReplace, referenceData, explicitImports)
 
-                PsiDocumentManager.getInstance(project).commitAllDocuments()
-                AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
+            AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
 
-                conversionPerformed = true
-            }
+            conversionPerformed = true
         }
     }
 
@@ -198,24 +206,34 @@ internal class ConversionResult(
         val textChanged: Boolean
 )
 
-internal fun convertCopiedCodeToKotlin(elementsAndTexts: Collection<Any>, project: Project): ConversionResult {
+internal fun ElementAndTextList.convertCodeToKotlin(project: Project): ConversionResult {
     val converter = JavaToKotlinConverter(
             project,
             ConverterSettings.defaultSettings,
             IdeaJavaToKotlinServices
     )
 
-    val inputElements = elementsAndTexts.filterIsInstance<PsiElement>()
-    val results = converter.elementsToKotlin(inputElements).results
+    val inputElements = this.toList().filterIsInstance<PsiElement>()
+    val results =
+            ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                    ThrowableComputable<JavaToKotlinConverter.Result, Exception> {
+                        runReadAction { converter.elementsToKotlin(inputElements) }
+                    },
+                    JavaToKotlinAction.title,
+                    false,
+                    project
+            ).results
+
+
     val importsToAdd = LinkedHashSet<FqName>()
 
     var resultIndex = 0
     val convertedCodeBuilder = StringBuilder()
     val originalCodeBuilder = StringBuilder()
     var parseContext: ParseContext? = null
-    for (o in elementsAndTexts) {
-        if (o is PsiElement) {
-            val originalText = o.text
+    this.process(object : ElementsAndTextsProcessor {
+        override fun processElement(element: PsiElement) {
+            val originalText = element.text
             originalCodeBuilder.append(originalText)
 
             val result = results[resultIndex++]
@@ -230,11 +248,12 @@ internal fun convertCopiedCodeToKotlin(elementsAndTexts: Collection<Any>, projec
                 convertedCodeBuilder.append(originalText)
             }
         }
-        else {
-            originalCodeBuilder.append(o)
-            convertedCodeBuilder.append(o as String)
+
+        override fun processText(string: String) {
+            originalCodeBuilder.append(string)
+            convertedCodeBuilder.append(string)
         }
-    }
+    })
 
     val convertedCode = convertedCodeBuilder.toString()
     val originalCode = originalCodeBuilder.toString()

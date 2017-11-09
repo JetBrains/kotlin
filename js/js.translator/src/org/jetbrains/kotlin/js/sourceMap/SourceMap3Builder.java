@@ -16,44 +16,53 @@
 
 package org.jetbrains.kotlin.js.sourceMap;
 
-import com.google.dart.compiler.common.SourceInfo;
-import com.google.dart.compiler.util.TextOutput;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.PairConsumer;
 import gnu.trove.TObjectIntHashMap;
+import kotlin.io.TextStreamsKt;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.util.TextOutput;
+import org.json.JSONWriter;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class SourceMap3Builder implements SourceMapBuilder {
     private final StringBuilder out = new StringBuilder(8192);
     private final File generatedFile;
     private final TextOutput textOutput;
-    private final PairConsumer<SourceMapBuilder, Object> sourceInfoConsumer;
+    private final String pathPrefix;
 
-    private String lastSource;
-    private int lastSourceIndex;
-
-    private final TObjectIntHashMap<String> sources = new TObjectIntHashMap<String>() {
+    private final TObjectIntHashMap<SourceKey> sources = new TObjectIntHashMap<SourceKey>() {
         @Override
-        public int get(String key) {
+        public int get(SourceKey key) {
             int index = index(key);
             return index < 0 ? -1 : _values[index];
         }
     };
 
-    private final List<String> orderedSources = new ArrayList<String>();
+    private final List<String> orderedSources = new ArrayList<>();
+    private final List<Supplier<Reader>> orderedSourceContentSuppliers = new ArrayList<>();
 
     private int previousGeneratedColumn = -1;
     private int previousSourceIndex;
     private int previousSourceLine;
     private int previousSourceColumn;
+    private int previousMappingOffset;
+    private int previousPreviousSourceIndex;
+    private int previousPreviousSourceLine;
+    private int previousPreviousSourceColumn;
+    private boolean currentMappingIsEmpty = true;
 
-    public SourceMap3Builder(File generatedFile, TextOutput textOutput, PairConsumer<SourceMapBuilder, Object> sourceInfoConsumer) {
+    public SourceMap3Builder(File generatedFile, TextOutput textOutput, String pathPrefix) {
         this.generatedFile = generatedFile;
         this.textOutput = textOutput;
-        this.sourceInfoConsumer = sourceInfoConsumer;
+        this.pathPrefix = pathPrefix;
     }
 
     @Override
@@ -63,29 +72,44 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
     @Override
     public String build() {
-        StringBuilder sb = new StringBuilder(out.length() + (128 * orderedSources.size()));
-        sb.append("{\"version\":3,\"file\":\"").append(generatedFile.getName()).append('"').append(',');
-        appendSources(sb);
-        sb.append(",\"names\":[");
-        sb.append("],\"mappings\":\"");
-        sb.append(out);
-        sb.append("\"}");
-        return sb.toString();
+        try {
+            StringWriter stringWriter = new StringWriter();
+            JSONWriter writer = new JSONWriter(stringWriter);
+            writer.object();
+            writer.key("version").value(3);
+            writer.key("file").value(generatedFile.getName());
+
+            appendSources(writer);
+            appendSourcesContent(writer);
+
+            writer.key("names").array().endArray();
+            writer.key("mappings").value(out.toString());
+
+            writer.endObject();
+            stringWriter.close();
+
+            return stringWriter.toString();
+        }
+        catch (IOException e) {
+            throw new AssertionError("This exception should have not been thrown from StringWriter", e);
+        }
     }
 
-    private void appendSources(StringBuilder sb) {
-        boolean isNotFirst = false;
-        sb.append('"').append("sources").append("\":[");
+    private void appendSources(JSONWriter writer) {
+        writer.key("sources").array();
         for (String source : orderedSources) {
-            if (isNotFirst) {
-                sb.append(',');
-            }
-            else {
-                isNotFirst = true;
-            }
-            sb.append('"').append("file://").append(source).append('"');
+            writer.value(pathPrefix + source);
         }
-        sb.append(']');
+        writer.endArray();
+    }
+
+    private void appendSourcesContent(JSONWriter writer) {
+        writer.key("sourcesContent").array();
+        for (Supplier<Reader> contentSupplier : orderedSourceContentSuppliers) {
+            Reader reader = contentSupplier.get();
+            writer.value(reader != null ? TextStreamsKt.readText(reader) : null);
+        }
+        writer.endArray();
     }
 
     @Override
@@ -99,47 +123,34 @@ public class SourceMap3Builder implements SourceMapBuilder {
         out.insert(0, StringUtil.repeatSymbol(';', count));
     }
 
-    @Override
-    public void processSourceInfo(Object sourceInfo) {
-        if (sourceInfo instanceof SourceInfo) {
-            throw new UnsupportedOperationException("SourceInfo is not yet supported");
-        }
-        sourceInfoConsumer.consume(this, sourceInfo);
-    }
-
-    private int getSourceIndex(String source) {
-        if (source.equals(lastSource)) {
-            return lastSourceIndex;
-        }
-
-        int sourceIndex = sources.get(source);
+    private int getSourceIndex(String source, Object identityObject, Supplier<Reader> contentSupplier) {
+        SourceKey key = new SourceKey(source, identityObject);
+        int sourceIndex = sources.get(key);
         if (sourceIndex == -1) {
             sourceIndex = orderedSources.size();
-            sources.put(source, sourceIndex);
+            sources.put(key, sourceIndex);
             orderedSources.add(source);
+            orderedSourceContentSuppliers.add(contentSupplier);
         }
-
-        lastSource = source;
-        lastSourceIndex = sourceIndex;
 
         return sourceIndex;
     }
 
     @Override
-    public void addMapping(String source, int sourceLine, int sourceColumn) {
-        if (previousGeneratedColumn == -1) {
-            previousGeneratedColumn = 0;
-        }
-        else {
-            out.append(',');
+    public void addMapping(
+            @NotNull String source, @Nullable Object identityObject, @NotNull Supplier<Reader> sourceContent,
+            int sourceLine, int sourceColumn
+    ) {
+        source = source.replace(File.separatorChar, '/');
+        int sourceIndex = getSourceIndex(source, identityObject, sourceContent);
+
+        if (!currentMappingIsEmpty && previousSourceIndex == sourceIndex && previousSourceLine == sourceLine &&
+            previousSourceColumn == sourceColumn) {
+            return;
         }
 
-        int columnDiff = textOutput.getColumn() - previousGeneratedColumn;
-        // TODO fix sections overlapping
-        // assert columnDiff != 0;
-        Base64VLQ.encode(out, columnDiff);
-        previousGeneratedColumn = textOutput.getColumn();
-        int sourceIndex = getSourceIndex(source);
+        startMapping();
+
         Base64VLQ.encode(out, sourceIndex - previousSourceIndex);
         previousSourceIndex = sourceIndex;
 
@@ -148,11 +159,49 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
         Base64VLQ.encode(out, sourceColumn - previousSourceColumn);
         previousSourceColumn = sourceColumn;
+
+        currentMappingIsEmpty = false;
+    }
+
+    @Override
+    public void addEmptyMapping() {
+        if (!currentMappingIsEmpty) {
+            startMapping();
+            currentMappingIsEmpty = true;
+        }
+    }
+
+    private void startMapping() {
+        boolean newGroupStarted = previousGeneratedColumn == -1;
+        if (newGroupStarted) {
+            previousGeneratedColumn = 0;
+        }
+
+        int columnDiff = textOutput.getColumn() - previousGeneratedColumn;
+        if (!newGroupStarted) {
+            out.append(',');
+        }
+
+        if (columnDiff > 0 || newGroupStarted) {
+            Base64VLQ.encode(out, columnDiff);
+            previousGeneratedColumn = textOutput.getColumn();
+
+            previousMappingOffset = out.length();
+            previousPreviousSourceIndex = previousSourceIndex;
+            previousPreviousSourceLine = previousSourceLine;
+            previousPreviousSourceColumn = previousSourceColumn;
+        }
+        else {
+            out.setLength(previousMappingOffset);
+            previousSourceIndex = previousPreviousSourceIndex;
+            previousSourceLine = previousPreviousSourceLine;
+            previousSourceColumn = previousPreviousSourceColumn;
+        }
     }
 
     @Override
     public void addLink() {
-        textOutput.print("\n//@ sourceMappingURL=");
+        textOutput.print("\n//# sourceMappingURL=");
         textOutput.print(generatedFile.getName());
         textOutput.print(".map\n");
     }
@@ -189,6 +238,36 @@ public class SourceMap3Builder implements SourceMapBuilder {
                 out.append(BASE64_MAP[digit]);
             }
             while (value > 0);
+        }
+    }
+
+    static final class SourceKey {
+        private final String sourcePath;
+        private final Object identityKey;
+
+        SourceKey(String sourcePath, Object identityKey) {
+            this.sourcePath = sourcePath;
+            this.identityKey = identityKey;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof SourceKey)) return false;
+
+            SourceKey key = (SourceKey) o;
+
+            if (!sourcePath.equals(key.sourcePath)) return false;
+            if (identityKey != null ? !identityKey.equals(key.identityKey) : key.identityKey != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = sourcePath.hashCode();
+            result = 31 * result + (identityKey != null ? identityKey.hashCode() : 0);
+            return result;
         }
     }
 }

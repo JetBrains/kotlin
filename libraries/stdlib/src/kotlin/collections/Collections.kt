@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@
 
 package kotlin.collections
 
-import java.io.Serializable
-import java.util.*
 import kotlin.comparisons.compareValues
 
 internal object EmptyIterator : ListIterator<Nothing> {
@@ -75,39 +73,100 @@ private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Bool
     public fun toArray(): Array<out Any?> = values.copyToArrayOfAny(isVarargs)
 }
 
-/** Returns an empty read-only list.  The returned list is serializable (JVM). */
+/**
+ * Returns an empty read-only list.  The returned list is serializable (JVM).
+ * @sample samples.collections.Collections.Lists.emptyReadOnlyList
+ */
 public fun <T> emptyList(): List<T> = EmptyList
 
-/** Returns a new read-only list of given elements.  The returned list is serializable (JVM). */
+/**
+ * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
+ * @sample samples.collections.Collections.Lists.readOnlyList
+ */
 public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
 
-/** Returns an empty read-only list.  The returned list is serializable (JVM). */
+/**
+ * Returns an empty read-only list.  The returned list is serializable (JVM).
+ * @sample samples.collections.Collections.Lists.emptyReadOnlyList
+ */
 @kotlin.internal.InlineOnly
 public inline fun <T> listOf(): List<T> = emptyList()
 
 /**
  * Returns an immutable list containing only the specified object [element].
  * The returned list is serializable.
+ * @sample samples.collections.Collections.Lists.singletonReadOnlyList
  */
 @JvmVersion
-public fun <T> listOf(element: T): List<T> = Collections.singletonList(element)
+public fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList(element)
 
-/** Returns a new [MutableList] with the given elements. */
+/**
+ * Returns an empty new [MutableList].
+ * @sample samples.collections.Collections.Lists.emptyMutableList
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> mutableListOf(): MutableList<T> = ArrayList()
+
+/**
+ * Returns an empty new [ArrayList].
+ * @sample samples.collections.Collections.Lists.emptyArrayList
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> arrayListOf(): ArrayList<T> = ArrayList()
+
+/**
+ * Returns a new [MutableList] with the given elements.
+ * @sample samples.collections.Collections.Lists.mutableList
+ */
 public fun <T> mutableListOf(vararg elements: T): MutableList<T>
         = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
 
-/** Returns a new [ArrayList] with the given elements. */
+/**
+ * Returns a new [ArrayList] with the given elements.
+ * @sample samples.collections.Collections.Lists.arrayList
+ */
 public fun <T> arrayListOf(vararg elements: T): ArrayList<T>
         = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
 
-/** Returns a new read-only list either of single given element, if it is not null, or empty list it the element is null. The returned list is serializable (JVM). */
+/**
+ * Returns a new read-only list either of single given element, if it is not null, or empty list if the element is null. The returned list is serializable (JVM).
+ * @sample samples.collections.Collections.Lists.listOfNotNull
+ */
 public fun <T : Any> listOfNotNull(element: T?): List<T> = if (element != null) listOf(element) else emptyList()
 
-/** Returns a new read-only list only of those given elements, that are not null.  The returned list is serializable (JVM). */
+/**
+ * Returns a new read-only list only of those given elements, that are not null.  The returned list is serializable (JVM).
+ * @sample samples.collections.Collections.Lists.listOfNotNull
+ */
 public fun <T : Any> listOfNotNull(vararg elements: T?): List<T> = elements.filterNotNull()
 
 /**
+ * Creates a new read-only list with the specified [size], where each element is calculated by calling the specified
+ * [init] function. The [init] function returns a list element given its index.
+ * @sample samples.collections.Collections.Lists.readOnlyListFromInitializer
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> List(size: Int, init: (index: Int) -> T): List<T> = MutableList(size, init)
+
+/**
+ * Creates a new mutable list with the specified [size], where each element is calculated by calling the specified
+ * [init] function. The [init] function returns a list element given its index.
+ * @sample samples.collections.Collections.Lists.mutableListFromInitializer
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableList<T> {
+    val list = ArrayList<T>(size)
+    repeat(size) { index -> list.add(init(index)) }
+    return list
+}
+
+/**
  * Returns an [IntRange] of the valid indices for this collection.
+ * @sample samples.collections.Collections.Collections.indicesOfCollection
  */
 public val Collection<*>.indices: IntRange
     get() = 0..size - 1
@@ -115,36 +174,48 @@ public val Collection<*>.indices: IntRange
 /**
  * Returns the index of the last item in the list or -1 if the list is empty.
  *
- * @sample test.collections.ListSpecificTest.lastIndex
+ * @sample samples.collections.Collections.Lists.lastIndexOfList
  */
 public val <T> List<T>.lastIndex: Int
     get() = this.size - 1
 
-/** Returns `true` if the collection is not empty. */
+/**
+ * Returns `true` if the collection is not empty.
+ * @sample samples.collections.Collections.Collections.collectionIsNotEmpty
+ */
 @kotlin.internal.InlineOnly
 public inline fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
 
-/** Returns this Collection if it's not `null` and the empty list otherwise. */
+/**
+ * Returns this Collection if it's not `null` and the empty list otherwise.
+ * @sample samples.collections.Collections.Collections.collectionOrEmpty
+ */
 @kotlin.internal.InlineOnly
 public inline fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
 
-/** Returns this List if it's not `null` and the empty list otherwise. */
+/**
+ * Returns this List if it's not `null` and the empty list otherwise.
+ * @sample samples.collections.Collections.Lists.listOrEmpty
+ */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
 /**
  * Returns a list containing the elements returned by this enumeration
  * in the order they are returned by the enumeration.
+ * @sample samples.collections.Collections.Lists.enumerationToList
  */
 @JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
+public inline fun <T> java.util.Enumeration<T>.toList(): List<T> = java.util.Collections.list(this)
 
 /**
  * Checks if all elements in the specified collection are contained in this collection.
  *
  * Allows to overcome type-safety restriction of `containsAll` that requires to pass a collection of type `Collection<E>`.
+ * @sample samples.collections.Collections.Collections.collectionContainsAll
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
 @kotlin.internal.InlineOnly
 public inline fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(elements: Collection<T>): Boolean = this.containsAll(elements)
 
@@ -154,6 +225,16 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
     else -> this
 }
 
+@JvmVersion
+@kotlin.internal.InlineOnly
+internal inline fun copyToArrayImpl(collection: Collection<*>): Array<Any?> =
+        kotlin.jvm.internal.CollectionToArray.toArray(collection)
+
+@JvmVersion
+@kotlin.internal.InlineOnly
+internal inline fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> =
+        kotlin.jvm.internal.CollectionToArray.toArray(collection, array)
+
 // copies typed varargs array to array of objects
 @JvmVersion
 private fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<Any?> =
@@ -161,7 +242,7 @@ private fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<Any?> =
             // if the array came from varargs and already is array of Any, copying isn't required
             @Suppress("UNCHECKED_CAST") (this as Array<Any?>)
         else
-            Arrays.copyOf(this, this.size, Array<Any?>::class.java)
+            java.util.Arrays.copyOf(this, this.size, Array<Any?>::class.java)
 
 /**
  * Searches this list or its range for the provided [element] using the binary search algorithm.
@@ -176,6 +257,8 @@ private fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<Any?> =
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of list) still remains sorted.
+ * @sample samples.collections.Collections.Lists.binarySearchOnComparable
+ * @sample samples.collections.Collections.Lists.binarySearchWithBoundaries
  */
 public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size): Int {
     rangeCheck(size, fromIndex, toIndex)
@@ -211,6 +294,7 @@ public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int 
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of list) still remains sorted according to the specified [comparator].
+ * @sample samples.collections.Collections.Lists.binarySearchWithComparator
  */
 public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Int {
     rangeCheck(size, fromIndex, toIndex)
@@ -247,6 +331,7 @@ public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fr
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of list) still remains sorted.
+ * @sample samples.collections.Collections.Lists.binarySearchByKey
  */
 public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromIndex: Int = 0, toIndex: Int = size, crossinline selector: (T) -> K?): Int =
         binarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
@@ -269,6 +354,7 @@ public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromInd
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of list) still remains sorted.
+ * @sample samples.collections.Collections.Lists.binarySearchWithComparisonFunction
  */
 public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, comparison: (T) -> Int): Int {
     rangeCheck(size, fromIndex, toIndex)

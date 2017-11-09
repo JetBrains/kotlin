@@ -1,10 +1,10 @@
-abstract class <lineMarker></lineMarker>A {
-  open fun <lineMarker></lineMarker>a(){
+abstract class <lineMarker>A</lineMarker> {
+  open fun <lineMarker>a</lineMarker>(){
   }
 }
 
 open class B : A(){
-  override fun <lineMarker></lineMarker>a(){
+  override fun <lineMarker>a</lineMarker>(){
   }
 }
 

@@ -38,8 +38,10 @@ public class ApiParser extends DefaultHandler {
 
     private static final String ATTR_NAME = "name";
     private static final String ATTR_SINCE = "since";
+    private static final String ATTR_DEPRECATED = "deprecated";
 
-    private final Map<String, ApiClass> mClasses = new HashMap<String, ApiClass>();
+    private final Map<String, ApiClass> mClasses = new HashMap<String, ApiClass>(1000);
+    private final Map<String, ApiPackage> mPackages = new HashMap<String, ApiPackage>();
 
     private ApiClass mCurrentClass;
 
@@ -49,6 +51,7 @@ public class ApiParser extends DefaultHandler {
     Map<String, ApiClass> getClasses() {
         return mClasses;
     }
+    Map<String, ApiPackage> getPackages() { return mPackages; }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -59,14 +62,21 @@ public class ApiParser extends DefaultHandler {
         }
 
         try {
+            //noinspection StatementWithEmptyBody
             if (NODE_API.equals(localName)) {
                 // do nothing.
-
             } else if (NODE_CLASS.equals(localName)) {
                 String name = attributes.getValue(ATTR_NAME);
                 int since = Integer.parseInt(attributes.getValue(ATTR_SINCE));
 
-                mCurrentClass = addClass(name, since);
+                String deprecatedAttr = attributes.getValue(ATTR_DEPRECATED);
+                int deprecatedIn;
+                if (deprecatedAttr != null) {
+                    deprecatedIn = Integer.parseInt(deprecatedAttr);
+                } else {
+                    deprecatedIn = 0;
+                }
+                mCurrentClass = addClass(name, since, deprecatedIn);
 
             } else if (NODE_EXTENDS.equals(localName)) {
                 String name = attributes.getValue(ATTR_NAME);
@@ -83,14 +93,15 @@ public class ApiParser extends DefaultHandler {
             } else if (NODE_METHOD.equals(localName)) {
                 String name = attributes.getValue(ATTR_NAME);
                 int since = getSince(attributes);
-
-                mCurrentClass.addMethod(name, since);
+                int deprecatedIn = getDeprecatedIn(attributes);
+                mCurrentClass.addMethod(name, since, deprecatedIn);
 
             } else if (NODE_FIELD.equals(localName)) {
                 String name = attributes.getValue(ATTR_NAME);
                 int since = getSince(attributes);
+                int deprecatedIn = getDeprecatedIn(attributes);
 
-                mCurrentClass.addField(name, since);
+                mCurrentClass.addField(name, since, deprecatedIn);
 
             }
 
@@ -99,11 +110,21 @@ public class ApiParser extends DefaultHandler {
         }
     }
 
-    private ApiClass addClass(String name, int apiLevel) {
+    private ApiClass addClass(String name, int apiLevel, int deprecatedIn) {
+        // There should not be any duplicates
         ApiClass theClass = mClasses.get(name);
-        if (theClass == null) {
-            theClass = new ApiClass(name, apiLevel);
-            mClasses.put(name, theClass);
+        assert theClass == null;
+        theClass = new ApiClass(name, apiLevel, deprecatedIn);
+        mClasses.put(name, theClass);
+
+        String pkg = theClass.getPackage();
+        if (pkg != null) {
+            ApiPackage apiPackage = mPackages.get(pkg);
+            if (apiPackage == null) {
+                apiPackage = new ApiPackage(pkg);
+                mPackages.put(pkg, apiPackage);
+            }
+            apiPackage.addClass(theClass);
         }
 
         return theClass;
@@ -118,5 +139,16 @@ public class ApiParser extends DefaultHandler {
         }
 
         return since;
+    }
+
+    private int getDeprecatedIn(Attributes attributes) {
+        int deprecatedIn = mCurrentClass.getDeprecatedIn();
+        String deprecatedAttr = attributes.getValue(ATTR_DEPRECATED);
+
+        if (deprecatedAttr != null) {
+            deprecatedIn = Integer.parseInt(deprecatedAttr);
+        }
+
+        return deprecatedIn;
     }
 }

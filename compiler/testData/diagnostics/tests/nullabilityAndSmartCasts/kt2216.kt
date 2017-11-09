@@ -7,15 +7,15 @@ fun baz(a: Int, b: Int, c: Int, d: Int) = a + b + c + d
 
 fun foo() {
     val x: Int? = 0
-    
+
     bar(if (x != null) x else return, x)
     x + 2
     bar(x, x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-    
+
     val y: Int? = 0
     val z: Int? = 0
     bar(if (y != null) y else <!TYPE_MISMATCH!>z<!>, <!TYPE_MISMATCH!>y<!>)
-    y <!UNSAFE_INFIX_CALL!>+<!> 2
+    y <!UNSAFE_OPERATOR_CALL!>+<!> 2
     baz(<!TYPE_MISMATCH!>y<!>, <!TYPE_MISMATCH!>y<!>, if (y == null) return else y, y)
     baz(y, z!!, z, y)
 }

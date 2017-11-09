@@ -1,0 +1,10 @@
+LineBreakpoint created at sofSuspendableCallInFun.kt:23
+LineBreakpoint created at sofSuspendableCallInFun.kt:29
+Run Java
+Connected to the target VM
+sofSuspendableCallInFun.kt:23
+sofSuspendableCallInFun.kt:21
+sofSuspendableCallInFun.kt:24
+Disconnected from the target VM
+
+Process finished with exit code 0

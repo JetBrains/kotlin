@@ -34,14 +34,14 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewUtil
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.isEnumCompanionPropertyWithEntryConflict
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
@@ -64,7 +64,6 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
@@ -85,7 +84,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     }
 
     private fun getJvmNames(element: PsiElement): Pair<String?, String?> {
-        val descriptor = (element.unwrapped as? KtDeclaration)?.resolveToDescriptor() as? PropertyDescriptor ?: return null to null
+        val descriptor = (element.unwrapped as? KtDeclaration)?.unsafeResolveToDescriptor() as? PropertyDescriptor ?: return null to null
         val getterName = descriptor.getter?.let { DescriptorUtils.getJvmName(it) }
         val setterName = descriptor.setter?.let { DescriptorUtils.getJvmName(it) }
         return getterName to setterName
@@ -101,7 +100,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
                 || (getterJvmName == null && (it.resolve() as? PsiNamedElement)?.name != setterJvmName)
                 || (setterJvmName == null && (it.resolve() as? PsiNamedElement)?.name != getterJvmName)
             }
-            element is KtLightElement<*, *> -> {
+            element is KtLightDeclaration<*, *> -> {
                 val name = element.name
                 if (name == getterJvmName || name == setterJvmName) allReferences.filterNot { it is KtReference } else allReferences
             }
@@ -200,7 +199,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     ) {
         if (newName == null) return
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return
-        val descriptor = declaration.resolveToDescriptor() as VariableDescriptor
+        val descriptor = declaration.unsafeResolveToDescriptor() as VariableDescriptor
 
         val collisions = SmartList<UsageInfo>()
         checkRedeclarations(descriptor, newName, collisions)
@@ -279,13 +278,13 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
             return preprocessAndPass(callableDeclaration)
         }
 
-        val superPsiMethods = deepestSuperDeclaration.getRepresentativeLightMethod().singletonOrEmptyList()
+        val superPsiMethods = listOfNotNull(deepestSuperDeclaration.getRepresentativeLightMethod())
         checkSuperMethodsWithPopup(callableDeclaration, superPsiMethods, "Rename", editor) {
             preprocessAndPass(if (it.size > 1) deepestSuperDeclaration else callableDeclaration)
         }
     }
 
-    class PropertyMethodWrapper(val propertyMethod: PsiMethod) : PsiNamedElement by propertyMethod, NavigationItem by propertyMethod {
+    class PropertyMethodWrapper(private val propertyMethod: PsiMethod) : PsiNamedElement by propertyMethod, NavigationItem by propertyMethod {
         override fun getName() = propertyMethod.name
         override fun setName(name: String) = this
         override fun copy() = this
@@ -445,7 +444,6 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
                     }
                 }
             }
-            true
         }
     }
 

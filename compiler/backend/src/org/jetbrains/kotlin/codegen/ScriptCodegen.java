@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.ScriptContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -33,7 +35,6 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
         List<ScriptDescriptor> earlierScripts = state.getReplSpecific().getEarlierScriptsForReplInterpreter();
         ScriptContext scriptContext = parentContext.intoScript(
                 scriptDescriptor,
-                earlierScripts == null ? Collections.<ScriptDescriptor>emptyList() : earlierScripts,
+                earlierScripts == null ? Collections.emptyList() : earlierScripts,
                 scriptDescriptor,
                 state.getTypeMapper()
         );
@@ -104,14 +105,17 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
     }
 
     @Override
-    protected void generateSyntheticParts() {
+    protected void generateSyntheticPartsBeforeBody() {
         generatePropertyMetadataArrayFieldIfNeeded(classAsmType);
     }
 
     @Override
+    protected void generateSyntheticPartsAfterBody() {
+    }
+
+    @Override
     protected void generateKotlinMetadataAnnotation() {
-        // TODO: copypaste from ImplementationBodyCodegen, so the script is seen as a KClass by reflection; implement separate kind with proper API
-        generateKotlinClassMetadataAnnotation(scriptDescriptor);
+        generateKotlinClassMetadataAnnotation(scriptDescriptor, true);
     }
 
     private void genConstructor(
@@ -146,6 +150,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
             Type classType = typeMapper.mapType(scriptDescriptor);
 
             ClassDescriptor superclass = DescriptorUtilsKt.getSuperClassNotAny(scriptDescriptor);
+            // TODO: throw if class is not found)
 
             if (superclass == null) {
                 iv.load(0, classType);
@@ -153,11 +158,11 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
             }
             else {
                 ConstructorDescriptor ctorDesc = superclass.getUnsubstitutedPrimaryConstructor();
-                assert ctorDesc != null;
+                if (ctorDesc == null) throw new RuntimeException("Primary constructor not found for script template " + superclass.toString());
 
                 iv.load(0, classType);
 
-                int valueParamStart = context.getEarlierScripts().size() + 1;
+                int valueParamStart = context.getEarlierScripts().isEmpty() ? 1 : 2; // this + array of earlier scripts if not empty
 
                 List<ValueParameterDescriptor> valueParameters = scriptDescriptor.getUnsubstitutedPrimaryConstructor().getValueParameters();
                 for (ValueParameterDescriptor superclassParam: ctorDesc.getValueParameters()) {
@@ -184,28 +189,25 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
             FrameMap frameMap = new FrameMap();
             frameMap.enterTemp(OBJECT_TYPE);
 
-            for (ScriptDescriptor importedScript : context.getEarlierScripts()) {
-                frameMap.enter(importedScript, OBJECT_TYPE);
-            }
 
-            int offset = 1;
+            if (!context.getEarlierScripts().isEmpty()) {
+                int scriptsParamIndex = frameMap.enterTemp(AsmUtil.getArrayType(OBJECT_TYPE));
 
-            for (ScriptDescriptor earlierScript : context.getEarlierScripts()) {
-                Type earlierClassType = typeMapper.mapClass(earlierScript);
-                iv.load(0, classType);
-                iv.load(offset, earlierClassType);
-                offset += earlierClassType.getSize();
-                iv.putfield(classType.getInternalName(), context.getScriptFieldName(earlierScript), earlierClassType.getDescriptor());
-            }
-
-            final ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this);
-
-            generateInitializers(new Function0<ExpressionCodegen>() {
-                @Override
-                public ExpressionCodegen invoke() {
-                    return codegen;
+                int earlierScriptIndex = 0;
+                for (ScriptDescriptor earlierScript : context.getEarlierScripts()) {
+                    Type earlierClassType = typeMapper.mapClass(earlierScript);
+                    iv.load(0, classType);
+                    iv.load(scriptsParamIndex, earlierClassType);
+                    iv.aconst(earlierScriptIndex++);
+                    iv.aload(OBJECT_TYPE);
+                    iv.checkcast(earlierClassType);
+                    iv.putfield(classType.getInternalName(), context.getScriptFieldName(earlierScript), earlierClassType.getDescriptor());
                 }
-            });
+            }
+
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this);
+
+            generateInitializers(() -> codegen);
 
             iv.areturn(Type.VOID_TYPE);
         }
@@ -229,6 +231,11 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
             }
             else if (declaration instanceof KtClassOrObject) {
                 genClassOrObject((KtClassOrObject) declaration);
+            }
+            else if (declaration instanceof KtDestructuringDeclaration) {
+                for (KtDestructuringDeclarationEntry entry : ((KtDestructuringDeclaration) declaration).getEntries()) {
+                    genSimpleMember(entry);
+                }
             }
         }
     }

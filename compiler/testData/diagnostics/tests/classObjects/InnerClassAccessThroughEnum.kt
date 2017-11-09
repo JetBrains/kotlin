@@ -3,13 +3,13 @@ package a
 
 enum class C {
     E1, E2, E3 {
-        object O_O
+        <!NESTED_CLASS_DEPRECATED!>object O_O<!>
 
         fun b() {
             O_O
         }
 
-        class G
+        <!NESTED_CLASS_DEPRECATED!>class G<!>
     },
 
     E4 {
@@ -41,7 +41,7 @@ fun f() {
     C.O
     C.O.InO
     C.A()
-    C.<!UNRESOLVED_REFERENCE!>B<!>()
+    C.<!RESOLUTION_TO_CLASSIFIER!>B<!>()
 
     C.E3.<!UNRESOLVED_REFERENCE!>O_O<!>
     C.E3.<!UNRESOLVED_REFERENCE!>G<!>()

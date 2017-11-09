@@ -1,4 +1,4 @@
-JetFile: EnumMissingName.kt
+KtFile: EnumMissingName.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

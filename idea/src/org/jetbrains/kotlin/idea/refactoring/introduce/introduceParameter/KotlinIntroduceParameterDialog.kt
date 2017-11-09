@@ -231,8 +231,8 @@ class KotlinIntroduceParameterDialog private constructor(
 
     override fun canRun() {
         val psiFactory = KtPsiFactory(myProject)
-        psiFactory.createSimpleName(nameField.enteredName.quoteIfNeeded()).validateElement("Invalid parameter name")
-        psiFactory.createType(typeField.enteredName).validateElement("Invalid parameter type")
+        psiFactory.createExpressionIfPossible(nameField.enteredName.quoteIfNeeded()).validateElement("Invalid parameter name")
+        psiFactory.createTypeIfPossible(typeField.enteredName).validateElement("Invalid parameter type")
     }
 
     override fun doAction() {
@@ -281,9 +281,7 @@ class KotlinIntroduceParameterDialog private constructor(
                                 val function = declaration as KtFunction
                                 val receiverType = function.receiverTypeReference?.text
                                 val parameterTypes = function
-                                        .valueParameters
-                                        .map { it.typeReference!!.text }
-                                        .joinToString()
+                                        .valueParameters.joinToString { it.typeReference!!.text }
                                 val returnType = function.typeReference?.text ?: "Unit"
 
                                 chosenType = (receiverType?.let { "$it." } ?: "") + "($parameterTypes) -> $returnType"

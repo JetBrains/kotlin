@@ -23,12 +23,13 @@ import org.jetbrains.annotations.NotNull;
 public class CompilerConfigurationKey<T> {
     Key<T> ideaKey;
 
-    private CompilerConfigurationKey(@NotNull @NonNls String name) {
+    public CompilerConfigurationKey(@NotNull @NonNls String name) {
         ideaKey = Key.create(name);
     }
 
+    @NotNull
     public static <T> CompilerConfigurationKey<T> create(@NotNull @NonNls String name) {
-        return new CompilerConfigurationKey<T>(name);
+        return new CompilerConfigurationKey<>(name);
     }
 
     @Override

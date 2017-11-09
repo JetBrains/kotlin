@@ -71,7 +71,7 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
 
         val lowerArgs = renderArguments(lowerBound)
         val upperArgs = renderArguments(upperBound)
-        val newArgs = lowerArgs.map { "(raw) $it" }.joinToString(", ")
+        val newArgs = lowerArgs.joinToString(", ") { "(raw) $it" }
         val newUpper =
                 if (lowerArgs.zip(upperArgs).all { onlyOutDiffers(it.first, it.second) })
                     upperRendered.replaceArgs(newArgs)
@@ -85,12 +85,10 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
 internal object RawSubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) = TypeProjectionImpl(eraseType(key))
 
-    private val lowerTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes()
-            .computeAttributes(allowFlexible = false, isRaw = true, forLower = true)
-    private val upperTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes()
-            .computeAttributes(allowFlexible = false, isRaw = true, forLower = false)
+    private val lowerTypeAttr = TypeUsage.COMMON.toAttributes().withFlexibility(JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND)
+    private val upperTypeAttr = TypeUsage.COMMON.toAttributes().withFlexibility(JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND)
 
-    fun eraseType(type: KotlinType): KotlinType {
+    private fun eraseType(type: KotlinType): KotlinType {
         val declaration = type.constructor.declarationDescriptor
         return when (declaration) {
             is TypeParameterDescriptor -> eraseType(declaration.getErasedUpperBound())
@@ -127,7 +125,7 @@ internal object RawSubstitution : TypeSubstitution() {
 
         if (type.isError) return ErrorUtils.createErrorType("Raw error type: ${type.constructor}") to false
 
-        return KotlinTypeFactory.simpleType(
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 type.annotations, type.constructor,
                 type.constructor.parameters.map {
                     parameter ->
@@ -141,18 +139,18 @@ internal object RawSubstitution : TypeSubstitution() {
             parameter: TypeParameterDescriptor,
             attr: JavaTypeAttributes,
             erasedUpperBound: KotlinType = parameter.getErasedUpperBound()
-    ) = when (attr.rawBound) {
+    ) = when (attr.flexibility) {
         // Raw(List<T>) => (List<Any?>..List<*>)
         // Raw(Enum<T>) => (Enum<Enum<*>>..Enum<out Enum<*>>)
         // In the last case upper bound is equal to star projection `Enum<*>`,
         // but we want to keep matching tree structure of flexible bounds (at least they should have the same size)
-        RawBound.LOWER -> TypeProjectionImpl(
+        JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND -> TypeProjectionImpl(
                 // T : String -> String
                 // in T : String -> String
                 // T : Enum<T> -> Enum<*>
                 Variance.INVARIANT, erasedUpperBound
         )
-        RawBound.UPPER, RawBound.NOT_RAW -> {
+        JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND, JavaTypeFlexibility.INFLEXIBLE -> {
             if (!parameter.variance.allowsOutPosition)
                 // in T -> Comparable<Nothing>
                 TypeProjectionImpl(Variance.INVARIANT, parameter.builtIns.nothingType)

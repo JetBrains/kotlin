@@ -1,0 +1,23 @@
+// FILE: before.kt
+interface Foo
+interface Bar
+
+fun foo(a: Foo.(Bar) -> Unit) {}
+
+fun bar() {
+    foo {
+        <caret>it
+    }
+}
+
+// FILE: after.kt
+interface Foo
+interface <caret>Bar
+
+fun foo(a: Foo.(Bar) -> Unit) {}
+
+fun bar() {
+    foo {
+        it
+    }
+}

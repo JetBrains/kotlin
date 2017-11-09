@@ -33,7 +33,7 @@ import java.util.List;
 public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements JavaCallableMemberDescriptor {
     private final boolean isStaticFinal;
 
-    protected JavaPropertyDescriptor(
+    private JavaPropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Modality modality,
@@ -46,7 +46,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             boolean isStaticFinal
     ) {
         super(containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, source,
-              /* lateInit = */ false, /* isConst = */ false);
+              false, false, false, false, false, false);
 
         this.isStaticFinal = isStaticFinal;
     }
@@ -74,10 +74,11 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             @NotNull Modality newModality,
             @NotNull Visibility newVisibility,
             @Nullable PropertyDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @NotNull Name newName
     ) {
         return new JavaPropertyDescriptor(
-                newOwner, getAnnotations(), newModality, newVisibility, isVar(), getName(), SourceElement.NO_SOURCE, original,
+                newOwner, getAnnotations(), newModality, newVisibility, isVar(), newName, SourceElement.NO_SOURCE, original,
                 kind, isStaticFinal
         );
     }
@@ -91,7 +92,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
     @Override
     public JavaCallableMemberDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
-            @NotNull List<KotlinType> enhancedValueParametersTypes,
+            @NotNull List<ValueParameterData> enhancedValueParametersData,
             @NotNull KotlinType enhancedReturnType
     ) {
         JavaPropertyDescriptor enhanced = new JavaPropertyDescriptor(

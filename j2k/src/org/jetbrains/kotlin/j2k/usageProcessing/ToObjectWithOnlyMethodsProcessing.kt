@@ -18,14 +18,13 @@ package org.jetbrains.kotlin.j2k.usageProcessing
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class ToObjectWithOnlyMethodsProcessing(private val psiClass: PsiClass) : UsageProcessing {
     override val targetElement: PsiElement get() = psiClass
 
     override val convertedCodeProcessor: ConvertedCodeProcessor? get() = null
 
-    override val javaCodeProcessors = ToObjectWithOnlyMethodsProcessor().singletonList()
+    override val javaCodeProcessors = listOf(ToObjectWithOnlyMethodsProcessor())
 
     override val kotlinCodeProcessors = emptyList<ExternalCodeProcessor>()
 

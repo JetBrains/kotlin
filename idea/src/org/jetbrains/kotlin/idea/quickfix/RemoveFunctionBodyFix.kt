@@ -32,10 +32,12 @@ class RemoveFunctionBodyFix(element: KtFunction) : KotlinQuickFixAction<KtFuncti
     override fun getText() = familyName
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return super.isAvailable(project, editor, file) && element.hasBody()
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val bodyExpression = element.bodyExpression!!
         val equalsToken = element.equalsToken
         if (equalsToken != null) {

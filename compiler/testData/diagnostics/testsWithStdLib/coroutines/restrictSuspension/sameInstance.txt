@@ -1,0 +1,14 @@
+package
+
+public fun generate(/*0*/ f: suspend RestrictedController.() -> kotlin.Unit): kotlin.Unit
+public fun test(): kotlin.Unit
+public suspend fun RestrictedController.extension(): kotlin.Unit
+public suspend fun RestrictedController.l(): kotlin.Unit
+
+@kotlin.coroutines.experimental.RestrictsSuspension public final class RestrictedController {
+    public constructor RestrictedController()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final suspend fun member(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

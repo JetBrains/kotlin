@@ -20,11 +20,11 @@ class B : A() {
         }
 
         if (d.x is B) {
-            d.x.<!INVISIBLE_MEMBER!>foo<!> {}
+            <!SMARTCAST_IMPOSSIBLE!>d.x<!>.foo {}
         }
     }
 }
 
 fun baz(a: A) {
-    a.<!INVISIBLE_MEMBER!>foo<!> <!TYPE_MISMATCH!>{ }<!>
+    a.<!INVISIBLE_MEMBER!>foo<!> { }
 }

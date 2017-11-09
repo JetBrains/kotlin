@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
@@ -54,7 +54,7 @@ class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsa
 
     private fun createChangeInfo(data: IntroduceParameterData, method: PsiElement): KotlinChangeInfo? {
         val psiMethodDescriptor = when (method) {
-            is KtFunction -> method.resolveToDescriptor() as? FunctionDescriptor
+            is KtFunction -> method.unsafeResolveToDescriptor() as? FunctionDescriptor
             is PsiMethod -> method.getJavaMethodDescriptor()
             else -> null
         } ?: return null
@@ -64,7 +64,7 @@ class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsa
         data.parametersToRemove.toNativeArray().sortedDescending().forEach { changeInfo.removeParameter(it) }
 
         // Temporarily assume that the new parameter is of Any type. Actual type is substituted during the signature update phase
-        val defaultValueForCall = (data.parameterInitializer.expression as? PsiExpression)?.let { it.j2k() }
+        val defaultValueForCall = (data.parameterInitializer.expression as? PsiExpression)?.j2k()
         changeInfo.addParameter(KotlinParameterInfo(callableDescriptor = psiMethodDescriptor,
                                                     name = data.parameterName,
                                                     originalTypeInfo = KotlinTypeInfo(false, psiMethodDescriptor.builtIns.anyType),

@@ -27,7 +27,7 @@ public class WhenByEnumsMapping {
     public static final String MAPPING_ARRAY_FIELD_PREFIX = "$EnumSwitchMapping$";
     public static final String MAPPINGS_CLASS_NAME_POSTFIX = "$WhenMappings";
 
-    private final Map<EnumValue, Integer> map = new LinkedHashMap<EnumValue, Integer>();
+    private final Map<EnumValue, Integer> map = new LinkedHashMap<>();
     private final ClassDescriptor enumClassDescriptor;
     private final String outerClassInternalNameForExpression;
     private final String mappingsClassInternalName;

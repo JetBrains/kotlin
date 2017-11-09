@@ -1,0 +1,635 @@
+FILE /dataClassWithArrayMembers.kt
+  CLASS CLASS Test1
+    $this: VALUE_PARAMETER this@Test1: Test1
+    CONSTRUCTOR public constructor Test1(stringArray: kotlin.Array<kotlin.String>, charArray: kotlin.CharArray, booleanArray: kotlin.BooleanArray, byteArray: kotlin.ByteArray, shortArray: kotlin.ShortArray, intArray: kotlin.IntArray, longArray: kotlin.LongArray, floatArray: kotlin.FloatArray, doubleArray: kotlin.DoubleArray)
+      VALUE_PARAMETER value-parameter stringArray: kotlin.Array<kotlin.String>
+      VALUE_PARAMETER value-parameter charArray: kotlin.CharArray
+      VALUE_PARAMETER value-parameter booleanArray: kotlin.BooleanArray
+      VALUE_PARAMETER value-parameter byteArray: kotlin.ByteArray
+      VALUE_PARAMETER value-parameter shortArray: kotlin.ShortArray
+      VALUE_PARAMETER value-parameter intArray: kotlin.IntArray
+      VALUE_PARAMETER value-parameter longArray: kotlin.LongArray
+      VALUE_PARAMETER value-parameter floatArray: kotlin.FloatArray
+      VALUE_PARAMETER value-parameter doubleArray: kotlin.DoubleArray
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
+    PROPERTY public final val stringArray: kotlin.Array<kotlin.String>
+      FIELD PROPERTY_BACKING_FIELD public final val stringArray: kotlin.Array<kotlin.String>
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter stringArray: Array<String>' type=kotlin.Array<kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-stringArray>(): kotlin.Array<kotlin.String>
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-stringArray>(): Array<String>'
+            GET_FIELD 'stringArray: Array<String>' type=kotlin.Array<kotlin.String> origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    PROPERTY public final val charArray: kotlin.CharArray
+      FIELD PROPERTY_BACKING_FIELD public final val charArray: kotlin.CharArray
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter charArray: CharArray' type=kotlin.CharArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-charArray>(): kotlin.CharArray
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-charArray>(): CharArray'
+            GET_FIELD 'charArray: CharArray' type=kotlin.CharArray origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    PROPERTY public final val booleanArray: kotlin.BooleanArray
+      FIELD PROPERTY_BACKING_FIELD public final val booleanArray: kotlin.BooleanArray
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter booleanArray: BooleanArray' type=kotlin.BooleanArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-booleanArray>(): kotlin.BooleanArray
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-booleanArray>(): BooleanArray'
+            GET_FIELD 'booleanArray: BooleanArray' type=kotlin.BooleanArray origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    PROPERTY public final val byteArray: kotlin.ByteArray
+      FIELD PROPERTY_BACKING_FIELD public final val byteArray: kotlin.ByteArray
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter byteArray: ByteArray' type=kotlin.ByteArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-byteArray>(): kotlin.ByteArray
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-byteArray>(): ByteArray'
+            GET_FIELD 'byteArray: ByteArray' type=kotlin.ByteArray origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    PROPERTY public final val shortArray: kotlin.ShortArray
+      FIELD PROPERTY_BACKING_FIELD public final val shortArray: kotlin.ShortArray
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter shortArray: ShortArray' type=kotlin.ShortArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-shortArray>(): kotlin.ShortArray
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-shortArray>(): ShortArray'
+            GET_FIELD 'shortArray: ShortArray' type=kotlin.ShortArray origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    PROPERTY public final val intArray: kotlin.IntArray
+      FIELD PROPERTY_BACKING_FIELD public final val intArray: kotlin.IntArray
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter intArray: IntArray' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-intArray>(): kotlin.IntArray
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-intArray>(): IntArray'
+            GET_FIELD 'intArray: IntArray' type=kotlin.IntArray origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    PROPERTY public final val longArray: kotlin.LongArray
+      FIELD PROPERTY_BACKING_FIELD public final val longArray: kotlin.LongArray
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter longArray: LongArray' type=kotlin.LongArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-longArray>(): kotlin.LongArray
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-longArray>(): LongArray'
+            GET_FIELD 'longArray: LongArray' type=kotlin.LongArray origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    PROPERTY public final val floatArray: kotlin.FloatArray
+      FIELD PROPERTY_BACKING_FIELD public final val floatArray: kotlin.FloatArray
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter floatArray: FloatArray' type=kotlin.FloatArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-floatArray>(): kotlin.FloatArray
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-floatArray>(): FloatArray'
+            GET_FIELD 'floatArray: FloatArray' type=kotlin.FloatArray origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    PROPERTY public final val doubleArray: kotlin.DoubleArray
+      FIELD PROPERTY_BACKING_FIELD public final val doubleArray: kotlin.DoubleArray
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter doubleArray: DoubleArray' type=kotlin.DoubleArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-doubleArray>(): kotlin.DoubleArray
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-doubleArray>(): DoubleArray'
+            GET_FIELD 'doubleArray: DoubleArray' type=kotlin.DoubleArray origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Array<kotlin.String>
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component1(): Array<String>'
+          CALL '<get-stringArray>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component2(): kotlin.CharArray
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component2(): CharArray'
+          CALL '<get-charArray>(): CharArray' type=kotlin.CharArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component3(): kotlin.BooleanArray
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component3(): BooleanArray'
+          CALL '<get-booleanArray>(): BooleanArray' type=kotlin.BooleanArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component4(): kotlin.ByteArray
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component4(): ByteArray'
+          CALL '<get-byteArray>(): ByteArray' type=kotlin.ByteArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component5(): kotlin.ShortArray
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component5(): ShortArray'
+          CALL '<get-shortArray>(): ShortArray' type=kotlin.ShortArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component6(): kotlin.IntArray
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component6(): IntArray'
+          CALL '<get-intArray>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component7(): kotlin.LongArray
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component7(): LongArray'
+          CALL '<get-longArray>(): LongArray' type=kotlin.LongArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component8(): kotlin.FloatArray
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component8(): FloatArray'
+          CALL '<get-floatArray>(): FloatArray' type=kotlin.FloatArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component9(): kotlin.DoubleArray
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component9(): DoubleArray'
+          CALL '<get-doubleArray>(): DoubleArray' type=kotlin.DoubleArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(stringArray: kotlin.Array<kotlin.String> = ..., charArray: kotlin.CharArray = ..., booleanArray: kotlin.BooleanArray = ..., byteArray: kotlin.ByteArray = ..., shortArray: kotlin.ShortArray = ..., intArray: kotlin.IntArray = ..., longArray: kotlin.LongArray = ..., floatArray: kotlin.FloatArray = ..., doubleArray: kotlin.DoubleArray = ...): Test1
+      $this: VALUE_PARAMETER this@Test1: Test1
+      VALUE_PARAMETER value-parameter stringArray: kotlin.Array<kotlin.String> = ...
+        EXPRESSION_BODY
+          CALL '<get-stringArray>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+      VALUE_PARAMETER value-parameter charArray: kotlin.CharArray = ...
+        EXPRESSION_BODY
+          CALL '<get-charArray>(): CharArray' type=kotlin.CharArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+      VALUE_PARAMETER value-parameter booleanArray: kotlin.BooleanArray = ...
+        EXPRESSION_BODY
+          CALL '<get-booleanArray>(): BooleanArray' type=kotlin.BooleanArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+      VALUE_PARAMETER value-parameter byteArray: kotlin.ByteArray = ...
+        EXPRESSION_BODY
+          CALL '<get-byteArray>(): ByteArray' type=kotlin.ByteArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+      VALUE_PARAMETER value-parameter shortArray: kotlin.ShortArray = ...
+        EXPRESSION_BODY
+          CALL '<get-shortArray>(): ShortArray' type=kotlin.ShortArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+      VALUE_PARAMETER value-parameter intArray: kotlin.IntArray = ...
+        EXPRESSION_BODY
+          CALL '<get-intArray>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+      VALUE_PARAMETER value-parameter longArray: kotlin.LongArray = ...
+        EXPRESSION_BODY
+          CALL '<get-longArray>(): LongArray' type=kotlin.LongArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+      VALUE_PARAMETER value-parameter floatArray: kotlin.FloatArray = ...
+        EXPRESSION_BODY
+          CALL '<get-floatArray>(): FloatArray' type=kotlin.FloatArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+      VALUE_PARAMETER value-parameter doubleArray: kotlin.DoubleArray = ...
+        EXPRESSION_BODY
+          CALL '<get-doubleArray>(): DoubleArray' type=kotlin.DoubleArray origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='copy(Array<String> = ..., CharArray = ..., BooleanArray = ..., ByteArray = ..., ShortArray = ..., IntArray = ..., LongArray = ..., FloatArray = ..., DoubleArray = ...): Test1'
+          CALL 'constructor Test1(Array<String>, CharArray, BooleanArray, ByteArray, ShortArray, IntArray, LongArray, FloatArray, DoubleArray)' type=Test1 origin=null
+            stringArray: GET_VAR 'value-parameter stringArray: Array<String> = ...' type=kotlin.Array<kotlin.String> origin=null
+            charArray: GET_VAR 'value-parameter charArray: CharArray = ...' type=kotlin.CharArray origin=null
+            booleanArray: GET_VAR 'value-parameter booleanArray: BooleanArray = ...' type=kotlin.BooleanArray origin=null
+            byteArray: GET_VAR 'value-parameter byteArray: ByteArray = ...' type=kotlin.ByteArray origin=null
+            shortArray: GET_VAR 'value-parameter shortArray: ShortArray = ...' type=kotlin.ShortArray origin=null
+            intArray: GET_VAR 'value-parameter intArray: IntArray = ...' type=kotlin.IntArray origin=null
+            longArray: GET_VAR 'value-parameter longArray: LongArray = ...' type=kotlin.LongArray origin=null
+            floatArray: GET_VAR 'value-parameter floatArray: FloatArray = ...' type=kotlin.FloatArray origin=null
+            doubleArray: GET_VAR 'value-parameter doubleArray: DoubleArray = ...' type=kotlin.DoubleArray origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='toString(): String'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value='Test1('
+            CONST String type=kotlin.String value='stringArray='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-stringArray>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+            CONST String type=kotlin.String value=', '
+            CONST String type=kotlin.String value='charArray='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-charArray>(): CharArray' type=kotlin.CharArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+            CONST String type=kotlin.String value=', '
+            CONST String type=kotlin.String value='booleanArray='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-booleanArray>(): BooleanArray' type=kotlin.BooleanArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+            CONST String type=kotlin.String value=', '
+            CONST String type=kotlin.String value='byteArray='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-byteArray>(): ByteArray' type=kotlin.ByteArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+            CONST String type=kotlin.String value=', '
+            CONST String type=kotlin.String value='shortArray='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-shortArray>(): ShortArray' type=kotlin.ShortArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+            CONST String type=kotlin.String value=', '
+            CONST String type=kotlin.String value='intArray='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-intArray>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+            CONST String type=kotlin.String value=', '
+            CONST String type=kotlin.String value='longArray='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-longArray>(): LongArray' type=kotlin.LongArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+            CONST String type=kotlin.String value=', '
+            CONST String type=kotlin.String value='floatArray='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-floatArray>(): FloatArray' type=kotlin.FloatArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+            CONST String type=kotlin.String value=', '
+            CONST String type=kotlin.String value='doubleArray='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-doubleArray>(): DoubleArray' type=kotlin.DoubleArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+            CONST String type=kotlin.String value=')'
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Test1: Test1
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
+          CONST Int type=kotlin.Int value='0'
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+            arg0: CALL '<get-stringArray>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value='31'
+            other: CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+              arg0: CALL '<get-charArray>(): CharArray' type=kotlin.CharArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value='31'
+            other: CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+              arg0: CALL '<get-booleanArray>(): BooleanArray' type=kotlin.BooleanArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value='31'
+            other: CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+              arg0: CALL '<get-byteArray>(): ByteArray' type=kotlin.ByteArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value='31'
+            other: CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+              arg0: CALL '<get-shortArray>(): ShortArray' type=kotlin.ShortArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value='31'
+            other: CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+              arg0: CALL '<get-intArray>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value='31'
+            other: CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+              arg0: CALL '<get-longArray>(): LongArray' type=kotlin.LongArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value='31'
+            other: CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+              arg0: CALL '<get-floatArray>(): FloatArray' type=kotlin.FloatArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'plus(Int): Int' type=kotlin.Int origin=null
+            $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value='31'
+            other: CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+              arg0: CALL '<get-doubleArray>(): DoubleArray' type=kotlin.DoubleArray origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+        RETURN type=kotlin.Nothing from='hashCode(): Int'
+          GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Test1: Test1
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
+              arg0: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+              arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='true'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test1
+              GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: Test1
+          TYPE_OP type=Test1 origin=CAST typeOperand=Test1
+            GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-stringArray>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+                arg1: CALL '<get-stringArray>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-charArray>(): CharArray' type=kotlin.CharArray origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+                arg1: CALL '<get-charArray>(): CharArray' type=kotlin.CharArray origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-booleanArray>(): BooleanArray' type=kotlin.BooleanArray origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+                arg1: CALL '<get-booleanArray>(): BooleanArray' type=kotlin.BooleanArray origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-byteArray>(): ByteArray' type=kotlin.ByteArray origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+                arg1: CALL '<get-byteArray>(): ByteArray' type=kotlin.ByteArray origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-shortArray>(): ShortArray' type=kotlin.ShortArray origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+                arg1: CALL '<get-shortArray>(): ShortArray' type=kotlin.ShortArray origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-intArray>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+                arg1: CALL '<get-intArray>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-longArray>(): LongArray' type=kotlin.LongArray origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+                arg1: CALL '<get-longArray>(): LongArray' type=kotlin.LongArray origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-floatArray>(): FloatArray' type=kotlin.FloatArray origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+                arg1: CALL '<get-floatArray>(): FloatArray' type=kotlin.FloatArray origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-doubleArray>(): DoubleArray' type=kotlin.DoubleArray origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+                arg1: CALL '<get-doubleArray>(): DoubleArray' type=kotlin.DoubleArray origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value='true'
+  CLASS CLASS Test2
+    $this: VALUE_PARAMETER this@Test2: Test2<T>
+    TYPE_PARAMETER <T>
+    CONSTRUCTOR public constructor Test2<T>(genericArray: kotlin.Array<T>)
+      VALUE_PARAMETER value-parameter genericArray: kotlin.Array<T>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
+    PROPERTY public final val genericArray: kotlin.Array<T>
+      FIELD PROPERTY_BACKING_FIELD public final val genericArray: kotlin.Array<T>
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter genericArray: Array<T>' type=kotlin.Array<T> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-genericArray>(): kotlin.Array<T>
+        $this: VALUE_PARAMETER this@Test2: Test2<T>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-genericArray>(): Array<T>'
+            GET_FIELD 'genericArray: Array<T>' type=kotlin.Array<T> origin=null
+              receiver: GET_VAR 'this@Test2: Test2<T>' type=Test2<T> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Array<T>
+      $this: VALUE_PARAMETER this@Test2: Test2<T>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component1(): Array<T>'
+          CALL '<get-genericArray>(): Array<T>' type=kotlin.Array<T> origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test2: Test2<T>' type=Test2<T> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(genericArray: kotlin.Array<T> = ...): Test2<T>
+      $this: VALUE_PARAMETER this@Test2: Test2<T>
+      VALUE_PARAMETER value-parameter genericArray: kotlin.Array<T> = ...
+        EXPRESSION_BODY
+          CALL '<get-genericArray>(): Array<T>' type=kotlin.Array<T> origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test2: Test2<T>' type=Test2<T> origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='copy(Array<T> = ...): Test2<T>'
+          CALL 'constructor Test2(Array<T>)' type=Test2<T> origin=null
+            <T>: null
+            genericArray: GET_VAR 'value-parameter genericArray: Array<T> = ...' type=kotlin.Array<T> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Test2: Test2<T>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='toString(): String'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value='Test2('
+            CONST String type=kotlin.String value='genericArray='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-genericArray>(): Array<T>' type=kotlin.Array<T> origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test2: Test2<T>' type=Test2<T> origin=null
+            CONST String type=kotlin.String value=')'
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Test2: Test2<T>
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
+          CONST Int type=kotlin.Int value='0'
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+            arg0: CALL '<get-genericArray>(): Array<T>' type=kotlin.Array<T> origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test2: Test2<T>' type=Test2<T> origin=null
+        RETURN type=kotlin.Nothing from='hashCode(): Int'
+          GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Test2: Test2<T>
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
+              arg0: GET_VAR 'this@Test2: Test2<T>' type=Test2<T> origin=null
+              arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='true'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test2<T>
+              GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: Test2<T>
+          TYPE_OP type=Test2<T> origin=CAST typeOperand=Test2<T>
+            GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-genericArray>(): Array<T>' type=kotlin.Array<T> origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test2: Test2<T>' type=Test2<T> origin=null
+                arg1: CALL '<get-genericArray>(): Array<T>' type=kotlin.Array<T> origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test2<T>' type=Test2<T> origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value='true'
+  CLASS CLASS Test3
+    $this: VALUE_PARAMETER this@Test3: Test3
+    CONSTRUCTOR public constructor Test3(anyArrayN: kotlin.Array<kotlin.Any>?)
+      VALUE_PARAMETER value-parameter anyArrayN: kotlin.Array<kotlin.Any>?
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test3'
+    PROPERTY public final val anyArrayN: kotlin.Array<kotlin.Any>?
+      FIELD PROPERTY_BACKING_FIELD public final val anyArrayN: kotlin.Array<kotlin.Any>?
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter anyArrayN: Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-anyArrayN>(): kotlin.Array<kotlin.Any>?
+        $this: VALUE_PARAMETER this@Test3: Test3
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-anyArrayN>(): Array<Any>?'
+            GET_FIELD 'anyArrayN: Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=null
+              receiver: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Array<kotlin.Any>?
+      $this: VALUE_PARAMETER this@Test3: Test3
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component1(): Array<Any>?'
+          CALL '<get-anyArrayN>(): Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(anyArrayN: kotlin.Array<kotlin.Any>? = ...): Test3
+      $this: VALUE_PARAMETER this@Test3: Test3
+      VALUE_PARAMETER value-parameter anyArrayN: kotlin.Array<kotlin.Any>? = ...
+        EXPRESSION_BODY
+          CALL '<get-anyArrayN>(): Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='copy(Array<Any>? = ...): Test3'
+          CALL 'constructor Test3(Array<Any>?)' type=Test3 origin=null
+            anyArrayN: GET_VAR 'value-parameter anyArrayN: Array<Any>? = ...' type=kotlin.Array<kotlin.Any>? origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Test3: Test3
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='toString(): String'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value='Test3('
+            CONST String type=kotlin.String value='anyArrayN='
+            CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
+              arg0: CALL '<get-anyArrayN>(): Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+            CONST String type=kotlin.String value=')'
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Test3: Test3
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
+          CONST Int type=kotlin.Int value='0'
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          BLOCK type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Array<kotlin.Any>?
+              CALL '<get-anyArrayN>(): Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=GET_PROPERTY
+                $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+            WHEN type=kotlin.Int origin=null
+              BRANCH
+                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                  arg0: GET_VAR 'tmp1: Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=null
+                  arg1: CONST Null type=kotlin.Nothing? value='null'
+                then: CONST Int type=kotlin.Int value='0'
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value='true'
+                then: CALL 'dataClassArrayMemberHashCode(Any): Int' type=kotlin.Int origin=null
+                  arg0: GET_VAR 'tmp1: Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=null
+        RETURN type=kotlin.Nothing from='hashCode(): Int'
+          GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Test3: Test3
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
+              arg0: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+              arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='true'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test3
+              GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: Test3
+          TYPE_OP type=Test3 origin=CAST typeOperand=Test3
+            GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-anyArrayN>(): Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
+                arg1: CALL '<get-anyArrayN>(): Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test3' type=Test3 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value='true'

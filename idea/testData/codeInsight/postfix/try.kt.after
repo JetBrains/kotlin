@@ -1,6 +1,6 @@
 fun foo(x: Boolean) {
     try {
         x
-    } catch(e: <caret>Exception) {
+    } catch (e: Exception) {
     }
 }

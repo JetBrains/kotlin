@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,32 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
-import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
-import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind;
 import com.intellij.util.SmartList;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.translate.context.Namer;
-import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public final class JsAstUtils {
     private static final JsNameRef DEFINE_PROPERTY = pureFqn("defineProperty", null);
-    public static final JsNameRef CREATE_OBJECT = pureFqn("create", null);
 
     private static final JsNameRef VALUE = new JsNameRef("value");
-    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(pureFqn("writable", null), JsLiteral.TRUE);
-    private static final JsPropertyInitializer ENUMERABLE = new JsPropertyInitializer(pureFqn("enumerable", null), JsLiteral.TRUE);
-
-    public static final String LENDS_JS_DOC_TAG = "lends";
+    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(pureFqn("writable", null), new JsBooleanLiteral(true));
+    private static final JsPropertyInitializer ENUMERABLE = new JsPropertyInitializer(pureFqn("enumerable", null),
+                                                                                      new JsBooleanLiteral(false));
 
     static {
         JsNameRef globalObjectReference = new JsNameRef("Object");
         DEFINE_PROPERTY.setQualifier(globalObjectReference);
-        CREATE_OBJECT.setQualifier(globalObjectReference);
     }
 
     private JsAstUtils() {
@@ -56,8 +52,9 @@ public final class JsAstUtils {
         assert (jsNode instanceof JsExpression) || (jsNode instanceof JsStatement)
                 : "Unexpected node of type: " + jsNode.getClass().toString();
         if (jsNode instanceof JsExpression) {
-            JsExpressionStatement statement = new JsExpressionStatement((JsExpression) jsNode);
-            if (jsNode instanceof JsNullLiteral) {
+            JsExpression expression = (JsExpression) jsNode;
+            JsExpressionStatement statement = new JsExpressionStatement(expression);
+            if (expression instanceof JsNullLiteral || MetadataProperties.getSynthetic(expression)) {
                 MetadataProperties.setSynthetic(statement, true);
             }
             return statement;
@@ -134,32 +131,29 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsExpression toInt32(@NotNull JsExpression expression) {
-        return new JsBinaryOperation(JsBinaryOperator.BIT_OR, expression, JsNumberLiteral.ZERO);
+        return new JsBinaryOperation(JsBinaryOperator.BIT_OR, expression, new JsIntLiteral(0));
+    }
+
+    @Nullable
+    public static JsExpression extractToInt32Argument(@NotNull JsExpression expression) {
+        if (!(expression instanceof JsBinaryOperation)) return null;
+
+        JsBinaryOperation binary = (JsBinaryOperation) expression;
+        if (binary.getOperator() != JsBinaryOperator.BIT_OR) return null;
+
+        if (!(binary.getArg2() instanceof JsIntLiteral)) return null;
+        JsIntLiteral arg2 = (JsIntLiteral) binary.getArg2();
+        return arg2.value == 0 ? binary.getArg1() : null;
     }
 
     @NotNull
     public static JsExpression charToInt(@NotNull JsExpression expression) {
-        return invokeMethod(expression, "charCodeAt", JsNumberLiteral.ZERO);
+        return toInt32(expression);
     }
 
     @NotNull
-    public static JsExpression toShort(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.SHORT.getIdentifier(), expression);
-    }
-
-    @NotNull
-    public static JsExpression toByte(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.BYTE.getIdentifier(), expression);
-    }
-
-    @NotNull
-    public static JsExpression toLong(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.LONG.getIdentifier(), expression);
-    }
-
-    @NotNull
-    public static JsExpression toChar(@NotNull JsExpression expression) {
-        return invokeKotlinFunction(OperatorConventions.CHAR.getIdentifier(), expression);
+    public static JsExpression charToString(@NotNull JsExpression expression) {
+        return new JsInvocation(new JsNameRef("fromCharCode", new JsNameRef("String")), expression);
     }
 
     @NotNull
@@ -172,45 +166,32 @@ public final class JsAstUtils {
         return invokeKotlinFunction(Namer.PRIMITIVE_COMPARE_TO, left, right);
     }
 
-    @NotNull
-    private static JsExpression rangeTo(@NotNull String rangeClassName, @NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
-        JsNameRef expr = pureFqn(rangeClassName, Namer.kotlinObject());
-        JsNew numberRangeConstructorInvocation = new JsNew(expr);
-        setArguments(numberRangeConstructorInvocation, rangeStart, rangeEnd);
-        return numberRangeConstructorInvocation;
-    }
-
-    @NotNull
-    public static JsExpression numberRangeTo(@NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
-        return rangeTo(Namer.NUMBER_RANGE, rangeStart, rangeEnd);
-    }
-
-    @NotNull
-    public static JsExpression charRangeTo(@NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
-        return rangeTo(Namer.CHAR_RANGE, rangeStart, rangeEnd);
-    }
-
-    public static JsExpression newLong(long value, @NotNull TranslationContext context) {
+    public static JsExpression newLong(long value) {
+        JsExpression result;
         if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
             int low = (int) value;
             int high = (int) (value >> 32);
-            List<JsExpression> args = new SmartList<JsExpression>();
-            args.add(context.program().getNumberLiteral(low));
-            args.add(context.program().getNumberLiteral(high));
-            return new JsNew(Namer.kotlinLong(), args);
+            List<JsExpression> args = new SmartList<>();
+            args.add(new JsIntLiteral(low));
+            args.add(new JsIntLiteral(high));
+            result = new JsNew(Namer.kotlinLong(), args);
         }
         else {
             if (value == 0) {
-                return new JsNameRef(Namer.LONG_ZERO, Namer.kotlinLong());
+                result = new JsNameRef(Namer.LONG_ZERO, Namer.kotlinLong());
             }
             else if (value == 1) {
-                return new JsNameRef(Namer.LONG_ONE, Namer.kotlinLong());
+                result = new JsNameRef(Namer.LONG_ONE, Namer.kotlinLong());
             }
             else if (value == -1) {
-                return new JsNameRef(Namer.LONG_NEG_ONE, Namer.kotlinLong());
+                result = new JsNameRef(Namer.LONG_NEG_ONE, Namer.kotlinLong());
             }
-            return longFromInt(context.program().getNumberLiteral((int) value));
+            else {
+                result = longFromInt(new JsIntLiteral((int) value));
+            }
         }
+        MetadataProperties.setSideEffects(result, SideEffectKind.PURE);
+        return result;
     }
 
     @NotNull
@@ -224,22 +205,12 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression equalsForObject(@NotNull JsExpression left, @NotNull JsExpression right) {
-        return invokeMethod(left, Namer.EQUALS_METHOD_NAME, right);
-    }
-
-    @NotNull
     public static JsExpression compareForObject(@NotNull JsExpression left, @NotNull JsExpression right) {
         return invokeMethod(left, Namer.COMPARE_TO_METHOD_NAME, right);
     }
 
     @NotNull
-    public static JsPrefixOperation negated(@NotNull JsExpression expression) {
-        return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
-    }
-
-    @NotNull
-    public static JsExpression negatedOptimized(@NotNull JsExpression expression) {
+    public static JsExpression notOptimized(@NotNull JsExpression expression) {
         if (expression instanceof JsUnaryOperation) {
             JsUnaryOperation unary = (JsUnaryOperation) expression;
             if (unary.getOperator() == JsUnaryOperator.NOT) return unary.getArg();
@@ -248,9 +219,9 @@ public final class JsAstUtils {
             JsBinaryOperation binary = (JsBinaryOperation) expression;
             switch (binary.getOperator()) {
                 case AND:
-                    return or(negatedOptimized(binary.getArg1()), negatedOptimized(binary.getArg2()));
+                    return or(notOptimized(binary.getArg1()), notOptimized(binary.getArg2()));
                 case OR:
-                    return and(negatedOptimized(binary.getArg1()), negatedOptimized(binary.getArg2()));
+                    return and(notOptimized(binary.getArg1()), notOptimized(binary.getArg2()));
                 case EQ:
                     return new JsBinaryOperation(JsBinaryOperator.NEQ, binary.getArg1(), binary.getArg2());
                 case NEQ:
@@ -272,7 +243,7 @@ public final class JsAstUtils {
             }
         }
 
-        return negated(expression);
+        return not(expression);
     }
 
     @NotNull
@@ -285,7 +256,7 @@ public final class JsAstUtils {
         return new JsBinaryOperation(JsBinaryOperator.OR, op1, op2);
     }
 
-    public static void setQualifier(@NotNull JsExpression selector, @Nullable JsExpression receiver) {
+    private static void setQualifier(@NotNull JsExpression selector, @Nullable JsExpression receiver) {
         assert (selector instanceof JsInvocation || selector instanceof JsNameRef);
         if (selector instanceof JsInvocation) {
             setQualifier(((JsInvocation) selector).getQualifier(), receiver);
@@ -339,6 +310,11 @@ public final class JsAstUtils {
         return new JsBinaryOperation(JsBinaryOperator.ASG, left, right);
     }
 
+    @NotNull
+    public static JsStatement assignmentToThisField(@NotNull String fieldName, @NotNull JsExpression right) {
+        return assignment(new JsNameRef(fieldName, new JsThisRef()), right).source(right.getSource()).makeStmt();
+    }
+
     public static JsStatement asSyntheticStatement(@NotNull JsExpression expression) {
         JsExpressionStatement statement = new JsExpressionStatement(expression);
         MetadataProperties.setSynthetic(statement, true);
@@ -352,7 +328,7 @@ public final class JsAstUtils {
         JsBinaryOperation binary = (JsBinaryOperation) expr;
         if (binary.getOperator() != JsBinaryOperator.ASG) return null;
 
-        return new Pair<JsExpression, JsExpression>(binary.getArg1(), binary.getArg2());
+        return new Pair<>(binary.getArg1(), binary.getArg2());
     }
 
     @Nullable
@@ -363,7 +339,7 @@ public final class JsAstUtils {
         JsNameRef nameRef = (JsNameRef) assignment.getFirst();
         if (nameRef.getName() == null || nameRef.getQualifier() != null) return null;
 
-        return new Pair<JsName, JsExpression>(nameRef.getName(), assignment.getSecond());
+        return new Pair<>(nameRef.getName(), assignment.getSecond());
     }
 
     @NotNull
@@ -411,31 +387,15 @@ public final class JsAstUtils {
         return new JsVars(new JsVars.JsVar(name, expr));
     }
 
-    public static void setArguments(@NotNull HasArguments invocation, @NotNull List<JsExpression> newArgs) {
-        List<JsExpression> arguments = invocation.getArguments();
-        assert arguments.isEmpty() : "Arguments already set.";
-        arguments.addAll(newArgs);
-    }
-
-    public static void setArguments(@NotNull HasArguments invocation, JsExpression... arguments) {
-        setArguments(invocation, Arrays.asList(arguments));
-    }
-
-    public static void setParameters(@NotNull JsFunction function, @NotNull List<JsParameter> newParams) {
-        List<JsParameter> parameters = function.getParameters();
-        assert parameters.isEmpty() : "Arguments already set.";
-        parameters.addAll(newParams);
-    }
-
     @NotNull
     public static JsExpression newSequence(@NotNull List<JsExpression> expressions) {
         assert !expressions.isEmpty();
         if (expressions.size() == 1) {
             return expressions.get(0);
         }
-        JsExpression result = expressions.get(expressions.size() - 1);
-        for (int i = expressions.size() - 2; i >= 0; i--) {
-            result = new JsBinaryOperation(JsBinaryOperator.COMMA, expressions.get(i), result);
+        JsExpression result = expressions.get(0);
+        for (int i = 1; i < expressions.size(); i++) {
+            result = new JsBinaryOperation(JsBinaryOperator.COMMA, result, expressions.get(i));
         }
         return result;
     }
@@ -446,41 +406,45 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static List<JsExpression> toStringLiteralList(@NotNull List<String> strings, @NotNull JsProgram program) {
+    public static List<JsExpression> toStringLiteralList(@NotNull List<String> strings) {
         if (strings.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<JsExpression> result = new SmartList<JsExpression>();
+        List<JsExpression> result = new SmartList<>();
         for (String str : strings) {
-            result.add(program.getStringLiteral(str));
+            result.add(new JsStringLiteral(str));
         }
         return result;
     }
 
     @NotNull
     public static JsInvocation defineProperty(
+            @NotNull JsExpression receiver,
             @NotNull String name,
-            @NotNull JsObjectLiteral value,
-            @NotNull TranslationContext context
+            @NotNull JsExpression value
     ) {
-        return new JsInvocation(DEFINE_PROPERTY, JsLiteral.THIS, context.program().getStringLiteral(name), value);
+        return new JsInvocation(DEFINE_PROPERTY.deepCopy(), receiver, new JsStringLiteral(name), value);
     }
 
     @NotNull
-    public static JsStatement defineSimpleProperty(@NotNull String name, @NotNull JsExpression value) {
-        return assignment(new JsNameRef(name, JsLiteral.THIS), value).makeStmt();
+    public static JsStatement defineSimpleProperty(@NotNull JsName name, @NotNull JsExpression value, @Nullable SourceElement source) {
+        JsExpression assignment = assignment(new JsNameRef(name, new JsThisRef()), value);
+        if (source != null) {
+            assignment.setSource(KotlinSourceElementKt.getPsi(source));
+        }
+        return assignment.makeStmt();
     }
 
     @NotNull
     public static JsObjectLiteral createDataDescriptor(@NotNull JsExpression value, boolean writable, boolean enumerable) {
         JsObjectLiteral dataDescriptor = new JsObjectLiteral();
-        dataDescriptor.getPropertyInitializers().add(new JsPropertyInitializer(VALUE, value));
+        dataDescriptor.getPropertyInitializers().add(new JsPropertyInitializer(VALUE.deepCopy(), value));
         if (writable) {
-            dataDescriptor.getPropertyInitializers().add(WRITABLE);
+            dataDescriptor.getPropertyInitializers().add(WRITABLE.deepCopy());
         }
         if (enumerable) {
-            dataDescriptor.getPropertyInitializers().add(ENUMERABLE);
+            dataDescriptor.getPropertyInitializers().add(ENUMERABLE.deepCopy());
         }
         return dataDescriptor;
     }
@@ -516,7 +480,7 @@ public final class JsAstUtils {
             return ((JsBlock) statement).getStatements();
         }
 
-        return new SmartList<JsStatement>(statement);
+        return new SmartList<>(statement);
     }
 
     @NotNull
@@ -543,5 +507,28 @@ public final class JsAstUtils {
 
         JsUnaryOperation unary = (JsUnaryOperation) expression;
         return unary.getOperator() == JsUnaryOperator.VOID;
+    }
+
+    @NotNull
+    public static JsExpression defineGetter(
+            @NotNull JsExpression receiver,
+            @NotNull String name,
+            @NotNull JsExpression body
+    ) {
+        JsObjectLiteral propertyLiteral = new JsObjectLiteral(true);
+        propertyLiteral.getPropertyInitializers().add(new JsPropertyInitializer(new JsNameRef("get"), body));
+        return defineProperty(receiver, name, propertyLiteral);
+    }
+
+    @NotNull
+    public static JsExpression prototypeOf(@NotNull JsExpression expression) {
+        return pureFqn("prototype", expression);
+    }
+
+    @NotNull
+    public static JsExpression stateMachineReceiver() {
+        JsNameRef result = new JsNameRef("$this$");
+        MetadataProperties.setCoroutineReceiver(result, true);
+        return result;
     }
 }

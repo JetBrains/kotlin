@@ -32,16 +32,19 @@ internal abstract class TaskToFriendTaskMapper {
 
 sealed internal class RegexTaskToFriendTaskMapper(
         private val prefix: String,
-        suffix: String
+        suffix: String,
+        private val postfixReplacement: String
 ) : TaskToFriendTaskMapper() {
-    class Default : RegexTaskToFriendTaskMapper("compile", "TestKotlin")
-    class Android : RegexTaskToFriendTaskMapper("compile", "(Unit|Android)TestKotlin")
+    class Default : RegexTaskToFriendTaskMapper("compile", "TestKotlin(AfterJava)?", "Kotlin")
+    class JavaScript : RegexTaskToFriendTaskMapper("compile", "TestKotlin2Js", "Kotlin2Js")
+    class Common : RegexTaskToFriendTaskMapper("compile", "TestKotlinCommon", "KotlinCommon")
+    class Android : RegexTaskToFriendTaskMapper("compile", "(Unit|Android)TestKotlin(AfterJava)?", "Kotlin")
 
     private val regex = "$prefix(.*)$suffix".toRegex()
 
     override fun getFriendByName(name: String): String? {
         val match = regex.matchEntire(name) ?: return null
         val variant = match.groups[1]?.value ?: ""
-        return prefix + variant + "Kotlin"
+        return prefix + variant + postfixReplacement
     }
 }

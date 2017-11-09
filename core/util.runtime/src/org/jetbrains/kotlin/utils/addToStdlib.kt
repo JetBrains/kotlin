@@ -20,12 +20,6 @@ import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
-
-fun <T> T.singletonList(): List<T> = Collections.singletonList(this)
-
-fun <T: Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) Collections.singleton(this) else Collections.emptySet()
-
 inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
@@ -76,7 +70,9 @@ fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.a
 
 fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
 
-fun <T: Any> T.check(predicate: (T) -> Boolean): T? = if (predicate(this)) this else null
+inline fun <reified T : Any> Any?.safeAs(): T? = this as? T
+inline fun <reified T : Any> Any?.cast(): T = this as T
+inline fun <reified T : Any> Any?.assertedCast(message: () -> String): T = this as? T ?: throw AssertionError(message())
 
 fun <T : Any> constant(calculator: () -> T): T {
     val cached = constantMap[calculator]
@@ -84,7 +80,7 @@ fun <T : Any> constant(calculator: () -> T): T {
     if (cached != null) return cached as T
 
     // safety check
-    val fields = calculator.javaClass.declaredFields.filter { it.modifiers.and(Modifier.STATIC) == 0 }
+    val fields = calculator::class.java.declaredFields.filter { it.modifiers.and(Modifier.STATIC) == 0 }
     assert(fields.isEmpty()) {
         "No fields in the passed lambda expected but ${fields.joinToString()} found"
     }
@@ -96,17 +92,21 @@ fun <T : Any> constant(calculator: () -> T): T {
 
 private val constantMap = ConcurrentHashMap<Function0<*>, Any>()
 
-fun String.indexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? {
-    val index = indexOf(char, startIndex, ignoreCase)
-    return if (index >= 0) index else null
-}
+fun String.indexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? =
+        indexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
-fun String.lastIndexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? {
-    val index = lastIndexOf(char, startIndex, ignoreCase)
-    return if (index >= 0) index else null
-}
+fun String.lastIndexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? =
+        lastIndexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
 inline fun <T, R : Any> Iterable<T>.firstNotNullResult(transform: (T) -> R?): R? {
+    for (element in this) {
+        val result = transform(element)
+        if (result != null) return result
+    }
+    return null
+}
+
+inline fun <T, R : Any> Array<T>.firstNotNullResult(transform: (T) -> R?): R? {
     for (element in this) {
         val result = transform(element)
         if (result != null) return result
@@ -120,4 +120,29 @@ inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
         sum += selector(element)
     }
     return sum
+}
+
+inline fun <T, C : Collection<T>, O> C.ifNotEmpty(body: C.() -> O?): O? = if (isNotEmpty()) this.body() else null
+
+inline fun <T, O> Array<out T>.ifNotEmpty(body: Array<out T>.() -> O?): O? = if (isNotEmpty()) this.body() else null
+
+inline fun <T> measureTimeMillisWithResult(block: () -> T) : Pair<Long, T> {
+    val start = System.currentTimeMillis()
+    val result = block()
+    return Pair(System.currentTimeMillis() - start, result)
+}
+
+fun <T, C : MutableCollection<in T>> Iterable<Iterable<T>>.flattenTo(c: C): C {
+    for (element in this) {
+        c.addAll(element)
+    }
+    return c
+}
+
+inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapToNullable(destination: C, transform: (T) -> Iterable<R>?): C? {
+    for (element in this) {
+        val list = transform(element) ?: return null
+        destination.addAll(list)
+    }
+    return destination
 }

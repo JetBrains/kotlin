@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import com.intellij.util.concurrency.AppExecutorUtil
-import com.intellij.util.concurrency.AppScheduledExecutorService
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -37,19 +35,13 @@ found top-level declarations to <destination dir> (*.kotlin_builtins files)"""
 
     val destDir = File(args[0])
 
-    val srcDirs = args.drop(1).map { File(it) }
+    val srcDirs = args.drop(1).map(::File)
     assert(srcDirs.isNotEmpty()) { "At least one source directory should be specified" }
 
-    val missing = srcDirs.filterNot { it.exists() }
+    val missing = srcDirs.filterNot(File::exists)
     assert(missing.isEmpty()) { "These source directories are missing: $missing" }
 
-    try {
-        BuiltInsSerializer(dependOnOldBuiltIns = false).serialize(destDir, srcDirs, listOf()) { totalSize, totalFiles ->
-            println("Total bytes written: $totalSize to $totalFiles files")
-        }
-    }
-    finally {
-        val service = AppExecutorUtil.getAppScheduledExecutorService() as AppScheduledExecutorService
-        service.shutdownAppScheduledExecutorService()
+    BuiltInsSerializer(dependOnOldBuiltIns = false).serialize(destDir, srcDirs, listOf()) { totalSize, totalFiles ->
+        println("Total bytes written: $totalSize to $totalFiles files")
     }
 }

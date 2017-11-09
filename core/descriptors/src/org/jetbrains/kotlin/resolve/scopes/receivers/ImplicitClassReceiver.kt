@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.types.KotlinType
+import java.lang.UnsupportedOperationException
 
 /**
  * Describes any "this" receiver inside a class
@@ -39,4 +41,7 @@ open class ImplicitClassReceiver(final override val classDescriptor: ClassDescri
     override fun hashCode() = classDescriptor.hashCode()
 
     override fun toString() = "Class{$type}"
+
+    override fun replaceType(newType: KotlinType) =
+            throw UnsupportedOperationException("Replace type should not be called for this receiver")
 }

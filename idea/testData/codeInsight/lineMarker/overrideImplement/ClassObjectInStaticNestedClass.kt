@@ -1,11 +1,11 @@
-interface <lineMarker></lineMarker>TestTrait {
-    fun <lineMarker></lineMarker>test()
+interface <lineMarker>TestTrait</lineMarker> {
+    fun <lineMarker>test</lineMarker>()
 }
 
 class A {
     class B {
         companion object : TestTrait { // TODO: No line marker
-            override fun <lineMarker descr="Implements function in 'TestTrait'"></lineMarker>test() {
+            override fun <lineMarker descr="Implements function in 'TestTrait'">test</lineMarker>() {
             }
         }
     }

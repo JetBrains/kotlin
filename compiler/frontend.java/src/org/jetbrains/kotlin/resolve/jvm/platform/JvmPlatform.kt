@@ -16,39 +16,37 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.PlatformConfigurator
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.JvmBuiltIns
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.*
 
 object JvmPlatform : TargetPlatform("JVM") {
-    override val defaultImports: List<ImportPath> = ArrayList<ImportPath>().apply {
-        add(ImportPath("java.lang.*"))
-        add(ImportPath("kotlin.*"))
-        add(ImportPath("kotlin.annotation.*"))
-        add(ImportPath("kotlin.jvm.*"))
-        add(ImportPath("kotlin.collections.*"))
-        add(ImportPath("kotlin.coroutines.*"))
-        add(ImportPath("kotlin.ranges.*"))
-        add(ImportPath("kotlin.sequences.*"))
-        add(ImportPath("kotlin.text.*"))
-        add(ImportPath("kotlin.io.*"))
+    private val defaultImports = LockBasedStorageManager().createMemoizedFunction<Boolean, List<ImportPath>> { includeKotlinComparisons ->
+        ArrayList<ImportPath>().apply {
+            addAll(Common.getDefaultImports(includeKotlinComparisons))
 
-        fun addAllClassifiersFromScope(scope: MemberScope) {
-            for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
-                add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
+            add(ImportPath.fromString("java.lang.*"))
+            add(ImportPath.fromString("kotlin.jvm.*"))
+
+            fun addAllClassifiersFromScope(scope: MemberScope) {
+                for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
+                    add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
+                }
+            }
+
+            for (builtinPackageFragment in JvmBuiltIns(LockBasedStorageManager.NO_LOCKS).builtInsPackageFragmentsImportedByDefault) {
+                addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
             }
         }
 
-        val builtIns = DefaultBuiltIns.Instance
-        for (builtinPackageFragment in builtIns.builtInsPackageFragments) {
-            addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
-        }
     }
 
+    override fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> = defaultImports(includeKotlinComparisons)
+
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
+
+    override val multiTargetPlatform = MultiTargetPlatform.Specific(platformName)
 }

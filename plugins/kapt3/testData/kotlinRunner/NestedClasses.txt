@@ -1,0 +1,4 @@
+MyMethodMyAnnotation.java:
+
+package generated;
+class MyMethodMyAnnotation {}

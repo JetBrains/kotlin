@@ -1,0 +1,24 @@
+package
+
+public final class TestIface : java.lang.Runnable {
+    public constructor TestIface(/*0*/ r: java.lang.Runnable)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun run(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestObject : java.lang.Object {
+    public constructor TestObject(/*0*/ o: java.lang.Object)
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun getClass(): java.lang.Class<*>!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun notify(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun notifyAll(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun wait(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun wait(/*0*/ p0: kotlin.Long): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun wait(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int): kotlin.Unit
+}

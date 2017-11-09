@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.checkers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JavaAgainstKotlin extends AbstractJavaAgainstKotlinSourceCheckerTest {
         public void testAllFilesPresentInJavaAgainstKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AssignKotlinClassToObjectInJava.kt")
@@ -70,6 +71,42 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
         @TestMetadata("EnumStaticImportInJava.kt")
         public void testEnumStaticImportInJava() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/EnumStaticImportInJava.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtendClassWithDefaultImplementationComplex.kt")
+        public void testExtendClassWithDefaultImplementationComplex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendClassWithDefaultImplementationComplex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtendClassWithDefaultImplementation_1_6.kt")
+        public void testExtendClassWithDefaultImplementation_1_6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendClassWithDefaultImplementation_1_6.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtendClassWithDefaultImplementation_1_8.kt")
+        public void testExtendClassWithDefaultImplementation_1_8() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendClassWithDefaultImplementation_1_8.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtendingMutableInterfaces.kt")
+        public void testExtendingMutableInterfaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendingMutableInterfaces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtendingReadOnlyInterfaces.kt")
+        public void testExtendingReadOnlyInterfaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendingReadOnlyInterfaces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionInNestedClassInDataFlowInspection.kt")
+        public void testFunctionInNestedClassInDataFlowInspection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/FunctionInNestedClassInDataFlowInspection.kt");
             doTest(fileName);
         }
 
@@ -121,6 +158,24 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             doTest(fileName);
         }
 
+        @TestMetadata("TopLevelFunctionWithNameSimilarToClassInDataFlowInspection.kt")
+        public void testTopLevelFunctionWithNameSimilarToClassInDataFlowInspection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/TopLevelFunctionWithNameSimilarToClassInDataFlowInspection.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelFunctionWithNameSimilarToPropertyInDataFlowInspection.kt")
+        public void testTopLevelFunctionWithNameSimilarToPropertyInDataFlowInspection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/TopLevelFunctionWithNameSimilarToPropertyInDataFlowInspection.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelOverloadedFunctionInDataFlowInspection.kt")
+        public void testTopLevelOverloadedFunctionInDataFlowInspection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/TopLevelOverloadedFunctionInDataFlowInspection.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UseKotlinConstInSwitch.kt")
         public void testUseKotlinConstInSwitch() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/UseKotlinConstInSwitch.kt");
@@ -138,6 +193,18 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/UsingKotlinPackageDeclarations.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("UsingMutableInterfaces.kt")
+        public void testUsingMutableInterfaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/UsingMutableInterfaces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UsingReadOnlyInterfaces.kt")
+        public void testUsingReadOnlyInterfaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/UsingReadOnlyInterfaces.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/kotlinAndJavaChecker/javaWithKotlin")
@@ -145,7 +212,7 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JavaWithKotlin extends AbstractJavaAgainstKotlinSourceCheckerTest {
         public void testAllFilesPresentInJavaWithKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaWithKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaWithKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("InnerClassWithoutName.kt")

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor;
-import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
 
 /* package */ class SamAdapterClassConstructorDescriptor extends JavaClassConstructorDescriptor
         implements SamAdapterDescriptor<JavaClassConstructorDescriptor> {

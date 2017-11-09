@@ -60,7 +60,7 @@ public class ClassBuilderFactories {
 
     public static ClassBuilderFactory TEST_WITH_SOURCE_RETENTION_ANNOTATIONS = new TestClassBuilderFactory(true);
     
-    private static class TestClassBuilderFactory implements ClassBuilderFactory {
+    public static class TestClassBuilderFactory implements ClassBuilderFactory {
         private final boolean generateSourceRetentionAnnotations;
 
         public TestClassBuilderFactory(boolean generateSourceRetentionAnnotations) {
@@ -101,7 +101,7 @@ public class ClassBuilderFactories {
     }
     
     @NotNull
-    public static ClassBuilderFactory binaries(final boolean generateSourceRetentionAnnotations) {
+    public static ClassBuilderFactory binaries(boolean generateSourceRetentionAnnotations) {
         return new ClassBuilderFactory() {
             @NotNull
             @Override

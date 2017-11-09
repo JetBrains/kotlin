@@ -1,3 +1,5 @@
+// LANGUAGE_VERSION: 1.0
+
 const val y = "cde"
 
 fun foo(x : String) : String {

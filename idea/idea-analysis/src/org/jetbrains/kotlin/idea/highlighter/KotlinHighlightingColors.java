@@ -38,6 +38,8 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey FUNCTION_LITERAL_BRACES_AND_ARROW = createTextAttributesKey("KOTLIN_FUNCTION_LITERAL_BRACES_AND_ARROW");
     public static final TextAttributesKey COMMA = createTextAttributesKey("KOTLIN_COMMA", DefaultLanguageHighlighterColors.COMMA);
     public static final TextAttributesKey SEMICOLON = createTextAttributesKey("KOTLIN_SEMICOLON", DefaultLanguageHighlighterColors.SEMICOLON);
+    public static final TextAttributesKey COLON = createTextAttributesKey("KOTLIN_COLON");
+    public static final TextAttributesKey DOUBLE_COLON = createTextAttributesKey("KOTLIN_DOUBLE_COLON");
     public static final TextAttributesKey DOT = createTextAttributesKey("KOTLIN_DOT", DefaultLanguageHighlighterColors.DOT);
     public static final TextAttributesKey SAFE_ACCESS = createTextAttributesKey("KOTLIN_SAFE_ACCESS", DefaultLanguageHighlighterColors.DOT);
     public static final TextAttributesKey ARROW = createTextAttributesKey("KOTLIN_ARROW", PARENTHESIS);
@@ -66,6 +68,7 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey BACKING_FIELD_VARIABLE = createTextAttributesKey("KOTLIN_BACKING_FIELD_VARIABLE");
     public static final TextAttributesKey EXTENSION_PROPERTY = createTextAttributesKey("KOTLIN_EXTENSION_PROPERTY", DefaultLanguageHighlighterColors.STATIC_FIELD);
     public static final TextAttributesKey DYNAMIC_PROPERTY_CALL = createTextAttributesKey("KOTLIN_DYNAMIC_PROPERTY_CALL");
+    public static final TextAttributesKey ANDROID_EXTENSIONS_PROPERTY_CALL = createTextAttributesKey("KOTLIN_ANDROID_EXTENSIONS_PROPERTY_CALL");
 
     // functions
     public static final TextAttributesKey FUNCTION_LITERAL_DEFAULT_PARAMETER = createTextAttributesKey("KOTLIN_CLOSURE_DEFAULT_PARAMETER");

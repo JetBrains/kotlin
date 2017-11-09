@@ -1,4 +1,4 @@
-JetFile: AbsentInnerType.kt
+KtFile: AbsentInnerType.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -7,4 +7,5 @@ annotation class Foo(val p: Int)
 
 annotation class Bar(val p: Int, val s: String)
 
-@Bar(p = 1, s = "") class C
+@Bar(p = 1, s = "")
+class C

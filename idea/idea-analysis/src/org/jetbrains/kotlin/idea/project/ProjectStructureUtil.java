@@ -16,74 +16,37 @@
 
 package org.jetbrains.kotlin.idea.project;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
-import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.caches.resolve.IdePlatformSupport;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
 
 public class ProjectStructureUtil {
-    private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
+    private static final Key<CachedValue<TargetPlatform>> PLATFORM_FOR_MODULE = Key.create("PLATFORM_FOR_MODULE");
 
     private ProjectStructureUtil() {
     }
 
-    public static boolean isJsKotlinModule(@NotNull KtFile file) {
-        Module module = ModuleUtilCore.findModuleForPsiElement(file);
-        return module != null && isJsKotlinModule(module);
-    }
-
-    public static boolean isJsKotlinModule(@NotNull final Module module) {
-        CachedValue<Boolean> result = module.getUserData(IS_KOTLIN_JS_MODULE);
+    @NotNull
+    /* package */ static TargetPlatform getCachedPlatformForModule(@NotNull final Module module) {
+        CachedValue<TargetPlatform> result = module.getUserData(PLATFORM_FOR_MODULE);
         if (result == null) {
-            result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<Boolean>() {
+            result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<TargetPlatform>() {
                 @Override
-                public Result<Boolean> compute() {
-                    return Result.create(
-                            getJSStandardLibrary(module) != null,
-                            ProjectRootModificationTracker.getInstance(module.getProject()));
+                public Result<TargetPlatform> compute() {
+                    return Result.create(IdePlatformSupport.getPlatformForModule(module),
+                                         ProjectRootModificationTracker.getInstance(module.getProject()));
                 }
             }, false);
 
-            module.putUserData(IS_KOTLIN_JS_MODULE, result);
+            module.putUserData(PLATFORM_FOR_MODULE, result);
         }
 
         return result.getValue();
-    }
-
-    @Nullable
-    private static Library getJSStandardLibrary(final Module module) {
-        return ApplicationManager.getApplication().runReadAction(new Computable<Library>() {
-            @Override
-            public Library compute() {
-                final Ref<Library> jsLibrary = Ref.create();
-
-                ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
-                    @Override
-                    public boolean process(Library library) {
-                        if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library)) {
-                            jsLibrary.set(library);
-                            return false;
-                        }
-
-                        return true;
-                    }
-                });
-
-                return jsLibrary.get();
-            }
-        });
     }
 }

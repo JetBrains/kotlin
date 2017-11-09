@@ -1,0 +1,32 @@
+fun <E : CharSequence> notNullValues(collection: Collection<E>) {
+    collection.stream()
+        // SUCCESS
+        // ORIGINAL:    fun stream(): Stream<E> defined in kotlin.collections.Collection
+        // SUBSTITUTED: fun stream(): Stream<E> defined in kotlin.collections.Collection
+    collection.parallelStream()
+        // SUCCESS
+        // ORIGINAL:    fun parallelStream(): Stream<E> defined in kotlin.collections.Collection
+        // SUBSTITUTED: fun parallelStream(): Stream<E> defined in kotlin.collections.Collection
+}
+
+fun <E : CharSequence> nullableValues(collection: Collection<E?>) {
+    collection.stream()
+        // SUCCESS
+        // ORIGINAL:    fun stream(): Stream<E> defined in kotlin.collections.Collection
+        // SUBSTITUTED: fun stream(): Stream<E?> defined in kotlin.collections.Collection
+    collection.parallelStream()
+        // SUCCESS
+        // ORIGINAL:    fun parallelStream(): Stream<E> defined in kotlin.collections.Collection
+        // SUBSTITUTED: fun parallelStream(): Stream<E?> defined in kotlin.collections.Collection
+}
+
+fun <E : CharSequence?> nullableValues2(collection: Collection<E>) {
+    collection.stream()
+        // SUCCESS
+        // ORIGINAL:    fun stream(): Stream<E> defined in kotlin.collections.Collection
+        // SUBSTITUTED: fun stream(): Stream<E> defined in kotlin.collections.Collection
+    collection.parallelStream()
+        // SUCCESS
+        // ORIGINAL:    fun parallelStream(): Stream<E> defined in kotlin.collections.Collection
+        // SUBSTITUTED: fun parallelStream(): Stream<E> defined in kotlin.collections.Collection
+}

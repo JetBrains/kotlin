@@ -40,9 +40,7 @@ class SubroutineExitInstruction(
         visitor.visitSubroutineExit(this)
     }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitSubroutineExit(this)
-    }
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitSubroutineExit(this)
 
     override fun toString(): String = if (isError) "<ERROR>" else "<END>"
 

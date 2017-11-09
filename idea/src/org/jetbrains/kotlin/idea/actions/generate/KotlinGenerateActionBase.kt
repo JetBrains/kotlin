@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-abstract class KotlinGenerateActionBase() : CodeInsightAction(), CodeInsightActionHandler {
+abstract class KotlinGenerateActionBase : CodeInsightAction(), CodeInsightActionHandler {
     override fun update(
             presentation: Presentation,
             project: Project,

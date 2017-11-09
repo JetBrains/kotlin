@@ -1,13 +1,25 @@
+// IGNORE_BACKEND: NATIVE
 // FILE: A.kt
+// WITH_RUNTIME
 package a
+
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
 class Controller {
-    suspend fun suspendHere(x: Continuation<String>) {
+    suspend fun suspendHere() = suspendCoroutineOrReturn<String> { x ->
         x.resume("OK")
+        COROUTINE_SUSPENDED
     }
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: suspend Controller.() -> Unit) {
+    c.startCoroutine(Controller(), object : Continuation<Unit> {
+        override val context: CoroutineContext = EmptyCoroutineContext
+        override fun resume(value: Unit) {}
+
+        override fun resumeWithException(exception: Throwable) {}
+    })
 }
 
 // FILE: B.kt

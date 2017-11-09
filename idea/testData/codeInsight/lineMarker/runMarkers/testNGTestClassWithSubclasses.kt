@@ -3,7 +3,7 @@ package testing
 
 import org.testng.annotations.Test
 
-abstract class <lineMarker descr="*"><lineMarker descr="Run Test"></lineMarker>KBase</lineMarker> {
+abstract class <lineMarker descr="*"><lineMarker descr="Run Test">KBase</lineMarker></lineMarker> {
     @Test
     fun <lineMarker descr="*">testFoo</lineMarker>() {
 

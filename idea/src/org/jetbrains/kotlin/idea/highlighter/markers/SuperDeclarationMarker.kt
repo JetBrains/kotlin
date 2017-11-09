@@ -17,11 +17,9 @@
 package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.NavigatablePsiElement
+import com.intellij.psi.PsiElement
 import com.intellij.util.Function
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
@@ -34,13 +32,15 @@ import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.search.usagesSearch.propertyDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import java.awt.event.MouseEvent
 import java.util.*
 
-object SuperDeclarationMarkerTooltip: Function<KtDeclaration, String> {
-    override fun `fun`(ktDeclaration: KtDeclaration?): String? {
+object SuperDeclarationMarkerTooltip: Function<PsiElement, String> {
+    override fun `fun`(element: PsiElement): String? {
+        val ktDeclaration = element.getParentOfType<KtDeclaration>(false) ?: return null
         val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(ktDeclaration!!)
         if (overriddenDescriptors.isEmpty()) return ""
 
@@ -65,45 +65,28 @@ object SuperDeclarationMarkerTooltip: Function<KtDeclaration, String> {
     }
 }
 
-class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<KtDeclaration> {
-    private var testNavigableElements: List<NavigatablePsiElement>? = null
-
-    @TestOnly fun getNavigationElements(): List<NavigatablePsiElement> {
-        val navigationResult = testNavigableElements!!
-        testNavigableElements = null
-        return navigationResult
+class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<PsiElement>, TestableLineMarkerNavigator {
+    override fun navigate(e: MouseEvent?, element: PsiElement?) {
+        getTargetsPopupDescriptor(element)?.showPopup(e)
     }
 
-    override fun navigate(e: MouseEvent?, element: KtDeclaration?) {
-        if (element == null) return
+    override fun getTargetsPopupDescriptor(element: PsiElement?): NavigationPopupDescriptor? {
+        val declaration = element?.getParentOfType<KtDeclaration>(false) ?: return null
 
-        val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(element)
-        if (overriddenDescriptors.isEmpty()) return
+        val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(declaration)
+        if (overriddenDescriptors.isEmpty()) return null
 
         val superDeclarations = ArrayList<NavigatablePsiElement>()
         for (overriddenMember in overriddenDescriptors) {
             val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(element.project, overriddenMember)
-            for (declaration in declarations) {
-                if (declaration is NavigatablePsiElement) {
-                    superDeclarations.add(declaration)
-                }
-            }
+            superDeclarations += declarations.filterIsInstance<NavigatablePsiElement>()
         }
 
-        if (!ApplicationManager.getApplication()!!.isUnitTestMode) {
-            val elementName = elementDescriptor!!.name
-
-            PsiElementListNavigator.openTargets(
-                    e,
-                    superDeclarations.toTypedArray(),
-                    KotlinBundle.message("navigation.title.super.declaration", elementName),
-                    KotlinBundle.message("navigation.findUsages.title.super.declaration", elementName),
-                    KtFunctionPsiElementCellRenderer())
-        }
-        else {
-            // Only store elements for retrieve in test
-            testNavigableElements = superDeclarations
-        }
+        val elementName = elementDescriptor!!.name
+        return NavigationPopupDescriptor(superDeclarations,
+                                         KotlinBundle.message("navigation.title.super.declaration", elementName),
+                                         KotlinBundle.message("navigation.findUsages.title.super.declaration", elementName),
+                                         KtFunctionPsiElementCellRenderer())
     }
 }
 

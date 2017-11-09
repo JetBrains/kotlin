@@ -1,0 +1,80 @@
+FILE /classes.kt
+  CLASS CLASS TestClass
+    $this: VALUE_PARAMETER this@TestClass: TestClass
+    CONSTRUCTOR public constructor TestClass()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestClass'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS INTERFACE TestInterface
+    $this: VALUE_PARAMETER this@TestInterface: TestInterface
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS OBJECT TestObject
+    $this: VALUE_PARAMETER this@TestObject: TestObject
+    CONSTRUCTOR private constructor TestObject()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestObject'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS ANNOTATION_CLASS TestAnnotationClass
+    $this: VALUE_PARAMETER this@TestAnnotationClass: TestAnnotationClass
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+  CLASS ENUM_CLASS TestEnumClass
+    $this: VALUE_PARAMETER this@TestEnumClass: TestEnumClass
+    CONSTRUCTOR private constructor TestEnumClass()
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestEnumClass'
+    FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+      $this: VALUE_PARAMETER this@Enum: Enum<TestEnumClass>
+    FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+      $this: VALUE_PARAMETER this@Enum: Enum<TestEnumClass>
+    FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<TestEnumClass!>!
+      $this: VALUE_PARAMETER this@Enum: Enum<TestEnumClass>
+    FUN FAKE_OVERRIDE public final override fun compareTo(other: TestEnumClass): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<TestEnumClass>
+      VALUE_PARAMETER value-parameter other: TestEnumClass
+    FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Enum: Enum<TestEnumClass>
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<TestEnumClass>
+    PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+        $this: VALUE_PARAMETER this@Enum: Enum<TestEnumClass>
+    PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
+      FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Enum: Enum<TestEnumClass>
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Enum: Enum<TestEnumClass>
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnumClass>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnumClass
+      VALUE_PARAMETER value-parameter value: kotlin.String
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
+

@@ -16,35 +16,26 @@
 
 package org.jetbrains.kotlin.load.java.components
 
-import com.intellij.psi.impl.JavaConstantExpressionEvaluator
-import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvaluator {
     override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>? {
-        val initializer = (field as JavaFieldImpl).initializer
-        val evaluated = JavaConstantExpressionEvaluator.computeConstantExpression(initializer, false) ?: return null
+        val evaluated = field.initializerValue ?: return null
+
         val factory = ConstantValueFactory(descriptor.builtIns)
-        when (evaluated) {
-            //Note: evaluated expression may be of class that does not match field type in some cases
-            // tested for Int, left other checks just in case
+        return when (evaluated) {
+        //Note: evaluated expression may be of class that does not match field type in some cases
+        // tested for Int, left other checks just in case
             is Byte, is Short, is Int, is Long -> {
-                return factory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.type)
+                factory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.type)
             }
             else -> {
-                return factory.createConstantValue(evaluated)
+                factory.createConstantValue(evaluated)
             }
         }
-    }
-
-    override fun isNotNullCompileTimeConstant(field: JavaField): Boolean {
-        // PsiUtil.isCompileTimeConstant returns false for null-initialized fields,
-        // see com.intellij.psi.util.IsConstantExpressionVisitor.visitLiteralExpression()
-        return PsiUtil.isCompileTimeConstant((field as JavaFieldImpl).psi)
     }
 }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations;
 
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
@@ -29,12 +28,7 @@ public abstract class AbstractDeclarationProviderFactory implements DeclarationP
 
     public AbstractDeclarationProviderFactory(@NotNull StorageManager storageManager) {
         this.packageDeclarationProviders =
-                storageManager.createMemoizedFunctionWithNullableValues(new Function1<FqName, PackageMemberDeclarationProvider>() {
-                    @Override
-                    public PackageMemberDeclarationProvider invoke(FqName fqName) {
-                        return createPackageMemberDeclarationProvider(fqName);
-                    }
-                });
+                storageManager.createMemoizedFunctionWithNullableValues(this::createPackageMemberDeclarationProvider);
     }
 
     @Nullable
@@ -46,7 +40,11 @@ public abstract class AbstractDeclarationProviderFactory implements DeclarationP
     }
 
     @Override
-    public void diagnoseMissingPackageFragment(KtFile file) {
-        throw new IllegalStateException("Cannot find package fragment for file " + file.getName() + " with package " + file.getPackageFqName());
+    public void diagnoseMissingPackageFragment(@NotNull FqName fqName, @Nullable KtFile file) {
+        String message = "Cannot find package fragment " + fqName;
+        if (file != null) {
+            message += "\nvFile = " + file.getVirtualFilePath() + ", file package = '" + file.getPackageFqName() + "'";
+        }
+        throw new IllegalStateException(message);
     }
 }

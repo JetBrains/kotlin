@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 class BridgeForBuiltinSpecial<out Signature : Any>(
@@ -64,8 +63,7 @@ object BuiltinSpecialBridgesUtil {
 
         val specialBridgeExists = function.getSpecialBridgeSignatureIfExists(signatureByDescriptor) != null
         val specialBridgesSignaturesInSuperClass = function.overriddenTreeAsSequence(useOriginal = true).mapNotNull {
-            if (it === function) return@mapNotNull null
-            it.getSpecialBridgeSignatureIfExists(signatureByDescriptor)
+            it.takeUnless { it === function }?.getSpecialBridgeSignatureIfExists(signatureByDescriptor)
         }
         val isTherePossibleClashWithSpecialBridge =
                 specialBridgeSignature in specialBridgesSignaturesInSuperClass
@@ -76,7 +74,7 @@ object BuiltinSpecialBridgesUtil {
         else null
 
         val commonBridges = reachableDeclarations.mapTo(LinkedHashSet<Signature>(), signatureByDescriptor)
-        commonBridges.removeAll(specialBridgesSignaturesInSuperClass + specialBridge?.from.singletonOrEmptyList())
+        commonBridges.removeAll(specialBridgesSignaturesInSuperClass + listOfNotNull(specialBridge?.from))
 
         if (fake) {
             for (overridden in function.overriddenDescriptors.map { it.original }) {
@@ -119,7 +117,7 @@ object BuiltinSpecialBridgesUtil {
     ): Boolean {
         if (BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(this) == null) return false
 
-        val builtin = getOverriddenBuiltinReflectingJvmDescriptor()!!
+        val builtin = getOverriddenBuiltinReflectingJvmDescriptor() ?: error("Overridden built-in member not found: $this")
         return signatureByDescriptor(this) == signatureByDescriptor(builtin)
     }
 }

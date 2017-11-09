@@ -12,5 +12,5 @@ class C {
 
 fun f() {
     <!RESOLUTION_TO_CLASSIFIER!>TestInterface<!>()
-    C.<!UNRESOLVED_REFERENCE!>I<!>()
+    C.<!RESOLUTION_TO_CLASSIFIER!>I<!>()
 }

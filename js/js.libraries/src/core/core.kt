@@ -1,45 +1,83 @@
 package kotlin.js
 
-import java.util.*
+@Deprecated(message = "Use `definedExternally` instead", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("definedExternally"))
+public external val noImpl: Nothing
 
-@native
-public val noImpl: Nothing
-    get() = throw Exception()
+/**
+ * The property that can be used as a placeholder for statements and values that are defined in JavaScript.
+ *
+ * This property can be used in two cases:
+ *
+ *   * To represent body of an external function. In most cases Kotlin does not require to provide bodies of external
+ *     functions and properties, but if for some reason you want to (for example, due to limitation of your coding style guides),
+ *     you should use `definedExternally`.
+ *   * To represent value of default argument.
+ *
+ * There's two forms of using `definedExternally`:
+ *
+ *   1. `= definedExternally` (for functions, properties and parameters).
+ *   2. `{ definedExternally }` (for functions and property getters/setters).
+ *
+ * This property can't be used from normal code.
+ *
+ * Examples:
+ *
+ * ``` kotlin
+ * external fun foo(): String = definedExternally
+ * external fun bar(x: Int) { definedExternally }
+ * external fun baz(z: Any = definedExternally): Array<Any>
+ * external val prop: Float = definedExternally
+ * ```
+ */
+public external val definedExternally: Nothing
 
-@native
-public fun eval(expr: String): dynamic = noImpl
+/**
+ * Exposes the JavaScript [eval function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval) to Kotlin.
+ */
+public external fun eval(expr: String): dynamic
 
-@native
-public val undefined: Nothing? = noImpl
+/**
+ * Exposes the JavaScript [undefined property](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined) to Kotlin.
+ */
+public external val undefined: Nothing?
 
-@native operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = noImpl
+@Deprecated("Use toInt() instead.", ReplaceWith("s.toInt()"), level = DeprecationLevel.ERROR)
+public external fun parseInt(s: String): Int
 
-@library
-public fun println() {}
+@Deprecated("Use toInt(radix) instead.", ReplaceWith("s.toInt(radix)"), level = DeprecationLevel.ERROR)
+public external fun parseInt(s: String, radix: Int = definedExternally): Int
 
-@library
-public fun println(s: Any?) {}
+@Deprecated("Use toDouble() instead.", ReplaceWith("s.toDouble()"), level = DeprecationLevel.ERROR)
+public external fun parseFloat(s: String, radix: Int = definedExternally): Double
 
-@library
-public fun print(s: Any?) {}
-
-//TODO: consistent parseInt
-@native
-public fun parseInt(s: String, radix: Int = 10): Int = noImpl
-
-@library
-public fun safeParseInt(s: String): Int? = noImpl
-
-@library
-public fun safeParseDouble(s: String): Double? = noImpl
-
-@native
-public fun js(code: String): dynamic = noImpl
+/**
+ * Puts the given piece of a JavaScript code right into the calling function.
+ * The compiler replaces call to `js(...)` code with the string constant provided as a parameter.
+ *
+ * Example:
+ *
+ * ``` kotlin
+ * fun logToConsole(message: String): Unit {
+ *     js("console.log(message)")
+ * }
+ * ```
+ *
+ * @param code the piece of JavaScript code to put to the generated code.
+ *        Must be a compile-time constant, otherwise compiler produces error message.
+ *        You can safely refer to local variables of calling function (but not to local variables of outer functions),
+ *        including parameters. You can't refer to functions, properties and classes by their short names.
+ */
+public external fun js(code: String): dynamic
 
 /**
  * Function corresponding to JavaScript's `typeof` operator
  */
+@kotlin.internal.InlineOnly
+@Suppress("UNUSED_PARAMETER")
 public inline fun jsTypeOf(a: Any?): String = js("typeof a")
 
-@library
-internal fun deleteProperty(`object`: Any, property: Any): Unit = noImpl
+@kotlin.internal.InlineOnly
+@Suppress("UNUSED_PARAMETER")
+internal inline fun deleteProperty(obj: Any, property: Any) {
+    js("delete obj[property]")
+}

@@ -27,3 +27,23 @@ class B {
 
     void foo(){}
 }
+
+class CtorComment {
+    public String myA;
+
+    /*
+     * The magic of comments
+     */
+    // single line magic comments
+    public CtorComment() {
+        myA = "a";
+    }
+}
+
+class CtorComment2 {
+    /*
+     * The magic of comments
+     */
+    // single line magic comments
+    public CtorComment() {}
+}

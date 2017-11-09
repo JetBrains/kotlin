@@ -1,6 +1,6 @@
 package
 
-public val test2: Base
+public val test2: Obsolete /* = Base */
 public val test3: Base.Companion
 public fun test1(/*0*/ x: Obsolete /* = Base */): Obsolete /* = Base */
 public fun test1a(/*0*/ x: kotlin.collections.List<Obsolete /* = Base */>): kotlin.collections.List<Obsolete /* = Base */>

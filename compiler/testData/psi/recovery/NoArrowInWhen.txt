@@ -1,4 +1,4 @@
-JetFile: NoArrowInWhen.kt
+KtFile: NoArrowInWhen.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

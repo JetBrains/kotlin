@@ -29,15 +29,12 @@ public class TrackingSlicedMap extends SlicedMapImpl {
     private final boolean trackWithStackTraces;
 
     public TrackingSlicedMap(boolean trackWithStackTraces) {
+        super(false);
         this.trackWithStackTraces = trackWithStackTraces;
     }
 
     private <K, V> SliceWithStackTrace<K, V> wrapSlice(ReadOnlySlice<K, V> slice) {
-        SliceWithStackTrace<?, ?> translated = sliceTranslationMap.get(slice);
-        if (translated == null) {
-            translated = new SliceWithStackTrace<K, V>(slice);
-            sliceTranslationMap.put(slice, translated);
-        }
+        SliceWithStackTrace<?, ?> translated = sliceTranslationMap.computeIfAbsent(slice, k -> new SliceWithStackTrace<>(slice));
         //noinspection unchecked
         return (SliceWithStackTrace) translated;
     }
@@ -53,19 +50,16 @@ public class TrackingSlicedMap extends SlicedMapImpl {
     }
 
     @Override
-    public void forEach(@NotNull final Function3<WritableSlice, Object, Object, Void> f) {
-        super.forEach(new Function3<WritableSlice, Object, Object, Void>() {
-            @Override
-            public Void invoke(WritableSlice slice, Object key, Object value) {
-                f.invoke(((SliceWithStackTrace) slice).getWritableDelegate(), key, ((TrackableValue<?>) value).value);
-                return null;
-            }
+    public void forEach(@NotNull Function3<WritableSlice, Object, Object, Void> f) {
+        super.forEach((slice, key, value) -> {
+            f.invoke(((SliceWithStackTrace) slice).getWritableDelegate(), key, ((TrackableValue<?>) value).value);
+            return null;
         });
     }
 
     @Override
     public <K, V> void put(WritableSlice<K, V> slice, K key, V value) {
-        super.put(wrapSlice(slice), key, new TrackableValue<V>(value, trackWithStackTraces));
+        super.put(wrapSlice(slice), key, new TrackableValue<>(value, trackWithStackTraces));
     }
 
     private static class TrackableValue<V> {
@@ -132,7 +126,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
 
         @Override
         public TrackableValue<V> computeValue(SlicedMap map, K key, TrackableValue<V> value, boolean valueNotFound) {
-            return new TrackableValue<V>(delegate.computeValue(map, key, value == null ? null : value.value, valueNotFound), trackWithStackTraces);
+            return new TrackableValue<>(delegate.computeValue(map, key, value == null ? null : value.value, valueNotFound), trackWithStackTraces);
         }
 
         @Override

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Collection;
 
@@ -75,7 +76,7 @@ public class OutputMessageUtil {
         return sourceFiles;
     }
 
-    public static class Output {
+    public static class Output implements Serializable {
         @NotNull
         public final Collection<File> sourceFiles;
         @Nullable
@@ -85,5 +86,7 @@ public class OutputMessageUtil {
             this.sourceFiles = sourceFiles;
             this.outputFile = outputFile;
         }
+
+        static final long serialVersionUID = 0L;
     }
 }

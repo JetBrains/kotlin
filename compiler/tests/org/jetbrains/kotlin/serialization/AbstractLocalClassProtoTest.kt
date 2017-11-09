@@ -16,21 +16,16 @@
 
 package org.jetbrains.kotlin.serialization
 
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownSingleModuleAnalyzerForJvm
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import java.io.File
@@ -54,17 +49,15 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val clazz = classLoader.loadClass(classFile.toRelativeString(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.'))
         assertHasAnnotationData(clazz)
 
-        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir)
+        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir).apply {
+            // This is needed because otherwise local classes, being binary classes, are not resolved via source module's container.
+            // They could only be resolved via the container of the _dependency_ module.
+            // This can be improved as soon as there's an API to get the container of the dependency module.
+            put(JVMConfigurationKeys.USE_SINGLE_MODULE, true)
+        }
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, configuration)
 
-        val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
-                moduleContext, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), DeclarationProviderFactory.EMPTY,
-                GlobalSearchScope.allScope(environment.project), PackagePartProvider.Empty
-        )
-        moduleContext.initializeModuleContents(container.get<JavaDescriptorResolver>().packageFragmentProvider)
-
-        val components = container.get<DeserializationComponentsForJava>().components
+        val components = JvmResolveUtil.createContainer(environment).get<DeserializationComponentsForJava>().components
 
         val classDescriptor = components.classDeserializer.deserializeClass(clazz.classId)
                               ?: error("Class is not resolved: $clazz (classId = ${clazz.classId})")

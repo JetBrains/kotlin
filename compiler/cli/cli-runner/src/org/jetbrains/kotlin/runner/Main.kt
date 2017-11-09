@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.runner
 
 import java.io.File
 import java.io.FileNotFoundException
+import java.net.URL
 import java.util.*
 
 object Main {
@@ -33,13 +34,11 @@ object Main {
     }
 
     private fun run(args: Array<String>) {
-        val classpath = Classpath()
+        val classpath = arrayListOf<URL>()
         var runner: Runner? = null
         var collectingArguments = false
         val arguments = arrayListOf<String>()
         var noReflect = false
-
-        classpath.add(".")
 
         var i = 0
         while (i < args.size) {
@@ -64,7 +63,9 @@ object Main {
                 printVersionAndExit()
             }
             else if ("-classpath" == arg || "-cp" == arg) {
-                classpath.add(next())
+                for (path in next().split(File.pathSeparator).filter(String::isNotEmpty)) {
+                    classpath.addPath(path)
+                }
             }
             else if ("-expression" == arg || "-e" == arg) {
                 runner = ExpressionRunner(next())
@@ -91,10 +92,14 @@ object Main {
             i++
         }
 
-        classpath.add(KOTLIN_HOME.toString() + "/lib/kotlin-runtime.jar")
+        if (classpath.isEmpty()) {
+            classpath.addPath(".")
+        }
+
+        classpath.addPath(KOTLIN_HOME.toString() + "/lib/kotlin-runtime.jar")
 
         if (!noReflect) {
-            classpath.add(KOTLIN_HOME.toString() + "/lib/kotlin-reflect.jar")
+            classpath.addPath(KOTLIN_HOME.toString() + "/lib/kotlin-reflect.jar")
         }
 
         if (runner == null) {
@@ -102,6 +107,10 @@ object Main {
         }
 
         runner.run(classpath, arguments)
+    }
+
+    private fun MutableList<URL>.addPath(path: String) {
+        add(File(path).absoluteFile.toURI().toURL())
     }
 
     @JvmStatic

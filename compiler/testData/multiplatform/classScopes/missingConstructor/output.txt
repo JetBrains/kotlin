@@ -1,0 +1,16 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/classScopes/missingConstructor/jvm.kt:1:14: error: actual class 'Foo' has no corresponding members for expected class members:
+
+    public constructor Foo(s: String)
+
+    The following declaration is incompatible because number of value parameters is different:
+        public constructor Foo()
+
+actual class Foo
+             ^

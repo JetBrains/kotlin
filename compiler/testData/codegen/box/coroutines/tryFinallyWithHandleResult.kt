@@ -1,27 +1,34 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
+import helpers.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
+
 var globalResult = ""
 var wasCalled = false
 class Controller {
-    val postponedActions = java.util.ArrayList<() -> Unit>()
+    val postponedActions = mutableListOf<() -> Unit>()
 
-    suspend fun suspendWithValue(v: String, x: Continuation<String>) {
+    suspend fun suspendWithValue(v: String): String = suspendCoroutineOrReturn { x ->
         postponedActions.add {
             x.resume(v)
         }
+
+        COROUTINE_SUSPENDED
     }
 
-    suspend fun suspendWithException(e: Exception, x: Continuation<String>) {
+    suspend fun suspendWithException(e: Exception): String = suspendCoroutineOrReturn { x ->
         postponedActions.add {
             x.resumeWithException(e)
         }
+
+        COROUTINE_SUSPENDED
     }
 
-    operator fun handleResult(x: String, c: Continuation<Nothing>) {
-        globalResult = x
-    }
-
-    fun run(c: Controller.() -> Continuation<Unit>) {
-        c(this).resume(Unit)
+    fun run(c: suspend Controller.() -> String) {
+        c.startCoroutine(this, handleResultContinuation {
+            globalResult = it
+        })
         while (postponedActions.isNotEmpty()) {
             postponedActions[0]()
             postponedActions.removeAt(0)
@@ -29,7 +36,7 @@ class Controller {
     }
 }
 
-fun builder(expectException: Boolean = false, coroutine c: Controller.() -> Continuation<Unit>) {
+fun builder(expectException: Boolean = false, c: suspend Controller.() -> String) {
     val controller = Controller()
 
     globalResult = "#"
@@ -71,7 +78,7 @@ fun box(): String {
 
     builder(expectException = true) {
         try {
-            suspendWithException(java.lang.RuntimeException("OK"))
+            suspendWithException(RuntimeException("OK"))
         } finally {
             if (suspendWithValue("G") != "G") throw RuntimeException("fail 2")
             wasCalled = true
