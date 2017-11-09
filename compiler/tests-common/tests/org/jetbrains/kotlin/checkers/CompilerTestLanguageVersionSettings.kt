@@ -27,24 +27,22 @@ const val LANGUAGE_DIRECTIVE = "LANGUAGE"
 const val API_VERSION_DIRECTIVE = "API_VERSION"
 
 data class CompilerTestLanguageVersionSettings(
-        private val languageFeatures: Map<LanguageFeature, LanguageFeature.State>,
+        private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
         override val apiVersion: ApiVersion,
         override val languageVersion: LanguageVersion,
-        private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = specificFeaturesForTests(),
         private val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
 ) : LanguageVersionSettings {
+    private val languageFeatures = initialLanguageFeatures + specificFeaturesForTests()
     private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion)
 
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
-            specificFeatures[feature] ?:
-            languageFeatures[feature] ?:
-            delegate.getFeatureSupport(feature)
+            languageFeatures[feature] ?: delegate.getFeatureSupport(feature)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getFlag(flag: AnalysisFlag<T>): T = analysisFlags[flag] as T? ?: flag.defaultValue
 }
 
-fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.State> {
+private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.State> {
     return if (System.getProperty("kotlin.ni") == "true")
         mapOf(LanguageFeature.NewInference to LanguageFeature.State.ENABLED)
     else
