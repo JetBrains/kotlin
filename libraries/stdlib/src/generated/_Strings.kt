@@ -1153,7 +1153,7 @@ public fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): 
  * @sample samples.collections.Collections.Transformations.chunked
  */
 @SinceKotlin("1.2")
-public fun CharSequence.chunkedSequence(size: Int): Sequence<String>  {
+public fun CharSequence.chunkedSequence(size: Int): Sequence<String> {
     return chunkedSequence(size) { it.toString() }
 }
 
@@ -1172,7 +1172,7 @@ public fun CharSequence.chunkedSequence(size: Int): Sequence<String>  {
  * @sample samples.text.Strings.chunkedTransformToSequence
  */
 @SinceKotlin("1.2")
-public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R>  {
+public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R> {
     return windowedSequence(size, size, partialWindows = true, transform = transform)
 }
 
@@ -1280,7 +1280,7 @@ public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: B
  * @sample samples.collections.Sequences.Transformations.takeWindows
  */
 @SinceKotlin("1.2")
-public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<String>  {
+public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<String> {
     return windowedSequence(size, step, partialWindows) { it.toString() }
 }
 
@@ -1302,7 +1302,7 @@ public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindow
  * @sample samples.collections.Sequences.Transformations.averageWindows
  */
 @SinceKotlin("1.2")
-public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): Sequence<R>  {
+public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): Sequence<R> {
     checkWindowSizeStep(size, step)
     val windows = (if (partialWindows) indices else 0 until length - size + 1) step step
     return windows.asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
