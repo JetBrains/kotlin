@@ -1,0 +1,8 @@
+6 class B2: A(1, <bold>"2"</bold>)
+3 	open class A(n: Int, <bold>s: String = "???"</bold>)
+6 		class B2: A(1, <bold>"2"</bold>)
+
+3 open class A(n: Int, s: String = <bold>"???"</bold>)
+3 	open class A(n: Int, <bold>s: String = "???"</bold>)
+3 		open class A(n: Int, s: String = <bold>"???"</bold>)
+
