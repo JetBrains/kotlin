@@ -1,6 +1,6 @@
 {
   "name": "kotlin-compiler",
-  "version": "0.0.0",
+  "version": "$version",
   "description": "Kotlin compiler",
   "repository": {
     "type": "git",
