@@ -41,6 +41,7 @@ import com.intellij.util.indexing.ScalarIndexExtension
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
@@ -213,17 +214,12 @@ enum class LibraryJarDescriptor(val jarName: String,
     fun getPathInPlugin() = getPath(PathUtil.kotlinPathsForIdeaPlugin)
 }
 
-fun bundledRuntimeVersion(): String {
-    return bundledRuntimeBuildNumber ?: pluginRuntimeVersion(KotlinPluginUtil.getPluginVersion())
-}
+fun bundledRuntimeVersion(): String = KotlinCompilerVersion.VERSION
 
-private val bundledRuntimeBuildNumber: String? by lazy {
-    val file = PathUtil.kotlinPathsForIdeaPlugin.buildNumberFile
-    if (file.exists()) file.readText().trim() else null
-}
 
 private val PLUGIN_VERSIONS_SEPARATORS = arrayOf("Idea", "IJ", "release", "dev", "Studio")
 
+// TODO: Used only in tests, can be removed
 fun pluginRuntimeVersion(pluginVersion: String): String {
     var placeToSplit = -1
 
