@@ -1,5 +1,7 @@
 // FILE: 1.kt
+// LANGUAGE_VERSION: 1.2
 // SKIP_INLINE_CHECK_IN: inlineFun$default
+// CHECK_CONTAINS_NO_CALLS: test
 package test
 
 //problem in test framework
@@ -10,7 +12,6 @@ interface A {
 
     fun test() = inlineFun()
 
-    @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
     private inline fun inlineFun(lambda: () -> String = { value }): String {
         return lambda()
     }

@@ -14,7 +14,7 @@ class M {
 fun topLevelFun() {}
 val topLevelProp = ""
 
-fun checkEquals(x: KCallable<*>, y: KCallable<*>) {
+fun <T> checkEquals(x: KCallable<T>, y: KCallable<T>) {
     assertEquals(x, y)
     assertEquals(y, x)
     assertEquals(x.hashCode(), y.hashCode())

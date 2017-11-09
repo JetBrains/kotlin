@@ -45,6 +45,7 @@ fun testFloatArray() {
     }
     throw AssertionError()
 }
+
 fun testDoubleArray() {
     DoubleArray(5) { i ->
         if (i == 3) return

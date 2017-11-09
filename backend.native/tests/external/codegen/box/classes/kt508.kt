@@ -1,7 +1,3 @@
-// TODO: Enable for JS when it supports Java class library.
-// IGNORE_BACKEND: JS
-// fails on JS with TypeError: imported$plus is not a function, it is undefined.
-
 operator fun <K, V> MutableMap<K, V>.set(key : K, value : V) = put(key, value)
 
 fun box() : String {

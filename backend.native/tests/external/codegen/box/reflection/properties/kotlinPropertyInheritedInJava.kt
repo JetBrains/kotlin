@@ -10,6 +10,7 @@ public class J extends K {
 // FILE: K.kt
 
 import kotlin.reflect.*
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.*
 
 public open class K {
@@ -32,7 +33,7 @@ fun box(): String {
     if (prop == K::prop) return "Fail J::prop == K::prop (these are different properties)"
 
 
-    val klass = J::class.java.kotlin
+    val klass = J::class
     if (klass.declaredMemberProperties.isNotEmpty()) return "Fail: declaredMemberProperties should be empty"
     if (klass.declaredMemberExtensionProperties.isNotEmpty()) return "Fail: declaredMemberExtensionProperties should be empty"
 

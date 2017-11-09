@@ -8,14 +8,14 @@ fun check(expected: String, obj: Any?) {
 }
 
 fun box(): String {
-    check("Function0<kotlin.Unit>")
-    { -> }
-    check("Function0<java.lang.Integer>")
-    { -> 42 }
+    check("Function0<kotlin.Unit>",
+          { -> })
+    check("Function0<java.lang.Integer>",
+          { -> 42 })
     check("Function1<java.lang.String, java.lang.Long>",
           fun (s: String) = 42.toLong())
-    check("Function2<java.lang.Integer, java.lang.Integer, kotlin.Unit>")
-    { x: Int, y: Int -> }
+    check("Function2<java.lang.Integer, java.lang.Integer, kotlin.Unit>",
+          { x: Int, y: Int -> })
 
     check("Function1<java.lang.Integer, kotlin.Unit>",
           fun Int.() {})

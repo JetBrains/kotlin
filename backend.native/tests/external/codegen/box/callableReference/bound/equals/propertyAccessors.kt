@@ -3,7 +3,8 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.*
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.*
 
 class C {
     var prop = 42

@@ -34,7 +34,7 @@ fun box(): String {
     check<Any>()
     checkAll<Any>()
 
-    check<String>(::comparableOfString, ::charSequence, ::serializable)
+    check<String>(::comparableOfString, ::charSequence, ::serializable, ::any)
     checkAll<String>(::comparableOfString, ::charSequence, ::serializable, ::any)
 
     check<Int>(::number, ::comparableOfInt, ::serializable)

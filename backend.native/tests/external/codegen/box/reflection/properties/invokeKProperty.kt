@@ -3,7 +3,7 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.declaredMemberProperties
+import kotlin.reflect.full.declaredMemberProperties
 
 class A(val foo: String)
 

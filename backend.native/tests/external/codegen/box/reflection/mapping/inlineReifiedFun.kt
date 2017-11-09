@@ -14,10 +14,10 @@ class Foo {
 }
 
 fun box(): String {
-    assertEquals(::g, ::g.javaMethod!!.kotlinFunction)
+    assertEquals(::g as Any?, ::g.javaMethod!!.kotlinFunction)
 
     val h = Foo::class.members.single { it.name == "h" } as KFunction<*>
-    assertEquals(h, h.javaMethod!!.kotlinFunction)
+    assertEquals(h, h.javaMethod!!.kotlinFunction as Any?)
 
     return "OK"
 }
