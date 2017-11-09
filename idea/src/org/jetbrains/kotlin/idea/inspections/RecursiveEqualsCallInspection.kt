@@ -32,24 +32,24 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 
-class RecursiveEqualsCallInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
+class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
 
             override fun visitBinaryExpression(expr: KtBinaryExpression) {
                 super.visitBinaryExpression(expr)
 
+                if (expr.operationToken != KtTokens.EQEQ) return
+
                 val classDescriptor = expr.containingClass()?.descriptor ?: return
+                val context = expr.analyze(BodyResolveMode.PARTIAL)
+                if (classDescriptor != expr.getResolvedCall(context)?.dispatchReceiver?.type?.constructor?.declarationDescriptor) return
 
                 val functionDescriptor = expr.getNonStrictParentOfType<KtNamedFunction>()?.descriptor as? FunctionDescriptor ?: return
                 if (functionDescriptor.name.asString() != "equals" ||
                     !DescriptorUtils.isOverride(functionDescriptor) ||
                     functionDescriptor.valueParameters.singleOrNull()?.type?.isNullableAny() == false ||
                     functionDescriptor.returnType?.isBoolean() == false) return
-
-                val context = expr.analyze(BodyResolveMode.PARTIAL)
-                if (expr.operationToken != KtTokens.EQEQ) return
-                if (classDescriptor != expr.getResolvedCall(context)?.dispatchReceiver?.type?.constructor?.declarationDescriptor) return
 
                 holder.registerProblem(expr,
                                        "Recursive equals call",
