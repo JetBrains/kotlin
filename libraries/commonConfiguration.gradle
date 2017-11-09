@@ -95,7 +95,7 @@ task preparePublication {
     Map<String, String> repositoryProviders = ['sonatype-nexus-staging' : 'sonatype', 'sonatype-nexus-snapshots' : 'sonatype']
     project.ext.isRelease = !project.version.toString().contains('-SNAPSHOT')
 
-    String repo = properties['deploy-repo']
+    String repo = properties["deployRepo"] ?: properties['deploy-repo']
     String repoProvider = repositoryProviders.get(repo, repo)
     project.ext.isSonatypePublish = repoProvider == 'sonatype'
     project.ext.isSonatypeRelease = isSonatypePublish && isRelease
