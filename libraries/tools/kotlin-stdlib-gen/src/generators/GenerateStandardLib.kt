@@ -15,7 +15,7 @@ fun main(args: Array<String>) {
         Elements,
         Filtering,
         Ordering,
-//        ArrayOps,
+        ArrayOps,
         Snapshots,
         Mapping,
         SetOps,
@@ -27,10 +27,9 @@ fun main(args: Array<String>) {
         RangeOps,
         Numeric,
         ComparableOps,
-//        CommonArrays,
-//        PlatformSpecialized,
-//        PlatformSpecializedJS,
-        { emptySequence() }
+        CommonArrays,
+        PlatformSpecialized,
+        PlatformSpecializedJS
     )
 
     require(args.size == 1) { "Expecting Kotlin project home path as an argument" }
