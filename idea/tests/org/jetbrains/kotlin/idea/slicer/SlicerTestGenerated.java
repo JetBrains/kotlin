@@ -306,6 +306,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inflow/settersViaDelegateForQualifiedRef.kt")
+    public void testInflow_SettersViaDelegateForQualifiedRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaDelegateForQualifiedRef.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/settersViaDelegateForSimpleRef.kt")
+    public void testInflow_SettersViaDelegateForSimpleRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaDelegateForSimpleRef.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/topLevelVal.kt")
     public void testInflow_TopLevelVal() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/topLevelVal.kt");
