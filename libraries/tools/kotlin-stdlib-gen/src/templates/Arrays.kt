@@ -1,13 +1,29 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package templates
 
 import templates.Family.*
 
-fun arrays(): List<GenericFunction> {
-    val templates = arrayListOf<GenericFunction>()
+object ArrayOps : TemplateGroupBase() {
 
-    templates add f("isEmpty()") {
-        inline(Inline.Only)
-        only(ArraysOfObjects, ArraysOfPrimitives)
+    val f_isEmpty = fn("isEmpty()") {
+        include(ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
+        inlineOnly()
         doc { "Returns `true` if the array is empty." }
         returns("Boolean")
         body {
@@ -15,9 +31,10 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
-    templates add f("isNotEmpty()") {
-        inline(Inline.Only)
-        only(ArraysOfObjects, ArraysOfPrimitives)
+    val f_isNotEmpty = fn("isNotEmpty()") {
+        include(ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
+        inlineOnly()
         doc { "Returns `true` if the array is not empty." }
         returns("Boolean")
         body {
@@ -26,8 +43,9 @@ fun arrays(): List<GenericFunction> {
     }
 
 
-    templates add pval("lastIndex") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+    val f_lastIndex = pval("lastIndex") {
+        include(ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
         doc { "Returns the last valid index for the array." }
         returns("Int")
         body {
@@ -35,8 +53,9 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
-    templates add pval("indices") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+    val f_indices = pval("indices") {
+        include(ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
         doc { "Returns the range of valid indices for the array." }
         returns("IntRange")
         body {
@@ -44,10 +63,10 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
-    templates add f("contentEquals(other: SELF)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+    val f_contentEquals = fn("contentEquals(other: SELF)") {
+        include(ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
         since("1.1")
-        inline(Platform.JVM, Inline.Only)
         infix(true)
         doc {
             """
@@ -56,20 +75,22 @@ fun arrays(): List<GenericFunction> {
             """
         }
         returns("Boolean")
-        body(Platform.JVM) { "return java.util.Arrays.equals(this, other)" }
+        on(Platform.JVM) {
+            inlineOnly()
+            body { "return java.util.Arrays.equals(this, other)" }
+        }
 
-        annotations(Platform.JS, """
-            @library("arrayEquals")
-            @Suppress("UNUSED_PARAMETER")
-        """)
-        body(Platform.JS) { "definedExternally" }
-
+        on(Platform.JS) {
+            annotation("""@library("arrayEquals")""")
+            annotation("""@Suppress("UNUSED_PARAMETER")""")
+            body { "definedExternally" }
+        }
     }
 
-    templates add f("contentDeepEquals(other: SELF)") {
-        only(ArraysOfObjects)
+    val f_contentDeepEquals = fn("contentDeepEquals(other: SELF)") {
+        include(ArraysOfObjects)
+    } builder {
         since("1.1")
-        inline(Platform.JVM, Inline.Only)
         infix(true)
         doc {
             """
@@ -81,18 +102,21 @@ fun arrays(): List<GenericFunction> {
             """
         }
         returns("Boolean")
-        body(Platform.JVM) { "return java.util.Arrays.deepEquals(this, other)" }
-        annotations(Platform.JS, """
-            @library("arrayDeepEquals")
-            @Suppress("UNUSED_PARAMETER")
-        """)
-        body(Platform.JS) { "definedExternally" }
+        on(Platform.JVM) {
+            inlineOnly()
+            body { "return java.util.Arrays.deepEquals(this, other)" }
+        }
+        on(Platform.JS) {
+            annotation("""@library("arrayDeepEquals")""")
+            annotation("""@Suppress("UNUSED_PARAMETER")""")
+            body { "definedExternally" }
+        }
     }
 
-    templates add f("contentToString()") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+    val f_contentToString = fn("contentToString()") {
+        include(ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
         since("1.1")
-        inline(Platform.JVM, Inline.Only)
         doc {
             """
             Returns a string representation of the contents of the specified array as if it is [List].
@@ -101,15 +125,20 @@ fun arrays(): List<GenericFunction> {
             """
         }
         returns("String")
-        body(Platform.JVM) { "return java.util.Arrays.toString(this)" }
-        annotations(Platform.JS, """@library("arrayToString")""")
-        body(Platform.JS) { "definedExternally" }
+        on(Platform.JVM) {
+            inlineOnly()
+            body { "return java.util.Arrays.toString(this)" }
+        }
+        on(Platform.JS) {
+            annotation("""@library("arrayToString")""")
+            body { "definedExternally" }
+        }
     }
 
-    templates add f("contentDeepToString()") {
-        only(ArraysOfObjects)
+    val f_contentDeepToString = fn("contentDeepToString()") {
+        include(ArraysOfObjects)
+    } builder {
         since("1.1")
-        inline(Platform.JVM, Inline.Only)
         doc {
             """
             Returns a string representation of the contents of this array as if it is a [List].
@@ -122,28 +151,38 @@ fun arrays(): List<GenericFunction> {
             """
         }
         returns("String")
-        body(Platform.JVM) { "return java.util.Arrays.deepToString(this)" }
-        annotations(Platform.JS, """@library("arrayDeepToString")""")
-        body(Platform.JS) { "definedExternally" }
+        on(Platform.JVM) {
+            inlineOnly()
+            body { "return java.util.Arrays.deepToString(this)" }
+        }
+        on(Platform.JS) {
+            annotation("""@library("arrayDeepToString")""")
+            body { "definedExternally" }
+        }
     }
 
-    templates add f("contentHashCode()") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+    val f_contentHashCode = fn("contentHashCode()") {
+        include(ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
         since("1.1")
-        inline(Platform.JVM, Inline.Only)
         doc {
             "Returns a hash code based on the contents of this array as if it is [List]."
         }
         returns("Int")
-        body(Platform.JVM) { "return java.util.Arrays.hashCode(this)" }
-        annotations(Platform.JS, """@library("arrayHashCode")""")
-        body(Platform.JS) { "definedExternally" }
+        on(Platform.JVM) {
+            inlineOnly()
+            body { "return java.util.Arrays.hashCode(this)" }
+        }
+        on(Platform.JS) {
+            annotation("""@library("arrayHashCode")""")
+            body { "definedExternally" }
+        }
     }
 
-    templates add f("contentDeepHashCode()") {
-        only(ArraysOfObjects)
+    val f_contentDeepHashCode = fn("contentDeepHashCode()") {
+        include(ArraysOfObjects)
+    } builder {
         since("1.1")
-        inline(Platform.JVM, Inline.Only)
         doc {
             """
             Returns a hash code based on the contents of this array as if it is [List].
@@ -153,20 +192,27 @@ fun arrays(): List<GenericFunction> {
             """
         }
         returns("Int")
-        body(Platform.JVM) { "return java.util.Arrays.deepHashCode(this)" }
-        annotations(Platform.JS, """@library("arrayDeepHashCode")""")
-        body(Platform.JS) { "definedExternally" }
+        on(Platform.JVM) {
+            inlineOnly()
+            body { "return java.util.Arrays.deepHashCode(this)" }
+        }
+        on(Platform.JS) {
+            annotation("""@library("arrayDeepHashCode")""")
+            body { "definedExternally" }
+        }
     }
 
-    templates addAll PrimitiveType.defaultPrimitives.map { primitive ->
+    val f_toPrimitiveArray = fn("toPrimitiveArray()") {
+        include(ArraysOfObjects, PrimitiveType.defaultPrimitives)
+        include(Collections, PrimitiveType.defaultPrimitives)
+    } builder {
+        val primitive = checkNotNull(primitive)
         val arrayType = primitive.name + "Array"
-        f("to$arrayType()") {
-            only(ArraysOfObjects, Collections)
-            buildFamilies.default!!.forEach { family -> onlyPrimitives(family, primitive) }
-            doc(ArraysOfObjects) { "Returns an array of ${primitive.name} containing all of the elements of this generic array." }
-            doc(Collections) { "Returns an array of ${primitive.name} containing all of the elements of this collection." }
-            returns(arrayType)
-            // TODO: Use different implementations for JS
+        signature("to$arrayType()")
+        returns(arrayType)
+        // TODO: Use different implementations for JS
+        specialFor(ArraysOfObjects) {
+            doc { "Returns an array of ${primitive.name} containing all of the elements of this generic array." }
             body {
                 """
                 val result = $arrayType(size)
@@ -175,7 +221,10 @@ fun arrays(): List<GenericFunction> {
                 return result
                 """
             }
-            body(Collections) {
+        }
+        specialFor(Collections) {
+            doc { "Returns an array of ${primitive.name} containing all of the elements of this collection." }
+            body {
                 """
                 val result = $arrayType(size)
                 var index = 0
@@ -186,6 +235,4 @@ fun arrays(): List<GenericFunction> {
             }
         }
     }
-
-    return templates
 }

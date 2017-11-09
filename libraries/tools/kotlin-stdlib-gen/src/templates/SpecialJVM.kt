@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,19 @@ package templates
 
 import templates.Family.*
 
-fun specialJVM(): List<GenericFunction> {
-    val templates = arrayListOf<GenericFunction>()
+object PlatformSpecialized : TemplateGroupBase() {
+    init {
+        defaultBuilder {
+            jvmOnly = true
+        }
+    }
 
-    templates add f("fill(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
+    val f_fill = fn("fill(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
+        platforms(Platform.JVM)
+        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+    } builder {
         doc { "Fills original array with the provided value." }
-        returns { "Unit" }
+        returns("Unit")
         body {
             """
             java.util.Arrays.fill(this, fromIndex, toIndex, element)
@@ -32,9 +38,11 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+    val f_binarySearch = fn("binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
+        platforms(Platform.JVM)
+        include(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
+    } builder {
         doc {
             """
             Searches the array or the range of the array for the provided [element] using the binary search algorithm.
@@ -54,8 +62,10 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)") {
-        only(ArraysOfObjects)
+    val f_binarySearch_comparator = fn("binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)") {
+        platforms(Platform.JVM)
+        include(ArraysOfObjects)
+    } builder {
         doc {
             """
             Searches the array or the range of the array for the provided [element] using the binary search algorithm.
@@ -76,9 +86,11 @@ fun specialJVM(): List<GenericFunction> {
     }
 
 
-    templates add f("sort()") {
+    val f_sort = fn("sort()") {
         // left with more generic signature for JVM only
-        only(ArraysOfObjects)
+        platforms(Platform.JVM)
+        include(ArraysOfObjects)
+    } builder {
         doc {
             """
             Sorts the array in-place according to the natural order of its elements.
@@ -92,9 +104,11 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("sort(fromIndex: Int = 0, toIndex: Int = size)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+    val f_sort_range = fn("sort(fromIndex: Int = 0, toIndex: Int = size)") {
+        platforms(Platform.JVM)
+        include(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
+    } builder {
         doc { "Sorts a range in the array in-place." }
         returns("Unit")
         body {
@@ -102,8 +116,10 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)") {
-        only(ArraysOfObjects)
+    val f_sortWith = fn("sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)") {
+        platforms(Platform.JVM)
+        include(ArraysOfObjects)
+    } builder {
         doc { "Sorts a range in the array in-place with the given [comparator]." }
         returns("Unit")
         body {
@@ -111,13 +127,15 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("filterIsInstanceTo(destination: C, klass: Class<R>)") {
+    val f_filterIsInstanceTo = fn("filterIsInstanceTo(destination: C, klass: Class<R>)") {
+        platforms(Platform.JVM)
+        include(Iterables, ArraysOfObjects, Sequences)
+    } builder {
         doc { "Appends all elements that are instances of specified class to the given [destination]." }
-        receiverAsterisk(true)
+        receiverAsterisk = true
         typeParam("C : MutableCollection<in R>")
         typeParam("R")
         returns("C")
-        exclude(ArraysOfPrimitives, Strings)
         body {
             """
             @Suppress("UNCHECKED_CAST")
@@ -127,9 +145,12 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("filterIsInstance(klass: Class<R>)") {
+    val f_filterIsInstance = fn("filterIsInstance(klass: Class<R>)") {
+        platforms(Platform.JVM)
+        include(Iterables, ArraysOfObjects, Sequences)
+    } builder {
         doc { "Returns a list containing all elements that are instances of specified class." }
-        receiverAsterisk(true)
+        receiverAsterisk= true
         typeParam("R")
         returns("List<R>")
         body {
@@ -137,10 +158,11 @@ fun specialJVM(): List<GenericFunction> {
             return filterIsInstanceTo(ArrayList<R>(), klass)
             """
         }
-        exclude(ArraysOfPrimitives, Strings)
 
-        doc(Sequences) { "Returns a sequence containing all elements that are instances of specified class." }
-        returns(Sequences) { "Sequence<R>" }
+        specialFor(Sequences) {
+            doc { "Returns a sequence containing all elements that are instances of specified class." }
+            returns("Sequence<R>")
+        }
         body(Sequences) {
             """
             @Suppress("UNCHECKED_CAST")
@@ -148,339 +170,318 @@ fun specialJVM(): List<GenericFunction> {
             """
         }
     }
-
-    templates.forEach { it.apply { jvmOnly(true) } }
-
-    return templates
 }
 
-object CommonArrays {
+object PlatformSpecializedJS : TemplateGroupBase() {
+    val f_sort = fn("sort(noinline comparison: (a: T, b: T) -> Int)") {
+        platforms(Platform.JS)
+        include(ArraysOfObjects, ArraysOfPrimitives)
+        exclude(PrimitiveType.Boolean)
+    } builder {
+        inlineOnly()
+        returns("Unit")
+        doc { "Sorts the array in-place according to the order specified by the given [comparison] function." }
+        body { "asDynamic().sort(comparison)" }
+    }
+}
 
-    fun f_plusElement() = f("plusElement(element: T)") {
-        inline(Platform.JVM, Inline.Only)
-        inline(Platform.JS, Inline.Yes)
-        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+object CommonArrays : TemplateGroupBase() {
 
-        only(InvariantArraysOfObjects)
-        only(Platform.JS, ArraysOfObjects)
-
+    val f_plusElement = fn("plusElement(element: T)") {
+        include(InvariantArraysOfObjects)
+    } builder {
         returns("SELF")
-        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
-        body(Platform.JVM) { "return plus(element)" }
-        body(Platform.JS) {
-            """
-            return this.asDynamic().concat(arrayOf(element))
-            """
+
+        on(Platform.JVM) {
+            inlineOnly()
+            body { "return plus(element)" }
+        }
+        on(Platform.JS) {
+            family = ArraysOfObjects
+            inline(suppressWarning = true)
+            returns("Array<T>")
+            body {
+                """
+                return this.asDynamic().concat(arrayOf(element))
+                """
+            }
         }
     }
 
-    fun f_plusElementOperator() =
-            (listOf(InvariantArraysOfObjects to null) + PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it }).map {
-                val (family, primitive) = it
-                f("plus(element: T)") {
-                    operator(true)
+    val f_plus = fn("plus(element: T)") {
+        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+    } builderWith { primitive ->
+        doc { "Returns an array containing all elements of the original array and then the given [element]." }
+        operator()
+        returns("SELF")
 
-                    only(family)
-                    if (family == InvariantArraysOfObjects) {
-                        only(Platform.JS, ArraysOfObjects)
-                    }
+        on(Platform.JVM) {
+            body {
+                """
+                val index = size
+                val result = java.util.Arrays.copyOf(this, index + 1)
+                result[index] = element
+                return result
+                """
+            }
+        }
 
-                    inline(Platform.JS, Inline.Yes)
-                    annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
-
-                    returns("SELF")
-                    returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
-                    doc { "Returns an array containing all elements of the original array and then the given [element]." }
-                    body(Platform.JVM) {
-                        """
-                        val index = size
-                        val result = java.util.Arrays.copyOf(this, index + 1)
-                        result[index] = element
-                        return result
-                        """
-                    }
-
-                    if (primitive == null) {
-                        body(Platform.JS) { "return this.asDynamic().concat(arrayOf(element))" }
-                    }
-                    else {
-                        only(primitive)
-                        body(Platform.JS, ArraysOfPrimitives) { "return plus(${primitive.name.toLowerCase()}ArrayOf(element))" }
-                    }
-                }
+        on(Platform.JS) {
+            inline(suppressWarning = true)
+            specialFor(InvariantArraysOfObjects) {
+                family = ArraysOfObjects
+                returns("Array<T>")
             }
 
-    fun f_plusCollection() =
-            (listOf(InvariantArraysOfObjects to null) + PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it }).map {
-                val (family, primitive) = it
-                f("plus(elements: Collection<T>)") {
-                    operator(true)
+            body {
+                if (primitive == null)
+                    "return this.asDynamic().concat(arrayOf(element))"
+                else
+                    "return plus(${primitive.name.toLowerCase()}ArrayOf(element))"
+            }
+        }
+    }
 
-                    only(family)
-                    if (family == InvariantArraysOfObjects) {
-                        only(Platform.JS, ArraysOfObjects)
-                    }
 
-                // TODO: inline arrayPlusCollection when @PublishedAPI is available
+    val f_plus_collection = fn("plus(elements: Collection<T>)") {
+        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+    } builder {
+        operator()
+        returns("SELF")
+        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
+        on(Platform.JVM) {
+            body {
+                """
+                var index = size
+                val result = java.util.Arrays.copyOf(this, index + elements.size)
+                for (element in elements) result[index++] = element
+                return result
+                """
+            }
+        }
+        on(Platform.JS) {
+            // TODO: inline arrayPlusCollection when @PublishedAPI is available
 //                    inline(Platform.JS, Inline.Yes)
 //                    annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
-
-                    returns("SELF")
-                    returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
-                    doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
-                    body(Platform.JVM) {
-                        """
-                        var index = size
-                        val result = java.util.Arrays.copyOf(this, index + elements.size)
-                        for (element in elements) result[index++] = element
-                        return result
-                        """
-                    }
-                    if (primitive != null) {
-                        only(primitive)
-                    }
-                    when (primitive) {
-                        null, PrimitiveType.Boolean, PrimitiveType.Long ->
-                            body(Platform.JS) { "return arrayPlusCollection(this, elements)" }
-                        else ->
-                            body(Platform.JS) { "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)" }
-                    }
-                }
+            specialFor(InvariantArraysOfObjects) {
+                family = ArraysOfObjects
+                returns("Array<T>")
             }
+            when (primitive) {
+                null, PrimitiveType.Boolean, PrimitiveType.Long ->
+                    body { "return arrayPlusCollection(this, elements)" }
+                else ->
+                    body { "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)" }
+            }
+        }
+    }
 
-    fun f_plusArray() = f("plus(elements: SELF)") {
+    val f_plus_array = fn("plus(elements: SELF)") {
+        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+    } builder {
         operator(true)
-
-        inline(Platform.JS, Inline.Yes)
-        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
-
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        only(Platform.JS, ArraysOfObjects, ArraysOfPrimitives)
-        customSignature(InvariantArraysOfObjects) { "plus(elements: Array<out T>)" }
-
         doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] array." }
         returns("SELF")
-        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
-
-        body(Platform.JVM) {
-            """
-            val thisSize = size
-            val arraySize = elements.size
-            val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-            System.arraycopy(elements, 0, result, thisSize, arraySize)
-            return result
-            """
-        }
-        body(Platform.JS) {
-            """
-            return this.asDynamic().concat(elements)
-            """
-        }
-        body(Platform.JS, ArraysOfPrimitives) {
-            """
-            return primitiveArrayConcat(this, elements)
-            """
+        specialFor(InvariantArraysOfObjects) {
+            signature("plus(elements: Array<out T>)", notForSorting = true)
         }
 
+        on(Platform.JVM) {
+            body {
+                """
+                val thisSize = size
+                val arraySize = elements.size
+                val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+                System.arraycopy(elements, 0, result, thisSize, arraySize)
+                return result
+                """
+            }
+
+        }
+        on(Platform.JS) {
+            inline(suppressWarning = true)
+            specialFor(InvariantArraysOfObjects) {
+                family = ArraysOfObjects
+                returns("Array<T>")
+                body { """return this.asDynamic().concat(elements)""" }
+            }
+            specialFor(ArraysOfPrimitives) {
+                body { """return primitiveArrayConcat(this, elements)""" }
+            }
+        }
     }
 
-    fun f_copyOfRange() = (listOf(InvariantArraysOfObjects to null) + PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it }).map {
-        val (family, primitive) = it
-        f("copyOfRange(fromIndex: Int, toIndex: Int)") {
-            only(family)
-            if (family == InvariantArraysOfObjects) {
-                only(Platform.JS, ArraysOfObjects)
+
+    val f_copyOfRange = fn("copyOfRange(fromIndex: Int, toIndex: Int)") {
+        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+    } builderWith { primitive ->
+        doc { "Returns new array which is a copy of range of original array." }
+        returns("SELF")
+
+        on(Platform.JS) {
+            specialFor(InvariantArraysOfObjects) {
+                family = ArraysOfObjects
+                returns("Array<T>")
             }
-
-            inline(Platform.JVM, Inline.Only)
-
-            doc { "Returns new array which is a copy of range of original array." }
-            returns("SELF")
-            returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
-            body(Platform.JVM) {
-                "return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)"
+            when(primitive) {
+                PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
+                    body { "return withType(\"${primitive}Array\", this.asDynamic().slice(fromIndex, toIndex))" }
+                else -> {
+                    inline(suppressWarning = true)
+                    body { "return this.asDynamic().slice(fromIndex, toIndex)" }
+                }
             }
+        }
+        on(Platform.JVM) {
+            inlineOnly()
+            body { "return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)" }
+        }
+    }
 
-            if (primitive != null) {
-                only(primitive)
+    val f_copyOf = fn("copyOf()") {
+        include(InvariantArraysOfObjects)
+        include(ArraysOfPrimitives, PrimitiveType.defaultPrimitives)
+    } builder {
+        doc { "Returns new array which is a copy of the original array." }
+        returns("SELF")
+        on(Platform.JVM) {
+            inlineOnly()
+            body { "return java.util.Arrays.copyOf(this, size)" }
+        }
+        on(Platform.JS) {
+            specialFor(InvariantArraysOfObjects) {
+                family = ArraysOfObjects
+                returns("Array<T>")
             }
             when (primitive) {
+                null -> {
+                    inline(suppressWarning = true)
+                    body { "return this.asDynamic().slice()" }
+                }
                 PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
-                    body(Platform.JS) { "return withType(\"${primitive}Array\", this.asDynamic().slice(fromIndex, toIndex))" }
+                    body { "return withType(\"${primitive}Array\", this.asDynamic().slice())" }
                 else -> {
-                    annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
-                    inline(Platform.JS, Inline.Yes)
-                    body(Platform.JS) { "return this.asDynamic().slice(fromIndex, toIndex)" }
+                    inline(suppressWarning = true)
+                    body { "return this.asDynamic().slice()" }
                 }
             }
         }
     }
 
-    fun f_copyOf() = (listOf(InvariantArraysOfObjects to null) + PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it }).map {
-        val (family, primitive) = it
-        f("copyOf()") {
-            only(family)
-            if (family == InvariantArraysOfObjects) {
-                only(Platform.JS, ArraysOfObjects)
-            }
-
-            inline(Platform.JVM, Inline.Only)
-
-            doc { "Returns new array which is a copy of the original array." }
+    val f_copyOf_newSize = fn("copyOf(newSize: Int)") {
+        include(ArraysOfPrimitives, PrimitiveType.defaultPrimitives)
+        include(InvariantArraysOfObjects)
+    } builder {
+        doc { "Returns new array which is a copy of the original array, resized to the given [newSize]." }
+        specialFor(ArraysOfPrimitives) {
             returns("SELF")
-            returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
-
-            body(Platform.JVM) {
-                "return java.util.Arrays.copyOf(this, size)"
-            }
-            body(Platform.JS) {
-                "return this.asDynamic().slice()"
-            }
-
-            if (primitive != null) {
-                only(primitive)
-            }
-            when (primitive) {
-                PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
-                    body(Platform.JS) { "return withType(\"${primitive}Array\", this.asDynamic().slice())" }
-                else -> {
-                    annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
-                    inline(Platform.JS, Inline.Yes)
-                    body(Platform.JS) { "return this.asDynamic().slice()" }
+            on(Platform.JS) {
+                when (primitive!!) {
+                    PrimitiveType.Boolean ->
+                        body { "return withType(\"BooleanArray\", arrayCopyResize(this, newSize, false))" }
+                    PrimitiveType.Char ->
+                        body { "return withType(\"CharArray\", fillFrom(this, ${primitive}Array(newSize)))" }
+                    PrimitiveType.Long ->
+                        body { "return withType(\"LongArray\", arrayCopyResize(this, newSize, ZERO))" }
+                    else ->
+                        body { "return fillFrom(this, ${primitive}Array(newSize))" }
                 }
+            }
+
+        }
+        specialFor(InvariantArraysOfObjects) {
+            returns("Array<T?>")
+            on(Platform.JS) {
+                family = ArraysOfObjects
+                body { "return arrayCopyResize(this, newSize, null)" }
+            }
+        }
+        on(Platform.JVM) {
+            inlineOnly()
+            body {
+                "return java.util.Arrays.copyOf(this, newSize)"
             }
         }
     }
 
-    fun f_copyOfResized() =
-            (PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it } + (InvariantArraysOfObjects to null)).map {
-                val (family, primitive) = it
-                f("copyOf(newSize: Int)") {
-                    only(family)
-                    if (family == InvariantArraysOfObjects) {
-                        only(Platform.JS, ArraysOfObjects)
-                    }
+    fun f_sort() = fn("sort()") {
+        include(ArraysOfPrimitives, PrimitiveType.numericPrimitives + PrimitiveType.Char)
+        include(ArraysOfObjects)
+    } builder {
+        typeParam("T: Comparable<T>")
+        doc { "Sorts the array in-place according to the natural order of its elements." }
+        specialFor(ArraysOfPrimitives) {
+            doc { "Sorts the array in-place." }
+        }
 
-                    inline(Platform.JVM, Inline.Only)
-                    doc { "Returns new array which is a copy of the original array, resized to the given [newSize]." }
-
-                    if (primitive != null) {
-                        only(primitive)
-                        returns("SELF")
-                        when (primitive) {
-                            PrimitiveType.Boolean ->
-                                body(Platform.JS) { "return withType(\"BooleanArray\", arrayCopyResize(this, newSize, false))" }
-                            PrimitiveType.Char ->
-                                body(Platform.JS) { "return withType(\"CharArray\", fillFrom(this, ${primitive}Array(newSize)))" }
-                            PrimitiveType.Long ->
-                                body(Platform.JS) { "return withType(\"LongArray\", arrayCopyResize(this, newSize, ZERO))" }
-                            else ->
-                                body(Platform.JS) { "return fillFrom(this, ${primitive}Array(newSize))" }
-                        }
-                    }
-                    else {
-                        returns { "Array<T?>" }
-                        body(Platform.JS) { "return arrayCopyResize(this, newSize, null)" }
-                    }
-
-                    body(Platform.JVM) {
-                        "return java.util.Arrays.copyOf(this, newSize)"
-                    }
+        returns("Unit")
+        on(Platform.JS) {
+            body {
+                """
+                if (size > 1)
+                    sort { a: T, b: T -> a.compareTo(b) }
+                """
+            }
+            specialFor(ArraysOfPrimitives) {
+                if (primitive != PrimitiveType.Long) {
+                    annotation("""@library("primitiveArraySort")""")
+                    body { "definedExternally" }
                 }
             }
-
-    fun f_sortPrimitives() =
-        (PrimitiveType.numericPrimitives + PrimitiveType.Char).map { primitive ->
-            f("sort()") {
-                only(ArraysOfPrimitives)
-                only(primitive)
-                doc { "Sorts the array in-place." }
-                returns("Unit")
-                body(Platform.JVM) {
+        }
+        on(Platform.JVM) {
+            specialFor(ArraysOfObjects) {
+                inlineOnly()
+                body {
+                    """
+                    @Suppress("UNCHECKED_CAST")
+                    (this as Array<Any?>).sort()
+                    """
+                }
+            }
+            specialFor(ArraysOfPrimitives) {
+                body {
                     "if (size > 1) java.util.Arrays.sort(this)"
                 }
-                if (primitive != PrimitiveType.Long) {
-                    annotations(Platform.JS, """@library("primitiveArraySort")""")
-                    body(Platform.JS) { "definedExternally" }
-                }
-                else {
-                    body(Platform.JS) {
-                        """
-                        if (size > 1)
-                            sort { a: T, b: T -> a.compareTo(b) }
-                        """
-                    }
-                }
             }
         }
-
-    fun f_sort() = f("sort()") {
-        only(ArraysOfObjects)
-        typeParam("T: Comparable<T>")
-        doc {
-            """
-            Sorts the array in-place according to the natural order of its elements.
-            """
-        }
-        returns("Unit")
-        inline(Platform.JVM, Inline.Only)
-        body(Platform.JVM) {
-            """
-            @Suppress("UNCHECKED_CAST")
-            (this as Array<Any?>).sort()
-            """
-        }
-        body(Platform.JS) {
-            """
-            if (size > 1)
-                sort { a: T, b: T -> a.compareTo(b) }
-            """
-        }
     }
 
-    fun f_sortWith() = f("sortWith(comparator: Comparator<in T>)") {
-        only(ArraysOfObjects)
-        buildFamilyPrimitives(Platform.JS, buildFamilyPrimitives.default!! - PrimitiveType.Boolean)
+    fun f_sortWith() = fn("sortWith(comparator: Comparator<in T>)") {
+        include(ArraysOfObjects)
+    } builder {
         doc { "Sorts the array in-place according to the order specified by the given [comparator]." }
         returns("Unit")
-        body(Platform.JVM) {
-            "if (size > 1) java.util.Arrays.sort(this, comparator)"
+        on(Platform.JVM) {
+            body {
+                "if (size > 1) java.util.Arrays.sort(this, comparator)"
+            }
         }
-        body(Platform.JS) {
-            """
-            if (size > 1)
-                sort { a, b -> comparator.compare(a, b) }
-            """
+        on(Platform.JS) {
+            body {
+                """
+                if (size > 1)
+                    sort { a, b -> comparator.compare(a, b) }
+                """
+            }
         }
     }
 
-    fun f_asList() = f("asList()") {
-        only(ArraysOfObjects)
+    fun f_asList() = fn("asList()") {
+        include(ArraysOfObjects, ArraysOfPrimitives)
+    } builder {
         doc { "Returns a [List] that wraps the original array." }
         returns("List<T>")
-        body(Platform.JVM) {
-            """
-            return ArraysUtilJVM.asList(this)
-            """
+        on(Platform.JVM) {
+            body { """return ArraysUtilJVM.asList(this)""" }
+        }
+        on(Platform.JS) {
+            body { """return ArrayList<T>(this.unsafeCast<Array<Any?>>())""" }
         }
 
-        body(Platform.JS) {
-            """
-            return ArrayList<T>(this.unsafeCast<Array<Any?>>())
-            """
-        }
-    }
-
-    fun f_asListPrimitives() =
-            PrimitiveType.defaultPrimitives.map { primitive ->
-                f("asList()") {
-                    only(ArraysOfPrimitives)
-                    only(primitive)
-                    doc { "Returns a [List] that wraps the original array." }
-                    returns("List<T>")
-
-                    val objectLiteralImpl = """
+        specialFor(ArraysOfPrimitives) {
+            val objectLiteralImpl = """
                         return object : AbstractList<T>(), RandomAccess {
                             override val size: Int get() = this@asList.size
                             override fun isEmpty(): Boolean = this@asList.isEmpty()
@@ -490,62 +491,51 @@ object CommonArrays {
                             override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
                         }
                         """
-
-                    body(Platform.JVM) { objectLiteralImpl }
-
-                    if (primitive == PrimitiveType.Char) {
-                        body(Platform.JS) { objectLiteralImpl }
-                    }
-                    else {
-                        inline(Platform.JS, Inline.Only, ArraysOfPrimitives)
-                        body(Platform.JS) { "return this.unsafeCast<Array<T>>().asList()" }
-                    }
+            on(Platform.JVM) {
+                body { objectLiteralImpl }
+            }
+            on(Platform.JS) {
+                if (primitive == PrimitiveType.Char) {
+                    body { objectLiteralImpl }
+                }
+                else {
+                    inlineOnly()
+                    body { "return this.unsafeCast<Array<T>>().asList()" }
                 }
             }
+        }
+    }
 
-    fun f_toTypedArray() =
-            PrimitiveType.defaultPrimitives.map { primitive ->
-                f("toTypedArray()") {
-                    only(ArraysOfPrimitives)
-                    only(primitive)
-                    returns("Array<T>")
-                    doc {
-                        """
-                        Returns a *typed* object array containing all of the elements of this primitive array.
-                        """
-                    }
-                    body(Platform.JVM) {
-                        """
-                        val result = arrayOfNulls<T>(size)
-                        for (index in indices)
-                            result[index] = this[index]
-                        @Suppress("UNCHECKED_CAST")
-                        return result as Array<T>
-                        """
-                    }
-                    when (primitive) {
-                        PrimitiveType.Char ->
-                            body(Platform.JS) { "return Array<Char>(size, { i -> this[i] })" }
-                        PrimitiveType.Boolean, PrimitiveType.Long ->
-                            body(Platform.JS) { "return copyOf().unsafeCast<Array<T>>()" }
-                        else ->
-                            body(Platform.JS) { "return js(\"[]\").slice.call(this)" }
-                    }
-                }
+    fun f_toTypedArray() = fn("toTypedArray()") {
+        include(ArraysOfPrimitives)
+    } builder {
+        returns("Array<T>")
+        doc {
+            """
+            Returns a *typed* object array containing all of the elements of this primitive array.
+            """
+        }
+        on(Platform.JVM) {
+            body {
+                """
+                val result = arrayOfNulls<T>(size)
+                for (index in indices)
+                    result[index] = this[index]
+                @Suppress("UNCHECKED_CAST")
+                return result as Array<T>
+                """
+            }
+        }
+        on(Platform.JS) {
+            when (primitive) {
+                PrimitiveType.Char ->
+                    body { "return Array<Char>(size, { i -> this[i] })" }
+                PrimitiveType.Boolean, PrimitiveType.Long ->
+                    body { "return copyOf().unsafeCast<Array<T>>()" }
+                else ->
+                    body { "return js(\"[]\").slice.call(this)" }
             }
 
-
-    // TODO: use reflection later to get all functions of matching type
-    fun templates() =
-            listOf(f_plusElement()) +
-            f_plusElementOperator() +
-            f_plusCollection() +
-            listOf(f_plusArray()) +
-            f_copyOf() +
-            f_copyOfRange() +
-            f_copyOfResized() +
-            f_sortPrimitives() +
-            listOf(f_sort(), f_sortWith(), f_asList()) +
-            f_asListPrimitives() +
-            f_toTypedArray()
+        }
+    }
 }
