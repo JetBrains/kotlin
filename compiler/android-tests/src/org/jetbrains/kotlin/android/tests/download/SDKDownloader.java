@@ -41,9 +41,9 @@ public class SDKDownloader {
     //NOTE: PLATFORM_TOOLS 23.1.0 requires only 64 bit build agents
     private static final String PLATFORM_TOOLS = "23.0.1";
     private static final String SDK_TOOLS = "25.1.1";
-    public static final String BUILD_TOOLS = "26.0.1";
+    public static final String BUILD_TOOLS = "26.0.2";
     private static final int ANDROID_VERSION = 19;
-    public static final String GRADLE_VERSION = "4.1";
+    public static final String GRADLE_VERSION = "4.3";
 
 
     public SDKDownloader(PathManager pathManager) {
@@ -63,7 +63,7 @@ public class SDKDownloader {
 
     private void downloadAbi() {
         download("https://dl.google.com/android/repository/sys-img/android/sysimg_armv7a-" + ANDROID_VERSION + "_r03.zip", armImage);  //Same for all platforms
-        download("https://dl.google.com/android/repository/sys-img/android/sysimg_x86-" + ANDROID_VERSION + "_r03.zip", x86Image);  //Same for all platforms
+        download("https://dl.google.com/android/repository/sys-img/android/sysimg_x86-" + ANDROID_VERSION + "_r05.zip", x86Image);  //Same for all platforms
     }
 
     public void downloadPlatformTools() {
@@ -127,7 +127,7 @@ public class SDKDownloader {
         String buildToolsFolder = buildTools + BUILD_TOOLS + "/";
         new File(buildToolsFolder).delete();
         unzip(buildToolsZipPath, buildTools);
-        new File(buildTools + "/android-8.0.0").renameTo(new File(buildToolsFolder));
+        new File(buildTools + "/android-8.1.0").renameTo(new File(buildToolsFolder));
     }
 
     public void deleteAll() {
