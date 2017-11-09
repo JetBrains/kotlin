@@ -21,7 +21,8 @@ fun Project.commonDep(coord: String): String {
     }
 }
 
-fun Project.commonDep(group: String, artifact: String): String = "$group:$artifact:${rootProject.extra["versions.$artifact"]}"
+fun Project.commonDep(group: String, artifact: String, vararg suffixesAndClassifiers: String): String =
+        "$group:$artifact${suffixesAndClassifiers.filterNot { it.startsWith(':') }.joinToString("")}:${rootProject.extra["versions.$artifact"]}${suffixesAndClassifiers.filter { it.startsWith(':') }.joinToString("")}"
 
 fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File(rootDir, "dependencies"), subdir: String? = null, optional: Boolean = false): ConfigurableFileCollection {
     val dir = if (subdir != null) File(baseDir, subdir) else baseDir

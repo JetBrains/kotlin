@@ -16,7 +16,8 @@ buildscript {
             "https://jcenter.bintray.com/",
             "https://plugins.gradle.org/m2")
             "https://plugins.gradle.org/m2",
-            "http://dl.bintray.com/kotlin/kotlinx")
+            "http://dl.bintray.com/kotlin/kotlinx",
+            "https://repo.gradle.org/gradle/libs-releases-local") // for native-platform
 
     extra["repos"] = repos
 
@@ -125,6 +126,7 @@ extra["versions.android"] = "2.3.1"
 extra["versions.kotlinx-coroutines-core"] = "0.14.1"
 extra["versions.kotlinx-coroutines-jdk8"] = "0.14.1"
 extra["versions.json"] = "20160807"
+extra["versions.native-platform"] = "0.14"
 
 // the former "ideaSdk/core" dir contents without intellij-core.jar
 extra["IntellijCoreDependencies"] =
@@ -140,6 +142,18 @@ extra["IntellijCoreDependencies"] =
                "trove4j.jar",
                "xpp3-1.1.4-min.jar",
                "xstream-*.jar")
+
+extra["nativePlatformVariants"] =
+        listOf("windows-amd64",
+               "windows-i386",
+               "osx-amd64",
+               "osx-i386",
+               "linux-amd64",
+               "linux-i386",
+               "freebsd-amd64-libcpp",
+               "freebsd-amd64-libstdcpp",
+               "freebsd-i386-libcpp",
+               "freebsd-i386-libstdcpp")
 
 extra["compilerModules"] = arrayOf(
         ":compiler:util",

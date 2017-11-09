@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 description = "Kotlin Daemon Client"
 
@@ -5,14 +6,21 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-val nativePlatformUberjar = preloadedDeps("native-platform-uberjar")
+val nativePlatformVariants: List<String> by rootProject.extra
+
+val fatJarContents by configurations.creating
 
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:daemon-common"))
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(nativePlatformUberjar)
+    compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
+    fatJarContents(project(":compiler:daemon-common"))
+    fatJarContents(commonDep("net.rubygrapefruit", "native-platform"))
+    nativePlatformVariants.forEach {
+        fatJarContents(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
+    }
 }
 
 sourceSets {
@@ -20,11 +28,9 @@ sourceSets {
     "test" {}
 }
 
-runtimeJar {
-    nativePlatformUberjar.forEach {
-        from(zipTree(it))
-    }
-    from(getSourceSetsFrom(":compiler:daemon-common")["main"].output.classesDirs)
+runtimeJar(task<ShadowJar>("shadowJar")) {
+    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
+    from(fatJarContents)
 }
 sourcesJar()
 javadocJar()

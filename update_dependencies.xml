@@ -31,8 +31,6 @@
 
     <property name="gradle.libs.repo" value="http://repo.gradle.org/gradle/libs-releases-local"/>
 
-    <property name="native-platform-lib-version" value="0.14"/>
-
     <property file="${dependencies.info.file}" prefix="dependencies.info.prev"/>
 
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies">
@@ -119,52 +117,7 @@
         </sequential>
     </macrodef>
 
-    <target name="make-native-platform-uberjar">
-        <property name="dependencies" value="${dependencies}"/>
-        <property name="download" value="${dependencies}/download"/>
-        <property name="server" value="${gradle.libs.repo}"/>
-        <property name="version" value="${native-platform-lib-version}"/>
-        <property name="common.name" value="native-platform"/>
-        <property name="common.prefix" value="${server}/net/rubygrapefruit/${common.name}"/>
-
-        <macrodef name="get-lib">
-            <attribute name="suffix"/>
-            <sequential>
-                <get src="${common.prefix}@{suffix}/${version}/${common.name}@{suffix}-${version}.jar" dest="${download}/${common.name}@{suffix}.jar" usetimestamp="true"/>
-            </sequential>
-        </macrodef>
-
-        <mkdir dir="${dependencies}"/>
-        <mkdir dir="${download}"/>
-
-        <get-lib suffix=""/>
-        <get-lib suffix="-windows-amd64"/>
-        <get-lib suffix="-windows-i386"/>
-        <get-lib suffix="-osx-amd64"/>
-        <get-lib suffix="-osx-i386"/>
-        <get-lib suffix="-linux-amd64"/>
-        <get-lib suffix="-linux-i386"/>
-        <get-lib suffix="-freebsd-amd64-libcpp"/>
-        <get-lib suffix="-freebsd-amd64-libstdcpp"/>
-        <get-lib suffix="-freebsd-i386-libcpp"/>
-        <get-lib suffix="-freebsd-i386-libstdcpp"/>
-
-        <jar destfile="${dependencies}/${common.name}-uberjar.jar">
-            <zipfileset src="${download}/${common.name}.jar" includes="**" />
-            <zipfileset src="${download}/${common.name}-windows-amd64.jar" includes="**" />
-            <zipfileset src="${download}/${common.name}-windows-i386.jar" includes="**" />
-            <zipfileset src="${download}/${common.name}-osx-amd64.jar" includes="**" />
-            <zipfileset src="${download}/${common.name}-osx-i386.jar" includes="**" />
-            <zipfileset src="${download}/${common.name}-linux-amd64.jar" includes="**" />
-            <zipfileset src="${download}/${common.name}-linux-i386.jar" includes="**" />
-            <zipfileset src="${download}/${common.name}-freebsd-amd64-libcpp.jar" includes="**" />
-            <zipfileset src="${download}/${common.name}-freebsd-amd64-libstdcpp.jar" includes="**" />
-            <zipfileset src="${download}/${common.name}-freebsd-i386-libcpp.jar" includes="**" />
-            <zipfileset src="${download}/${common.name}-freebsd-i386-libstdcpp.jar" includes="**" />
-        </jar>
-    </target>
-
-    <target name="fetch-third-party" depends="get-ivy-library, make-dependency-dirs, make-native-platform-uberjar">
+    <target name="fetch-third-party" depends="get-ivy-library, make-dependency-dirs">
         <!-- ProGuard -->
         <get-maven-library prefix="net/sf/proguard" lib="proguard-base" version="5.3" target.jar.name.base="proguard" src="false"/>
         <get-maven-library prefix="net/sf/proguard" lib="proguard-anttask" version="5.3" target.jar.name.base="proguard-anttask" src="false"/>
