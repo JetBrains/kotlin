@@ -21,6 +21,7 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
+import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpression
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
@@ -63,6 +65,7 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 private fun KtDeclaration.processHierarchyDownward(scope: SearchScope, processor: KtDeclaration.() -> Unit) {
@@ -228,6 +231,16 @@ class InflowSlicer(
         if (function is KtPropertyAccessor && function.isSetter) {
             function.property.processPropertyAssignments()
             return
+        }
+
+        if (function is KtNamedFunction
+            && function.name == OperatorNameConventions.SET_VALUE.asString()
+            && function.hasModifier(KtTokens.OPERATOR_KEYWORD)) {
+
+            ReferencesSearch
+                    .search(function, parentUsage.scope.toSearchScope())
+                    .filterIsInstance<KtPropertyDelegationMethodsReference>()
+                    .forEach { (it.element?.parent as? KtProperty)?.processPropertyAssignments() }
         }
 
         val parameterDescriptor = analyze()[BindingContext.VALUE_PARAMETER, this] ?: return
