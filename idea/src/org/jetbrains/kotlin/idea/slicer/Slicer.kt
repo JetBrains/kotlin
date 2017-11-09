@@ -157,7 +157,8 @@ class InflowSlicer(
     private fun KtDeclaration.processAssignments(accessSearchScope: SearchScope) {
         processVariableAccesses(accessSearchScope, Access.Write) body@ {
             val refExpression = it.element as? KtExpression ?: return@body
-            val rhs = KtPsiUtil.safeDeparenthesize(refExpression).getAssignmentByLHS()?.right ?: return@body
+            val rhs = KtPsiUtil.safeDeparenthesize(refExpression).getQualifiedExpressionForSelectorOrThis().getAssignmentByLHS()?.right
+                      ?: return@body
             rhs.passToProcessorAsValue()
         }
     }
