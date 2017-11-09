@@ -14,47 +14,64 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.intentions
+package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.util.TextRange
+import com.intellij.codeInspection.*
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.inspections.replaceWithBranch
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.isFalseConstant
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.isTrueConstant
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtWhenConditionWithExpression
-import org.jetbrains.kotlin.psi.KtWhenEntry
-import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
-class SimplifyWhenWithBooleanConstantConditionIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Simplify when expression") {
+class SimplifyWhenWithBooleanConstantConditionInspection : AbstractKotlinInspection() {
 
-    override fun applicabilityRange(element: KtWhenExpression): TextRange? {
-        if (element.closeBrace == null) return null
-        if (element.subjectExpression != null) return null
-        if (element.entries.none { it.isTrueConstantCondition() || it.isFalseConstantCondition() }) return null
-        return element.whenKeyword.textRange
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
+        return object : KtVisitorVoid() {
+
+            override fun visitWhenExpression(expression: KtWhenExpression) {
+                super.visitWhenExpression(expression)
+
+                if (expression.closeBrace == null) return
+                if (expression.subjectExpression != null) return
+                if (expression.entries.none { it.isTrueConstantCondition() || it.isFalseConstantCondition() }) return
+
+                holder.registerProblem(expression.whenKeyword,
+                                       "This 'when' is simplifiable",
+                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                       SimplifyWhenFix())
+            }
+
+        }
     }
+}
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
+private class SimplifyWhenFix : LocalQuickFix {
+    override fun getName() = "Simplify 'when'"
+
+    override fun getFamilyName() = name
+
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        val element = descriptor.psiElement.getStrictParentOfType<KtWhenExpression>() ?: return
         val closeBrace = element.closeBrace ?: return
-        val project = editor?.project ?: return
         val factory = KtPsiFactory(project)
         val usedAsExpression = element.isUsedAsExpression(element.analyze())
-        element.deleteFalseEntry(usedAsExpression)
+        element.deleteFalseEntries(usedAsExpression)
         element.replaceTrueEntry(usedAsExpression, closeBrace, factory)
     }
 }
 
-private fun KtWhenExpression.deleteFalseEntry(usedAsExpression: Boolean) {
+private fun KtWhenExpression.deleteFalseEntries(usedAsExpression: Boolean) {
     for (entry in entries) {
         if (entry.isFalseConstantCondition()) {
             entry.delete()
         }
     }
 
+    val entries = entries
     if (entries.isEmpty() && !usedAsExpression) {
         delete()
     }
@@ -64,6 +81,7 @@ private fun KtWhenExpression.deleteFalseEntry(usedAsExpression: Boolean) {
 }
 
 private fun KtWhenExpression.replaceTrueEntry(usedAsExpression: Boolean, closeBrace: PsiElement, factory: KtPsiFactory) {
+    val entries = entries
     val trueIndex = entries.indexOfFirst { it.isTrueConstantCondition() }
     if (trueIndex == -1) return
 
@@ -74,8 +92,8 @@ private fun KtWhenExpression.replaceTrueEntry(usedAsExpression: Boolean, closeBr
     }
     else {
         val elseEntry = factory.createWhenEntry("else -> ${expression.text}")
-        for (index in trueIndex until entries.size) {
-            entries[index].delete()
+        for (entry in entries.subList(trueIndex, entries.size)) {
+            entry.delete()
         }
         addBefore(elseEntry, closeBrace)
     }

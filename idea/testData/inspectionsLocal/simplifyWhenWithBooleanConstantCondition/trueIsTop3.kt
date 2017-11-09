@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 fun test() {
-    when<caret> {
+    wh<caret>en {
         true -> {
             println(1)
         }
