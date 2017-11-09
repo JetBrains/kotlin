@@ -23,4 +23,7 @@ sourceSets {
 runtimeJar()
 dist()
 
+javadocJar()
+sourcesJar()
+
 publish()
