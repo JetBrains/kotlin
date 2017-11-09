@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.context;
 
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil;
@@ -116,9 +117,10 @@ public interface LocalLookup {
                     return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true, StackValue.LOCAL_0, vd);
                 }
 
-                String localFunClassName = callableClass.getName().asString();
-                int localClassIndexStart = localFunClassName.lastIndexOf('$');
-                String localFunSuffix = localClassIndexStart >= 0 ? localFunClassName.substring(localClassIndexStart) : "";
+                String internalName = localType.getInternalName();
+                String simpleName = StringsKt.substringAfterLast(internalName, "/", internalName);
+                int localClassIndexStart = simpleName.lastIndexOf('$');
+                String localFunSuffix = localClassIndexStart >= 0 ? simpleName.substring(localClassIndexStart) : "";
 
                 String fieldName = "$" + vd.getName() + localFunSuffix;
                 StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(localType, classType, fieldName, false,
