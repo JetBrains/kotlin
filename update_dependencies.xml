@@ -240,8 +240,6 @@
             <mapper type="flatten"/>
         </unzip>
 
-        <get-protobuf-and-rename-packages/>
-
         <download_teamcity_artifact
             teamcity.server.url="https://teamcity.jetbrains.com"
             build.locator.request="${markdown.locator}"
@@ -252,68 +250,6 @@
         />
 
     </target>
-
-    <macrodef name="get-protobuf-and-rename-packages">
-        <sequential>
-            <macrodef name="rename-packages-in-binaries">
-                <attribute name="target.jar"/>
-                <attribute name="source.jar"/>
-
-                <sequential>
-                    <delete file="@{target.jar}" failonerror="false"/>
-                    <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${dependencies}/jarjar.jar"/>
-                    <jarjar jarfile="@{target.jar}" filesonly="true">
-                        <zipfileset src="@{source.jar}">
-                            <exclude name="META-INF/maven/com.google.protobuf/protobuf-java/pom.properties"/>
-                        </zipfileset>
-                        <rule pattern="com.google.protobuf.**" result="org.jetbrains.kotlin.protobuf.@1"/>
-                    </jarjar>
-                </sequential>
-            </macrodef>
-
-            <macrodef name="rename-packages-in-sources">
-                <attribute name="target.jar"/>
-                <attribute name="source.jar"/>
-
-                <sequential>
-                    <local name="tmp.src"/>
-                    <property name="tmp.src" value="${dependencies}/download/protobuf-src"/>
-
-                    <delete dir="${tmp.src}" failonerror="false"/>
-                    <unzip src="@{source.jar}" dest="${tmp.src}">
-                        <patternset includes="**/*"/>
-                    </unzip>
-
-                    <replaceregexp match="com\.google\.protobuf" replace="org.jetbrains.kotlin.protobuf" flags="g">
-                        <fileset dir="${tmp.src}/" includes="**/*.java"/>
-                    </replaceregexp>
-
-                    <move file="${tmp.src}/com/google/protobuf"
-                          tofile="${tmp.src}/org/jetbrains/kotlin/protobuf"/>
-
-                    <delete file="@{target.jar}" failonerror="false"/>
-                    <zip destfile="@{target.jar}" basedir="${tmp.src}"/>
-                </sequential>
-            </macrodef>
-
-            <property name="protobuf.version" value="2.6.1"/>
-
-            <!-- Download protobuf and rename packages -->
-            <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="${protobuf.version}"/>
-            <delete file="${dependencies}/protobuf-java-${protobuf.version}.jar"/>
-            <delete file="${dependencies}/protobuf-java-${protobuf.version}-sources.jar"/>
-
-            <rename-packages-in-binaries
-                source.jar="${dependencies}/download/protobuf-java-${protobuf.version}.jar"
-                target.jar="${dependencies}/protobuf-${protobuf.version}.jar"
-            />
-
-            <rename-packages-in-sources
-                source.jar="${dependencies}/download/protobuf-java-${protobuf.version}-sources.jar"
-                target.jar="${dependencies}/protobuf-${protobuf.version}-sources.jar"
-            />
-        </sequential>
-    </macrodef>
 
     <macrodef name="download_teamcity_artifact">
         <attribute name="teamcity.server.url"/>

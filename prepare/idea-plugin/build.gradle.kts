@@ -63,7 +63,7 @@ val packedJars by configurations.creating
 val sideJars by configurations.creating
 
 dependencies {
-    packedJars(preloadedDeps("protobuf-${rootProject.extra["versions.protobuf-java"]}"))
+    packedJars(protobufFull())
     packedJars(project(":core:builtins", configuration = "builtins"))
     sideJars(projectDist(":kotlin-script-runtime"))
     sideJars(projectDist(":kotlin-stdlib"))

@@ -53,13 +53,14 @@ fun DependencyHandler.projectArchives(name: String): ProjectDependency = project
 fun DependencyHandler.projectClasses(name: String): ProjectDependency = project(name, configuration = "classes-dirs")
 
 val protobufLiteProject = ":custom-dependencies:protobuf-lite"
+val protobufRelocatedProject = ":custom-dependencies:protobuf-relocated"
 fun DependencyHandler.protobufLite(): ProjectDependency =
         project(protobufLiteProject, configuration = "default").apply { isTransitive = false }
 val protobufLiteTask = "$protobufLiteProject:prepare"
 
 fun DependencyHandler.protobufFull(): ProjectDependency =
-        project(protobufLiteProject, configuration = "relocated").apply { isTransitive = false }
-val protobufFullTask = "$protobufLiteProject:prepare-relocated-protobuf"
+        project(protobufRelocatedProject, configuration = "default").apply { isTransitive = false }
+val protobufFullTask = "$protobufLiteProject:prepare"
 
 fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
 
