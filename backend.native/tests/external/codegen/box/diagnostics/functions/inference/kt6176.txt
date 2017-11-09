@@ -1,6 +1,0 @@
-package
-
-public fun box(): kotlin.String
-public fun </*0*/ R> foo(/*0*/ f: () -> R): R
-public fun </*0*/ T : kotlin.Any> some(/*0*/ v: T?, /*1*/ b: T): T
-public fun </*0*/ T : kotlin.Any> some1(/*0*/ v: T?, /*1*/ b: T): T
