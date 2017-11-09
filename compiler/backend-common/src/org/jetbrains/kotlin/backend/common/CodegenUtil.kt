@@ -146,14 +146,14 @@ object CodegenUtil {
 
 
     @JvmStatic
-    fun BindingContext.isExhaustive(whenExpression: KtWhenExpression, isStatement: Boolean): Boolean {
-        val slice = if (isStatement && !whenExpression.isUsedAsExpression(this)) {
+    fun isExhaustive(bindingContext: BindingContext, whenExpression: KtWhenExpression, isStatement: Boolean): Boolean {
+        val slice = if (isStatement && !whenExpression.isUsedAsExpression(bindingContext)) {
             BindingContext.IMPLICIT_EXHAUSTIVE_WHEN
         }
         else {
             BindingContext.EXHAUSTIVE_WHEN
         }
-        return this[slice, whenExpression] == true
+        return bindingContext[slice, whenExpression] == true
     }
 
     @JvmStatic
