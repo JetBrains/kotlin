@@ -347,11 +347,20 @@ internal class KotlinCommonSourceSetProcessor(
 
         project.afterEvaluate { project ->
             kotlinTask.source(kotlinSourceSet.kotlin)
+
+            val subpluginEnvironment: SubpluginEnvironment = loadSubplugins(project)
+            val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
+                    project, kotlinTask, kotlinTask, null, null, sourceSet)
+
             project.tasks.findByName(sourceSet.classesTaskName).dependsOn(kotlinTask)
             // can be missing (e.g. in case of tests)
             project.tasks.findByName(sourceSet.jarTaskName)?.dependsOn(kotlinTask)
             val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
             project.tasks.remove(javaTask)
+
+            appliedPlugins
+                    .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
+                    .forEach { it.source(kotlinSourceSet.kotlin) }
         }
     }
 
