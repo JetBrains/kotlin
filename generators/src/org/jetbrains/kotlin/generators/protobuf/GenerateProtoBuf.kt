@@ -69,8 +69,11 @@ fun main(args: Array<String>) {
 
         for (protoPath in PROTO_PATHS) {
             execProtoc(protoPath.file, protoPath.outPath)
+            renamePackages(protoPath.file, protoPath.outPath)
             modifyAndExecProtoc(protoPath)
         }
+
+        generateJvmPackageTableToBuildSrc()
 
         println()
         println("Do not forget to run GenerateProtoBufCompare")
@@ -108,8 +111,6 @@ private fun execProtoc(protoPath: String, outPath: String) {
     if (processOutput.stderr.isNotEmpty()) {
         throw AssertionError(processOutput.stderr)
     }
-
-    renamePackages(protoPath, outPath)
 }
 
 private fun renamePackages(protoPath: String, outPath: String) {
@@ -143,7 +144,9 @@ private fun modifyAndExecProtoc(protoPath: ProtoPath) {
     debugProtoFile.writeText(modifyForDebug(protoPath))
     debugProtoFile.deleteOnExit()
 
-    execProtoc(debugProtoFile.path, "build-common/test")
+    val outPath = "build-common/test"
+    execProtoc(debugProtoFile.path, outPath)
+    renamePackages(debugProtoFile.path, outPath)
 }
 
 private fun modifyForDebug(protoPath: ProtoPath): String {
@@ -157,4 +160,8 @@ private fun modifyForDebug(protoPath: ProtoPath): String {
         text = text.replace(file, newFile)
     }
     return text
+}
+
+private fun generateJvmPackageTableToBuildSrc() {
+    execProtoc("core/descriptors.jvm/src/jvm_package_table.proto", "buildSrc/src/main/java")
 }

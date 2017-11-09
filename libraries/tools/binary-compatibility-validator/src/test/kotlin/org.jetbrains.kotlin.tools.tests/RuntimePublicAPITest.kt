@@ -58,7 +58,7 @@ class RuntimePublicAPITest {
     }
 
     @Test fun kotlinReflect() {
-        snapshotAPIAndCompare("../../reflect/build/libs", "kotlin-reflect(?!-[-a-z]+)", listOf("../reflect-declarations.json"), nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
+        snapshotAPIAndCompare("../../reflect/api/build/libs", "kotlin-reflect-api(?!-[-a-z]+)", listOf("../reflect-declarations.json"), nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
     }
 
 

@@ -1,0 +1,32 @@
+description = ''
+
+apply plugin: 'kotlin'
+
+configureJvm6Project(project)
+
+sourceSets {
+    main {
+        java {
+            srcDir "${rootDir}/core/reflection.jvm/src"
+        }
+    }
+}
+
+dependencies {
+    compileOnly project(':kotlin-stdlib')
+    compileOnly project(':core:descriptors')
+    compileOnly project(':core:descriptors.jvm')
+    compileOnly project(':core:deserialization')
+    compileOnly project(':core:descriptors.runtime')
+    compileOnly project(':core:util.runtime')
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-version",
+                            "-Xallow-kotlin-package",
+                            "-Xnormalize-constructor-calls=enable",
+                            "-module-name", "kotlin-reflection",
+                            "-Xdump-declarations-to=${buildDir}/reflect-declarations.json"]
+    }
+}

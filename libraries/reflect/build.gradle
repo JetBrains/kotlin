@@ -13,11 +13,10 @@ buildscript {
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'kotlin'
+apply plugin: 'java'
 
-configureJvm6Project(project)
+configureJavaOnlyJvm6Project(project)
 configurePublishing(project)
-
 
 def core = "${rootDir}/core"
 def annotationsSrc = "${buildDir}/annotations"
@@ -27,7 +26,6 @@ sourceSets {
     main {
         java {
             srcDir annotationsSrc
-            srcDir "${core}/reflection.jvm/src"
         }
     }
 }
@@ -40,7 +38,11 @@ configurations {
 }
 
 dependencies {
+    compile project(':kotlin-stdlib')
+
     proguardDeps project(':kotlin-stdlib')
+
+    shadows project(':kotlin-reflect-api')
     shadows project(':core:descriptors')
     shadows project(':core:descriptors.jvm')
     shadows project(':core:deserialization')
@@ -48,9 +50,6 @@ dependencies {
     shadows project(':core:util.runtime')
     shadows 'javax.inject:javax.inject:1'
     shadows project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
-
-    compile project(':kotlin-stdlib')
-    compileOnly project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
 }
 
 task copyAnnotations(type: Sync) {
@@ -69,21 +68,6 @@ compileJava {
     // options.compilerArgs.addAll(["-Xlint:unchecked"])
 }
 
-compileKotlin {
-    dependsOn copyAnnotations
-    dependsOn ':custom-dependencies:protobuf-lite:prepare'
-    kotlinOptions {
-        freeCompilerArgs = ["-version",
-                            "-Xallow-kotlin-package",
-                            "-Xnormalize-constructor-calls=enable",
-                            "-module-name", "kotlin-reflection",
-                            "-Xdump-declarations-to=${buildDir}/reflect-declarations.json"]
-    }
-}
-
-kotlin.experimental.coroutines "enable"
-
-
 task reflectShadowJar(type: ShadowJar) {
     classifier = 'shadow'
     version = null
@@ -96,6 +80,8 @@ task reflectShadowJar(type: ShadowJar) {
     from(project(":core:deserialization").sourceSets.main.resources) {
         include 'META-INF/services/**'
     }
+
+    transform(new KotlinModuleShadowTransformer(logger))
 
     configurations = [project.configurations.shadows]
     relocate 'org.jetbrains.kotlin', 'kotlin.reflect.jvm.internal.impl'
