@@ -62,8 +62,8 @@ public class SDKDownloader {
     }
 
     private void downloadAbi() {
-        download("https://dl.google.com/android/repository/sys-img/android/sysimg_armv7a-" + ANDROID_VERSION + "_r03.zip", armImage);  //Same for all platforms
-        download("https://dl.google.com/android/repository/sys-img/android/sysimg_x86-" + ANDROID_VERSION + "_r05.zip", x86Image);  //Same for all platforms
+        download("https://dl.google.com/android/repository/sys-img/android/armeabi-v7a-" + ANDROID_VERSION + "_r05.zip", armImage);  //Same for all platforms
+        download("https://dl.google.com/android/repository/sys-img/android/x86-" + ANDROID_VERSION + "_r06.zip", x86Image);  //Same for all platforms
     }
 
     public void downloadPlatformTools() {
