@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-
-object Test {
-    @JvmStatic
-    @JvmName("main")
-    fun <caret>test(args: Array<String>) {
-    }
-}

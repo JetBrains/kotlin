@@ -1338,7 +1338,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateTraitMethods() {
-        if (isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, state)) return;
+        if (isInterfaceWithoutDefaults(descriptor, state)) return;
 
         List<FunctionDescriptor> restrictedInheritance = new ArrayList<>();
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {

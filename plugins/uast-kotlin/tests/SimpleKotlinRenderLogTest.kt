@@ -1,5 +1,9 @@
 package org.jetbrains.uast.test.kotlin
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtVisitor
 import org.junit.Test
 
 class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
@@ -24,6 +28,8 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
     @Test fun testEnumValueMembers() = doTest("EnumValueMembers")
 
     @Test fun testStringTemplate() = doTest("StringTemplate")
+
+    @Test fun testStringTemplateComplex() = doTest("StringTemplateComplex")
 
     @Test fun testQualifiedConstructorCall() = doTest("QualifiedConstructorCall")
 

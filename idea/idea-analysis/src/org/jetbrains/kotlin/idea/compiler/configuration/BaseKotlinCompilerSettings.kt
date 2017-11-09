@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.compiler.configuration
 
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR
+import com.intellij.util.ReflectionUtil
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
@@ -64,7 +65,12 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor()
     override fun getState() = XmlSerializer.serialize(_settings, SKIP_DEFAULT_VALUES)
 
     override fun loadState(state: Element) {
-        _settings = XmlSerializer.deserialize(state, _settings.javaClass)
+        _settings = ReflectionUtil.newInstance(_settings.javaClass).apply {
+            if (this is CommonCompilerArguments) {
+                freeArgs = ArrayList()
+            }
+            XmlSerializer.deserializeInto(this, state)
+        }
     }
 
     public override fun clone(): Any = super.clone()

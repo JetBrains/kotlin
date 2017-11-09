@@ -50,6 +50,10 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 val receiverTypeReference = callableDeclaration.receiverTypeReference
                 if (receiverTypeReference == null || receiverTypeReference.textRange.isEmpty) return
 
+                val context = receiverTypeReference.analyze()
+                val receiverType = context[BindingContext.TYPE, receiverTypeReference] ?: return
+                if (DescriptorUtils.isCompanionObject(receiverType.constructor.declarationDescriptor)) return
+
                 if (callableDeclaration.isOverridable() ||
                     callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) ||
                     callableDeclaration.hasModifier(KtTokens.OPERATOR_KEYWORD) ||

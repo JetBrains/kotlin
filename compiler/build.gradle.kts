@@ -35,6 +35,8 @@ val testDistProjects = listOf(
         ":kotlin-annotations-jvm",
         ":kotlin-annotations-android")
 
+val testJvm6ServerRuntime by configurations.creating
+
 dependencies {
     depDistProjects.forEach {
         testCompile(projectDist(it))
@@ -43,7 +45,6 @@ dependencies {
     testCompileOnly(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:tests-common-jvm6"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
@@ -59,6 +60,8 @@ dependencies {
     testRuntime(ideaSdkCoreDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
+
+    testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))
 }
 
 sourceSets {
@@ -88,8 +91,6 @@ projectTest {
     systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
 }
 
-evaluationDependsOn(":compiler:tests-common-jvm6")
-
 fun Project.codegenTest(target: Int, jvm: Int,
                         jdk: String = "JDK_${if (jvm <= 8) "1" else ""}$jvm",
                         body: Test.() -> Unit): Test = projectTest("codegenTarget${target}Jvm${jvm}Test") {
@@ -115,7 +116,7 @@ fun Project.codegenTest(target: Int, jvm: Int,
 }
 
 codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
-    dependsOn(":compiler:tests-common-jvm6:build")
+    dependsOn(testJvm6ServerRuntime)
 
     val port = project.findProperty("kotlin.compiler.codegen.tests.port")?.toString() ?: "5100"
     var jdkProcess: Process? = null
@@ -125,11 +126,7 @@ codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
         val jdkPath = project.findProperty("JDK_16") ?: error("JDK_16 is not optional to run this test")
         val executable = "$jdkPath/bin/java"
         val main = "org.jetbrains.kotlin.test.clientserver.TestProcessServer"
-
-        val classpath = getSourceSetsFrom(":compiler:tests-common-jvm6")["main"].output.asPath + ":" +
-                getSourceSetsFrom(":kotlin-stdlib")["main"].output.asPath + ":" +
-                getSourceSetsFrom(":kotlin-stdlib")["builtins"].output.asPath + ":" +
-                getSourceSetsFrom(":kotlin-test:kotlin-test-jvm")["main"].output.asPath
+        val classpath = testJvm6ServerRuntime.asPath
 
         logger.debug("Server classpath: $classpath")
 

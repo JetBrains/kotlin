@@ -63,7 +63,8 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
 fun KotlinFacetSettings.initializeIfNeeded(
         module: Module,
         rootModel: ModuleRootModel?,
-        platformKind: TargetPlatformKind<*>? = null // if null, detect by module dependencies
+        platformKind: TargetPlatformKind<*>? = null, // if null, detect by module dependencies
+        languageVersion: String? = null
 ) {
     val project = module.project
 
@@ -83,7 +84,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
 
     if (languageLevel == null) {
         languageLevel = (if (useProjectSettings) LanguageVersion.fromVersionString(commonArguments.languageVersion) else null)
-                        ?: getDefaultLanguageLevel(module)
+                        ?: getDefaultLanguageLevel(module, languageVersion)
     }
 
     if (apiLevel == null) {
@@ -209,8 +210,12 @@ fun KotlinFacet.configureFacet(
     with(configuration.settings) {
         compilerArguments = null
         compilerSettings = null
-        initializeIfNeeded(module, modelsProvider.getModifiableRootModel(module), platformKind)
-        languageLevel = LanguageVersion.fromFullVersionString(compilerVersion) ?: LanguageVersion.LATEST_STABLE
+        initializeIfNeeded(
+                module,
+                modelsProvider.getModifiableRootModel(module),
+                platformKind,
+                compilerVersion
+        )
         // Both apiLevel and languageLevel should be initialized in the lines above
         if (apiLevel!! > languageLevel!!) {
             apiLevel = languageLevel

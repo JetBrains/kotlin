@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
@@ -192,8 +193,12 @@ object ArrayFIF : CompositeFIF() {
             }
             invocation.inlineStrategy = InlineStrategy.IN_PLACE
             val descriptor = callInfo.resolvedCall.resultingDescriptor.original
-            invocation.descriptor = descriptor
-            context.addInlineCall(descriptor)
+            val resolvedDescriptor = when (descriptor) {
+                is TypeAliasConstructorDescriptor -> descriptor.underlyingConstructorDescriptor
+                else -> descriptor
+            }
+            invocation.descriptor = resolvedDescriptor
+            context.addInlineCall(resolvedDescriptor)
             invocation
         }
     }

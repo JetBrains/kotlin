@@ -22,12 +22,15 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasRestrictsSuspensionAnnotation
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
@@ -42,17 +45,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object CoroutineSuspendCallChecker : CallChecker {
     private val ALLOWED_SCOPE_KINDS = setOf(LexicalScopeKind.FUNCTION_INNER_SCOPE, LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING)
+    private val COROUTINE_CONTEXT_FQ_NAME = FqName("kotlin.coroutines.experimental.intrinsics.coroutineContext")
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
-        if (!descriptor.isSuspend) return
+        val descriptor = resolvedCall.candidateDescriptor
+        when (descriptor) {
+            is FunctionDescriptor -> if (!descriptor.isSuspend) return
+            is PropertyDescriptor -> if (descriptor.fqNameSafe != COROUTINE_CONTEXT_FQ_NAME) return
+            else -> return
+        }
 
-        val enclosingSuspendFunction =
-                context.scope
-                        .parentsWithSelf.firstOrNull {
-                                it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS &&
-                                    it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
-                        }?.cast<LexicalScope>()?.ownerDescriptor?.cast<FunctionDescriptor>()
+        val enclosingSuspendFunction = context.scope
+                .parentsWithSelf.firstOrNull {
+            it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS &&
+            it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
+        }?.cast<LexicalScope>()?.ownerDescriptor?.cast<FunctionDescriptor>()
 
         when {
             enclosingSuspendFunction != null -> {
@@ -70,7 +77,10 @@ object CoroutineSuspendCallChecker : CallChecker {
                 checkRestrictsSuspension(enclosingSuspendFunction, resolvedCall, reportOn, context)
             }
             else -> {
-                context.trace.report(Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(reportOn, resolvedCall.candidateDescriptor))
+                when (descriptor) {
+                    is FunctionDescriptor -> context.trace.report(Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(reportOn, resolvedCall.candidateDescriptor))
+                    is PropertyDescriptor -> context.trace.report(Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS.on(reportOn, resolvedCall.candidateDescriptor))
+                }
             }
         }
     }

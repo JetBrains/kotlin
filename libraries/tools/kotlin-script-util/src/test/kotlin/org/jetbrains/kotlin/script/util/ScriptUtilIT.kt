@@ -145,7 +145,7 @@ done
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
             }
 
-            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             try {
                 return KotlinToJVMBytecodeCompiler.compileScript(environment)
@@ -164,12 +164,6 @@ done
         finally {
             Disposer.dispose(rootDisposable)
         }
-    }
-
-    private inline fun <R> ifFailed(default: R, block: () -> R) = try {
-        block()
-    } catch (t: Throwable) {
-        default
     }
 
     private fun String.linesSplitTrim() =
