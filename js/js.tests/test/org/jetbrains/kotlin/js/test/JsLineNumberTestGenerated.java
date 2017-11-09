@@ -306,6 +306,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("whenEntryWithMultipleConditionsNonOptimized.kt")
+    public void testWhenEntryWithMultipleConditionsNonOptimized() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/whenEntryWithMultipleConditionsNonOptimized.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("whenIn.kt")
     public void testWhenIn() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/whenIn.kt");

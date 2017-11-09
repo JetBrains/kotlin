@@ -31,12 +31,14 @@ import org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.KotlinType
 
 class WhenTranslator
 private constructor(private val whenExpression: KtWhenExpression, context: TranslationContext) : AbstractTranslator(context) {
     private val expressionToMatch: JsExpression?
     private val type: KotlinType?
+    private val uniqueConstants = mutableSetOf<Any>()
 
     private val isExhaustive: Boolean
         get() {
@@ -53,9 +55,27 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
     }
 
     private fun translate(): JsNode {
-        var currentIf: JsIf? = null
-        var resultIf: JsIf? = null
-        for (entry in whenExpression.entries) {
+        var resultIf: JsNode? = null
+        var setWhenStatement: (JsStatement) -> Unit = { resultIf = it }
+
+        var i = 0
+        var hasElse = false
+        while (i < whenExpression.entries.size) {
+            val asSwitch = translateAsSwitch(i)
+            if (asSwitch != null) {
+                val (jsSwitch, next) = asSwitch
+                setWhenStatement(jsSwitch)
+                setWhenStatement = { whenStatement ->
+                    jsSwitch.cases += JsDefault().apply {
+                        statements += whenStatement
+                        statements += JsBreak().apply { source = whenExpression }
+                    }
+                }
+                i = next
+                continue
+            }
+
+            val entry = whenExpression.entries[i++]
             val statementBlock = JsBlock()
             var statement = translateEntryExpression(entry, context(), statementBlock)
 
@@ -65,32 +85,90 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
             }
             statement = JsAstUtils.mergeStatementInBlockIfNeeded(statement, statementBlock)
 
-            if (resultIf == null) {
-                currentIf = JsAstUtils.newJsIf(translateConditions(entry, context()), statement)
-                currentIf.source = entry
-                resultIf = currentIf
+            val conditionsBlock = JsBlock()
+            if (entry.isElse) {
+                hasElse = true
+                setWhenStatement(statement)
+                break
             }
-            else {
-                currentIf!!
-                if (entry.isElse) {
-                    currentIf.elseStatement = statement
-                    return resultIf
-                }
-                val conditionsBlock = JsBlock()
-                val nextIf = JsAstUtils.newJsIf(translateConditions(entry, context().innerBlock(conditionsBlock)), statement)
-                nextIf.source = entry
-                val statementToAdd = JsAstUtils.mergeStatementInBlockIfNeeded(nextIf, conditionsBlock)
-                currentIf.elseStatement = statementToAdd
-                currentIf = nextIf
-            }
+            val jsIf = JsAstUtils.newJsIf(translateConditions(entry, context().innerBlock(conditionsBlock)), statement)
+            jsIf.source = entry
+
+            val statementToAdd = JsAstUtils.mergeStatementInBlockIfNeeded(jsIf, conditionsBlock)
+            setWhenStatement(statementToAdd)
+            setWhenStatement = { jsIf.elseStatement = it }
         }
 
-        if (currentIf != null && currentIf.elseStatement == null && isExhaustive) {
+        if (isExhaustive && !hasElse) {
             val noWhenMatchedInvocation = JsInvocation(JsAstUtils.pureFqn("noWhenBranchMatched", Namer.kotlinObject()))
-            currentIf.elseStatement = JsAstUtils.asSyntheticStatement(noWhenMatchedInvocation)
+            setWhenStatement(JsAstUtils.asSyntheticStatement(noWhenMatchedInvocation))
         }
 
-        return if (resultIf != null) resultIf else JsNullLiteral()
+        return if (resultIf != null) resultIf!! else JsNullLiteral()
+    }
+
+    private fun translateAsSwitch(fromIndex: Int): Pair<JsSwitch, Int>? {
+        val expectedType = type ?: return null
+        val subject = expressionToMatch ?: return null
+
+        val entries = whenExpression.entries
+        val entriesForSwitch = mutableListOf<Pair<List<JsExpression>, KtWhenEntry>>()
+        var i = fromIndex
+        while (i < entries.size) {
+            val entry = entries[i]
+            if (entry.isElse) break
+
+            var hasImproperConstants = false
+            val constantValues = entry.conditions.mapNotNull { condition ->
+                val expression = (condition as? KtWhenConditionWithExpression)?.expression
+                expression?.let { ConstantExpressionEvaluator.getConstant(it, bindingContext())?.getValue(expectedType) } ?: run {
+                    hasImproperConstants = true
+                    null
+                }
+            }
+            if (hasImproperConstants) break
+
+            val constants = constantValues.filter { uniqueConstants.add(it) }.mapNotNull { value ->
+                when (value) {
+                    is String -> JsStringLiteral(value)
+                    is Int -> JsIntLiteral(value)
+                    is Short -> JsIntLiteral(value.toInt())
+                    is Byte -> JsIntLiteral(value.toInt())
+                    else -> {
+                        hasImproperConstants = true
+                        null
+                    }
+                }
+            }
+            if (hasImproperConstants) break
+
+            if (constants.isNotEmpty()) {
+                entriesForSwitch += Pair(constants, entry)
+            }
+            i++
+        }
+
+        return if (entriesForSwitch.asSequence().map { it.first.size }.sum() > 1) {
+            val switchEntries = mutableListOf<JsSwitchMember>()
+            entriesForSwitch.flatMapTo(switchEntries) { (conditions, entry) ->
+                val members = conditions.map {
+                    JsCase().apply {
+                        caseExpression = it.source(entry)
+                    }
+                }
+                val block = JsBlock()
+                val statement = translateEntryExpression(entry, context(), block)
+                val lastEntry = members.last()
+                lastEntry.statements += block.statements
+                lastEntry.statements += statement
+                lastEntry.statements += JsBreak().apply { source = entry }
+                members
+            }
+            Pair(JsSwitch(subject, switchEntries).apply { source = expression }, i)
+        }
+        else {
+            null
+        }
     }
 
     private fun translateEntryExpression(
