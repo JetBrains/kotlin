@@ -54,6 +54,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inflow/compositeAssignments.kt")
+    public void testInflow_CompositeAssignments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/compositeAssignments.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/defaultGetterFieldInSetter.kt")
     public void testInflow_DefaultGetterFieldInSetter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/defaultGetterFieldInSetter.kt");
