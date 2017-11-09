@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
@@ -47,6 +45,7 @@ open class SerialTypeInfo(
 fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
     val T = property.type
     return when {
+        T.isTypeParameter() -> SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", null)
         T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(property,
                                                                      T.nameIfStandardType.toString().capitalize())
         KotlinBuiltIns.isString(T) -> SerialTypeInfo(property, "String")
@@ -71,6 +70,7 @@ fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
 
 fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
     return if (kType.requiresPolymorphism()) findPolymorphicSerializer(module)
+    else if (kType.isTypeParameter()) return null
     else kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
          ?: findStandardKotlinTypeSerializer(module, kType) // otherwise see if there is a standard serializer
          ?: findEnumTypeSerializer(module, kType)
@@ -89,6 +89,7 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "D", "kotlin.Double" -> "DoubleSerializer"
         "C", "kotlin.Char" -> "CharSerializer"
         "kotlin.String" -> "StringSerializer"
+        "kotlin.Pair" -> "PairSerializer"
         "kotlin.collections.Collection", "kotlin.collections.List", "kotlin.collections.ArrayList" -> "ArrayListSerializer"
         "kotlin.collections.Set", "kotlin.collections.LinkedHashSet" -> "LinkedHashSetSerializer"
         "kotlin.collections.HashSet" -> "HashSetSerializer"

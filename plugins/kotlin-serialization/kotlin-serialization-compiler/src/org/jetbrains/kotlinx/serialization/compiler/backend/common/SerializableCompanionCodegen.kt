@@ -33,7 +33,5 @@ abstract class SerializableCompanionCodegen(declaration: KtPureClassOrObject, bi
         generateSerializerGetter(fser)
     }
 
-    protected open fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
-        TODO("js")
-    }
+    protected abstract fun generateSerializerGetter(methodDescriptor: FunctionDescriptor)
 }

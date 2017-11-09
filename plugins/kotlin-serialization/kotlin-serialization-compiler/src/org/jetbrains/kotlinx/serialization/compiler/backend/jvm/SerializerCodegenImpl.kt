@@ -18,6 +18,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.annotationVarsAndDesc
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.typeArgPrefix
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorBySerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
@@ -52,14 +52,13 @@ class SerializerCodegenImpl(
         }
     }
 
-    override fun generateGenericFieldsAndConstructor() {
+    override fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ConstructorDescriptor) {
         serializableDescriptor.declaredTypeParameters.forEachIndexed { i, _ ->
             codegen.v.newField(OtherOrigin(codegen.myClass.psiOrParent), ACC_PRIVATE or ACC_SYNTHETIC,
                               "$typeArgPrefix$i", kSerializerType.descriptor, null, null )
         }
 
-        val descr = createTypedSerializerConstructorDescriptor(serializableDescriptor)
-        codegen.generateMethod(descr) { sig, exprCodegen ->
+        codegen.generateMethod(typedConstructorDescriptor) { sig, exprCodegen ->
             load(0, serializerAsmType)
             invokespecial("java/lang/Object", "<init>", "()V", false)
             serializableDescriptor.declaredTypeParameters.forEachIndexed { i, _ ->

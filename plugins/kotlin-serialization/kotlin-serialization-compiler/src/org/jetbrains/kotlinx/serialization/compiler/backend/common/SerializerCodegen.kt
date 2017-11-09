@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperties
 
 abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContext: BindingContext) {
@@ -44,7 +44,7 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
         if (save || load || prop)
             generateSerialDesc()
         if (serializableDescriptor.declaredTypeParameters.isNotEmpty()) {
-            generateGenericFieldsAndConstructor()
+            generateGenericFieldsAndConstructor(createTypedSerializerConstructorDescriptor(serializerDescriptor, serializableDescriptor))
         }
     }
 
@@ -52,9 +52,7 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
                                                                        serializerDescriptor::checkSerializableClassPropertyResult)
     protected abstract fun generateSerialDesc()
 
-    protected open fun generateGenericFieldsAndConstructor() { //todo: make abstract after JS impl
-        TODO("js")
-    }
+    protected abstract fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ConstructorDescriptor)
 
     protected abstract fun generateSerializableClassProperty(property: PropertyDescriptor)
 

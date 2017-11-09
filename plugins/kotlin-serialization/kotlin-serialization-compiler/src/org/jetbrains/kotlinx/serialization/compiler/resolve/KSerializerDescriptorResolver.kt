@@ -248,21 +248,27 @@ object KSerializerDescriptorResolver {
         return functionDescriptor
     }
 
-    fun createTypedSerializerConstructorDescriptor(classDescriptor: ClassDescriptor): ConstructorDescriptor {
+    fun createTypedSerializerConstructorDescriptor(classDescriptor: ClassDescriptor, serializableDescriptor: ClassDescriptor): ConstructorDescriptor {
         val constrDesc = ClassConstructorDescriptorImpl.createSynthesized(
                 classDescriptor,
                 Annotations.EMPTY,
                 false,
                 classDescriptor.source
         )
+        val serializerClass = classDescriptor.getClassFromSerializationPackage("KSerializer")
+        val targs = mutableListOf<TypeParameterDescriptor>()
+        val args = serializableDescriptor.declaredTypeParameters.mapIndexed { index, _ ->
+            val targ = TypeParameterDescriptorImpl.createWithDefaultBound(constrDesc, Annotations.EMPTY, false, Variance.INVARIANT,
+                                                                          Name.identifier("T$index"), index)
 
-        val KSerializerClass = classDescriptor.getClassFromSerializationPackage("KSerializer").toSimpleType(false)
-        val args = classDescriptor.declaredTypeParameters.mapIndexed { index, _ ->
-            ValueParameterDescriptorImpl(constrDesc, null, index, Annotations.EMPTY, Name.identifier("$typeArgPrefix$index"), KSerializerClass,
+            val pType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, serializerClass, listOf(TypeProjectionImpl(targ.defaultType)))
+
+            targs.add(targ)
+            ValueParameterDescriptorImpl(constrDesc, null, index, Annotations.EMPTY, Name.identifier("$typeArgPrefix$index"), pType,
                                          false, false, false, null, constrDesc.source)
         }
 
-        constrDesc.initialize(args, Visibilities.PUBLIC)
+        constrDesc.initialize(args, Visibilities.PUBLIC, targs)
         constrDesc.returnType = classDescriptor.defaultType
         return constrDesc
     }
