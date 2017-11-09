@@ -1,5 +1,0 @@
-val foo = when {
-  true -> "foo"
-  false -> "bar"
-  else -> "baz"
-}
