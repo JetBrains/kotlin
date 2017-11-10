@@ -4,7 +4,7 @@
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$/libraries/tools/kotlin-stdlib-gen" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="" />
+      <option name="scriptParameters" value="--configure-on-demand" />
       <option name="taskDescriptions">
         <list />
       </option>
