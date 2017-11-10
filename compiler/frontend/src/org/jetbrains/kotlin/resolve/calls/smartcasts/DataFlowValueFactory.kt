@@ -70,6 +70,34 @@ object DataFlowValueFactory {
     }
 
     @JvmStatic
+    /*
+    1. [Special case] 'null', 'Nothing?': special DFV
+    2. [Special case] error-type: special DFV
+    3. [Special case] '!!': force non-null DFV to prevent issues with generics
+    4. Block, if, when, elvis: stable DFV for complex expression
+    5. Qualified expression:
+            - selector info, when receiver is package or class
+            - NO, when receiver is NO
+            - QualifiedInfo otherwise. Stability = min(stability of receiver, stability of selector)
+    6. 'is', 'as': NO
+    7. 'as?': SafeCastInfo. stability <=> stability of subject
+    8. '++', '--': PostfixInfo. stability <=> stability of argument
+    9. 'this': Receiver(target)
+    10. Property.
+        Check if this property is either: 'var', has open or custom getter, declared in other module.
+        If so, then it is unstable.
+        Otherwise it is stable.
+    11. Local variable/function parameter.
+            - 'val': stable value
+            - 'var': generally, unstable, but can be relaxed for some cases
+                - if no one writes in this 'var', then it is considered stable
+                - if inside closure: generally, unstable, but can be relaxed for some cases:
+                    - if all writers are reliably "before" closured access, then considered stable
+                - if not inside closure, but has closure writers: generally, unstable, but can be relaxed for some cases:
+                    - if all closure writers are provably "after" access, then considered stable
+        NB. Also consider implicit receivers, and create QualifiedInfo, if it is present
+
+     */
     fun createDataFlowValue(
         expression: KtExpression,
         type: KotlinType,
@@ -92,6 +120,8 @@ object DataFlowValueFactory {
             //
             // But there are some problem with types built on type parameters, e.g.
             // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
+            //
+            // This is closely connected with 'immanentlyNotNull' checks in the second part of 'SmartCastManager.checkAndRecordPossibleCast()'
             return DataFlowValue(
                 ExpressionIdentifierInfo(expression),
                 type,

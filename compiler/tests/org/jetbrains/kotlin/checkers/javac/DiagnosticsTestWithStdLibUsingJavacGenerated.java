@@ -55,6 +55,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         doTest(fileName);
     }
 
+    @TestMetadata("dontCommitTmp.kt")
+    public void testDontCommitTmp() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/dontCommitTmp.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("elvisOnJavaList.kt")
     public void testElvisOnJavaList() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/elvisOnJavaList.kt");

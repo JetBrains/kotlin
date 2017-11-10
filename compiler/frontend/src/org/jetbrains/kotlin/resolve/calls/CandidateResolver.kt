@@ -370,28 +370,41 @@ class CandidateResolver(
                 if (type == null || (type.isError && !type.isFunctionPlaceholder)) {
                     matchStatus = ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE
                 } else if (!noExpectedType(expectedType)) {
+                    // argument has expected type
                     if (!ArgumentTypeResolver.isSubtypeOfForArgumentType(type, expectedType)) {
+                        // and we have raw type mismatch. But wait, maybe we can get a smartcast!
                         val smartCast = smartCastValueArgumentTypeIfPossible(expression, newContext.expectedType, type, newContext)
                         if (smartCast == null) {
+                            // No smartcast too :(
+                            // It's already mismatch for sure, but let's check if we're passing nullable argument to non-nullable
+                            // parameter to provide better diagnostic
                             resultStatus = tryNotNullableArgument(type, expectedType) ?: OTHER_ERROR
                             matchStatus = ArgumentMatchStatus.TYPE_MISMATCH
                         } else {
+                            // Nice, we got smartcast, lets use it
                             resultingType = smartCast
                         }
                     } else if (ErrorUtils.containsUninferredParameter(expectedType)) {
+                        // Nice, type of argument is subtype of expected type
+                        // However, ArgumentTypeResolver.isSubtypeOfForArgumentType could return true if some types were
+                        // not inferred. Let's check this and if there are some, use appropriate match status
                         matchStatus = ArgumentMatchStatus.MATCH_MODULO_UNINFERRED_TYPES
                     }
 
                     val spreadElement = argument.getSpreadElement()
                     if (spreadElement != null && !type.isFlexible() && type.isMarkedNullable) {
+                        // Oh shi~, we're using spread on the nullable argument. Usually this is forbidden,
+                        // but what if we have a smartcast around...
                         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context)
                         val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
                             dataFlowValue, expectedType, expression, context,
                             call = null, recordExpressionType = false
                         )
                         if (smartCastResult == null || !smartCastResult.isCorrect) {
+                            // Nope, we don't, so report error
                             context.trace.report(Errors.SPREAD_OF_NULLABLE.on(spreadElement))
                         }
+                        // Otherwise, we do have suitable smartcast, so everything is OK
                     }
                 }
                 argumentTypes.add(resultingType)
@@ -511,8 +524,13 @@ class CandidateResolver(
         val safeAccess = isExplicitReceiver && !implicitInvokeCheck && call.isSemanticallyEquivalentToSafeCall
         val expectedReceiverParameterType = if (safeAccess) TypeUtils.makeNullable(receiverParameter.type) else receiverParameter.type
 
+        // Inside getSmartCastReceiverResult:
+        // 1. Create DFV from receiverArgument
+        // 2. Pull DFI from context
+        // 3. Ask DFI about .getCollectedTypes()
         val smartCastSubtypingResult = smartCastManager.getSmartCastReceiverResult(receiverArgument, expectedReceiverParameterType, this)
         if (smartCastSubtypingResult == null) {
+            // Ok, we can't smartcast, give up
             tracing.wrongReceiverType(
                 trace, receiverParameter, receiverArgument,
                 this.replaceCallPosition(CallPosition.ExtensionReceiverPosition(candidateCall))
@@ -520,9 +538,12 @@ class CandidateResolver(
             return OTHER_ERROR
         }
 
+        // Here we have smartcast: either to type or to right nullability
+
         val notNullReceiverExpected = smartCastSubtypingResult != SmartCastManager.ReceiverSmartCastResult.OK
         val smartCastNeeded =
-            notNullReceiverExpected || !isCandidateVisibleOrExtensionReceiver(receiverArgument, null, isDispatchReceiver)
+                // TODO: Ask how the extension receiver is related here
+                notNullReceiverExpected || !isCandidateVisibleOrExtensionReceiver(receiverArgument, null, isDispatchReceiver)
         var reportUnsafeCall = false
 
         var nullableImplicitInvokeReceiver = false
@@ -539,19 +560,26 @@ class CandidateResolver(
             }
         }
 
+        // Again traverse all DataFlowInfo
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
         val nullability = dataFlowInfo.getStableNullability(dataFlowValue)
+
         val expression = (receiverArgument as? ExpressionReceiver)?.expression
-        if (nullability.canBeNull() && !nullability.canBeNonNull()) {
+        if (nullability.canBeNull() && !nullability.canBeNonNull()) { // I.e. receiver is definitely null
             if (!TypeUtils.isNullableType(expectedReceiverParameterType)) {
                 reportUnsafeCall = true
             }
+
+            // This 'if' can be false for 'Nothing?' (i.e. for 'null' constant)
             if (dataFlowValue.immanentNullability.canBeNonNull()) {
                 expression?.let { trace.record(BindingContext.SMARTCAST_NULL, it) }
             }
         } else if (!nullableImplicitInvokeReceiver && smartCastNeeded) {
+            // !nullability.canBeNull() || nullability.canBeNotNull() <=> canBeNotNull
             // Look if smart cast has some useful nullability info
 
+            // Why the hell we go and ask for smartcasts second time? We've already asked above
+            // Reminder: dataFlowValue was manually created from receiverArgument
             val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
                 dataFlowValue, expectedReceiverParameterType,
                 { possibleSmartCast -> isCandidateVisibleOrExtensionReceiver(receiverArgument, possibleSmartCast, isDispatchReceiver) },
@@ -559,10 +587,13 @@ class CandidateResolver(
             )
 
             if (smartCastResult == null) {
+                // Sigh, no smartcast
                 if (notNullReceiverExpected) {
+                    // But dude, we wanted not null! This is unsafe, bruh
                     reportUnsafeCall = true
                 }
             } else {
+                // Ok we have some smartcast
                 if (isDispatchReceiver) {
                     candidateCall.setSmartCastDispatchReceiverType(smartCastResult.resultType)
                 } else {

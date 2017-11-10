@@ -122,6 +122,37 @@ public class DataFlowAnalyzer {
         return !typeHasOverriddenEquals(type, lookupElement);
     }
 
+    /*
+    Visits PSI-tree which contains some boolean condition, and extracts
+    data flow info, given that it is known that this 'condition' is equal to 'conditionValue'.
+
+    1. For 'is'-expression: just take recorded DFI from trace
+       Intricacies:
+         - check that it indeed brings us subtype infromation. Case chasing: "if operator isn't inverted
+           and 'conditionValue' == true, then record subtyping; if operator is inverted and 'conditionValue == false',
+           then record subtyping; otherwise do not record anything (we don't have a notion of "not-subtype-of" in compiler)
+
+    2. For binary operator: do recursive calls on arguments and merge DFI
+       Intricacies:
+         - short-circuit logic
+         - choosing right operator for merging (case chasing: if operator is '&&' and 'conditionValue == true', then
+           merge with 'AND'; if operator is '||' and 'conditionValue == false', then merge with 'OR'; ...)
+
+    3. For equals operator: equate 'left' and 'right'
+       Intricacies:
+         - Identity equals
+         - choosing right operator (equate vs. disequate + inversion in case of 'conditionValue == false')
+
+    4. For elvis: lower
+        'E ?: false' -> 'E == true',
+        'E ?: true' -> 'E == false'
+       where "E" is some expression of nullable type
+
+    5. For unary negation: recruse with inverted 'conditionValue'
+
+    6. For everything else: just take recorded DFI from trace
+
+     */
     @NotNull
     public DataFlowInfo extractDataFlowInfoFromCondition(
             @Nullable KtExpression condition,
@@ -270,6 +301,20 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
+    /*
+    If expected type is not present, trivial, or not denotable -- then do not check anything.
+    Also omit trivial checks (if expression is already subtype of expected type)
+
+    Then:
+        - for constant expressions, check its type via CompileTimeConstantChecker in light mode
+        - for when expression, do nothing
+        - for all the rest, try to get smartcast, and return, if suitable is found.
+
+    Otherwise, there's type mismatch and we have to report it properly:
+        - Special case: type mismatch was because of type projections
+        - Special case: type mismatch was because of Scala-like function syntax
+        - Otherwise, just report generic "Expected X but got Y"
+     */
     private KotlinType checkTypeInternal(
             @NotNull KotlinType expressionType,
             @NotNull KtExpression expression,
@@ -307,6 +352,12 @@ public class DataFlowAnalyzer {
         return expressionType;
     }
 
+    /*
+    1. Record expected type
+        - Needed for IDE, and ControlFlowAnalyzer
+    2. Call into cehckTypeInternal
+    3. Run additional type checkers
+     */
     @Nullable
     public KotlinType checkType(
             @Nullable KotlinType expressionType,
@@ -405,6 +456,9 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
+    /*
+    Returns the same dataflow, as in the passed context
+     */
     public KotlinTypeInfo createCompileTimeConstantTypeInfo(
             @NotNull CompileTimeConstant<?> value,
             @NotNull KtExpression expression,

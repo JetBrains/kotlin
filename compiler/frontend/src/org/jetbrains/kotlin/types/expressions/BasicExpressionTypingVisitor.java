@@ -173,6 +173,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return components.dataFlowAnalyzer.checkType(typeInfo, expression, context); // TODO : Extensions to this
     }
 
+    /*
+    Veeeeeery suspicious
+    */
     @Override
     public KotlinTypeInfo visitParenthesizedExpression(@NotNull KtParenthesizedExpression expression, ExpressionTypingContext context) {
         KtExpression innerExpression = expression.getExpression();
@@ -190,6 +193,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return result;
     }
 
+
+    /*
+    Returns the same data-flow info, as in the context
+     */
     @Override
     public KotlinTypeInfo visitConstantExpression(@NotNull KtConstantExpression expression, ExpressionTypingContext context) {
         IElementType elementType = expression.getNode().getElementType();
@@ -293,6 +300,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
     }
 
+    /*
+    Returns the same info + maybe enhances it with "as"-cast info
+     */
     @Override
     public KotlinTypeInfo visitBinaryWithTypeRHSExpression(
             @NotNull KtBinaryExpressionWithTypeRHS expression,
@@ -658,6 +668,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return components.doubleColonExpressionResolver.visitClassLiteralExpression(expression, c);
     }
 
+    /*
+    Seems like no extra data-flow hoops, but have to re-check
+     */
     @Override
     public KotlinTypeInfo visitCallableReferenceExpression(@NotNull KtCallableReferenceExpression expression, ExpressionTypingContext c) {
         return components.doubleColonExpressionResolver.visitCallableReferenceExpression(expression, c);
@@ -819,6 +832,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                      contextWithExpectedType.replaceDataFlowInfo(typeInfo.getDataFlowInfo()));
     }
 
+    /*
+    Practically no non-trivial data-flow manipulations except for casually forcing non-nullability of argument.
+     */
     private KotlinTypeInfo visitExclExclExpression(@NotNull KtUnaryExpression expression, @NotNull ExpressionTypingContext context) {
         KtExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null;
@@ -847,6 +863,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         assert baseTypeInfo != null : "Base expression was not processed: " + expression;
         KotlinType baseType = baseTypeInfo.getType();
         if (baseType == null) {
+            // Can get here in case of esoteric red code, like "java.lang.System!!"
             return baseTypeInfo;
         }
         DataFlowInfo dataFlowInfo = baseTypeInfo.getDataFlowInfo();
@@ -1254,6 +1271,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinTypeInfo leftTypeInfo = BindingContextUtils.getRecordedTypeInfo(left, context.trace.getBindingContext());
         boolean isLeftFunctionLiteral = ArgumentTypeResolver.isFunctionLiteralArgument(left, context);
         boolean isLeftCallableReference = ArgumentTypeResolver.isCallableReferenceArgument(left, context);
+
+        // Hoops with function literals and callable references
         if (leftTypeInfo == null && (isLeftFunctionLiteral || isLeftCallableReference)) {
             DiagnosticFactory0<PsiElement> diagnosticFactory =
                     isLeftFunctionLiteral ? USELESS_ELVIS_ON_LAMBDA_EXPRESSION : USELESS_ELVIS_ON_CALLABLE_REFERENCE;
@@ -1261,6 +1280,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
         assert leftTypeInfo != null : "Left expression was not processed: " + expression;
+
+        // USELESS_ELVIS diagnostics
         KotlinType leftType = leftTypeInfo.getType();
         if (isKnownToBeNotNull(left, leftType, context)) {
             context.trace.report(USELESS_ELVIS.on(expression, leftType));
@@ -1268,45 +1289,60 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else if (KtPsiUtil.isNullConstant(right) && leftType != null && !FlexibleTypesKt.isNullabilityFlexible(leftType)) {
             context.trace.report(USELESS_ELVIS_RIGHT_IS_NULL.on(expression));
         }
+
+        // Hoops with function literals and callable references
         KotlinTypeInfo rightTypeInfo = BindingContextUtils.getRecordedTypeInfo(right, context.trace.getBindingContext());
         if (rightTypeInfo == null && ArgumentTypeResolver.isFunctionLiteralOrCallableReference(right, context)) {
             // the type is computed later in call completer according to the '?:' semantics as a function
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
+
         assert rightTypeInfo != null : "Right expression was not processed: " + expression;
-        boolean loopBreakContinuePossible = leftTypeInfo.getJumpOutPossible() || rightTypeInfo.getJumpOutPossible();
         KotlinType rightType = rightTypeInfo.getType();
+
+        // DataFlowShit starts here
+        boolean loopBreakContinuePossible = leftTypeInfo.getJumpOutPossible() || rightTypeInfo.getJumpOutPossible();
 
         // Only left argument DFA is taken into account here: we cannot be sure that right argument is joined
         // (we merge it with right DFA if right argument contains no jump outside)
-        DataFlowInfo dataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getInfo(call.getValueArguments().get(1));
+        DataFlowInfo resultDataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getInfo(call.getValueArguments().get(1));
+
 
         KotlinType type = resolvedCall.getResultingDescriptor().getReturnType();
         if (type == null ||
             rightType == null ||
-            leftType == null && KotlinBuiltIns.isNothing(rightType)) return TypeInfoFactoryKt.noTypeInfo(dataFlowInfo);
+            leftType == null && KotlinBuiltIns.isNothing(rightType)
+        ) {
+            return TypeInfoFactoryKt.noTypeInfo(resultDataFlowInfo);
+        }
 
         if (leftType != null) {
+            // This one is about logic "if right value is somehow breaks flow, then left is non-null"
             DataFlowValue leftValue = createDataFlowValue(left, leftType, context);
             DataFlowInfo rightDataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
             boolean jumpInRight = KotlinBuiltIns.isNothing(rightType);
             DataFlowValue nullValue = DataFlowValue.nullValue(components.builtIns);
+
             // left argument is considered not-null if it's not-null also in right part or if we have jump in right part
             if (jumpInRight || !rightDataFlowInfo.getStableNullability(leftValue).canBeNull()) {
-                dataFlowInfo = dataFlowInfo.disequate(leftValue, nullValue, components.languageVersionSettings);
+                resultDataFlowInfo = resultDataFlowInfo.disequate(leftValue, nullValue, components.languageVersionSettings);
+
+                // Here we cover cases like "(x as? Foo) ?: return". Since 1.2, we have SafeCastCheckBoundSmartCasts language feature,
+                // which cover such cases more generally
                 if (left instanceof KtBinaryExpressionWithTypeRHS) {
-                    dataFlowInfo = establishSubtypingForTypeRHS((KtBinaryExpressionWithTypeRHS) left, dataFlowInfo, context,
+                    resultDataFlowInfo = establishSubtypingForTypeRHS((KtBinaryExpressionWithTypeRHS) left, resultDataFlowInfo, context,
                                                                 components.languageVersionSettings);
                 }
             }
+
             DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, type, context);
-            dataFlowInfo =
-                    dataFlowInfo.assign(resultValue, leftValue, components.languageVersionSettings)
+            resultDataFlowInfo =
+                    resultDataFlowInfo.assign(resultValue, leftValue, components.languageVersionSettings)
                     .disequate(resultValue, nullValue, components.languageVersionSettings);
             if (!jumpInRight) {
                 DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);
                 rightDataFlowInfo = rightDataFlowInfo.assign(resultValue, rightValue, components.languageVersionSettings);
-                dataFlowInfo = dataFlowInfo.or(rightDataFlowInfo);
+                resultDataFlowInfo = resultDataFlowInfo.or(rightDataFlowInfo);
             }
         }
 
@@ -1316,16 +1352,24 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             type = TypeUtils.makeNotNullable(type);
         }
         if (context.contextDependency == DEPENDENT) {
-            return TypeInfoFactoryKt.createTypeInfo(type, dataFlowInfo);
+            return TypeInfoFactoryKt.createTypeInfo(type, resultDataFlowInfo);
         }
 
         // If break or continue was possible, take condition check info as the jump info
+        // components.dataFlowAnalyzer.createCheckedTypeInfo(type, contextWithExpectedType, expression);
+        // <=> checkType(TypeInfoFactoryKt.createTypeInfo(type, context), expression, context)
+        // <=> TypeInfoFactoryKt.createTypeInfo(type, context).replaceType(checkType(type), expression, context)
+        // <=> TypeInfoFactoryKT.createTypeInfo(checkType(type), expression, context
+
         return TypeInfoFactoryKt.createTypeInfo(components.dataFlowAnalyzer.checkType(type, expression, contextWithExpectedType),
-                                                dataFlowInfo,
+                                                resultDataFlowInfo,
                                                 loopBreakContinuePossible,
                                                 context.dataFlowInfo);
     }
 
+    /*
+    Obsolete, see comment at use-site
+     */
     @NotNull
     private static DataFlowInfo establishSubtypingForTypeRHS(
             @NotNull KtBinaryExpressionWithTypeRHS left,
@@ -1348,10 +1392,24 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return dataFlowInfo;
     }
 
+    /*
+    Nothing too special, just regular linear data-flow juggling, but note that order is different:
+    1. Resolve *right* expression in basic context, get data flow info after right ("dataFlowInfo")
+
+    2. Resolve *whole* call in the context of right-expression ("contextWithDataFlow")
+       Note that it will compute data-flow info for left-expression too, as part of resolving arguments of desugared call
+
+    3. Get data flow info for *left* expression in the "contextWithDataFlow" (will just take already computed data-flow info from trace), "flowForLeft"
+
+    4. Return 'and'-merged flow for left and flow for right (orly??) <=> dataFlowInfo && flowForLeft
+       Note that implementation doesn't create new TypeInfo and instead mutates 'rightTypeInfo', which is quite confusing tbh.
+       Also note that 'and'-merging flow for left and right is most probably not correct (similar to 'and'-merging in DataFlowInfoForArguments),
+       but luckily we don't have (yet) constructions with non-trivial enough flow to break this.
+     */
     @NotNull
     public KotlinTypeInfo checkInExpression(
             @NotNull KtElement callElement,
-            @NotNull KtSimpleNameExpression operationSign,
+            @NotNull KtSimpleNameExpression operationSign, // either "in" or "!in"
             @NotNull ValueArgument leftArgument,
             @Nullable KtExpression right,
             @NotNull ExpressionTypingContext context
@@ -1378,8 +1436,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ensureBooleanResult(operationSign, OperatorNameConventions.CONTAINS, containsType, context);
 
         if (left != null) {
-            dataFlowInfo = facade.getTypeInfo(left, contextWithDataFlow).getDataFlowInfo().and(dataFlowInfo);
-            rightTypeInfo = rightTypeInfo.replaceDataFlowInfo(dataFlowInfo);
+            DataFlowInfo flowForLeft = facade.getTypeInfo(left, contextWithDataFlow).getDataFlowInfo();
+            rightTypeInfo = rightTypeInfo.replaceDataFlowInfo(flowForLeft);
         }
 
         if (resolutionResult.isSuccess()) {
@@ -1490,6 +1548,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return declarationInIllegalContext(property, context);
     }
 
+    /*
+    Very trivial manipulations:
+        - resolve lhs in basic context
+        - resolve rhs in context with info from lhs
+        - use rhs resulting info (resolvedCall.dataFlowInfoForArguments.resultInfo) as result
+     */
     @NotNull
     private KotlinTypeInfo getTypeInfoForBinaryCall(
             @NotNull Name name,
@@ -1676,6 +1740,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return resolveArrayAccessSpecialMethod(arrayAccessExpression, null, context, context.trace, true, false);
     }
 
+    /*
+    1. Take data flow for array call (e.g. for "foo()" in "foo()[bar(), baz(), bak()]", "arrayTypeInfo"
+    2. If there are any indices, take data flow for all indices computation (as usual, this is resolved as call, and indices are arguments, so resulting info is
+       bound to the last argument)
+    3. If there are rightHandSide (for 'set'-method), then take data flow for it instead (it's not obvious, but it *will* contain info about indices, because both
+       indices and RHS are analyzed during synthethic-call resolution as arguments, and dataFlow for them is already recorded)
+     */
     @NotNull
     private KotlinTypeInfo resolveArrayAccessSpecialMethod(
             @NotNull KtArrayAccessExpression arrayAccessExpression,
@@ -1700,6 +1771,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         Call call = isGet
                     ? CallMaker.makeArrayGetCall(receiver, arrayAccessExpression, Call.CallType.ARRAY_GET_METHOD)
                     : CallMaker.makeArraySetCall(receiver, arrayAccessExpression, rightHandSide, Call.CallType.ARRAY_SET_METHOD);
+
+        // As a side effect, this call will record typeinfo for rightHandSide
+        // Quite logical, if you think about it, but totally not obvious from a first glance
         OverloadResolutionResults<FunctionDescriptor> functionResults = components.callResolver.resolveCallWithGivenName(
                 context, call, arrayAccessExpression, isGet ? OperatorNameConventions.GET : OperatorNameConventions.SET);
 
@@ -1711,6 +1785,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         if (!isGet) {
+            // Surprise-surprise: though that looks like we're saying here:
+            // "Take context info(which is empty atm), and resolve 'rightHandSide' in that context, and then *OVERWRITE* current info with it"
+            // And one could (rightfully) think that this is wrong, because it obviously won't contain data-flow information about indices
+            // But no!
+            // In face, getTypeInfo will take out cached type info, calculated by someone else, which apparently *does* contain info about indices
             resultTypeInfo = facade.getTypeInfo(rightHandSide, context);
         }
 

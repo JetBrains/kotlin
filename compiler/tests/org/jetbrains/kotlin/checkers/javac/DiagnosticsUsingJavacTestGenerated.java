@@ -20585,6 +20585,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("foobar.kt")
+            public void testFoobar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/foobar.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("genericIntersection.kt")
             public void testGenericIntersection() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/genericIntersection.kt");

@@ -102,8 +102,7 @@ internal class DelegatingDataFlowInfo private constructor(
         }
 
         val identifierInfo = value.identifierInfo
-        if (affectReceiver && !nullability.canBeNull() &&
-            languageVersionSettings.supportsFeature(LanguageFeature.SafeCallBoundSmartCasts)) {
+        if (affectReceiver && !nullability.canBeNull() && languageVersionSettings.supportsFeature(LanguageFeature.SafeCallBoundSmartCasts)) {
             when (identifierInfo) {
                 is IdentifierInfo.Qualified -> {
                     val receiverType = identifierInfo.receiverType

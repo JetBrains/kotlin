@@ -82,18 +82,27 @@ class SmartCastManager {
         return dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings)
     }
 
+    // Checks if `receiverArgument` can be cast to `receiverParameterType` with smartcasts taken into consideration
     fun getSmartCastReceiverResult(
         receiverArgument: ReceiverValue,
         receiverParameterType: KotlinType,
         context: ResolutionContext<*>
     ): ReceiverSmartCastResult? {
+        // Ok, let's just check if some cast is known with exact types
         getSmartCastReceiverResultWithGivenNullability(receiverArgument, receiverParameterType, context)?.let {
+            // We have some cast with exact type
+            // Noe that it also returns for plain subtypes
             return it
         }
 
+        // No luck here, but maybe we can find suitable cast for nullable reciever?
         val nullableParameterType = TypeUtils.makeNullable(receiverParameterType)
+
         return when {
+        // Still no luck, return 'null'
             getSmartCastReceiverResultWithGivenNullability(receiverArgument, nullableParameterType, context) == null -> null
+
+        // Found cast, but note that we've expanded nullability, so no matters what we've found, it's still "NOT_NULL_EXPECTED"
             else -> ReceiverSmartCastResult.SMARTCAST_NEEDED_OR_NOT_NULL_EXPECTED
         }
     }
@@ -115,6 +124,7 @@ class SmartCastManager {
 
     enum class ReceiverSmartCastResult {
         OK,
+        // Fun fact -- it is used only in SmartCastManager
         SMARTCAST_NEEDED_OR_NOT_NULL_EXPECTED
     }
 
@@ -130,14 +140,21 @@ class SmartCastManager {
         ) {
             if (KotlinBuiltIns.isNullableNothing(type)) return
             if (dataFlowValue.isStable) {
+                // Smartcast is possible, lets try to do this!
+
                 val oldSmartCasts = trace[SMARTCAST, expression]
                 val newSmartCast = SingleSmartCast(call, type)
                 if (oldSmartCasts != null) {
+                    // There already was some smartcast on that expression
+
+                    // Let's check if this SMARTCAST slice (for the same expression!) already contains cast for this particular 'call'
                     val oldType = oldSmartCasts.type(call)
                     if (oldType != null && oldType != type) {
+                        // Oops, this slice already contains smartcast for this particular 'call'
                         throw AssertionError("Rewriting key $call for smart cast on ${expression.text}")
                     }
                 }
+                // Ok, either there was no SMARTCAST slice at all for this 'expression', or it didn't contain a cast for this particular call
                 trace.record(SMARTCAST, expression, oldSmartCasts?.let { it + newSmartCast } ?: newSmartCast)
                 if (recordExpressionType) {
                     //TODO
@@ -145,6 +162,7 @@ class SmartCastManager {
                     trace.recordType(expression, type)
                 }
             } else {
+                // Unstable data
                 trace.report(SMARTCAST_IMPOSSIBLE.on(expression, type, expression.text, dataFlowValue.kind.description))
             }
         }
@@ -160,6 +178,16 @@ class SmartCastManager {
             return checkAndRecordPossibleCast(dataFlowValue, expectedType, null, expression, c, call, recordExpressionType)
         }
 
+        /*
+        Semantics of this method:
+        1. Take 'dataFlowValue'
+        2. Pull 'dataFlowInfo' from 'c' and get all types for that 'dataFlowValue'
+        3. If some of that types matches 'expectedType' and 'additionalPredicate' (if any), then record smartcast/error (i.e. diagnostic) with stability taken into consideration
+           (can also involve some additional hoops for implicit receiver)
+
+        IF NO TYPES WERE MATCHED ON PREVIOUS STEP, THEN:
+        4.
+         */
         fun checkAndRecordPossibleCast(
             dataFlowValue: DataFlowValue,
             expectedType: KotlinType,
@@ -171,14 +199,24 @@ class SmartCastManager {
         ): SmartCastResult? {
             val calleeExpression = call?.calleeExpression
             for (possibleType in c.dataFlowInfo.getCollectedTypes(dataFlowValue, c.languageVersionSettings)) {
+                // Check another type from smartcast
                 if (ArgumentTypeResolver.isSubtypeOfForArgumentType(possibleType, expectedType) &&
                     (additionalPredicate == null || additionalPredicate(possibleType))
                 ) {
+                    // This type suits us!
                     if (expression != null) {
+                        // records cast if DFV is stable (with rewrite checks) OR records SMARTCAST_IMPOSSIBLE if DFV is unstable
                         recordCastOrError(expression, possibleType, c.trace, dataFlowValue, call, recordExpressionType)
                     } else if (calleeExpression != null && dataFlowValue.isStable) {
+                        // This is the case when we have implicit receiver (e.g. in cases like 'with(a) { if (this is String) ... }'
+                        // or in the body of extension function)
+                        //
+                        // Here we have to invent additional diagnostic on call itself
                         val receiver = (dataFlowValue.identifierInfo as? IdentifierInfo.Receiver)?.value
                         if (receiver is ImplicitReceiver) {
+                            // This is the case #2
+
+                            // dat logic duplication tho (see above)
                             val oldSmartCasts = c.trace[IMPLICIT_RECEIVER_SMARTCAST, calleeExpression]
                             val newSmartCasts = ImplicitSmartCasts(receiver, possibleType)
                             if (oldSmartCasts != null) {
@@ -192,14 +230,17 @@ class SmartCastManager {
                             }
                             c.trace.record(IMPLICIT_RECEIVER_SMARTCAST, calleeExpression,
                                            oldSmartCasts?.let { it + newSmartCasts } ?: newSmartCasts)
-
                         }
                     }
+
+                    // ...but who the fuck is going to report this smartcast? :(
                     return SmartCastResult(possibleType, dataFlowValue.isStable)
                 }
             }
 
             if (!c.dataFlowInfo.getCollectedNullability(dataFlowValue).canBeNull() && !expectedType.isMarkedNullable) {
+                // Ok, this value can't be null, and we expect not-null
+
                 // Handling cases like:
                 // fun bar(x: Any) {}
                 // fun <T : Any?> foo(x: T) {
@@ -208,23 +249,45 @@ class SmartCastManager {
                 //      }
                 // }
                 //
-                // It doesn't handled by lower code with getPossibleTypes because smart cast of T after `x != null` is still has same type T.
+                // It doesn't handled by upper code with getCollectedTypes because smart cast of T after `x != null` is still has same type T.
                 // But at the same time we're sure that `x` can't be null and just check for such cases manually
 
                 // E.g. in case x!! when x has type of T where T is type parameter with nullable upper bounds
                 // x!! is immanently not null (see DataFlowValueFactory.createDataFlowValue for expression)
+
+
+                // Segment below is much easier to understand if considered without 'immanentlyNotNull' flag
+
+                // Essentially, this is fast path for cases when 'dataFlowValue.type' can be casted to 'expected type'
+                // with the help of smartcasts.
                 val immanentlyNotNull = !dataFlowValue.immanentNullability.canBeNull()
                 val nullableExpectedType = TypeUtils.makeNullable(expectedType)
 
+                // Let's check if types are suitable modulo nullability smartcast
                 if (ArgumentTypeResolver.isSubtypeOfForArgumentType(dataFlowValue.type, nullableExpectedType) &&
                     (additionalPredicate == null || additionalPredicate(dataFlowValue.type))
                 ) {
+                    // Ok, dataFlowValue.type <: expectedType?
+                    // AND
+                    // we know what dataFlowValue can be casted to not-null, and we expect not-null
+                    // =>
+                    // let's record smartcast!
                     if (!immanentlyNotNull && expression != null) {
+                        // Let's record smartcast!
                         recordCastOrError(expression, dataFlowValue.type, c.trace, dataFlowValue, call, recordExpressionType)
                     }
 
                     return SmartCastResult(dataFlowValue.type, immanentlyNotNull || dataFlowValue.isStable)
                 }
+                // Now, why do we even have that 'immanentlyNotNull' flag?
+                // Because it indicates that we're doing '!!'-assertion on generic type with nullable upper bound, which should be
+                // handled separately if it is in call chain (i.e. in cases like 'x!!.foo) because we have no other place to
+                // handle this case (compare that with cases like 'x!!; x.length' - here first statement provides DFI that x != null,
+                // and we already see it in the second statement)
+
+
+                // Ok, so we can't transform 'dataFlowValue' to 'expectedType' via nullability smartcast
+                // We say here: let's try again, but we will try to find cast to the nullable expected type
                 return checkAndRecordPossibleCast(dataFlowValue, nullableExpectedType, expression, c, call, recordExpressionType)
             }
 

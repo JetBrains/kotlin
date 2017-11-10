@@ -251,6 +251,33 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         return visitWhileExpression(expression, context, false);
     }
 
+    /*
+    0. Check if it is used as statement, exit with reporting, if so
+    1. Launch PreliminaryLoopVisitor to clear DFI for all variables assigned in loop
+    2. Extract type info from body:
+        - If body is present, then resolve its body in context with DFI = "(condition == true) && (condition finished)"
+        - Otherwise, use empty type info
+    3. Infer outer info:
+        Step a. Initialize "result: DataFlowInfo" with context data flow info (remember, it has already all assigned variables cleared)
+        Step b. Update "result &= dfi(condition finished)".
+        Step c. If there is no jumpout in body, then update "result &= dfi(condition == true)"
+        Step d. If it is 'while(true)', then further update 'result &= jumpOutInfo' <=> 'result &= dfi(first break in loop body) - assignedVariablesInfo'
+
+    Possible higher-level logic:
+    0. Check if it is used as statement, exit with reporting
+    1. dataFlowResults = analyzer.analyzeWhileLoop(whileExpression, context)
+        - launches PreliminiaryLoopVisitor, clears DFI for all variables assigned in loop
+        - extracts "condition == true"
+        - extracts "condition finished"
+        - ? returns some lightweight view, maybe even lazy one
+    2. contextForBody = dataFlowResults.getContextForBodyResultion()
+        - returns context with "(condition == true) && (condition finished)"
+    3. Resolve body in contextForBody. This will return "dataFlowInfoForBlock"
+    4. analyzer.feed(dataFlowInfoForBlock) // submit info about body into analyzer, analyzer will decide what should be done about it
+    5. return analyzer.loopResultInfo
+
+     */
+
     public KotlinTypeInfo visitWhileExpression(KtWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         if (!isStatement) return components.dataFlowAnalyzer.illegalStatementType(expression, contextWithExpectedType, facade);
 
@@ -344,6 +371,22 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         return visitDoWhileExpression(expression, context, false);
     }
 
+    /*
+    0. Check if it is used as statement, returning with diagnostic if so
+    1. Launch PreliminaryVisitor to clear all info about variables assigned in loop
+    2. Extract body info:
+        - if body is present, then resolve it in current context (remember, it has already all asigned variables cleared)
+        - otherwise, no type info
+    3. Resolve condition:
+        - use context DFI (*NOT* a body DFI!)
+        - use *BODY* scope (hello, nice "feature" of using val's, declared in do-while body, in condition)
+    4. Infer outer info:
+        Step a.
+            - If no jumpouts in body, then we initialize "result" to "dfi(condition == true) && dfi(condition finished)"
+            - If there are jumpouts in body, then initialize "result" to context dfi (dfi at the enter of loop - all assigned variables)
+        Step b. Update "result" with "result &= jumpOutInfo" <=> "result &= dataFlowInfoAtFirstBreak - allAssignedVariables"
+
+     */
     public KotlinTypeInfo visitDoWhileExpression(KtDoWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         if (!isStatement) return components.dataFlowAnalyzer.illegalStatementType(expression, contextWithExpectedType, facade);
 
@@ -411,6 +454,17 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         return visitForExpression(expression, context, false);
     }
 
+    /*
+    0. If used as statement, return with diagnostic
+    1. Launch loopVisitor to clear all info for all assigned variables, producing context'
+    2. Extract loopRangeInfo
+        - if loopRangeExpression is present, then resolve it in context'
+        - otherwise, use empty type info
+    3. Extract body type info:
+        - if body is present, then resolve it in context of loopRangeInfo
+        - otherwise, use empty type info
+    4. Use loopRangeInfo as outer info
+     */
     public KotlinTypeInfo visitForExpression(KtForExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         if (!isStatement) return components.dataFlowAnalyzer.illegalStatementType(expression, contextWithExpectedType, facade);
 
@@ -503,6 +557,22 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         return variableDescriptor;
     }
 
+    /*
+    0. Let context' = current contexxt with no context dependency
+    1. Extract info from try-block in context'
+    2. Infer info at the end of try-catch, "tryOutputContext":
+        Step a. initialize to context'.dataFlowInfo
+        Step b. If it is possible to fall-through at least one catch-clause (i.e. not every catch-clause ends with jumpout),
+                then launch PreliminaryVisitor and clear info for all assigned variables in 'try'
+    3. If there is a finally clause, then resolve it in "tryOutputContext" context
+    4. Infer info at the end of the whole try-expression (with all catches and finaly-clause, if any), "result":
+        Step a. Initialize "result" to "tryOutputContext", i.e. very conservative info (it is <= context info)
+        Step b. If finally is present, then we're sure that it is executed.
+                Update "result" to the finally's info
+        Step c. If finally is not present, but fall-through is impossible, then we're sure that try-block is executed.
+                Update "result" to the info at the end of the try-block, "tryResult".
+    5. Return "result"
+     */
     @Override
     public KotlinTypeInfo visitTryExpression(@NotNull KtTryExpression expression, ExpressionTypingContext typingContext) {
         ExpressionTypingContext context = typingContext.replaceContextDependency(INDEPENDENT);
@@ -565,6 +635,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (type != null) {
             types.add(type);
         }
+
         if (types.isEmpty()) {
             return result.clearType();
         }
@@ -607,6 +678,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
+    /*
+    No data-flow manipulations whatsoever, in the end it returns context.dataFlowInfo, though that's highly obscure and
+    non-obvious at the first glance
+     */
     public KotlinTypeInfo visitReturnExpression(@NotNull KtReturnExpression expression, ExpressionTypingContext context) {
         KtElement labelTargetElement = LabelResolver.INSTANCE.resolveControlLabel(expression, context);
 
