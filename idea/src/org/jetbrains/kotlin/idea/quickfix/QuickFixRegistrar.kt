@@ -253,7 +253,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS.registerFactory(AddWhenRemainingBranchesFix)
         BREAK_OR_CONTINUE_IN_WHEN.registerFactory(AddLoopLabelFix)
 
-        NO_TYPE_ARGUMENTS_ON_RHS.registerFactory(AddStarProjectionsFix.IsExpressionFactory)
+        NO_TYPE_ARGUMENTS_ON_RHS.registerFactory(AddStarProjectionsFixFactory)
 
         TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.registerFactory(RemovePsiElementSimpleFix.RemoveTypeArgumentsFactory)
 
