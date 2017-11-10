@@ -28,12 +28,12 @@ import java.io.File
 import java.lang.IllegalStateException
 import java.util.regex.Pattern
 
-fun parse(line: String, reader: OutputLineReader, messages: MutableList<Message>): Boolean {
-    val colonIndex1 = line.colon()
-    val severity = if (colonIndex1 >= 0) line.substringBeforeAndTrim(colonIndex1) else return false
+fun parse(lineText: String, reader: OutputLineReader, messages: MutableList<Message>): Boolean {
+    val colonIndex1 = lineText.colon()
+    val severity = if (colonIndex1 >= 0) lineText.substringBeforeAndTrim(colonIndex1) else return false
     if (!severity.startsWithSeverityPrefix()) return false
 
-    val lineWoSeverity = line.substringAfterAndTrim(colonIndex1)
+    val lineWoSeverity = lineText.substringAfterAndTrim(colonIndex1)
     val colonIndex2 = lineWoSeverity.colon().skipDriveOnWin(lineWoSeverity)
     if (colonIndex2 >= 0) {
         val path = lineWoSeverity.substringBeforeAndTrim(colonIndex2)
@@ -53,12 +53,13 @@ fun parse(line: String, reader: OutputLineReader, messages: MutableList<Message>
             val message = lineWoPath.substringAfterAndTrim(colonIndex3).amendNextLinesIfNeeded(reader)
 
             if (matcher.matches()) {
-                val lineNumber = matcher.group(1)
-                val symbolNumber = if (matcher.groupCount() >= 2) matcher.group(2) else "1"
-                if (lineNumber != null) {
-                    val symbolNumberText = symbolNumber.toInt()
-                    return addMessage(createMessageWithLocation(
-                            getMessageKind(severity), message, path, lineNumber.toInt(), symbolNumberText, symbolNumberText), messages)
+                val line = matcher.group(1)?.toInt()
+                val column = if (matcher.groupCount() >= 2) matcher.group(2)?.toInt() ?: 1 else 1
+
+                if (line != null) {
+                    val mainPosition = SourceFilePosition(file, SourcePosition(line, column, column))
+                    val kotlinKaptPosition = findAdditionalKotlinLocationFromKapt(message)
+                    return addMessage(Message(getMessageKind(severity), message.trim(), kotlinKaptPosition ?: mainPosition), messages)
                 }
             }
 
@@ -72,9 +73,26 @@ fun parse(line: String, reader: OutputLineReader, messages: MutableList<Message>
     return false
 }
 
+private fun findAdditionalKotlinLocationFromKapt(message: String): SourceFilePosition? {
+    for (lineText in message.lines()) {
+        val matcher = ADDITIONAL_KOTLIN_POSITION_FROM_KAPT_PATTERN.matcher(lineText.trim()).takeIf { it.matches() } ?: continue
+        val filePath = matcher.group(1) ?: break
+
+        // Check both Unix (/...) and Windows (C:\...) patterns
+        if (!filePath.startsWith("/") && !filePath.drop(1).startsWith(":\\")) break
+
+        val line = matcher.group(2).toIntOrNull() ?: break
+        val column = matcher.group(3).toIntOrNull() ?: break
+        return SourceFilePosition(File(filePath), SourcePosition(line, column, column))
+    }
+
+    return null
+}
+
 private val COLON = ":"
 private val KOTLIN_POSITION_PATTERN = Pattern.compile("\\(([0-9]*), ([0-9]*)\\)")
 private val JAVAC_POSITION_PATTERN = Pattern.compile("([0-9]+)")
+private val ADDITIONAL_KOTLIN_POSITION_FROM_KAPT_PATTERN = Pattern.compile("^Kotlin location: (.+): \\((\\d+), (\\d+)\\)$")
 
 private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
     var nextLine = reader.readLine()
@@ -159,17 +177,4 @@ private fun addMessage(message: Message, messages: MutableList<Message>): Boolea
 
 private fun createMessage(messageKind: Message.Kind, text: String): Message {
     return Message(messageKind, text.trim(), text, Optional.absent<String>(), ImmutableList.of())
-}
-
-private fun createMessageWithLocation(
-        messageKind: Message.Kind,
-        text: String,
-        file: String,
-        lineNumber: Int,
-        columnIndex: Int,
-        offset: Int
-): Message {
-    val sourcePosition = SourcePosition(lineNumber - 1, columnIndex - 1, offset)
-    val sourceFilePosition = SourceFilePosition(File(file), sourcePosition)
-    return Message(messageKind, text.trim(), sourceFilePosition)
 }
