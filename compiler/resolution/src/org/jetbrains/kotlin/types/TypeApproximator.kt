@@ -203,7 +203,25 @@ class TypeApproximator {
         val baseSuperType = when (supertypes.size) {
             0 -> type.builtIns.nullableAnyType // Let C = in Int, then superType for C and C? is Any?
             1 -> supertypes.single()
-            else -> intersectTypes(supertypes)
+
+            // Consider the following example:
+            // A.getA()::class.java, where `getA()` returns some class from Java
+            // From `::class` we are getting type KClass<Cap<out A!>>, where Cap<out A!> have two supertypes:
+            // - Any (from declared upper bound of type parameter for KClass)
+            // - (A..A?) -- from A!, projection type of captured type
+
+            // Now, after approximation we were getting type `KClass<out A>`, because { Any & (A..A?) } = A,
+            // but in old inference type was equal to `KClass<out A!>`.
+
+            // Important note that from the point of type system first type is more specific:
+            // Here, approximation of KClass<Cap<out A!>> is a type KClass<T> such that KClass<Cap<out A!>> <: KClass<out T> =>
+            // So, the the more specific type for T would be "some non-null (because of declared upper bound type) subtype of A", which is `out A`
+
+            // But for now, to reduce differences in behaviour of old and new inference, we'll approximate such types to `KClass<out A!>`
+
+            // Once NI will be more stabilized, we'll use more specific type
+
+            else -> type.constructor.projection.type.unwrap()
         }
         val baseSubType = type.lowerType ?: type.builtIns.nothingType
 
