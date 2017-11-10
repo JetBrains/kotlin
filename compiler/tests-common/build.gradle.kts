@@ -23,6 +23,7 @@ dependencies {
     testCompileOnly(project(":plugins:android-extensions-compiler"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common-jvm6"))
+    testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))
     testCompile(ideaSdkCoreDeps("intellij-core"))
     testCompile(ideaSdkDeps("openapi", "idea", "idea_rt"))

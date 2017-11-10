@@ -16,6 +16,7 @@ dependencies {
     testCompile(project(":compiler:cli"))
     testCompile(project(":idea:idea-test-framework"))
     testCompileOnly(ideaSdkDeps("idea_rt"))
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(ideaSdkDeps("*.jar"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
     testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))

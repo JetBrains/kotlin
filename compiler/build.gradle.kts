@@ -12,8 +12,8 @@ val otherCompilerModules = compilerModules.filter { it != path }
 val depDistProjects = listOf(
         ":kotlin-script-runtime",
         ":kotlin-stdlib",
-        ":kotlin-reflect",
-        ":kotlin-test:kotlin-test-jvm")
+        ":kotlin-test:kotlin-test-jvm"
+)
 
 // TODO: it seems incomplete, find and add missing dependencies
 val testDistProjects = listOf(
@@ -33,7 +33,8 @@ val testDistProjects = listOf(
         ":plugins:android-extensions-compiler",
         ":kotlin-ant",
         ":kotlin-annotations-jvm",
-        ":kotlin-annotations-android")
+        ":kotlin-annotations-android"
+)
 
 val testJvm6ServerRuntime by configurations.creating
 
@@ -49,11 +50,13 @@ dependencies {
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testCompileOnly(project(":kotlin-daemon-client"))
+    testCompileOnly(project(":kotlin-reflect-api"))
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
     testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all", "commons-httpclient-3.1-patched"))
 
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(projectDist(":kotlin-daemon-client"))
     testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))

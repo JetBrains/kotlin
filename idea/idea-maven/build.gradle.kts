@@ -23,6 +23,7 @@ dependencies {
     testCompileOnly(ideaSdkDeps("openapi", "idea", "gson", "idea_rt"))
     testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
 
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":plugins:android-extensions-ide"))

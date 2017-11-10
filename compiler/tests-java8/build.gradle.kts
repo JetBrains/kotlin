@@ -5,6 +5,7 @@ apply { plugin("kotlin") }
 dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":generators:test-generator"))
+    testRuntime(projectDist(":kotlin-reflect"))
 }
 
 sourceSets {

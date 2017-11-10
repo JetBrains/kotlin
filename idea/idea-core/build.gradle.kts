@@ -2,6 +2,7 @@ apply { plugin("kotlin") }
 
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
+    compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
     compile(project(":compiler:frontend"))

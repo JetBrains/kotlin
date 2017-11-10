@@ -9,6 +9,7 @@ dependencies {
     compile(project(":idea:idea-core"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":kotlin-test:kotlin-test-jvm"))
+    compileOnly(project(":kotlin-reflect-api"))
     compile(commonDep("junit:junit"))
     compile(ideaSdkDeps("openapi", "idea"))
 }
