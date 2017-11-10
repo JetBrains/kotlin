@@ -29,9 +29,9 @@ enum class E {
     X, Y
 }
 
-private inline fun createWrongC(): C = js("void 0").unsafeCast<C>()
+private inline fun createWrongC(): C = js("{ name: 'Z' }").unsafeCast<C>()
 
-private inline fun createWrongE(): E = js("void 0").unsafeCast<E>()
+private inline fun createWrongE(): E = js("{ name: 'Z' }").unsafeCast<E>()
 
 fun box(): String {
     checkThrown(createWrongC()) {

@@ -1,3 +1,6 @@
+// CHECK_CASES_COUNT: function=test count=0
+// CHECK_IF_COUNT: function=test count=3
+
 enum class E {
     A,
     B
