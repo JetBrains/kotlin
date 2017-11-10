@@ -8,8 +8,6 @@
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
 
-    <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS,tag:forKotlin"/>
-
     <property name="bootstrap.build.no.tests" value="false"/>
 
     <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
@@ -202,6 +200,8 @@
             build.number.pattern="\d+\s-\sKotlin\s[\w-+\.]+"
         />
 
+        <!-- node.js -->
+        <antcall target="download-nodejs-and-npm"/>
     </target>
 
     <macrodef name="download_teamcity_artifact">

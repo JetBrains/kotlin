@@ -37,7 +37,7 @@ dependencies {
     compile(project(":kotlin-script-util")) { isTransitive = false }
 
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    compile(preloadedDeps("markdown"))
+    compile("teamcity:markdown")
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
