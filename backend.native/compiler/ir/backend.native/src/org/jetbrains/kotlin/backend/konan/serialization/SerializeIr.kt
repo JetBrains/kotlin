@@ -270,6 +270,12 @@ internal class IrSerializer(val context: Context,
         return proto.build()
     }
 
+    fun serializeGetClass(expression: IrGetClass): KonanIr.IrGetClass {
+        val proto = KonanIr.IrGetClass.newBuilder()
+            .setArgument(serializeExpression(expression.argument))
+        return proto.build()
+    }
+
     fun serializeGetEnumValue(expression: IrGetEnumValue): KonanIr.IrGetEnumValue {
         val proto = KonanIr.IrGetEnumValue.newBuilder()
             .setType(serializeKotlinType(expression.type))
@@ -472,6 +478,7 @@ internal class IrSerializer(val context: Context,
             is IrDelegatingConstructorCall
                              -> operationProto.setDelegatingConstructorCall(serializeDelegatingConstructorCall(expression))
             is IrDoWhileLoop -> operationProto.setDoWhile(serializeDoWhile(expression))
+            is IrGetClass    -> operationProto.setGetClass(serializeGetClass(expression))
             is IrGetField    -> operationProto.setGetField(serializeGetField(expression))
             is IrGetValue    -> operationProto.setGetValue(serializeGetValue(expression))
             is IrGetEnumValue    
@@ -851,6 +858,11 @@ internal class IrDeserializer(val context: Context,
         return call
     }
 
+    fun deserializeGetClass(proto: KonanIr.IrGetClass, start: Int, end: Int, type: KotlinType): IrGetClass {
+        val argument = deserializeExpression(proto.argument)
+        return IrGetClassImpl(start, end, type, argument)
+    }
+
     fun deserializeGetField(proto: KonanIr.IrGetField, start: Int, end: Int): IrGetField {
         val access = proto.fieldAccess
         val descriptor = deserializeDescriptor(access.getDescriptor()) as PropertyDescriptor
@@ -1082,6 +1094,8 @@ internal class IrDeserializer(val context: Context,
                 -> deserializeDoWhile(proto.doWhile, start, end, type)
             GET_ENUM_VALUE
                 -> deserializeGetEnumValue(proto.getEnumValue, start, end)
+            GET_CLASS
+                -> deserializeGetClass(proto.getClass, start, end, type)
             GET_FIELD
                 -> deserializeGetField(proto.getField, start, end)
             GET_OBJECT

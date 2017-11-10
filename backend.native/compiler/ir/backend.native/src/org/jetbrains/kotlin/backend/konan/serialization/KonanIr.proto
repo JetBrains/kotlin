@@ -153,6 +153,10 @@ message IrEnumConstructorCall {
     required MemberAccessCommon member_access = 2;
 }
 
+message IrGetClass {
+    required IrExpression argument = 1;
+}
+
 message IrGetEnumValue {
     required KotlinType type = 1;
     required KotlinDescriptor descriptor = 2;
@@ -248,6 +252,7 @@ message IrOperation {
         IrDelegatingConstructorCall delegating_constructor_call = 7;
         IrDoWhile do_while = 25;
         IrEnumConstructorCall enum_constructor_call = 8;
+        IrGetClass get_class = 24;
         IrGetEnumValue get_enum_value = 9;
         IrGetField get_field = 10;
         IrGetValue get_value = 11;
