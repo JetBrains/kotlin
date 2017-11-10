@@ -562,7 +562,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
             memScoped {
                 slotToVariableLocation.forEach { slot, variable ->
-                    val expr = longArrayOf(DwarfOp.DW_OP_plus.value,
+                    val expr = longArrayOf(DwarfOp.DW_OP_plus_uconst.value,
                             runtime.pointerSize * slot.toLong()).toCValues()
                     DIInsertDeclaration(
                             builder       = codegen.context.debugInfo.builder,
