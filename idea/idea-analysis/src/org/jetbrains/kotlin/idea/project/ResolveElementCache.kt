@@ -172,8 +172,8 @@ class ResolveElementCache(
                 val resolveToCache = CachedPartialResolve(bindingContext, file, bodyResolveMode)
 
                 for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
-                    if (!partialResolveMap.containsKey(statement) && bindingContext[BindingContext.PROCESSED, statement] == true) {
-                        partialResolveMap[statement] = resolveToCache
+                    if (bindingContext[BindingContext.PROCESSED, statement] == true) {
+                        partialResolveMap.putIfAbsent(statement, resolveToCache)
                     }
                 }
 
