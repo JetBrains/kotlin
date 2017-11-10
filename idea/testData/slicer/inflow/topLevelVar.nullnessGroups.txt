@@ -1,0 +1,3 @@
+[NotNull Values]
+3 	var <bold>foo: Int = 1</bold>
+3 		var <bold>foo: Int = 1</bold>
