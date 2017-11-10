@@ -6303,6 +6303,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertSealedSubClassToObject")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertSealedSubClassToObject extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertSealedSubClassToObject() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertSealedSubClassToObject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("nestedWithParentheses.kt")
+        public void testNestedWithParentheses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSealedSubClassToObject/nestedWithParentheses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedWithoutParentheses.kt")
+        public void testNestedWithoutParentheses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSealedSubClassToObject/nestedWithoutParentheses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notNested.kt")
+        public void testNotNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSealedSubClassToObject/notNested.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

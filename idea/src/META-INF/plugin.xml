@@ -1644,13 +1644,18 @@
       <className>org.jetbrains.kotlin.idea.intentions.AddPropertySetterIntention</className>
       <category>Kotlin</category>
     </intentionAction>
+    
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.MoveMemberToTopLevelIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+    
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertSealedSubClassToObjectIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
 
-      <intentionAction>
-          <className>org.jetbrains.kotlin.idea.intentions.MoveMemberToTopLevelIntention</className>
-          <category>Kotlin</category>
-      </intentionAction>
-
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupPath="Kotlin"
                      groupName="Style issues"
@@ -2670,6 +2675,16 @@
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SealedSubClassCanBeObject"
+                     displayName="Refactor Sealed Sub-class to Object"
+                     groupPath="Kotlin"
+                     groupName="Other problems"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="INFO"
                      language="kotlin"
     />
 
