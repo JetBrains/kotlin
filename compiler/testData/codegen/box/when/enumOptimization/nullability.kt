@@ -1,4 +1,8 @@
 // WITH_RUNTIME
+// CHECK_CASES_COUNT: function=foo1 count=0
+// CHECK_IF_COUNT: function=foo1 count=2
+// CHECK_CASES_COUNT: function=foo2 count=0
+// CHECK_IF_COUNT: function=foo2 count=2
 
 import kotlin.test.assertEquals
 

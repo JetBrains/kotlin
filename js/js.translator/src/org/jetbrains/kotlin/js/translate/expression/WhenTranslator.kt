@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.js.translate.expression
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -29,16 +31,26 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.not
 import org.jetbrains.kotlin.js.translate.utils.mutator.CoercionMutator
 import org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
+
+private typealias EntryWithConstants = Pair<List<JsExpression>, KtWhenEntry>
 
 class WhenTranslator
 private constructor(private val whenExpression: KtWhenExpression, context: TranslationContext) : AbstractTranslator(context) {
     private val expressionToMatch: JsExpression?
     private val type: KotlinType?
     private val uniqueConstants = mutableSetOf<Any>()
+    private val uniqueEnumNames = mutableSetOf<String>()
 
     private val isExhaustive: Boolean
         get() {
@@ -108,44 +120,26 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
     }
 
     private fun translateAsSwitch(fromIndex: Int): Pair<JsSwitch, Int>? {
-        val expectedType = type ?: return null
+        val ktSubject = whenExpression.subjectExpression ?: return null
+        val subjectType = bindingContext().getType(ktSubject) ?: return null
+
+        val dataFlow = DataFlowValueFactory.createDataFlowValue(
+                ktSubject, subjectType, bindingContext(), context().declarationDescriptor ?: context().currentModule)
+        val expectedTypes = bindingContext().getDataFlowInfoBefore(ktSubject).getStableTypes(dataFlow) + setOf(subjectType)
         val subject = expressionToMatch ?: return null
+        var subjectSupplier = { subject }
 
-        val entries = whenExpression.entries
-        val entriesForSwitch = mutableListOf<Pair<List<JsExpression>, KtWhenEntry>>()
-        var i = fromIndex
-        while (i < entries.size) {
-            val entry = entries[i]
-            if (entry.isElse) break
-
-            var hasImproperConstants = false
-            val constantValues = entry.conditions.mapNotNull { condition ->
-                val expression = (condition as? KtWhenConditionWithExpression)?.expression
-                expression?.let { ConstantExpressionEvaluator.getConstant(it, bindingContext())?.getValue(expectedType) } ?: run {
-                    hasImproperConstants = true
-                    null
-                }
+        val enumClass = expectedTypes.asSequence().mapNotNull { it.getEnumClass() }.firstOrNull()
+        val (entriesForSwitch, nextIndex) = if (enumClass != null) {
+            subjectSupplier = {
+                val enumBaseClass = enumClass.getSuperClassOrAny()
+                val nameProperty = DescriptorUtils.getPropertyByName(enumBaseClass.unsubstitutedMemberScope, Name.identifier("name"))
+                JsNameRef(context().getNameForDescriptor(nameProperty), subject)
             }
-            if (hasImproperConstants) break
-
-            val constants = constantValues.filter { uniqueConstants.add(it) }.mapNotNull { value ->
-                when (value) {
-                    is String -> JsStringLiteral(value)
-                    is Int -> JsIntLiteral(value)
-                    is Short -> JsIntLiteral(value.toInt())
-                    is Byte -> JsIntLiteral(value.toInt())
-                    else -> {
-                        hasImproperConstants = true
-                        null
-                    }
-                }
-            }
-            if (hasImproperConstants) break
-
-            if (constants.isNotEmpty()) {
-                entriesForSwitch += Pair(constants, entry)
-            }
-            i++
+            collectEnumEntries(fromIndex, whenExpression.entries, enumClass.defaultType)
+        }
+        else {
+            collectPrimitiveConstantEntries(fromIndex, whenExpression.entries, expectedTypes)
         }
 
         return if (entriesForSwitch.asSequence().map { it.first.size }.sum() > 1) {
@@ -164,11 +158,92 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
                 lastEntry.statements += JsBreak().apply { source = entry }
                 members
             }
-            Pair(JsSwitch(subject, switchEntries).apply { source = expression }, i)
+            Pair(JsSwitch(subjectSupplier(), switchEntries).apply { source = expression }, nextIndex)
         }
         else {
             null
         }
+    }
+
+    private fun collectPrimitiveConstantEntries(
+            fromIndex: Int,
+            entries: List<KtWhenEntry>,
+            expectedTypes: Set<KotlinType>
+    ): Pair<List<EntryWithConstants>, Int> {
+        return collectConstantEntries(
+                fromIndex, entries,
+                { constant -> expectedTypes.asSequence().mapNotNull { constant.getValue(it) }.firstOrNull() },
+                { uniqueConstants.add(it) },
+                {
+                    when (it) {
+                        is String -> JsStringLiteral(it)
+                        is Int -> JsIntLiteral(it)
+                        is Short -> JsIntLiteral(it.toInt())
+                        is Byte -> JsIntLiteral(it.toInt())
+                        is Char -> JsIntLiteral(it.toInt())
+                        else -> null
+                    }
+                }
+        )
+    }
+
+    private fun collectEnumEntries(
+            fromIndex: Int,
+            entries: List<KtWhenEntry>,
+            expectedType: KotlinType
+    ): Pair<List<EntryWithConstants>, Int> {
+        return collectConstantEntries(
+                fromIndex, entries,
+                { (it.toConstantValue(expectedType) as? EnumValue)?.value?.name?.identifier },
+                { uniqueEnumNames.add(it) },
+                { JsStringLiteral(it) }
+        )
+    }
+
+    private fun <T : Any> collectConstantEntries(
+            fromIndex: Int,
+            entries: List<KtWhenEntry>,
+            extractor: (CompileTimeConstant<*>) -> T?,
+            filter: (T) -> Boolean,
+            wrapper: (T) -> JsExpression?
+    ): Pair<List<EntryWithConstants>, Int> {
+        val entriesForSwitch = mutableListOf<EntryWithConstants>()
+        var i = fromIndex
+        while (i < entries.size) {
+            val entry = entries[i]
+            if (entry.isElse) break
+
+            var hasImproperConstants = false
+            val constantValues = entry.conditions.mapNotNull { condition ->
+                val expression = (condition as? KtWhenConditionWithExpression)?.expression
+                expression?.let { ConstantExpressionEvaluator.getConstant(it, bindingContext()) }?.let(extractor) ?: run {
+                    hasImproperConstants = true
+                    null
+                }
+            }
+            if (hasImproperConstants) break
+
+            val constants = constantValues.filter(filter).mapNotNull {
+                wrapper(it) ?: run {
+                    hasImproperConstants = true
+                    null
+                }
+            }
+            if (hasImproperConstants) break
+
+            if (constants.isNotEmpty()) {
+                entriesForSwitch += Pair(constants, entry)
+            }
+            i++
+        }
+
+        return Pair(entriesForSwitch, i)
+    }
+
+    private fun KotlinType.getEnumClass(): ClassDescriptor? {
+        if (isMarkedNullable) return null
+        val classDescriptor = (constructor.declarationDescriptor as? ClassDescriptor)
+        return if (classDescriptor?.kind == ClassKind.ENUM_CLASS) classDescriptor else null
     }
 
     private fun translateEntryExpression(

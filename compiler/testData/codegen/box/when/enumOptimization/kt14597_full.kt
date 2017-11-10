@@ -1,3 +1,6 @@
+// CHECK_CASES_COUNT: function=box count=18
+// CHECK_IF_COUNT: function=box count=3
+
 enum class En { A, B, С }
 
 fun box(): String {
