@@ -1,0 +1,3 @@
+[NotNull Values]
+10 	val <bold>x = foo(f)</bold>
+10 		val <bold>x = foo(f)</bold>

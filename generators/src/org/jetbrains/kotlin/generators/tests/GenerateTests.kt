@@ -131,6 +131,7 @@ import org.jetbrains.kotlin.idea.resolve.*
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerLeafGroupingTest
+import org.jetbrains.kotlin.idea.slicer.AbstractSlicerNullnessGroupingTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerTreeTest
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
@@ -715,6 +716,10 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractSlicerLeafGroupingTest> {
+            model("slicer/inflow", singleClass = true)
+        }
+
+        testClass<AbstractSlicerNullnessGroupingTest> {
             model("slicer/inflow", singleClass = true)
         }
     }
