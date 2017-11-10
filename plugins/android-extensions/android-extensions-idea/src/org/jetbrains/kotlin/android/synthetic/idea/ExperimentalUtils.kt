@@ -52,6 +52,12 @@ private fun isTestMode(module: Module): Boolean {
 internal val Module.androidExtensionsIsEnabled: Boolean
     get() = isTestMode(this) || getOptionValueInFacet(ENABLED_OPTION) == "true"
 
+internal val ModuleInfo.androidExtensionsIsEnabled: Boolean
+    get() {
+        val module = (this as? ModuleSourceInfo)?.module ?: return false
+        return module.androidExtensionsIsEnabled
+    }
+
 internal val ModuleInfo.androidExtensionsIsExperimental: Boolean
     get() {
         val module = (this as? ModuleSourceInfo)?.module ?: return false
