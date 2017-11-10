@@ -150,7 +150,6 @@ object ComparableOps : TemplateGroupBase() {
         typeParam("T: Comparable<T>")
         returns("T")
         receiver("")
-        specialFor(Primitives) { inlineOnly() }
         doc {
             """
             Returns the smaller of two values.
@@ -159,15 +158,25 @@ object ComparableOps : TemplateGroupBase() {
         }
         // TODO: Add a note about NaN propagation for floats.
         specialFor(Primitives) {
+            inlineOnly()
             doc {
                 """Returns the smaller of two values."""
             }
-            // TODO: custom body for JS minOf(Long, Long)
+            var convertBack = "to$primitive()"
+            on(Platform.JS) {
+                convertBack = "unsafeCast<$primitive>()"
+            }
             body {
                 "return Math.min(a, b)"
             }
             if (primitive in shortIntPrimitives) {
-                body { "return Math.min(a.toInt(), b.toInt()).to$primitive()" }
+                body { "return Math.min(a.toInt(), b.toInt()).$convertBack" }
+            }
+            on(Platform.JS) {
+                if (primitive == PrimitiveType.Long) {
+                    inline(suppressWarning = true)
+                    body { "return if (a <= b) a else b" }
+                }
             }
         }
         body(Generic) {
@@ -197,6 +206,14 @@ object ComparableOps : TemplateGroupBase() {
         specialFor(Primitives) {
             if (primitive in shortIntPrimitives) {
                 body { "return Math.min(a.toInt(), Math.min(b.toInt(), c.toInt())).to$primitive()" }
+                on(Platform.JS) {
+                    body { "return Math.min(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
+                }
+            }
+            else if (primitive != PrimitiveType.Long) {
+                on(Platform.JS) {
+                    body { "return Math.min(a, b, c)" }
+                }
             }
         }
     }
@@ -245,7 +262,6 @@ object ComparableOps : TemplateGroupBase() {
         typeParam("T: Comparable<T>")
         returns("T")
         receiver("")
-        specialFor(Primitives) { inlineOnly() }
         doc {
             """
             Returns the greater of two values.
@@ -254,14 +270,25 @@ object ComparableOps : TemplateGroupBase() {
         }
         // TODO: Add a note about NaN propagation for floats.
         specialFor(Primitives) {
+            inlineOnly()
             doc {
                 """Returns the greater of two values."""
+            }
+            var convertBack = "to$primitive()"
+            on(Platform.JS) {
+                convertBack = "unsafeCast<$primitive>()"
             }
             body {
                 "return Math.max(a, b)"
             }
             if (primitive in shortIntPrimitives) {
-                body { "return Math.max(a.toInt(), b.toInt()).to$primitive()" }
+                body { "return Math.max(a.toInt(), b.toInt()).$convertBack" }
+            }
+            on(Platform.JS) {
+                if (primitive == PrimitiveType.Long) {
+                    inline(suppressWarning = true)
+                    body { "return if (a >= b) a else b" }
+                }
             }
         }
         body(Generic) {
@@ -291,6 +318,14 @@ object ComparableOps : TemplateGroupBase() {
         specialFor(Primitives) {
             if (primitive in shortIntPrimitives) {
                 body { "return Math.max(a.toInt(), Math.max(b.toInt(), c.toInt())).to$primitive()" }
+                on(Platform.JS) {
+                    body { "return Math.max(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
+                }
+            }
+            else if (primitive != PrimitiveType.Long) {
+                on(Platform.JS) {
+                    body { "return Math.max(a, b, c)" }
+                }
             }
         }
     }
