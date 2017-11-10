@@ -10,15 +10,16 @@ dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.frontend"))
+    compileOnly(project(":kotlin-reflect-api"))
     compileOnly(ideaSdkDeps("util"))
     testCompileOnly(project(":compiler:cli-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(protobufFull())
     testCompile(projectDist(":kotlin-stdlib"))
-    testCompile(projectDist(":kotlin-reflect"))
     testCompileOnly(ideaSdkDeps("openapi"))
     testRuntime(projectDist(":kotlin-compiler"))
+    testRuntime(projectDist(":kotlin-reflect"))
 }
 
 sourceSets {

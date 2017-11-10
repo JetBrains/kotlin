@@ -2,7 +2,7 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(projectDist(":kotlin-reflect"))
+    compileOnly(project(":kotlin-reflect-api"))
     compile(project(":compiler:util"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:frontend"))
@@ -28,6 +28,7 @@ dependencies {
     testCompile(ideaSdkDeps("gson"))
     testCompile(commonDep("junit:junit"))
 
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":plugins:kapt3-idea"))

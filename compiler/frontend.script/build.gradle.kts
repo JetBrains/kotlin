@@ -7,7 +7,7 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(projectDist(":kotlin-stdlib"))
-    compile(projectDist(":kotlin-reflect"))
+    compileOnly(project(":kotlin-reflect-api"))
     compile(preloadedDeps("kotlinx-coroutines-core"))
 }
 
