@@ -47,11 +47,8 @@ class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     override fun getStubBuilder() = stubBuilder
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): KotlinDecompiledFileViewProvider {
-        val project = manager.project
         return KotlinDecompiledFileViewProvider(manager, file, physical) factory@{ provider ->
             val virtualFile = provider.virtualFile
-            val fileIndex = ServiceManager.getService(project, FileIndexFacade::class.java)
-            if (!fileIndex.isInLibraryClasses(virtualFile) && fileIndex.isInSource(virtualFile)) return@factory null
 
             if (isKotlinInternalCompiledFile(virtualFile))
                 null
