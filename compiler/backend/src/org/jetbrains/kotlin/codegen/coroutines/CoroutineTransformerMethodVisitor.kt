@@ -77,6 +77,8 @@ class CoroutineTransformerMethodVisitor(
         FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
 
         if (isForNamedFunction) {
+            ReturnUnitMethodTransformer.transform(containingClassInternalName, methodNode)
+
             if (allSuspensionPointsAreTailCalls(containingClassInternalName, methodNode, suspensionPoints)) {
                 dropSuspensionMarkers(methodNode, suspensionPoints)
                 return
@@ -701,7 +703,7 @@ private fun allSuspensionPointsAreTailCalls(
     }
 }
 
-private class IgnoringCopyOperationSourceInterpreter : SourceInterpreter() {
+internal class IgnoringCopyOperationSourceInterpreter : SourceInterpreter() {
     override fun copyOperation(insn: AbstractInsnNode?, value: SourceValue?) = value
 }
 
