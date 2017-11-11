@@ -1,26 +1,32 @@
 @file:kotlin.jvm.JvmVersion
 package test.concurrent
 
+import java.util.*
 import kotlin.concurrent.*
 import kotlin.test.*
 
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.Timer
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 
 class TimerTest {
     @Test fun scheduledTask() {
-        val counter = AtomicInteger(0)
         val timer = Timer()
 
-        val task = timer.scheduleAtFixedRate(1000, 100) {
-            val current = counter.incrementAndGet()
-            if (false) println("Timer fired at $current")
+        val latch = CountDownLatch(10)
+        val startedAt = System.nanoTime()
+        lateinit var callbackTask: TimerTask
+        val task = timer.scheduleAtFixedRate(100, 10) {
+            callbackTask = this
+            latch.countDown()
+            if (latch.count == 0L) this.cancel()
         }
-        Thread.sleep(1500)
-        task.cancel()
+        if (!latch.await(1500, TimeUnit.MILLISECONDS)) throw TimeoutException()
+        val elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startedAt)
 
-        val value = counter.get()
-        assertTrue(value >= 4, "Expected to fire at least 4 times, but was $value")
+        val expectedRange = 100L..500L
+        assertTrue(elapsed in expectedRange, "Expected elapsed ($elapsed ms) to fit in range $expectedRange")
+        assertSame(task, callbackTask)
     }
 }
