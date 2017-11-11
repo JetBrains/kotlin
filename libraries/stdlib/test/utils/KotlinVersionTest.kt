@@ -60,7 +60,7 @@ class KotlinVersionTest {
         val random = java.util.Random()
         fun randomComponent(): Int = random.nextInt(KotlinVersion.MAX_COMPONENT_VALUE + 1)
         fun randomVersion() = KotlinVersion(randomComponent(), randomComponent(), randomComponent())
-        repeat(10000) {
+        repeat(1000) {
             val v1 = randomVersion()
             val v2 = randomVersion()
             if (v1.isAtLeast(v2.major, v2.minor, v2.patch))

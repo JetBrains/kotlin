@@ -4,11 +4,13 @@ package test.utils
 
 import kotlin.*
 import kotlin.test.*
-import java.io.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 import test.io.serializeAndDeserialize
+import java.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicBoolean
 
 class LazyJVMTest {
 
@@ -16,11 +18,12 @@ class LazyJVMTest {
         val counter = AtomicInteger(0)
         val lazy = lazy {
             val value = counter.incrementAndGet()
-            Thread.sleep(100)
+            Thread.sleep(80)
             value
         }
 
-        val accessThreads = listOf(lazy, lazy).map { thread { it.value } }
+        val accessThreads = List(3) { thread(start = false) { lazy.value } }
+        accessThreads.forEach { it.start() }
         accessThreads.forEach { it.join() }
 
         assertEquals(1, counter.get())
@@ -35,7 +38,7 @@ class LazyJVMTest {
         val initializer = {
             val value = counter.incrementAndGet()
             runs += (value to initialized)
-            Thread.sleep(100)
+            Thread.sleep(50)
             initialized = true
             value
         }
@@ -54,26 +57,32 @@ class LazyJVMTest {
 
     @Test fun publishOnceLazy() {
         val counter = AtomicInteger(0)
-        var initialized: Boolean = false
-        val runs = ConcurrentHashMap<Int, Boolean>()
+        val initialized = AtomicBoolean(false)
+        val threads = 3
+        val values = Random().let { r -> List(threads) { 50 + r.nextInt(50) } }
+        data class Run(val id: Int, val value: Int, val initialized: Boolean)
+        val runs = ConcurrentLinkedQueue<Run>()
 
         val initializer = {
-            val value = counter.incrementAndGet()
-            runs += (value to initialized)
-            Thread.sleep((3 - value) * 100L)
-            initialized = true
+            val id = counter.getAndIncrement()
+            val value = values[id]
+            runs += Run(id, value, initialized.get())
+            Thread.sleep(value.toLong())
+            initialized.set(true)
             value
         }
         val lazy = lazy(LazyThreadSafetyMode.PUBLICATION, initializer)
 
-        val accessThreads = listOf(lazy, lazy).map { thread { it.value } }
+        val accessThreads = List(threads) { thread(start = false) { lazy.value } }
+        accessThreads.forEach { it.start() }
+        val result = run { while (!lazy.isInitialized()) /* wait */; lazy.value }
         accessThreads.forEach { it.join() }
 
-        assertEquals(2, counter.get())
-        assertEquals(2, lazy.value)
-        @Suppress("NAME_SHADOWING")
-        for ((_, initialized) in runs) {
-            assertFalse(initialized, "Expected uninitialized on first and second run")
+        assertEquals(threads, counter.get())
+        assertEquals(result, lazy.value, "Value must not change after isInitialized is set: $lazy, runs: $runs")
+
+        runs.forEach {
+            assertFalse(it.initialized, "Expected uninitialized on all initializer executions, runs: $runs")
         }
     }
 
