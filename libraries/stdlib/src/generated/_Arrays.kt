@@ -511,7 +511,7 @@ public inline fun CharArray.elementAt(index: Int): Char {
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return this.getOrElse(index, defaultValue)
 }
 
 /**
@@ -519,7 +519,7 @@ public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (In
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return this.getOrElse(index, defaultValue)
 }
 
 /**
@@ -527,7 +527,7 @@ public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> B
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Short): Short {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return this.getOrElse(index, defaultValue)
 }
 
 /**
@@ -535,7 +535,7 @@ public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Int): Int {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return this.getOrElse(index, defaultValue)
 }
 
 /**
@@ -543,7 +543,7 @@ public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> In
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Long): Long {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return this.getOrElse(index, defaultValue)
 }
 
 /**
@@ -551,7 +551,7 @@ public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> L
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Float): Float {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return this.getOrElse(index, defaultValue)
 }
 
 /**
@@ -559,7 +559,7 @@ public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Double): Double {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return this.getOrElse(index, defaultValue)
 }
 
 /**
@@ -567,7 +567,7 @@ public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) ->
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return this.getOrElse(index, defaultValue)
 }
 
 /**
@@ -575,7 +575,7 @@ public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return this.getOrElse(index, defaultValue)
 }
 
 /**
