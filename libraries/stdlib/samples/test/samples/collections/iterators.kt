@@ -17,55 +17,56 @@
 package samples.collections
 
 import samples.Sample
-import samples.assertPrints
 import java.util.*
 
 class Iterators {
 
     @Sample
     fun iteratorForEnumeration() {
-        val list = arrayListOf<String>()
         val vector = Vector<String>().apply {
             add("RED")
             add("GREEN")
             add("BLUE")
         }
-        val iterator = vector.elements().iterator()
-        while (iterator.hasNext()) {
-            list.add(iterator.next())
-        }
 
-        assertPrints(list.joinToString(":"), "RED:GREEN:BLUE")
+        for (e in vector.elements()) {
+            println("The element is $e")
+        }
     }
 
     @Sample
     fun iterator() {
-        val intIterator = IntProgression.fromClosedRange(1, 3, 1).iterator()
-        val iterator = intIterator.iterator()
+        val mutableList = mutableListOf(1, 2, 3)
+        val mutableIterator = mutableList.iterator()
 
-        assertPrints(iterator.next(), "1")
-        assertPrints(iterator.next(), "2")
-        assertPrints(iterator.next(), "3")
+        if (mutableIterator.hasNext()) {
+            mutableIterator.next()
+            mutableIterator.remove()
+        }
+
+        for (e in mutableIterator) {
+            println("The element is $e")
+        }
     }
 
     @Sample
     fun withIndexIterator() {
-        var result = 0
-        val iterator = (1..3).iterator()
-        for ((index) in iterator.withIndex()) {
-            result += index
-        }
+        val iterator = ('a'..'c').iterator()
 
-        assertPrints(result, "3")
+        for ((index, value) in iterator.withIndex()) {
+            println("The element at $index is $value")
+        }
     }
 
     @Sample
     fun forEachIterator() {
-        var result = 0
-        (1..3).iterator().forEach {
-            result += it
+        val iterator = (1..3).iterator()
+        if (iterator.hasNext()) {
+            iterator.next()
         }
 
-        assertPrints(result, "6")
+        iterator.forEach {
+            println("The element is $it")
+        }
     }
 }
