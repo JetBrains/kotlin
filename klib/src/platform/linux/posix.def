@@ -12,7 +12,8 @@ headers = alloca.h ar.h assert.h complex.h dirent.h dlfcn.h err.h errno.h fcntl.
     sys/queue.h sys/select.h sys/shm.h sys/stat.h sys/socket.h \
     sys/time.h sys/times.h sys/utsname.h sys/wait.h
 
-compilerOpts = -D_ANSI_SOURCE -D_POSIX_SOURCE -D_BSD_SOURCE -D_XOPEN_SOURCE=700 -D__need_error_t
+compilerOpts = -D_ANSI_SOURCE -D_POSIX_C_SOURCE=199309 -D_BSD_SOURCE \
+               -D_XOPEN_SOURCE=700 -D__need_error_t
 linkerOpts = -lresolv -lm -lpthread -lutil -lcrypt -lrt
 excludedFunctions = bindresvport6 __p_section __res_nisourserver __res_npquery \
                     ns_sign ns_sign2 ns_sign_tcp ns_sign_tcp2 ns_sign_tcp_init \

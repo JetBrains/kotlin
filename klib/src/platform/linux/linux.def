@@ -35,6 +35,6 @@ headers = aio.h aliases.h a.out.h argp.h argz.h byteswap.h cpio.h crypt.h \
 
 headers.x86-64 = sys/debugreg.h sys/reg.h sys/io.h sys/perm.h sys/kdaemon.h
 
-compilerOpts = -D_ANSI_SOURCE -D_POSIX_SOURCE -D_BSD_SOURCE -D_XOPEN_SOURCE=700
+compilerOpts = -D_ANSI_SOURCE -D_POSIX_C_SOURCE=199309 -D_BSD_SOURCE -D_XOPEN_SOURCE=700
 depends = posix
 
