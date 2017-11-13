@@ -1,6 +1,0 @@
-<idea-plugin>
-    <id>org.jetbrains.kotlin</id>
-
-    <extensions defaultExtensionNs="org.jetbrains.kotlin">
-    </extensions>
-</idea-plugin>
