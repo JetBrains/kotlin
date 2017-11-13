@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.kapt3.stubs
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeScanner
 import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollector.Companion.KAPT_SIGNATURE_ANNOTATION_FQNAME
+import org.jetbrains.kotlin.kapt3.util.getPackageNameJava9Aware
 
 class KaptStubLineInformation {
     private val offsets = mutableMapOf<JCTree.JCCompilationUnit, KaptLineMappingCollector.LineInfo>()
@@ -84,7 +85,7 @@ class KaptStubLineInformation {
         // Unfortunately, we have to do this the hard way, as symbols may be not available yet
         // (for instance, if this code is called inside the "enterTrees()")
         val simpleDescriptor = getFqName(declaration, file, "")
-        val packageName = file.packageName?.toString()?.replace('.', '/')
+        val packageName = file.getPackageNameJava9Aware()?.toString()?.replace('.', '/')
         return if (packageName == null) simpleDescriptor else "$packageName/$simpleDescriptor"
     }
 

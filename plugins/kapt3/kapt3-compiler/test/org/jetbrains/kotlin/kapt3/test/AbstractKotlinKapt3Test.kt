@@ -34,8 +34,10 @@ import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaLog
+import org.jetbrains.kotlin.kapt3.parseJavaFiles
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
+import org.jetbrains.kotlin.kapt3.util.isJava9OrLater
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -44,8 +46,11 @@ import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
+import java.net.URL
+import java.net.URLClassLoader
 import java.nio.file.Files
 import java.util.*
+import java.util.concurrent.TimeUnit
 import com.sun.tools.javac.util.List as JavacList
 
 abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
@@ -88,6 +93,8 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
 
         try {
             check(kaptContext, javaFiles, txtFile, wholeFile)
+        } catch (e: Throwable) {
+            throw RuntimeException(e)
         } finally {
             javaFiles.forEach { it.delete() }
             tempFiles.forEach { it.delete() }
@@ -115,7 +122,8 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         kaptContext.compiler.log.nerrors = 0
 
         try {
-            val parsedJavaFiles = kaptContext.compiler.parseFiles(kaptContext.fileManager.getJavaFileObjectsFromFiles(allJavaFiles))
+            val parsedJavaFiles = kaptContext.parseJavaFiles(allJavaFiles)
+
             for (file in parsedJavaFiles) {
                 // By default, JavaFileObject.getName() returns the absolute path to the file.
                 // In our test, such a path will be temporary, so the comparision against it will lead to flaky tests.
@@ -135,18 +143,70 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
             wholeFile: File)
 }
 
-abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test() {
-    internal companion object {
+open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test() {
+    companion object {
         private val KOTLIN_METADATA_GROUP = "[a-z0-9]+ = (\\{.+?\\}|[0-9]+)"
         private val KOTLIN_METADATA_REGEX = "@kotlin\\.Metadata\\(($KOTLIN_METADATA_GROUP)(, $KOTLIN_METADATA_GROUP)*\\)".toRegex()
         private val KAPT_METADATA_REGEX = "@kapt\\.internal\\.KaptMetadata\\((value = )?\"[^(].*?\"\\)".toRegex()
 
         private val EXPECTED_ERROR = "EXPECTED_ERROR"
 
-        fun removeMetadataAnnotationContents(s: String): String {
+        internal fun removeMetadataAnnotationContents(s: String): String {
             return s.replace(KOTLIN_METADATA_REGEX, "@kotlin.Metadata()")
                     .replace(KAPT_METADATA_REGEX, "@kapt.internal.KaptMetadata()")
         }
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            if (args.isEmpty()) error("1 argument expected, 0 passed")
+            AbstractClassFileToSourceStubConverterTest().doTest(args[0])
+        }
+    }
+
+    // This is to suppress "AssertionFailedError: No tests found"
+    fun testSuppressWarning() {}
+
+    override fun doTest(filePath: String) {
+        super.doTest(filePath)
+
+        if (!isJava9OrLater) {
+            doTestWithJdk9(filePath)
+        }
+    }
+
+    private fun doTestWithJdk9(filePath: String) {
+        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: run {
+            println("JDK9 not found, the test was skipped")
+            return
+        }
+
+        val javaExe = File(jdk9Home, "bin/java.exe").takeIf { it.exists() } ?: File(jdk9Home, "bin/java")
+        assert(javaExe.exists()) { "Can't find 'java' executable in $jdk9Home" }
+
+        val currentJavaHome = System.getProperty("java.home")
+        val classpath = collectClasspath(AbstractClassFileToSourceStubConverterTest::class.java.classLoader)
+                .filter { !it.path.startsWith(currentJavaHome) }
+
+        val process = ProcessBuilder(
+                javaExe.absolutePath,
+                "--illegal-access=warn",
+                "-ea",
+                "-classpath",
+                classpath.joinToString(File.pathSeparator),
+                AbstractClassFileToSourceStubConverterTest::class.java.name,
+                filePath
+        ).inheritIO().start()
+
+        process.waitFor(3, TimeUnit.MINUTES)
+        if (process.exitValue() != 0) {
+            throw AssertionError("Java 9 test process exited with exit code ${process.exitValue()} \n")
+        }
+    }
+
+    private fun collectClasspath(classLoader: ClassLoader?): List<URL> = when (classLoader) {
+        is URLClassLoader -> classLoader.urLs.asList() + collectClasspath(classLoader.parent)
+        is ClassLoader -> collectClasspath(classLoader.parent)
+        else -> emptyList()
     }
 
     override fun check(kaptContext: KaptContext<GenerationState>, javaFiles: List<File>, txtFile: File, wholeFile: File) {
