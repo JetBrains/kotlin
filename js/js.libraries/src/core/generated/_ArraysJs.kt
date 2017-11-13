@@ -13207,6 +13207,86 @@ public fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
 }
 
 /**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public fun ByteArray.copyRangeTo(srcPos: Int, dest: ByteArray, destPos: Int, length: Int): Unit {
+    (dest as dynamic).set((this as dynamic).subarray(srcPos, srcPos + length), destPos)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public fun ShortArray.copyRangeTo(srcPos: Int, dest: ShortArray, destPos: Int, length: Int): Unit {
+    (dest as dynamic).set((this as dynamic).subarray(srcPos, srcPos + length), destPos)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public fun IntArray.copyRangeTo(srcPos: Int, dest: IntArray, destPos: Int, length: Int): Unit {
+    (dest as dynamic).set((this as dynamic).subarray(srcPos, srcPos + length), destPos)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public fun LongArray.copyRangeTo(srcPos: Int, dest: LongArray, destPos: Int, length: Int): Unit {
+    if ((this === dest) && (destPos > srcPos)) {
+       for (n in 0 until length) dest[destPos + length - n - 1] = this[srcPos + length - n - 1]
+    } else {
+       for (n in 0 until length) dest[destPos + n] = this[srcPos + n]
+    }
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public fun FloatArray.copyRangeTo(srcPos: Int, dest: FloatArray, destPos: Int, length: Int): Unit {
+    (dest as dynamic).set((this as dynamic).subarray(srcPos, srcPos + length), destPos)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public fun DoubleArray.copyRangeTo(srcPos: Int, dest: DoubleArray, destPos: Int, length: Int): Unit {
+    (dest as dynamic).set((this as dynamic).subarray(srcPos, srcPos + length), destPos)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public fun BooleanArray.copyRangeTo(srcPos: Int, dest: BooleanArray, destPos: Int, length: Int): Unit {
+    (dest as dynamic).set((this as dynamic).subarray(srcPos, srcPos + length), destPos)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public fun CharArray.copyRangeTo(srcPos: Int, dest: CharArray, destPos: Int, length: Int): Unit {
+    (dest as dynamic).set((this as dynamic).subarray(srcPos, srcPos + length), destPos)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public fun <T> Array<out T>.copyRangeTo(srcPos: Int, dest: Array<out T>, destPos: Int, length: Int): Unit {
+    if ((this === dest) && (destPos > srcPos)) {
+       for (n in 0 until length) dest[destPos + length - n - 1] = this[srcPos + length - n - 1]
+    } else {
+       for (n in 0 until length) dest[destPos + n] = this[srcPos + n]
+    }
+}
+
+/**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")

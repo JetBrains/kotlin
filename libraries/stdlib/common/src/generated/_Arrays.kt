@@ -7537,6 +7537,60 @@ public expect fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): Boolea
 public expect fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
 
 /**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public expect fun ByteArray.copyRangeTo(srcPos: Int, dest: ByteArray, destPos: Int, length: Int): Unit
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public expect fun ShortArray.copyRangeTo(srcPos: Int, dest: ShortArray, destPos: Int, length: Int): Unit
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public expect fun IntArray.copyRangeTo(srcPos: Int, dest: IntArray, destPos: Int, length: Int): Unit
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public expect fun LongArray.copyRangeTo(srcPos: Int, dest: LongArray, destPos: Int, length: Int): Unit
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public expect fun FloatArray.copyRangeTo(srcPos: Int, dest: FloatArray, destPos: Int, length: Int): Unit
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public expect fun DoubleArray.copyRangeTo(srcPos: Int, dest: DoubleArray, destPos: Int, length: Int): Unit
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public expect fun BooleanArray.copyRangeTo(srcPos: Int, dest: BooleanArray, destPos: Int, length: Int): Unit
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public expect fun CharArray.copyRangeTo(srcPos: Int, dest: CharArray, destPos: Int, length: Int): Unit
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+public expect fun <T> Array<T>.copyRangeTo(srcPos: Int, dest: Array<T>, destPos: Int, length: Int): Unit
+
+/**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public expect operator fun <T> Array<T>.plus(element: T): Array<T>

@@ -13334,6 +13334,87 @@ public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
 }
 
 /**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyRangeTo(srcPos: Int, dest: ByteArray, destPos: Int, length: Int): Unit {
+    java.lang.System.arraycopy(this, srcPos, dest, destPos, length)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyRangeTo(srcPos: Int, dest: ShortArray, destPos: Int, length: Int): Unit {
+    java.lang.System.arraycopy(this, srcPos, dest, destPos, length)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyRangeTo(srcPos: Int, dest: IntArray, destPos: Int, length: Int): Unit {
+    java.lang.System.arraycopy(this, srcPos, dest, destPos, length)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyRangeTo(srcPos: Int, dest: LongArray, destPos: Int, length: Int): Unit {
+    java.lang.System.arraycopy(this, srcPos, dest, destPos, length)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyRangeTo(srcPos: Int, dest: FloatArray, destPos: Int, length: Int): Unit {
+    java.lang.System.arraycopy(this, srcPos, dest, destPos, length)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyRangeTo(srcPos: Int, dest: DoubleArray, destPos: Int, length: Int): Unit {
+    java.lang.System.arraycopy(this, srcPos, dest, destPos, length)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyRangeTo(srcPos: Int, dest: BooleanArray, destPos: Int, length: Int): Unit {
+    java.lang.System.arraycopy(this, srcPos, dest, destPos, length)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyRangeTo(srcPos: Int, dest: CharArray, destPos: Int, length: Int): Unit {
+    java.lang.System.arraycopy(this, srcPos, dest, destPos, length)
+}
+
+/**
+ * Copies an array from the specified source array [this] with [length], beginning at the specified [srcPos], to the specified position [destPos] of the destination array [dest].
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyRangeTo(srcPos: Int, dest: Array<T>, destPos: Int, length: Int): Unit {
+    java.lang.System.arraycopy(this, srcPos, dest, destPos, length)
+}
+
+/**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 public operator fun <T> Array<T>.plus(element: T): Array<T> {
