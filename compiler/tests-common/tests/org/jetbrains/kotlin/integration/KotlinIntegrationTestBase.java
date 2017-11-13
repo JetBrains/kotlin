@@ -140,7 +140,8 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
     }
 
     protected static File getKotlinProjectHome() {
-        return new File(PathManager.getHomePath()).getParentFile();
+        // assuming that tests are always run from the project's root
+        return new File(System.getProperty("user.dir"));
     }
 
     private static class OutputListener extends ProcessAdapter {
