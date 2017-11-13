@@ -143,10 +143,10 @@ class Maps {
             val originalMap = mapOf("key1" to 1, "key2" to 2, "key3" to 3)
             val destinationMap = mutableMapOf("key40" to 40, "key50" to 50)
 
-            val filteredToMap = originalMap.filterTo(destinationMap) { it.value < 3 }
+            val filteredMap = originalMap.filterTo(destinationMap) { it.value < 3 }
 
             //destination map is updated with filtered items from the original map
-            assertEquals(destinationMap, filteredToMap)
+            assertTrue(destinationMap === filteredMap)
             assertPrints(destinationMap, "{key40=40, key50=50, key1=1, key2=2}")
             // original map has not changed
             assertPrints(originalMap, "{key1=1, key2=2, key3=3}")
@@ -179,7 +179,7 @@ class Maps {
 
             val filteredMap = originalMap.filterNotTo(destinationMap) { it.value < 3 }
             //destination map instance has been updated
-            assertEquals(destinationMap, filteredMap)
+            assertTrue(destinationMap === filteredMap)
             assertPrints(destinationMap, "{key40=40, key50=50, key3=3}")
             // original map has not changed
             assertPrints(originalMap, "{key1=1, key2=2, key3=3}")
