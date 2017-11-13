@@ -63,7 +63,7 @@ dependencies {
 
 idea {
     module {
-        excludeDirs = files('node_modules').toSet()
+        excludeDirs = excludeDirs + files('node_modules')
     }
 }
 
