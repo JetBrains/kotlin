@@ -77,9 +77,7 @@ val jar: Jar by tasks
 jar.apply {
     from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
     from("../idea/src").apply {
-        include("META-INF/extensions/common.xml",
-                "META-INF/extensions/kotlin2jvm.xml",
-                "META-INF/extensions/kotlin2js.xml")
+        include("META-INF/extensions/common.xml")
     }
 }
 

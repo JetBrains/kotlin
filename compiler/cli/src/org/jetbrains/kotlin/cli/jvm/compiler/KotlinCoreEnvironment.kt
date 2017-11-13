@@ -110,8 +110,6 @@ import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.zip.ZipFile
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
 
 class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable,
@@ -385,14 +383,15 @@ class KotlinCoreEnvironment private constructor(
         private var ourApplicationEnvironment: JavaCoreApplicationEnvironment? = null
         private var ourProjectCount = 0
 
-        @JvmStatic fun createForProduction(
+        @JvmStatic
+        fun createForProduction(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
             setCompatibleBuild()
-            val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration, configFiles.files)
+            val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration)
             // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
             // breaks a lot of tests, therefore it is disabled for production and enabled for tests
-            if (!(System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY).toBooleanLenient() ?: false)) {
+            if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY).toBooleanLenient() != true) {
                 // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
                 // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
                 Disposer.register(parentDisposable, Disposable {
@@ -418,33 +417,33 @@ class KotlinCoreEnvironment private constructor(
         }
 
         @TestOnly
-        @JvmStatic fun createForTests(
-                parentDisposable: Disposable, configuration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
+        @JvmStatic
+        fun createForTests(
+                parentDisposable: Disposable, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
-            val config = configuration.copy()
-            if (config.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS).isEmpty()) {
-                config.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
+            val configuration = initialConfiguration.copy()
+            if (configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS).isEmpty()) {
+                configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
             }
             // Tests are supposed to create a single project and dispose it right after use
-            return KotlinCoreEnvironment(parentDisposable,
-                                         createApplicationEnvironment(parentDisposable, config, extensionConfigs.files,
-                                                 unitTestMode = true),
-                                         config,
-                                         extensionConfigs)
+            return KotlinCoreEnvironment(
+                    parentDisposable,
+                    createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true),
+                    configuration,
+                    extensionConfigs
+            )
         }
 
         // used in the daemon for jar cache cleanup
         val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
-        private fun getOrCreateApplicationEnvironmentForProduction(
-                configuration: CompilerConfiguration, configFilePaths: List<String>
-        ): JavaCoreApplicationEnvironment {
+        private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration): JavaCoreApplicationEnvironment {
             synchronized (APPLICATION_LOCK) {
                 if (ourApplicationEnvironment != null)
                     return ourApplicationEnvironment!!
 
                 val parentDisposable = Disposer.newDisposable()
-                ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, configFilePaths, unitTestMode = false)
+                ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, unitTestMode = false)
                 ourProjectCount = 0
                 Disposer.register(parentDisposable, Disposable {
                     synchronized (APPLICATION_LOCK) {
@@ -467,7 +466,6 @@ class KotlinCoreEnvironment private constructor(
         private fun createApplicationEnvironment(
                 parentDisposable: Disposable,
                 configuration: CompilerConfiguration,
-                configFilePaths: List<String>,
                 unitTestMode: Boolean
         ): JavaCoreApplicationEnvironment {
             Extensions.cleanRootArea(parentDisposable)
@@ -476,9 +474,7 @@ class KotlinCoreEnvironment private constructor(
                 override fun createJrtFileSystem(): VirtualFileSystem? = CoreJrtFileSystem()
             }
 
-            for (configPath in configFilePaths) {
-                registerApplicationExtensionPointsAndExtensionsFrom(configuration, configPath)
-            }
+            registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/common.xml")
 
             registerApplicationServicesForCLI(applicationEnvironment)
             registerApplicationServices(applicationEnvironment)

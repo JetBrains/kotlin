@@ -380,8 +380,6 @@
 
                 <fileset dir="idea/src">
                     <include name="META-INF/extensions/common.xml"/>
-                    <include name="META-INF/extensions/kotlin2jvm.xml"/>
-                    <include name="META-INF/extensions/kotlin2js.xml"/>
                 </fileset>
 
                 <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
