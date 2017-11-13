@@ -89,7 +89,7 @@ class Future<T> internal constructor(val id: FutureId) {
     /**
      * Blocks execution until the future is ready.
      */
-    fun consume(code: (T) -> Unit) {
+    fun <R> consume(code: (T) -> R) =
         when (state) {
             FutureState.SCHEDULED, FutureState.COMPUTED -> {
                 val value = @Suppress("UNCHECKED_CAST") (consumeFuture(id) as T)
@@ -100,18 +100,13 @@ class Future<T> internal constructor(val id: FutureId) {
             FutureState.CANCELLED ->
                 throw IllegalStateException("Future is cancelled")
         }
-    }
 
     val state: FutureState
         get() = FutureState.values()[stateOfFuture(id)]
 
-    override fun equals(other: Any?): Boolean {
-        return (other is Future<*>) && (id == other.id)
-    }
+    override fun equals(other: Any?) = (other is Future<*>) && (id == other.id)
 
-    override fun hashCode(): Int {
-        return id
-    }
+    override fun hashCode() = id
 }
 
 /**
@@ -145,13 +140,9 @@ class Worker(val id: WorkerId) {
              */
             throw RuntimeException("Shall not be called directly")
 
-    override fun equals(other: Any?): Boolean {
-        return (other is Worker) && (id == other.id)
-    }
+    override fun equals(other: Any?) = (other is Worker) && (id == other.id)
 
-    override fun hashCode(): Int {
-        return id
-    }
+    override fun hashCode() = id
 }
 
 /**

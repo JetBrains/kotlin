@@ -158,9 +158,9 @@ class Worker {
   void putJob(Job job, bool toFront) {
     Locker locker(&lock_);
     if (toFront)
-      queue_.push_front(job);
+       queue_.push_front(job);
     else
-      queue_.push_back(job);
+       queue_.push_back(job);
     pthread_cond_signal(&cond_);
   }
 
@@ -340,8 +340,11 @@ void Future::storeResultUnlocked(KNativePtr result) {
     Locker locker(&lock_);
     state_ = COMPUTED;
     result_ = result;
+    // Beware here: although manual clearly says that pthread_cond_signal() could be called outside
+    // of the taken lock, it's not on OSX (as of 10.13.1). If moved outside of the lock,
+    // some notifications gets missed.
+    pthread_cond_signal(&cond_);
   }
-  pthread_cond_signal(&cond_);
   theState()->signalAnyFuture();
 }
 
@@ -350,11 +353,13 @@ void Future::cancelUnlocked() {
     Locker locker(&lock_);
     state_ = CANCELLED;
     result_ = nullptr;
+    pthread_cond_signal(&cond_);
   }
-  pthread_cond_signal(&cond_);
   theState()->signalAnyFuture();
 }
 
+// Defined in RuntimeUtils.kt.
+extern "C" void ReportUnhandledException(KRef e);
 
 void* workerRoutine(void* argument) {
   Worker* worker = reinterpret_cast<Worker*>(argument);
@@ -374,9 +379,14 @@ void* workerRoutine(void* argument) {
     // so we don't use ObjHolder.
     // It is so, as ownership is transferred.
     KRef resultRef = nullptr;
-    job.function(argument, &resultRef);
-    // Transfer the result.
-    KNativePtr result = transfer(resultRef, job.transferMode);
+    KNativePtr result = nullptr;
+    try {
+        job.function(argument, &resultRef);
+        // Transfer the result.
+        result = transfer(resultRef, job.transferMode);
+    } catch (ObjHolder& e) {
+        ReportUnhandledException(e.obj());
+    }
     // Notify the future.
     job.future->storeResultUnlocked(result);
   }
