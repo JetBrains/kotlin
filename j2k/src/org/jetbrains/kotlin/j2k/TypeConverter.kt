@@ -486,3 +486,37 @@ class TypeConverter(val converter: Converter) {
         private val mutableKotlinClasses = toKotlinMutableTypesMap.values.toSet()
     }
 }
+
+fun PsiExpression.getTypeConversionMethod(expectedType: PsiType): String? {
+    val actualType = this.type ?: return null
+    if (actualType == expectedType) return null
+    if (expectedType.canonicalText == CommonClassNames.JAVA_LANG_STRING) return "toString"
+    return when (expectedType) {
+        PsiType.BYTE -> "toByte"
+        PsiType.SHORT -> "toShort"
+        PsiType.INT -> "toInt"
+        PsiType.LONG -> "toLong"
+        PsiType.FLOAT -> "toFloat"
+        PsiType.DOUBLE -> "toDouble"
+        PsiType.CHAR -> "toChar"
+        else -> null
+    }
+}
+
+fun PsiType.needTypeConversion(expected: PsiType): Boolean {
+    val expectedStr = expected.canonicalText
+    val actualStr = canonicalText
+    return expectedStr != actualStr &&
+           expectedStr != typeConversionMap[actualStr] &&
+           actualStr != typeConversionMap[expectedStr]
+}
+
+private val typeConversionMap: Map<String, String> = mapOf(
+        CommonClassNames.JAVA_LANG_BYTE to "byte",
+        CommonClassNames.JAVA_LANG_SHORT to "short",
+        CommonClassNames.JAVA_LANG_INTEGER to "int",
+        CommonClassNames.JAVA_LANG_LONG to "long",
+        CommonClassNames.JAVA_LANG_FLOAT to "float",
+        CommonClassNames.JAVA_LANG_DOUBLE to "double",
+        CommonClassNames.JAVA_LANG_CHARACTER to "char"
+)
