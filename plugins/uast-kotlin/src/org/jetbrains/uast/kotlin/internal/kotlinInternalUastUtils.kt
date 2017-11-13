@@ -69,7 +69,7 @@ internal fun DeclarationDescriptor.toSource(): PsiElement? {
     }
 }
 
-internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
+internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.SYNCHRONIZED, initializer)
 
 internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: Boolean): PsiType {
     if (this.isError) return UastErrorType
