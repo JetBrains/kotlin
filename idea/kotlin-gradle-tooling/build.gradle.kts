@@ -8,11 +8,9 @@ jvmTarget = "1.6"
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":compiler:cli-common"))
-    compile(ideaSdkDeps("gradle-tooling-api",
+    compile(ideaSdkDeps("gradle-api",
                         "gradle-tooling-extension-api",
                         "gradle",
-                        "gradle-core",
-                        "gradle-base-services-groovy",
                         subdir = "plugins/gradle/lib"))
 }
 
