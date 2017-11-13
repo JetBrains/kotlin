@@ -72,7 +72,7 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
     }
 
     override fun getExtraProjectModelClasses() = setOf(KaptGradleModel::class.java)
-    override fun getToolingExtensionsClasses() = setOf(KaptModelBuilderService::class.java)
+    override fun getToolingExtensionsClasses() = setOf(KaptModelBuilderService::class.java, Unit::class.java)
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         val kaptModel = resolverCtx.getExtraProject(gradleModule, KaptGradleModel::class.java) ?: return
