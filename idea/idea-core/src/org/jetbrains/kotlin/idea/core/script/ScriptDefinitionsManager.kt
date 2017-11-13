@@ -74,8 +74,13 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
         currentDefinitions().any { it.isScript(fileName) }
     }
 
-    private fun getContributors(): List<ScriptDefinitionContributor> =
-            Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.toList()
+    private fun getContributors(): List<ScriptDefinitionContributor> {
+        @Suppress("DEPRECATION")
+        val fromDeprecatedEP = Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.toList()
+                .map(::ScriptTemplatesProviderAdapter)
+        val fromNewEp = Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.toList()
+        return fromDeprecatedEP + fromNewEp
+    }
 
     fun reloadScriptDefinitions() = lock.write {
         definitionsByContributor = getContributors().associateByTo(mutableMapOf(), { it }, { it.safeGetDefinitions() })
