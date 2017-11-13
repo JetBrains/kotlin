@@ -2053,6 +2053,12 @@ task serialized_catch(type: LinkKonanTest) {
     goldValue = "Gotcha1: XXX\nGotcha2: YYY\n"
 }
 
+task serialized_doWhile(type: LinkKonanTest) {
+    source = "serialization/use.kt"
+    lib = "serialization/do_while.kt"
+    goldValue = "999\n"
+}
+
 task testing_annotations(type: RunStandaloneKonanTest) {
     source = "testing/annotations.kt"
     flags = ['-tr']
