@@ -137,7 +137,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     ) {
         String simpleName = name.substring(name.lastIndexOf('/') + 1);
         ClassDescriptor classDescriptor = new SyntheticClassDescriptorForLambda(
-                customContainer != null ? customContainer : correctContainerForLambda(callableDescriptor, element),
+                customContainer != null ? customContainer : correctContainerForLambda(callableDescriptor),
                 Name.special("<closure-" + simpleName + ">"),
                 supertypes,
                 element
@@ -149,7 +149,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     @NotNull
     @SuppressWarnings("ConstantConditions")
-    private DeclarationDescriptor correctContainerForLambda(@NotNull CallableDescriptor descriptor, @NotNull KtElement function) {
+    private DeclarationDescriptor correctContainerForLambda(@NotNull CallableDescriptor descriptor) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
 
         // In almost all cases the function's direct container is the correct container to consider in JVM back-end
@@ -158,23 +158,11 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         // in this case it's constructed in the outer code, despite being located under the object PSI- and descriptor-wise
         // TODO: consider the possibility of fixing this in the compiler front-end
 
-        if (container instanceof ConstructorDescriptor && DescriptorUtils.isAnonymousObject(container.getContainingDeclaration())) {
-            PsiElement element = function;
-            while (element != null) {
-                PsiElement child = element;
-                element = element.getParent();
-
-                if (bindingContext.get(DECLARATION_TO_DESCRIPTOR, element) == container) return container;
-
-                if (element instanceof KtObjectDeclaration &&
-                    element.getParent() instanceof KtObjectLiteralExpression &&
-                    child instanceof KtSuperTypeList) {
-                    // If we're passing an anonymous object's super call, it means "container" is ConstructorDescriptor of that object.
-                    // To reach outer context, we should call getContainingDeclaration() twice
-                    // TODO: this is probably not entirely correct, mostly because DECLARATION_TO_DESCRIPTOR can return null
-                    container = container.getContainingDeclaration().getContainingDeclaration();
-                }
-            }
+        while (container instanceof ConstructorDescriptor) {
+            ClassDescriptor classDescriptor = ((ConstructorDescriptor) container).getConstructedClass();
+            if (!DescriptorUtils.isAnonymousObject(classDescriptor)) break;
+            if (!uninitializedClasses.contains(classDescriptor)) break;
+            container = classDescriptor.getContainingDeclaration();
         }
 
         return container;
