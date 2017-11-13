@@ -124,9 +124,6 @@
         <get src="http://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/jarjar/jarjar-1.4.jar" dest="${dependencies}/download/jarjar-1.4.jar" usetimestamp="true"/>
         <copy file="${dependencies}/download/jarjar-1.4.jar" tofile="${dependencies}/jarjar.jar" overwrite="true"/>
 
-        <!-- ant 1.8.2 -->
-        <get-ant-library version="1.8.2" folderName="ant-1.8"/>
-
         <!-- dx.jar -->
         <property name="android-build-tools.zip" value="build-tools_r21.1.1-linux.zip"/>
         <get

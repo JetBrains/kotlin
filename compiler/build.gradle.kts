@@ -41,6 +41,7 @@ val testDistProjects = listOf(
 )
 
 val testJvm6ServerRuntime by configurations.creating
+val antLauncherJar by configurations.creating
 
 dependencies {
     depDistProjects.forEach {
@@ -62,16 +63,19 @@ dependencies {
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-daemon-client"))
     testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
-    testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    testRuntime(files(toolsJar()))
 
     testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))
+
+    antLauncherJar(commonDep("org.apache.ant", "ant"))
+    antLauncherJar(files(toolsJar()))
 }
 
 afterEvaluate {
     dependencies {
         testCompile(intellij { include("openapi.jar", "idea.jar", "util.jar", "asm-all.jar", "commons-httpclient-3.1-patched.jar") })
-        testRuntime(intellijCoreJar())
         testRuntime(intellij())
+        testRuntime(intellijCoreJar())
     }
 }
 
@@ -88,6 +92,10 @@ projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
+    doFirst {
+        systemProperty("ant.classpath", antLauncherJar.asPath)
+        systemProperty("ant.launcher.class", "org.apache.tools.ant.Main")
+    }
 }
 
 fun Project.codegenTest(target: Int, jvm: Int,

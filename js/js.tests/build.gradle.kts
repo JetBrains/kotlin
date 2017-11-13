@@ -14,6 +14,8 @@ apply { plugin("kotlin") }
 
 configureIntellijPlugin()
 
+val antLauncherJar by configurations.creating
+
 dependencies {
     testCompile(protobufFull())
     testCompile(projectTests(":compiler:tests-common"))
@@ -33,6 +35,9 @@ dependencies {
     testRuntime(projectDist(":kotlin-preloader")) // it's required for ant tests
     testRuntime(project(":compiler:backend-common"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
+
+    antLauncherJar(commonDep("org.apache.ant", "ant"))
+    antLauncherJar(files(toolsJar()))
 }
 
 afterEvaluate {
@@ -59,6 +64,10 @@ val testDistProjects = listOf(
 projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
+    doFirst {
+        systemProperty("ant.classpath", antLauncherJar.asPath)
+        systemProperty("ant.launcher.class", "org.apache.tools.ant.Main")
+    }
 }
 
 testsJar {}
@@ -67,6 +76,10 @@ projectTest("quickTest") {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
     systemProperty("kotlin.js.skipMinificationTest", "true")
+    doFirst {
+        systemProperty("ant.classpath", antLauncherJar.asPath)
+        systemProperty("ant.launcher.class", "org.apache.tools.ant.Main")
+    }
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")

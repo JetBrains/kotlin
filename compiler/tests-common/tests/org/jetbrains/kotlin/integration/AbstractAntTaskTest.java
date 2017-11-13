@@ -25,11 +25,20 @@ public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
     protected void doTest(String testFile) throws Exception {
         String testDataDir = new File(testFile).getAbsolutePath();
 
+        String antClasspath = System.getProperty("ant.classpath");
+        if (antClasspath == null) {
+            throw new RuntimeException("Unable to get a valid classpath from 'ant.classpath' property, please set it accordingly");
+        }
+
+        String antLauncherClass = System.getProperty("ant.launcher.class");
+        if (antLauncherClass == null) {
+            throw new RuntimeException("Unable to get a valid class FQN from 'ant.launcher.class' property, please set it accordingly");
+        }
+
         runJava(
                 testDataDir,
                 "build.log",
                 "-Xmx192m",
-                "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
                 "-Dkotlin.lib=" + KotlinIntegrationTestBase.getCompilerLib(),
                 "-Dkotlin.runtime.jar=" + ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath(),
                 "-Dkotlin.reflect.jar=" + ForTestCompileRuntime.reflectJarForTests().getAbsolutePath(),
@@ -39,6 +48,8 @@ public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
                 "-Dkotlin.stdlib.jdk8.jar=" + new File("dist/kotlinc/lib/kotlin-stdlib-jdk8.jar").getAbsolutePath(),
                 "-Dtest.data=" + testDataDir,
                 "-Dtemp=" + tmpdir,
+                "-cp", antClasspath,
+                antLauncherClass,
                 "-f", "build.xml"
         );
     }
@@ -48,10 +59,5 @@ public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
     protected String normalizeOutput(@NotNull File testDataDir, @NotNull String content) {
         return super.normalizeOutput(testDataDir, content)
                 .replaceAll("Total time: .+\n", "Total time: [time]\n");
-    }
-
-    @NotNull
-    private static String getAntHome() {
-        return KotlinIntegrationTestBase.getKotlinProjectHome().getAbsolutePath() + File.separator + "dependencies" + File.separator + "ant-1.8";
     }
 }
