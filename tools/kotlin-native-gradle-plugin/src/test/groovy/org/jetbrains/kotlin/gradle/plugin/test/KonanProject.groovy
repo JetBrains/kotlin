@@ -141,7 +141,7 @@ class KonanProject {
             |plugins { id 'konan' }
             |
             |konan.targets = [${targets.collect { "'$it'" }.join(", ")}]
-            """.stripMargin()
+            |""".stripMargin()
         )
         compilationTasks = [":compileKonan", ":build"]
         return result

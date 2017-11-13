@@ -234,7 +234,6 @@ class LibrarySpecification extends BaseKonanSpecification {
                 .build()
     }
 
-    @Ignore // TODO: Ignored due to an error with recursive klibs
     def 'Plugin should support library dependencies in the same project'() {
         expect:
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
@@ -255,7 +254,6 @@ class LibrarySpecification extends BaseKonanSpecification {
                 .build()
     }
 
-    @Ignore  // TODO: Ignored due to an error with recursive klibs
     def 'Plugin should support library dependencies from other projects'() {
         expect:
         def project = KonanProject.createEmpty(projectDirectory)
@@ -272,11 +270,15 @@ class LibrarySpecification extends BaseKonanSpecification {
 
         subproject2.addCompilerArtifact("bar", "fun bar() { println(43) }", ArtifactType.LIBRARY)
         subproject2.addSetting("bar", "noDefaultLibs", "true")
-        subproject2.addLibraryToArtifact("bar", "rootProject.project('subproject1'), foo")
+        subproject2.addLibraryToArtifactCustom(
+                "bar", "artifact rootProject.project('subproject1'), 'foo'"
+        )
 
         project.addCompilerArtifact("main" ,"fun main(args: Array<String>) { foo(); bar() }")
         project.addSetting("main", "noDefaultLibs", "true" )
-        project.addLibraryToArtifact("main", "project(subproject2), bar")
+        project.addLibraryToArtifactCustom(
+                "main", "artifact project('subproject2'), 'bar'"
+        )
 
         project.createRunner()
                 .withArguments(KonanProject.compilationTask("main"))
