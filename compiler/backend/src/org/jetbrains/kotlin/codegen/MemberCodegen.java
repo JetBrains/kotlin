@@ -812,7 +812,10 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null
         );
 
-        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) && !isNonDefaultInterfaceMember(functionDescriptor, state);
+        boolean isJvmStaticInObjectOrClass = CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor);
+        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) &&
+                                      !isNonDefaultInterfaceMember(functionDescriptor, state) &&
+                                      !isJvmStaticInObjectOrClass;
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
 
         int accessorParam = (hasDispatchReceiver && !accessorIsConstructor) ? 1 : 0;
@@ -824,7 +827,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             accessorParam = 0;
         }
         else if (KotlinTypeMapper.isAccessor(accessorDescriptor) && (hasDispatchReceiver || accessorIsConstructor)) {
-            if (!CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor)) {
+            if (!isJvmStaticInObjectOrClass) {
                 iv.load(0, OBJECT_TYPE);
             }
         }
