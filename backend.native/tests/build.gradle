@@ -2047,6 +2047,12 @@ task deserialized_members(type: LinkKonanTest) {
     source = "serialization/deserialize_members.kt"
 }
 
+task serialized_catch(type: LinkKonanTest) {
+    source = "serialization/use.kt"
+    lib = "serialization/catch.kt"
+    goldValue = "Gotcha1: XXX\nGotcha2: YYY\n"
+}
+
 task testing_annotations(type: RunStandaloneKonanTest) {
     source = "testing/annotations.kt"
     flags = ['-tr']
