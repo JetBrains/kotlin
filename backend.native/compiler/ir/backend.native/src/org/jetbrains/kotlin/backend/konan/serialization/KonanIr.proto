@@ -336,7 +336,7 @@ message IrBlockBody {
 }
 
 message IrCatch {
-    required KotlinDescriptor parameter = 1;
+    required IrDeclaration catch_parameter = 1;
     required IrExpression result = 2;
 }
 

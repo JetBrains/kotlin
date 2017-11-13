@@ -151,7 +151,7 @@ internal class IrSerializer(val context: Context,
 
     fun serializeCatch(catch: IrCatch): KonanIr.IrCatch {
         val proto = KonanIr.IrCatch.newBuilder()
-           .setParameter(serializeDescriptor(catch.parameter))
+           .setCatchParameter(serializeDeclaration(catch.catchParameter))
            .setResult(serializeExpression(catch.result))
         return proto.build()
     }
@@ -708,8 +708,7 @@ internal class IrDeserializer(val context: Context,
     }
 
     fun deserializeCatch(proto: KonanIr.IrCatch, start: Int, end: Int): IrCatch {
-        val parameter = deserializeDescriptor(proto.getParameter()) as VariableDescriptor
-        val catchParameter = IrVariableImpl(start, end, IrDeclarationOrigin.CATCH_PARAMETER, parameter)
+        val catchParameter = deserializeDeclaration(proto.catchParameter) as IrVariable
         val result = deserializeExpression(proto.getResult())
 
         return IrCatchImpl(start, end, catchParameter, result)
