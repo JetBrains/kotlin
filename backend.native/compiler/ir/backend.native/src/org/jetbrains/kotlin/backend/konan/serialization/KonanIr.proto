@@ -86,9 +86,8 @@ message IrBreak {
 }
 
 message IrBlock {
-    required bool is_transparent_scope = 1;
-    required bool is_lambda_origin = 2;
-    repeated IrStatement statement = 3; 
+    required bool is_lambda_origin = 1;
+    repeated IrStatement statement = 2; 
 }
 
 message MemberAccessCommon {
@@ -116,6 +115,10 @@ message IrCallableReference {
     required TypeMap type_map = 2;
 }
 
+message IrComposite {
+    repeated IrStatement statement = 1;
+}
+
 message IrConst {
     oneof value {
         bool    null = 1;
@@ -139,6 +142,10 @@ message IrContinue {
 message IrDelegatingConstructorCall {
     required KotlinDescriptor descriptor = 1;
     required MemberAccessCommon member_access = 2;
+}
+
+message IrDoWhile {
+    required Loop loop = 1;
 }
 
 message IrEnumConstructorCall {
@@ -171,6 +178,13 @@ message IrGetObject {
 
 message IrInstanceInitializerCall {
     required KotlinDescriptor descriptor = 1;
+}
+
+message Loop {
+    required int32 loop_id = 1;
+    required IrExpression condition = 2;
+    optional string label = 3;
+    optional IrExpression body = 4;
 }
 
 message IrReturn {
@@ -217,10 +231,7 @@ message IrWhen {
 }
 
 message IrWhile {
-    required int32 loop_id = 1;
-    required IrExpression condition = 2;
-    optional string label = 3;
-    optional IrExpression body = 4;
+    required Loop loop = 1;
 }
 
 // TODO: we need an extension mechanism to accomodate new 
@@ -232,8 +243,10 @@ message IrOperation {
         IrCall call = 3;
         IrCallableReference callable_reference = 4;
         IrConst const = 5;
+        IrComposite composite = 26;
         IrContinue continue = 6;
         IrDelegatingConstructorCall delegating_constructor_call = 7;
+        IrDoWhile do_while = 25;
         IrEnumConstructorCall enum_constructor_call = 8;
         IrGetEnumValue get_enum_value = 9;
         IrGetField get_field = 10;
