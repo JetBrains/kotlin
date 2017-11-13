@@ -51,7 +51,7 @@ dependencies {
     testCompile(project(":idea:idea-maven")) { isTransitive = false }
     testCompile(commonDep("junit:junit"))
 
-    testCompileOnly(ideaPluginDeps("gradle-base-services", "gradle-tooling-extension-impl", "gradle-wrapper", plugin = "gradle"))
+    testCompileOnly(ideaPluginDeps("gradle-api", "gradle-tooling-extension-impl", "gradle-wrapper", plugin = "gradle"))
     testCompileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))
     testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
 
