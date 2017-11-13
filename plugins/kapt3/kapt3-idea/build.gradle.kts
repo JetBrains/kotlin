@@ -10,7 +10,7 @@ dependencies {
     compile(project(":idea:kotlin-gradle-tooling"))
     compile(project(":kotlin-annotation-processing"))
     compile(ideaSdkDeps("openapi", "external-system-rt"))
-    compile(ideaPluginDeps("gradle-core", "gradle-tooling-api", "gradle", plugin = "gradle"))
+    compile(ideaPluginDeps("gradle-api", "gradle", plugin = "gradle"))
     compile(ideaPluginDeps("android", "android-common", "sdklib", "sdk-common", "sdk-tools", plugin = "android"))
 }
 
