@@ -9,6 +9,6 @@ fun foo() : Int {
     return foobar(1, bar(2), 3)
 }
 
-// 1 ISTORE
-// 5 ILOAD
+// 3 ISTORE
+// 7 ILOAD
 // 0 InlineMarker
