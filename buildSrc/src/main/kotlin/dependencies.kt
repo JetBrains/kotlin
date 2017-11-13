@@ -86,8 +86,7 @@ private fun String.toMaybeVersionedJarRegex(): Regex {
 
 private val jreHome = System.getProperty("java.home")
 
-fun firstFromJavaHomeThatExists(vararg paths: String): File =
+fun firstFromJavaHomeThatExists(vararg paths: String): File? =
         paths.mapNotNull { File(jreHome, it).takeIf { it.exists() } }.firstOrNull()
-                ?: throw GradleException("Cannot find under '$jreHome' neither of: ${paths.joinToString()}")
 
-fun toolsJar(): File = firstFromJavaHomeThatExists("../lib/tools.jar", "../Classes/tools.jar")
+fun toolsJar(): File? = firstFromJavaHomeThatExists("../lib/tools.jar", "../Classes/tools.jar")
