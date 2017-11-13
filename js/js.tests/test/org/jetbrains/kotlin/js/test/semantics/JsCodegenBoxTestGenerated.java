@@ -15877,6 +15877,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
 
+            @TestMetadata("inFloatingPointRangeWithNaNBound.kt")
+            public void testInFloatingPointRangeWithNaNBound() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inFloatingPointRangeWithNaNBound.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inIntRange.kt")
             public void testInIntRange() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inIntRange.kt");

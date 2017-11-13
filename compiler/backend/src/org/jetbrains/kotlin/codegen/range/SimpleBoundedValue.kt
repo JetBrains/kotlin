@@ -25,9 +25,9 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 class SimpleBoundedValue(
         codegen: ExpressionCodegen,
         rangeCall: ResolvedCall<out CallableDescriptor>,
-        private val lowBound: StackValue,
+        val lowBound: StackValue,
         isLowInclusive: Boolean,
-        private val highBound: StackValue,
+        val highBound: StackValue,
         isHighInclusive: Boolean
 ): AbstractBoundedValue(codegen, rangeCall, isLowInclusive, isHighInclusive) {
     constructor(
