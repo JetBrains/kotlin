@@ -115,8 +115,10 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
         val kotlinRuntimeJar = PathUtil.kotlinPathsForIdeaPlugin.stdlibPath
         val layoutLibJars = listOf(File(androidPluginPath, "layoutlib.jar"), File(androidPluginPath, "layoutlib-api.jar"))
 
-        val robolectricJars = File("dependencies/robolectric")
-                .listFiles { f: File -> f.extension == "jar" }
+        val robolectricClasspath = System.getProperty("robolectric.classpath")
+                                   ?: throw RuntimeException("Unable to get a valid classpath from 'robolectric.classpath' property, please set it accordingly")
+        val robolectricJars = robolectricClasspath.split(File.pathSeparator)
+                .map { File(it) }
                 .sortedBy { it.nameWithoutExtension }
 
         val junitCoreResourceName = JUnitCore::class.java.name.replace('.', '/') + ".class"
