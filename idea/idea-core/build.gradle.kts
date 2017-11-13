@@ -16,7 +16,7 @@ dependencies {
     compile(project(":plugins:android-extensions-compiler"))
     compile(ideaSdkCoreDeps("intellij-core", "util"))
     compile(ideaSdkDeps("openapi", "idea"))
-    compile(ideaPluginDeps("gradle-tooling-api", "gradle", plugin = "gradle"))
+    compile(ideaPluginDeps("gradle-api", "gradle", plugin = "gradle"))
     compile(preloadedDeps("kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
 }
 
