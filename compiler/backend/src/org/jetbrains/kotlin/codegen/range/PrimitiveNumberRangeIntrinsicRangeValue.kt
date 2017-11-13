@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForRangeContainsCall
 import org.jetbrains.kotlin.codegen.range.inExpression.CallBasedInExpressionGenerator
-import org.jetbrains.kotlin.codegen.range.inExpression.InPrimitiveContinuousRangeExpressionGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
+import org.jetbrains.kotlin.codegen.range.inExpression.InFloatingPointRangeLiteralExpressionGenerator
+import org.jetbrains.kotlin.codegen.range.inExpression.InIntegralContinuousRangeExpressionGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.org.objectweb.asm.Type
 
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): CallIntrinsicRangeValue(rangeCall) {
     protected val asmElementType = getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCall.resultingDescriptor)
@@ -41,12 +43,22 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(rangeCall: ResolvedCall<o
             resolvedCall: ResolvedCall<out CallableDescriptor>
     ): InExpressionGenerator {
         val comparisonGenerator = getComparisonGeneratorForRangeContainsCall(codegen, resolvedCall)
-        return if (comparisonGenerator != null)
-            InPrimitiveContinuousRangeExpressionGenerator(
-                    operatorReference, getBoundedValue(codegen), comparisonGenerator, codegen.frameMap
-            )
-        else
-            CallBasedInExpressionGenerator(codegen, operatorReference)
+        val comparedType = comparisonGenerator?.comparedType
+
+        return when {
+            comparisonGenerator == null -> CallBasedInExpressionGenerator(codegen, operatorReference)
+
+            comparedType == Type.DOUBLE_TYPE || comparedType == Type.FLOAT_TYPE -> {
+                val rangeLiteral = getBoundedValue(codegen) as? SimpleBoundedValue ?:
+                                   throw AssertionError("Floating point intrinsic range value should be a range literal")
+                InFloatingPointRangeLiteralExpressionGenerator(operatorReference, rangeLiteral, comparisonGenerator, codegen.frameMap)
+            }
+
+            else ->
+                InIntegralContinuousRangeExpressionGenerator(
+                        operatorReference, getBoundedValue(codegen), comparisonGenerator, codegen.frameMap
+                )
+        }
     }
 
     protected abstract fun getBoundedValue(codegen: ExpressionCodegen): BoundedValue

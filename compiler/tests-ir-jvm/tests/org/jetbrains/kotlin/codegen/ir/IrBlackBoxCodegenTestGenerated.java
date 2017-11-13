@@ -14575,6 +14575,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("inFloatingPointRangeWithNaNBound.kt")
+            public void testInFloatingPointRangeWithNaNBound() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inFloatingPointRangeWithNaNBound.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inIntRange.kt")
             public void testInIntRange() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inIntRange.kt");
