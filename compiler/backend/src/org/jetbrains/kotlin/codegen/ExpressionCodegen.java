@@ -392,16 +392,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this, OwnerKind.IMPLEMENTATION);
         new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen(), /* isLocal = */ true).generate();
 
-        if (declaration instanceof KtClass && ((KtClass) declaration).isInterface()) {
-            // TODO consider dropping this code
-            // It looks like this code generates DefaultImpl class for a local interface.
-            // Local interfaces are prohibited in Kotlin 1.0.
-            Type traitImplType = state.getTypeMapper().mapDefaultImpls(descriptor);
-            ClassBuilder traitImplBuilder = state.getFactory().newVisitor(JvmDeclarationOriginKt.DefaultImpls(declaration, descriptor), traitImplType, declaration.getContainingFile());
-            ClassContext traitImplContext = context.intoAnonymousClass(descriptor, this, OwnerKind.DEFAULT_IMPLS);
-            new InterfaceImplBodyCodegen(declaration, traitImplContext, traitImplBuilder, state, parentCodegen).generate();
-        }
-
         return StackValue.none();
     }
 
