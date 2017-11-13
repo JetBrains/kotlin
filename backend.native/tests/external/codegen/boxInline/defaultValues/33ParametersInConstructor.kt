@@ -1,6 +1,6 @@
 // FILE: 1.kt
 
-package test
+package testpackage
 
 fun calc() = "OK"
 
@@ -43,7 +43,7 @@ class Test(
 )
 // FILE: 2.kt
 
-import test.*
+import testpackage.*
 
 fun box(): String {
     val test = Test()
