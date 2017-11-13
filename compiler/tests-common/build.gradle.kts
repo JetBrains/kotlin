@@ -2,8 +2,9 @@
 apply { plugin("kotlin") }
 
 dependencies {
-    testCompile(project(":core"))
-    testCompile(project(":core::util.runtime"))
+    testCompile(project(":core:descriptors"))
+    testCompile(project(":core:descriptors.jvm"))
+    testCompile(project(":core:deserialization"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:frontend"))

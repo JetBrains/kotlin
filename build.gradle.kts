@@ -64,8 +64,6 @@ allprojects {
 extra["kotlin_root"] = rootDir
 
 val bootstrapCompileCfg = configurations.create("bootstrapCompile")
-val scriptCompileCfg = configurations.create("scriptCompile").extendsFrom(bootstrapCompileCfg)
-val scriptRuntimeCfg = configurations.create("scriptRuntime").extendsFrom(scriptCompileCfg)
 
 repositories {
     for (repo in (rootProject.extra["repos"] as List<String>)) {
@@ -119,35 +117,39 @@ extra["versions.android"] = "2.3.1"
 extra["ideaCoreSdkJars"] = arrayOf("annotations", "asm-all", "guava", "intellij-core", "jdom", "jna", "log4j", "picocontainer",
                                    "snappy-in-java", "streamex", "trove4j", "xpp3-1.1.4-min", "xstream")
 
-extra["compilerModules"] = arrayOf(":compiler:util",
-                                   ":compiler:container",
-                                   ":compiler:conditional-preprocessor",
-                                   ":compiler:resolution",
-                                   ":compiler:serialization",
-                                   ":compiler:frontend",
-                                   ":compiler:frontend.java",
-                                   ":compiler:frontend.script",
-                                   ":compiler:cli-common",
-                                   ":compiler:daemon-common",
-                                   ":compiler:daemon",
-                                   ":compiler:ir.tree",
-                                   ":compiler:ir.psi2ir",
-                                   ":compiler:backend-common",
-                                   ":compiler:backend",
-                                   ":compiler:plugin-api",
-                                   ":compiler:light-classes",
-                                   ":compiler:cli",
-                                   ":compiler:incremental-compilation-impl",
-                                   ":js:js.ast",
-                                   ":js:js.serializer",
-                                   ":js:js.parser",
-                                   ":js:js.frontend",
-                                   ":js:js.translator",
-                                   ":js:js.dce",
-                                   ":compiler",
-                                   ":kotlin-build-common",
-                                   ":core:util.runtime",
-                                   ":core")
+extra["compilerModules"] = arrayOf(
+        ":compiler:util",
+        ":compiler:container",
+        ":compiler:conditional-preprocessor",
+        ":compiler:resolution",
+        ":compiler:serialization",
+        ":compiler:frontend",
+        ":compiler:frontend.java",
+        ":compiler:frontend.script",
+        ":compiler:cli-common",
+        ":compiler:daemon-common",
+        ":compiler:daemon",
+        ":compiler:ir.tree",
+        ":compiler:ir.psi2ir",
+        ":compiler:backend-common",
+        ":compiler:backend",
+        ":compiler:plugin-api",
+        ":compiler:light-classes",
+        ":compiler:cli",
+        ":compiler:incremental-compilation-impl",
+        ":js:js.ast",
+        ":js:js.serializer",
+        ":js:js.parser",
+        ":js:js.frontend",
+        ":js:js.translator",
+        ":js:js.dce",
+        ":compiler",
+        ":kotlin-build-common",
+        ":core:descriptors",
+        ":core:descriptors.jvm",
+        ":core:deserialization",
+        ":core:util.runtime"
+)
 
 val coreLibProjects = listOf(
         ":kotlin-stdlib",
@@ -459,7 +461,6 @@ fun jdkPath(version: String): String = jdkPathIfFound(version)
         ?: throw GradleException ("Please set environment variable JDK_${version.replace(".", "")} to point to JDK $version installation")
 
 fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
-
     tasks.withType<JavaCompile> {
         options.isFork = true
         options.forkOptions.javaHome = file(javaHome)
@@ -470,9 +471,6 @@ fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
     tasks.withType<KotlinCompile> {
         kotlinOptions.jdkHome = javaHome
         kotlinOptions.jvmTarget = javaVersion
-        doFirst {
-            System.setProperty("kotlin.colors.enabled", "false")
-        }
     }
 
     tasks.withType<Test> {

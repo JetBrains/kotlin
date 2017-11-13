@@ -13,10 +13,12 @@
           <option value=":compiler:generateTests" />
           <option value=":compiler:tests-java8:generateTests" />
           <option value=":js:js.tests:generateTests" />
+          <option value=":core:descriptors.runtime:generateTests" />
         </list>
       </option>
       <option name="vmOptions" value="" />
     </ExternalSystemSettings>
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <method />
   </configuration>
 </component>

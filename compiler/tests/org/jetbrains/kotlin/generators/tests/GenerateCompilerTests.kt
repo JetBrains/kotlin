@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
-import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
@@ -251,11 +250,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractLoadKotlinWithTypeTableTest> {
             model("loadJava/compiledKotlin")
-        }
-
-        testClass<AbstractJvmRuntimeDescriptorLoaderTest> {
-            model("loadJava/compiledKotlin")
-            model("loadJava/compiledJava", extension = "java", excludeDirs = listOf("sam", "kotlinSignature/propagation"))
         }
 
         testClass<AbstractLoadJavaWithFastClassReadingTest> {

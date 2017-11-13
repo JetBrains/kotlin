@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
@@ -75,4 +77,13 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
                 clazz.classLoader.loadClass(JvmAnnotationNames.METADATA_FQ_NAME.asString()) as Class<Annotation>
         )) { "Metadata annotation is not found for class $clazz" }
     }
+
+    private val Class<*>.classId: ClassId
+        get() = when {
+            enclosingMethod != null || enclosingConstructor != null || simpleName.isEmpty() -> {
+                val fqName = FqName(name)
+                ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), true)
+            }
+            else -> declaringClass?.classId?.createNestedClassId(Name.identifier(simpleName)) ?: ClassId.topLevel(FqName(name))
+        }
 }
