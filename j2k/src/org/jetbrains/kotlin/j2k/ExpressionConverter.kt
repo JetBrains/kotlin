@@ -449,10 +449,6 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 val data = SpecialMethod.ConvertCallData(qualifier, arguments.asList(), typeArguments, dot, lPar, rPar, codeConverter)
                 val converted = specialMethod.convertCall(data)
                 if (converted != null) {
-                    qualifier?.type?.let {
-                        if (canRemoveSpecialMethod(specialMethod, it)) return
-                    }
-
                     result = converted
                     return
                 }
@@ -470,16 +466,6 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                                       typeArguments,
                                       isNullable).assignPrototypesFrom(methodExpression)
         methodExpression.assignNoPrototype()
-    }
-
-    private fun canRemoveSpecialMethod(specialMethod: SpecialMethod, psiType: PsiType): Boolean = when {
-        specialMethod == SpecialMethod.NUMBER_BYTE_VALUE && psiType.canonicalText == "java.lang.Byte" -> true
-        specialMethod == SpecialMethod.NUMBER_SHORT_VALUE && psiType.canonicalText == "java.lang.Short" -> true
-        specialMethod == SpecialMethod.NUMBER_INT_VALUE && psiType.canonicalText == "java.lang.Integer" -> true
-        specialMethod == SpecialMethod.NUMBER_LONG_VALUE && psiType.canonicalText == "java.lang.Long" -> true
-        specialMethod == SpecialMethod.NUMBER_FLOAT_VALUE && psiType.canonicalText == "java.lang.Float" -> true
-        specialMethod == SpecialMethod.NUMBER_DOUBLE_VALUE && psiType.canonicalText == "java.lang.Double" -> true
-        else -> false
     }
 
     private fun KtLightMethod.isKotlinExtensionFunction(): Boolean {
