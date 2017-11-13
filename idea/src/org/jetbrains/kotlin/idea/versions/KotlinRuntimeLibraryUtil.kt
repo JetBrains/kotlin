@@ -217,33 +217,6 @@ enum class LibraryJarDescriptor(val jarName: String,
 fun bundledRuntimeVersion(): String = KotlinCompilerVersion.VERSION
 
 
-private val PLUGIN_VERSIONS_SEPARATORS = arrayOf("Idea", "IJ", "release", "dev", "Studio")
-
-// TODO: Used only in tests, can be removed
-fun pluginRuntimeVersion(pluginVersion: String): String {
-    var placeToSplit = -1
-
-    for (separator in PLUGIN_VERSIONS_SEPARATORS) {
-        val ideaPatternIndex = StringUtil.indexOf(pluginVersion, separator)
-        if (ideaPatternIndex >= 2 && Character.isDigit(pluginVersion[ideaPatternIndex - 2])) {
-            placeToSplit = ideaPatternIndex - 1
-            break
-        }
-    }
-
-    if (placeToSplit == -1) {
-        for (i in 1..pluginVersion.length - 1) {
-            val ch = pluginVersion[i]
-            if (Character.isLetter(ch) && pluginVersion[i - 1] == '.') {
-                placeToSplit = i - 1
-                break
-            }
-        }
-    }
-
-    return if (placeToSplit != -1) pluginVersion.substring(0, placeToSplit) else pluginVersion
-}
-
 fun getLocalJar(kotlinRuntimeJar: VirtualFile?): VirtualFile? {
     if (kotlinRuntimeJar == null) return null
 
