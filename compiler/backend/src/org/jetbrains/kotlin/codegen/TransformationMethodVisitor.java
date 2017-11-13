@@ -85,7 +85,7 @@ public abstract class TransformationMethodVisitor extends MethodVisitor {
             delegate.visitEnd();
         }
         catch (Throwable t) {
-            throw new CompilationException("Couldn't transform method node: " + getNodeText(methodNode), t, null);
+            throw new CompilationException("Couldn't transform method node:\n" + getNodeText(methodNode), t, null);
         }
     }
 
