@@ -944,6 +944,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/coroutines"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("debugStatement.kt")
+        public void testDebugStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coroutines/debugStatement.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localVarOptimization.kt")
         public void testLocalVarOptimization() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coroutines/localVarOptimization.kt");

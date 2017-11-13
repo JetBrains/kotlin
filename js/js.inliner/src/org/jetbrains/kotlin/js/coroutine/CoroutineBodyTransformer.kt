@@ -338,6 +338,10 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
         currentStatements += x
     }
 
+    override fun visitDebugger(x: JsDebugger) {
+        currentStatements += x
+    }
+
     private fun handleExpression(expression: JsExpression): JsExpression? {
         val assignment = JsAstUtils.decomposeAssignment(expression)
         if (assignment != null) {
