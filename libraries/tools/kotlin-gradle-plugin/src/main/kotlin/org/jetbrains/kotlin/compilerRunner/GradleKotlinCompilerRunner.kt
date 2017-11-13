@@ -259,6 +259,8 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 resultDifferenceFile = environment.buildHistoryFile,
                 friendDifferenceFile = environment.friendBuildHistoryFile
         )
+
+        log.info("Options for KOTLIN DAEMON: $compilationOptions")
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(project, environment)
         val argsArray = ArgumentUtils.convertArgumentsToStringList(environment.compilerArgs).toTypedArray()
         return daemon.compile(sessionId, argsArray, compilationOptions, servicesFacade, GradleCompilationResults(project))
