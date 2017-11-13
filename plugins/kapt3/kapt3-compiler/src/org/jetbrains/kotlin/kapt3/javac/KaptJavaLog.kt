@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.stubs.KotlinPosition
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedWriter
+import org.jetbrains.kotlin.kapt3.util.isJava9OrLater
 import java.io.File
 import java.io.PrintWriter
 import javax.tools.JavaFileObject
@@ -74,6 +75,8 @@ class KaptJavaLog(
     }
 
     override fun report(diagnostic: JCDiagnostic) {
+        System.err.println("Diagnostic code: ${diagnostic.code}")
+
         if (diagnostic.type == JCDiagnostic.DiagnosticType.ERROR && diagnostic.code in IGNORED_DIAGNOSTICS) {
             return
         }
@@ -102,7 +105,7 @@ class KaptJavaLog(
             val kotlinFile = kotlinPosition?.let { getKotlinSourceFile(it) }
             if (kotlinPosition != null && kotlinFile != null) {
                 val locationMessage = "$KOTLIN_LOCATION_PREFIX${kotlinFile.absolutePath}: (${kotlinPosition.line}, ${kotlinPosition.column})"
-                val locationDiagnostic = diagnosticFactory.note("proc.messager", locationMessage)
+                val locationDiagnostic = diagnosticFactory.note(null as DiagnosticSource?, null, "proc.messager", locationMessage)
                 val wrappedDiagnostic = JCDiagnostic.MultilineDiagnostic(diagnostic, JavacList.of(locationDiagnostic))
 
                 super.report(wrappedDiagnostic)
@@ -126,9 +129,9 @@ class KaptJavaLog(
 
         val writer = when (diagnostic.type) {
             DiagnosticType.FRAGMENT, null -> kotlin.error("Invalid root diagnostic type: ${diagnostic.type}")
-            DiagnosticType.NOTE -> super.noticeWriter
-            DiagnosticType.WARNING -> super.warnWriter
-            DiagnosticType.ERROR -> super.errWriter
+            DiagnosticType.NOTE -> super.getWriter(WriterKind.NOTICE)
+            DiagnosticType.WARNING -> super.getWriter(WriterKind.WARNING)
+            DiagnosticType.ERROR -> super.getWriter(WriterKind.ERROR)
         }
 
         val formattedMessage = diagnosticFormatter.format(diagnostic, javacMessages.currentLocale)
@@ -211,10 +214,32 @@ class KaptJavaLog(
 }
 
 fun KaptContext<*>.kaptError(text: String): JCDiagnostic {
-    return JCDiagnostic.Factory.instance(context).error(null, null, "proc.messager", text)
+    return JCDiagnostic.Factory.instance(context).errorJava9Aware(null, null, "proc.messager", text)
 }
 
 fun KaptContext<*>.kaptError(text: String, target: PsiElement): JCDiagnostic {
     //TODO provide source binding
-    return JCDiagnostic.Factory.instance(context).error(null, null, "proc.messager", text)
+    return JCDiagnostic.Factory.instance(context).errorJava9Aware(null, null, "proc.messager", text)
+}
+
+private fun JCDiagnostic.Factory.errorJava9Aware(
+        source: DiagnosticSource?,
+        pos: JCDiagnostic.DiagnosticPosition?,
+        key: String,
+        vararg args: String
+): JCDiagnostic {
+    return if (isJava9OrLater) {
+        val errorMethod = this::class.java.getDeclaredMethod(
+                "error",
+                JCDiagnostic.DiagnosticFlag::class.java,
+                DiagnosticSource::class.java,
+                JCDiagnostic.DiagnosticPosition::class.java,
+                String::class.java,
+                Array<Any>::class.java)
+
+        errorMethod.invoke(this, JCDiagnostic.DiagnosticFlag.MANDATORY, source, pos, key, args) as JCDiagnostic
+    }
+    else {
+        this.error(source, pos, key, *args)
+    }
 }
