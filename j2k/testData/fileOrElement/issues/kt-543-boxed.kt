@@ -8,6 +8,6 @@ internal class Test {
         putInt(b.toInt())
 
         val b2 = 10
-        putInt(b2.toInt())
+        putInt(b2)
     }
 }
