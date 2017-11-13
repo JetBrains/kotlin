@@ -16,7 +16,11 @@ buildscript {
 apply plugin: 'com.jfrog.bintray'
 
 def versionMapping = [
-        'kotlin-script-runtime' : kotlinScriptRuntimeVersion
+       'kotlin-script-runtime' : kotlinScriptRuntimeVersion,
+       'kotlin-compiler'       : kotlinVersion,
+       'kotlin-stdlib'         : kotlinStdLibVersion,
+       'kotlin-reflect'        : kotlinReflectVersion,
+       'kotlin-stdlib-jre8'    : kotlinStdLibJdk8Version
 ]
 
 // Hack kotlin-compiler pom-file to resolve the dependency correctly.
@@ -65,7 +69,7 @@ bintray {
         def (groupId, artifactId, version) = gradle.startParameter.projectProperties.module.tokenize(':')
         def groupPath = groupId.replace('.', '/')
         def artifactPath = artifactId
-        def versionPath =  "$version" //TODO: snapshots?
+        def versionPath = "${version.tokenize('-')[0]}-SNAPSHOT"
         from project.files(gradle.startParameter.projectProperties.jar)
         from project.files(gradle.startParameter.projectProperties.src)
         from project.files(gradle.startParameter.projectProperties.doc)
