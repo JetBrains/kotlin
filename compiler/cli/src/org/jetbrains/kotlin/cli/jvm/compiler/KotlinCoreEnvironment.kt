@@ -474,7 +474,7 @@ class KotlinCoreEnvironment private constructor(
                 override fun createJrtFileSystem(): VirtualFileSystem? = CoreJrtFileSystem()
             }
 
-            registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/common.xml")
+            registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler.xml")
 
             registerApplicationServicesForCLI(applicationEnvironment)
             registerApplicationServices(applicationEnvironment)

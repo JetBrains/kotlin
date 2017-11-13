@@ -2721,7 +2721,7 @@
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensionPoints>
-    <xi:include href="extensions/common.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
+    <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
