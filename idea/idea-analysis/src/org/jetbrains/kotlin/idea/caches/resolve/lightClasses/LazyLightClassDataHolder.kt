@@ -45,28 +45,28 @@ sealed class LazyLightClassDataHolder(
 
     private val exactResult: LightClassBuilderResult by exactResultLazyValue
 
-    private val lazyInexactResult by lazyPub {
-        dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context) } }
+    private val lazyInexactStub by lazyPub {
+        dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context).stub } }
     }
 
-    private val inexactResult: LightClassBuilderResult?
-        get() = if (exactResultLazyValue.isInitialized()) null else lazyInexactResult
+    private val inexactStub: PsiJavaFileStub?
+        get() = if (exactResultLazyValue.isInitialized()) null else lazyInexactStub
 
     override val javaFileStub get() = exactResult.stub
     override val extraDiagnostics get() = exactResult.diagnostics
 
     // for facade or defaultImpls
     override fun findData(findDelegate: (PsiJavaFileStub) -> PsiClass): LightClassData =
-            LazyLightClassData { lightClassBuilderResult ->
-                findDelegate(lightClassBuilderResult.stub)
+            LazyLightClassData { stub ->
+                findDelegate(stub)
             }
 
     class ForClass(
             builder: LightClassBuilder, exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
     ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForClass {
         override fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData =
-                LazyLightClassData { lightClassBuilderResult ->
-                    lightClassBuilderResult.stub.findDelegate(classOrObject)
+                LazyLightClassData { stub ->
+                    stub.findDelegate(classOrObject)
                 }
     }
 
@@ -79,11 +79,11 @@ sealed class LazyLightClassDataHolder(
     ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForScript
 
     private inner class LazyLightClassData(
-            findDelegate: (LightClassBuilderResult) -> PsiClass
+            findDelegate: (PsiJavaFileStub) -> PsiClass
     ) : LightClassData {
-        override val clsDelegate: PsiClass by lazyPub { findDelegate(exactResult) }
+        override val clsDelegate: PsiClass by lazyPub { findDelegate(javaFileStub) }
 
-        private val dummyDelegate: PsiClass? by lazyPub { inexactResult?.let(findDelegate) }
+        private val dummyDelegate: PsiClass? by lazyPub { inexactStub?.let(findDelegate) }
 
         override fun getOwnFields(containingClass: KtLightClass): List<KtLightField> {
             if (dummyDelegate == null) return KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)
