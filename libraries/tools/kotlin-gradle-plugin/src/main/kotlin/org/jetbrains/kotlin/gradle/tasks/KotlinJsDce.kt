@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
@@ -32,9 +34,11 @@ import java.io.File
 open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJsDce {
     private val dceOptionsImpl = KotlinJsDceOptionsImpl()
 
+    @get:Internal
     override val dceOptions: KotlinJsDceOptions
         get() = dceOptionsImpl
 
+    @get:Input
     override val keep: MutableList<String> = mutableListOf()
 
     override fun findKotlinCompilerClasspath(project: Project): List<File> = findKotlinJsDceClasspath(project)
@@ -54,6 +58,8 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
         val args = K2JSDceArguments()
         dceOptionsImpl.updateArguments(args)
         args.declarationsToKeep = keep.toTypedArray()
+
+        //todo handle the args like those of the compile tasks
         val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
 
         val log = GradleKotlinLogger(project.logger)

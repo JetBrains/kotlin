@@ -1,13 +1,11 @@
 package org.jetbrains.kotlin.gradle.internal
 
+import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -15,9 +13,13 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.File
 
 open class KaptTask : ConventionTask() {
+    @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
+    @get:Internal
     internal lateinit var kotlinCompileTask: KotlinCompile
+
+    @get:OutputDirectory
     internal lateinit var stubsDir: File
 
     private fun isInsideDestinationDirs(file: File): Boolean {
@@ -25,14 +27,15 @@ open class KaptTask : ConventionTask() {
                 || FileUtil.isAncestor(classesDir, file, /* strict = */ false)
     }
 
-    @OutputDirectory
+    @get:OutputDirectory
     internal lateinit var classesDir: File
 
-    @OutputDirectory
+    @get:OutputDirectory
     lateinit var destinationDir: File
 
+    @get:Classpath
     val classpath: FileCollection
-        @InputFiles get() = kotlinCompileTask.classpath
+        get() = kotlinCompileTask.classpath
 
     val source: FileCollection
         @InputFiles get() {
@@ -54,6 +57,7 @@ open class KaptTask : ConventionTask() {
         val rawSourceRoots = FilteringSourceRootsContainer(sourceRootsFromKotlin, { !isInsideDestinationDirs(it) })
         val sourceRoots = SourceRoots.ForJvm.create(kotlinCompileTask.source, rawSourceRoots)
 
+        // todo handle the args like those of the compile tasks
         val args = K2JVMCompilerArguments()
         kotlinCompileTask.setupCompilerArgs(args)
 

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.api.tasks.incremental.InputFileDetails
 import com.intellij.openapi.util.io.FileUtil.isAncestor
@@ -65,7 +62,10 @@ internal open class SyncOutputTask : DefaultTask() {
     private val classesDirs: List<File>
             get() = listOf(kotlinOutputDir, kaptClassesDir).filter(File::exists)
 
+    @get:OutputDirectory
     var javaOutputDir: File by Delegates.notNull()
+
+    @get:Internal
     var kotlinTask: KotlinCompile by Delegates.notNull()
 
     // OutputDirectory needed for task to be incremental
@@ -73,9 +73,13 @@ internal open class SyncOutputTask : DefaultTask() {
     val workingDir: File by lazy {
         File(kotlinTask.taskBuildDirectory, "sync")
     }
+
+    @get:Internal
     private val timestampsFile: File by lazy {
         File(workingDir, TIMESTAMP_FILE_NAME)
     }
+
+    @get:Internal
     private val timestamps: MutableMap<File, Long> by lazy {
         readTimestamps(timestampsFile, javaOutputDir)
     }
