@@ -1,0 +1,4 @@
+package
+
+public fun foo(): kotlin.Unit
+public inline fun myRun(/*0*/ b: () -> kotlin.Unit): kotlin.Unit
