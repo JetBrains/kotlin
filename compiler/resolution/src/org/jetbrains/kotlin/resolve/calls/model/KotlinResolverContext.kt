@@ -183,8 +183,7 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
             CheckExplicitReceiverKindConsistency,
             CheckReceivers,
             CheckArguments,
-            CheckExternalArgument,
-            CheckSpreadArgumentToNonVarargParameter
+            CheckExternalArgument
     ),
     UNSUPPORTED();
 

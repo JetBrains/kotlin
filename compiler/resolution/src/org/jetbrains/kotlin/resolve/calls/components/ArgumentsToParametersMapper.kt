@@ -240,7 +240,7 @@ class ArgumentsToParametersMapper {
                     }
                     else {
                         if (resolvedArgument.callArgument.isSpread) {
-                            addDiagnostic(NonVarargSpread(resolvedArgument.callArgument, parameter))
+                            addDiagnostic(NonVarargSpread(resolvedArgument.callArgument))
                         }
                     }
                 }

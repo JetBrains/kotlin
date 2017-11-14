@@ -33,7 +33,7 @@ abstract class InapplicableArgumentDiagnostic : KotlinCallDiagnostic(INAPPLICABL
 // ArgumentsToParameterMapper
 class TooManyArguments(override val argument: KotlinCallArgument, val descriptor: CallableDescriptor) : InapplicableArgumentDiagnostic()
 
-class NonVarargSpread (val argument: KotlinCallArgument, val parameterDescriptor: ValueParameterDescriptor) : KotlinCallDiagnostic(INAPPLICABLE) {
+class NonVarargSpread(val argument: KotlinCallArgument) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentSpread(argument, this)
 }
 
@@ -159,12 +159,6 @@ object AbstractSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
 class SuperAsExtensionReceiver(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallReceiver(receiver, this)
-    }
-}
-
-class SpreadArgumentToNonVarargParameter(val argument: KotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
-    override fun report(reporter: DiagnosticReporter) {
-        reporter.onCallArgument(argument, this)
     }
 }
 
