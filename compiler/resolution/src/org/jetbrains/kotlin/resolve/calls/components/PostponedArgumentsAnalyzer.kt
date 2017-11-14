@@ -39,17 +39,24 @@ class PostponedArgumentsAnalyzer(
         fun getBuilder(): ConstraintSystemBuilder
     }
 
-    fun analyze(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, argument: ResolvedAtom) {
+    fun analyze(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, argument: ResolvedAtom, diagnosticsHolder: KotlinDiagnosticsHolder) {
         when (argument) {
-            is ResolvedLambdaAtom -> analyzeLambda(c, resolutionCallbacks, argument)
-            is LambdaWithTypeVariableAsExpectedTypeAtom -> analyzeLambda(c, resolutionCallbacks, argument.transformToResolvedLambda(c.getBuilder()))
-            is ResolvedCallableReferenceAtom -> callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument)
+            is ResolvedLambdaAtom ->
+                analyzeLambda(c, resolutionCallbacks, argument, diagnosticsHolder)
+
+            is LambdaWithTypeVariableAsExpectedTypeAtom ->
+                analyzeLambda(c, resolutionCallbacks, argument.transformToResolvedLambda(c.getBuilder()), diagnosticsHolder)
+
+            is ResolvedCallableReferenceAtom ->
+                callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument, diagnosticsHolder)
+
             is ResolvedCollectionLiteralAtom -> TODO("Not supported")
+
             else -> error("Unexpected resolved primitive: ${argument.javaClass.canonicalName}")
         }
     }
 
-    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: ResolvedLambdaAtom) {
+    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: ResolvedLambdaAtom, diagnosticHolder: KotlinDiagnosticsHolder) {
         val currentSubstitutor = c.buildCurrentSubstitutor()
         fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
 
@@ -61,8 +68,6 @@ class PostponedArgumentsAnalyzer(
 
         resultArguments.forEach { c.addSubsystemForArgument(it) }
 
-        val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
-
         val subResolvedKtPrimitives = resultArguments.map {
             checkSimpleArgument(c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false)
         }
@@ -72,6 +77,6 @@ class PostponedArgumentsAnalyzer(
             c.getBuilder().addSubtypeConstraint(lambda.returnType.let(::substitute), unitType, LambdaArgumentConstraintPosition(lambda))
         }
 
-        lambda.setAnalyzedResults(resultArguments, subResolvedKtPrimitives, diagnosticHolder.getDiagnostics())
+        lambda.setAnalyzedResults(resultArguments, subResolvedKtPrimitives)
     }
 }
