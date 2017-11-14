@@ -294,8 +294,14 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     val variableUseStatusData: Map<Instruction, Edges<ReadOnlyUseControlFlowInfo>>
         get() {
-            val resultForTrivialVals = computeUseInfoForTrivialVals()
-            if (rootVariables.nonTrivialVariables.isEmpty()) return resultForTrivialVals
+            val edgesForTrivialVals = computeUseInfoForTrivialVals()
+            if (rootVariables.nonTrivialVariables.isEmpty()) {
+                return hashMapOf<Instruction, Edges<ReadOnlyUseControlFlowInfo>>().apply {
+                    pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
+                        put(instruction, edgesForTrivialVals)
+                    }
+                }
+            }
 
             return pseudocodeVariableDataCollector.collectData(TraversalOrder.BACKWARD, UseControlFlowInfo()) { instruction: Instruction, incomingEdgesData: Collection<UseControlFlowInfo> ->
 
@@ -336,17 +342,16 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                     Edges(enterResult, exitResult)
                 }
             }.mapValues {
-                (instruction, edges) ->
-                val edgeForTrivialVals = resultForTrivialVals[instruction]!!
+                (_, edges) ->
 
                 Edges(
-                        edgeForTrivialVals.incoming.replaceDelegate(edges.incoming),
-                        edgeForTrivialVals.outgoing.replaceDelegate(edges.outgoing)
+                        edgesForTrivialVals.incoming.replaceDelegate(edges.incoming),
+                        edgesForTrivialVals.outgoing.replaceDelegate(edges.outgoing)
                 )
             }
         }
 
-    private fun computeUseInfoForTrivialVals(): Map<Instruction, Edges<ReadOnlyUseControlFlowInfoImpl>> {
+    private fun computeUseInfoForTrivialVals(): Edges<ReadOnlyUseControlFlowInfoImpl> {
         val used = hashSetOf<VariableDescriptor>()
 
         pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
@@ -358,13 +363,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         }
 
         val constantUseInfo = ReadOnlyUseControlFlowInfoImpl(used, null)
-        val constantEdges = Edges(constantUseInfo, constantUseInfo)
-        val result = hashMapOf<Instruction, Edges<ReadOnlyUseControlFlowInfoImpl>>()
-
-        pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
-            result[instruction] = constantEdges
-        }
-        return result
+        return Edges(constantUseInfo, constantUseInfo)
     }
 
     private fun extractValWithTrivialInitializer(instruction: Instruction): VariableDescriptor? {
