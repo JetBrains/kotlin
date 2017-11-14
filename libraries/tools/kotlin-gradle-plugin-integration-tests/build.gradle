@@ -28,6 +28,9 @@ dependencies {
     testRuntime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
 }
 
+// Include Gradle task properties validation into the testing procedure:
+test.dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
+
 test.dependsOn(":kotlin-allopen:install",
                ":kotlin-android-extensions:install",
                ":kotlin-build-common:install",
@@ -38,6 +41,7 @@ test.dependsOn(":kotlin-allopen:install",
                ":kotlin-gradle-subplugin-example:install",
                ":kotlin-stdlib-jre8:install",
                ":examples:annotation-processor-example:install")
+
 
 // Validate that all dependencies 'install' tasks are added to 'test' dependencies
 // Test dependencies are specified as paths to avoid forcing dependency resolution
