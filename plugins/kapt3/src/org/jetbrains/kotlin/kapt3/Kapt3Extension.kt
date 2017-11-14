@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.givenClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -224,7 +225,7 @@ abstract class AbstractKapt3Extension(
 
         val generationState = GenerationState.Builder(
                 project,
-                builderFactory,
+                givenClassBuilderFactory(builderFactory),
                 module,
                 bindingContext,
                 files,

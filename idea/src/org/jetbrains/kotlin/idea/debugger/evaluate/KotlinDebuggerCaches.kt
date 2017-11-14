@@ -33,6 +33,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.Value
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.givenClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -189,7 +190,7 @@ class KotlinDebuggerCaches(project: Project) {
         private fun createTypeMapper(file: KtFile, analysisResult: AnalysisResult): KotlinTypeMapper {
             val state = GenerationState.Builder(
                     file.project,
-                    ClassBuilderFactories.THROW_EXCEPTION,
+                    givenClassBuilderFactory(ClassBuilderFactories.THROW_EXCEPTION),
                     analysisResult.moduleDescriptor,
                     analysisResult.bindingContext,
                     listOf(file),

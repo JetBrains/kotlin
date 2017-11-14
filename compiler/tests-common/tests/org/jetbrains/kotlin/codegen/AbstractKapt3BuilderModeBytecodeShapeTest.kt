@@ -17,17 +17,13 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractKapt3BuilderModeBytecodeShapeTest : CodegenTestCase() {
-    private companion object {
-        var TEST_LIGHT_ANALYSIS: ClassBuilderFactory = object : ClassBuilderFactories.TestClassBuilderFactory(false) {
-            override fun getClassBuilderMode() = ClassBuilderMode.KAPT3
-        }
-    }
 
     override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
@@ -39,8 +35,8 @@ abstract class AbstractKapt3BuilderModeBytecodeShapeTest : CodegenTestCase() {
         AnalysisHandlerExtension.registerExtension(environment.project, PartialAnalysisHandlerExtension())
     }
 
-    override fun getClassBuilderFactory(): ClassBuilderFactory {
-        return TEST_LIGHT_ANALYSIS
+    override fun getClassBuilderFactory(): ((GenerationState.Builder) -> ClassBuilderFactory) {
+        return classBuilderFactoryWithTrace(ClassBuilderMode.KAPT3);
     }
 
     override fun verifyWithDex(): Boolean {

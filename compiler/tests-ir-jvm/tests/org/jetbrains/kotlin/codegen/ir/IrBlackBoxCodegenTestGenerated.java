@@ -2561,6 +2561,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("redundantCastToPackagePrivateClass.kt")
+        public void testRedundantCastToPackagePrivateClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/redundantCastToPackagePrivateClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unitAsAny.kt")
         public void testUnitAsAny() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/unitAsAny.kt");

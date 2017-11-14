@@ -6,10 +6,9 @@ inline fun <reified T> safeAs(x: Any) {
     x as? T
 }
 
-fun test() {
-    val x: Any = arrayListOf("abc", "def")
-    safeAs<MutableList<*>>(x)
-}
+val x: Any = arrayListOf("abc", "def")
+
+fun test() = safeAs<MutableList<*>>(x)
 
 // 0 INSTANCEOF java/util/List
 // 1 INVOKESTATIC kotlin/jvm/internal/TypeIntrinsics\.isMutableList

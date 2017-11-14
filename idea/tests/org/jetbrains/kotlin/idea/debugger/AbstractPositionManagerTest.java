@@ -40,6 +40,7 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
+import org.jetbrains.kotlin.codegen.ClassBuilderFactoriesKt;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -147,7 +148,12 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
         configuration.put(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES, true);
 
         GenerationState state =
-                GenerationUtils.compileFiles(files, configuration, ClassBuilderFactories.TEST, scope -> PackagePartProvider.Empty.INSTANCE);
+                GenerationUtils.compileFiles(
+                        files,
+                        configuration,
+                        ClassBuilderFactoriesKt.classBuilderFactoryForTests(),
+                        scope -> PackagePartProvider.Empty.INSTANCE
+                );
 
         Map<String, ReferenceType> referencesByName = getReferenceMap(state.getFactory());
 

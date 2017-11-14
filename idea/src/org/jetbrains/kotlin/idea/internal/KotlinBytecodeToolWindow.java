@@ -37,10 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory;
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
-import org.jetbrains.kotlin.codegen.DefaultCodegenFactory;
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
+import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
@@ -325,7 +322,8 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         };
 
         GenerationState state = new GenerationState.Builder(
-                ktFile.getProject(), ClassBuilderFactories.TEST, resolutionFacade.getModuleDescriptor(), bindingContext, toProcess,
+                ktFile.getProject(), ClassBuilderFactoriesKt.classBuilderFactoryWithTrace(false),
+                resolutionFacade.getModuleDescriptor(), bindingContext, toProcess,
                 configuration
         )
                 .generateDeclaredClassFilter(generateClassFilter)

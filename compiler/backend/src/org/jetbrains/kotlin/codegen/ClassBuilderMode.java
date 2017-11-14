@@ -43,7 +43,7 @@ public class ClassBuilderMode {
     /**
      * Full function bodies
      */
-    private final static ClassBuilderMode FULL = new ClassBuilderMode(
+    public final static ClassBuilderMode FULL = new ClassBuilderMode(
             /* bodies = */ true, 
             /* metadata = */ true,
             /* sourceRetention = */ false,

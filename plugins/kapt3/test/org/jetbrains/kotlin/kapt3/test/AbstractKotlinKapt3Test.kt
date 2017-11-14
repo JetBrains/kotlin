@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.codegen.givenClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
 import org.jetbrains.kotlin.kapt3.KaptContext
@@ -58,7 +59,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
 
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
         val classBuilderFactory = Kapt3BuilderFactory()
-        val generationState = GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, classBuilderFactory)
+        val generationState = GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, givenClassBuilderFactory(classBuilderFactory))
 
         val logger = KaptLogger(isVerbose = true, messageCollector = messageCollector)
         val kaptContext = KaptContext(logger, generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,

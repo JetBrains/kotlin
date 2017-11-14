@@ -2,10 +2,9 @@
 // 'as?' should be generated as a single 'safeAs...' intrinsic call
 // without instanceof or 'is...'.
 
-fun test() {
-    val x: Any = arrayListOf("abc", "def")
-    x as? MutableList<*>
-}
+val x: Any = arrayListOf("abc", "def")
+
+fun test() = x as? MutableList<*>
 
 // 0 INSTANCEOF
 // 1 INVOKESTATIC kotlin/jvm/internal/TypeIntrinsics\.isMutableList

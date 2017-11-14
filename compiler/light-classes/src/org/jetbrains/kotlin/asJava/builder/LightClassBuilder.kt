@@ -27,6 +27,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
+import org.jetbrains.kotlin.codegen.givenClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
@@ -49,7 +50,7 @@ fun buildLightClass(
         val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(project, packageFqName, files))
         val state = GenerationState.Builder(
                 project,
-                classBuilderFactory,
+                givenClassBuilderFactory(classBuilderFactory),
                 context.module,
                 context.bindingContext,
                 files.toList(),

@@ -45,22 +45,22 @@ object GenerationUtils {
     fun compileFiles(
             files: List<KtFile>,
             environment: KotlinCoreEnvironment,
-            classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST
+            createClassBuilderFactory: ClassBuilderFactoryProvider = classBuilderFactoryWithTrace(false)
     ): GenerationState =
-            compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider)
+            compileFiles(files, environment.configuration, createClassBuilderFactory, environment::createPackagePartProvider)
 
     @JvmStatic
     fun compileFiles(
             files: List<KtFile>,
             configuration: CompilerConfiguration,
-            classBuilderFactory: ClassBuilderFactory,
+            createClassBuilderFactory: ClassBuilderFactoryProvider,
             packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
     ): GenerationState {
         val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration, packagePartProvider)
         analysisResult.throwIfError()
 
         val state = GenerationState.Builder(
-                files.first().project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
+                files.first().project, createClassBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
                 files, configuration
         ).codegenFactory(
                 if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory

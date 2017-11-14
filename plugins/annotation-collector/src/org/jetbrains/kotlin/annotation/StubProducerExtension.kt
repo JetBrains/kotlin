@@ -45,7 +45,7 @@ class StubProducerExtension(
     ): AnalysisResult? {
         val generationState = GenerationState.Builder(
                 project, 
-                StubClassBuilderFactory(),
+                givenClassBuilderFactory(StubClassBuilderFactory()),
                 module, 
                 bindingTrace.bindingContext, 
                 files.toList(),

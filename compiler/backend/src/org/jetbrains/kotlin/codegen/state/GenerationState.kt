@@ -61,53 +61,59 @@ class GenerationState private constructor(
         moduleName: String?,
         val outDirectory: File?,
         private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
-        wantsDiagnostics: Boolean
+        wantsDiagnostics: Boolean,
+        val jvmBackendClassResolver: JvmBackendClassResolver
 ) {
 
     class Builder(
             private val project: Project,
-            private val builderFactory: ClassBuilderFactory,
+            private val createClassBuilderFactory : ClassBuilderFactoryProvider,
             private val module: ModuleDescriptor,
             private val bindingContext: BindingContext,
             private val files: List<KtFile>,
             private val configuration: CompilerConfiguration
     ) {
-        private var generateDeclaredClassFilter: GenerateClassFilter = GenerateClassFilter.GENERATE_ALL
+        var generateDeclaredClassFilter: GenerateClassFilter = GenerateClassFilter.GENERATE_ALL; private set
         fun generateDeclaredClassFilter(v: GenerateClassFilter) =
                 apply { generateDeclaredClassFilter = v }
 
-        private var codegenFactory: CodegenFactory = DefaultCodegenFactory
+        var codegenFactory: CodegenFactory = DefaultCodegenFactory; private set
         fun codegenFactory(v: CodegenFactory) =
                 apply { codegenFactory = v }
 
-        private var targetId: TargetId? = null
+        var targetId: TargetId? = null; private set
         fun targetId(v: TargetId?) =
                 apply { targetId = v }
 
-        private var moduleName: String? = configuration[CommonConfigurationKeys.MODULE_NAME]
+        var moduleName: String? = configuration[CommonConfigurationKeys.MODULE_NAME]; private set
         fun moduleName(v: String?) =
                 apply { moduleName = v }
 
         // 'outDirectory' is a hack to correctly determine if a compiled class is from the same module as the callee during
         // partial compilation. Module chunks are treated as a single module.
         // TODO: get rid of it with the proper module infrastructure
-        private var outDirectory: File? = null
+        var outDirectory: File? = null; private set
         fun outDirectory(v: File?) =
                 apply { outDirectory = v }
 
-        private var onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING
+        var onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING; private set
         fun onIndependentPartCompilationEnd(v: GenerationStateEventCallback) =
                 apply { onIndependentPartCompilationEnd = v }
 
-        private var wantsDiagnostics: Boolean = true
+        var wantsDiagnostics: Boolean = true; private set
         fun wantsDiagnostics(v: Boolean) =
                 apply { wantsDiagnostics = v }
 
+        var jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module); private set
+        fun jvmBackendClassResolver(v: JvmBackendClassResolver) =
+                apply { jvmBackendClassResolver = v }
+
         fun build() =
                 GenerationState(
-                        project, builderFactory, module, bindingContext, files, configuration,
+                        project, createClassBuilderFactory(), module, bindingContext, files, configuration,
                         generateDeclaredClassFilter, codegenFactory, targetId,
-                        moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics
+                        moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics,
+                        jvmBackendClassResolver
                 )
     }
 

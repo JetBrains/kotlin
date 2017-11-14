@@ -471,7 +471,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
                 val state = GenerationState.Builder(
                         fileForDebugger.project,
-                        if (!DEBUG_MODE) ClassBuilderFactories.binaries(false) else ClassBuilderFactories.TEST,
+                        if (!DEBUG_MODE) classBuilderFactoryForBinaries(false) else classBuilderFactoryWithTrace(false),
                         moduleDescriptor,
                         bindingContext,
                         files,

@@ -25,6 +25,7 @@ import com.intellij.testFramework.TestDataFile;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
+import kotlin.jvm.functions.Function1;
 import kotlin.script.experimental.dependencies.ScriptDependencies;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
@@ -463,7 +465,9 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         if (classFileFactory == null) {
             try {
                 classFileFactory =
-                        GenerationUtils.compileFiles(myFiles.getPsiFiles(), myEnvironment, getClassBuilderFactory()).getFactory();
+                        GenerationUtils.compileFiles(
+                                myFiles.getPsiFiles(), myEnvironment, getClassBuilderFactory()
+                        ).getFactory();
 
                 if (verifyWithDex() && DxChecker.RUN_DX_CHECKER) {
                     DxChecker.check(classFileFactory);
@@ -568,8 +572,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     }
 
-    protected ClassBuilderFactory getClassBuilderFactory(){
-        return ClassBuilderFactories.TEST;
+    protected Function1<GenerationState.Builder, ClassBuilderFactory> getClassBuilderFactory() {
+        return ClassBuilderFactoriesKt.classBuilderFactoryForTests();
     }
 
     protected void setupEnvironment(@NotNull KotlinCoreEnvironment environment) {

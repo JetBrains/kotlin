@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.ClassWriter;
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor;
@@ -27,7 +29,7 @@ import java.io.StringWriter;
 @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
 public class ClassBuilderFactories {
     @NotNull
-    public static ClassBuilderFactory THROW_EXCEPTION = new ClassBuilderFactory() {
+    public static final ClassBuilderFactory THROW_EXCEPTION = new ClassBuilderFactory() {
         @NotNull
         @Override
         public ClassBuilderMode getClassBuilderMode() {
@@ -55,110 +57,7 @@ public class ClassBuilderFactories {
             throw new IllegalStateException();
         }
     };
-    
-    public static ClassBuilderFactory TEST = new TestClassBuilderFactory(false);
-
-    public static ClassBuilderFactory TEST_WITH_SOURCE_RETENTION_ANNOTATIONS = new TestClassBuilderFactory(true);
-    
-    public static class TestClassBuilderFactory implements ClassBuilderFactory {
-        private final boolean generateSourceRetentionAnnotations;
-
-        public TestClassBuilderFactory(boolean generateSourceRetentionAnnotations) {
-            this.generateSourceRetentionAnnotations = generateSourceRetentionAnnotations;
-        }
-
-        @NotNull
-        @Override
-        public ClassBuilderMode getClassBuilderMode() {
-            return ClassBuilderMode.full(generateSourceRetentionAnnotations);
-        }
-
-        @NotNull
-        @Override
-        public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
-            return new TraceBuilder(new BinaryClassWriter());
-        }
-
-        @Override
-        public String asText(ClassBuilder builder) {
-            TraceClassVisitor visitor = (TraceClassVisitor) builder.getVisitor();
-
-            StringWriter writer = new StringWriter();
-            visitor.p.print(new PrintWriter(writer));
-
-            return writer.toString();
-        }
-
-        @Override
-        public byte[] asBytes(ClassBuilder builder) {
-            return ((TraceBuilder) builder).binary.toByteArray();
-        }
-
-        @Override
-        public void close() {
-
-        }
-    }
-    
-    @NotNull
-    public static ClassBuilderFactory binaries(boolean generateSourceRetentionAnnotations) {
-        return new ClassBuilderFactory() {
-            @NotNull
-            @Override
-            public ClassBuilderMode getClassBuilderMode() {
-                return ClassBuilderMode.full(generateSourceRetentionAnnotations);
-            }
-
-            @NotNull
-            @Override
-            public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
-                return new AbstractClassBuilder.Concrete(new BinaryClassWriter());
-            }
-
-            @Override
-            public String asText(ClassBuilder builder) {
-                throw new UnsupportedOperationException("BINARIES generator asked for text");
-            }
-
-            @Override
-            public byte[] asBytes(ClassBuilder builder) {
-                ClassWriter visitor = (ClassWriter) builder.getVisitor();
-                return visitor.toByteArray();
-            }
-
-            @Override
-            public void close() {
-
-            }
-        };
-    }
 
     private ClassBuilderFactories() {
-    }
-
-    private static class BinaryClassWriter extends ClassWriter {
-        public BinaryClassWriter() {
-            super(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-        }
-
-        @Override
-        protected String getCommonSuperClass(@NotNull String type1, @NotNull String type2) {
-            // This method is needed to generate StackFrameMap: bytecode metadata for JVM verification. For bytecode version 50.0 (JDK 6)
-            // these maps can be invalid: in this case, JVM would generate them itself (potentially slowing class loading),
-            // for bytecode 51.0+ (JDK 7+) JVM would crash with VerifyError.
-            // It seems that for bytecode emitted by Kotlin compiler, it is safe to return "Object" here, because there will
-            // be "checkcast" generated before making a call, anyway.
-
-            return "java/lang/Object";
-        }
-    }
-
-    private static class TraceBuilder extends AbstractClassBuilder.Concrete {
-        public final BinaryClassWriter binary;
-
-        public TraceBuilder(BinaryClassWriter binary) {
-            super(new TraceClassVisitor(binary, new PrintWriter(new StringWriter())));
-            this.binary = binary;
-        }
     }
 }
