@@ -1315,6 +1315,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("allKotlinFilesRemovedThenNewAdded")
+            public void testAllKotlinFilesRemovedThenNewAdded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/allKotlinFilesRemovedThenNewAdded/");
+                doTest(fileName);
+            }
+
             @TestMetadata("classToPackageFacade")
             public void testClassToPackageFacade() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/classToPackageFacade/");
