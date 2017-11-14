@@ -113,11 +113,6 @@ class DiagnosticReporterByTrackingStrategy(
             VarargArgumentOutsideParentheses::class.java ->
                 reportIfNonNull(callArgument.psiExpression) { trace.report(VARARG_OUTSIDE_PARENTHESES.on(it)) }
 
-            SpreadArgumentToNonVarargParameter::class.java -> {
-                val spreadElement = callArgument.safeAs<ExpressionKotlinCallArgumentImpl>()?.valueArgument?.getSpreadElement()
-                reportIfNonNull(spreadElement) { trace.report(NON_VARARG_SPREAD.on(it)) }
-            }
-
             MixingNamedAndPositionArguments::class.java ->
                 trace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(callArgument.psiCallArgument.valueArgument.asElement()))
         }
@@ -147,7 +142,12 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     override fun onCallArgumentSpread(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
-
+        when (diagnostic.javaClass) {
+            NonVarargSpread::class.java -> {
+                val spreadElement = callArgument.safeAs<ExpressionKotlinCallArgumentImpl>()?.valueArgument?.getSpreadElement()
+                reportIfNonNull(spreadElement) { trace.report(NON_VARARG_SPREAD.on(it)) }
+            }
+        }
     }
 
     private fun reportSmartCast(smartCastDiagnostic: SmartCastDiagnostic) {
