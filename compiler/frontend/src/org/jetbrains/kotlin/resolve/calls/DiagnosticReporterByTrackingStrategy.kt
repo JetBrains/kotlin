@@ -104,23 +104,27 @@ class DiagnosticReporterByTrackingStrategy(
             SmartCastDiagnostic::class.java -> reportSmartCast(diagnostic as SmartCastDiagnostic)
             UnstableSmartCast::class.java -> reportUnstableSmartCast(diagnostic as UnstableSmartCast)
             TooManyArguments::class.java -> {
-                val psiExpression = callArgument.psiExpression
-                if (psiExpression != null) {
-                    trace.report(TOO_MANY_ARGUMENTS.on(psiExpression, (diagnostic as TooManyArguments).descriptor))
+                reportIfNonNull(callArgument.psiExpression) {
+                    trace.report(TOO_MANY_ARGUMENTS.on(it, (diagnostic as TooManyArguments).descriptor))
                 }
 
                 trace.markAsReported()
             }
             VarargArgumentOutsideParentheses::class.java ->
-                trace.report(VARARG_OUTSIDE_PARENTHESES.on(callArgument.psiExpression!!))
+                reportIfNonNull(callArgument.psiExpression) { trace.report(VARARG_OUTSIDE_PARENTHESES.on(it)) }
 
             SpreadArgumentToNonVarargParameter::class.java -> {
                 val spreadElement = callArgument.safeAs<ExpressionKotlinCallArgumentImpl>()?.valueArgument?.getSpreadElement()
-                if (spreadElement != null) {
-                    trace.report(NON_VARARG_SPREAD.on(spreadElement))
-                }
+                reportIfNonNull(spreadElement) { trace.report(NON_VARARG_SPREAD.on(it)) }
             }
+
+            MixingNamedAndPositionArguments::class.java ->
+                trace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(callArgument.psiCallArgument.valueArgument.asElement()))
         }
+    }
+
+    private fun <T> reportIfNonNull(element: T?, report: (T) -> Unit) {
+        if (element != null) report(element)
     }
 
     override fun onCallArgumentName(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
