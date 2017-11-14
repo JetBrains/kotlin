@@ -113,4 +113,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             description = "Paths to friend modules"
     )
     var friendModules: String? by FreezableVar(null)
+
+    @Argument(value = "-XXir", description = "Use IR-based translator")
+    var irBasedTranslator: Boolean by FreezableVar(false)
 }

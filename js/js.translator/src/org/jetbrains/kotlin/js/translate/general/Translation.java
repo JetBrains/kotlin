@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.general;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.js.IrBasedTranslator;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationUnit;
@@ -290,25 +292,54 @@ public final class Translation {
 
         List<File> sourceRoots = config.getSourceMapRoots().stream().map(File::new).collect(Collectors.toList());
         JsAstDeserializer deserializer = new JsAstDeserializer(program, sourceRoots);
+
+        List<KtFile> inputFiles = new ArrayList<>();
+        Map<Integer, Integer> fragmentIndexMap = new HashMap<>();
+        int index = 0;
         for (TranslationUnit unit : units) {
             if (unit instanceof TranslationUnit.SourceFile) {
                 KtFile file = ((TranslationUnit.SourceFile) unit).getFile();
+                fragmentIndexMap.put(index, inputFiles.size());
+                inputFiles.add(file);
+            }
+            index++;
+        }
+
+        if (config.getConfiguration().getBoolean(JSConfigurationKeys.IR_USED)) {
+            IrBasedTranslator irTranslator = new IrBasedTranslator(bindingTrace, moduleDescriptor);
+            newFragments.addAll(irTranslator.translate(inputFiles, program.getScope()));
+        }
+        else {
+            for (KtFile file : inputFiles) {
                 StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver);
                 TranslationContext context = TranslationContext.rootContext(staticContext);
                 List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
                 translateFile(context, file, fileMemberScope);
-                fragments.add(staticContext.getFragment());
                 newFragments.add(staticContext.getFragment());
-                fragmentMap.put(file, staticContext.getFragment());
                 fileMemberScopes.put(file, fileMemberScope);
-                merger.addFragment(staticContext.getFragment());
+            }
+        }
+
+        index = 0;
+        for (TranslationUnit unit : units) {
+            JsProgramFragment fragment;
+            if (unit instanceof TranslationUnit.SourceFile) {
+                fragment = newFragments.get(fragmentIndexMap.get(index));
+                fragmentMap.put(((TranslationUnit.SourceFile) unit).getFile(), fragment);
             }
             else if (unit instanceof TranslationUnit.BinaryAst) {
                 byte[] astData = ((TranslationUnit.BinaryAst) unit).getData();
-                JsProgramFragment fragment = deserializer.deserialize(new ByteArrayInputStream(astData));
-                merger.addFragment(fragment);
-                fragments.add(fragment);
+                fragment = deserializer.deserialize(new ByteArrayInputStream(astData));
             }
+            else {
+                throw new AssertionError("Unit must be either SourceFile or BinaryAst: " + unit.getClass().getName());
+            }
+            fragments.add(fragment);
+            index++;
+        }
+
+        for (JsProgramFragment fragment : fragments) {
+            merger.addFragment(fragment);
         }
 
         JsProgramFragment testFragment = mayBeGenerateTests(config, bindingTrace, moduleDescriptor, sourceFilePathResolver);
