@@ -32,6 +32,8 @@ class JsBuilder(private var currentSource: Any? = null) {
 
     fun JsExpression.dot(name: String) = attachSource(JsNameRef(name, this))
 
+    fun JsName.dot(name: String) = ref().dot(name)
+
     fun JsExpression.dotPure(name: JsName) = dot(name).pure()
 
     fun String.dotPure(name: String) = ref().dotPure(name)

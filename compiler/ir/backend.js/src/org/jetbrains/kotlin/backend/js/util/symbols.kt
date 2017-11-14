@@ -17,6 +17,18 @@
 package org.jetbrains.kotlin.backend.js.util
 
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
+import org.jetbrains.kotlin.js.naming.encodeSignature
+import org.jetbrains.kotlin.name.FqName
 
 val IrFunctionSymbol.parameterCount: Int
     get() = descriptor.valueParameters.size
+
+val IrFunctionSymbol.name: String
+    get() = descriptor.name.asString()
+
+val IrFunctionSymbol.signatureAsString: String
+    get() = encodeSignature(descriptor)
+
+val IrPackageFragmentSymbol.fqName: FqName
+    get() = descriptor.fqName
