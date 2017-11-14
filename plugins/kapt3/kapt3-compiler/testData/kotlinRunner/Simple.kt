@@ -1,5 +1,8 @@
 package test
 
+/**
+ * KDoc comment.
+ */
 @Suppress("UNRESOLVED_REFERENCE")
 internal class Simple {
     @MyAnnotation
@@ -12,8 +15,14 @@ internal class Simple {
     }
 }
 
+/*
+Multi
+line
+comment
+ */
 internal annotation class MyAnnotation
 
+// Small comment
 internal enum class EnumClass {
     BLACK, WHITE
 }

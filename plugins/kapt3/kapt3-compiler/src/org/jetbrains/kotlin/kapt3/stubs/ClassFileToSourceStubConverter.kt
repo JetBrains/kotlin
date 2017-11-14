@@ -98,6 +98,8 @@ class ClassFileToSourceStubConverter(
 
     private val anonymousTypeHandler = AnonymousTypeHandler(this)
 
+    private val kdocCommentKeeper = KDocCommentKeeper(kaptContext)
+
     private var done = false
 
     fun convert(): JavacList<JCCompilationUnit> {
@@ -180,6 +182,7 @@ class ClassFileToSourceStubConverter(
         val classes = JavacList.of<JCTree>(classDeclaration)
 
         val topLevel = treeMaker.TopLevelJava9Aware(packageClause, imports + classes)
+        topLevel.docComments = kdocCommentKeeper.docCommentTable
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this
@@ -347,7 +350,7 @@ class ClassFileToSourceStubConverter(
                 genericType.typeParameters,
                 if (hasSuperClass) genericType.superClass else null,
                 genericType.interfaces,
-                enumValues + fields + methods + nestedClasses)
+                enumValues + fields + methods + nestedClasses).keepComments(clazz)
     }
 
     private tailrec fun checkIfShouldBeIgnored(type: Type): Boolean {
@@ -453,7 +456,7 @@ class ClassFileToSourceStubConverter(
 
         lineMappings.registerField(containingClass, field)
 
-        return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer)
+        return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).keepComments(field)
     }
 
     private fun convertMethod(
@@ -563,7 +566,7 @@ class ClassFileToSourceStubConverter(
         return treeMaker.MethodDef(
                 modifiers, treeMaker.name(name), returnType, genericSignature.typeParameters,
                 genericSignature.parameterTypes, genericSignature.exceptionTypes,
-                body, defaultValue)
+                body, defaultValue).keepComments(method)
     }
 
     private fun isIgnored(annotations: List<AnnotationNode>?): Boolean {
@@ -882,6 +885,11 @@ class ClassFileToSourceStubConverter(
         Type.FLOAT_TYPE -> 0.0F
         Type.DOUBLE_TYPE -> 0.0
         else -> null
+    }
+
+    private fun <T : JCTree> T.keepComments(node: Any): T {
+        kdocCommentKeeper.saveKDocComment(this, node)
+        return this
     }
 }
 

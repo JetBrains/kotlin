@@ -1,5 +1,8 @@
 package test;
 
+/**
+ * KDoc comment.
+ */
 class Simple {
     @MyAnnotation
     void myMethod() {
