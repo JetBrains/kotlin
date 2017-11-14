@@ -57,6 +57,7 @@ class KaptContext<out GState : GenerationState?>(
 
         fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
         compiler = JavaCompiler.instance(context) as KaptJavaCompiler
+        compiler.keepComments = true
 
         ClassReader.instance(context).saveParameterNames = true
 

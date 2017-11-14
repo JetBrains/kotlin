@@ -34,6 +34,15 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
     }
 
     @Test
+    fun testComments() = test("Simple", "test.MyAnnotation") { set, roundEnv, env ->
+        fun commentOf(className: String) = env.elementUtils.getDocComment(env.elementUtils.getTypeElement(className))
+
+        assert(commentOf("test.Simple") == " * KDoc comment.\n")
+        assert(commentOf("test.EnumClass") == null) // simple comment - not saved
+        assert(commentOf("test.MyAnnotation") == null) // multiline comment - not saved
+    }
+
+    @Test
     fun testSimpleStubsAndIncrementalData() = bindingsTest("Simple") { stubsOutputDir, incrementalDataOutputDir, bindings ->
         assert(File(stubsOutputDir, "error/NonExistentClass.java").exists())
         assert(File(stubsOutputDir, "test/Simple.java").exists())

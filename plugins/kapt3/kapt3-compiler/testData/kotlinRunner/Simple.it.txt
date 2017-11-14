@@ -25,6 +25,34 @@ public @interface KaptSignature {
 
 package test;
 
+/**
+ * * KDoc comment.
+ */
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+@kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public final class Simple {
+
+    @MyAnnotation()
+    @kapt.internal.KaptSignature("myMethod()V")
+    public final void myMethod() {
+    }
+
+    @kapt.internal.KaptSignature("heavyMethod()I")
+    public final int heavyMethod() {
+        return 0;
+    }
+
+    @kapt.internal.KaptSignature("<init>()V")
+    public Simple() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
 @kotlin.Metadata()
 @kapt.internal.KaptMetadata()
 public enum EnumClass {
@@ -60,30 +88,5 @@ public enum EnumClass2 {
     @kapt.internal.KaptSignature("<init>(Ljava/lang/String;ILjava/lang/String;)V")
     EnumClass2(@org.jetbrains.annotations.NotNull()
     java.lang.String blah) {
-    }
-}
-
-////////////////////
-
-package test;
-
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
-@kotlin.Metadata()
-@kapt.internal.KaptMetadata()
-public final class Simple {
-
-    @MyAnnotation()
-    @kapt.internal.KaptSignature("myMethod()V")
-    public final void myMethod() {
-    }
-
-    @kapt.internal.KaptSignature("heavyMethod()I")
-    public final int heavyMethod() {
-        return 0;
-    }
-
-    @kapt.internal.KaptSignature("<init>()V")
-    public Simple() {
-        super();
     }
 }
