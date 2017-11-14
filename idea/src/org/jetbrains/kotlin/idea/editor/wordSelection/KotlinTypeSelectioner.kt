@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinTypeSelectioner : ExtendWordSelectionHandlerBase() {
 
-    override fun canSelect(e: PsiElement?): Boolean {
+    override fun canSelect(e: PsiElement): Boolean {
         return e is KtTypeReference
                && e.getStrictParentOfType<KtObjectDeclaration>() == null
                && e.getStrictParentOfType<KtParameter>() == null
