@@ -50,7 +50,7 @@ public inline fun File.printWriter(charset: Charset = Charsets.UTF_8): PrintWrit
  *
  * @return the entire content of this file as a byte array.
  */
-public fun File.readBytes(): ByteArray = FileInputStream(this).use { input ->
+public fun File.readBytes(): ByteArray = inputStream().use { input ->
     var offset = 0
     var remaining = this.length().let {
         if (it > Int.MAX_VALUE) throw OutOfMemoryError("File $this is too big ($it bytes) to fit in memory.") else it
@@ -129,19 +129,16 @@ public fun File.forEachBlock(action: (buffer: ByteArray, bytesRead: Int) -> Unit
  */
 public fun File.forEachBlock(blockSize: Int, action: (buffer: ByteArray, bytesRead: Int) -> Unit): Unit {
     val arr = ByteArray(blockSize.coerceAtLeast(MINIMUM_BLOCK_SIZE))
-    val fis = FileInputStream(this)
 
-    try {
+    inputStream().use {
         do {
-            val size = fis.read(arr)
+            val size = it.read(arr)
             if (size <= 0) {
                 break
             } else {
                 action(arr, size)
             }
         } while (true)
-    } finally {
-        fis.close()
     }
 }
 
@@ -155,8 +152,7 @@ public fun File.forEachBlock(blockSize: Int, action: (buffer: ByteArray, bytesRe
  * @param action function to process file lines.
  */
 public fun File.forEachLine(charset: Charset = Charsets.UTF_8, action: (line: String) -> Unit): Unit {
-    // Note: close is called at forEachLine
-    BufferedReader(InputStreamReader(FileInputStream(this), charset)).forEachLine(action)
+    reader(charset).forEachLine(action)
 }
 
 /**
@@ -184,7 +180,7 @@ public inline fun File.outputStream(): FileOutputStream {
  * @return list of file lines.
  */
 public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
-    val result = ArrayList<String>()
+    val result = arrayListOf<String>()
     forEachLine(charset) { result.add(it); }
     return result
 }
@@ -196,6 +192,5 @@ public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
  * @param charset character set to use. By default uses UTF-8 charset.
  * @return the value returned by [block].
  */
-@RequireKotlin("1.2", versionKind = RequireKotlinVersionKind.COMPILER_VERSION, message = "Requires newer compiler version to be inlined correctly.")
 public inline fun <T> File.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T =
-        bufferedReader(charset).use { block(it.lineSequence()) }
+        reader(charset).useLines(block)
