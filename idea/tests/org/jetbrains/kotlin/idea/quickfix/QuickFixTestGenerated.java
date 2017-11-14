@@ -1025,6 +1025,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("annotationWithVarargArrayLiteralDouble.kt")
+        public void testAnnotationWithVarargArrayLiteralDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addTypeAnnotationToValueParameter/annotationWithVarargArrayLiteralDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("annotationWithVarargArrayLiteralInt.kt")
+        public void testAnnotationWithVarargArrayLiteralInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addTypeAnnotationToValueParameter/annotationWithVarargArrayLiteralInt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("annotationWithVarargArrayLiteralString.kt")
+        public void testAnnotationWithVarargArrayLiteralString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addTypeAnnotationToValueParameter/annotationWithVarargArrayLiteralString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noDefaultValue.kt")
         public void testNoDefaultValue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addTypeAnnotationToValueParameter/noDefaultValue.kt");
