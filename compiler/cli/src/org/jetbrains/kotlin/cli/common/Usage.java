@@ -52,7 +52,7 @@ public class Usage {
 
     private static void propertyUsage(@NotNull StringBuilder sb, @NotNull KProperty1 property, boolean extraHelp) {
         Argument argument = ContainerUtil.findInstance(property.getAnnotations(), Argument.class);
-        if (argument == null) return;
+        if (argument == null || ParseCommandLineArgumentsKt.isHidden(argument)) return;
 
         if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return;
 

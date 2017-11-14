@@ -32,9 +32,16 @@ annotation class Argument(
 )
 
 val Argument.isAdvanced: Boolean
-    get() = value.startsWith(ADVANCED_ARGUMENT_PREFIX) && value.length > ADVANCED_ARGUMENT_PREFIX.length
+    get() = isPrefixedBy(ADVANCED_ARGUMENT_PREFIX)
+
+val Argument.isHidden: Boolean
+    get() = isPrefixedBy(HIDDEN_ARGUMENT_PREFIX)
+
+private fun Argument.isPrefixedBy(prefix: String): Boolean =
+        value.startsWith(prefix) && value.length > prefix.length
 
 private val ADVANCED_ARGUMENT_PREFIX = "-X"
+private val HIDDEN_ARGUMENT_PREFIX = "-XX"
 private val FREE_ARGS_DELIMITER = "--"
 
 data class ArgumentParseErrors(
