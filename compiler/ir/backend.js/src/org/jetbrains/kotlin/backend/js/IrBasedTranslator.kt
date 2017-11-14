@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.js
 import org.jetbrains.kotlin.backend.js.context.IrTranslationContext
 import org.jetbrains.kotlin.backend.js.context.IrTranslationStaticContext
 import org.jetbrains.kotlin.backend.js.declarations.IrDeclarationTranslationVisitor
+import org.jetbrains.kotlin.backend.js.declarations.IrTopLevelDeclarationExporter
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -50,5 +51,7 @@ class IrBasedTranslator(private val bindingTrace: BindingTrace, private val modu
         for (declaration in file.declarations) {
             declaration.acceptVoid(visitor)
         }
+
+        file.acceptVoid(IrTopLevelDeclarationExporter(context.names, context.fragment))
     }
 }
