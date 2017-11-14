@@ -398,12 +398,33 @@ public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.i
 }
 
 /**
+ * Returns a sequence containing all elements that are instances of specified class.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
+    @Suppress("UNCHECKED_CAST")
+    return filter { klass.isInstance(it) } as Sequence<R>
+}
+
+/**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  *
  * The operation is _terminal_.
  */
 public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements that are instances of specified class to the given [destination].
+ *
+ * The operation is _terminal_.
+ */
+public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    @Suppress("UNCHECKED_CAST")
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }
 
@@ -1849,22 +1870,5 @@ public fun Sequence<Double>.sum(): Double {
         sum += element
     }
     return sum
-}
-
-/**
- * Returns a sequence containing all elements that are instances of specified class.
- */
-public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
-    @Suppress("UNCHECKED_CAST")
-    return filter { klass.isInstance(it) } as Sequence<R>
-}
-
-/**
- * Appends all elements that are instances of specified class to the given [destination].
- */
-public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
-    @Suppress("UNCHECKED_CAST")
-    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
-    return destination
 }
 

@@ -26,10 +26,7 @@ fun main(args: Array<String>) {
         SequenceOps,
         RangeOps,
         Numeric,
-        ComparableOps,
-        CommonArrays,
-        PlatformSpecialized,
-        PlatformSpecializedJS
+        ComparableOps
     )
 
     require(args.size == 1) { "Expecting Kotlin project home path as an argument" }

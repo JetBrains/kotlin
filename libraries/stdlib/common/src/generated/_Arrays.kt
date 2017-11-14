@@ -2802,6 +2802,51 @@ public expect fun BooleanArray.sortedWith(comparator: Comparator<in Boolean>): L
 public expect fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char>
 
 /**
+ * Returns a [List] that wraps the original array.
+ */
+public expect fun <T> Array<out T>.asList(): List<T>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public expect fun ByteArray.asList(): List<Byte>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public expect fun ShortArray.asList(): List<Short>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public expect fun IntArray.asList(): List<Int>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public expect fun LongArray.asList(): List<Long>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public expect fun FloatArray.asList(): List<Float>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public expect fun DoubleArray.asList(): List<Double>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public expect fun BooleanArray.asList(): List<Boolean>
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public expect fun CharArray.asList(): List<Char>
+
+/**
  * Returns `true` if the two specified arrays are *deeply* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  * 
@@ -3022,6 +3067,141 @@ public expect fun BooleanArray.contentToString(): String
 public expect fun CharArray.contentToString(): String
 
 /**
+ * Returns new array which is a copy of the original array.
+ */
+public expect fun <T> Array<T>.copyOf(): Array<T>
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public expect fun ByteArray.copyOf(): ByteArray
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public expect fun ShortArray.copyOf(): ShortArray
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public expect fun IntArray.copyOf(): IntArray
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public expect fun LongArray.copyOf(): LongArray
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public expect fun FloatArray.copyOf(): FloatArray
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public expect fun DoubleArray.copyOf(): DoubleArray
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public expect fun BooleanArray.copyOf(): BooleanArray
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public expect fun CharArray.copyOf(): CharArray
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+public expect fun ByteArray.copyOf(newSize: Int): ByteArray
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+public expect fun ShortArray.copyOf(newSize: Int): ShortArray
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+public expect fun IntArray.copyOf(newSize: Int): IntArray
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+public expect fun LongArray.copyOf(newSize: Int): LongArray
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+public expect fun FloatArray.copyOf(newSize: Int): FloatArray
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+public expect fun DoubleArray.copyOf(newSize: Int): DoubleArray
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+public expect fun BooleanArray.copyOf(newSize: Int): BooleanArray
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+public expect fun CharArray.copyOf(newSize: Int): CharArray
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+public expect fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T>
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+public expect fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+public expect fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+public expect fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+public expect fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+public expect fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+public expect fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+public expect fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+public expect fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
+
+/**
  * Returns the range of valid indices for the array.
  */
 public expect val <T> Array<out T>.indices: IntRange
@@ -3220,6 +3400,191 @@ public expect val BooleanArray.lastIndex: Int
 public expect val CharArray.lastIndex: Int
 
 /**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public expect operator fun <T> Array<T>.plus(element: T): Array<T>
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public expect operator fun ByteArray.plus(element: Byte): ByteArray
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public expect operator fun ShortArray.plus(element: Short): ShortArray
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public expect operator fun IntArray.plus(element: Int): IntArray
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public expect operator fun LongArray.plus(element: Long): LongArray
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public expect operator fun FloatArray.plus(element: Float): FloatArray
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public expect operator fun DoubleArray.plus(element: Double): DoubleArray
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public expect operator fun BooleanArray.plus(element: Boolean): BooleanArray
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public expect operator fun CharArray.plus(element: Char): CharArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public expect operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T>
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public expect operator fun ByteArray.plus(elements: Collection<Byte>): ByteArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public expect operator fun ShortArray.plus(elements: Collection<Short>): ShortArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public expect operator fun IntArray.plus(elements: Collection<Int>): IntArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public expect operator fun LongArray.plus(elements: Collection<Long>): LongArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public expect operator fun FloatArray.plus(elements: Collection<Float>): FloatArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public expect operator fun DoubleArray.plus(elements: Collection<Double>): DoubleArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public expect operator fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public expect operator fun CharArray.plus(elements: Collection<Char>): CharArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public expect operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T>
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public expect operator fun ByteArray.plus(elements: ByteArray): ByteArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public expect operator fun ShortArray.plus(elements: ShortArray): ShortArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public expect operator fun IntArray.plus(elements: IntArray): IntArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public expect operator fun LongArray.plus(elements: LongArray): LongArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public expect operator fun FloatArray.plus(elements: FloatArray): FloatArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public expect operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public expect operator fun BooleanArray.plus(elements: BooleanArray): BooleanArray
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public expect operator fun CharArray.plus(elements: CharArray): CharArray
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public expect fun <T> Array<T>.plusElement(element: T): Array<T>
+
+/**
+ * Sorts the array in-place.
+ */
+public expect fun IntArray.sort(): Unit
+
+/**
+ * Sorts the array in-place.
+ */
+public expect fun LongArray.sort(): Unit
+
+/**
+ * Sorts the array in-place.
+ */
+public expect fun ByteArray.sort(): Unit
+
+/**
+ * Sorts the array in-place.
+ */
+public expect fun ShortArray.sort(): Unit
+
+/**
+ * Sorts the array in-place.
+ */
+public expect fun DoubleArray.sort(): Unit
+
+/**
+ * Sorts the array in-place.
+ */
+public expect fun FloatArray.sort(): Unit
+
+/**
+ * Sorts the array in-place.
+ */
+public expect fun CharArray.sort(): Unit
+
+/**
+ * Sorts the array in-place according to the natural order of its elements.
+ */
+public expect fun <T: Comparable<T>> Array<out T>.sort(): Unit
+
+/**
+ * Sorts the array in-place according to the order specified by the given [comparator].
+ */
+public expect fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit
+
+/**
  * Returns an array of Boolean containing all of the elements of this generic array.
  */
 public expect fun Array<out Boolean>.toBooleanArray(): BooleanArray
@@ -3258,6 +3623,46 @@ public expect fun Array<out Long>.toLongArray(): LongArray
  * Returns an array of Short containing all of the elements of this generic array.
  */
 public expect fun Array<out Short>.toShortArray(): ShortArray
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public expect fun ByteArray.toTypedArray(): Array<Byte>
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public expect fun ShortArray.toTypedArray(): Array<Short>
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public expect fun IntArray.toTypedArray(): Array<Int>
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public expect fun LongArray.toTypedArray(): Array<Long>
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public expect fun FloatArray.toTypedArray(): Array<Float>
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public expect fun DoubleArray.toTypedArray(): Array<Double>
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public expect fun BooleanArray.toTypedArray(): Array<Boolean>
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public expect fun CharArray.toTypedArray(): Array<Char>
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -7355,409 +7760,4 @@ public expect fun FloatArray.sum(): Float
  * Returns the sum of all elements in the array.
  */
 public expect fun DoubleArray.sum(): Double
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public expect fun <T> Array<out T>.asList(): List<T>
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public expect fun ByteArray.asList(): List<Byte>
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public expect fun ShortArray.asList(): List<Short>
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public expect fun IntArray.asList(): List<Int>
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public expect fun LongArray.asList(): List<Long>
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public expect fun FloatArray.asList(): List<Float>
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public expect fun DoubleArray.asList(): List<Double>
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public expect fun BooleanArray.asList(): List<Boolean>
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public expect fun CharArray.asList(): List<Char>
-
-/**
- * Returns new array which is a copy of the original array.
- */
-public expect fun <T> Array<T>.copyOf(): Array<T>
-
-/**
- * Returns new array which is a copy of the original array.
- */
-public expect fun ByteArray.copyOf(): ByteArray
-
-/**
- * Returns new array which is a copy of the original array.
- */
-public expect fun ShortArray.copyOf(): ShortArray
-
-/**
- * Returns new array which is a copy of the original array.
- */
-public expect fun IntArray.copyOf(): IntArray
-
-/**
- * Returns new array which is a copy of the original array.
- */
-public expect fun LongArray.copyOf(): LongArray
-
-/**
- * Returns new array which is a copy of the original array.
- */
-public expect fun FloatArray.copyOf(): FloatArray
-
-/**
- * Returns new array which is a copy of the original array.
- */
-public expect fun DoubleArray.copyOf(): DoubleArray
-
-/**
- * Returns new array which is a copy of the original array.
- */
-public expect fun BooleanArray.copyOf(): BooleanArray
-
-/**
- * Returns new array which is a copy of the original array.
- */
-public expect fun CharArray.copyOf(): CharArray
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-public expect fun ByteArray.copyOf(newSize: Int): ByteArray
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-public expect fun ShortArray.copyOf(newSize: Int): ShortArray
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-public expect fun IntArray.copyOf(newSize: Int): IntArray
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-public expect fun LongArray.copyOf(newSize: Int): LongArray
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-public expect fun FloatArray.copyOf(newSize: Int): FloatArray
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-public expect fun DoubleArray.copyOf(newSize: Int): DoubleArray
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-public expect fun BooleanArray.copyOf(newSize: Int): BooleanArray
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-public expect fun CharArray.copyOf(newSize: Int): CharArray
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-public expect fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T>
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-public expect fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-public expect fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-public expect fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-public expect fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-public expect fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-public expect fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-public expect fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-public expect fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public expect operator fun <T> Array<T>.plus(element: T): Array<T>
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public expect operator fun ByteArray.plus(element: Byte): ByteArray
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public expect operator fun ShortArray.plus(element: Short): ShortArray
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public expect operator fun IntArray.plus(element: Int): IntArray
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public expect operator fun LongArray.plus(element: Long): LongArray
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public expect operator fun FloatArray.plus(element: Float): FloatArray
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public expect operator fun DoubleArray.plus(element: Double): DoubleArray
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public expect operator fun BooleanArray.plus(element: Boolean): BooleanArray
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public expect operator fun CharArray.plus(element: Char): CharArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public expect operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T>
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public expect operator fun ByteArray.plus(elements: Collection<Byte>): ByteArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public expect operator fun ShortArray.plus(elements: Collection<Short>): ShortArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public expect operator fun IntArray.plus(elements: Collection<Int>): IntArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public expect operator fun LongArray.plus(elements: Collection<Long>): LongArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public expect operator fun FloatArray.plus(elements: Collection<Float>): FloatArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public expect operator fun DoubleArray.plus(elements: Collection<Double>): DoubleArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public expect operator fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public expect operator fun CharArray.plus(elements: Collection<Char>): CharArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public expect operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T>
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public expect operator fun ByteArray.plus(elements: ByteArray): ByteArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public expect operator fun ShortArray.plus(elements: ShortArray): ShortArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public expect operator fun IntArray.plus(elements: IntArray): IntArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public expect operator fun LongArray.plus(elements: LongArray): LongArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public expect operator fun FloatArray.plus(elements: FloatArray): FloatArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public expect operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public expect operator fun BooleanArray.plus(elements: BooleanArray): BooleanArray
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public expect operator fun CharArray.plus(elements: CharArray): CharArray
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public expect fun <T> Array<T>.plusElement(element: T): Array<T>
-
-/**
- * Sorts the array in-place.
- */
-public expect fun IntArray.sort(): Unit
-
-/**
- * Sorts the array in-place.
- */
-public expect fun LongArray.sort(): Unit
-
-/**
- * Sorts the array in-place.
- */
-public expect fun ByteArray.sort(): Unit
-
-/**
- * Sorts the array in-place.
- */
-public expect fun ShortArray.sort(): Unit
-
-/**
- * Sorts the array in-place.
- */
-public expect fun DoubleArray.sort(): Unit
-
-/**
- * Sorts the array in-place.
- */
-public expect fun FloatArray.sort(): Unit
-
-/**
- * Sorts the array in-place.
- */
-public expect fun CharArray.sort(): Unit
-
-/**
- * Sorts the array in-place according to the natural order of its elements.
- */
-public expect fun <T: Comparable<T>> Array<out T>.sort(): Unit
-
-/**
- * Sorts the array in-place according to the order specified by the given [comparator].
- */
-public expect fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public expect fun ByteArray.toTypedArray(): Array<Byte>
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public expect fun ShortArray.toTypedArray(): Array<Short>
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public expect fun IntArray.toTypedArray(): Array<Int>
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public expect fun LongArray.toTypedArray(): Array<Long>
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public expect fun FloatArray.toTypedArray(): Array<Float>
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public expect fun DoubleArray.toTypedArray(): Array<Double>
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public expect fun BooleanArray.toTypedArray(): Array<Boolean>
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public expect fun CharArray.toTypedArray(): Array<Char>
 

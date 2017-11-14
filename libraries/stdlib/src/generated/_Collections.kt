@@ -645,10 +645,26 @@ public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.inter
 }
 
 /**
+ * Returns a list containing all elements that are instances of specified class.
+ */
+public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
+    return filterIsInstanceTo(ArrayList<R>(), klass)
+}
+
+/**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  */
 public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements that are instances of specified class to the given [destination].
+ */
+public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    @Suppress("UNCHECKED_CAST")
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }
 
@@ -2351,21 +2367,5 @@ public fun Iterable<Double>.sum(): Double {
         sum += element
     }
     return sum
-}
-
-/**
- * Returns a list containing all elements that are instances of specified class.
- */
-public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
-    return filterIsInstanceTo(ArrayList<R>(), klass)
-}
-
-/**
- * Appends all elements that are instances of specified class to the given [destination].
- */
-public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
-    @Suppress("UNCHECKED_CAST")
-    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
-    return destination
 }
 

@@ -755,6 +755,51 @@ object Filtering : TemplateGroupBase() {
         }
     }
 
+    val f_filterIsInstanceTo_class = fn("filterIsInstanceTo(destination: C, klass: Class<R>)") {
+        platforms(Platform.JVM)
+        include(Iterables, ArraysOfObjects, Sequences)
+    } builder {
+        doc { "Appends all elements that are instances of specified class to the given [destination]." }
+        receiverAsterisk = true
+        typeParam("C : MutableCollection<in R>")
+        typeParam("R")
+        returns("C")
+        body {
+            """
+            @Suppress("UNCHECKED_CAST")
+            for (element in this) if (klass.isInstance(element)) destination.add(element as R)
+            return destination
+            """
+        }
+    }
+
+    val f_filterIsInstance_class = fn("filterIsInstance(klass: Class<R>)") {
+        platforms(Platform.JVM)
+        include(Iterables, ArraysOfObjects, Sequences)
+    } builder {
+        doc { "Returns a list containing all elements that are instances of specified class." }
+        receiverAsterisk= true
+        typeParam("R")
+        returns("List<R>")
+        body {
+            """
+            return filterIsInstanceTo(ArrayList<R>(), klass)
+            """
+        }
+
+        specialFor(Sequences) {
+            doc { "Returns a sequence containing all elements that are instances of specified class." }
+            returns("Sequence<R>")
+        }
+        body(Sequences) {
+            """
+            @Suppress("UNCHECKED_CAST")
+            return filter { klass.isInstance(it) } as Sequence<R>
+            """
+        }
+    }
+
+
 
     val f_slice = fn("slice(indices: Iterable<Int>)") {
         include(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
