@@ -26,7 +26,7 @@ import javax.script.ScriptException
 
 abstract class AbstractWebDemoExamplesTest(relativePath: String) : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "/$relativePath/",
-        BasicBoxTest.TEST_DATA_DIR_PATH + "out/$relativePath/",
+        relativePath,
         generateNodeJsRunner = false
 ) {
     override fun runGeneratedCode(

@@ -74,12 +74,16 @@ import java.util.regex.Pattern
 
 abstract class BasicBoxTest(
         protected val pathToTestDir: String,
-        private val pathToOutputDir: String,
+        testGroupOutputDirPrefix: String,
+        pathToRootOutputDir: String = BasicBoxTest.TEST_DATA_DIR_PATH,
         private val typedArraysEnabled: Boolean = true,
         private val generateSourceMap: Boolean = false,
         private val generateNodeJsRunner: Boolean = true
 ) : KotlinTestWithEnvironment() {
     val additionalCommonFileDirectories = mutableListOf<String>()
+
+    private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
+    private val testGroupOutputDirForMinification = File(pathToRootOutputDir + "out-min/" + testGroupOutputDirPrefix)
 
     protected open fun getOutputPrefixFile(testFilePath: String): File? = null
     protected open fun getOutputPostfixFile(testFilePath: String): File? = null
@@ -196,8 +200,9 @@ abstract class BasicBoxTest(
                     }
                 }
 
+                val outputDirForMinification = getOutputDir(file, testGroupOutputDirForMinification)
                 minifyAndRun(
-                        workDir = File(File(outputDir, "min"), file.nameWithoutExtension),
+                        workDir = File(outputDirForMinification, file.nameWithoutExtension),
                         allJsFiles = allJsFiles,
                         generatedJsFiles = generatedJsFiles,
                         expectedResult = expectedResult,
@@ -254,13 +259,13 @@ abstract class BasicBoxTest(
         return sb.toString()
     }
 
-    protected fun getOutputDir(file: File): File {
+    protected fun getOutputDir(file: File, testGroupOutputDir: File = testGroupOutputDirForCompilation): File {
         val stopFile = File(pathToTestDir)
         return generateSequence(file.parentFile) { it.parentFile }
                 .takeWhile { it != stopFile }
                 .map { it.name }
                 .toList().asReversed()
-                .fold(File(pathToOutputDir), ::File)
+                .fold(testGroupOutputDir, ::File)
     }
 
     private fun TestModule.outputFileSimpleName(): String {

@@ -18,7 +18,8 @@ workspace.xml
 /ultimate/ideaSDK
 /ultimate/out
 /ultimate/tmp
-/js/js.translator/testData/**/out/
+/js/js.translator/testData/out/
+/js/js.translator/testData/out-min/
 .gradle/
 build/
 !**/src/**/build
