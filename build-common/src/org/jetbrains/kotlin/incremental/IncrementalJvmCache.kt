@@ -287,7 +287,9 @@ open class IncrementalJvmCache(
         fun remove(className: JvmClassName, changesCollector: ChangesCollector) {
             val key = className.internalName
             val oldValue = storage[key] ?: return
-            changesCollector.collectProtoChanges(oldData = oldValue.toProtoData(className.packageFqName), newData = null)
+            if (key != MODULE_MAPPING_FILE_NAME) {
+                changesCollector.collectProtoChanges(oldData = oldValue.toProtoData(className.packageFqName), newData = null)
+            }
             storage.remove(key)
         }
 
