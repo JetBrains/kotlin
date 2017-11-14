@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.backend.js.expression.IrExpressionTranslationVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 
 class IrBodyTranslationVisitor(private val context: IrTranslationContext) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
@@ -30,7 +29,7 @@ class IrBodyTranslationVisitor(private val context: IrTranslationContext) : IrEl
     override fun visitBlockBody(body: IrBlockBody) {
         val innerVisitor = IrExpressionTranslationVisitor(context)
         for (statement in body.statements) {
-            statement.accept(innerVisitor, Unit)?.let { context.addStatement(JsExpressionStatement(it)) }
+            statement.accept(innerVisitor, Unit)?.let { context.addExpressionStatement(statement) { it } }
         }
     }
 }

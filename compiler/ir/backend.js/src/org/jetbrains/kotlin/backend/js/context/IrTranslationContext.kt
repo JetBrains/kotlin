@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.backend.js.context
 
+import org.jetbrains.kotlin.backend.js.util.JsBuilder
+import org.jetbrains.kotlin.backend.js.util.buildJs
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.js.backend.ast.JsName
-import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
-import org.jetbrains.kotlin.js.backend.ast.JsScope
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.backend.ast.*
 
 class IrTranslationContext(val staticContext: IrTranslationStaticContext, val fragment: JsProgramFragment) {
     var statements: MutableCollection<JsStatement> = mutableListOf()
@@ -30,6 +29,14 @@ class IrTranslationContext(val staticContext: IrTranslationStaticContext, val fr
 
     fun addStatement(statement: JsStatement) {
         statements.add(statement)
+    }
+
+    fun addStatement(location: Any?, build: JsBuilder.() -> JsStatement) {
+        statements.add(buildJs(location, build))
+    }
+
+    fun addExpressionStatement(location: Any?, build: JsBuilder.() -> JsExpression) {
+        statements.add(JsExpressionStatement(buildJs(location, build)))
     }
 
     inline fun <T> savingStatements(action: () -> T): T {
