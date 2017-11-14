@@ -136,7 +136,7 @@ class ResolvedCallableReferenceAtom(
 
     override val inputTypes: Collection<UnwrappedType>
         get() {
-            val functionType = getFunctionTypeFromCallableReferenceExpectedType(expectedType) ?: return emptyList()
+            val functionType = getFunctionTypeFromCallableReferenceExpectedType(expectedType) ?: return listOfNotNull(expectedType)
             val parameters = functionType.getValueParameterTypesFromFunctionType().map { it.type.unwrap() }
             val receiver = functionType.getReceiverTypeFromFunctionType()?.unwrap()
             return receiver?.let { parameters + it } ?: parameters
