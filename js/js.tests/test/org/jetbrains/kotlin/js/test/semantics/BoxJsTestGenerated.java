@@ -1217,6 +1217,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inheritViaAnotherInterfaceIndirectly.kt")
+        public void testInheritViaAnotherInterfaceIndirectly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/defaultArguments/inheritViaAnotherInterfaceIndirectly.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overloadFunWithDefArg.kt")
         public void testOverloadFunWithDefArg() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/defaultArguments/overloadFunWithDefArg.kt");
