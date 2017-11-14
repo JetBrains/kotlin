@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.formatting.blocks.split
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
@@ -202,13 +203,15 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             facadeFiles: List<KtFile>,
             moduleInfo: IdeaModuleInfo
     ): List<PsiClass> {
-        return if (moduleInfo is ModuleSourceInfo) {
+        val (clsFiles, sourceFiles) = facadeFiles.partition { it is KtClsFile }
+        val lightClassesForClsFacades = clsFiles.mapNotNull { createLightClassForDecompiledKotlinFile(it as KtClsFile) }
+        if (moduleInfo is ModuleSourceInfo && sourceFiles.isNotEmpty()) {
             val lightClassForFacade = KtLightClassForFacade.createForFacade(
-                    psiManager, facadeFqName, moduleInfo.contentScope(), facadeFiles)
-            withFakeLightClasses(lightClassForFacade, facadeFiles)
+                    psiManager, facadeFqName, moduleInfo.contentScope(), sourceFiles)
+            return withFakeLightClasses(lightClassForFacade, sourceFiles) + lightClassesForClsFacades
         }
         else {
-            facadeFiles.filterIsInstance<KtClsFile>().mapNotNull { createLightClassForDecompiledKotlinFile(it) }
+            return lightClassesForClsFacades
         }
     }
 
