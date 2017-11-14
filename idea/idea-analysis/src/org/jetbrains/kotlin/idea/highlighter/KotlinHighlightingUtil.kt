@@ -33,6 +33,9 @@ object KotlinHighlightingUtil {
 
     fun shouldHighlightErrors(psiElement: PsiElement): Boolean {
         val ktFile = psiElement.containingFile as? KtFile ?: return false
+        if (ktFile.isCompiled) {
+            return false
+        }
         return (ktFile is KtCodeFragment && ktFile.context != null) || ktFile.isScript() || ProjectRootsUtil.isInProjectSource(ktFile)
     }
 }
