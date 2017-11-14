@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
 import org.gradle.api.Task
+import org.gradle.api.tasks.Internal
 
 interface CompilerArgumentAware {
     val serializedCompilerArguments: List<String>
@@ -25,6 +26,7 @@ interface CompilerArgumentAware {
 }
 
 interface KotlinCompile<T : KotlinCommonOptions> : Task, CompilerArgumentAware {
+    @get:Internal
     val kotlinOptions: T
 
     fun kotlinOptions(fn: T.() -> Unit) {

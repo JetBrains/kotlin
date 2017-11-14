@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.SourceTask
-import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import com.intellij.openapi.util.io.FileUtil
-import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.*
+import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -33,14 +31,16 @@ import java.io.File
 open class KaptGenerateStubsTask : KotlinCompile() {
     override val sourceRootsContainer = FilteringSourceRootsContainer(emptyList(), { isSourceRootAllowed(it) })
 
+    @get:Internal
     internal lateinit var kotlinCompileTask: KotlinCompile
 
     @get:OutputDirectory
     lateinit var stubsDir: File
 
+    @get:Internal
     lateinit var generatedSourcesDir: File
 
-    @get:InputFiles
+    @get:Classpath @get:InputFiles
     lateinit var kaptClasspath: List<File>
 
     override fun source(vararg sources: Any?): SourceTask? {
@@ -70,6 +70,7 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         }
 
         sourceRoots.log(this.name, logger)
+        // todo handle the args like those of the compile tasks
         val args = createCompilerArgs()
 
         kotlinCompileTask.setupCompilerArgs(args)
