@@ -66,4 +66,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<List<String>> FRIEND_PATHS =
             CompilerConfigurationKey.create("friend module paths");
+
+    public static final CompilerConfigurationKey<Boolean> IR_USED =
+            CompilerConfigurationKey.create("use IR-based translator");
 }

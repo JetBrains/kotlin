@@ -18,12 +18,15 @@ dependencies {
     compile(project(":js:js.parser"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("trove4j", "guava", rootProject = rootProject) }
+    compile(project(":compiler:ir.tree"))
+    compile(project(":compiler:ir.psi2ir"))
 }
 
 sourceSets {
     "main" {
         projectDefault()
         java.srcDir("../js.inliner/src")
+        java.srcDir("../../compiler/ir/backend.js/src")
     }
     "test" {}
 }
