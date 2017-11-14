@@ -115,8 +115,13 @@ message IrCallableReference {
     required TypeMap type_map = 2;
 }
 
+
 message IrComposite {
     repeated IrStatement statement = 1;
+}
+
+message IrClassReference {
+    required KotlinDescriptor class_descriptor = 1;
 }
 
 message IrConst {
@@ -246,6 +251,7 @@ message IrOperation {
         IrBreak break = 2;
         IrCall call = 3;
         IrCallableReference callable_reference = 4;
+        IrClassReference class_reference = 25;
         IrConst const = 5;
         IrComposite composite = 26;
         IrContinue continue = 6;

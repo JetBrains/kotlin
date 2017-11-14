@@ -230,6 +230,12 @@ internal class IrSerializer(val context: Context,
         return proto.build()
     }
 
+    fun serializeClassReference(expression: IrClassReference): KonanIr.IrClassReference {
+        val proto = KonanIr.IrClassReference.newBuilder()
+            .setClassDescriptor(serializeDescriptor(expression.symbol.descriptor))
+        return proto.build()
+    }
+
     fun serializeConst(value: IrConst<*>): KonanIr.IrConst {
         val proto = KonanIr.IrConst.newBuilder()
         when (value.kind) {
@@ -469,6 +475,8 @@ internal class IrSerializer(val context: Context,
         when (expression) {
             is IrBlock       -> operationProto.setBlock(serializeBlock(expression))
             is IrBreak       -> operationProto.setBreak(serializeBreak(expression))
+            is IrClassReference
+                             -> operationProto.setClassReference(serializeClassReference(expression))
             is IrCall        -> operationProto.setCall(serializeCall(expression))
             is IrCallableReference
                              -> operationProto.setCallableReference(serializeCallableReference(expression))
@@ -796,6 +804,11 @@ internal class IrDeserializer(val context: Context,
         }
     }
 
+    fun deserializeClassReference(proto: KonanIr.IrClassReference, start: Int, end: Int, type: KotlinType): IrClassReference {
+        val descriptor = deserializeDescriptor(proto.classDescriptor) as ClassifierDescriptor
+        return IrClassReferenceImpl(start, end, type, descriptor)
+    }
+
     fun deserializeCall(proto: KonanIr.IrCall, start: Int, end: Int, type: KotlinType): IrCall {
         val descriptor = deserializeDescriptor(proto.getDescriptor()) as FunctionDescriptor
 
@@ -1078,6 +1091,8 @@ internal class IrDeserializer(val context: Context,
                 -> deserializeBlock(proto.block, start, end, type)
             BREAK
                 -> deserializeBreak(proto.getBreak(), start, end, type)
+            CLASS_REFERENCE
+                -> deserializeClassReference(proto.classReference, start, end, type)
             CALL
                 -> deserializeCall(proto.call, start, end, type)
             CALLABLE_REFERENCE
