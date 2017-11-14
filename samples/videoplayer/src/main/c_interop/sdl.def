@@ -1,0 +1,8 @@
+package = sdl
+headers = SDL.h
+entryPoint = SDL_main
+
+headerFilter = SDL*
+
+linkerOpts.osx = -lSDL2
+linkerOpts.linux = -lSDL2

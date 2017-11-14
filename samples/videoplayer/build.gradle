@@ -1,0 +1,45 @@
+apply plugin: 'konan'
+
+konan.targets = ['macbook', 'linux']
+
+konanArtifacts {
+    interop('ffmpeg') {
+        defFile 'src/main/c_interop/ffmpeg.def'
+
+        target 'linux', {
+            includeDirs '/usr/include', '/usr/include/x86_64-linux-gnu'
+        }
+        target 'macbook', {
+            includeDirs '/opt/local/include', '/usr/local/include'
+        }
+    }
+
+    interop ('sdl') {
+        defFile 'src/main/c_interop/sdl.def'
+
+        target 'macbook', {
+            includeDirs '/Library/Frameworks/SDL2.framework/Headers',
+                    "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers",
+                    '/opt/local/include/SDL2',
+                    '/usr/local/include/SDL2'
+        }
+
+        target 'linux', {
+            includeDirs '/usr/include/SDL2'
+        }
+    }
+
+    program('Player') {
+        libraries {
+            artifact 'ffmpeg'
+            artifact 'sdl'
+        }
+        target 'macbook', {
+            linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -L/opt/local/lib"
+        }
+
+        target 'linux', {
+            linkerOpts '-L/usr/lib/x86_64-linux-gnu'
+        }
+    }
+}

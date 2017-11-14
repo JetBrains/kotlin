@@ -101,6 +101,10 @@ class Future<T> internal constructor(val id: FutureId) {
                 throw IllegalStateException("Future is cancelled")
         }
 
+    fun result(): T {
+        return consume { it -> it }
+    }
+
     val state: FutureState
         get() = FutureState.values()[stateOfFuture(id)]
 
