@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 apply plugin: 'groovy'
 apply plugin: 'org.jetbrains.dokka'
@@ -40,7 +41,7 @@ dependencies {
     compileOnly project(':kotlin-annotation-processing-gradle')
 
     compileOnly 'com.android.tools.build:gradle:2.0.0'
-    compileOnly 'org.codehaus.groovy:groovy-all:2.4.11'
+    compileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
     compileOnly gradleApi()
 
     runtime project(path: ':kotlin-compiler-embeddable', configuration: "runtimeJar")
@@ -49,7 +50,7 @@ dependencies {
     runtime project(path: ':kotlin-compiler-runner', configuration: 'runtimeJar')
 
     agp25CompileOnly 'com.android.tools.build:gradle:3.0.0-alpha1'
-    agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
+    agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
     agp25CompileOnly gradleApi()
     agp25CompileOnly project(':kotlin-annotation-processing')
     agp25CompileOnly project(':kotlin-annotation-processing-gradle')
@@ -107,6 +108,8 @@ artifacts {
 }
 
 test.executable = "${JDK_18}/bin/java"
+
+validateTaskProperties.failOnWarning = true
 
 dokka {
     outputFormat = 'markdown'
