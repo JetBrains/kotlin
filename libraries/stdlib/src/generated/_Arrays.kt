@@ -6961,7 +6961,6 @@ public fun CharArray.toSet(): Set<Char> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
 public fun <T: Comparable<T>> Array<out T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
 }
@@ -6969,7 +6968,6 @@ public fun <T: Comparable<T>> Array<out T>.toSortedSet(): SortedSet<T> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
 public fun ByteArray.toSortedSet(): SortedSet<Byte> {
     return toCollection(TreeSet<Byte>())
 }
@@ -6977,7 +6975,6 @@ public fun ByteArray.toSortedSet(): SortedSet<Byte> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
 public fun ShortArray.toSortedSet(): SortedSet<Short> {
     return toCollection(TreeSet<Short>())
 }
@@ -6985,7 +6982,6 @@ public fun ShortArray.toSortedSet(): SortedSet<Short> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
 public fun IntArray.toSortedSet(): SortedSet<Int> {
     return toCollection(TreeSet<Int>())
 }
@@ -6993,7 +6989,6 @@ public fun IntArray.toSortedSet(): SortedSet<Int> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
 public fun LongArray.toSortedSet(): SortedSet<Long> {
     return toCollection(TreeSet<Long>())
 }
@@ -7001,7 +6996,6 @@ public fun LongArray.toSortedSet(): SortedSet<Long> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
 public fun FloatArray.toSortedSet(): SortedSet<Float> {
     return toCollection(TreeSet<Float>())
 }
@@ -7009,7 +7003,6 @@ public fun FloatArray.toSortedSet(): SortedSet<Float> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
 public fun DoubleArray.toSortedSet(): SortedSet<Double> {
     return toCollection(TreeSet<Double>())
 }
@@ -7017,7 +7010,6 @@ public fun DoubleArray.toSortedSet(): SortedSet<Double> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
 public fun BooleanArray.toSortedSet(): SortedSet<Boolean> {
     return toCollection(TreeSet<Boolean>())
 }
@@ -7025,7 +7017,6 @@ public fun BooleanArray.toSortedSet(): SortedSet<Boolean> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
 public fun CharArray.toSortedSet(): SortedSet<Char> {
     return toCollection(TreeSet<Char>())
 }
@@ -7035,7 +7026,6 @@ public fun CharArray.toSortedSet(): SortedSet<Char> {
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  */
-@kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
     return toCollection(TreeSet<T>(comparator))
 }
@@ -13784,7 +13774,6 @@ public fun CharArray.toTypedArray(): Array<Char> {
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted according to the specified [comparator].
  */
-@kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Int {
     return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)
 }
@@ -13800,7 +13789,6 @@ public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<in T
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
  */
-@kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size): Int {
     return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
@@ -13816,7 +13804,6 @@ public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
  */
-@kotlin.jvm.JvmVersion
 public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Int {
     return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
@@ -13832,7 +13819,6 @@ public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: In
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
  */
-@kotlin.jvm.JvmVersion
 public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: Int = size): Int {
     return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
@@ -13848,7 +13834,6 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
  */
-@kotlin.jvm.JvmVersion
 public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int = size): Int {
     return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
@@ -13864,7 +13849,6 @@ public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int 
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
  */
-@kotlin.jvm.JvmVersion
 public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: Int = size): Int {
     return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
@@ -13880,7 +13864,6 @@ public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: In
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
  */
-@kotlin.jvm.JvmVersion
 public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: Int = size): Int {
     return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
@@ -13896,7 +13879,6 @@ public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: 
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
  */
-@kotlin.jvm.JvmVersion
 public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex: Int = size): Int {
     return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
@@ -13912,7 +13894,6 @@ public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the array (or the specified subrange of array) still remains sorted.
  */
-@kotlin.jvm.JvmVersion
 public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: Int = size): Int {
     return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
@@ -13920,7 +13901,6 @@ public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: In
 /**
  * Fills original array with the provided value.
  */
-@kotlin.jvm.JvmVersion
 public fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.fill(this, fromIndex, toIndex, element)
 }
@@ -13928,7 +13908,6 @@ public fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size
 /**
  * Fills original array with the provided value.
  */
-@kotlin.jvm.JvmVersion
 public fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.fill(this, fromIndex, toIndex, element)
 }
@@ -13936,7 +13915,6 @@ public fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size
 /**
  * Fills original array with the provided value.
  */
-@kotlin.jvm.JvmVersion
 public fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.fill(this, fromIndex, toIndex, element)
 }
@@ -13944,7 +13922,6 @@ public fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = si
 /**
  * Fills original array with the provided value.
  */
-@kotlin.jvm.JvmVersion
 public fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.fill(this, fromIndex, toIndex, element)
 }
@@ -13952,7 +13929,6 @@ public fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size):
 /**
  * Fills original array with the provided value.
  */
-@kotlin.jvm.JvmVersion
 public fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.fill(this, fromIndex, toIndex, element)
 }
@@ -13960,7 +13936,6 @@ public fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size
 /**
  * Fills original array with the provided value.
  */
-@kotlin.jvm.JvmVersion
 public fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.fill(this, fromIndex, toIndex, element)
 }
@@ -13968,7 +13943,6 @@ public fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = si
 /**
  * Fills original array with the provided value.
  */
-@kotlin.jvm.JvmVersion
 public fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.fill(this, fromIndex, toIndex, element)
 }
@@ -13976,7 +13950,6 @@ public fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = 
 /**
  * Fills original array with the provided value.
  */
-@kotlin.jvm.JvmVersion
 public fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.fill(this, fromIndex, toIndex, element)
 }
@@ -13984,7 +13957,6 @@ public fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int 
 /**
  * Fills original array with the provided value.
  */
-@kotlin.jvm.JvmVersion
 public fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.fill(this, fromIndex, toIndex, element)
 }
@@ -13992,7 +13964,6 @@ public fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size
 /**
  * Returns a list containing all elements that are instances of specified class.
  */
-@kotlin.jvm.JvmVersion
 public fun <R> Array<*>.filterIsInstance(klass: Class<R>): List<R> {
     return filterIsInstanceTo(ArrayList<R>(), klass)
 }
@@ -14000,7 +13971,6 @@ public fun <R> Array<*>.filterIsInstance(klass: Class<R>): List<R> {
 /**
  * Appends all elements that are instances of specified class to the given [destination].
  */
-@kotlin.jvm.JvmVersion
 public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     @Suppress("UNCHECKED_CAST")
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
@@ -14012,7 +13982,6 @@ public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destinat
  * 
  * @throws ClassCastException if any element of the array is not [Comparable].
  */
-@kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.sort(): Unit {
     if (size > 1) java.util.Arrays.sort(this)
 }
@@ -14020,7 +13989,6 @@ public fun <T> Array<out T>.sort(): Unit {
 /**
  * Sorts a range in the array in-place.
  */
-@kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
 }
@@ -14028,7 +13996,6 @@ public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 /**
  * Sorts a range in the array in-place.
  */
-@kotlin.jvm.JvmVersion
 public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
 }
@@ -14036,7 +14003,6 @@ public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  */
-@kotlin.jvm.JvmVersion
 public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
 }
@@ -14044,7 +14010,6 @@ public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  */
-@kotlin.jvm.JvmVersion
 public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
 }
@@ -14052,7 +14017,6 @@ public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  */
-@kotlin.jvm.JvmVersion
 public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
 }
@@ -14060,7 +14024,6 @@ public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  */
-@kotlin.jvm.JvmVersion
 public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
 }
@@ -14068,7 +14031,6 @@ public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  */
-@kotlin.jvm.JvmVersion
 public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
 }
@@ -14076,7 +14038,6 @@ public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  */
-@kotlin.jvm.JvmVersion
 public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
 }
@@ -14084,7 +14045,6 @@ public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place with the given [comparator].
  */
-@kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex, comparator)
 }

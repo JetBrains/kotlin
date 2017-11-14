@@ -1101,7 +1101,6 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
 public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
 }
@@ -1111,7 +1110,6 @@ public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): SortedSet<T> {
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  */
-@kotlin.jvm.JvmVersion
 public fun <T> Iterable<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
     return toCollection(TreeSet<T>(comparator))
 }
@@ -2358,7 +2356,6 @@ public fun Iterable<Double>.sum(): Double {
 /**
  * Returns a list containing all elements that are instances of specified class.
  */
-@kotlin.jvm.JvmVersion
 public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
     return filterIsInstanceTo(ArrayList<R>(), klass)
 }
@@ -2366,7 +2363,6 @@ public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
 /**
  * Appends all elements that are instances of specified class to the given [destination].
  */
-@kotlin.jvm.JvmVersion
 public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     @Suppress("UNCHECKED_CAST")
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)

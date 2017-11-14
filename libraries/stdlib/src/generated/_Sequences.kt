@@ -679,7 +679,6 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
  *
  * The operation is _terminal_.
  */
-@kotlin.jvm.JvmVersion
 public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
 }
@@ -691,7 +690,6 @@ public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): SortedSet<T> {
  *
  * The operation is _terminal_.
  */
-@kotlin.jvm.JvmVersion
 public fun <T> Sequence<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
     return toCollection(TreeSet<T>(comparator))
 }
@@ -1856,7 +1854,6 @@ public fun Sequence<Double>.sum(): Double {
 /**
  * Returns a sequence containing all elements that are instances of specified class.
  */
-@kotlin.jvm.JvmVersion
 public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
     @Suppress("UNCHECKED_CAST")
     return filter { klass.isInstance(it) } as Sequence<R>
@@ -1865,7 +1862,6 @@ public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
 /**
  * Appends all elements that are instances of specified class to the given [destination].
  */
-@kotlin.jvm.JvmVersion
 public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     @Suppress("UNCHECKED_CAST")
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)

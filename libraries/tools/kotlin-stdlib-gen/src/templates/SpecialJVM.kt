@@ -19,11 +19,6 @@ package templates
 import templates.Family.*
 
 object PlatformSpecialized : TemplateGroupBase() {
-    init {
-        defaultBuilder {
-            jvmOnly = true
-        }
-    }
 
     val f_fill = fn("fill(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
         platforms(Platform.JVM)

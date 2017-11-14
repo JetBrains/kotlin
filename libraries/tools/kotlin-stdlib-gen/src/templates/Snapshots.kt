@@ -99,7 +99,6 @@ object Snapshots : TemplateGroupBase() {
         include(CharSequences)
         platforms(Platform.JVM)
     } builder {
-        jvmOnly = true
         typeParam("T: Comparable<T>")
         doc { "Returns a [SortedSet] of all ${f.element.pluralize()}." }
         returns("SortedSet<T>")
@@ -110,7 +109,6 @@ object Snapshots : TemplateGroupBase() {
         include(Iterables, ArraysOfObjects, Sequences)
         platforms(Platform.JVM)
     } builder {
-        jvmOnly = true
         doc {
             """
                 Returns a [SortedSet] of all ${f.element.pluralize()}.
