@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.TowerResolver
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 
 class CallableReferenceOverloadConflictResolver(
@@ -62,7 +60,8 @@ class CallableReferenceResolver(
 
     fun processCallableReferenceArgument(
             csBuilder: ConstraintSystemBuilder,
-            resolvedAtom: ResolvedCallableReferenceAtom
+            resolvedAtom: ResolvedCallableReferenceAtom,
+            diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
         val argument = resolvedAtom.atom
         val expectedType = resolvedAtom.expectedType?.let { csBuilder.buildCurrentSubstitutor().safeSubstitute(it) }
@@ -71,30 +70,28 @@ class CallableReferenceResolver(
         val candidates = runRHSResolution(scopeTower, argument, expectedType) { checkCallableReference ->
             csBuilder.runTransaction { checkCallableReference(this); false }
         }
-        val diagnostics = SmartList<KotlinCallDiagnostic>()
-
         val chosenCandidate = candidates.singleOrNull()
         if (chosenCandidate != null) {
             val (toFreshSubstitutor, diagnostic) = with(chosenCandidate) {
                 csBuilder.checkCallableReference(argument, dispatchReceiver, extensionReceiver, candidate,
                                                  reflectionCandidateType, expectedType, scopeTower.lexicalScope.ownerDescriptor)
             }
-            diagnostics.addIfNotNull(diagnostic)
+            diagnosticsHolder.addDiagnosticIfNotNull(diagnostic)
             chosenCandidate.freshSubstitutor = toFreshSubstitutor
         }
         else {
             if (candidates.isEmpty()) {
-                diagnostics.add(NoneCallableReferenceCandidates(argument))
+                diagnosticsHolder.addDiagnostic(NoneCallableReferenceCandidates(argument))
             }
             else {
-                diagnostics.add(CallableReferenceCandidatesAmbiguity(argument, candidates))
+                diagnosticsHolder.addDiagnostic(CallableReferenceCandidatesAmbiguity(argument, candidates))
             }
         }
 
         // todo -- create this inside CallableReferencesCandidateFactory
         val subKtArguments = listOfNotNull(buildResolvedKtArgument(argument.lhsResult))
 
-        resolvedAtom.setAnalyzedResults(chosenCandidate, subKtArguments, diagnostics)
+        resolvedAtom.setAnalyzedResults(chosenCandidate, subKtArguments)
     }
 
     private fun buildResolvedKtArgument(lhsResult: LHSResult): ResolvedAtom? {

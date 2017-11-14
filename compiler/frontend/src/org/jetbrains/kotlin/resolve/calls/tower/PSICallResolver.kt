@@ -179,7 +179,7 @@ class PSICallResolver(
         if (result.type == CallResolutionResult.Type.ALL_CANDIDATES) {
             val resolvedCalls = result.allCandidates?.map {
                 val resultingSubstitutor = it.getSystem().asReadOnlyStorage().buildResultingSubstitutor()
-                kotlinToResolvedCallTransformer.transformToResolvedCall<D>(it.resolvedCall, null, resultingSubstitutor)
+                kotlinToResolvedCallTransformer.transformToResolvedCall<D>(it.resolvedCall, null, resultingSubstitutor, result.diagnostics)
             }
 
             return AllCandidates(resolvedCalls ?: emptyList())
@@ -193,7 +193,7 @@ class PSICallResolver(
         }
 
         result.diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.let {
-            val resolvedCalls = it.candidates.map { kotlinToResolvedCallTransformer.onlyTransform<D>(it.resolvedCall) }
+            val resolvedCalls = it.candidates.map { kotlinToResolvedCallTransformer.onlyTransform<D>(it.resolvedCall, emptyList()) }
             if (it.candidates.areAllFailed()) {
                 tracingStrategy.noneApplicable(trace, resolvedCalls)
                 tracingStrategy.recordAmbiguity(trace, resolvedCalls)
@@ -210,11 +210,11 @@ class PSICallResolver(
             return ManyCandidates(resolvedCalls)
         }
 
-        val singleCandidate = result.resultCallAtom ?: error("Should be not null for result: $result")
-        val isInapplicableReceiver = getResultApplicability(singleCandidate.diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+        val isInapplicableReceiver = getResultApplicability(result.diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
 
         val resolvedCall = if (isInapplicableReceiver) {
-            kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate).also {
+            val singleCandidate = result.resultCallAtom ?: error("Should be not null for result: $result")
+            kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate, result.diagnostics).also {
                 tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(it))
             }
         }
@@ -233,15 +233,15 @@ class PSICallResolver(
             }
 
     private fun CallResolutionResult.areAllInapplicable(): Boolean {
-        val candidates = diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.candidates?.map { it.resolvedCall }
-                         ?: listOfNotNull(resultCallAtom)
-
-        return candidates.all {
-            val applicability = getResultApplicability(it.diagnostics)
-            applicability == ResolutionCandidateApplicability.INAPPLICABLE ||
-            applicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER ||
-            applicability == ResolutionCandidateApplicability.HIDDEN
+        val manyCandidates = diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.candidates
+        if (manyCandidates != null) {
+            return manyCandidates.areAllFailed()
         }
+
+        val applicability = getResultApplicability(diagnostics)
+        return applicability == ResolutionCandidateApplicability.INAPPLICABLE ||
+               applicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER ||
+               applicability == ResolutionCandidateApplicability.HIDDEN
     }
 
     // true if we found something
