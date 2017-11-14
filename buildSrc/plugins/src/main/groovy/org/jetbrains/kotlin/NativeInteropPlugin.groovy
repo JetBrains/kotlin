@@ -28,6 +28,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.reflect.Instantiator
+import org.jetbrains.kotlin.konan.target.*
 
 class NamedNativeInteropConfig implements Named {
 
@@ -145,7 +146,8 @@ class NamedNativeInteropConfig implements Named {
     }
 
     File getNativeLibsDir() {
-        return new File(project.buildDir, "nativelibs")
+        def target = new TargetManager(target).target.userName
+        return new File(project.buildDir, "nativelibs/$target")
     }
 
     File getGeneratedSrcDir() {

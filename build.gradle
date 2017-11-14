@@ -172,7 +172,7 @@ task distCompiler(type: Copy) {
         into('konan/lib')
     }
 
-    from(project(':backend.native').file('build/nativelibs')) {
+    from(project(':backend.native').file("build/nativelibs/$hostName")) {
         into('konan/nativelib')
     }
 
