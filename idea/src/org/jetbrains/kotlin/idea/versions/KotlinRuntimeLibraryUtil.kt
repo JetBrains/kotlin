@@ -315,10 +315,13 @@ fun getStdlibArtifactId(sdk: Sdk?, version: String): String {
         return MAVEN_STDLIB_ID
     }
 
+    val areSDKArtifactsAvailable = VersionComparatorUtil.COMPARATOR.compare("1.2.0-rc-39", version) >= 0
     val sdkVersion = sdk?.version
     return when {
-        sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8) -> MAVEN_STDLIB_ID_JDK8
-        sdkVersion == JavaSdkVersion.JDK_1_7 -> MAVEN_STDLIB_ID_JDK7
+        sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8) ->
+            if (areSDKArtifactsAvailable) MAVEN_STDLIB_ID_JDK8 else MAVEN_STDLIB_ID_JDK7
+        sdkVersion == JavaSdkVersion.JDK_1_7 ->
+            if (areSDKArtifactsAvailable) MAVEN_STDLIB_ID_JDK7 else MAVEN_STDLIB_ID_JRE7
         else -> MAVEN_STDLIB_ID
     }
 }

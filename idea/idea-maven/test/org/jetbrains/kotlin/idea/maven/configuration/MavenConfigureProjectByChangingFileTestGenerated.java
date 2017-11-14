@@ -44,6 +44,12 @@ public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMa
             doTestWithMaven(fileName);
         }
 
+        @TestMetadata("jreLib")
+        public void testJreLib() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/configurator/jvm/jreLib/");
+            doTestWithMaven(fileName);
+        }
+
         @TestMetadata("libraryMissed")
         public void testLibraryMissed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/configurator/jvm/libraryMissed/");
