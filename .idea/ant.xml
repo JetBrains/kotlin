@@ -2,10 +2,6 @@
 <project version="4">
   <component name="AntConfiguration">
     <buildFile url="file://$PROJECT_DIR$/compiler/frontend/buildLexer.xml" />
-    <buildFile url="file://$PROJECT_DIR$/build.xml">
-      <antCommandLine value="-J-ea" />
-      <maximumHeapSize value="1024" />
-    </buildFile>
     <buildFile url="file://$PROJECT_DIR$/update_dependencies.xml" />
     <buildFile url="file://$PROJECT_DIR$/TeamCityBuild.xml">
       <maximumHeapSize value="512" />

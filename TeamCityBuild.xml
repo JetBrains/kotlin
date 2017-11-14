@@ -1,5 +1,6 @@
 <project name="Kotlin CI Steps" default="none">
-    <import file="build.xml" optional="false"/>
+    <import file="common.xml" optional="false"/>
+    <property name="kotlin-home" value="${output}/kotlinc"/>
 
     <property name="build.number" value="snapshot"/>
     <property name="fail.on.plugin.verifier.error" value="true"/>
@@ -38,84 +39,53 @@
     <echoprop prop="user.home"/>
     <echoprop prop="user.dir"/>
 
-    <target name="cleanupArtifacts">
-        <delete dir="${artifact.output.path}" includes="*"/>
-    </target>
-
-    <macrodef name="substituteVersionInFile">
-        <attribute name="target.file"/>
-        <attribute name="test.string"/>
-        <attribute name="target.file.bk" default="@{target.file}.bk"/>
-        <attribute name="target.file.versioned" default="@{target.file}.versioned"/>
-        <attribute name="token.key" default="snapshot"/>
-        <attribute name="version" default="${build.number}"/>
+    <macrodef name="run-gradle">
+        <attribute name="tasks" />
         <sequential>
-            <!-- Create backup. Backup will be restored after build end. This will allow to rebuild project without renew
-                 plugin.xml from repository. -->
-            <copy file="@{target.file}" tofile="@{target.file.bk}"/>
-
-            <!-- Check that version has correct pattern for substitution -->
-            <copy todir="">
-                <fileset file="@{target.file.bk}">
-                    <contains text="@{test.string}"/>
-                </fileset>
-                <filterchain>
-                    <replacetokens>
-                        <token key="@{token.key}" value="@{version}"/>
-                    </replacetokens>
-                </filterchain>
-                <mergemapper to="@{target.file.versioned}"/>
-            </copy>
-
-            <!-- If file doesn't exist - there's a problem with original plugin.xml. Probably there's a bad pattern used for version -->
-            <copy file="@{target.file.versioned}" tofile="@{target.file}" overwrite="true"/>
-
-            <delete file="@{target.file.versioned}" quiet="true"/>
+            <java classname="org.gradle.wrapper.GradleWrapperMain"
+                  fork="true"
+                  dir="${basedir}"
+                  failonerror="true"
+                  timeout="4000000"
+                  maxmemory="400m"
+                  taskname="gradle">
+                <classpath>
+                    <pathelement location="${basedir}/gradle/wrapper/gradle-wrapper.jar"/>
+                </classpath>
+                <arg line="--no-daemon" />
+                <arg line="@{tasks}" />
+            </java>
         </sequential>
     </macrodef>
+
+    <target name="cleanupArtifacts">
+        <run-gradle tasks="cleanupArtifacts" />
+    </target>
+
+    <target name="zip-compiler">
+        <run-gradle tasks="zip-compiler" />
+    </target>
+
+    <target name="zip-test-data">
+        <run-gradle tasks="zip-test-data" />
+    </target>
 
     <target name="writeCompilerVersionToTemplateFile">
         <!-- empty, version is written in gradle build -->
     </target>
 
     <target name="writePluginVersionToTemplateFile">
-        <mkdir dir="${version_substitute_dir}"/>
-
-        <substituteVersionInFile
-            target.file="${plugin.xml}"
-            target.file.bk="${plugin.xml.bk}"
-            target.file.versioned="${plugin.xml.versioned}"
-            test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"
-            version="${plugin.xml.version.number}"/>
+        <run-gradle tasks="writePluginVersionToTemplateFile" />
     </target>
 
     <target name="revertTemplateFiles">
-        <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
-        <copy file="${compiler.version.java.bk}" tofile="${compiler.version.java}" overwrite="true"/>
-
-        <delete dir="${version_substitute_dir}" quiet="true"/>
+        <run-gradle tasks="revertTemplateFiles" />
     </target>
 
     <target name="pre_build" depends="writeCompilerVersionToTemplateFile, writePluginVersionToTemplateFile, cleanupArtifacts"/>
 
     <target name="zipArtifacts">
-        <macrodef name="zipPlugin">
-            <attribute name="filename"/>
-            <attribute name="prefix" />
-            <attribute name="dir"/>
-
-            <sequential>
-                <zip destfile="@{filename}">
-                    <zipfileset prefix="@{prefix}" dir="@{dir}" excludes="kotlinc/bin/*"/>
-                    <zipfileset prefix="@{prefix}/kotlinc/bin" dir="@{dir}/kotlinc/bin" includes="*.bat"
-                                filemode="644"/>
-                    <zipfileset prefix="@{prefix}/kotlinc/bin" dir="@{dir}/kotlinc/bin" excludes="*.bat"
-                                filemode="755"/>
-                </zip>
-            </sequential>
-        </macrodef>
-
-        <zipPlugin filename="${plugin.zip}" prefix="Kotlin" dir="${artifact.output.path}/${pluginArtifactDir}"/>
+        <run-gradle tasks="zipArtifacts" />
     </target>
 
     <macrodef name="print-statistic">

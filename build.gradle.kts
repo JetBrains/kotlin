@@ -358,6 +358,13 @@ tasks {
         }
     }
 
+    // TODO: copied from TeamCityBuild.xml (with ultimate-related modification), consider removing after migrating from it
+    "cleanupArtifacts" {
+        doLast {
+            delete(ideaPluginDir)
+            delete(ideaUltimatePluginDir)
+        }
+    }
 
     "coreLibsTest" {
         (coreLibProjects + listOf(
@@ -482,6 +489,86 @@ tasks {
         }
     }
     "check" { dependsOn("test") }
+}
+
+// TODO: copied from build.xml (used on TC), reconsider location and dependencies after complete migration
+val `zip-compiler` by task<Zip> {
+    destinationDir = file(distDir)
+    archiveName = "kotlin-compiler-$kotlinVersion.zip"
+    from(distKotlinHomeDir) {
+        exclude("bin/**")
+        into("kotlinc")
+    }
+    from("$distKotlinHomeDir/bin") {
+        include("*.bat")
+        into("kotlinc/bin")
+        fileMode = 0b110100100
+    }
+    from("$distKotlinHomeDir/bin") {
+        exclude("*.bat")
+        into("kotlinc/bin")
+        fileMode = 0b111101101
+    }
+}
+
+// TODO: copied from build.xml (used on TC), reconsider location and dependencies after complete migration
+val `zip-test-data` by task<Zip> {
+    destinationDir = file(distDir)
+    archiveName = "kotlin-test-data.zip"
+    from("compiler/testData") { into("compiler") }
+    from("idea/testData") { into("ide") }
+    from("idea/idea-completion/testData") { into("ide/completion") }
+}
+
+// TODO: copied from TeamCityBuild.xml (excluding some parts), consider implementing patching in the appropriate projects
+
+val pluginXmlDir = "$rootDir/idea/src/META-INF"
+val pluginXmlPath = "$pluginXmlDir/plugin.xml"
+val pluginXmlBackupDir = "$buildDir/plugin_xml_backup"
+val pluginXmlBackupPath = "$pluginXmlBackupDir/plugin.xml"
+
+val backupTemplateFile by task<Copy> {
+    from(pluginXmlPath)
+    into(pluginXmlBackupDir)
+}
+
+val writePluginVersionToTemplateFile by task<Copy> {
+    dependsOn(backupTemplateFile)
+    from(pluginXmlBackupPath)
+    into(pluginXmlDir)
+    filter { it.replace("@snapshot@", "$buildNumber") }
+}
+
+val restoreTemplateFile by task<Copy> {
+    from(pluginXmlBackupPath)
+    into(pluginXmlDir)
+}
+
+val revertTemplateFiles by task<Delete> {
+    dependsOn(restoreTemplateFile)
+    delete(pluginXmlBackupDir)
+}
+
+// TODO: copied from build.xml (used on TC), reconsider location, logic and dependencies after complete migration
+val zipArtifacts by task<Zip> {
+    val dest = File(System.getProperty("plugin.zip") ?: "$distDir/artifacts/kotlin-plugin-$buildNumber.zip")
+    val src = System.getProperty("pluginArtifactDir") ?: ideaPluginDir
+    destinationDir = dest.parentFile
+    archiveName = dest.name
+    from(src) {
+        exclude("kotlinc/bin/**")
+        into("Kotlin")
+    }
+    from("$src/kotlinc/bin") {
+        include("*.bat")
+        into("Kotlin/kotlinc/bin")
+        fileMode = 0b110100100
+    }
+    from("$src/kotlinc/bin") {
+        exclude("*.bat")
+        into("Kotlin/kotlinc/bin")
+        fileMode = 0b111101101
+    }
 }
 
 configure<IdeaModel> {

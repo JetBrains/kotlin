@@ -116,13 +116,6 @@
     </macrodef>
 
     <target name="fetch-third-party" depends="get-ivy-library, make-dependency-dirs">
-        <!-- ProGuard -->
-        <get-maven-library prefix="net/sf/proguard" lib="proguard-base" version="5.3" target.jar.name.base="proguard" src="false"/>
-        <get-maven-library prefix="net/sf/proguard" lib="proguard-anttask" version="5.3" target.jar.name.base="proguard-anttask" src="false"/>
-
-        <!-- JarJar -->
-        <get src="http://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/jarjar/jarjar-1.4.jar" dest="${dependencies}/download/jarjar-1.4.jar" usetimestamp="true"/>
-        <copy file="${dependencies}/download/jarjar-1.4.jar" tofile="${dependencies}/jarjar.jar" overwrite="true"/>
 
         <!-- dx.jar -->
         <property name="android-build-tools.zip" value="build-tools_r21.1.1-linux.zip"/>
