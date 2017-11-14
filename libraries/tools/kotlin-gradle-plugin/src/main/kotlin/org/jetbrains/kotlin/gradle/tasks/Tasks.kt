@@ -20,10 +20,8 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.BasePluginConvention
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.SourceTask
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
@@ -56,10 +54,13 @@ const val USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using experim
 
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCompile() {
     // TODO: deprecate and remove
+    @get:Internal
     var compilerJarFile: File? = null
+
+    @get:Internal
     var compilerClasspath: List<File>? = null
 
-    @get:InputFiles
+    @get:Classpath @get:InputFiles
     internal val computedCompilerClasspath: List<File>
         get() = compilerClasspath?.takeIf { it.isNotEmpty() }
                 ?: compilerJarFile?.let {
@@ -73,11 +74,13 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCo
 }
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKotlinCompileTool<T>(), CompilerArgumentAware {
+    @get:LocalState
     internal val taskBuildDirectory: File
         get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
 
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
+    @get:Input
     var incremental: Boolean = false
         get() = field
         set(value) {
@@ -87,9 +90,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     abstract protected fun createCompilerArgs(): T
 
+    @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
+    @get:Classpath @get:InputFiles
     protected val additionalClasspath = arrayListOf<File>()
+
+    @get:Internal // classpath already participates in the checks
     protected val compileClasspath: Iterable<File>
         get() = (classpath + additionalClasspath)
                 .filterTo(LinkedHashSet(), File::exists)
@@ -102,6 +109,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             return ArgumentUtils.convertArgumentsToStringList(arguments)
         }
 
+    @get:Internal
     override val defaultSerializedCompilerArguments: List<String>
         get() {
             val arguments = createCompilerArgs()
@@ -126,6 +134,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         destinationDirProvider = lazyOf(destinationDir)
     }
 
+    @get:Internal
     internal var coroutinesFromGradleProperties: Coroutines? = null
     // Input is needed to force rebuild even if source files are not changed
     @get:Input
@@ -137,11 +146,20 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
                 ?: coroutinesFromGradleProperties
                 ?: Coroutines.DEFAULT
 
+    @get:Internal
     internal var compilerCalled: Boolean = false
+
     // TODO: consider more reliable approach (see usage)
+    @get:Internal
     internal var anyClassesCompiled: Boolean = false
+
+    @get:Internal
     internal var friendTaskName: String? = null
+
+    @get:Internal
     internal var javaOutputDir: File? = null
+
+    @get:Internal
     internal var sourceSetName: String by Delegates.notNull()
 
     @get:Input
@@ -154,6 +172,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         }
 
     @Suppress("UNCHECKED_CAST")
+    @get:Internal
     protected val friendTask: AbstractKotlinCompile<T>?
             get() = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractKotlinCompile<T>
 
@@ -167,6 +186,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         attachedClassesDirs += lazy(provider)
     }
 
+    @get:Internal // takes part in the compiler arguments
     var friendPaths: Lazy<Array<String>?> = lazy {
         friendTask?.let { friendTask ->
             mutableListOf<String>().apply {
@@ -200,7 +220,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
     }
 
+    @Internal
     internal abstract fun getSourceRoots(): SourceRoots
+
     internal abstract fun callCompiler(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
     open fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false) {
@@ -226,27 +248,37 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 }
 
 open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
+    @get:Internal
     internal var parentKotlinOptionsImpl: KotlinJvmOptionsImpl? = null
+
     private val kotlinOptionsImpl = KotlinJvmOptionsImpl()
+
     override val kotlinOptions: KotlinJvmOptions
-            get() = kotlinOptionsImpl
+        get() = kotlinOptionsImpl
+
+    @get:Internal
     internal open val sourceRootsContainer = FilteringSourceRootsContainer()
 
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
+
+    @get:Internal
     val buildHistoryFile: File = File(taskBuildDirectory, "build-history.bin")
 
+    @get:Internal
     val kaptOptions = KaptOptions()
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
      * Example: a Java source file with `package com.example.my.package` is located in directory `src/main/java/my/package`.
      * Then, for the Kotlin compilation to locate the source file, use package prefix `"com.example"` */
+    @get:Input
+    @get:Optional
     var javaPackagePrefix: String? = null
 
-    @get:Input
-    internal val javaPackagePrefixInputString get() = javaPackagePrefix ?: ""
-
+    @get:Internal
     internal var artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null
+
+    @get:Internal
     internal var artifactFile: File? = null
 
     @get:Input
@@ -300,6 +332,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         logger.kotlinDebug { "$name destinationDir = $destinationDir" }
     }
 
+    @Internal
     override fun getSourceRoots() = SourceRoots.ForJvm.create(getSource(), sourceRootsContainer)
 
     override fun callCompiler(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
@@ -403,13 +436,15 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
 open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
     private val kotlinOptionsImpl = KotlinJsOptionsImpl()
+
     override val kotlinOptions: KotlinJsOptions
             get() = kotlinOptionsImpl
 
     private val defaultOutputFile: File
-            get() = File(destinationDir, "$moduleName.js")
+        get() = File(destinationDir, "$moduleName.js")
 
     @Suppress("unused")
+    @get:OutputFile
     val outputFile: String
         get() = kotlinOptions.outputFile ?: defaultOutputFile.canonicalPath
 
@@ -432,18 +467,21 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
 
     override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource())
 
-    override fun callCompiler(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
-        sourceRoots as SourceRoots.KotlinOnly
-
-        logger.debug("Calling compiler")
-        destinationDir.mkdirs()
-
-        val friendDependency = friendTaskName
+    @get:InputFiles
+    @get:Optional
+    internal val friendDependency
+        get() = friendTaskName
                 ?.let { project.getTasksByName(it, false).singleOrNull() as? Kotlin2JsCompile }
                 ?.outputFile
                 ?.let { File(it).parentFile }
                 ?.let { if (LibraryUtils.isKotlinJavascriptLibrary(it)) it else null }
                 ?.absolutePath
+
+    override fun callCompiler(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+        sourceRoots as SourceRoots.KotlinOnly
+
+        logger.debug("Calling compiler")
+        destinationDir.mkdirs()
 
         val dependencies = compileClasspath
                 .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
