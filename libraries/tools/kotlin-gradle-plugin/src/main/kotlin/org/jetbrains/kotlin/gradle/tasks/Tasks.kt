@@ -281,8 +281,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     }
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
-        super.setupCompilerArgs(args, defaultsOnly)
         args.apply { fillDefaultValues() }
+        super.setupCompilerArgs(args, defaultsOnly)
 
         args.addCompilerBuiltIns = true
 
@@ -425,8 +425,9 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
             K2JSCompilerArguments()
 
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean) {
-        super.setupCompilerArgs(args, defaultsOnly)
         args.apply { fillDefaultValues() }
+        super.setupCompilerArgs(args, defaultsOnly)
+
         args.outputFile = outputFile
 
         if (defaultsOnly) return

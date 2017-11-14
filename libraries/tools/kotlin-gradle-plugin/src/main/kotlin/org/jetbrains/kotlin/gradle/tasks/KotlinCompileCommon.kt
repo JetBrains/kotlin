@@ -45,8 +45,8 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
             findKotlinMetadataCompilerClasspath(project)
 
     override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean) {
-        super.setupCompilerArgs(args, defaultsOnly)
         args.apply { fillDefaultValues() }
+        super.setupCompilerArgs(args, defaultsOnly)
 
         if (defaultsOnly) return
 
