@@ -89,7 +89,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         val buildGradle = moduleDir.createChildData(null, "build.gradle")
         val buildScriptData = BuildScriptDataBuilder(buildGradle)
         supportProvider.addSupport(buildScriptData, sdk)
-        buildScriptData.addDependencyNotation("implement project(\":\")")
+        buildScriptData.addDependencyNotation("expectedBy project(\":\")")
         VfsUtil.saveText(buildGradle, buildScriptData.build())
     }
 }
