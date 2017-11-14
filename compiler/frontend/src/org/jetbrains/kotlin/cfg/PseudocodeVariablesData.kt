@@ -337,14 +337,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                 }
             }.mapValues {
                 (instruction, edges) ->
-                val edgeForTrivialVals =
-                        resultForTrivialVals[instruction]
-                        ?: error(
-                            """
-                                Unknown trivial result for $instruction in pseudocode for declaration:
-                                 ${pseudocode.correspondingElement.text}
-                            """.trimIndent()
-                        )
+                val edgeForTrivialVals = resultForTrivialVals[instruction]!!
 
                 Edges(
                         edgeForTrivialVals.incoming.replaceDelegate(edges.incoming),
