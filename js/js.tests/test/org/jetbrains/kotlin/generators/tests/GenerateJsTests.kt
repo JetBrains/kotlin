@@ -33,6 +33,10 @@ fun main(args: Array<String>) {
             model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrBoxJsTest> {
+            model("irbox/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
+        }
+
         testClass<AbstractSourceMapGenerationSmokeTest> {
             model("sourcemap/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
         }

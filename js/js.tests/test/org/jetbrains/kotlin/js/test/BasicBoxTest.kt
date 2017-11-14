@@ -77,7 +77,8 @@ abstract class BasicBoxTest(
         private val pathToOutputDir: String,
         private val typedArraysEnabled: Boolean = true,
         private val generateSourceMap: Boolean = false,
-        private val generateNodeJsRunner: Boolean = true
+        private val generateNodeJsRunner: Boolean = true,
+        private val ir: Boolean = false
 ) : KotlinTestWithEnvironment() {
     val additionalCommonFileDirectories = mutableListOf<String>()
 
@@ -532,6 +533,8 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, module.sourceMapSourceEmbedding)
 
         configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, typedArraysEnabled)
+
+        configuration.put(JSConfigurationKeys.IR_USED, ir)
 
         return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }

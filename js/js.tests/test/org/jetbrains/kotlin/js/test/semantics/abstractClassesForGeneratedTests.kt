@@ -63,3 +63,9 @@ abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
         generateSourceMap = true,
         generateNodeJsRunner = false
 )
+
+abstract class AbstractIrBoxJsTest : BasicBoxTest(
+        BasicBoxTest.TEST_DATA_DIR_PATH + "irbox/",
+        BasicBoxTest.TEST_DATA_DIR_PATH + "out/irbox/",
+        ir = true
+)
