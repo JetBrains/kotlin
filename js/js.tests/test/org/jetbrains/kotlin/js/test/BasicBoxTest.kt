@@ -82,7 +82,8 @@ abstract class BasicBoxTest(
         testGroupOutputDirPrefix: String,
         pathToRootOutputDir: String = BasicBoxTest.TEST_DATA_DIR_PATH,
         private val generateSourceMap: Boolean = false,
-        private val generateNodeJsRunner: Boolean = true
+        private val generateNodeJsRunner: Boolean = true,
+        private val ir: Boolean = false
 ) : KotlinTestWithEnvironment() {
     val additionalCommonFileDirectories = mutableListOf<String>()
 
@@ -558,6 +559,8 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, module.sourceMapSourceEmbedding)
+
+        configuration.put(JSConfigurationKeys.IR_USED, ir)
 
         return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }
