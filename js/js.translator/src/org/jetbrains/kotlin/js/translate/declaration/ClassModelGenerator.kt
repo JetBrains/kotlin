@@ -19,13 +19,17 @@ package org.jetbrains.kotlin.js.translate.declaration
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.bridges.Bridge
 import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.utils.*
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.prototypeOf
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -51,32 +55,22 @@ class ClassModelGenerator(val context: TranslationContext) {
 
         // Traverse fake non-abstract member. Current class does not provide their implementation,
         // it can be inherited from interface.
-        for (member in members.filter { !it.kind.isReal }) {
+        val membersToSkipFurther = mutableSetOf<FunctionDescriptor>()
+        for (member in members.filter { it.modality != Modality.ABSTRACT && !it.kind.isReal }) {
             if (member is FunctionDescriptor) {
-                tryCopyWhenImplementingInterfaceWithDefaultArgs(member, model)
+                if (tryCopyWhenImplementingInterfaceWithDefaultArgs(member, model)) {
+                    membersToSkipFurther += member
+                }
             }
-
             copySimpleMember(descriptor, member, model)
-
-            // Copy *implementation* functions (i.e. those ones which end with `$default` suffix)
-            // of Kotlin functions with optional parameters.
-            if (member is FunctionDescriptor && !hasImplementationInPrototype(member) && member.modality != Modality.ABSTRACT) {
-                copyMemberWithOptionalArgs(descriptor, member, model, Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
-            }
         }
 
         // Traverse non-fake non-abstract members. Current class provides their implementation, but the implementation
         // may override function with optional parameters. In this case we already copied *implementation* function
         // (with `$default` suffix) but we also need *dispatcher* function (without suffix).
         // Case of fake member is covered by previous loop.
-        for (function in members.filterIsInstance<FunctionDescriptor>().filter { it.modality != Modality.ABSTRACT && it.kind.isReal }) {
-            copyMemberWithOptionalArgs(descriptor, function, model, "")
-        }
-    }
-
-    private fun hasImplementationInPrototype(member: CallableMemberDescriptor): Boolean {
-        return member.overriddenDescriptors.any {
-            it.modality != Modality.ABSTRACT && !DescriptorUtils.isInterface(it.containingDeclaration)
+        for (function in members.asSequence().filterIsInstance<FunctionDescriptor>().filter { it !in membersToSkipFurther }) {
+            copyMemberWithOptionalArgs(descriptor, function, model)
         }
     }
 
@@ -90,10 +84,10 @@ class ClassModelGenerator(val context: TranslationContext) {
     // inherits dispatcher function from I (by copying it) and implementation function from B.
     // However, D inherits `foo` without suffix (i.e. it corresponds to I's dispatcher function).
     // We must copy B.foo to D.foo$default and then I.foo to D.foo
-    private fun tryCopyWhenImplementingInterfaceWithDefaultArgs(member: FunctionDescriptor, model: JsClassModel) {
-        val fromInterface = member.overriddenDescriptors.firstOrNull { it.hasOwnParametersWithDefaultValue() } ?: return
-        if (!DescriptorUtils.isInterface(fromInterface.containingDeclaration)) return
-        val fromClass = member.overriddenDescriptors.firstOrNull { !DescriptorUtils.isInterface(it.containingDeclaration) } ?: return
+    private fun tryCopyWhenImplementingInterfaceWithDefaultArgs(member: FunctionDescriptor, model: JsClassModel): Boolean {
+        val fromInterface = member.overriddenDescriptors.firstOrNull { it.hasOwnParametersWithDefaultValue() } ?: return false
+        if (!DescriptorUtils.isInterface(fromInterface.containingDeclaration)) return false
+        val fromClass = member.overriddenDescriptors.firstOrNull { !DescriptorUtils.isInterface(it.containingDeclaration) } ?: return false
 
         val targetClass = member.containingDeclaration as ClassDescriptor
         val fromInterfaceName = context.getNameForDescriptor(fromInterface).ident
@@ -103,6 +97,8 @@ class ClassModelGenerator(val context: TranslationContext) {
         copyMethod(fromInterfaceName, context.getNameForDescriptor(member).ident,
                    fromInterface.containingDeclaration as ClassDescriptor, targetClass,
                    model.postDeclarationBlock)
+
+        return true
     }
 
     private fun copySimpleMember(descriptor: ClassDescriptor, member: CallableMemberDescriptor, model: JsClassModel) {
@@ -113,7 +109,13 @@ class ClassModelGenerator(val context: TranslationContext) {
         val classToCopyFrom = memberToCopy.containingDeclaration as ClassDescriptor
         if (classToCopyFrom.kind != ClassKind.INTERFACE || AnnotationsUtils.isNativeObject(classToCopyFrom)) return
 
-        copyMember(member, classToCopyFrom, descriptor, model)
+        if (memberToCopy is FunctionDescriptor && memberToCopy.hasOrInheritsParametersWithDefaultValue()) {
+            val name = context.getNameForDescriptor(member).ident + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX
+            copyMethod(name, name, classToCopyFrom, descriptor, model.postDeclarationBlock)
+        }
+        else {
+            copyMember(member, classToCopyFrom, descriptor, model)
+        }
     }
 
     private fun copyInvisibleFakeMember(descriptor: ClassDescriptor, member: CallableMemberDescriptor, model: JsClassModel) {
@@ -146,63 +148,79 @@ class ClassModelGenerator(val context: TranslationContext) {
         }
     }
 
-    private fun copyMemberWithOptionalArgs(descriptor: ClassDescriptor, member: FunctionDescriptor, model: JsClassModel, suffix: String) {
+    private fun copyMemberWithOptionalArgs(descriptor: ClassDescriptor, member: FunctionDescriptor, model: JsClassModel) {
         val memberToCopy = findOptionalArgsMemberToCopy(member) ?: return
         val classToCopyFrom = memberToCopy.containingDeclaration as ClassDescriptor
         if (classToCopyFrom.kind != ClassKind.INTERFACE || AnnotationsUtils.isNativeObject(classToCopyFrom)) return
 
-        val name = context.getNameForDescriptor(member).ident + suffix
+        val name = context.getNameForDescriptor(member).ident
         copyMethod(name, name, classToCopyFrom, descriptor, model.postDeclarationBlock)
     }
 
     private fun findMemberToCopy(member: CallableMemberDescriptor): CallableMemberDescriptor? {
-        // If one of overridden members is non-abstract, copy it.
-        // When none found, we have nothing to copy, ignore.
-        // When multiple found, our current class should provide implementation, ignore.
-        val memberToCopy = member.findNonRepeatingOverriddenDescriptors({ overriddenDescriptors }, { original })
-                                   .singleOrNull {
-                                       it.modality != Modality.ABSTRACT ||
-                                       (it is FunctionDescriptor && it.hasOwnParametersWithDefaultValue())
-                                   } ?: return null
-
-        // If found member is not from interface, we don't need to copy it, it's already in prototype
-        if ((memberToCopy.containingDeclaration as ClassDescriptor).kind != ClassKind.INTERFACE) return null
-
-        // If found member is fake itself, repeat search for it, until we find actual implementation
-        return if (!memberToCopy.kind.isReal) findMemberToCopy(memberToCopy) else memberToCopy
+        val candidate = member.findOverriddenDescriptor({ overriddenDescriptors }, { original }) {
+            modality != Modality.ABSTRACT || (this is FunctionDescriptor && hasOrInheritsParametersWithDefaultValue())
+        }
+        return if (candidate != null && candidate.shouldBeCopied) candidate else null
     }
 
     private fun findOptionalArgsMemberToCopy(member: FunctionDescriptor): FunctionDescriptor? {
-        // If one of overridden members has parameters with default value, copy it.
-        // When non found, we have nothing to copy, ignore.
-        // When multiple found, our current class should provide implementation, ignore.
-        val memberToCopy = member.findNonRepeatingOverriddenDescriptors({ overriddenDescriptors }, { original })
-                                   .singleOrNull { it.hasOrInheritsParametersWithDefaultValue() } ?: return null
-
-        // If found member is not from interface, we don't need to copy it, it's already in prototype
-        if ((memberToCopy.containingDeclaration as ClassDescriptor).kind != ClassKind.INTERFACE) return null
-
-        // If found member is fake itself, repeat search for it, until we find actual implementation
-        return if (!memberToCopy.kind.isReal) findOptionalArgsMemberToCopy(memberToCopy) else memberToCopy
+        val candidate = member.findOverriddenDescriptor({ overriddenDescriptors }, { original }) {
+            hasOrInheritsParametersWithDefaultValue()
+        }
+        return if (candidate != null && candidate.shouldBeCopied) candidate else null
     }
 
-    private fun <T : CallableMemberDescriptor> T.findNonRepeatingOverriddenDescriptors(
+    private val CallableMemberDescriptor.shouldBeCopied: Boolean
+        get() = isInterfaceMember && !isInheritedFromAny
+
+    private val CallableMemberDescriptor.isInterfaceMember: Boolean
+        get() = (containingDeclaration as ClassDescriptor).kind == ClassKind.INTERFACE
+
+    private val CallableMemberDescriptor.isInheritedFromAny: Boolean
+        get() = KotlinBuiltIns.isAny(containingDeclaration as ClassDescriptor) || overriddenDescriptors.any { it.isInheritedFromAny }
+
+    private fun <T : CallableMemberDescriptor> T.findOverriddenDescriptor(
             getTypedOverriddenDescriptors: T.() -> Collection<T>,
-            getOriginalDescriptor: T.() -> T
-    ): List<T> {
-        val allDescriptors = mutableSetOf<T>()
-        val repeatedDescriptors = mutableSetOf<T>()
-        fun walk(descriptor: T) {
+            getOriginalDescriptor: T.() -> T,
+            filter: T.() -> Boolean
+    ): T? {
+        val visitedDescriptors = mutableSetOf<T>()
+        val collectedDescriptors = mutableMapOf<T, T>()
+        fun walk(descriptor: T, source: T) {
             val original = descriptor.getOriginalDescriptor()
-            if (!allDescriptors.add(original)) return
+            if (!visitedDescriptors.add(original) || !original.filter()) return
             val overridden = original.getTypedOverriddenDescriptors().map { it.getOriginalDescriptor() }
-            repeatedDescriptors += overridden
-            overridden.forEach { walk(it) }
+
+            if (original.kind.isReal) {
+                collectedDescriptors.putIfAbsent(original, source)
+            }
+            else {
+                overridden.forEach { walk(it, source) }
+            }
         }
 
         val directOverriddenDescriptors = getTypedOverriddenDescriptors()
-        directOverriddenDescriptors.forEach { walk(it) }
-        return directOverriddenDescriptors.filter { it.getOriginalDescriptor() !in repeatedDescriptors }
+        directOverriddenDescriptors.forEach { walk(it, it) }
+        val keysWithoutDuplicates = collectedDescriptors.keys.removeRepeated(getTypedOverriddenDescriptors, getOriginalDescriptor)
+        return keysWithoutDuplicates.map { collectedDescriptors[it] }.singleOrNull()
+    }
+
+    private fun <T : CallableMemberDescriptor> Collection<T>.removeRepeated(
+            getTypedOverriddenDescriptors: T.() -> Collection<T>,
+            getOriginalDescriptor: T.() -> T
+    ): List<T> {
+        val visitedDescriptors = mutableSetOf<T>()
+        fun walk(descriptor: T) {
+            val original = descriptor.getOriginalDescriptor()
+            if (!visitedDescriptors.add(original)) return
+            val overridden = original.getTypedOverriddenDescriptors().map { it.getOriginalDescriptor() }
+
+            overridden.forEach { walk(it) }
+        }
+
+        asSequence().flatMap { it.getTypedOverriddenDescriptors().asSequence() }.forEach { walk(it.getOriginalDescriptor()) }
+        return filter { it.getOriginalDescriptor() !in visitedDescriptors }
     }
 
     private fun generateBridgeMethods(descriptor: ClassDescriptor, model: JsClassModel) {
