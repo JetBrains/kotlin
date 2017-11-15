@@ -42,6 +42,9 @@ interface SyntheticResolveExtension {
                 override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> =
                         instances.flatMap { it.getSyntheticNestedClassNames(thisDescriptor) }
 
+                override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
+                        instances.flatMap { it.getSyntheticFunctionNames(thisDescriptor) }
+
                 override fun generateSyntheticClasses(thisDescriptor: ClassDescriptor, name: Name,
                                                       ctx: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider,
                                                       result: MutableSet<ClassDescriptor>) =
@@ -68,6 +71,8 @@ interface SyntheticResolveExtension {
     }
 
     fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? = null
+
+    fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
 
     fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
 
