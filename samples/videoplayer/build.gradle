@@ -1,6 +1,6 @@
 apply plugin: 'konan'
 
-konan.targets = ['macbook', 'linux']
+konan.targets = ['macbook', 'linux', 'mingw']
 
 konanArtifacts {
     interop('ffmpeg') {
@@ -9,8 +9,13 @@ konanArtifacts {
         target 'linux', {
             includeDirs '/usr/include', '/usr/include/x86_64-linux-gnu'
         }
+
         target 'macbook', {
             includeDirs '/opt/local/include', '/usr/local/include'
+        }
+
+        target 'mingw', {
+            includeDirs 'C:/msys64/mingw64/include'
         }
     }
 
@@ -27,6 +32,10 @@ konanArtifacts {
         target 'linux', {
             includeDirs '/usr/include/SDL2'
         }
+
+        target 'mingw', {
+            includeDirs 'C:/msys64/mingw64/include/SDL2'
+        }
     }
 
     program('Player') {
@@ -34,12 +43,17 @@ konanArtifacts {
             artifact 'ffmpeg'
             artifact 'sdl'
         }
+
         target 'macbook', {
             linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -L/opt/local/lib"
         }
 
         target 'linux', {
             linkerOpts '-L/usr/lib/x86_64-linux-gnu'
+        }
+
+        target 'mingw', {
+            linkerOpts '-LC:/msys64/mingw64/lib'
         }
     }
 }

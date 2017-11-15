@@ -4,5 +4,4 @@ entryPoint = SDL_main
 
 headerFilter = SDL*
 
-linkerOpts.osx = -lSDL2
-linkerOpts.linux = -lSDL2
+linkerOpts = -lSDL2

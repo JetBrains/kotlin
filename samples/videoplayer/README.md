@@ -8,6 +8,7 @@ ffmpeg and SDL2 is needed for that to work, i.e.
      apt install libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
                  libavresample-dev
      apt install libsdl2-dev
+     pacman -S mingw-w64-x86_64-SDL2 mingw-w64-x86_64-ffmpeg
 
 To build use `../gradlew build`.
 
