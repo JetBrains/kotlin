@@ -51,14 +51,14 @@ class KotlinCallCompleter(
 
         if (candidate == null || candidate.csBuilder.hasContradiction) {
             val candidateForCompletion = candidate ?: factory.createErrorCandidate().forceResolution()
-            candidateForCompletion.prepareForCompletion(expectedType)
+            candidateForCompletion.prepareForCompletion(expectedType, resolutionCallbacks)
             runCompletion(candidateForCompletion.resolvedCall, ConstraintSystemCompletionMode.FULL, diagnosticHolder, candidateForCompletion.getSystem(), resolutionCallbacks)
 
             val systemStorage = candidate?.getSystem()?.asReadOnlyStorage() ?: ConstraintStorage.Empty
             return CallResolutionResult(CallResolutionResult.Type.ERROR, candidate?.resolvedCall, diagnosticHolder.getDiagnostics(), systemStorage)
         }
 
-        val completionType = candidate.prepareForCompletion(expectedType)
+        val completionType = candidate.prepareForCompletion(expectedType, resolutionCallbacks)
         val constraintSystem = candidate.getSystem()
         runCompletion(candidate.resolvedCall, completionType, diagnosticHolder, constraintSystem, resolutionCallbacks)
 
@@ -77,7 +77,7 @@ class KotlinCallCompleter(
     ): CallResolutionResult {
         val diagnosticsHolder = KotlinDiagnosticsHolder.SimpleHolder()
         for (candidate in candidates) {
-            candidate.prepareForCompletion(expectedType)
+            candidate.prepareForCompletion(expectedType, resolutionCallbacks)
             runCompletion(
                     candidate.resolvedCall,
                     ConstraintSystemCompletionMode.FULL,
@@ -109,9 +109,16 @@ class KotlinCallCompleter(
 
 
     // true if we should complete this call
-    private fun KotlinResolutionCandidate.prepareForCompletion(expectedType: UnwrappedType?): ConstraintSystemCompletionMode {
+    private fun KotlinResolutionCandidate.prepareForCompletion(
+            expectedType: UnwrappedType?,
+            resolutionCallbacks: KotlinResolutionCallbacks
+    ): ConstraintSystemCompletionMode {
         val unsubstitutedReturnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return ConstraintSystemCompletionMode.PARTIAL
-        val returnType = resolvedCall.substitutor.substituteKeepAnnotations(unsubstitutedReturnType)
+        val withSmartCastInfo = resolutionCallbacks.createReceiverWithSmartCastInfo(resolvedCall)
+
+        val actualType = withSmartCastInfo?.stableType ?: unsubstitutedReturnType
+
+        val returnType = resolvedCall.substitutor.substituteKeepAnnotations(actualType)
         if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
             csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
         }

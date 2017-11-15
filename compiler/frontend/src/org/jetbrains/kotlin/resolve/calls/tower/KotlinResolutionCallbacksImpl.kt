@@ -30,12 +30,15 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.TypeUtils
@@ -44,6 +47,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinResolutionCallbacksImpl(
         val topLevelCallContext: BasicCallResolutionContext,
@@ -144,4 +148,16 @@ class KotlinResolutionCallbacksImpl(
         kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(candidate, trace)
     }
 
+    override fun createReceiverWithSmartCastInfo(resolvedAtom: ResolvedCallAtom): ReceiverValueWithSmartCastInfo? {
+        val returnType = resolvedAtom.candidateDescriptor.returnType ?: return null
+        val psiKotlinCall = resolvedAtom.atom.psiKotlinCall
+        val expression = psiKotlinCall.psiCall.callElement.safeAs<KtExpression>() ?: return null
+
+        return transformToReceiverWithSmartCastInfo(
+                resolvedAtom.candidateDescriptor,
+                trace.bindingContext,
+                psiKotlinCall.resultDataFlowInfo,
+                ExpressionReceiver.create(expression, returnType, trace.bindingContext)
+        )
+    }
 }
