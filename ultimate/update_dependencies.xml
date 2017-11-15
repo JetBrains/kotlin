@@ -1,27 +1,10 @@
 <project name="Update Ultimate Dependencies" default="update">
-    <dirname file="${basedir}" property="main.project.dir"/>
 
-    <property name="use.ultimate.by.default" value="true"/>
-    <property name="dependencies" value="${main.project.dir}/dependencies"/>
-    <property name="generators" value="${main.project.dir}/generators"/>
-
-    <import file="${main.project.dir}/update_dependencies.xml" as="main"/>
-
-    <property name="download" value="dependencies/download"/>
-
-    <macrodef name="get-nodejs-intellij-plugin">
-        <sequential>
-            <get src="http://plugins.jetbrains.com/plugin/download?updateId=37668" dest="${download}/nodejs_plugin.zip" usetimestamp="true"/>
-            <unzip src="${download}/nodejs_plugin.zip" dest="dependencies/nodejs_plugin" overwrite="true"/>
-        </sequential>
-    </macrodef>
+    <!-- not needed anymore, keeping temporarily for TC build configs compatibility -->
 
     <target name="fetch-extras">
-        <mkdir dir="${download}"/>
-
-        <get-nodejs-intellij-plugin/>
     </target>
 
-    <!-- Override fetch-third-party from the main buildfile -->
-    <target name="fetch-third-party" depends="main.make-dependency-dirs,fetch-extras"/>
+    <target name="fetch-third-party" depends="fetch-extras"/>
+    <target name="update" depends="fetch-extras"/>
 </project>

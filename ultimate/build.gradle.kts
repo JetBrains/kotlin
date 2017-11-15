@@ -34,7 +34,8 @@ configureIntellijPlugin {
                "IntelliLang",
                "testng",
                "copyright",
-               "java-decompiler")
+               "java-decompiler",
+               "NodeJS:${rootProject.extra["versions.idea.NodeJS"]}")
 }
 
 val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceSets["main"].output.resourcesDir
@@ -58,8 +59,6 @@ dependencies {
     compile(project(":idea:idea-core")) { isTransitive = false }
     compile(project(":idea:ide-common")) { isTransitive = false }
     compile(project(":idea:idea-gradle")) { isTransitive = false }
-
-    compile(ideaUltimatePreloadedDeps("*.jar", subdir = "nodejs_plugin/NodeJS/lib"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
@@ -118,6 +117,7 @@ afterEvaluate {
         compile(intellijPlugin("uml"))
         compile(intellijPlugin("JavaScriptLanguage"))
         compile(intellijPlugin("JavaScriptDebugger"))
+        compile(intellijPlugin("NodeJS"))
         testCompile(intellij { include("gson-*.jar") })
         testRuntime(intellij())
         testRuntime(intellijPlugin("properties"))
