@@ -410,16 +410,34 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
             throw IllegalArgumentException("import path must not be empty")
         }
 
-        val importDirectiveBuilder = StringBuilder("import ")
-        importDirectiveBuilder.append(importPath.pathStr)
+        val file = createFile(buildString { appendImport (importPath) })
+        return file.importDirectives.first()
+    }
+
+    private fun StringBuilder.appendImport(importPath: ImportPath) {
+        if (importPath.fqName.isRoot) {
+            throw IllegalArgumentException("import path must not be empty")
+        }
+
+        append("import ")
+        append(importPath.pathStr)
 
         val alias = importPath.alias
         if (alias != null) {
-            importDirectiveBuilder.append(" as ").append(alias.asString())
+            append(" as ").append(alias.asString())
+        }
+    }
+
+    fun createImportDirectives(paths: Collection<ImportPath>): List<KtImportDirective> {
+        val fileContent = buildString {
+            for (path in paths) {
+                appendImport(path)
+                append('\n')
+            }
         }
 
-        val file = createFile(importDirectiveBuilder.toString())
-        return file.importDirectives.first()
+        val file = createFile(fileContent)
+        return file.importDirectives
     }
 
     fun createPrimaryConstructor(): KtPrimaryConstructor {
