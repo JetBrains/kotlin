@@ -1833,6 +1833,57 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/redundantSemicolon")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantSemicolon extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInRedundantSemicolon() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantSemicolon"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("companionBeforeFun.kt")
+        public void testCompanionBeforeFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSemicolon/companionBeforeFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionBeforeInit.kt")
+        public void testCompanionBeforeInit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSemicolon/companionBeforeInit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionBeforePrivateFun.kt")
+        public void testCompanionBeforePrivateFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSemicolon/companionBeforePrivateFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionBeforeVal.kt")
+        public void testCompanionBeforeVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSemicolon/companionBeforeVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionInLast.kt")
+        public void testCompanionInLast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSemicolon/companionInLast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionWithBody.kt")
+        public void testCompanionWithBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSemicolon/companionWithBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionWithName.kt")
+        public void testCompanionWithName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSemicolon/companionWithName.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/redundantSetter")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

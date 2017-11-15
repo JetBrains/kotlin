@@ -12896,6 +12896,48 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("companionBeforeFun.kt")
+        public void testCompanionBeforeFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/companionBeforeFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionBeforeInit.kt")
+        public void testCompanionBeforeInit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/companionBeforeInit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionBeforePrivateFun.kt")
+        public void testCompanionBeforePrivateFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/companionBeforePrivateFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionBeforeVal.kt")
+        public void testCompanionBeforeVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/companionBeforeVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionInLast.kt")
+        public void testCompanionInLast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/companionInLast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionWithName.kt")
+        public void testCompanionWithName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/companionWithName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionWithSemicolon.kt")
+        public void testCompanionWithSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/companionWithSemicolon.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyClass.kt")
         public void testEmptyClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/emptyClass.kt");
