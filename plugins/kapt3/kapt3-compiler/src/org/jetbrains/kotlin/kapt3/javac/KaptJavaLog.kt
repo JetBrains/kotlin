@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedWriter
 import org.jetbrains.kotlin.kapt3.util.isJava9OrLater
 import java.io.File
 import java.io.PrintWriter
+import javax.tools.Diagnostic
 import javax.tools.JavaFileObject
 import com.sun.tools.javac.util.List as JavacList
 
@@ -106,17 +107,32 @@ class KaptJavaLog(
                 val locationDiagnostic = diagnosticFactory.note(null as DiagnosticSource?, null, "proc.messager", locationMessage)
                 val wrappedDiagnostic = JCDiagnostic.MultilineDiagnostic(diagnostic, JavacList.of(locationDiagnostic))
 
-                super.report(wrappedDiagnostic)
-                _reportedDiagnostics += wrappedDiagnostic
-
-                // Avoid reporting the diagnostic twice
-                return
+                reportDiagnostic(wrappedDiagnostic)
+                return // Avoid reporting the diagnostic twice
             }
         }
 
-        _reportedDiagnostics += diagnostic
+        reportDiagnostic(diagnostic)
+    }
 
-        super.report(diagnostic)
+    private fun reportDiagnostic(diagnostic: JCDiagnostic) {
+        if (diagnostic.kind == Diagnostic.Kind.ERROR) {
+            val oldErrors = nerrors
+            super.report(diagnostic)
+            if (nerrors > oldErrors) {
+                _reportedDiagnostics += diagnostic
+            }
+        }
+        else if (diagnostic.kind == Diagnostic.Kind.WARNING) {
+            val oldWarnings = nwarnings
+            super.report(diagnostic)
+            if (nwarnings > oldWarnings) {
+                _reportedDiagnostics += diagnostic
+            }
+        }
+        else {
+            super.report(diagnostic)
+        }
     }
 
     override fun writeDiagnostic(diagnostic: JCDiagnostic) {
