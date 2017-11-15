@@ -5,10 +5,10 @@ konan.targets = ['macbook', 'linux']
 konanArtifacts {
     interop('libcurl') {
         target('linux') {
-            includeDirs '/usr/include'
+            headerFilterAdditionalSearchPrefixes '/usr/include'
         }
         target('macbook') {
-            includeDirs '/opt/local/include', '/usr/local/include'
+            headerFilterAdditionalSearchPrefixes '/opt/local/include', '/usr/local/include'
         }
     }
 

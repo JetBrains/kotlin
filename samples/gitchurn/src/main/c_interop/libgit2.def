@@ -1,4 +1,4 @@
 headers = git2.h
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/lib -lgit2
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lgit2
-headerFilter = git2/**
+headerFilter = git2/** git2.h

@@ -4,8 +4,9 @@ DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 source "$DIR/../konan.sh"
 
-CFLAGS_macbook=-I/opt/local/include
-CFLAGS_linux="-I /usr/include -I /usr/include/x86_64-linux-gnu"
+INTEROP_ARGS_macbook="-headerFilterAdditionalSearchPrefix /opt/local/include"
+INTEROP_ARGS_linux="-headerFilterAdditionalSearchPrefix /usr/include \
+                    -headerFilterAdditionalSearchPrefix /usr/include/x86_64-linux-gnu"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -15,18 +16,17 @@ case "$OSTYPE" in
 esac
 fi
 
-var=CFLAGS_${TARGET}
-CFLAGS=${!var}
-var=COMPILER_ARGS_${TARGET}
-COMPILER_ARGS=${!var} # add -opt for an optimized build.
+var=INTEROP_ARGS_${TARGET}
+INTEROP_ARGS=${!var}
+COMPILER_ARGS= # add -opt for an optimized build.
 
 mkdir -p $DIR/build/c_interop/
 mkdir -p $DIR/build/bin/
 
-cinterop -compilerOpts "$CFLAGS" -compilerOpts -I$DIR -def $DIR/src/main/c_interop/libcurl.def -target $TARGET \
+cinterop $INTEROP_ARGS -def $DIR/src/main/c_interop/libcurl.def -target $TARGET \
 	 -o $DIR/build/c_interop/libcurl || exit 1
 
-konanc -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/libcurl \
+konanc $COMPILER_ARGS -target $TARGET $DIR/src/main/kotlin -library $DIR/build/c_interop/libcurl \
        -o $DIR/build/bin/Curl || exit 1
 
 echo "Artifact path is $DIR/build/bin/Curl.kexe"
