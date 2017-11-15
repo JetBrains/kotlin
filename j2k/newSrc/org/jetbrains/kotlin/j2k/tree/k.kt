@@ -24,7 +24,7 @@ interface JKKtPrimaryConstructor : JKKtConstructor
 
 interface JKKtAssignmentStatement : JKStatement
 
-interface JKKtCall : JKCall
+interface JKKtCall : JKMethodCallExpression
 
 interface JKKtProperty : JKDeclaration, JKModifierListOwner {
     var type: JKTypeIdentifier
