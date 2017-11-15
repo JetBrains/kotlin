@@ -240,6 +240,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("maxErrorCount.kt")
+    public void testMaxErrorCount() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/maxErrorCount.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("methodParameterNames.kt")
     public void testMethodParameterNames() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/methodParameterNames.kt");

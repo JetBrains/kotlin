@@ -84,8 +84,16 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val generationState = GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, classBuilderFactory)
 
         val logger = KaptLogger(isVerbose = true, messageCollector = messageCollector)
+
+        val javacOptions = wholeFile.getOptionValues("JAVAC_OPTION")
+                .map { opt ->
+                    val (key, value) = opt.split('=').map { it.trim() }.also { assert(it.size == 2) }
+                    key to value
+                }.toMap()
+
         val kaptContext = KaptContext(logger, generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
-                                      classBuilderFactory.origins, generationState, processorOptions = emptyMap())
+                                      classBuilderFactory.origins, generationState,
+                                      processorOptions = emptyMap(), javacOptions = javacOptions)
 
         val javaFiles = files
                 .filter { it.name.toLowerCase().endsWith(".java") }
@@ -135,6 +143,14 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
             kaptContext.compiler.log.nerrors = oldErrorCount
         }
     }
+
+    protected fun File.isOptionSet(name: String) = this.useLines { lines -> lines.any { it.trim() == "// $name" } }
+
+    protected fun File.getRawOptionValues(name: String) = this.useLines { lines ->
+        lines.filter { it.startsWith("// $name") }.toList()
+    }
+
+    protected fun File.getOptionValues(name: String) = getRawOptionValues(name).map { it.drop("// ".length + name.length).trim() }
 
     protected abstract fun check(
             kaptContext: KaptContext<GenerationState>,
@@ -210,16 +226,10 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
     }
 
     override fun check(kaptContext: KaptContext<GenerationState>, javaFiles: List<File>, txtFile: File, wholeFile: File) {
-        fun isOptionSet(name: String) = wholeFile.useLines { lines -> lines.any { it.trim() == "// $name" } }
-
-        fun getOptionValues(name: String) = wholeFile.useLines { lines ->
-            lines.filter { it.startsWith("// $name") }.toList()
-        }
-
-        val generateNonExistentClass = isOptionSet("NON_EXISTENT_CLASS")
-        val correctErrorTypes = isOptionSet("CORRECT_ERROR_TYPES")
-        val validate = !isOptionSet("NO_VALIDATION")
-        val expectedErrors = getOptionValues(EXPECTED_ERROR).sorted()
+        val generateNonExistentClass = wholeFile.isOptionSet("NON_EXISTENT_CLASS")
+        val correctErrorTypes = wholeFile.isOptionSet("CORRECT_ERROR_TYPES")
+        val validate = !wholeFile.isOptionSet("NO_VALIDATION")
+        val expectedErrors = wholeFile.getRawOptionValues(EXPECTED_ERROR).sorted()
 
         val convertedFiles = convert(kaptContext, javaFiles, generateNonExistentClass, correctErrorTypes)
 

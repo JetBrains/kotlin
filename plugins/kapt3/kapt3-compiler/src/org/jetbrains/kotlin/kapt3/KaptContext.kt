@@ -55,14 +55,6 @@ class KaptContext<out GState : GenerationState?>(
         KaptTreeMaker.preRegister(context, this)
         KaptJavaCompiler.preRegister(context)
 
-        fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
-        compiler = JavaCompiler.instance(context) as KaptJavaCompiler
-        compiler.keepComments = true
-
-        ClassReader.instance(context).saveParameterNames = true
-
-        javaLog = compiler.log as KaptJavaLog
-
         options = Options.instance(context)
         for ((key, value) in processorOptions) {
             val option = if (value.isEmpty()) "-A$key" else "-A$key=$value"
@@ -80,6 +72,14 @@ class KaptContext<out GState : GenerationState?>(
         if (logger.isVerbose) {
             logger.info("Javac options: " + options.keySet().keysToMap { key -> options[key] ?: "" })
         }
+
+        fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
+        compiler = JavaCompiler.instance(context) as KaptJavaCompiler
+        compiler.keepComments = true
+
+        ClassReader.instance(context).saveParameterNames = true
+
+        javaLog = compiler.log as KaptJavaLog
     }
 
     override fun close() {
