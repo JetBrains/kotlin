@@ -251,7 +251,7 @@ message IrOperation {
         IrBreak break = 2;
         IrCall call = 3;
         IrCallableReference callable_reference = 4;
-        IrClassReference class_reference = 25;
+        IrClassReference class_reference = 27;
         IrConst const = 5;
         IrComposite composite = 26;
         IrContinue continue = 6;
