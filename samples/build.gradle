@@ -27,4 +27,5 @@ task buildSamplesWithPlatfromLibs() {
     dependsOn ':tensorflow:build'
     dependsOn ':uikit:build'
     dependsOn ':win32:build'
+    dependsOn ':workers:build'
 }

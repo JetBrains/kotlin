@@ -1,0 +1,5 @@
+apply plugin: 'konan'
+
+konanArtifacts {
+    program('Workers')
+}
