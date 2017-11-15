@@ -14,15 +14,22 @@ import java.io.File
 fun Project.commonDep(coord: String): String {
     val parts = coord.split(':')
     return when (parts.size) {
-        1 -> "$coord:$coord:${rootProject.extra["versions.$coord"]}"
-        2 -> "${parts[0]}:${parts[1]}:${rootProject.extra["versions.${parts[1]}"]}"
+        1 -> "$coord:$coord:${commonVer(coord, coord)}"
+        2 -> "${parts[0]}:${parts[1]}:${commonVer(parts[0], parts[1])}"
         3 -> coord
         else -> throw IllegalArgumentException("Illegal maven coordinates: $coord")
     }
 }
 
 fun Project.commonDep(group: String, artifact: String, vararg suffixesAndClassifiers: String): String =
-        "$group:$artifact${suffixesAndClassifiers.filterNot { it.startsWith(':') }.joinToString("")}:${rootProject.extra["versions.$artifact"]}${suffixesAndClassifiers.filter { it.startsWith(':') }.joinToString("")}"
+        "$group:$artifact${suffixesAndClassifiers.filterNot { it.startsWith(':') }.joinToString("")}:${commonVer(group, artifact)}${suffixesAndClassifiers.filter { it.startsWith(':') }.joinToString("")}"
+
+fun Project.commonVer(group: String, artifact: String) =
+        when {
+            rootProject.extra.has("versions.$artifact") -> rootProject.extra["versions.$artifact"]
+            rootProject.extra.has("versions.$group") -> rootProject.extra["versions.$group"]
+            else -> throw GradleException("Neither versions.$artifact nor versions.$group is defined in the root project's extra")
+        }
 
 fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File(rootDir, "dependencies"), subdir: String? = null, optional: Boolean = false): ConfigurableFileCollection {
     val dir = if (subdir != null) File(baseDir, subdir) else baseDir

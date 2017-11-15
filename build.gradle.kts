@@ -129,6 +129,7 @@ extra["versions.json"] = "20160807"
 extra["versions.native-platform"] = "0.14"
 extra["versions.ant-launcher"] = "1.8.0"
 extra["versions.robolectric"] = "3.1"
+extra["versions.org.springframework"] = "4.2.0.RELEASE"
 
 val markdownVer =  "4054 - Kotlin 1.0.2-dev-566".replace(" ", "%20") // fixed here, was last with "status:SUCCESS,tag:forKotlin"
 extra["markdownParserRepo"] = "https://teamcity.jetbrains.com/guestAuth/repository/download/IntelliJMarkdownParser_Build/$markdownVer/([artifact]_[ext]/)[artifact](.[ext])"

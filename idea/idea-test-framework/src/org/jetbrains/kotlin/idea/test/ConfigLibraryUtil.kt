@@ -159,11 +159,12 @@ object ConfigLibraryUtil {
         }
     }
 
-    fun addLibrary(module: Module, libraryName: String, rootPath: String, jarPaths: Array<String>) {
+    fun addLibrary(module: Module, libraryName: String, rootPath: String?, jarPaths: Array<String>) {
         val editor = NewLibraryEditor()
         editor.name = libraryName
         for (jarPath in jarPaths) {
-            editor.addRoot(VfsUtil.getUrlForLibraryRoot(File(rootPath, jarPath)), OrderRootType.CLASSES)
+            val jarFile = if (rootPath == null) File(jarPath) else File(rootPath, jarPath)
+            editor.addRoot(VfsUtil.getUrlForLibraryRoot(jarFile), OrderRootType.CLASSES)
         }
 
         addLibrary(editor, module)
