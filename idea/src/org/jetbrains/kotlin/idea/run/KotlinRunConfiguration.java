@@ -64,18 +64,15 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import java.util.*;
 
-public class KotlinRunConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule>
-    implements CommonJavaRunConfigurationParameters, RefactoringListenerProvider {
-
-    public String MAIN_CLASS_NAME;
+@SuppressWarnings("deprecation")
+public class KotlinRunConfiguration extends JetRunConfiguration {
     public String VM_PARAMETERS;
     public String PROGRAM_PARAMETERS;
-    public String WORKING_DIRECTORY;
-
     public boolean ALTERNATIVE_JRE_PATH_ENABLED;
     public String ALTERNATIVE_JRE_PATH;
-    private Map<String, String> myEnvs = new LinkedHashMap<String, String>();
     public boolean PASS_PARENT_ENVS = true;
+
+    private Map<String, String> myEnvs = new LinkedHashMap<String, String>();
 
     public KotlinRunConfiguration(String name, JavaRunConfigurationModule runConfigurationModule, ConfigurationFactory factory) {
         super(name, runConfigurationModule, factory);
@@ -144,16 +141,6 @@ public class KotlinRunConfiguration extends ModuleBasedConfiguration<JavaRunConf
     @Override
     public String getProgramParameters() {
         return PROGRAM_PARAMETERS;
-    }
-
-    @Override
-    public void setWorkingDirectory(String value) {
-        WORKING_DIRECTORY = ExternalizablePath.urlValue(value);
-    }
-
-    @Override
-    public String getWorkingDirectory() {
-        return ExternalizablePath.localPathValue(WORKING_DIRECTORY);
     }
 
     @Override
