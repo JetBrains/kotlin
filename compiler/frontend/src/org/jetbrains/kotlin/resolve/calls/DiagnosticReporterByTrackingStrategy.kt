@@ -201,6 +201,14 @@ class DiagnosticReporterByTrackingStrategy(
                     if (reportConstantTypeMismatch(constraintError, deparenthesized)) return
                     trace.report(Errors.TYPE_MISMATCH.on(deparenthesized, constraintError.upperType, constraintError.lowerType))
                 }
+
+                (position as? ExpectedTypeConstraintPosition)?.let {
+                    val call = it.topLevelCall.psiKotlinCall.psiCall.callElement.safeAs<KtExpression>()
+                    reportIfNonNull(call) {
+                        trace.report(Errors.TYPE_MISMATCH.on(it, constraintError.upperType, constraintError.lowerType))
+                    }
+                }
+
                 (position as? ExplicitTypeParameterConstraintPosition)?.let {
                     val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
                     trace.report(UPPER_BOUND_VIOLATED.on(typeArgumentReference, constraintError.upperType, constraintError.lowerType))
