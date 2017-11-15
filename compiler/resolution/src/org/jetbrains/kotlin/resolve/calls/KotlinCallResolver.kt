@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver
@@ -98,8 +99,16 @@ class KotlinCallResolver(
     ): CallResolutionResult {
         val isDebuggerContext = candidateFactory.scopeTower.isDebuggerContext
 
+        var refinedCandidates = candidates
+        if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.RefinedSamAdaptersPriority)) {
+            val nonSynthesized = candidates.filter { !it.resolvedCall.candidateDescriptor.isSynthesized }
+            if (!nonSynthesized.isEmpty()) {
+                refinedCandidates = nonSynthesized
+            }
+        }
+
         val maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
-                candidates,
+                refinedCandidates,
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                 discriminateGenerics = true, // todo
                 isDebuggerContext = isDebuggerContext)
