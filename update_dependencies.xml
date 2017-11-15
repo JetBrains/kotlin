@@ -9,22 +9,6 @@
 
     <property name="download" value="dependencies/download"/>
 
-    <macrodef name="get-spring-library">
-        <attribute name="lib"/>
-        <attribute name="version"/>
-
-        <sequential>
-            <get-maven-library
-                    server="http://central.maven.org/maven2"
-                    prefix="org/springframework"
-                    lib="@{lib}"
-                    version="@{version}"
-                    src="false"
-                    download="${download}"
-                    dependencies="dependencies/spring/@{version}"/>
-        </sequential>
-    </macrodef>
-
     <macrodef name="get-nodejs-intellij-plugin">
         <sequential>
             <get src="http://plugins.jetbrains.com/plugin/download?updateId=37668" dest="${download}/nodejs_plugin.zip" usetimestamp="true"/>
@@ -34,12 +18,6 @@
 
     <target name="fetch-extras">
         <mkdir dir="${download}"/>
-
-        <get-spring-library lib="spring-core" version="4.2.0.RELEASE"/>
-        <get-spring-library lib="spring-beans" version="4.2.0.RELEASE"/>
-        <get-spring-library lib="spring-context" version="4.2.0.RELEASE"/>
-        <get-spring-library lib="spring-tx" version="4.2.0.RELEASE"/>
-        <get-spring-library lib="spring-web" version="4.2.0.RELEASE"/>
 
         <get-nodejs-intellij-plugin/>
     </target>
