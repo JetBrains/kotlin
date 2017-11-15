@@ -32,6 +32,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptionsImpl
 import java.io.File
 
 open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJsDce {
+
+    override fun createCompilerArgs(): K2JSDceArguments = K2JSDceArguments()
+
+    override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean) {
+        dceOptionsImpl.updateArguments(args)
+        args.declarationsToKeep = keep.toTypedArray()
+    }
+
     private val dceOptionsImpl = KotlinJsDceOptionsImpl()
 
     @get:Internal
@@ -55,12 +63,7 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
         val outputDirArgs = arrayOf("-output-dir", destinationDir.path)
 
-        val args = K2JSDceArguments()
-        dceOptionsImpl.updateArguments(args)
-        args.declarationsToKeep = keep.toTypedArray()
-
-        //todo handle the args like those of the compile tasks
-        val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
+        val argsArray = serializedCompilerArguments.toTypedArray()
 
         val log = GradleKotlinLogger(project.logger)
         val allArgs = argsArray + outputDirArgs + inputFiles

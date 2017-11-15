@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
@@ -9,11 +10,13 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.gradle.plugin.compareVersionNumbers
+import org.jetbrains.kotlin.gradle.dsl.CompilerArgumentAware
+import org.jetbrains.kotlin.gradle.dsl.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.File
 
-open class KaptTask : ConventionTask() {
+open class KaptTask : ConventionTask(), CompilerArgumentAware<K2JVMCompilerArguments> {
+
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
@@ -36,6 +39,16 @@ open class KaptTask : ConventionTask() {
 
     @get:OutputDirectory
     lateinit var destinationDir: File
+
+    override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
+
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
+        kotlinCompileTask.setupCompilerArgs(args)
+
+        args.pluginClasspaths = (pluginOptions.classpath + args.pluginClasspaths!!).toSet().toTypedArray()
+        args.pluginOptions = (pluginOptions.arguments + args.pluginOptions!!).toTypedArray()
+        args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
+    }
 
     @get:Classpath @get:InputFiles
     val classpath: FileCollection
@@ -61,13 +74,7 @@ open class KaptTask : ConventionTask() {
         val rawSourceRoots = FilteringSourceRootsContainer(sourceRootsFromKotlin, { !isInsideDestinationDirs(it) })
         val sourceRoots = SourceRoots.ForJvm.create(kotlinCompileTask.source, rawSourceRoots)
 
-        // todo handle the args like those of the compile tasks
-        val args = K2JVMCompilerArguments()
-        kotlinCompileTask.setupCompilerArgs(args)
-
-        args.pluginClasspaths = (pluginOptions.classpath + args.pluginClasspaths!!).toSet().toTypedArray()
-        args.pluginOptions = (pluginOptions.arguments + args.pluginOptions!!).toTypedArray()
-        args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
+        val args = prepareCompilerArguments()
 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
