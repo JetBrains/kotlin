@@ -1,8 +1,7 @@
 package com.intellij.debugger.streams.kotlin.lib
 
 import com.intellij.debugger.streams.kotlin.resolve.FilterOrderResolver
-import com.intellij.debugger.streams.kotlin.trace.impl.handler.collections.FilterIntermediateHandler
-import com.intellij.debugger.streams.kotlin.trace.impl.handler.collections.FilterTerminatorHandler
+import com.intellij.debugger.streams.kotlin.trace.impl.handler.collections.*
 import com.intellij.debugger.streams.kotlin.trace.impl.interpret.FilterTraceInterpreter
 import com.intellij.debugger.streams.lib.IntermediateOperation
 import com.intellij.debugger.streams.lib.TerminalOperation
@@ -20,9 +19,7 @@ import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
  */
 class KotlinCollectionLibrarySupport : LibrarySupportBase() {
   init {
-    addOperation(FilterOperation("filter",
-        { num, call, dsl -> FilterIntermediateHandler(num, call, dsl) },
-        { call, resultExpression, dsl -> FilterTerminatorHandler(call, resultExpression, dsl)}))
+    addOperation(FilterOperation("filter", FilterCallHandler()))
   }
 
   private fun addOperation(operation: CollectionOperation) {
@@ -31,23 +28,21 @@ class KotlinCollectionLibrarySupport : LibrarySupportBase() {
   }
 
   private abstract class CollectionOperation(override val name: String,
-                                             private val intermediateHandlerProvider: IntermediateHandlerProvider,
-                                             private val terminatorCallProvider: TerminatorHandlerProvider)
+                                             handler: BothSemanticsHandler)
     : IntermediateOperation, TerminalOperation {
+
+    private val wrapper = BothSemanticCallWrapper(handler)
+
     override fun getTraceHandler(callOrder: Int, call: IntermediateStreamCall, dsl: Dsl): IntermediateCallHandler =
-        intermediateHandlerProvider(callOrder, call, dsl)
+        wrapper.createIntermediateHandler(callOrder, call, dsl)
 
     override fun getTraceHandler(call: TerminatorStreamCall, resultExpression: String, dsl: Dsl): TerminatorCallHandler =
-        terminatorCallProvider(call, resultExpression, dsl)
+        wrapper.createTerminatorHandler(call, resultExpression, dsl)
   }
 
-  private class FilterOperation(name: String, intermediateHandlerProvider: IntermediateHandlerProvider,
-                                terminatorHandlerProvider: TerminatorHandlerProvider)
-    : CollectionOperation(name, intermediateHandlerProvider, terminatorHandlerProvider) {
+  private class FilterOperation(name: String, handler: BothSemanticsHandler)
+    : CollectionOperation(name, handler) {
     override val traceInterpreter: CallTraceInterpreter = FilterTraceInterpreter()
     override val valuesOrderResolver: ValuesOrderResolver = FilterOrderResolver()
   }
 }
-
-private typealias IntermediateHandlerProvider = (Int, IntermediateStreamCall, Dsl) -> IntermediateCallHandler
-private typealias TerminatorHandlerProvider = (TerminatorStreamCall, String, Dsl) -> TerminatorCallHandler
