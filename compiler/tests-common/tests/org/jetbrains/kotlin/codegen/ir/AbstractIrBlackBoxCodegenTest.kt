@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,19 @@
 
 package org.jetbrains.kotlin.codegen.ir
 
-import org.jetbrains.kotlin.codegen.AbstractCompileKotlinAgainstInlineKotlinTest
+import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.ConfigurationKind
 
-abstract class AbstractIrCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstInlineKotlinTest() {
-    override fun updateConfiguration(configuration: CompilerConfiguration) = configuration.put(JVMConfigurationKeys.IR, true)
+abstract class AbstractIrBlackBoxCodegenTest : AbstractBlackBoxCodegenTest() {
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        configuration.put(JVMConfigurationKeys.IR, true)
+    }
 
-    override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind = ConfigurationKind.ALL
+    //symbols are constructed with stdlib descriptors so stdlib should be presented
+    // TODO rewrite symbols building
+    override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
+        return ConfigurationKind.ALL
+    }
 }
