@@ -61,6 +61,7 @@ testsJar()
 
 projectTest {
     workingDir = rootDir
+    systemProperty("android.sdk", androidSdkPath())
 }
 
 configureInstrumentation()

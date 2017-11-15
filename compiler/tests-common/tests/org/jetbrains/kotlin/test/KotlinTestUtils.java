@@ -366,7 +366,27 @@ public class KotlinTestUtils {
     }
 
     public static File findAndroidApiJar() {
-        return new File(getHomeDirectory(), "dependencies/android.jar");
+        String androidJarProp = System.getProperty("android.jar");
+        File androidJarFile = androidJarProp == null ? null : new File(androidJarProp);
+        if (androidJarFile == null || !androidJarFile.isFile()) {
+            throw new RuntimeException(
+                    "Unable to get a valid path from 'android.jar' property (" +
+                    androidJarProp +
+                    "), please point it to the 'android.jar' file location");
+        }
+        return androidJarFile;
+    }
+
+    public static File findAndroidSdk() {
+        String androidSdkProp = System.getProperty("android.sdk");
+        File androidSdkDir = androidSdkProp == null ? null : new File(androidSdkProp);
+        if (androidSdkDir == null || !androidSdkDir.isDirectory()) {
+            throw new RuntimeException(
+                    "Unable to get a valid path from 'android.sdk' property (" +
+                    androidSdkProp +
+                    "), please point it to the android SDK location");
+        }
+        return androidSdkDir;
     }
 
     public static File getAnnotationsJar() {

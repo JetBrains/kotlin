@@ -24,6 +24,7 @@ import org.jetbrains.jps.android.model.JpsAndroidSdkType
 import org.jetbrains.jps.model.impl.JpsSimpleElementImpl
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.kotlin.jps.build.BaseKotlinJpsBuildTestCase
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractAndroidJpsTestCase : BaseKotlinJpsBuildTestCase() {
@@ -42,7 +43,7 @@ abstract class AbstractAndroidJpsTestCase : BaseKotlinJpsBuildTestCase() {
         val jdkName = "java_sdk"
         addJdk(jdkName)
         val properties = JpsAndroidSdkProperties("android-23", jdkName)
-        val sdkPath = homePath + "/../dependencies/androidSDK"
+        val sdkPath = KotlinTestUtils.findAndroidSdk().canonicalPath
         val library = myModel.global.addSdk(SDK_NAME, sdkPath, "", JpsAndroidSdkType.INSTANCE, JpsSimpleElementImpl(properties))
         library.addRoot(File(sdkPath + "/platforms/android-23/android.jar"), JpsOrderRootType.COMPILED)
         return library.properties

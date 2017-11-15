@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.android;
 
 import com.android.annotations.NonNull;
 import com.intellij.openapi.application.PathManager;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 
@@ -29,7 +30,7 @@ import java.io.File;
 public class TestUtils {
     @NonNull
     public static File getSdk() {
-        return new File(PathManager.getHomePath() + "/../dependencies/androidSDK");
+        return KotlinTestUtils.findAndroidSdk();
     }
 
     @NonNull

@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply { plugin("kotlin") }
 
@@ -18,7 +19,7 @@ dependencies {
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-gradle"))
 
-    compile(preloadedDeps("dx", subdir = "android-5.0/lib"))
+    compile(project(":custom-dependencies:android-sdk", configuration = "dxJar"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
@@ -56,8 +57,13 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+tasks.withType<KotlinCompile> {
+    dependsOn(":custom-dependencies:android-sdk:extractDxJar")
+}
+
 projectTest {
     workingDir = rootDir
+    systemProperty("android.sdk", androidSdkPath())
 }
 
 testsJar {}

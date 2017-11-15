@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.util.allKotlinFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 
@@ -15,9 +16,9 @@ class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
 
     private fun androidBuildOptions() =
             BuildOptions(withDaemon = true,
-                    androidHome = File(ANDROID_HOME_PATH),
-                    androidGradlePluginVersion = ANDROID_GRADLE_PLUGIN_VERSION,
-                    incremental = true)
+                         androidHome = KotlinTestUtils.findAndroidSdk(),
+                         androidGradlePluginVersion = ANDROID_GRADLE_PLUGIN_VERSION,
+                         incremental = true)
 
     override fun defaultBuildOptions(): BuildOptions =
             super.defaultBuildOptions().copy(withDaemon = true, incremental = true)

@@ -22,6 +22,7 @@ import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 
@@ -470,7 +471,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
         """)
         createProjectSubFile("local.properties", """
-            sdk.dir=/${StringUtil.escapeBackSlashes(File(homePath).parent + "/dependencies/androidSDK")}
+            sdk.dir=/${KotlinTestUtils.findAndroidSdk()}
         """)
 
 
@@ -597,7 +598,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
         """)
         createProjectSubFile("local.properties", """
-            sdk.dir=/${StringUtil.escapeBackSlashes(File(homePath).parent + "/dependencies/androidSDK")}
+            sdk.dir=/${KotlinTestUtils.findAndroidSdk()}
         """)
 
         importProject()

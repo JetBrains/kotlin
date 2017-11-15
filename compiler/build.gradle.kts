@@ -62,7 +62,7 @@ dependencies {
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-daemon-client"))
-    testRuntime(preloadedDeps("dx", subdir = "android-5.0/lib"))
+    testRuntime(project(":custom-dependencies:android-sdk", configuration = "dxJar"))
     testRuntime(files(toolsJar()))
 
     testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))

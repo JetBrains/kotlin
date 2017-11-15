@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 
@@ -41,15 +42,13 @@ class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion =
     }
 }
 
-const val ANDROID_HOME_PATH = "../../../dependencies/androidSDK"
-
 abstract class AbstractKotlinAndroidGradleTests(
         protected val gradleVersion: String,
         private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = File(ANDROID_HOME_PATH),
+            super.defaultBuildOptions().copy(androidHome = KotlinTestUtils.findAndroidSdk(),
                                              androidGradlePluginVersion = androidGradlePluginVersion)
 
     @Test
@@ -301,7 +300,7 @@ abstract class AbstractKotlinAndroidWithJackGradleTests(
     fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = File(ANDROID_HOME_PATH),
+            super.defaultBuildOptions().copy(androidHome = KotlinTestUtils.findAndroidSdk(),
                     androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18()))
 
     @Test

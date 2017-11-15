@@ -18,13 +18,15 @@ package org.jetbrains.kotlin.android
 
 import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractParcelQuickFixTest : AbstractAndroidQuickFixMultiFileTest() {
     override fun setUp() {
         super.setUp()
 
-        val androidJarDir = File("dependencies/androidSDK/platforms").listFiles().first { it.name.startsWith("android-") }
+        val androidSdk = KotlinTestUtils.findAndroidSdk()
+        val androidJarDir = File(androidSdk, "platforms").listFiles().first { it.name.startsWith("android-") }
         ConfigLibraryUtil.addLibrary(myModule, "androidJar", androidJarDir.absolutePath, arrayOf("android.jar"))
 
         ConfigLibraryUtil.addLibrary(myModule, "androidExtensionsRuntime", "dist/kotlinc/lib", arrayOf("android-extensions-runtime.jar"))
