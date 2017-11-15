@@ -118,6 +118,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var legacySmartCastAfterTry by FreezableVar(false)
 
+    @Argument(
+            value = "-Xeffect-system",
+            description = "Enable experimental language feature: effect system"
+    )
+    var effectSystem: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
