@@ -1,38 +1,36 @@
 package com.intellij.debugger.streams.kotlin.trace.impl.handler.collections
 
 import com.intellij.debugger.streams.trace.IntermediateCallHandler
-import com.intellij.debugger.streams.trace.dsl.CodeBlock
-import com.intellij.debugger.streams.trace.dsl.Dsl
-import com.intellij.debugger.streams.trace.dsl.Expression
-import com.intellij.debugger.streams.trace.dsl.VariableDeclaration
+import com.intellij.debugger.streams.trace.dsl.*
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 
 /**
  * @author Vitaliy.Bibaev
  */
 class CollectionIntermediateHandler(
-    private val order: Int,
+    order: Int,
     private val call: IntermediateStreamCall,
     private val dsl: Dsl,
     private val internalHandler: BothSemanticsHandler)
-  : IntermediateCallHandler {
-  override fun additionalVariablesDeclaration(): MutableList<VariableDeclaration> {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
+  : IntermediateCallHandler, CollectionHandlerBase(order, dsl, call, internalHandler) {
 
   override fun prepareResult(): CodeBlock {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return internalHandler.prepareResult(dsl, variables)
   }
 
-  override fun additionalCallsBefore(): MutableList<IntermediateStreamCall> {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  override fun additionalCallsBefore(): List<IntermediateStreamCall> {
+    return internalHandler.additionalCallsBefore(call, dsl)
   }
 
-  override fun additionalCallsAfter(): MutableList<IntermediateStreamCall> {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  override fun additionalCallsAfter(): List<IntermediateStreamCall> {
+    return internalHandler.additionalCallsAfter(call, dsl)
+  }
+
+  override fun transformCall(call: IntermediateStreamCall): IntermediateStreamCall {
+    return internalHandler.transformAsIntermediateCall(call, dsl)
   }
 
   override fun getResultExpression(): Expression {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return internalHandler.getResultExpression(call, variables)
   }
 }
