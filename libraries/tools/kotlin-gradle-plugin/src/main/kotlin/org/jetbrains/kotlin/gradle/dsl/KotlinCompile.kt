@@ -18,14 +18,30 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
 import org.gradle.api.Task
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 
-interface CompilerArgumentAware {
+interface CompilerArgumentAware<T : CommonToolArguments> {
+    @get:Input
     val serializedCompilerArguments: List<String>
+        get() = ArgumentUtils.convertArgumentsToStringList(prepareCompilerArguments())
+
+    @get:Internal
     val defaultSerializedCompilerArguments: List<String>
+        get() = createCompilerArgs()
+                .also { setupCompilerArgs(it, defaultsOnly = true) }
+                .let(ArgumentUtils::convertArgumentsToStringList)
+
+    fun createCompilerArgs(): T
+    fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false)
 }
 
-interface KotlinCompile<T : KotlinCommonOptions> : Task, CompilerArgumentAware {
+internal fun <T : CommonToolArguments> CompilerArgumentAware<T>.prepareCompilerArguments() =
+        createCompilerArgs().also { setupCompilerArgs(it) }
+
+interface KotlinCompile<T : KotlinCommonOptions> : Task {
     @get:Internal
     val kotlinOptions: T
 

@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.gradle.internal
 import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.gradle.dsl.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -58,6 +60,15 @@ open class KaptGenerateStubsTask : KotlinCompile() {
                !source.isInside(generatedSourcesDir)
     }
 
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
+        kotlinCompileTask.setupCompilerArgs(args)
+        args.pluginClasspaths = (pluginOptions.classpath + args.pluginClasspaths!!).toSet().toTypedArray()
+        args.pluginOptions = (pluginOptions.arguments + args.pluginOptions!!).toTypedArray()
+        args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
+        args.classpathAsList = this.compileClasspath.toList()
+        args.destinationAsFile = this.destinationDir
+    }
+
     override fun execute(inputs: IncrementalTaskInputs) {
         val sourceRoots = kotlinCompileTask.getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles
@@ -70,15 +81,7 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         }
 
         sourceRoots.log(this.name, logger)
-        // todo handle the args like those of the compile tasks
-        val args = createCompilerArgs()
-
-        kotlinCompileTask.setupCompilerArgs(args)
-        args.pluginClasspaths = (pluginOptions.classpath + args.pluginClasspaths!!).toSet().toTypedArray()
-        args.pluginOptions = (pluginOptions.arguments + args.pluginOptions!!).toTypedArray()
-        args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
-        args.classpathAsList = this.compileClasspath.toList()
-        args.destinationAsFile = this.destinationDir
+        val args = prepareCompilerArguments()
 
         compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
