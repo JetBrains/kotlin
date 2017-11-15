@@ -191,7 +191,10 @@ class JavaToJKTreeBuilder {
 
 
         fun PsiField.toJK(): JKJavaField {
-            val initializer = this.initializer?.buildTreeForExpression()
+
+            val initializer = with(ExpressionTreeMapper) {
+                initializer?.toJK()
+            }
 
             val type = JKJavaTypeIdentifierImpl(this.type.canonicalText)
             val name = JKNameIdentifierImpl(this.name!!)
