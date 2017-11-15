@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.shouldWritePreReleaseFlag
+import org.jetbrains.kotlin.config.isPreRelease
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 
@@ -63,7 +63,7 @@ fun JvmBuildMetaInfo(args: CommonCompilerArguments): JvmBuildMetaInfo {
     val languageVersion = args.languageVersion?.let((LanguageVersion)::fromVersionString) ?: LanguageVersion.LATEST_STABLE
 
     return JvmBuildMetaInfo(
-            isEAP = languageVersion.shouldWritePreReleaseFlag(),
+            isEAP = languageVersion.isPreRelease(),
             compilerBuildVersion = KotlinCompilerVersion.VERSION,
             languageVersionString = languageVersion.versionString,
             apiVersionString = args.apiVersion ?: ApiVersion.LATEST_STABLE.versionString,

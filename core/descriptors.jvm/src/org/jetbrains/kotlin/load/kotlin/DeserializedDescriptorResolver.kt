@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -75,9 +74,12 @@ class DeserializedDescriptorResolver {
             return IncompatibleVersionErrorData(classHeader.metadataVersion, JvmMetadataVersion.INSTANCE, location, classId)
         }
 
+    /**
+     * @return true if the class is invisible because it's compiled by a pre-release compiler, and this compiler is either released
+     * or is run with a released language version.
+     */
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
-        get() = !components.configuration.skipPreReleaseCheck &&
-                !KotlinCompilerVersion.isPreRelease() &&
+        get() = components.configuration.reportErrorsOnPreReleaseDependencies &&
                 (classHeader.isPreRelease || classHeader.metadataVersion == KOTLIN_1_1_EAP_METADATA_VERSION)
 
     internal fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {

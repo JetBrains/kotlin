@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -80,7 +79,7 @@ class KotlinJavascriptPackageFragment(
             get() = null
 
         override val isPreReleaseInvisible: Boolean =
-                !configuration.skipPreReleaseCheck && (header.flags and 1) != 0 && !KotlinCompilerVersion.isPreRelease()
+                configuration.reportErrorsOnPreReleaseDependencies && (header.flags and 1) != 0
 
         override val presentableString: String
             get() = "Package '$fqName'"

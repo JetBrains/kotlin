@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.serialization.js
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.shouldWritePreReleaseFlag
+import org.jetbrains.kotlin.config.isPreRelease
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
@@ -243,7 +243,7 @@ object KotlinJavascriptSerializationUtil {
             header.packageFqName = packageFqName.asString()
         }
 
-        if (languageVersionSettings.shouldWritePreReleaseFlag()) {
+        if (languageVersionSettings.isPreRelease()) {
             header.flags = 1
         }
 

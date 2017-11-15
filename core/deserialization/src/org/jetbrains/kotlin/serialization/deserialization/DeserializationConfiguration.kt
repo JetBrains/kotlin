@@ -20,7 +20,7 @@ interface DeserializationConfiguration {
     val skipMetadataVersionCheck: Boolean
         get() = false
 
-    val skipPreReleaseCheck: Boolean
+    val reportErrorsOnPreReleaseDependencies: Boolean
         get() = false
 
     val typeAliasesAllowed: Boolean
