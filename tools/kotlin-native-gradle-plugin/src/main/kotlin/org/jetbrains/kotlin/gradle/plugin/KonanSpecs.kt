@@ -86,4 +86,8 @@ interface KonanInteropSpec: KonanBuildingSpec {
 
     fun link(vararg files: Any)
     fun link(files: FileCollection)
+
+    fun headerFilterAdditionalSearchPrefix(path: Any)
+    fun headerFilterAdditionalSearchPrefixes(vararg paths: Any)
+    fun headerFilterAdditionalSearchPrefixes(paths: Collection<Any>)
 }

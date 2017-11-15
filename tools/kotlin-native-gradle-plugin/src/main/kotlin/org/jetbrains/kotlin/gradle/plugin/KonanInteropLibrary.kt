@@ -58,4 +58,14 @@ open class KonanInteropLibrary(name: String, project: ProjectInternal, instantia
 
     override fun link(vararg files: Any) = forEach { it.link(*files) }
     override fun link(files: FileCollection) = forEach { it.link(files) }
+
+    override fun headerFilterAdditionalSearchPrefix(path: Any) =
+            forEach { it.headerFilterAdditionalSearchPrefix(path) }
+
+    override fun headerFilterAdditionalSearchPrefixes(vararg paths: Any) =
+            headerFilterAdditionalSearchPrefixes(paths.toList())
+
+    override fun headerFilterAdditionalSearchPrefixes(paths: Collection<Any>) =
+            forEach { it.headerFilterAdditionalSearchPrefix(paths) }
+
 }

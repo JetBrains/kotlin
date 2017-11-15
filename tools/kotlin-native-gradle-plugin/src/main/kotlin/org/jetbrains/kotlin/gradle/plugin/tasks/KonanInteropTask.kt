@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.tasks
 
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -51,6 +52,8 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
     @InputFiles val headers   = mutableSetOf<FileCollection>()
     @InputFiles val linkFiles = mutableSetOf<FileCollection>()
 
+    @Input val headerFilterAdditionalSearchDirectories = mutableSetOf<File>()
+
     override fun buildArgs() = mutableListOf<String>().apply {
         addArg("-properties", "${project.konanHome}/konan/konan.properties")
 
@@ -81,6 +84,15 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
         addArgs("-library", libraries.artifacts.map { it.artifact.canonicalPath })
 
         addKey("-nodefaultlibs", noDefaultLibs)
+
+        addArgs("-headerFilterAdditionalSearchPrefix",
+                headerFilterAdditionalSearchDirectories.map {
+                    if (!it.isDirectory) {
+                        throw InvalidUserDataException("headerFilterAdditionalSearchPrefix must be a directory: $it")
+                    }
+                    it.absolutePath
+                }
+        )
 
         addAll(extraOpts)
     }
@@ -122,7 +134,18 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
     override fun link(files: FileCollection) {
         linkFiles.add(files)
     }
-    
+
+    override fun headerFilterAdditionalSearchPrefix(path: Any) {
+        headerFilterAdditionalSearchDirectories.add(project.file(path))
+    }
+
+    override fun headerFilterAdditionalSearchPrefixes(vararg paths: Any) =
+            headerFilterAdditionalSearchPrefixes(paths.toList())
+
+    override fun headerFilterAdditionalSearchPrefixes(paths: Collection<Any>) = paths.forEach {
+        headerFilterAdditionalSearchPrefix(it)
+    }
+
     // endregion
 }
 

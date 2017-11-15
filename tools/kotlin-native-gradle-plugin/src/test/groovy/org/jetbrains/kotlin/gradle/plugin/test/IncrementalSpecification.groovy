@@ -97,7 +97,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
         "noDefaultLibs"       | "true"
     }
 
-    def 'Plugin should support custom entry points and recompile an artifact if it changes'() {
+    def 'Plugin should support a custom entry point and recompile an artifact if it changes'() {
         when:
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
             it.addCompilerArtifact("main", """
