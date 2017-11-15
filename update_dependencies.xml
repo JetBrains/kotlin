@@ -171,18 +171,6 @@
             </patternset>
             <mapper type="flatten"/>
         </unzip>
-
-        <download_teamcity_artifact
-            teamcity.server.url="https://teamcity.jetbrains.com"
-            build.locator.request="${markdown.locator}"
-            artifact.path="markdown_jar/markdown.jar"
-            dest="${dependencies}/markdown.jar"
-            usetimestamp="true"
-            build.number.pattern="\d+\s-\sKotlin\s[\w-+\.]+"
-        />
-
-        <!-- node.js -->
-        <antcall target="download-nodejs-and-npm"/>
     </target>
 
     <macrodef name="download_teamcity_artifact">
