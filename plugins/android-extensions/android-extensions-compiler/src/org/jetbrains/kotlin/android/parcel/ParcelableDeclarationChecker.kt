@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.android.parcel.serializers.isParcelable
 import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -214,7 +215,12 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
 
             try {
                 val parcelers = getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)
-                val context = ParcelSerializer.ParcelSerializerContext(typeMapper, typeMapper.mapType(containerClass.defaultType), parcelers)
+                val context = ParcelSerializer.ParcelSerializerContext(
+                        typeMapper,
+                        typeMapper.mapType(containerClass.defaultType),
+                        parcelers,
+                        FrameMap())
+
                 ParcelSerializer.get(type, asmType, context, strict = true)
             }
             catch (e: IllegalArgumentException) {

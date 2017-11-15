@@ -75,8 +75,6 @@ class KaptJavaLog(
     }
 
     override fun report(diagnostic: JCDiagnostic) {
-        System.err.println("Diagnostic code: ${diagnostic.code}")
-
         if (diagnostic.type == JCDiagnostic.DiagnosticType.ERROR && diagnostic.code in IGNORED_DIAGNOSTICS) {
             return
         }

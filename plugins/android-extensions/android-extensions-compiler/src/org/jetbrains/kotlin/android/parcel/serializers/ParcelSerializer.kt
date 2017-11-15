@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.android.parcel.serializers
 
 import kotlinx.android.parcel.WriteWith
 import org.jetbrains.kotlin.android.parcel.isParcelize
+import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -54,7 +55,8 @@ interface ParcelSerializer {
     data class ParcelSerializerContext(
             val typeMapper: KotlinTypeMapper,
             val containerClassType: Type,
-            val typeParcelers: List<TypeParcelerMapping>
+            val typeParcelers: List<TypeParcelerMapping>,
+            val frameMap: FrameMap
     ) {
         fun findParcelerClass(type: KotlinType): KotlinType? {
             return typeParcelers.firstOrNull { it.first == type }?.second
@@ -152,7 +154,7 @@ interface ParcelSerializer {
                     }
 
                     val elementSerializer = get(elementType, elementAsmType, context, forceBoxed = true, strict = strict())
-                    wrapToNullAwareIfNeeded(type, ListSetParcelSerializer(asmType, elementSerializer))
+                    wrapToNullAwareIfNeeded(type, ListSetParcelSerializer(asmType, elementSerializer, context.frameMap))
                 }
 
                 className == Map::class.java.canonicalName
@@ -168,7 +170,7 @@ interface ParcelSerializer {
                             keyType.type, typeMapper.mapTypeSafe(keyType.type, forceBoxed = true), context, forceBoxed = true, strict = strict())
                     val valueSerializer = get(
                             valueType.type, typeMapper.mapTypeSafe(valueType.type, forceBoxed = true), context, forceBoxed = true, strict = strict())
-                    wrapToNullAwareIfNeeded(type, MapParcelSerializer(asmType, keySerializer, valueSerializer))
+                    wrapToNullAwareIfNeeded(type, MapParcelSerializer(asmType, keySerializer, valueSerializer, context.frameMap))
                 }
 
                 asmType.isBoxedPrimitive() -> wrapToNullAwareIfNeeded(type, BoxedPrimitiveTypeParcelSerializer.forBoxedType(asmType))
@@ -206,16 +208,16 @@ interface ParcelSerializer {
                         Method("readSparseBooleanArray"))
 
                 asmType.isSparseIntArray() -> wrapToNullAwareIfNeeded(type, SparseArrayParcelSerializer(
-                        asmType, PrimitiveTypeParcelSerializer.getInstance(Type.INT_TYPE)))
+                        asmType, PrimitiveTypeParcelSerializer.getInstance(Type.INT_TYPE), context.frameMap))
 
                 asmType.isSparseLongArray() -> wrapToNullAwareIfNeeded(type, SparseArrayParcelSerializer(
-                        asmType, PrimitiveTypeParcelSerializer.getInstance(Type.LONG_TYPE)))
+                        asmType, PrimitiveTypeParcelSerializer.getInstance(Type.LONG_TYPE), context.frameMap))
 
                 asmType.isSparseArray() -> {
                     val elementType = type.arguments.single().type
                     val elementSerializer = get(
                             elementType, typeMapper.mapTypeSafe(elementType, forceBoxed = true), context, forceBoxed = true, strict = strict())
-                    wrapToNullAwareIfNeeded(type, SparseArrayParcelSerializer(asmType, elementSerializer))
+                    wrapToNullAwareIfNeeded(type, SparseArrayParcelSerializer(asmType, elementSerializer, context.frameMap))
                 }
 
                 type.isCharSequence() -> CharSequenceParcelSerializer(asmType)
