@@ -9,7 +9,6 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:ir.tree"))
-    compile(project(":compiler:cli-common"))
 }
 
 sourceSets {

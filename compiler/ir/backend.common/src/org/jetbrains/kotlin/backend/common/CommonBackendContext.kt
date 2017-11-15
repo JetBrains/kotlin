@@ -2,13 +2,13 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -35,7 +35,7 @@ interface CommonBackendContext : BackendContext {
 
     fun log(message: () -> String)
 
-    val messageCollector: MessageCollector
+    fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean)
 }
 
 class ReflectionTypes(module: ModuleDescriptor, internalPackage: FqName) {
