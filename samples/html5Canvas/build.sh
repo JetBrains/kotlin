@@ -2,11 +2,7 @@
 
 DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-if [ -z "$KONAN_HOME" ]; then
-    PATH="$DIR/../../dist/bin:$DIR/../../bin:$PATH"
-else
-    PATH="$KONAN_HOME/bin:$PATH"
-fi
+source "$DIR/../konan.sh"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -41,4 +37,4 @@ echo "Artifact path is $DIR/build/bin/html5Canvas.wasm"
 echo "Artifact path is $DIR/build/bin/html5Canvas.wasm.js"
 echo "Check out $DIR/index.html"
 echo "Serve $DIR/ by an http server for the demo"
-# For example run: python -m SimpleHTTPServer 8080 
+# For example run: python -m SimpleHTTPServer 8080

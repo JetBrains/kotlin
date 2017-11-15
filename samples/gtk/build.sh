@@ -2,11 +2,7 @@
 
 DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-if [ -z "$KONAN_HOME" ]; then
-    PATH="$DIR/../../dist/bin:$DIR/../../bin:$PATH"
-else
-    PATH="$KONAN_HOME/bin:$PATH"
-fi
+source "$DIR/../konan.sh"
 
 IPREFIX_macbook=-I/opt/local/include
 IPREFIX_linux=-I/usr/include
