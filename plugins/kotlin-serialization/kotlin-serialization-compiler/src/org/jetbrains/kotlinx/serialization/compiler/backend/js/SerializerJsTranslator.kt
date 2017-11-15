@@ -123,9 +123,12 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(serialDescPropertyDescriptor!!), JsThisRef())
 
         // output.writeBegin(desc, [])
+        val typeParams = serializableDescriptor.declaredTypeParameters.mapIndexed { idx, _ ->
+            JsNameRef(context.scope().declareName("$typeArgPrefix$idx"), JsThisRef())
+        }
         val call = JsInvocation(JsNameRef(wBeginFunc, JsNameRef(jsFun.parameters[0].name)),
                                 serialClassDescRef,
-                                JsArrayLiteral())
+                                JsArrayLiteral(typeParams))
         val objRef = JsNameRef(jsFun.parameters[1].name)
         // output = output.writeBegin...
         val localOutputName = jsFun.scope.declareFreshName("output")
@@ -229,10 +232,13 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         +JsVars(localProps.map { JsVars.JsVar(it.name) }, true)
 
         //input = input.readBegin(...)
+        val typeParams = serializableDescriptor.declaredTypeParameters.mapIndexed { idx, _ ->
+            JsNameRef(context.scope().declareName("$typeArgPrefix$idx"), JsThisRef())
+        }
         val inputVar = JsNameRef(jsFun.scope.declareFreshName("input"))
         val readBeginF = inputClass.getFuncDesc("readBegin").single()
         val call = JsInvocation(JsNameRef(context.getNameForDescriptor(readBeginF), JsNameRef(jsFun.parameters[0].name)),
-                                serialClassDescRef, JsArrayLiteral())
+                                serialClassDescRef, JsArrayLiteral(typeParams))
         +JsVars(JsVars.JsVar(inputVar.name, call))
 
         // while(true) {

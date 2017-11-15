@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
+import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 import org.jetbrains.kotlinx.serialization.compiler.resolve.serialInfoFqName
 import java.util.*
@@ -35,6 +36,12 @@ class SerializationResolveExtension : SyntheticResolveExtension {
         thisDescriptor.annotations.hasAnnotation(serialInfoFqName) -> listOf(KSerializerDescriptorResolver.IMPL_NAME)
         thisDescriptor.isInternalSerializable -> listOf(KSerializerDescriptorResolver.SERIALIZER_CLASS_NAME)
         else -> listOf()
+    }
+
+    override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = when {
+        thisDescriptor.isCompanionObject && getSerializableClassDescriptorByCompanion(thisDescriptor) != null ->
+            listOf(KSerializerDescriptorResolver.SERIALIZER_PROVIDER_NAME)
+        else -> emptyList()
     }
 
     override fun generateSyntheticClasses(thisDescriptor: ClassDescriptor, name: Name, ctx: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider, result: MutableSet<ClassDescriptor>) {
