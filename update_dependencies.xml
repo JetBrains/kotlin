@@ -133,12 +133,6 @@
         <delete dir="${dependencies}/dx-src" failonerror="false"/>
         <untar src="${dependencies}/download/${android-sources.tgz}" dest="${dependencies}/dx-src" compression="gzip"/>
 
-        <mkdir dir="${dependencies}/jflex"/>
-        <get src="https://jetbrains.bintray.com/intellij-third-party-dependencies/org/jetbrains/intellij/deps/jflex/jflex/1.7.0/jflex-1.7.0.jar"
-             dest="${dependencies}/jflex/JFlex.jar" usetimestamp="true"/>
-        <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
-             dest="${dependencies}/jflex/idea-flex.skeleton" usetimestamp="true"/>
-
         <!-- jline -->
         <get-maven-library prefix="org/jline" lib="jline" version="3.3.1" target.jar.name.base="jline3"/>
 

@@ -1,12 +1,13 @@
 <project name="KotlinLexer" default="lexer">
     <property name="home" value="${basedir}"/>
-    <property name="flex.base" value="${home}/../../dependencies/jflex"/>
-    <property name="out.dir" value="${basedir}/tmpout"/>
+    <property name="builddir" value="${basedir}/build"/>
+    <property name="flex.classpath" value="${home}/../../dependencies/jflex/JFlex.jar"/>
+    <property name="out.dir" value="${builddir}/tmpout"/>
 
     <macrodef name="flex">
       <attribute name="flexfile"/>
       <attribute name="destdir"/>
-      <attribute name="skeleton" default="${flex.base}/idea-flex.skeleton"/>
+      <attribute name="skeleton" default="${builddir}/idea-flex.skeleton"/>
       <sequential>
         <delete dir="${out.dir}"/>
         <mkdir dir="${out.dir}"/>
@@ -20,7 +21,7 @@
           <arg value="${out.dir}"/>
           <arg value="@{flexfile}"/>
           <classpath>
-            <pathelement location="${flex.base}/JFlex.jar"/>
+            <pathelement path="${flex.classpath}"/>
           </classpath>
         </java>
         <move todir="@{destdir}">
@@ -32,7 +33,16 @@
       </sequential>
     </macrodef>
 
-    <target name="lexer">
+    <target name="check-idea-flex.skeleton.exists">
+        <available file="${builddir}/idea-flex.skeleton" property="skjeleton.exisits"/>
+    </target>
+
+    <target name="get-idea-flex.skeleton.if.not.exists" depends="check-idea-flex.skeleton.exists" unless="skjeleton.exisits">
+        <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
+             dest="${builddir}/idea-flex.skeleton" usetimestamp="true"/>
+    </target>
+
+    <target name="lexer" depends="get-idea-flex.skeleton.if.not.exists">
         <flex flexfile="${home}/src/org/jetbrains/kotlin/lexer/Kotlin.flex"
               destdir="${home}/src/org/jetbrains/kotlin/lexer/"/>
 
