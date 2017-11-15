@@ -33,7 +33,7 @@ open class KaptTask : ConventionTask() {
     @get:OutputDirectory
     lateinit var destinationDir: File
 
-    @get:Classpath
+    @get:Classpath @get:InputFiles
     val classpath: FileCollection
         get() = kotlinCompileTask.classpath
 

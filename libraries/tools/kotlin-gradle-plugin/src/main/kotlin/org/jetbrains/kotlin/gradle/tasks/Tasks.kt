@@ -62,7 +62,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCo
     @get:Internal
     var compilerClasspath: List<File>? = null
 
-    @get:Classpath
+    @get:Classpath @get:InputFiles
     internal val computedCompilerClasspath: List<File>
         get() = compilerClasspath?.takeIf { it.isNotEmpty() }
                 ?: compilerJarFile?.let {
@@ -95,7 +95,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
-    @get:Classpath
+    @get:Classpath @get:InputFiles
     protected val additionalClasspath = arrayListOf<File>()
 
     @get:Internal // classpath already participates in the checks
