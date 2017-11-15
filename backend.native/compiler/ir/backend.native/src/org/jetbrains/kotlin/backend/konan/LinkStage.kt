@@ -32,10 +32,12 @@ internal abstract class PlatformFlags(val properties: KonanProperties) {
     val llvmLtoNooptFlags = properties.llvmLtoNooptFlags
     val llvmLtoOptFlags = properties.llvmLtoOptFlags
     val llvmLtoFlags = properties.llvmLtoFlags
+    val llvmLtoDynamicFlags = properties.llvmLtoDynamicFlags
     val entrySelector = properties.entrySelector
     val linkerOptimizationFlags = properties.linkerOptimizationFlags
     val linkerKonanFlags = properties.linkerKonanFlags
     val linkerDebugFlags = properties.linkerDebugFlags
+    val linkerDynamicFlags = properties.linkerDynamicFlags
     val llvmDebugOptFlags = properties.llvmDebugOptFlags
     val s2wasmFlags = properties.s2wasmFlags
     val targetToolchain = properties.absoluteTargetToolchain
@@ -46,7 +48,7 @@ internal abstract class PlatformFlags(val properties: KonanProperties) {
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
     abstract fun linkCommand(objectFiles: List<ObjectFile>,
-        executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String>
+        executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String>
 
     open fun linkCommandSuffix(): List<String> = emptyList()
 
@@ -77,7 +79,7 @@ internal open class AndroidPlatform(distribution: Distribution)
     override fun filterStaticLibraries(binaries: List<String>) 
         = binaries.filter { it.isUnixStaticLib }
 
-    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
         // liblog.so must be linked in, as we use its functionality in runtime.
         return mutableListOf(clang).apply{
             add("-o")
@@ -88,6 +90,7 @@ internal open class AndroidPlatform(distribution: Distribution)
             addAll(objectFiles)
             if (optimize) addAll(linkerOptimizationFlags)
             if (!debug) addAll(linkerDebugFlags)
+            if (dynamic) addAll(linkerDynamicFlags)
             addAll(linkerKonanFlags)
         }
     }
@@ -110,7 +113,7 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
     override fun filterStaticLibraries(binaries: List<String>) 
         = binaries.filter { it.isUnixStaticLib }
 
-    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
         return mutableListOf(linker).apply {
             add("-demangle")
             addAll(listOf("-object_path_lto", "temporary.o", "-lto_library", libLTO))
@@ -120,6 +123,7 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
             addAll(objectFiles)
             if (optimize) addAll(linkerOptimizationFlags)
             if (!debug) addAll(linkerDebugFlags)
+            if (dynamic) addAll(linkerDynamicFlags)
             addAll(linkerKonanFlags)
             add("-lSystem")
         }
@@ -144,7 +148,7 @@ internal open class LinuxBasedPlatform(val distribution: Distribution)
     override fun filterStaticLibraries(binaries: List<String>) 
         = binaries.filter { it.isUnixStaticLib }
 
-    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
         // TODO: Can we extract more to the konan.properties?
         return mutableListOf(linker).apply {
             addAll(listOf("--sysroot=${targetSysRoot}",
@@ -162,6 +166,7 @@ internal open class LinuxBasedPlatform(val distribution: Distribution)
             addAll(objectFiles)
             if (optimize) addAll(linkerOptimizationFlags)
             if (!debug) addAll(linkerDebugFlags)
+            if (dynamic) addAll(linkerDynamicFlags)
             addAll(linkerKonanFlags)
             addAll(listOf("-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
                     "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
@@ -181,12 +186,13 @@ internal open class MingwPlatform(distribution: Distribution)
     override fun filterStaticLibraries(binaries: List<String>) 
         = binaries.filter { it.isWindowsStaticLib || it.isUnixStaticLib }
 
-    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
         return mutableListOf(linker).apply {
             addAll(listOf("-o", executable))
             addAll(objectFiles)
             if (optimize) addAll(linkerOptimizationFlags)
             if (!debug) addAll(linkerDebugFlags)
+            if (dynamic) addAll(linkerDynamicFlags)
         }
     }
 
@@ -203,7 +209,7 @@ internal open class WasmPlatform(distribution: Distribution)
     override fun filterStaticLibraries(binaries: List<String>) 
         = emptyList<String>()
 
-    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean): List<String> {
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
 
         //No link stage for WASM yet, just give '.wasm' as output.
         return mutableListOf("/bin/cp", objectFiles.single(), executable)
@@ -233,6 +239,7 @@ internal class LinkStage(val context: Context) {
 
     private val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
     private val debug = config.get(KonanConfigKeys.DEBUG) ?: false
+    private val dynamic = config.get(KonanConfigKeys.PRODUCE) == CompilerOutputKind.DYNAMIC
     private val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
     private val emitted = context.bitcodeFileName
     private val libraries = context.llvm.librariesToLink
@@ -251,6 +258,7 @@ internal class LinkStage(val context: Context) {
             debug    -> command.addNonEmpty(platform.llvmDebugOptFlags)
             else     -> command.addNonEmpty(platform.llvmLtoNooptFlags)
         }
+        command.addNonEmpty(platform.llvmLtoDynamicFlags)
         command.addNonEmpty(files)
         runTool(*command.toTypedArray())
 
@@ -322,7 +330,7 @@ internal class LinkStage(val context: Context) {
     private fun link(objectFiles: List<ObjectFile>, includedBinaries: List<String>, libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
         val executable = context.config.outputFile
 
-        val linkCommand = platform.linkCommand(objectFiles, executable, optimize, debug) +
+        val linkCommand = platform.linkCommand(objectFiles, executable, optimize, debug, dynamic) +
                 platform.targetLibffi +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                 entryPointSelector +

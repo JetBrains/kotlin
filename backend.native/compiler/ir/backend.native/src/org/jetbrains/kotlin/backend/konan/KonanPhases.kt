@@ -86,7 +86,8 @@ object KonanPhases {
             KonanPhase.SERIALIZER.enabled = 
                 (get(PRODUCE) == CompilerOutputKind.LIBRARY)
             KonanPhase.LINK_STAGE.enabled = 
-                (get(PRODUCE) == CompilerOutputKind.PROGRAM)
+                (get(PRODUCE) == CompilerOutputKind.PROGRAM || 
+                 get(PRODUCE) == CompilerOutputKind.DYNAMIC)
 
             KonanPhase.TEST_PROCESSOR.enabled = getBoolean(GENERATE_TEST_RUNNER)
 

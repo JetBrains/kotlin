@@ -38,10 +38,12 @@ class KonanProperties(val target: KonanTarget, val properties: Properties, val b
     val llvmLtoNooptFlags get() = targetList("llvmLtoNooptFlags")
     val llvmLtoOptFlags get() = targetList("llvmLtoOptFlags")
     val llvmLtoFlags get() = targetList("llvmLtoFlags")
+    val llvmLtoDynamicFlags get() = targetList("llvmLtoDynamicFlags")
     val entrySelector get() = targetList("entrySelector")
     val linkerOptimizationFlags get() = targetList("linkerOptimizationFlags")
     val linkerKonanFlags get() = targetList("linkerKonanFlags")
     val linkerDebugFlags get() = targetList("linkerDebugFlags")
+    val linkerDynamicFlags get() = targetList("linkerDynamicFlags")
     val llvmDebugOptFlags get() = targetList("llvmDebugOptFlags")
     val s2wasmFlags get() = targetList("s2wasmFlags")
 

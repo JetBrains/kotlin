@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -36,7 +37,8 @@ import org.jetbrains.kotlin.utils.alwaysTrue
 internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
 
     val config = context.config.configuration
-    if (config.get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.PROGRAM) return null
+    if (config.get(KonanConfigKeys.PRODUCE) != PROGRAM &&
+        config.get(KonanConfigKeys.PRODUCE) != DYNAMIC) return null
 
     val entryPoint = FqName(config.get(KonanConfigKeys.ENTRY) ?:
             if (context.shouldGenerateTestRunner()) testEntryName else defaultEntryName)

@@ -27,6 +27,7 @@ internal fun produceOutput(context: Context) {
     val config = context.config.configuration
 
     when (config.get(KonanConfigKeys.PRODUCE)) {
+        CompilerOutputKind.DYNAMIC,
         CompilerOutputKind.PROGRAM -> {
             val program = context.config.outputName
             val output = "$program.kt.bc"

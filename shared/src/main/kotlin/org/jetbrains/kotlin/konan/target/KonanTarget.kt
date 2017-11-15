@@ -61,7 +61,7 @@ enum class CompilerOutputKind {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.exeSuffix}"
     },
     DYNAMIC {
-        override fun suffix(target: KonanTarget?) = ".${target!!.family.dynamicSuffix!!}"
+        override fun suffix(target: KonanTarget?) = ".${target!!.family.dynamicSuffix}"
     },
     LIBRARY {
         override fun suffix(target: KonanTarget?) = ".klib"
