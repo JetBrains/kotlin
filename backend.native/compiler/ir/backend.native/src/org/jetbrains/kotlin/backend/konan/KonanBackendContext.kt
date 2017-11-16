@@ -21,10 +21,15 @@ import org.jetbrains.kotlin.backend.konan.descriptors.KonanSharedVariablesManage
 import org.jetbrains.kotlin.backend.konan.descriptors.konanInternal
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.getCompilerMessageLocation
 import org.jetbrains.kotlin.name.Name
 
 abstract internal class KonanBackendContext(val config: KonanConfig) : CommonBackendContext {
@@ -44,6 +49,25 @@ abstract internal class KonanBackendContext(val config: KonanConfig) : CommonBac
     override fun getInternalFunctions(name: String): List<FunctionDescriptor> =
             builtIns.konanInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
 
-    override val messageCollector: MessageCollector
+    val messageCollector: MessageCollector
         get() = config.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+    override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
+        val location = element?.getCompilerMessageLocation(irFile ?: error("irFile should be not null for $element"))
+        this.messageCollector.report(
+                if (isError) CompilerMessageSeverity.ERROR else CompilerMessageSeverity.WARNING,
+                message, location
+        )
+    }
+
+    private fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? {
+        val sourceRangeInfo = containingFile.fileEntry.getSourceRangeInfo(this.startOffset, this.endOffset)
+        return CompilerMessageLocation.create(
+                path = sourceRangeInfo.filePath,
+                line = sourceRangeInfo.startLineNumber,
+                column = sourceRangeInfo.startColumnNumber,
+                lineContent = null // TODO: retrieve the line content.
+        )
+    }
+
 }
