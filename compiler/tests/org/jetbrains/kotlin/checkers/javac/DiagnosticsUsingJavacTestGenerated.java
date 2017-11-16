@@ -12328,6 +12328,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("defaultMethods_warning.kt")
+            public void testDefaultMethods_warning() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/defaultMethods_warning.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("differentFilename.kt")
             public void testDifferentFilename() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/differentFilename.kt");

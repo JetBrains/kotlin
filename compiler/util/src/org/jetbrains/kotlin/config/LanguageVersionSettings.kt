@@ -64,6 +64,7 @@ enum class LanguageFeature(
     JvmPackageName(KOTLIN_1_2),
     AssigningArraysToVarargsInNamedFormInAnnotations(KOTLIN_1_2),
     ExpectedTypeFromCast(KOTLIN_1_2),
+    DefaultMethodsCallFromJava6TargetError(KOTLIN_1_2),
 
     BooleanElvisBoundSmartCasts(KOTLIN_1_3),
     ReturnsEffect(KOTLIN_1_3),
