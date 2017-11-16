@@ -22,6 +22,7 @@ import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
@@ -126,6 +127,9 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
                 }
             }
             return exitCode;
+        }
+        catch (AnalysisResult.CompilationErrorException e) {
+            return COMPILATION_ERROR;
         }
         catch (Throwable t) {
             MessageCollectorUtil.reportException(groupingCollector, t);

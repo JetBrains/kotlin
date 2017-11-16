@@ -166,10 +166,15 @@ abstract class AbstractKapt3Extension(
         try {
             runAnnotationProcessing(kaptContext, processors)
         } catch (error: KaptError) {
-            val originalException = error.cause ?: error
-            return AnalysisResult.error(bindingTrace.bindingContext, originalException)
+            val cause = error.cause
+
+            if (cause != null) {
+                kaptContext.logger.exception(cause)
+            }
+
+            return AnalysisResult.compilationError(bindingTrace.bindingContext)
         } catch (thr: Throwable) {
-            return AnalysisResult.error(bindingTrace.bindingContext, thr)
+            return AnalysisResult.internalError(bindingTrace.bindingContext, thr)
         } finally {
             kaptContext.close()
         }
