@@ -7,7 +7,6 @@ import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
 import com.intellij.debugger.streams.trace.dsl.impl.VariableImpl
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
-
 /**
  * @author Vitaliy.Bibaev
  */
@@ -84,6 +83,7 @@ class KotlinStatementFactory(private val peekCallFactory: PeekCallFactory) : Sta
   override fun createNewArrayExpression(elementType: GenericType, vararg args: Expression): Expression {
     val arguments = args.joinToString { it.toCode() }
     return when (elementType) {
+      types.BOOLEAN -> TextExpression("kotlin.booleanArrayOf($arguments)")
       types.INT -> TextExpression("kotlin.intArrayOf($arguments)")
       types.LONG -> TextExpression("kotlin.longArrayOf($arguments)")
       types.DOUBLE -> TextExpression("kotlin.doubleArrayOf($arguments)")
@@ -92,7 +92,8 @@ class KotlinStatementFactory(private val peekCallFactory: PeekCallFactory) : Sta
   }
 
   override fun createNewSizedArray(elementType: GenericType, size: Expression): Expression =
-    TextExpression("arrayOfNulls<${elementType.genericTypeName}>(${size.toCode()})")
+      TextExpression(types.array(elementType).sizedDeclaration(size.toCode()))
+
 
   override fun createPeekCall(elementsType: GenericType, lambda: String): IntermediateStreamCall =
       peekCallFactory.createPeekCall(elementsType, lambda)
