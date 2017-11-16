@@ -140,8 +140,7 @@ class SerializerCodegenImpl(
             // output = output.writeBegin(classDesc, new KSerializer[0])
             load(outputVar, kOutputType)
             load(descVar, descType)
-            iconst(0)
-            newarray(kSerializerType) // todo: use some predefined empty array
+            genArrayOfTypeParametersSerializers()
             invokevirtual(kOutputType.internalName, "writeBegin",
                           "(" + descType.descriptor + kSerializerArrayType.descriptor +
                           ")" + kOutputType.descriptor, false)
@@ -184,6 +183,19 @@ class SerializerCodegenImpl(
         }
     }
 
+    internal fun InstructionAdapter.genArrayOfTypeParametersSerializers() {
+        val size = serializableDescriptor.declaredTypeParameters.size
+        iconst(size)
+        newarray(kSerializerType) // todo: use some predefined empty array, if size is 0
+        for (i in 0 until size) {
+            dup() // array
+            iconst(i) // index
+            load(0, kSerializerType) // this.serialTypeI
+            getfield(codegen.typeMapper.mapClass(codegen.descriptor).internalName, "$typeArgPrefix$i", kSerializerType.descriptor)
+            astore(kSerializerType)
+        }
+    }
+
     override fun generateLoad(
             function: FunctionDescriptor
     ) {
@@ -218,8 +230,7 @@ class SerializerCodegenImpl(
             // input = input.readBegin(classDesc, new KSerializer[0])
             load(inputVar, kInputType)
             load(descVar, descType)
-            iconst(0)
-            newarray(kSerializerType) // todo: use some predefined empty array
+            genArrayOfTypeParametersSerializers()
             invokevirtual(kInputType.internalName, "readBegin",
                           "(" + descType.descriptor + kSerializerArrayType.descriptor +
                           ")" + kInputType.descriptor, false)
