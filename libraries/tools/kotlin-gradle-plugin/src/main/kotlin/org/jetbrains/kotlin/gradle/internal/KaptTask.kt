@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.gradle.dsl.CompilerArgumentAware
-import org.jetbrains.kotlin.gradle.dsl.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.File
 
