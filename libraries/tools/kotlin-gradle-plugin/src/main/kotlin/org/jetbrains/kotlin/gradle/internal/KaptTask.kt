@@ -43,7 +43,7 @@ open class KaptTask : ConventionTask(), CompilerArgumentAware<K2JVMCompilerArgum
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
         kotlinCompileTask.setupCompilerArgs(args)
 
-        args.pluginClasspaths = (pluginOptions.classpath + args.pluginClasspaths!!).toSet().toTypedArray()
+        args.pluginClasspaths = (pluginClasspath + args.pluginClasspaths!!).toSet().toTypedArray()
         args.pluginOptions = (pluginOptions.arguments + args.pluginOptions!!).toTypedArray()
         args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
     }
@@ -51,6 +51,12 @@ open class KaptTask : ConventionTask(), CompilerArgumentAware<K2JVMCompilerArgum
     @get:Classpath @get:InputFiles
     val classpath: FileCollection
         get() = kotlinCompileTask.classpath
+
+    @get:Classpath @get:InputFiles @Suppress("unused")
+    internal val kotlinTaskPluginClasspaths get() = kotlinCompileTask.pluginClasspath
+
+    @get:Classpath @get:InputFiles
+    internal val pluginClasspath get() = pluginOptions.classpath
 
     val source: FileCollection
         @InputFiles get() {
