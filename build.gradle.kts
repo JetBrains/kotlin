@@ -343,6 +343,7 @@ tasks {
 
     "jsCompilerTest" {
         dependsOn(":js:js.tests:test")
+        dependsOn(":js:js.tests:runMocha")
     }
 
     "scriptingTest" {
