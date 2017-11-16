@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
+@CacheableTask
 internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
 
     private val kotlinOptionsImpl = KotlinMultiplatformCommonOptionsImpl()
