@@ -1,1 +1,1 @@
-arrayOfNulls<kotlin.String>(100)
+kotlin.arrayOfNulls<kotlin.String>(100)

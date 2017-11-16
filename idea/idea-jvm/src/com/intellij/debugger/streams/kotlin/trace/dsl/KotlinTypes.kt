@@ -23,10 +23,12 @@ object KotlinTypes : Types {
       ListTypeImpl(elementsType, { "kotlin.collections.MutableList<$it>" }, "kotlin.collections.mutableListOf()")
 
   override fun array(elementType: GenericType): ArrayType = when (elementType) {
+    BOOLEAN -> ArrayTypeImpl(BOOLEAN, { "kotlin.BooleanArray" }, { "kotlin.BooleanArray($it)" })
     INT -> ArrayTypeImpl(INT, { "kotlin.IntArray" }, { "kotlin.IntArray($it)" })
     LONG -> ArrayTypeImpl(LONG, { "kotlin.LongArray" }, { "kotlin.LongArray($it)" })
     DOUBLE -> ArrayTypeImpl(DOUBLE, { "kotlin.DoubleArray" }, { "kotlin.DoubleArray($it)" })
-    else -> ArrayTypeImpl(nullable { elementType }, { "kotlin.Array<$it>" }, { "kotlin.arrayOfNulls($it)" })
+    else -> ArrayTypeImpl(nullable { elementType }, { "kotlin.Array<$it>" },
+        { "kotlin.arrayOfNulls<${elementType.genericTypeName}>($it)" })
   }
 
     override fun map(keyType: GenericType, valueType: GenericType): MapType =
