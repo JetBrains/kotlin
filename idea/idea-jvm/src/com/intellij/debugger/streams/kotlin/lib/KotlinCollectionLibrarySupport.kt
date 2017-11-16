@@ -1,11 +1,11 @@
 package com.intellij.debugger.streams.kotlin.lib
 
-import com.intellij.debugger.streams.kotlin.resolve.FilterOrderResolver
 import com.intellij.debugger.streams.kotlin.trace.impl.handler.collections.*
 import com.intellij.debugger.streams.kotlin.trace.impl.interpret.FilterTraceInterpreter
 import com.intellij.debugger.streams.lib.IntermediateOperation
 import com.intellij.debugger.streams.lib.TerminalOperation
 import com.intellij.debugger.streams.lib.impl.LibrarySupportBase
+import com.intellij.debugger.streams.resolve.FilterResolver
 import com.intellij.debugger.streams.resolve.ValuesOrderResolver
 import com.intellij.debugger.streams.trace.CallTraceInterpreter
 import com.intellij.debugger.streams.trace.IntermediateCallHandler
@@ -19,7 +19,8 @@ import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
  */
 class KotlinCollectionLibrarySupport : LibrarySupportBase() {
   init {
-    addOperation(FilterOperation("filter", FilterCallHandler()))
+    addOperation(FilterOperation("filter", FilterCallHandler(), true))
+    addOperation(FilterOperation("filterNot", FilterCallHandler(), false))
   }
 
   private fun addOperation(operation: CollectionOperation) {
@@ -40,9 +41,9 @@ class KotlinCollectionLibrarySupport : LibrarySupportBase() {
         wrapper.createTerminatorHandler(call, resultExpression, dsl)
   }
 
-  private class FilterOperation(name: String, handler: BothSemanticsHandler)
+  private class FilterOperation(name: String, handler: BothSemanticsHandler, valueToAccept: Boolean)
     : CollectionOperation(name, handler) {
-    override val traceInterpreter: CallTraceInterpreter = FilterTraceInterpreter()
-    override val valuesOrderResolver: ValuesOrderResolver = FilterOrderResolver()
+    override val traceInterpreter: CallTraceInterpreter = FilterTraceInterpreter(valueToAccept)
+    override val valuesOrderResolver: ValuesOrderResolver = FilterResolver()
   }
 }
