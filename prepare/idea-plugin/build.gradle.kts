@@ -1,18 +1,7 @@
-
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.jvm.tasks.Jar
 
 description = "Kotlin IDEA plugin"
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    }
-}
 
 plugins {
     `java-base`

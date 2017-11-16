@@ -1,4 +1,3 @@
-
 import java.io.File
 import proguard.gradle.ProGuardTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -7,12 +6,7 @@ import org.gradle.api.file.DuplicatesStrategy
 description = "Kotlin Compiler"
 
 buildscript {
-    repositories {
-        jcenter()
-    }
-
     dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
         classpath("net.sf.proguard:proguard-gradle:${property("versions.proguard")}")
     }
 }

@@ -1,17 +1,6 @@
-
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 description = "Kotlin JPS plugin"
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    }
-}
 
 plugins {
     `java-base`

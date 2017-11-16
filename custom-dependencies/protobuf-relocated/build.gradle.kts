@@ -1,15 +1,4 @@
-
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    }
-}
 
 val baseProtobuf by configurations.creating
 val baseProtobufSources by configurations.creating

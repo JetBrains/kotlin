@@ -67,6 +67,7 @@ dependencies {
     compile("com.jakewharton.dex:dex-method-list:2.0.0-alpha")
     // TODO: adding the dep to the plugin breaks the build unexpectedly, resolve and uncomment
 //    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["bootstrap_kotlin_version"]}")
+    // Shadow plugin is used in many projects of the main build. Once it's no longer used in buildSrc, please move this dependency to the root project
     compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     compile("org.ow2.asm:asm-all:6.0_BETA")
 }

@@ -17,7 +17,6 @@ buildscript {
     }
     dependencies {
         classpath("net.sf.proguard:proguard-gradle:${property("versions.proguard")}")
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     }
 }
 
