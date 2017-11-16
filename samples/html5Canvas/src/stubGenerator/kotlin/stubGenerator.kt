@@ -116,7 +116,7 @@ fun Operation.generateKotlin(parent: Interface): String {
     argList + 
     "): ${returnType.toKotlinType()} {\n" +
 
-    "\t\tval wasmRetVal = ${wasmFunctionName(name, parent.name)}($wasmArgList)\n" +
+    "\t\t${if (returnType != Void) "val wasmRetVal = " else ""}${wasmFunctionName(name, parent.name)}($wasmArgList)\n" +
 
     "\t\treturn ${returnType.wasmReturnMapping("wasmRetVal")}\n"+
     "\t}\n"

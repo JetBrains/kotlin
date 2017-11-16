@@ -14,8 +14,8 @@ fun main(args: Array<String>) {
     var mouseY: Int = 0
     var draw: Boolean = false
 
-    document.setter("onmousemove") { args: ArrayList<JsValue> ->
-        val event = MouseEvent(args[0])
+    document.setter("onmousemove") { arguments: ArrayList<JsValue> ->
+        val event = MouseEvent(arguments[0])
         mouseX = event.getInt("clientX") - rectLeft
         mouseY = event.getInt("clientY") - rectTop
 

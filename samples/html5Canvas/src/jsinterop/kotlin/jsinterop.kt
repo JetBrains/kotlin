@@ -25,7 +25,7 @@ external public fun stringLengthBytes(message: String): Int
 typealias KtFunction <R> = ((ArrayList<JsValue>)->R)
 
 fun <R> wrapFunction(func: KtFunction<R>): Int {
-    val ptr: Long = StableObjPtr.create(func).value.toLong() 
+    val ptr: Long = StableRef.create(func).asCPointer().toLong() 
     return ptr.toInt() // TODO: LP64 unsafe.
 }
 
@@ -38,7 +38,7 @@ fun runLambda(pointer: Int, argumentsArena: Arena, argumentsArenaSize: Int): Int
     val previousArena = ArenaManager.currentArena
     ArenaManager.currentArena = argumentsArena
     // TODO: LP64 unsafe: wasm32 passes Int, not Long.
-    val func = StableObjPtr.fromValue(pointer.toLong().toCPointer()!!).get() as KtFunction<JsValue> 
+    val func = StableRef.fromValue(pointer.toLong().toCPointer()!!).get() as KtFunction<JsValue>
     val result = func(arguments)
 
     ArenaManager.currentArena = previousArena
