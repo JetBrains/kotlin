@@ -203,6 +203,9 @@ internal class Kotlin2JvmSourceSetProcessor(
 
                     registerKotlinOutputForJavaLibrary(classesDirectory, classesProviderTask)
                 }
+
+                // To make Gradle read this location from the task's @LocalState property and clean it on cache hit:
+                kotlinTask.buildServicesWorkingDir = Callable { kotlinGradleBuildServices.workingDir }
             }
         }
     }

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryP
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
+import java.util.concurrent.Callable
 import kotlin.properties.Delegates
 
 const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
@@ -275,6 +276,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             field = value
             logger.kotlinDebug { "Set $this.usePreciseJavaTracking=$value" }
         }
+
+    @get:LocalState @get:Optional
+    internal var buildServicesWorkingDir: Callable<File>? = null
 
     init {
         incremental = true
