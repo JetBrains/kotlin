@@ -7,7 +7,7 @@ interface Simple extends KInterface {
 }
 
 // FILE: main.kt
-
+// JVM_TARGET: 1.8
 interface KInterface {
     fun test(): String {
         return "base";
@@ -15,7 +15,6 @@ interface KInterface {
 }
 
 class Test : Simple {
-    @kotlin.Suppress("DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET")
     fun bar(): String {
         return super.test()
     }
