@@ -105,7 +105,7 @@ internal class ProjectResolutionFacade(
         val withError = results.firstOrNull { it.isError() }
         val bindingContext = CompositeBindingContext.create(results.map { it.bindingContext })
         return if (withError != null)
-            AnalysisResult.error(bindingContext, withError.error)
+            AnalysisResult.internalError(bindingContext, withError.error)
         else
         //TODO: (module refactoring) several elements are passed here in debugger
             AnalysisResult.success(bindingContext, findModuleDescriptor(elements.first().getModuleInfo()))

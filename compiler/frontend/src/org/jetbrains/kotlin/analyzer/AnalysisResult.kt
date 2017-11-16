@@ -26,7 +26,6 @@ open class AnalysisResult protected constructor(
         val moduleDescriptor: ModuleDescriptor,
         val shouldGenerateCode: Boolean = true
 ) {
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         return (other is AnalysisResult && bindingContext == other.bindingContext &&
@@ -48,17 +47,25 @@ open class AnalysisResult protected constructor(
     operator fun component3() = shouldGenerateCode
 
     val error: Throwable
-        get() = if (this is Error) this.exception else throw IllegalStateException("Should only be called for error analysis result")
+        get() = if (this is InternalError) this.exception else throw IllegalStateException("Should only be called for error analysis result")
 
-    fun isError(): Boolean = this is Error
+    fun isError(): Boolean = this is InternalError || this is CompilationError
 
     fun throwIfError() {
-        if (isError()) {
-            throw IllegalStateException("failed to analyze: " + error, error)
+        when {
+            this is InternalError -> throw IllegalStateException("failed to analyze: " + error, error)
+            this is CompilationError -> throw CompilationErrorException()
         }
     }
 
-    private class Error(bindingContext: BindingContext, val exception: Throwable) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
+    class CompilationErrorException : RuntimeException()
+
+    private class CompilationError(bindingContext: BindingContext) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
+
+    private class InternalError(
+            bindingContext: BindingContext,
+            val exception: Throwable
+    ) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
     
     class RetryWithAdditionalJavaRoots(
             bindingContext: BindingContext, 
@@ -78,8 +85,12 @@ open class AnalysisResult protected constructor(
             return AnalysisResult(bindingContext, module, shouldGenerateCode)
         }
 
-        @JvmStatic fun error(bindingContext: BindingContext, error: Throwable): AnalysisResult {
-            return Error(bindingContext, error)
+        @JvmStatic fun internalError(bindingContext: BindingContext, error: Throwable): AnalysisResult {
+            return InternalError(bindingContext, error)
+        }
+
+        @JvmStatic fun compilationError(bindingContext: BindingContext): AnalysisResult {
+            return CompilationError(bindingContext)
         }
     }
 }
