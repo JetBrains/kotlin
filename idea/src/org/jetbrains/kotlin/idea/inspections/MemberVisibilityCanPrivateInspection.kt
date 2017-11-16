@@ -31,17 +31,19 @@ import com.intellij.util.Processor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.effectiveVisibility
-import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
+import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
+import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 
 class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
 
@@ -96,7 +98,7 @@ class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
         val useScope = declaration.useScope
         val name = declaration.name ?: return false
         if (useScope is GlobalSearchScope) {
-            when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
+            when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope, null, null)) {
                 PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES -> return false
                 PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES -> return false
                 PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES -> {

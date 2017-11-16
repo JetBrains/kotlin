@@ -33,6 +33,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.quickfix.RemoveValVarFromParameterFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
@@ -92,7 +93,7 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
                 if (useScope is GlobalSearchScope) {
                     val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(parameter.project)
                     for (accessorName in parameter.getAccessorNames()) {
-                        when (psiSearchHelper.isCheapEnoughToSearch(accessorName, useScope, null, null)) {
+                        when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(accessorName, useScope, null, null)) {
                             ZERO_OCCURRENCES -> {
                             } // go on
                             else -> return         // accessor in use: should remain a property
@@ -100,7 +101,7 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
                     }
                     // TOO_MANY_OCCURRENCES: too expensive
                     // ZERO_OCCURRENCES: unused at all, reported elsewhere
-                    if (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null) != FEW_OCCURRENCES) return
+                    if (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope, null, null) != FEW_OCCURRENCES) return
                 }
                 // Find all references and check them
                 val references = ReferencesSearch.search(parameter, useScope)

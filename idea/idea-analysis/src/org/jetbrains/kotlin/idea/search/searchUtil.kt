@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.search
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeRegistry
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -27,7 +28,9 @@ import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 infix fun SearchScope.and(otherScope: SearchScope): SearchScope = intersectWith(otherScope)
 infix fun SearchScope.or(otherScope: SearchScope): SearchScope = union(otherScope)
@@ -96,4 +99,15 @@ fun ReferencesSearch.SearchParameters.effectiveSearchScope(element: PsiElement):
 
 fun isOnlyKotlinSearch(searchScope: SearchScope): Boolean {
     return searchScope is LocalSearchScope && searchScope.scope.all { it.containingFile is KtFile }
+}
+
+fun PsiSearchHelper.isCheapEnoughToSearchConsideringOperators(
+    name: String,
+    scope: GlobalSearchScope,
+    fileToIgnoreOccurrencesIn: PsiFile?,
+    progress: ProgressIndicator?
+): PsiSearchHelper.SearchCostResult {
+    if (OperatorConventions.isConventionName(Name.identifier(name))) return PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES
+
+    return isCheapEnoughToSearch(name, scope, fileToIgnoreOccurrencesIn, progress)
 }

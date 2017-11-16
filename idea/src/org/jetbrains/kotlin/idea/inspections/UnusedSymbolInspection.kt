@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
+import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
@@ -205,7 +206,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
             for (name in listOf(declaration.name) + declaration.getAccessorNames() + listOfNotNull(declaration.getClassNameForCompanionObject())) {
                 if (name == null) continue
-                when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
+                when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope, null, null)) {
                     ZERO_OCCURRENCES -> {} // go on, check other names
                     FEW_OCCURRENCES -> zeroOccurrences = false
                     TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used
