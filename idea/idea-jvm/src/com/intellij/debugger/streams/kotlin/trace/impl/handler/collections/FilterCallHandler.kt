@@ -68,6 +68,7 @@ class FilterCallHandler : BothSemanticsHandler {
       val filterResult = dsl.variable(dsl.types.BOOLEAN, "result")
       declare(filterResult, oldPredicate.call("invoke", lambdaArg), false)
       +filteringMap.set(dsl.currentTime(), filterResult)
+      +dsl.updateTime() // reserve unique time for mapped value
       doReturn(filterResult)
     }.toCode()
 
