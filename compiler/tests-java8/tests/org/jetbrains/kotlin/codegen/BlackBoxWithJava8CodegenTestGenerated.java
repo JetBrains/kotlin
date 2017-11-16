@@ -102,6 +102,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTest(fileName);
     }
 
+    @TestMetadata("invokeDefaultViaSuper_16.kt")
+    public void testInvokeDefaultViaSuper_16() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/invokeDefaultViaSuper_16.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("longChainOfKotlinExtendsFromJavaWithDefault.kt")
     public void testLongChainOfKotlinExtendsFromJavaWithDefault() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/longChainOfKotlinExtendsFromJavaWithDefault.kt");

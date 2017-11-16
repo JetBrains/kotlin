@@ -11,7 +11,7 @@ public interface Simple {
 }
 
 // FILE: main.kt
-
+// JVM_TARGET: 1.8
 interface TestInterface : Simple {}
 class Test : TestInterface {}
 
