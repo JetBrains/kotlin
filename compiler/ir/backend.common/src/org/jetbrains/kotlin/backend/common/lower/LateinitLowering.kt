@@ -51,7 +51,8 @@ class LateinitLowering(val context: CommonBackendContext): FileLoweringPass {
                 irBuilder.run {
                     val block = irBlock(type)
                     val resultVar = scope.createTemporaryVariable(
-                            irGetField(irGet(getter.dispatchReceiverParameter!!.symbol), backingFieldSymbol))
+                            irGetField(getter.dispatchReceiverParameter?.let { irGet(it.symbol) }, backingFieldSymbol)
+                    )
                     block.statements.add(resultVar)
                     val throwIfNull = irIfThenElse(context.builtIns.nothingType,
                             irNotEquals(irGet(resultVar.symbol), irNull()),
