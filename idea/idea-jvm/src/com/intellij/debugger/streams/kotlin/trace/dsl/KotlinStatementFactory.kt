@@ -82,13 +82,15 @@ class KotlinStatementFactory(private val peekCallFactory: PeekCallFactory) : Sta
 
   override fun createNewArrayExpression(elementType: GenericType, vararg args: Expression): Expression {
     val arguments = args.joinToString { it.toCode() }
-    return when (elementType) {
-      types.BOOLEAN -> TextExpression("kotlin.booleanArrayOf($arguments)")
-      types.INT -> TextExpression("kotlin.intArrayOf($arguments)")
-      types.LONG -> TextExpression("kotlin.longArrayOf($arguments)")
-      types.DOUBLE -> TextExpression("kotlin.doubleArrayOf($arguments)")
-      else -> TextExpression("kotlin.arrayOf<${types.nullable { elementType }.genericTypeName}>($arguments)")
+    val text = when (elementType) {
+      types.BOOLEAN -> "kotlin.booleanArrayOf($arguments)"
+      types.INT -> "kotlin.intArrayOf($arguments)"
+      types.LONG -> "kotlin.longArrayOf($arguments)"
+      types.DOUBLE -> "kotlin.doubleArrayOf($arguments)"
+      else -> "kotlin.arrayOf<${types.nullable { elementType }.genericTypeName}>($arguments)"
     }
+
+    return TextExpression(text)
   }
 
   override fun createNewSizedArray(elementType: GenericType, size: Expression): Expression =
