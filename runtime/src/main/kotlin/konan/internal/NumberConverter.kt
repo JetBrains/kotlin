@@ -36,6 +36,7 @@ class NumberConverter {
 
     private fun convertDouble(inputNumber: Double): String {
         val p = 1023 + 52 // The power offset (precision).
+        @Suppress("INTEGER_OVERFLOW")
         val signMask = 0x7FFFFFFFFFFFFFFFL + 1 // The mask to get the sign of.
         // The number.
         val eMask = 0x7FF0000000000000L // The mask to get the power bits.
@@ -88,6 +89,7 @@ class NumberConverter {
 
     private fun convertFloat(inputNumber: Float): String {
         val p = 127 + 23 // The power offset (precision).
+        @Suppress("INTEGER_OVERFLOW")
         val signMask = 0x7FFFFFFF + 1 // The mask to get the sign of the number.
         val eMask = 0x7F800000 // The mask to get the power bits.
         val fMask = 0x007FFFFF // The mask to get the significand bits.
