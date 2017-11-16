@@ -31,7 +31,7 @@ class KotlinCollectionLibrarySupport : LibrarySupportBase() {
                                              handler: BothSemanticsHandler)
     : IntermediateOperation, TerminalOperation {
 
-    private val wrapper = BothSemanticCallWrapper(handler)
+    private val wrapper = BothSemanticHandlerWrapper(handler)
 
     override fun getTraceHandler(callOrder: Int, call: IntermediateStreamCall, dsl: Dsl): IntermediateCallHandler =
         wrapper.createIntermediateHandler(callOrder, call, dsl)

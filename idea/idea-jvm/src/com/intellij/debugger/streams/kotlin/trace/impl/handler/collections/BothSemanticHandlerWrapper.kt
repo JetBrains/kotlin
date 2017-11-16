@@ -12,7 +12,7 @@ import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
  *
  * @author Vitaliy.Bibaev
  */
-class BothSemanticCallWrapper(private val handler: BothSemanticsHandler) {
+class BothSemanticHandlerWrapper(private val handler: BothSemanticsHandler) {
   fun createIntermediateHandler(order: Int, call: IntermediateStreamCall, dsl: Dsl): IntermediateCallHandler =
       CollectionIntermediateHandler(order, call, dsl, handler)
 
