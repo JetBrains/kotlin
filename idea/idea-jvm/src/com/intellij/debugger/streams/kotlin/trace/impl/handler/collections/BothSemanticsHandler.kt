@@ -17,9 +17,9 @@ interface BothSemanticsHandler {
 
   fun additionalCallsAfter(call: StreamCall, dsl: Dsl): List<IntermediateStreamCall>
 
-  fun getResultExpression(call: StreamCall, variables: List<Variable>): Expression
+  fun transformAsIntermediateCall(call: IntermediateStreamCall, variables: List<Variable>, dsl: Dsl): IntermediateStreamCall
 
-  fun transformAsIntermediateCall(call: IntermediateStreamCall, dsl: Dsl): IntermediateStreamCall
+  fun transformAsTerminalCall(call: TerminatorStreamCall, variables: List<Variable>, dsl: Dsl): TerminatorStreamCall
 
-  fun transformAsTerminalCall(call: TerminatorStreamCall, dsl: Dsl): TerminatorStreamCall
+  fun getResultExpression(call: StreamCall, dsl: Dsl, variables: List<Variable>): Expression
 }

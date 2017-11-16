@@ -27,10 +27,10 @@ class CollectionIntermediateHandler(
   }
 
   override fun transformCall(call: IntermediateStreamCall): IntermediateStreamCall {
-    return internalHandler.transformAsIntermediateCall(call, dsl)
+    return internalHandler.transformAsIntermediateCall(call, variables, dsl)
   }
 
   override fun getResultExpression(): Expression {
-    return internalHandler.getResultExpression(call, variables)
+    return internalHandler.getResultExpression(call, dsl, variables)
   }
 }

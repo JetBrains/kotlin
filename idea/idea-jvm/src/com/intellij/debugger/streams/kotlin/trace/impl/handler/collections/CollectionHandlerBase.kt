@@ -10,7 +10,7 @@ import com.intellij.debugger.streams.wrapper.StreamCall
 /**
  * @author Vitaliy.Bibaev
  */
-abstract class CollectionHandlerBase(order: Int, dsl: Dsl,
+abstract class CollectionHandlerBase(order: Int, private val dsl: Dsl,
                                      private val call: StreamCall, private val internalHandler: BothSemanticsHandler)
   : TraceHandler {
   private val declarations: List<VariableDeclaration> = internalHandler.variablesDeclaration(call, order, dsl)
@@ -18,5 +18,5 @@ abstract class CollectionHandlerBase(order: Int, dsl: Dsl,
 
   override fun additionalVariablesDeclaration(): List<VariableDeclaration> = declarations
 
-  override fun getResultExpression(): Expression = internalHandler.getResultExpression(call, variables)
+  override fun getResultExpression(): Expression = internalHandler.getResultExpression(call, dsl, variables)
 }

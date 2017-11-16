@@ -34,7 +34,7 @@ class CollectionTerminatorHandler(private val call: TerminatorStreamCall,
       internalHandler.additionalCallsBefore(call, dsl)
 
   override fun transformCall(call: TerminatorStreamCall): TerminatorStreamCall {
-    return internalHandler.transformAsTerminalCall(call, dsl)
+    return internalHandler.transformAsTerminalCall(call, variables, dsl)
   }
 
   private fun createCallAfterExpression(additionalCallsAfter: List<IntermediateStreamCall>): Expression {
