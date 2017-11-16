@@ -34,6 +34,7 @@ import java.io.File
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
+import org.jetbrains.kotlin.gradle.tasks.useBuildCacheIfSupported
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.util.*
@@ -280,7 +281,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     private fun Kapt3SubpluginContext.createKaptKotlinTask(): KaptTask {
-        val kaptTask = project.tasks.create(getKaptTaskName("kapt"), KaptTask::class.java)
+        val kaptTask = project.tasks.create(
+                getKaptTaskName("kapt"),
+                KaptTask::class.java)
+
+        kaptTask.useBuildCacheIfSupported()
+
         kaptTask.kotlinCompileTask = kotlinCompile
 
         kaptClasspathArtifacts.forEach { kaptTask.pluginOptions.addClasspathEntry(it) }
@@ -312,7 +318,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): KaptGenerateStubsTask {
-        val kaptTask = project.tasks.create(getKaptTaskName("kaptGenerateStubs"), KaptGenerateStubsTask::class.java)
+        val kaptTask = project.tasks.create(
+                getKaptTaskName("kaptGenerateStubs"),
+                KaptGenerateStubsTask::class.java)
+
+        kaptTask.useBuildCacheIfSupported()
+
         kaptTask.sourceSetName = sourceSetName
         kaptTask.kotlinCompileTask = kotlinCompile
         kotlinToKaptGenerateStubsTasksMap[kotlinCompile] = kaptTask

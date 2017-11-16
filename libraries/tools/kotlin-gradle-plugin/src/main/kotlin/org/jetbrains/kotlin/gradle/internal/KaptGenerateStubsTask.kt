@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.incremental.pathsAsStringRelativeTo
 import java.io.File
 
+@CacheableTask
 open class KaptGenerateStubsTask : KotlinCompile() {
     override val sourceRootsContainer = FilteringSourceRootsContainer(emptyList(), { isSourceRootAllowed(it) })
 

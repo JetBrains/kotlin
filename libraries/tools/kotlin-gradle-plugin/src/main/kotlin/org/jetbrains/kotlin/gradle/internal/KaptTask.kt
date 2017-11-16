@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.File
 
+@CacheableTask
 open class KaptTask : ConventionTask(), CompilerArgumentAware<K2JVMCompilerArguments> {
 
     @get:Internal
