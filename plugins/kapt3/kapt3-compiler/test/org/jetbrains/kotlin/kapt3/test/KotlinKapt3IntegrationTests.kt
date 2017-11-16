@@ -20,11 +20,28 @@ import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.Test
+import org.junit.runner.JUnitCore
+import org.junit.runner.Request
 import java.io.File
+import javax.annotation.processing.ProcessingEnvironment
+import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
+import javax.lang.model.element.TypeElement
 
-class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
+class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9TestLauncher {
+    override fun test(
+            name: String,
+            vararg supportedAnnotations: String,
+            options: Map<String, String>,
+            process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
+    ) {
+        super.test(name, *supportedAnnotations, options = options, process = process)
+
+        doTestWithJdk9(SingleJUnitTestRunner::class.java,
+                       KotlinKapt3IntegrationTests::class.java.name + "#test" + getTestName(false))
+    }
+
     @Test
     fun testSimple() = test("Simple", "test.MyAnnotation") { set, roundEnv, _ ->
         assertEquals(1, set.size)
@@ -118,5 +135,17 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
         assertEquals("someInt", constructors[1].parameters[0].simpleName.toString())
         assertEquals("someLong", constructors[1].parameters[1].simpleName.toString())
         assertEquals("someString", constructors[1].parameters[2].simpleName.toString())
+    }
+}
+
+internal class SingleJUnitTestRunner {
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val (className, methodName) = args.single().split('#')
+            val request = Request.method(Class.forName(className), methodName)
+            val result = JUnitCore().run(request)
+            System.exit(if (result.wasSuccessful()) 0 else 1)
+        }
     }
 }

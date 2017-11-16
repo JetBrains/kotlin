@@ -65,7 +65,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         super.tearDown()
     }
 
-    protected fun test(
+    protected open fun test(
             name: String,
             vararg supportedAnnotations: String,
             options: Map<String, String> = emptyMap(),
