@@ -1129,10 +1129,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         Call call = CallMaker.makeCallWithExpressions(
                 expression,
                 receiver,
-                // semantically, a call to `==` is a safe call
-                new KtPsiFactory(expression.getProject(), false).createSafeCallNode(),
+                null,
                 operationSign,
-                Collections.singletonList(right)
+                Collections.singletonList(right),
+                Call.CallType.DEFAULT,
+                // semantically, a call to `==` is a safe call
+                true
         );
 
         OverloadResolutionResults<FunctionDescriptor> resolutionResults =

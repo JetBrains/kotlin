@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiComment
@@ -63,10 +62,6 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     fun createVarKeyword(): PsiElement {
         val property = createProperty("var x = 1")
         return property.valOrVarKeyword
-    }
-
-    fun createSafeCallNode(): ASTNode {
-        return (createExpression("a?.b") as KtSafeQualifiedExpression).operationTokenNode
     }
 
     private fun doCreateExpression(text: String): KtExpression? {
