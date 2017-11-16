@@ -196,6 +196,19 @@ class IncrementalSpecification extends BaseKonanSpecification {
         "noDefaultLibs"      | "true"
     }
 
+    def 'headerFilterAdditionalSearchPrefix change should cause recompilation and interop reprocessing'() {
+        when:
+        def project = KonanProject.createWithInterop(projectDirectory) { KonanProject it ->
+            it.defFiles.first().write("headers = stdio.h\nheaderFilter = stdio.h")
+        }
+        def results = buildTwice(project) { KonanProject it ->
+            it.addSetting(KonanProject.DEFAULT_INTEROP_NAME, "headerFilterAdditionalSearchPrefix", "'.'")
+        }
+
+        then:
+        recompilationAndInteropProcessingHappened(*results)
+    }
+
     def 'defFile change for an interop task should cause recompilation and interop reprocessing'() {
         when:
         def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY)

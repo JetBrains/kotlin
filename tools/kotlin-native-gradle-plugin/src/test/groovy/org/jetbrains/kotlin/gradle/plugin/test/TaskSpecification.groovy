@@ -34,6 +34,22 @@ class TaskSpecification extends BaseKonanSpecification {
         result.output.findAll(~/BACKEND:\s+\d+\s+msec/).size() == 1
     }
 
+    def 'Plugin should support headerFilterAdditionalSearchPrefix option for cinterop'() {
+        expect:
+        def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
+            it.addCompilerArtifact("interopLib", "headers=foo.h\nheaderFilter=foo.h bar.h", ArtifactType.INTEROP)
+            it.generateSrcFile(it.projectPath, "foo.h", "#include <bar.h>")
+            def fooDir = it.projectPath.resolve("foo")
+            it.generateSrcFile(fooDir, "bar.h", "const int foo = 5;")
+            it.addSetting("interopLib", "headerFilterAdditionalSearchPrefix", fooDir.toFile())
+            it.addSetting("interopLib", "headerFilterAdditionalSearchPrefix", it.projectDir)
+        }
+        project.createRunner().withArguments("build").build()
+        def wrong_path = project.createFile("wrong_path", "")
+        project.addSetting("interopLib", "headerFilterAdditionalSearchPrefix", wrong_path)
+        project.createRunner().withArguments("build").buildAndFail()
+    }
+
     BuildResult failOnPropertyAccess(KonanProject project, String property) {
          project.buildFile.append("""
             task testTask(type: DefaultTask) {
