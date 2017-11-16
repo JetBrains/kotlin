@@ -6,7 +6,7 @@ run {
   var i: kotlin.Int = 0
   for (key in map.keys) {
     keys[i] = key
-    values[i] = map[key]
+    values[i] = map.getValue(key)
     i++
   }
   resultArray = kotlin.arrayOf<kotlin.Any?>(keys, values)

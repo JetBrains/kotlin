@@ -1,1 +1,1 @@
-map[key]
+map.getValue(key)

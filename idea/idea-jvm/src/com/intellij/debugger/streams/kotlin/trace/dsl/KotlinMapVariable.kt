@@ -10,7 +10,7 @@ import com.intellij.debugger.streams.trace.impl.handler.type.MapType
  * @author Vitaliy.Bibaev
  */
 class KotlinMapVariable(type: MapType, name: String) : MapVariableBase(type, name) {
-  override fun get(key: Expression): Expression = TextExpression("${toCode()}[${key.toCode()}]")
+  override fun get(key: Expression): Expression = this.call("getValue", key)
 
   override fun set(key: Expression, newValue: Expression): Expression =
     TextExpression("${toCode()}[${key.toCode()}] = ${newValue.toCode()}")
