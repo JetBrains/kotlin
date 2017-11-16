@@ -75,7 +75,7 @@ private void dumpReport(String name, ByteArrayOutputStream output) {
 
 task konanRun(type: Exec) {
     def output = new ByteArrayOutputStream()
-    commandLine project.file("build/konan/bin/Ring.${gradle.startParameter.projectProperties.exe_suffix}").absolutePath, "$ringWarmup", "$iterations"
+    commandLine konanArtifacts.Ring.getByTarget('host').artifact.absolutePath, "$ringWarmup", "$iterations"
     standardOutput = output
     doLast {
         dumpReport('konanReport', output)
