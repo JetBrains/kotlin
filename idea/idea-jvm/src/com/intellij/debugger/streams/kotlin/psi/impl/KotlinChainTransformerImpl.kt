@@ -26,13 +26,13 @@ class KotlinChainTransformerImpl : ChainTransformer<KtCallExpression> {
     val qualifier = if (parent is KtDotQualifiedExpression)
       QualifierExpressionImpl(parent.receiverExpression.text, parent.receiverExpression.textRange, KotlinTypes.ANY)
     else
-      QualifierExpressionImpl("", TextRange.EMPTY_RANGE, KotlinTypes.ANY) // This possible only when this inherits Stream
+      QualifierExpressionImpl("", TextRange.EMPTY_RANGE, KotlinTypes.nullable { KotlinTypes.ANY }) // This is possible only when this inherits Stream
 
     val intermediateCalls = mutableListOf<IntermediateStreamCall>()
     for (call in callChain.subList(0, callChain.size - 1)) {
       intermediateCalls += IntermediateStreamCallImpl(call.callName(),
           call.valueArguments.map { it.toCallArgument() },
-          KotlinTypes.ANY, KotlinTypes.ANY,
+          KotlinTypes.nullable { KotlinTypes.ANY }, KotlinTypes.nullable { KotlinTypes.ANY },
           call.textRange)
     }
 
@@ -40,7 +40,7 @@ class KotlinChainTransformerImpl : ChainTransformer<KtCallExpression> {
     // TODO: infer true types
     val terminationCall = TerminatorStreamCallImpl(terminationsPsiCall.callName(),
         terminationsPsiCall.valueArguments.map { it.toCallArgument() },
-        KotlinTypes.ANY, KotlinTypes.ANY,
+        KotlinTypes.nullable { KotlinTypes.ANY }, KotlinTypes.nullable { KotlinTypes.ANY },
         terminationsPsiCall.textRange)
 
     return StreamChainImpl(qualifier, intermediateCalls, terminationCall, context)
