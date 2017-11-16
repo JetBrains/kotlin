@@ -89,10 +89,10 @@ class Future<T> internal constructor(val id: FutureId) {
     /**
      * Blocks execution until the future is ready.
      */
-    fun <R> consume(code: (T) -> R) =
+    inline fun <R> consume(code: (T) -> R) =
         when (state) {
             FutureState.SCHEDULED, FutureState.COMPUTED -> {
-                val value = @Suppress("UNCHECKED_CAST") (consumeFuture(id) as T)
+                val value = @Suppress("UNCHECKED_CAST", "NON_PUBLIC_CALL_FROM_PUBLIC_INLINE") (consumeFuture(id) as T)
                 code(value)
             }
             FutureState.INVALID ->
@@ -101,9 +101,7 @@ class Future<T> internal constructor(val id: FutureId) {
                 throw IllegalStateException("Future is cancelled")
         }
 
-    fun result(): T {
-        return consume { it -> it }
-    }
+    fun result(): T  = consume { it -> it }
 
     val state: FutureState
         get() = FutureState.values()[stateOfFuture(id)]
@@ -123,7 +121,7 @@ class Worker(val id: WorkerId) {
      * until all scheduled jobs processed, or terminate immediately.
      */
     fun requestTermination(processScheduledJobs: Boolean = true) =
-            Future<Any?>(requestTerminationInternal(id, processScheduledJobs))
+            Future<FutureId>(requestTerminationInternal(id, processScheduledJobs))
 
     /**
      * Schedule a job for further execution in the worker. Schedule is a two-phase operation,
@@ -218,6 +216,7 @@ external internal fun shallowCopyInternal(value: Any?): Any?
 external internal fun stateOfFuture(id: FutureId): Int
 
 @SymbolName("Kotlin_Worker_consumeFuture")
+@kotlin.internal.InlineExposed
 external internal fun consumeFuture(id: FutureId): Any?
 
 @SymbolName("Kotlin_Worker_waitForAnyFuture")

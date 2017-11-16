@@ -132,6 +132,8 @@ class VideoPlayer(val requestedWidth: Int, val requestedHeight: Int) {
 
                 // Interframe pause, may lead to broken A/V sync, think of better approach.
                 if (state == State.PLAYING) {
+                    // Request decoding.
+                    decoder.requestDecodeChunk()
                     if (hasVideo) {
                         if (hasAudio) {
                             // Use sound for A/V sync.
