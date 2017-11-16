@@ -612,7 +612,8 @@ class ClassFileToSourceStubConverter(
                                 val element = kaptContext.origins[method]?.element
                                 when (element) {
                                     is KtFunction -> element.typeReference
-                                    is KtProperty -> if (method.name.startsWith("get")) element.typeReference else null
+                                    is KtProperty -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
+                                    is KtParameter -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
                                     else -> null
                                 }
                             },

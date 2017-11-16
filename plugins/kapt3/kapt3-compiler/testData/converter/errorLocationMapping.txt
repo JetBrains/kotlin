@@ -48,13 +48,13 @@ public final class ErrorInConstructorParameter {
 
     @org.jetbrains.annotations.NotNull()
     @kapt.internal.KaptSignature(value = "getB()Lerror/NonExistentClass;")
-    public final error.NonExistentClass getB() {
+    public final ABC getB() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
     @kapt.internal.KaptSignature(value = "getC()Ljava/util/List;")
-    public final java.util.List<error.NonExistentClass> getC() {
+    public final java.util.List<ABC> getC() {
         return null;
     }
 

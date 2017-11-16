@@ -218,10 +218,12 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
 
             log.flush()
 
+            val lineSeparator = System.getProperty("line.separator")
+            System.err.println(actualErrors.joinToString(lineSeparator))
+
             if (expectedErrors.isEmpty()) {
                 error("There were errors during analysis. See errors above. Stubs:\n\n$actual")
             } else {
-                val lineSeparator = System.getProperty("line.separator")
                 TestCase.assertEquals("Expected error matching failed",
                                       expectedErrors.joinToString(lineSeparator),
                                       actualErrors.joinToString(lineSeparator))
