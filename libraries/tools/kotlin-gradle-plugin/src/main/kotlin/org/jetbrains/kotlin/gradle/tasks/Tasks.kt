@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
-import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
@@ -103,6 +102,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected val compileClasspath: Iterable<File>
         get() = (classpath + additionalClasspath)
                 .filterTo(LinkedHashSet(), File::exists)
+
+    @get:Classpath @get:InputFiles
+    internal val pluginClasspath get() = pluginOptions.classpath
 
     private val kotlinExt: KotlinProjectExtension
             get() = project.extensions.findByType(KotlinProjectExtension::class.java)!!
@@ -228,7 +230,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     }
 
     open fun setupPlugins(compilerArgs: T) {
-        compilerArgs.pluginClasspaths = pluginOptions.classpath.toTypedArray()
+        compilerArgs.pluginClasspaths = pluginClasspath.toTypedArray()
         compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
     }
 }
@@ -285,7 +287,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             K2JVMCompilerArguments()
 
     override fun setupPlugins(compilerArgs: K2JVMCompilerArguments) {
-        compilerArgs.pluginClasspaths = pluginOptions.classpath.toTypedArray()
+        compilerArgs.pluginClasspaths = pluginClasspath.toTypedArray()
 
         val kaptPluginOptions = getKaptPluginOptions()
         compilerArgs.pluginOptions = (pluginOptions.arguments + kaptPluginOptions.arguments).toTypedArray()
