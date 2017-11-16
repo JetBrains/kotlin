@@ -631,11 +631,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (context.needGlobalInit(declaration)) {
             val type = codegen.getLLVMType(descriptor.type)
             val globalProperty = context.llvmDeclarations.forStaticField(descriptor).storage
-            if (declaration.initializer!!.expression is IrConst<*>) {
-                LLVMSetInitializer(globalProperty, evaluateExpression(declaration.initializer!!.expression))
-            } else {
+            val initializer = declaration.initializer?.expression as? IrConst<*>
+            if (initializer != null)
+                LLVMSetInitializer(globalProperty, evaluateExpression(initializer))
+            else
                 LLVMSetInitializer(globalProperty, LLVMConstNull(type))
-            }
             context.llvm.fileInitializers.add(declaration)
 
             // (Cannot do this before the global is initialized).
