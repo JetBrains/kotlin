@@ -359,6 +359,9 @@ tables below.
             enableDebug true          // Enable debugging for binaries generated (true/false).
             noDefaultLibs true        // Don't link with default libraries
 
+            // Custom entry point
+            entryPoint 'org.demo.foo'
+
             // Arguments to be passed to a linker.
             linkerOpts 'Some linker option', 'More linker options'
 
@@ -423,6 +426,17 @@ tables below.
             headers project.files('header1.h', 'header2.h')
 
             // Directories to look for headers.
+            includeDirs {
+                // All objects accepted by the Project.file method may be used with both options.
+
+                // Directories for header search (an analogue of the -I<path> compiler option).
+                allHeaders 'path1', 'path2'
+
+                // Additional directories to search headers listed in the 'headerFilter' def-file option.
+                // -headerFilterAdditionalSearchPrefix command line option analogue.
+                headerFilterOnly 'path1', 'path2'
+            }
+            // A shortcut for includeDirs.allHeaders.
             includeDirs "include/directory" "another/directory"
 
             // Additional files to link with native stubs.
