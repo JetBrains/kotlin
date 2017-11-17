@@ -28,6 +28,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
@@ -1654,6 +1655,80 @@ compileTestKotlin {
         }
 
         assertAllModulesConfigured()
+    }
+
+    @Test
+    fun testCommonArgumentsImport() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0-rc-39")
+                }
+            }
+
+            apply plugin: 'kotlin-platform-common'
+
+            repositories {
+                mavenCentral()
+                maven {
+                    url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
+                }
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.0-rc-39"
+            }
+
+            compileKotlinCommon{
+                kotlinOptions {
+                    languageVersion = 1.1
+                    apiVersion = 1.0
+                    freeCompilerArgs += ["-cp", "my/classpath"]
+                    freeCompilerArgs += ["-d", "my/destination"]
+                }
+            }
+
+            compileTestKotlinCommon{
+                kotlinOptions {
+                    languageVersion = 1.1
+                    apiVersion = 1.0
+                    freeCompilerArgs += ["-cp", "my/test/classpath"]
+                    freeCompilerArgs += ["-d", "my/test/destination"]
+                }
+            }
+
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.Common, targetPlatformKind)
+            Assert.assertEquals("my/classpath", (compilerArguments as K2MetadataCompilerArguments).classpath)
+            Assert.assertEquals("my/destination", (compilerArguments as K2MetadataCompilerArguments).destination)
+        }
+
+        with (facetSettings("project_test")) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.Common, targetPlatformKind)
+            Assert.assertEquals("my/test/classpath", (compilerArguments as K2MetadataCompilerArguments).classpath)
+            Assert.assertEquals("my/test/destination", (compilerArguments as K2MetadataCompilerArguments).destination)
+        }
+
+        val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
+        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
+        assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
     }
 
     private fun assertAllModulesConfigured() {

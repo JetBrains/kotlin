@@ -170,6 +170,7 @@ class KotlinFacetEditorGeneralTab(
             val fieldNamesToCheck = when (platform) {
                 is TargetPlatformKind.Jvm -> jvmUIExposedFields
                 is TargetPlatformKind.JavaScript -> jsUIExposedFields
+                is TargetPlatformKind.Common-> metadataUIExposedFields
                 else -> commonUIExposedFields
             }
 
