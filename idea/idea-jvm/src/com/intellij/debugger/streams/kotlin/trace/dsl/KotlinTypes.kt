@@ -9,10 +9,15 @@ import com.intellij.debugger.streams.trace.impl.handler.type.*
  */
 object KotlinTypes : Types {
   override val ANY: GenericType = ClassTypeImpl("kotlin.Any", "kotlin.Any()")
+
+  override val BOOLEAN: GenericType = ClassTypeImpl("kotlin.Boolean", "false")
+  val BYTE: GenericType = ClassTypeImpl("kotlin.Byte", "0")
+  val SHORT: GenericType = ClassTypeImpl("kotlin.Short", "0")
+  val CHAR: GenericType = ClassTypeImpl("kotlin.Char", "0.toChar()")
   override val INT: GenericType = ClassTypeImpl("kotlin.Int", "0")
   override val LONG: GenericType = ClassTypeImpl("kotlin.Long", "0L")
-  override val BOOLEAN: GenericType = ClassTypeImpl("kotlin.Boolean", "false")
-  override val DOUBLE: GenericType = ClassTypeImpl("kotlin.Double", "0.")
+  val FLOAT: GenericType = ClassTypeImpl("kotlin.Float", "0.0f")
+  override val DOUBLE: GenericType = ClassTypeImpl("kotlin.Double", "0.0")
   override val STRING: GenericType = ClassTypeImpl("kotlin.String", "\"\"")
   override val EXCEPTION: GenericType = ClassTypeImpl("kotlin.Throwable", "kotlin.Throwable()")
   override val VOID: GenericType = ClassTypeImpl("kotlin.Unit", "Unit")
@@ -27,8 +32,12 @@ object KotlinTypes : Types {
 
   override fun array(elementType: GenericType): ArrayType = when (elementType) {
     BOOLEAN -> ArrayTypeImpl(BOOLEAN, { "kotlin.BooleanArray" }, { "kotlin.BooleanArray($it)" })
+    BYTE -> ArrayTypeImpl(BYTE, { "kotlin.ByteArray" }, { "kotlin.ByteArray($it)" })
+    SHORT -> ArrayTypeImpl(SHORT, { "kotlin.ShortArray" }, { "kotlin.ShortArray($it)" })
+    CHAR -> ArrayTypeImpl(CHAR, { "kotlin.CharArray" }, { "kotlin.CharArray($it)" })
     INT -> ArrayTypeImpl(INT, { "kotlin.IntArray" }, { "kotlin.IntArray($it)" })
     LONG -> ArrayTypeImpl(LONG, { "kotlin.LongArray" }, { "kotlin.LongArray($it)" })
+    FLOAT -> ArrayTypeImpl(FLOAT, { "kotlin.FloatArray" }, { "kotlin.FloatArray($it)" })
     DOUBLE -> ArrayTypeImpl(DOUBLE, { "kotlin.DoubleArray" }, { "kotlin.DoubleArray($it)" })
     else -> ArrayTypeImpl(nullable { elementType }, { "kotlin.Array<$it>" },
         { "kotlin.arrayOfNulls<${elementType.genericTypeName}>($it)" })
