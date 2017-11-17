@@ -67,6 +67,9 @@ fun KotlinFacetSettings.initializeIfNeeded(
 ) {
     val project = module.project
 
+    val shouldInferLanguageLevel = languageLevel == null
+    val shouldInferAPILevel = apiLevel == null
+
     if (compilerSettings == null) {
         compilerSettings = KotlinCompilerSettings.getInstance(project).settings
     }
@@ -81,12 +84,12 @@ fun KotlinFacetSettings.initializeIfNeeded(
         }
     }
 
-    if (languageLevel == null) {
+    if (shouldInferLanguageLevel) {
         languageLevel = (if (useProjectSettings) LanguageVersion.fromVersionString(commonArguments.languageVersion) else null)
                         ?: getDefaultLanguageLevel(module)
     }
 
-    if (apiLevel == null) {
+    if (shouldInferAPILevel) {
         apiLevel = if (useProjectSettings) {
             LanguageVersion.fromVersionString(commonArguments.apiVersion) ?: languageLevel
         }
