@@ -133,7 +133,16 @@ private class LldbSessionSpecification private constructor(
                 && commands.zip(executedCommands).all { (cmd, h) -> h == "(lldb) $cmd" }
 
         if (!responsesMatch) {
-            fail("Responses do not match commands.\nResponses: $executedCommands\nCommands: $commands")
+            val message = """
+Responses do not match commands.
+
+COMMANDS: $commands
+RESPONSES: $executedCommands
+
+FULL SESSION:
+$output
+"""
+            fail(message)
         }
 
         for ((patternBody, command) in patterns.zip(bodies).zip(executedCommands)) {
