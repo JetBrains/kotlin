@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.dce.DeadCodeElimination
 import org.jetbrains.kotlin.js.dce.InputFile
+import org.jetbrains.kotlin.js.dce.InputResource
 import org.jetbrains.kotlin.js.facade.*
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
@@ -549,12 +550,12 @@ abstract class BasicBoxTest(
         val kotlinJsLibOutput = File(workDir, "kotlin.min.js").path
         val kotlinTestJsLibOutput = File(workDir, "kotlin-test.min.js").path
 
-        val kotlinJsInputFile = InputFile(kotlinJsLib, null, kotlinJsLibOutput, "kotlin")
-        val kotlinTestJsInputFile = InputFile(kotlinTestJsLib, null, kotlinTestJsLibOutput, "kotlin-test")
+        val kotlinJsInputFile = InputFile(InputResource.file(kotlinJsLib), null, kotlinJsLibOutput, "kotlin")
+        val kotlinTestJsInputFile = InputFile(InputResource.file(kotlinTestJsLib), null, kotlinTestJsLibOutput, "kotlin-test")
 
         val filesToMinify = generatedJsFiles.associate { (fileName, module) ->
             val inputFileName = File(fileName).nameWithoutExtension
-            fileName to InputFile(fileName, null, File(workDir, inputFileName + ".min.js").absolutePath, module.name)
+            fileName to InputFile(InputResource.file(fileName), null, File(workDir, inputFileName + ".min.js").absolutePath, module.name)
         }
 
         val testFunctionFqn = testModuleName + (if (testPackage.isNullOrEmpty()) "" else ".$testPackage") + ".$testFunction"

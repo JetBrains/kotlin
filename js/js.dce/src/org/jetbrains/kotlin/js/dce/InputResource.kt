@@ -16,4 +16,18 @@
 
 package org.jetbrains.kotlin.js.dce
 
-class InputFile(val resource: InputResource, val sourceMapResource: InputResource?, val outputPath: String, val moduleName: String? = null)
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
+import java.util.zip.ZipFile
+
+class InputResource(val name: String, val reader: () -> InputStream) {
+    companion object {
+        fun file(path: String): InputResource = InputResource(path) { FileInputStream(File(path)) }
+
+        fun zipFile(path: String, entryPath: String): InputResource = InputResource("$path!$entryPath") {
+            val zipFile = ZipFile(path)
+            zipFile.getInputStream(zipFile.getEntry(entryPath))
+        }
+    }
+}
