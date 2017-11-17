@@ -582,9 +582,9 @@ class ExpressionCodegen(
             }
 
             IrTypeOperator.IMPLICIT_NOTNULL -> {
-                gen(expression.argument, OBJECT_TYPE, data)
+                gen(expression.argument, asmType, data)
                 mv.dup()
-                mv.visitLdcInsn("TODO provide message") /*TODO*/
+                mv.visitLdcInsn("TODO provide message for IMPLICIT_NOTNULL") /*TODO*/
                 mv.invokestatic("kotlin/jvm/internal/Intrinsics", "checkExpressionValueIsNotNull",
                                "(Ljava/lang/Object;Ljava/lang/String;)V", false)
             }
