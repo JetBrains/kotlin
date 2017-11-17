@@ -85,13 +85,13 @@ fun Type.wasmReturnMapping(value: String): String {
 }
 
 fun wasmFunctionName(functionName: String, interfaceName: String)
-    = "knjs_${interfaceName}_$functionName"
+    = "knjs__${interfaceName}_$functionName"
 
 fun wasmSetterName(propertyName: String, interfaceName: String)
-    = "knjs_${interfaceName}_set_$propertyName"
+    = "knjs_set__${interfaceName}_$propertyName"
 
 fun wasmGetterName(propertyName: String, interfaceName: String)
-    = "knjs_${interfaceName}_get_$propertyName"
+    = "knjs_get__${interfaceName}_$propertyName"
 
 val Operation.kotlinTypeParameters: String get() {
     val lambdaRetTypes = args.filter { it.type is Function }
