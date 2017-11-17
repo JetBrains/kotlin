@@ -58,6 +58,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
             fileBasedIndex.requestRebuild(KotlinMetadataFileIndex.KEY)
             fileBasedIndex.requestRebuild(KotlinMetadataFilePackageIndex.KEY)
             fileBasedIndex.requestRebuild(KotlinModuleMappingIndex.KEY)
+            fileBasedIndex.requestRebuild(KotlinPackageSourcesMemberNamesIndex.KEY)
 
             PropertiesComponent.getInstance()?.setValue(INSTALLED_KOTLIN_VERSION, KotlinPluginUtil.getPluginVersion())
         }
