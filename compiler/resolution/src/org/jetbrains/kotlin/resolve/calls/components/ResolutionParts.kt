@@ -140,7 +140,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             return
         }
 
-        val typeParameters = candidateDescriptor.typeParameters
+        val typeParameters = candidateDescriptor.original.typeParameters
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
             val freshVariable = toFreshVariables.freshVariables[index]
