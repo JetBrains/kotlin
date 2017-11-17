@@ -38,7 +38,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform"
 
-    override fun getNodeIcon() = KotlinIcons.SMALL_LOGO
+    override fun getNodeIcon() = KotlinIcons.MPP
 
     override fun getPresentableName() = "Kotlin (Multiplatform - Experimental)"
 
