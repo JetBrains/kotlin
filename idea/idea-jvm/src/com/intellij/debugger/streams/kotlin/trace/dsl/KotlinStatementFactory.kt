@@ -84,8 +84,12 @@ class KotlinStatementFactory(private val peekCallFactory: PeekCallFactory) : Sta
     val arguments = args.joinToString { it.toCode() }
     val text = when (elementType) {
       types.BOOLEAN -> "kotlin.booleanArrayOf($arguments)"
+      KotlinTypes.BYTE -> "kotlin.byteArrayOf($arguments)"
+      KotlinTypes.SHORT -> "kotlin.shortArrayOf($arguments)"
+      KotlinTypes.CHAR -> "kotlin.charArrayOf($arguments)"
       types.INT -> "kotlin.intArrayOf($arguments)"
       types.LONG -> "kotlin.longArrayOf($arguments)"
+      KotlinTypes.FLOAT -> "kotlin.floatArrayOf($arguments)"
       types.DOUBLE -> "kotlin.doubleArrayOf($arguments)"
       else -> "kotlin.arrayOf<${types.nullable { elementType }.genericTypeName}>($arguments)"
     }
