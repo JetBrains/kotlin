@@ -60,7 +60,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
         val toHighlight = valueStatement.toHighlight()
         return when {
             valueStatement !is KtReturnExpression -> Status(toHighlight, "block body", INFORMATION)
-            valueStatement.returnedExpression is KtWhenExpression -> Status(toHighlight, "'return when'", GENERIC_ERROR_OR_WARNING)
+            valueStatement.returnedExpression is KtWhenExpression -> Status(toHighlight, "'return when'", INFORMATION)
             valueStatement.isOneLiner() -> Status(toHighlight, "one-line return", GENERIC_ERROR_OR_WARNING)
             else -> Status(toHighlight, "return", INFORMATION)
         }
