@@ -30,3 +30,5 @@ sourcesJar()
 javadocJar()
 
 dist()
+
+publish()
