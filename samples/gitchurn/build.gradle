@@ -5,11 +5,11 @@ konan.targets = ['macbook', 'linux']
 konanArtifacts {
     interop('libgit2') {
         target('linux') {
-            headerFilterAdditionalSearchPrefix '/usr/include'
+            includeDirs.headerFilterOnly '/usr/include'
         }
 
         target('macbook') {
-            headerFilterAdditionalSearchPrefixes '/opt/local/include', '/usr/local/include'
+            includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
         }
     }
 

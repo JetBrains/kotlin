@@ -69,6 +69,14 @@ interface KonanCompileSpec: KonanBuildingSpec {
 
 interface KonanInteropSpec: KonanBuildingSpec {
 
+    interface IncludeDirectoriesSpec {
+        fun allHeaders(vararg includeDirs: Any)
+        fun allHeaders(includeDirs: Collection<Any>)
+
+        fun headerFilterOnly(vararg includeDirs: Any)
+        fun headerFilterOnly(includeDirs: Collection<Any>)
+    }
+
     fun defFile(file: Any)
 
     fun packageName(value: String)
@@ -81,13 +89,13 @@ interface KonanInteropSpec: KonanBuildingSpec {
 
     fun includeDirs(vararg values: Any)
 
+    fun includeDirs(closure: Closure<Unit>)
+    fun includeDirs(action: Action<IncludeDirectoriesSpec>)
+    fun includeDirs(configure: IncludeDirectoriesSpec.() -> Unit)
+
     fun linkerOpts(vararg values: String)
     fun linkerOpts(values: List<String>)
 
     fun link(vararg files: Any)
     fun link(files: FileCollection)
-
-    fun headerFilterAdditionalSearchPrefix(path: Any)
-    fun headerFilterAdditionalSearchPrefixes(vararg paths: Any)
-    fun headerFilterAdditionalSearchPrefixes(paths: Collection<Any>)
 }

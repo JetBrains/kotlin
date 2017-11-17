@@ -187,22 +187,23 @@ class IncrementalSpecification extends BaseKonanSpecification {
         recompilationAndInteropProcessingHappened(*results)
 
         where:
-        parameter            | value
-        "packageName"        | "'org.sample'"
-        "compilerOpts"       | "'-g'"
-        "linkerOpts"         | "'--help'"
-        "includeDirs"        | "'src'"
-        "extraOpts"          | "'-shims', 'false'"
-        "noDefaultLibs"      | "true"
+        parameter                | value
+        "packageName"            | "'org.sample'"
+        "compilerOpts"           | "'-g'"
+        "linkerOpts"             | "'--help'"
+        "includeDirs"            | "'src'"
+        "includeDirs.allHeaders" | "'src'"
+        "extraOpts"              | "'-shims', 'false'"
+        "noDefaultLibs"          | "true"
     }
 
-    def 'headerFilterAdditionalSearchPrefix change should cause recompilation and interop reprocessing'() {
+    def 'includeDirs.headerFilterOnly change should cause recompilation and interop reprocessing'() {
         when:
         def project = KonanProject.createWithInterop(projectDirectory) { KonanProject it ->
             it.defFiles.first().write("headers = stdio.h\nheaderFilter = stdio.h")
         }
         def results = buildTwice(project) { KonanProject it ->
-            it.addSetting(KonanProject.DEFAULT_INTEROP_NAME, "headerFilterAdditionalSearchPrefix", "'.'")
+            it.addSetting(KonanProject.DEFAULT_INTEROP_NAME, "includeDirs.headerFilterOnly", "'.'")
         }
 
         then:

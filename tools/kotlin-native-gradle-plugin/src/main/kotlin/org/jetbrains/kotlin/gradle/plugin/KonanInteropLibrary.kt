@@ -16,11 +16,15 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
+import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
+import org.jetbrains.kotlin.gradle.plugin.KonanInteropSpec.IncludeDirectoriesSpec
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -41,6 +45,20 @@ open class KonanInteropLibrary(name: String, project: ProjectInternal, instantia
 
     // DSL
 
+    inner class IncludeDirectoriesSpecImpl: IncludeDirectoriesSpec {
+        override fun allHeaders(vararg includeDirs: Any) = allHeaders(includeDirs.toList())
+        override fun allHeaders(includeDirs: Collection<Any>) = forEach {
+            it.includeDirs.allHeaders(includeDirs)
+        }
+
+        override fun headerFilterOnly(vararg includeDirs: Any) = headerFilterOnly(includeDirs.toList())
+        override fun headerFilterOnly(includeDirs: Collection<Any>) = forEach {
+            it.includeDirs.headerFilterOnly(includeDirs)
+        }
+    }
+
+    val includeDirs = IncludeDirectoriesSpecImpl()
+
     override fun defFile(file: Any) = forEach { it.defFile(file) }
 
     override fun packageName(value: String) = forEach { it.packageName(value) }
@@ -52,20 +70,14 @@ open class KonanInteropLibrary(name: String, project: ProjectInternal, instantia
     override fun headers(files: FileCollection) = forEach { it.headers(files) }
 
     override fun includeDirs(vararg values: Any) = forEach { it.includeDirs(*values) }
+    override fun includeDirs(closure: Closure<Unit>) = includeDirs(ConfigureUtil.configureUsing(closure))
+    override fun includeDirs(action: Action<IncludeDirectoriesSpec>) = includeDirs { action.execute(this) }
+    override fun includeDirs(configure: IncludeDirectoriesSpec.() -> Unit) = includeDirs.configure()
 
     override fun linkerOpts(values: List<String>) = forEach { it.linkerOpts(values) }
     override fun linkerOpts(vararg values: String) = linkerOpts(values.toList())
 
     override fun link(vararg files: Any) = forEach { it.link(*files) }
     override fun link(files: FileCollection) = forEach { it.link(files) }
-
-    override fun headerFilterAdditionalSearchPrefix(path: Any) =
-            forEach { it.headerFilterAdditionalSearchPrefix(path) }
-
-    override fun headerFilterAdditionalSearchPrefixes(vararg paths: Any) =
-            headerFilterAdditionalSearchPrefixes(paths.toList())
-
-    override fun headerFilterAdditionalSearchPrefixes(paths: Collection<Any>) =
-            forEach { it.headerFilterAdditionalSearchPrefix(paths) }
 
 }

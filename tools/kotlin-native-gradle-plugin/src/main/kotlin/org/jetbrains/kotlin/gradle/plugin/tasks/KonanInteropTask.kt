@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.tasks
 
-import org.gradle.api.InvalidUserDataException
+import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
+import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KonanInteropSpec.IncludeDirectoriesSpec
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -49,10 +52,10 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
     @Input val compilerOpts   = mutableListOf<String>()
     @Input val linkerOpts     = mutableListOf<String>()
 
+    @Nested val includeDirs = IncludeDirectoriesSpecImpl()
+
     @InputFiles val headers   = mutableSetOf<FileCollection>()
     @InputFiles val linkFiles = mutableSetOf<FileCollection>()
-
-    @Input val headerFilterAdditionalSearchDirectories = mutableSetOf<File>()
 
     override fun buildArgs() = mutableListOf<String>().apply {
         addArg("-properties", "${project.konanHome}/konan/konan.properties")
@@ -77,6 +80,9 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
             addArg("-lopt", it)
         }
 
+        addArgs("-copt", includeDirs.allHeadersDirs.map { "-I${it.absolutePath}" })
+        addArgs("-headerFilterAdditionalSearchPrefix", includeDirs.headerFilterDirs.map { it.absolutePath })
+
         addArgs("-repo", libraries.repos.map { it.canonicalPath })
 
         addFileArgs("-library", libraries.files)
@@ -85,19 +91,25 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
 
         addKey("-nodefaultlibs", noDefaultLibs)
 
-        addArgs("-headerFilterAdditionalSearchPrefix",
-                headerFilterAdditionalSearchDirectories.map {
-                    if (!it.isDirectory) {
-                        throw InvalidUserDataException("headerFilterAdditionalSearchPrefix must be a directory: $it")
-                    }
-                    it.absolutePath
-                }
-        )
-
         addAll(extraOpts)
     }
 
     // region DSL.
+
+    inner class IncludeDirectoriesSpecImpl: IncludeDirectoriesSpec {
+        @Input val allHeadersDirs = mutableSetOf<File>()
+        @Input val headerFilterDirs = mutableSetOf<File>()
+
+        override fun allHeaders(vararg includeDirs: Any) = allHeaders(includeDirs.toList())
+        override fun allHeaders(includeDirs: Collection<Any>) {
+            allHeadersDirs.addAll(includeDirs.map { project.file(it) })
+        }
+
+        override fun headerFilterOnly(vararg includeDirs: Any) = headerFilterOnly(includeDirs.toList())
+        override fun headerFilterOnly(includeDirs: Collection<Any>) {
+            headerFilterDirs.addAll(includeDirs.map { project.file(it) })
+        }
+    }
 
     override fun defFile(file: Any) {
         defFile = project.file(file)
@@ -119,9 +131,11 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
         headers.add(files)
     }
 
-    override fun includeDirs(vararg values: Any) {
-        compilerOpts.addAll(values.map { "-I${project.file(it).canonicalPath}" })
-    }
+    override fun includeDirs(vararg values: Any) = includeDirs.allHeaders(values.toList())
+
+    override fun includeDirs(closure: Closure<Unit>) = includeDirs(ConfigureUtil.configureUsing(closure))
+    override fun includeDirs(action: Action<IncludeDirectoriesSpec>) = includeDirs { action.execute(this) }
+    override fun includeDirs(configure: IncludeDirectoriesSpec.() -> Unit) = includeDirs.configure()
 
     override fun linkerOpts(vararg values: String) = linkerOpts(values.toList())
     override fun linkerOpts(values: List<String>) {
@@ -133,17 +147,6 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
     }
     override fun link(files: FileCollection) {
         linkFiles.add(files)
-    }
-
-    override fun headerFilterAdditionalSearchPrefix(path: Any) {
-        headerFilterAdditionalSearchDirectories.add(project.file(path))
-    }
-
-    override fun headerFilterAdditionalSearchPrefixes(vararg paths: Any) =
-            headerFilterAdditionalSearchPrefixes(paths.toList())
-
-    override fun headerFilterAdditionalSearchPrefixes(paths: Collection<Any>) = paths.forEach {
-        headerFilterAdditionalSearchPrefix(it)
     }
 
     // endregion

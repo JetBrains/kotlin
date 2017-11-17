@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
+import spock.lang.Unroll
 
 class TaskSpecification extends BaseKonanSpecification {
 
@@ -34,20 +35,24 @@ class TaskSpecification extends BaseKonanSpecification {
         result.output.findAll(~/BACKEND:\s+\d+\s+msec/).size() == 1
     }
 
-    def 'Plugin should support headerFilterAdditionalSearchPrefix option for cinterop'() {
+    @Unroll('Plugin should support #option option for cinterop')
+    def 'Plugin should support includeDir option for cinterop'() {
         expect:
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
-            it.addCompilerArtifact("interopLib", "headers=foo.h\nheaderFilter=foo.h bar.h", ArtifactType.INTEROP)
+            it.addCompilerArtifact("interopLib", "headers=foo.h\n$headerFilter", ArtifactType.INTEROP)
             it.generateSrcFile(it.projectPath, "foo.h", "#include <bar.h>")
             def fooDir = it.projectPath.resolve("foo")
             it.generateSrcFile(fooDir, "bar.h", "const int foo = 5;")
-            it.addSetting("interopLib", "headerFilterAdditionalSearchPrefix", fooDir.toFile())
-            it.addSetting("interopLib", "headerFilterAdditionalSearchPrefix", it.projectDir)
+            it.addSetting("interopLib", option, fooDir.toFile())
+            it.addSetting("interopLib", option, it.projectDir)
         }
         project.createRunner().withArguments("build").build()
-        def wrong_path = project.createFile("wrong_path", "")
-        project.addSetting("interopLib", "headerFilterAdditionalSearchPrefix", wrong_path)
-        project.createRunner().withArguments("build").buildAndFail()
+
+        where:
+        option                         | headerFilter
+        "includeDirs.headerFilterOnly" | "headerFilter=foo.h bar.h"
+        "includeDirs.allHeaders"       | ""
+        "includeDirs"                  | ""
     }
 
     BuildResult failOnPropertyAccess(KonanProject project, String property) {

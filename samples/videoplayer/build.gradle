@@ -7,11 +7,11 @@ konanArtifacts {
         defFile 'src/main/c_interop/ffmpeg.def'
 
         target 'linux', {
-            headerFilterAdditionalSearchPrefixes '/usr/include', '/usr/include/x86_64-linux-gnu'
+            includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
         }
 
         target 'macbook', {
-            headerFilterAdditionalSearchPrefixes '/opt/local/include', '/usr/local/include'
+            includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
         }
 
         target 'mingw', {
