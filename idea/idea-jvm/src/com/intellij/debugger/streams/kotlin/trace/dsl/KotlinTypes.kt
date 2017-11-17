@@ -17,6 +17,8 @@ object KotlinTypes : Types {
   override val EXCEPTION: GenericType = ClassTypeImpl("kotlin.Throwable", "kotlin.Throwable()")
   override val VOID: GenericType = ClassTypeImpl("kotlin.Unit", "Unit")
 
+  val NULLABLE_ANY: GenericType = nullable { ANY }
+
   override val TIME: GenericType = ClassTypeImpl("java.util.concurrent.atomic.AtomicInteger",
       "java.util.concurrent.atomic.AtomicInteger()")
 
