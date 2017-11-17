@@ -112,39 +112,39 @@ fun Operation.generateKotlin(parent: Interface): String {
     val wasmArgList = (parent.wasmReceiverArgs + args.map{it.wasmMapping()} + parent.wasmReturnArg()).joinToString(",")
 
     // TODO: there can be multiple Rs.
-    return "\tfun $kotlinTypeParameters $name(" + 
+    return "  fun $kotlinTypeParameters $name(" + 
     argList + 
     "): ${returnType.toKotlinType()} {\n" +
 
-    "\t\t${if (returnType != Void) "val wasmRetVal = " else ""}${wasmFunctionName(name, parent.name)}($wasmArgList)\n" +
+    "    ${if (returnType != Void) "val wasmRetVal = " else ""}${wasmFunctionName(name, parent.name)}($wasmArgList)\n" +
 
-    "\t\treturn ${returnType.wasmReturnMapping("wasmRetVal")}\n"+
-    "\t}\n"
+    "    return ${returnType.wasmReturnMapping("wasmRetVal")}\n"+
+    "  }\n"
 }
 
 fun Attribute.generateKotlinSetter(parent: Interface): String {
     val kotlinType = type.toKotlinType(name)
-    return "\t\tset(value: $kotlinType) {\n" +
-    "\t\t\t${wasmSetterName(name, parent.name)}(" +
+    return "    set(value: $kotlinType) {\n" +
+    "      ${wasmSetterName(name, parent.name)}(" +
         (parent.wasmReceiverArgs + Arg("value", type).wasmMapping()).joinToString(", ") + 
         ")\n" + 
-    "\t\t}\n"
+    "    }\n"
 }
 
 fun Attribute.generateKotlinGetter(parent: Interface): String {
     //val kotlinType = type.toKotlinType()
-    return "\t\tget() {\n" +
-    "\t\t\tval wasmRetVal = ${wasmGetterName(name, parent.name)}(${(parent.wasmReceiverArgs + parent.wasmReturnArg()).joinToString(", ")})\n" + 
-    "\t\t\treturn ${type.wasmReturnMapping("wasmRetVal")}\n"+
-    "\t\t}\n" +
-    "\t\n"
+    return "    get() {\n" +
+    "      val wasmRetVal = ${wasmGetterName(name, parent.name)}(${(parent.wasmReceiverArgs + parent.wasmReturnArg()).joinToString(", ")})\n" + 
+    "      return ${type.wasmReturnMapping("wasmRetVal")}\n"+
+    "    }\n" +
+    "  \n"
 }
 
 fun Attribute.generateKotlin(parent: Interface): String {
     val kotlinType = type.toKotlinType(name)
-    return "\tvar $name: $kotlinType\n" +
-    (if (hasGetter) generateKotlinGetter(parent) else "\t\tget() = error(\"There is no getter for $name\")\n") + 
-    (if (hasSetter) generateKotlinSetter(parent) else "\t\tset(_) = error(\"There is no setter for $name\")\n")
+    return "  var $name: $kotlinType\n" +
+    (if (hasGetter) generateKotlinGetter(parent) else "    get() = error(\"There is no getter for $name\")\n") + 
+    (if (hasSetter) generateKotlinSetter(parent) else "    set(_) = error(\"There is no setter for $name\")\n")
 }
 
 val Interface.wasmTypedReceiverArgs get() = 
@@ -218,16 +218,16 @@ fun Interface.generateKotlinMembers() =
 
 fun Interface.generateKotlinClassHeader() =
     "open class $name(arena: Int, index: Int): JsValue(arena, index) {\n" +
-    "\tconstructor(jsValue: JsValue): this(jsValue.arena, jsValue.index)\n"
+    "  constructor(jsValue: JsValue): this(jsValue.arena, jsValue.index)\n"
     
 fun Interface.generateKotlinClassFooter() =
     "}\n"
 
 fun Interface.generateKotlinClassConverter() =
     "val JsValue.as$name: $name\n" +
-    "\tget() {\n" +
-    "\t\treturn $name(this.arena, this.index)\n"+
-    "\t}\n"
+    "  get() {\n" +
+    "    return $name(this.arena, this.index)\n"+
+    "  }\n"
 
 fun Interface.generateKotlin(): String {
 
@@ -256,9 +256,9 @@ fun Arg.composeWasmArgs(): String {
         is Void -> error("An arg can not be Void")
         is Integer -> ""
         is Floating -> ""
-        is idlString -> "\t\t$name = toUTF16String(${name}Ptr, ${name}Len);\n"
+        is idlString -> "    $name = toUTF16String(${name}Ptr, ${name}Len);\n"
         is Object -> TODO("implement me")
-        is Function -> "\t\t$name = konan_dependencies.env.Konan_js_wrapLambda(lambdaResultArena, ${name}Index);\n"
+        is Function -> "    $name = konan_dependencies.env.Konan_js_wrapLambda(lambdaResultArena, ${name}Index);\n"
 
         is InterfaceRef -> TODO("Implement me")
         else -> error("Unexpected type")
@@ -274,11 +274,11 @@ fun Operation.generateJs(parent: Interface): String {
     val argList = args.map { it.name }. joinToString(", ")
     val composedArgsList = args.map { it.composeWasmArgs() }. joinToString("")
 
-    return "\n\t${wasmFunctionName(this.name, parent.name)}: function($wasmMapping) {\n" +
+    return "\n  ${wasmFunctionName(this.name, parent.name)}: function($wasmMapping) {\n" +
         composedArgsList +
-        "\t\tvar result = ${parent.receiver}$name($argList);\n" +
-        (if (returnType == Void) "" else  "\t\treturn toArena(resultArena, result);\n") +
-    "\t}"
+        "    var result = ${parent.receiver}$name($argList);\n" +
+        (if (returnType == Void) "" else  "    return toArena(resultArena, result);\n") +
+    "  }"
 }
 
 val Interface.wasmReceiverArgName get() =
@@ -294,19 +294,19 @@ fun Attribute.generateJsSetter(parent: Interface): String {
     val valueArg = Arg("value", type)
     val allArgs = parent.wasmReceiverArgName + valueArg.wasmArgNames()
     val wasmMapping = allArgs.joinToString(", ")
-    return "\n\t${wasmSetterName(name, parent.name)}: function($wasmMapping) {\n" +
+    return "\n  ${wasmSetterName(name, parent.name)}: function($wasmMapping) {\n" +
         valueArg.composeWasmArgs() +
-        "\t\t${parent.receiver}$name = value;\n" +
-    "\t}"
+        "    ${parent.receiver}$name = value;\n" +
+    "  }"
 }
 
 fun Attribute.generateJsGetter(parent: Interface): String {
     val allArgs = parent.wasmReceiverArgName + wasmReturnArgName
     val wasmMapping = allArgs.joinToString(", ")
-    return "\n\t${wasmGetterName(name, parent.name)}: function($wasmMapping) {\n" +
-        "\t\tvar result = ${parent.receiver}$name;\n" +
-        "\t\treturn toArena(resultArena, result);\n" +
-    "\t}"
+    return "\n  ${wasmGetterName(name, parent.name)}: function($wasmMapping) {\n" +
+        "    var result = ${parent.receiver}$name;\n" +
+        "    return toArena(resultArena, result);\n" +
+    "  }"
 }
 
 fun Attribute.generateJs(parent: Interface) =
