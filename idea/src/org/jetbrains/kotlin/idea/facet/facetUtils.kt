@@ -252,10 +252,16 @@ private val jsSpecificUIExposedFields = listOf(K2JSCompilerArguments::sourceMap.
 val jsUIExposedFields = commonUIExposedFields + jsSpecificUIExposedFields
 private val jsPrimaryFields = commonPrimaryFields + jsSpecificUIExposedFields
 
+private val metadataSpecificUIExposedFields = listOf(K2MetadataCompilerArguments::destination.name,
+                                                     K2MetadataCompilerArguments::classpath.name)
+val metadataUIExposedFields = commonUIExposedFields + metadataSpecificUIExposedFields
+private val metadataPrimaryFields = commonPrimaryFields + metadataSpecificUIExposedFields
+
 private val CommonCompilerArguments.primaryFields: List<String>
     get() = when (this) {
         is K2JVMCompilerArguments -> jvmPrimaryFields
         is K2JSCompilerArguments -> jsPrimaryFields
+        is K2MetadataCompilerArguments -> metadataPrimaryFields
         else -> commonPrimaryFields
     }
 
