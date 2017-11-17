@@ -138,7 +138,7 @@ open class GradleKotlinJSFrameworkSupportProvider(frameworkTypeId: String = "KOT
 }
 
 open class GradleKotlinMPPCommonFrameworkSupportProvider :
-        GradleKotlinFrameworkSupportProvider("KOTLIN_MPP_COMMON", "Kotlin (Multiplatform Common - Experimental)", KotlinIcons.SMALL_LOGO) {
+        GradleKotlinFrameworkSupportProvider("KOTLIN_MPP_COMMON", "Kotlin (Multiplatform Common - Experimental)", KotlinIcons.MPP) {
     override fun getPluginId() = "kotlin-platform-common"
 
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_COMMON_STDLIB_ID)
