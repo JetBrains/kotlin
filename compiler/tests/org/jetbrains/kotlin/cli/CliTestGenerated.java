@@ -800,12 +800,6 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsDceTest(fileName);
         }
 
-        @TestMetadata("overrideOutputName.args")
-        public void testOverrideOutputName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/overrideOutputName.args");
-            doJsDceTest(fileName);
-        }
-
         @TestMetadata("parseError.args")
         public void testParseError() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/parseError.args");
