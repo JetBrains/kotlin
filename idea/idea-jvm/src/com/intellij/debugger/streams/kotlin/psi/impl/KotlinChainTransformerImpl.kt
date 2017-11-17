@@ -3,7 +3,7 @@ package com.intellij.debugger.streams.kotlin.psi.impl
 
 import com.intellij.debugger.streams.kotlin.psi.callName
 import com.intellij.debugger.streams.kotlin.psi.resolveType
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
+import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.NULLABLE_ANY
 import com.intellij.debugger.streams.psi.ChainTransformer
 import com.intellij.debugger.streams.wrapper.CallArgument
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
@@ -28,24 +28,21 @@ class KotlinChainTransformerImpl : ChainTransformer<KtCallExpression> {
     val firstCall = callChain.first()
     val parent = firstCall.parent
     val qualifier = if (parent is KtDotQualifiedExpression)
-      QualifierExpressionImpl(parent.receiverExpression.text, parent.receiverExpression.textRange, KotlinTypes.ANY)
+      QualifierExpressionImpl(parent.receiverExpression.text, parent.receiverExpression.textRange, NULLABLE_ANY)
     else
-      QualifierExpressionImpl("", TextRange.EMPTY_RANGE, KotlinTypes.nullable { KotlinTypes.ANY }) // This is possible only when this inherits Stream
+      QualifierExpressionImpl("", TextRange.EMPTY_RANGE, NULLABLE_ANY) // This is possible only when this inherits Stream
 
     val intermediateCalls = mutableListOf<IntermediateStreamCall>()
     for (call in callChain.subList(0, callChain.size - 1)) {
       intermediateCalls += IntermediateStreamCallImpl(call.callName(),
-          call.valueArguments.map { createCallArgument(call, it) },
-          KotlinTypes.nullable { KotlinTypes.ANY }, KotlinTypes.nullable { KotlinTypes.ANY },
-          call.textRange)
+          call.valueArguments.map { createCallArgument(call, it) }, NULLABLE_ANY, NULLABLE_ANY, call.textRange)
     }
 
     val terminationsPsiCall = callChain.last()
     // TODO: infer true types
     val terminationCall = TerminatorStreamCallImpl(terminationsPsiCall.callName(),
         terminationsPsiCall.valueArguments.map { createCallArgument(terminationsPsiCall, it) },
-        KotlinTypes.nullable { KotlinTypes.ANY }, KotlinTypes.nullable { KotlinTypes.ANY },
-        terminationsPsiCall.textRange)
+        NULLABLE_ANY, NULLABLE_ANY, terminationsPsiCall.textRange)
 
     return StreamChainImpl(qualifier, intermediateCalls, terminationCall, context)
   }
