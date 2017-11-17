@@ -17,7 +17,7 @@ apply plugin: 'com.jfrog.bintray'
 
 def versionMapping = [
        'kotlin-script-runtime' : kotlinScriptRuntimeVersion,
-       'kotlin-compiler'       : kotlinVersion,
+       'kotlin-compiler'       : kotlinCompilerVersion,
        'kotlin-stdlib'         : kotlinStdLibVersion,
        'kotlin-reflect'        : kotlinReflectVersion,
        'kotlin-stdlib-jre8'    : kotlinStdLibJdk8Version

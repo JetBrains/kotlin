@@ -61,7 +61,7 @@ task pluginMetadata {
 
 dependencies {
     compile project(':shared')
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile gradleApi()
 
     testCompile gradleTestKit()
@@ -103,7 +103,7 @@ publishing {
                 def stdlibDep = xml.asNode().appendNode("dependencies").appendNode("dependency")
                 stdlibDep.appendNode("groupId", "org.jetbrains.kotlin")
                 stdlibDep.appendNode("artifactId", "kotlin-stdlib")
-                stdlibDep.appendNode("version", "$kotlin_version")
+                stdlibDep.appendNode("version", "$buildKotlinVersion")
             }
         }
     }

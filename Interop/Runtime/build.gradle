@@ -44,8 +44,8 @@ model {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$buildKotlinVersion"
 }
 
 sourceSets.main.kotlin.srcDirs += "src/jvm/kotlin"

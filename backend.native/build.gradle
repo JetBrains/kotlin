@@ -145,7 +145,7 @@ dependencies {
     compilerCompile kotlinNativeInterop['hash'].configuration
     compilerCompile project(':shared')
 
-    cli_bcCompile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
+    cli_bcCompile "org.jetbrains.kotlin:kotlin-runtime:$buildKotlinVersion"
     cli_bcCompile project(':shared')
     cli_bcCompile sourceSets.compiler.output
 

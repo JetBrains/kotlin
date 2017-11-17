@@ -24,7 +24,7 @@ apply plugin: 'application'
 mainClassName = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile project(':Interop:Indexer')
     compile project(':shared')
 }

@@ -21,7 +21,7 @@ buildscript {
 apply plugin: 'kotlin'
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile project(':backend.native')
     compile project(':Interop:StubGenerator')
     compile project(':klib')

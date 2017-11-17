@@ -18,7 +18,7 @@ buildscript {
     ext {
         gradleProperties = new Properties()
         gradleProperties.load(new FileInputStream("$projectDir/../../gradle.properties"))
-        kotlin_version = gradleProperties."kotlin_version"
+        buildKotlinVersion = gradleProperties."buildKotlinVersion"
     }
 
     apply from: '../../gradle/kotlinGradlePlugin.gradle'
@@ -30,7 +30,7 @@ apply plugin: 'kotlin'
 sourceSets.main.kotlin.srcDirs = ["$projectDir/../../shared"]
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
 }
 
 rootProject.dependencies {

@@ -21,6 +21,6 @@ buildscript {
 apply plugin: 'kotlin'
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile project(path: ':backend.native', configuration: 'cli_bc')
 }
