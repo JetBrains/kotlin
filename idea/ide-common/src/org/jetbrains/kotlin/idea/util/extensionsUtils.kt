@@ -21,6 +21,7 @@ package org.jetbrains.kotlin.idea.util
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -106,6 +107,24 @@ fun ReceiverValue?.getThisReceiverOwner(bindingContext: BindingContext): Declara
         is ExpressionReceiver -> {
             val thisRef = (KtPsiUtil.deparenthesize(this.expression) as? KtThisExpression)?.instanceReference ?: return null
             bindingContext[BindingContext.REFERENCE_TARGET, thisRef]
+        }
+
+        is ImplicitReceiver -> this.declarationDescriptor
+
+        else -> null
+    }
+}
+
+fun ReceiverValue?.getReceiverTargetDescriptor(bindingContext: BindingContext): DeclarationDescriptor? {
+    return when (this) {
+        is ExpressionReceiver -> {
+            val expression = KtPsiUtil.deparenthesize(this.expression)
+            val refExpression = when (expression) {
+                                    is KtThisExpression -> expression.instanceReference
+                                    is KtReferenceExpression -> expression
+                                    else -> null
+                                }  ?: return null
+            bindingContext[BindingContext.REFERENCE_TARGET, refExpression]
         }
 
         is ImplicitReceiver -> this.declarationDescriptor
