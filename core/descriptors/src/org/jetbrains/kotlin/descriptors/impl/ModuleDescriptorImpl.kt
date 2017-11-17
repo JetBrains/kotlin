@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.InvalidModuleException
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -51,7 +52,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 
     override fun assertValid() {
         if (!isValid) {
-            throw IllegalStateException("Accessing invalid module descriptor $this")
+            throw InvalidModuleException("Accessing invalid module descriptor $this")
         }
     }
 
