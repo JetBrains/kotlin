@@ -29,6 +29,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
 import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootMap
 import org.jetbrains.kotlin.idea.configuration.allConfigurators
@@ -1606,6 +1607,43 @@ compileTestKotlin {
             compileKotlin {
                 kotlinOptions.languageVersion = "1.1"
                 kotlinOptions.apiVersion = "1.2"
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+        }
+
+        assertAllModulesConfigured()
+    }
+
+    @Test
+    fun testIgnoreProjectLanguageAndAPIVersion() {
+        KotlinCommonCompilerArgumentsHolder.getInstance(myProject).update {
+            languageVersion = "1.0"
+            apiVersion = "1.0"
+        }
+
+        createProjectSubFile("build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
             }
         """)
         importProject()
