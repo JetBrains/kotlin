@@ -15,7 +15,7 @@ object Object: Type
 object Function: Type
 
 data class Attribute(val name: String, val type: Type, 
-    val hasGetter: Boolean = false, val hasSetter: Boolean = false): Member
+    val readOnly: Boolean = false): Member
 
 data class Arg(val name: String, val type: Type)
 
@@ -76,9 +76,9 @@ fun Type.wasmReturnMapping(value: String): String {
         is Void -> ""
         is Integer -> value
         is Floating -> value
-        is idlString -> TODO("Implement me")
+        is idlString -> "TODO(\"Implement me\")"
         is Object -> "JsValue(ArenaManager.currentArena, $value)"
-        is Function -> TODO("Implement me")
+        is Function -> "TODO(\"Implement me\")"
         is InterfaceRef -> "$name(ArenaManager.currentArena, $value)"
         else -> error("Unexpected type")
     }
@@ -132,7 +132,6 @@ fun Attribute.generateKotlinSetter(parent: Interface): String {
 }
 
 fun Attribute.generateKotlinGetter(parent: Interface): String {
-    //val kotlinType = type.toKotlinType()
     return "    get() {\n" +
     "      val wasmRetVal = ${wasmGetterName(name, parent.name)}(${(parent.wasmReceiverArgs + parent.wasmReturnArg()).joinToString(", ")})\n" + 
     "      return ${type.wasmReturnMapping("wasmRetVal")}\n"+
@@ -142,9 +141,10 @@ fun Attribute.generateKotlinGetter(parent: Interface): String {
 
 fun Attribute.generateKotlin(parent: Interface): String {
     val kotlinType = type.toKotlinType(name)
-    return "  var $name: $kotlinType\n" +
-    (if (hasGetter) generateKotlinGetter(parent) else "    get() = error(\"There is no getter for $name\")\n") + 
-    (if (hasSetter) generateKotlinSetter(parent) else "    set(_) = error(\"There is no setter for $name\")\n")
+    val varOrVal = if (readOnly) "val" else "var"
+    return "  $varOrVal $name: $kotlinType\n" +
+    generateKotlinGetter(parent) +
+    if (!readOnly) generateKotlinSetter(parent) else ""
 }
 
 val Interface.wasmTypedReceiverArgs get() = 
@@ -171,8 +171,8 @@ fun Attribute.generateWasmGetterStub(parent: Interface): String {
     "external public fun $wasmGetter($allArgs): Int\n\n"
 }
 fun Attribute.generateWasmStubs(parent: Interface) =
-    (if (hasGetter) generateWasmGetterStub(parent) else "") +
-    (if (hasSetter) generateWasmSetterStub(parent) else "")
+    generateWasmGetterStub(parent) +
+    if (!readOnly) generateWasmSetterStub(parent) else ""
 
 // TODO: consider using virtual mathods
 fun Member.generateKotlin(parent: Interface): String {
@@ -310,8 +310,8 @@ fun Attribute.generateJsGetter(parent: Interface): String {
 }
 
 fun Attribute.generateJs(parent: Interface) =
-    (if (hasGetter) generateJsGetter(parent) else "") + 
-    (if (hasSetter) generateJsSetter(parent) else "") 
+    generateJsGetter(parent) + 
+    if (!readOnly) ",\n${generateJsSetter(parent)}" else ""
 
 fun Member.generateJs(parent: Interface): String {
     return when (this) {

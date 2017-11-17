@@ -5,9 +5,9 @@ import org.jetbrains.kotlin.konan.jsinterop.tool.Type.*
 // This shall be an output of Web IDL parser.
 val all = listOf(
     Interface("Context", 
-        Attribute("lineWidth", Integer, hasSetter = true),
-        Attribute("fillStyle", idlString, hasSetter = true),
-        Attribute("strokeStyle", idlString, hasSetter = true),
+        Attribute("lineWidth", Integer),
+        Attribute("fillStyle", idlString),
+        Attribute("strokeStyle", idlString),
 
         Operation("lineTo", Void, Arg("x", Integer), Arg("y", Integer)),
         Operation("moveTo", Void, Arg("x", Integer), Arg("y", Integer)),
@@ -19,10 +19,10 @@ val all = listOf(
         Operation("closePath", Void)
     ),
     Interface("DOMRect",
-        Attribute("left", Integer, hasGetter = true),
-        Attribute("right", Integer, hasGetter = true),
-        Attribute("top", Integer, hasGetter = true),
-        Attribute("bottom", Integer, hasGetter = true)
+        Attribute("left", Integer),
+        Attribute("right", Integer),
+        Attribute("top", Integer),
+        Attribute("bottom", Integer)
     ),
     Interface("Canvas",
         Operation("getContext", InterfaceRef("Context"), Arg("context", idlString)),
@@ -32,8 +32,8 @@ val all = listOf(
         Operation("getElementById", Object, Arg("id", idlString))
     ),
     Interface("MouseEvent",
-        Attribute("clientX", Integer, hasGetter = true),
-        Attribute("clientY", Integer, hasGetter = true)
+        Attribute("clientX", Integer, readOnly = true),
+        Attribute("clientY", Integer, readOnly = true)
     ),
     Interface("Response",
         Operation("json", Object)
@@ -42,7 +42,7 @@ val all = listOf(
         Operation("then", InterfaceRef("Promise"), Arg("lambda", Function))
     ),
     Interface("__Global",
-        Attribute("document", InterfaceRef("Document"), hasGetter = true),
+        Attribute("document", InterfaceRef("Document"), readOnly = true),
 
         Operation("fetch", InterfaceRef("Promise"), Arg("url", idlString)),
         Operation("setInterval", Void, Arg("lambda", Function), Arg("interval", Integer))
