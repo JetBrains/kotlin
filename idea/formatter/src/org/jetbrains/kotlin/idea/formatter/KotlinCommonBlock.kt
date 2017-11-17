@@ -539,7 +539,12 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
         strategy("Array literals")
                 .within(KtNodeTypes.COLLECTION_LITERAL_EXPRESSION)
                 .notForType(LBRACKET, RBRACKET)
-                .set(Indent.getNormalIndent())
+                .set(Indent.getNormalIndent()),
+
+        strategy("Type aliases")
+                .within(KtNodeTypes.TYPEALIAS)
+                .notForType(KtTokens.TYPE_ALIAS_KEYWORD, KtTokens.EOL_COMMENT, KtNodeTypes.MODIFIER_LIST)
+                .set(Indent.getContinuationIndent())
 )
 
 

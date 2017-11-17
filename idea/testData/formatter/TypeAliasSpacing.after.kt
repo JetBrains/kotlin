@@ -4,11 +4,11 @@ typealias B = Int
 typealias C = Int
 
 typealias D =
-Int
+        Int
 
 //
 typealias E =
-Int
+        Int
 
 typealias F = Int
 //
@@ -34,3 +34,5 @@ typealias K = Int
 //
 object OO
 typealias L = Int
+
+internal typealias M = Int
