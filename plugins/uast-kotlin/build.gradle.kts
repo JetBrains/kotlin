@@ -8,7 +8,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
-    compileOnly(ideaSdkDeps("openapi", "idea"))
+    compileOnly(ideaSdkDeps("openapi", "idea", "java-api", "java-impl"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
