@@ -13,8 +13,8 @@ dependencies {
 
     testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(ideaSdkDeps("idea", "idea_rt", "openapi"))
-    
+    testCompile(ideaSdkDeps("idea", "idea_rt", "openapi", "platform-impl"))
+
     compileOnly(project(":kotlin-annotation-processing-runtime"))
 
     testCompile(commonDep("junit:junit"))
