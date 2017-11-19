@@ -1,8 +1,8 @@
 internal class Test {
-    fun operationsWithChar() {
-        val c: Char = 1.toChar()
-        val i = 1
+    val c: Char = 1.toChar()
+    val i = 1
 
+    fun operationsWithChar() {
         b(i > c.toInt())
         b(i >= c.toInt())
         b(i < c.toInt())
@@ -47,7 +47,21 @@ internal class Test {
     }
 
     fun operationsWithCharLiteral() {
-        val i = 1
+        b('0' > c)
+        b('0' >= c)
+        b('0' < c)
+        b('0' <= c)
+
+        b(c > '0')
+        b(c >= '0')
+        b(c < '0')
+        b(c <= '0')
+
+        b(c == '0')
+        b(c != '0')
+
+        b('0' == c)
+        b('0' != c)
 
         b(i > '0'.toInt())
         b(i >= '0'.toInt())
@@ -93,13 +107,13 @@ internal class Test {
     }
 
     fun operationsWithCharLiterals() {
-        b('A'.toInt() > '0'.toInt())
-        b('A'.toInt() >= '0'.toInt())
-        b('A'.toInt() < '0'.toInt())
-        b('A'.toInt() <= '0'.toInt())
+        b('A' > '0')
+        b('A' >= '0')
+        b('A' < '0')
+        b('A' <= '0')
 
-        b('0'.toInt() == 'A'.toInt())
-        b('0'.toInt() != 'A'.toInt())
+        b('0' == 'A')
+        b('0' != 'A')
 
         i('A'.toInt() + '0'.toInt())
         i('A'.toInt() - '0'.toInt())

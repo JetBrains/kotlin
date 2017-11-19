@@ -1,9 +1,8 @@
-//file
 class Test {
-    public void operationsWithChar() {
-        char c = 1;
-        int i = 1;
+    final char c = 1;
+    final int i = 1;
 
+    public void operationsWithChar() {
         b(i > c);
         b(i >= c);
         b(i < c);
@@ -48,7 +47,21 @@ class Test {
     }
 
     public void operationsWithCharLiteral() {
-        int i = 1;
+        b('0' > c);
+        b('0' >= c);
+        b('0' < c);
+        b('0' <= c);
+
+        b(c > '0');
+        b(c >= '0');
+        b(c < '0');
+        b(c <= '0');
+
+        b(c == '0');
+        b(c != '0');
+
+        b('0' == c);
+        b('0' != c);
 
         b(i > '0');
         b(i >= '0');

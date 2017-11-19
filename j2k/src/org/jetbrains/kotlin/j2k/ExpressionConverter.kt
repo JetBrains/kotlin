@@ -319,8 +319,12 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 text = text.replace("\\\\([0-3]?[0-7]{1,2})".toRegex()) {
                     String.format("\\u%04x", Integer.parseInt(it.groupValues[1], 8))
                 }
-                if (expression.parent is PsiBinaryExpression) {
-                    text += ".${Char::toInt.name}()"
+                val parent = expression.parent
+                if (parent is PsiBinaryExpression) {
+                    val castNeeded = (parent.operationTokenType !in COMPARISON_OPS) || !isChar(parent.rOperand)
+                    if (castNeeded) {
+                        text += ".${Char::toInt.name}()"
+                    }
                 }
             }
 
@@ -341,6 +345,10 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         result = LiteralExpression(text)
     }
+
+    private val COMPARISON_OPS = setOf(JavaTokenType.EQEQ, JavaTokenType.NE, JavaTokenType.GT, JavaTokenType.LT, JavaTokenType.GE, JavaTokenType.LE)
+
+    private fun isChar(operand: PsiExpression?) = operand?.type?.isAssignableFrom(PsiType.CHAR) ?: false
 
     override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
         val methodExpr = expression.methodExpression
