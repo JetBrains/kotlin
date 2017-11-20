@@ -37,8 +37,7 @@ import org.jetbrains.kotlin.utils.alwaysTrue
 internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
 
     val config = context.config.configuration
-    if (config.get(KonanConfigKeys.PRODUCE) != PROGRAM &&
-        config.get(KonanConfigKeys.PRODUCE) != DYNAMIC) return null
+    if (config.get(KonanConfigKeys.PRODUCE) != PROGRAM) return null
 
     val entryPoint = FqName(config.get(KonanConfigKeys.ENTRY) ?:
             if (context.shouldGenerateTestRunner()) testEntryName else defaultEntryName)

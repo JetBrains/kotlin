@@ -33,8 +33,12 @@ internal fun produceOutput(context: Context) {
             val output = "$program.kt.bc"
             context.bitcodeFileName = output
 
+            val nativeLibraries = 
+                context.config.nativeLibraries +
+                context.config.defaultNativeLibraries 
+
             PhaseManager(context).phase(KonanPhase.BITCODE_LINKER) {
-                for (library in context.config.nativeLibraries) {
+                for (library in nativeLibraries) {
                     val libraryModule = parseBitcodeFile(library)
                     val failed = LLVMLinkModules2(llvmModule, libraryModule)
                     if (failed != 0) {

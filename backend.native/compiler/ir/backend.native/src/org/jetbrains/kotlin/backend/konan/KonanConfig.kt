@@ -103,6 +103,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val loadedDescriptors = loadLibMetadata()
 
+    internal val defaultNativeLibraries = 
+        if (produce == CompilerOutputKind.PROGRAM) 
+            File(distribution.defaultNatives).listFiles.map { it.absolutePath } 
+        else emptyList()
+
     internal val nativeLibraries: List<String> = 
         configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
 

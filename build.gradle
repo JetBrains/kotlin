@@ -259,8 +259,13 @@ targetList.each { target ->
         destinationDir distDir
 
         from(project(':runtime').file("build/$target")) {
-            include("*.bc")
+            include("runtime.bc")
             into("$stdlib/targets/$target/native")
+        }
+        from(project(':runtime').file("build/$target")) {
+            include("*.bc")
+            exclude("runtime.bc")
+            into("konan/targets/$target/native")
         }
         from(project(':runtime').file("build/${target}Stdlib")) {
             include('**')
@@ -268,7 +273,7 @@ targetList.each { target ->
         }
         from(project(':runtime').file("build/${target}Start.bc")) {
             rename("${target}Start.bc", 'start.bc')
-            into("$stdlib/targets/$target/native")
+            into("konan/targets/$target/native")
         }
         if (target == 'wasm32') {
             from(project(':runtime').file('src/launcher/js')) {
