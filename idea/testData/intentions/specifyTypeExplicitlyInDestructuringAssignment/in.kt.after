@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 fun test() {
-    val list = emptyList<Pair<Int, String>>()
-    for (<caret>(key: Int, value: String) in list)
+    val map = mapOf(1 to "two")
+    for ((key: Int, value: String<caret>) in map) {
+    }
 }

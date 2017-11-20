@@ -22,7 +22,9 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.isError
 
@@ -40,7 +42,7 @@ class SpecifyTypeExplicitlyInDestructuringAssignmentIntention : SelfTargetingRan
 
     override fun applyTo(element: KtDestructuringDeclaration, editor: Editor?) {
         val entries = element.noTypeReferenceEntries()
-        if (editor != null && element.initializer != null)
+        if (editor != null && element.getParentOfType<KtParameterList>(false) == null)
             SpecifyTypeExplicitlyIntention.addTypeAnnotationWithTemplate(editor, entries.iterator())
         else
             entries.forEach {
