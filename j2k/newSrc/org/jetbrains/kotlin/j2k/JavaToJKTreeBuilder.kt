@@ -186,7 +186,9 @@ class JavaToJKTreeBuilder {
                 isInterface -> JKClass.ClassKind.INTERFACE
                 else -> JKClass.ClassKind.CLASS
             }
-            return JKClassImpl(with(ModifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(this.name!!), classKind)
+            return JKClassImpl(with(ModifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(this.name!!), classKind).apply {
+                declarations = children.mapNotNull { ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration }
+            }
         }
 
 
@@ -266,10 +268,6 @@ class JavaToJKTreeBuilder {
 
     private class ElementVisitor : JavaElementVisitor() {
 
-        override fun visitElement(element: PsiElement) {
-            element.acceptChildren(this)
-        }
-
         var resultElement: JKElement? = null
 
         override fun visitClass(aClass: PsiClass) {
@@ -280,6 +278,9 @@ class JavaToJKTreeBuilder {
             resultElement = with(DeclarationMapper) { field.toJK() }
         }
 
+        override fun visitFile(file: PsiFile) {
+            file.acceptChildren(this)
+        }
     }
 
 
