@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package h
 
 interface A<T> {}

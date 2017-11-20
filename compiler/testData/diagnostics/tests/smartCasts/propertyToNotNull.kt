@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class Immutable(val x: String?) {
     fun foo(): String {
         if (x != null) return <!DEBUG_INFO_SMARTCAST!>x<!>

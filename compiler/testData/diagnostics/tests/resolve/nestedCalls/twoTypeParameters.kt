@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class ResolutionCandidate<A>
 
 class ResolutionTask<B, C : B>(val candidate: ResolutionCandidate<B>)

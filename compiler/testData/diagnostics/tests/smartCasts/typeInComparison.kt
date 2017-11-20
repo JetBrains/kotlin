@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun foo(): Int {
     val x: Any? = null
     val y = 2

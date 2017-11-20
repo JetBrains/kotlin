@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 import java.util.ArrayList
 
 @<!NONE_APPLICABLE!>ArrayList<!><Int>(1, 1) fun b() {}

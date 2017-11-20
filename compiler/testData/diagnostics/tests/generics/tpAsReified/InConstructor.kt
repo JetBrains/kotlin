@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class C<<!REIFIED_TYPE_PARAMETER_NO_INLINE!>reified<!> T>
 
 fun <T> id(p: T): T = p

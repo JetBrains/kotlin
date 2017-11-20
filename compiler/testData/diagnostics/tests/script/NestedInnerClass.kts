@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // documents inconsistency between scripts and classes, see DeclarationScopeProviderImpl
 
 fun function() = 42

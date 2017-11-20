@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 interface Base1 {
     fun test() = "OK"
 }

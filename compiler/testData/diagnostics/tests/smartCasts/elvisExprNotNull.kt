@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun foo(s: Any?): String {
     val t = when {
         // To resolve: String U Nothing? = String?

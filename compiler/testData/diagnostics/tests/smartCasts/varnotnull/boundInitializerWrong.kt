@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // KT-15792 and related
 
 fun foo() {

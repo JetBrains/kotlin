@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 open class Outer<E> {
     inner open class Inner<F> {

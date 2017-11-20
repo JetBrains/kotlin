@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package collections
 
 fun <T> testCollection(c: Collection<T>, t: T) {

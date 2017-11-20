@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 open class BaseOuter {
     protected fun foo() = 1

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class Rule(val apply:() -> Unit)
 
 fun bar() {}

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun foo(n: Number) = n
 
 fun test() {

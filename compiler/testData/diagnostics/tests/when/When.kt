@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun Int.foo() : Boolean = true
 
 fun foo() : Int {

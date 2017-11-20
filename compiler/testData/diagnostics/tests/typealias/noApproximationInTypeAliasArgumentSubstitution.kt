@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 typealias Array2D<T> = Array<Array<T>>
 
 fun foo1(a: Array2D<out Number>) = a

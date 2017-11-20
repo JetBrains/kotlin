@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // See also KT-10896: Wrong inference of if / else result type
 

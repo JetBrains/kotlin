@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun foo(x: String?, y: String?, z: String?, w: String?) {
     if (x != null && y != null && (x == z || y == z))
         <!DEBUG_INFO_SMARTCAST!>z<!>.length

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<Int>): Int {
     val inner = javaClass.createInner<String>()

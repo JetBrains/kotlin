@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun test() {
   val a : Int? = 0
   if (a != null) {

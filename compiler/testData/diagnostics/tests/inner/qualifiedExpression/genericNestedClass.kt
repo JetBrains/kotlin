@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class Outer {
     class Nested<T>
 }

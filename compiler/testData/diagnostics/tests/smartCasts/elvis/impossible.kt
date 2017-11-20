@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !LANGUAGE: +BooleanElvisBoundSmartCasts
 // See KT-20752
 

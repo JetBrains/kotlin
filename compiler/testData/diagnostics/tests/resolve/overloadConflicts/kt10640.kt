@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 interface AutoCloseable
 interface Closeable : AutoCloseable
 

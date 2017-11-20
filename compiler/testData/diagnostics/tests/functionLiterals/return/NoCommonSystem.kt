@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun <T, R> Iterable<T>.map(<!UNUSED_PARAMETER!>transform<!>: (T) -> R): List<R> = null!!
 fun <T> listOf(): List<T> = null!!
 fun <T> listOf(vararg <!UNUSED_PARAMETER!>values<!>: T): List<T> = null!!

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 @Target(AnnotationTarget.FUNCTION)
 annotation class FunAnn
 

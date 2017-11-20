@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun foo() {
     fun bar1() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>bar1()<!>
 

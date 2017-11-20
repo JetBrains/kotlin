@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun foo(@<!UNRESOLVED_REFERENCE!>varargs<!> <!UNUSED_PARAMETER!>f<!> : Int) {}
 
 var bar : Int = 1

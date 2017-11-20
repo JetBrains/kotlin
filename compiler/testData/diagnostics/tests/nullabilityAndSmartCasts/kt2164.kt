@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 //KT-2164 !! does not propagate nullability information
 package kt2164
 

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 //KT-832 Provide better diagnostics when type inference fails for an expression that returns a function
 package a
 

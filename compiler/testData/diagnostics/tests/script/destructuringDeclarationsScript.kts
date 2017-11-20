@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 val (a1, a2) = A()
 val (b1: Int, b2: Int) = <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>A()<!>
 val (c1) = <!UNRESOLVED_REFERENCE!>unresolved<!>

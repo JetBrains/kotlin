@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun foo(x: Int) = x
 
 fun test0(flag: Boolean) {

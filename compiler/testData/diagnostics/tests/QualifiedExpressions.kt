@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package qualified_expressions
 
 fun test(s: IntRange?) {

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun foo(arg: Int?): Int {
     var i = arg
     if (i != null && <!DEBUG_INFO_SMARTCAST!>i<!>++ == 5) {

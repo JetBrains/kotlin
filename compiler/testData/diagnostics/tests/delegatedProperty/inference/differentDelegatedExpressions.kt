@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package baz
 
 import kotlin.reflect.KProperty

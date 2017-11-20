@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class Foo<A : Number>
 class Bar<B : CharSequence>
 
