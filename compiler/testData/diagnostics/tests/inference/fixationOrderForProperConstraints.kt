@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun <X, Y, Z> foo(f: (Y) -> Z, g: (X) -> Y, x: X): Z = f(g(x))
 
 // TODO: Actually, this is a bug and will work when new inference is enabled

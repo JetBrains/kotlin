@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package c
 
 import java.util.ArrayList

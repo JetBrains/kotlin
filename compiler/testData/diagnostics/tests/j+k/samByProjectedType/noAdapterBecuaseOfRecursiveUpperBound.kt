@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // FILE: Function.java
 public interface Function<E extends CharSequence, F extends java.util.Map<String, E>> {

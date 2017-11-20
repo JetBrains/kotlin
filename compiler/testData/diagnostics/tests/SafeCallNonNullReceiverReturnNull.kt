@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun Int.gg() = null
 
 fun ff() {

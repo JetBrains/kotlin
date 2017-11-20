@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !LANGUAGE: +ArrayLiteralsInAnnotations
 
 import kotlin.reflect.KClass

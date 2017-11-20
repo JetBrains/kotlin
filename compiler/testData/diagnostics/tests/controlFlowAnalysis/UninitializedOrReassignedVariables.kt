@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package uninitialized_reassigned_variables
 
 fun doSmth(<!UNUSED_PARAMETER!>s<!>: String) {}

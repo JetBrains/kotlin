@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun test() = 3
 
 fun <T> proxy(t: T) = t

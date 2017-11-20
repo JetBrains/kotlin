@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun <T> foo(array: Array<Array<T>>): Array<Array<T>> = array

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
 annotation class test
 

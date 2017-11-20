@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package variance
 
 abstract class Consumer<in T> {}

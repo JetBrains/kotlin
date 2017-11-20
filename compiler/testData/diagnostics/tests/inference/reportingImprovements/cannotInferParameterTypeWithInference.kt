@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package aa
 
 fun <T, R> foo(block: (T)-> R) = block

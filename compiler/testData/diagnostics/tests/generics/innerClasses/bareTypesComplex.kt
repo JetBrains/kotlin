@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 open class SuperOuter<E> {
     inner open class SuperInner<F>
 }

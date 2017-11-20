@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 interface A<T>
 interface B<E> {
     fun foo(x: A<in E>)

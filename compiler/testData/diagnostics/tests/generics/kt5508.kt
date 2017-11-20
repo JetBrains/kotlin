@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // KT-5508 Stackoverflow in type substitution
 
 abstract class A<T> {

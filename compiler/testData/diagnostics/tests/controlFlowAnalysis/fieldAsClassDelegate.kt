@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // See KT-15566
 
 import DefaultHttpClient.client

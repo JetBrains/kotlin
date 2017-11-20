@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class MyClass
 
 operator fun MyClass.inc(): MyClass { <!UNREACHABLE_CODE!>return<!> null!! }

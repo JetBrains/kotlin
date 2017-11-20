@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package a
 
 fun <V: U, U> foo(<!UNUSED_PARAMETER!>v<!>: V, u: U) = u

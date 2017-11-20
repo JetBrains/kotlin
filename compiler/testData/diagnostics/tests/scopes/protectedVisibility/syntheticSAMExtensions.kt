@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: abc/A.java
 package abc;
 public class A {

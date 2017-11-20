@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // See also: KT-11998
 data class My(val x: Boolean?)
 

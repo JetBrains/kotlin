@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class A {
     init {
         <!RETURN_NOT_ALLOWED!>return<!>

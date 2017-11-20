@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // KT-353 Generic type argument inference sometimes doesn't work
 
 interface A {

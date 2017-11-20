@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 interface Ref<T> {
     var x: T
 }

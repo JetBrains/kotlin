@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class A
 
 fun test(a: Any): String {

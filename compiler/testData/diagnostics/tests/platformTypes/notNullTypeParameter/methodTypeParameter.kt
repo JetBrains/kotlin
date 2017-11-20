@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: A.java
 
 import org.jetbrains.annotations.NotNull;

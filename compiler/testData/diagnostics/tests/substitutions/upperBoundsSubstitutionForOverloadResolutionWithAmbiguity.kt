@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: foo.kt
 package foo
 

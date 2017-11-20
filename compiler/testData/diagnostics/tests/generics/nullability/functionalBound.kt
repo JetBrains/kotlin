@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun <E : String?, T : ((CharSequence) -> Unit)?> foo(x: E, y: T) {
     if (x != null) {
         <!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>(<!DEBUG_INFO_SMARTCAST!>x<!>)

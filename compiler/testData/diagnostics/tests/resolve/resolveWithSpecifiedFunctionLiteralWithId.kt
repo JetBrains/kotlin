@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 //If this test hangs, it means something is broken.
 package a
 

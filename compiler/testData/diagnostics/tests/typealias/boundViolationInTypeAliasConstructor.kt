@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class Num<T: Number>(val x: T)
 
 typealias N<T> = Num<T>

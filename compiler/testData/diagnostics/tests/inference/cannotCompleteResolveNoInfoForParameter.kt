@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package f
 
 fun <T> f(<!UNUSED_PARAMETER!>i<!>: Int, <!UNUSED_PARAMETER!>c<!>: Collection<T>): List<T> {throw Exception()}

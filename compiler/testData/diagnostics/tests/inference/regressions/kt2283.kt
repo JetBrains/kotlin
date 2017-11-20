@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 //KT-2283 Bad diagnostics of failed type inference
 package a
 

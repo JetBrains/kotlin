@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !LANGUAGE: +ArrayLiteralsInAnnotations
 
 annotation class Foo(

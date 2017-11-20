@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // KT-312 Nullability problem when a nullable version of a generic type is returned
 
 fun <T> Array<out T>.safeGet(index : Int) : T? {
