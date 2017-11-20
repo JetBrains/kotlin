@@ -23,7 +23,6 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import org.gradle.tooling.model.idea.IdeaModuleDependency
 import org.gradle.tooling.model.idea.IdeaProject
 
 interface KotlinGradleModelFacade {
@@ -50,8 +49,7 @@ class DefaultGradleModelFacade : KotlinGradleModelFacade {
 
     override fun getDependencyModules(ideModule: DataNode<ModuleData>, gradleIdeaProject: IdeaProject): Collection<DataNode<ModuleData>> {
         val ideProject = ideModule.parent as DataNode<ProjectData>
-        val gradleModule =  gradleIdeaProject.modules.firstOrNull { it.gradleProject.path == ideModule.data.id }
-        val dependencyModuleNames = gradleModule?.dependencies?.mapNotNull { (it as? IdeaModuleDependency)?.targetModuleName } ?: return emptyList()
+        val dependencyModuleNames = ExternalSystemApiUtil.getChildren(ideModule, ProjectKeys.MODULE_DEPENDENCY).map { it.data.target.externalName }.toHashSet()
         return findModulesByNames(dependencyModuleNames, gradleIdeaProject, ideProject)
     }
 }
@@ -66,11 +64,7 @@ fun getDependencyModules(moduleData: DataNode<ModuleData>, gradleIdeaProject: Id
     return emptyList()
 }
 
-fun findModulesByNames(dependencyModuleNames: List<String>, gradleIdeaProject: IdeaProject, ideProject: DataNode<ProjectData>): LinkedHashSet<DataNode<ModuleData>> {
-    return dependencyModuleNames.mapNotNullTo(LinkedHashSet()) { targetModuleName ->
-        val targetGradleModule = gradleIdeaProject.modules.firstOrNull { it.name == targetModuleName } ?: return@mapNotNullTo null
-        ExternalSystemApiUtil.findFirstRecursively(ideProject) {
-            (it.data as? ModuleData)?.id == targetGradleModule.gradleProject.path
-        } as DataNode<ModuleData>?
-    }
+fun findModulesByNames(dependencyModuleNames: Set<String>, gradleIdeaProject: IdeaProject, ideProject: DataNode<ProjectData>): LinkedHashSet<DataNode<ModuleData>> {
+    val modules = ExternalSystemApiUtil.getChildren(ideProject, ProjectKeys.MODULE)
+    return modules.filterTo(LinkedHashSet()) { it.data.externalName in dependencyModuleNames }
 }
