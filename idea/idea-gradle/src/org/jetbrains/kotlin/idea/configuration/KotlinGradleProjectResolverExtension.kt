@@ -53,6 +53,8 @@ var DataNode<ModuleData>.implementedModule
         by UserDataProperty(Key.create<DataNode<ModuleData>>("IMPLEMENTS"))
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
+    val isAndroidProjectKey = Key.findKeyByName("IS_ANDROID_PROJECT_KEY")
+
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
         return setOf(KotlinGradleModelBuilder::class.java, Unit::class.java)
     }
@@ -63,7 +65,6 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
     private fun useModulePerSourceSet(): Boolean {
         // See AndroidGradleProjectResolver
-        val isAndroidProjectKey = Key.findKeyByName("IS_ANDROID_PROJECT_KEY")
         if (isAndroidProjectKey != null && resolverCtx.getUserData(isAndroidProjectKey) == true) {
             return false
         }
