@@ -68,6 +68,7 @@
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
         </dokka>
+        <makeurl file="${docs.output}/jre8/kotlin-stdlib/package-list" property="stdlib.package.list"/>
         <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
                noStdlibLink="true">
 
@@ -76,7 +77,7 @@
             <sourceRoot path="kotlin.test/js/src/main/kotlin" platforms="JS"/>
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
-            <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="file://${docs.output}/jre8/kotlin-stdlib/package-list" />
+            <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
         </dokka>
     </target>
 
