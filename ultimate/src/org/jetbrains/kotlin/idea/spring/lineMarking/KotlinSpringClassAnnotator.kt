@@ -21,11 +21,16 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.navigation.GotoRelatedItem
 import com.intellij.openapi.editor.markup.GutterIconRenderer
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.spring.gutter.SpringClassAnnotator
 import com.intellij.util.Function
 import com.intellij.util.SmartList
@@ -45,8 +50,26 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import javax.swing.Icon
 
+
+private val ELEMENT_TO_PROCESS = Key.create<CachedValue<PsiElement?>>("ELEMENT_TO_PROCESS")
+
+private val MARKERS = Key.create<CachedValue<List<RelatedItemLineMarkerInfo<PsiElement>>>>("MARKERS")
+
 class KotlinSpringClassAnnotator : SpringClassAnnotator() {
-    override fun getElementToProcess(psiElement: PsiElement): PsiElement? {
+
+    override fun collectNavigationMarkers(elements: MutableList<PsiElement>, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>, forNavigation: Boolean) {
+        super.collectNavigationMarkers(elements.distinctBy { getElementToProcess(it) }, result, forNavigation)
+    }
+
+    override fun getElementToProcess(psiElement: PsiElement): PsiElement? =
+            CachedValuesManager.getManager(psiElement.project).getCachedValue(psiElement, ELEMENT_TO_PROCESS, {
+                CachedValueProvider.Result.create(
+                        computeElementToProcess(psiElement),
+                        PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                )
+            }, false)
+
+    private fun computeElementToProcess(psiElement: PsiElement): PsiElement? {
         if (psiElement is KtLightIdentifier) return psiElement.parent
         psiElement.getParentOfTypeAndBranch<KtClass> { nameIdentifier }?.let { return it.toLightClass() }
         psiElement.getParentOfTypeAndBranch<KtNamedFunction> { nameIdentifier }?.let { function ->
@@ -72,19 +95,26 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
         return null
     }
 
-    private fun doCollectMarkers(psiElement: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
+    private fun doCollectMarkers(psiElement: PsiElement): List<RelatedItemLineMarkerInfo<PsiElement>> {
+        val result = SmartList<RelatedItemLineMarkerInfo<PsiElement>>()
+
         if (psiElement is KtProperty || psiElement is KtParameter) {
             for (it in (psiElement as KtDeclaration).toLightElements()) {
                 val nameIdentifier = (it as? PsiNameIdentifierOwner)?.nameIdentifier ?: continue
                 super.collectNavigationMarkers(nameIdentifier, result)
             }
-            return
+            return result
         }
 
         // Workaround for SpringClassAnnotator
-        (getElementToProcess(psiElement) as? KtLightAnnotationForSourceEntry)?.let { return super.collectNavigationMarkers(it, result) }
+        (getElementToProcess(psiElement) as? KtLightAnnotationForSourceEntry)?.let {
+            super.collectNavigationMarkers(it, result)
+            return result
+        }
 
         super.collectNavigationMarkers(psiElement, result)
+
+        return result
     }
 
     // TODO
@@ -104,9 +134,10 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
     }
 
     override fun collectNavigationMarkers(psiElement: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
-        val newItems = SmartList<RelatedItemLineMarkerInfo<PsiElement>>()
 
-        doCollectMarkers(psiElement, newItems)
+        val newItems = CachedValuesManager.getManager(psiElement.project).getCachedValue(psiElement, MARKERS, {
+            CachedValueProvider.Result.create(doCollectMarkers(psiElement), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+        }, false)
 
         newItems.mapNotNullTo(result) { item ->
             val itemElement = item.element
