@@ -454,6 +454,9 @@ abstract class BaseGradleIT {
                 System.getProperty("maven.repo.local")?.let {
                     add("-Dmaven.repo.local=$it") // TODO: proper escaping
                 }
+                if (options.withBuildCache) {
+                    add("--build-cache")
+                }
                 addAll(options.freeCommandLineArgs)
             }
 
