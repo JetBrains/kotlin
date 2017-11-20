@@ -10,6 +10,9 @@ virtual machines are not desirable or possible (such as iOS, embedded targets),
 or where a developer is willing to produce a reasonably-sized self-contained program
 without the need to ship an additional execution runtime.
 
+Prerequesties:
+	install JDK for your platform, instead of JRE. The build requires ```tools.jar```, which is not included in JRE.
+
 To compile from sources use following steps.
 
 First download dependencies:
