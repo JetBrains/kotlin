@@ -22,6 +22,6 @@ abstract class AbstractNewJavaToKotlinConverterNewSingleFileTest : AbstractJavaT
 
     override fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
-        return NewJavaToKotlinConverter(project, settings).filesToKotlin(listOf(file))
+        return NewJavaToKotlinConverter(project, settings).filesToKotlin(listOf(file)).single()
     }
 }

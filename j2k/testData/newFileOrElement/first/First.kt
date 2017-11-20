@@ -1,0 +1,3 @@
+class Some {
+/* !!! Hit visitElement !!! */
+}
