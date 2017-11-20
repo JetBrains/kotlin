@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinCollectionChainBuilder : KotlinChainBuilderBase(KotlinChainTransformerImpl()) {
+class KotlinCollectionChainBuilder
+  : KotlinChainBuilderBase(KotlinChainTransformerImpl(KotlinCollectionsTypeExtractor())) {
   private companion object {
     // TODO: Avoid enumeration of all available types
     val SUPPORTED_RECEIVERS = setOf("kotlin.collections.List", "kotlin.collections.Set")

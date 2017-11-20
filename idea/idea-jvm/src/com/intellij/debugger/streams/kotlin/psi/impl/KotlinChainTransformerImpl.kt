@@ -1,9 +1,9 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.debugger.streams.kotlin.psi.impl
 
+import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor
 import com.intellij.debugger.streams.kotlin.psi.callName
 import com.intellij.debugger.streams.kotlin.psi.resolveType
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.NULLABLE_ANY
 import com.intellij.debugger.streams.psi.ChainTransformer
 import com.intellij.debugger.streams.wrapper.CallArgument
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
@@ -23,26 +23,30 @@ import org.jetbrains.kotlin.types.KotlinType
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinChainTransformerImpl : ChainTransformer<KtCallExpression> {
+class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) : ChainTransformer<KtCallExpression> {
   override fun transform(callChain: List<KtCallExpression>, context: PsiElement): StreamChain {
-    val firstCall = callChain.first()
-    val parent = firstCall.parent
-    val qualifier = if (parent is KtDotQualifiedExpression)
-      QualifierExpressionImpl(parent.receiverExpression.text, parent.receiverExpression.textRange, NULLABLE_ANY)
-    else
-      QualifierExpressionImpl("", TextRange.EMPTY_RANGE, NULLABLE_ANY) // This is possible only when this inherits Stream
-
     val intermediateCalls = mutableListOf<IntermediateStreamCall>()
     for (call in callChain.subList(0, callChain.size - 1)) {
+      val (typeBefore, typeAfter) = typeExtractor.extractIntermediateCallTypes(call)
       intermediateCalls += IntermediateStreamCallImpl(call.callName(),
-          call.valueArguments.map { createCallArgument(call, it) }, NULLABLE_ANY, NULLABLE_ANY, call.textRange)
+          call.valueArguments.map { createCallArgument(call, it) }, typeBefore, typeAfter, call.textRange)
     }
 
     val terminationsPsiCall = callChain.last()
-    // TODO: infer true types
+    val (typeBeforeTerminator, resultType) = typeExtractor.extractTerminalCallTypes(terminationsPsiCall)
     val terminationCall = TerminatorStreamCallImpl(terminationsPsiCall.callName(),
         terminationsPsiCall.valueArguments.map { createCallArgument(terminationsPsiCall, it) },
-        NULLABLE_ANY, NULLABLE_ANY, terminationsPsiCall.textRange)
+        typeBeforeTerminator, resultType, terminationsPsiCall.textRange)
+
+    val qualifierTypeAfter =
+        if (intermediateCalls.isEmpty()) typeBeforeTerminator else intermediateCalls.first().typeBefore
+
+    val firstCall = callChain.first()
+    val parent = firstCall.parent
+    val qualifier = if (parent is KtDotQualifiedExpression)
+      QualifierExpressionImpl(parent.receiverExpression.text, parent.receiverExpression.textRange, qualifierTypeAfter)
+    else // This is possible only when {@code this} inherits Stream/Iterable/Sequence/etc
+      QualifierExpressionImpl("", TextRange.EMPTY_RANGE, qualifierTypeAfter)
 
     return StreamChainImpl(qualifier, intermediateCalls, terminationCall, context)
   }

@@ -4,13 +4,13 @@ package com.intellij.debugger.streams.kotlin.psi.impl
 import com.intellij.debugger.streams.kotlin.psi.StreamCallChecker
 import com.intellij.debugger.streams.kotlin.psi.previousCall
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import java.util.*
 
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinJavaStreamChainBuilder(private val callChecker: StreamCallChecker) : KotlinChainBuilderBase(KotlinChainTransformerImpl()) {
+class KotlinJavaStreamChainBuilder(private val callChecker: StreamCallChecker)
+  : KotlinChainBuilderBase(KotlinChainTransformerImpl(JavaStreamChainTypeExtractor())) {
   override val existenceChecker: ExistenceChecker = MyExistenceChecker()
 
   override fun createChainsBuilder(): ChainBuilder = MyBuilderVisitor()
