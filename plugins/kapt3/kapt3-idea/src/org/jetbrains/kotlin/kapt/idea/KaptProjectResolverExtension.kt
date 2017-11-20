@@ -86,8 +86,7 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
                 fun addSourceSet(path: String, type: ExternalSystemSourceType) {
                     val contentRootData = ContentRootData(GRADLE_SYSTEM_ID, path)
                     contentRootData.storePath(type, path)
-                    val child = sourceSetDataNode.createChild(ProjectKeys.CONTENT_ROOT, contentRootData)
-                    sourceSetDataNode.addChild(child)
+                    sourceSetDataNode.createChild(ProjectKeys.CONTENT_ROOT, contentRootData)
                 }
 
                 val sourceType = if (sourceSet.isTest) ExternalSystemSourceType.TEST_GENERATED else ExternalSystemSourceType.SOURCE_GENERATED
@@ -95,11 +94,10 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
                 sourceSet.generatedKotlinSourcesDirFile?.let { addSourceSet(it.absolutePath, sourceType) }
 
                 sourceSet.generatedClassesDirFile?.let { generatedClassesDir ->
-                    val libraryData = LibraryData(GRADLE_SYSTEM_ID, "Kapt generated classes")
+                    val libraryData = LibraryData(GRADLE_SYSTEM_ID, "")
                     libraryData.addPath(LibraryPathType.BINARY, generatedClassesDir.absolutePath)
-                    val libraryDependencyData = LibraryDependencyData(ideModule.data, libraryData, LibraryLevel.MODULE)
-                    val child = sourceSetDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData)
-                    sourceSetDataNode.addChild(child)
+                    val libraryDependencyData = LibraryDependencyData(sourceSetDataNode.data, libraryData, LibraryLevel.MODULE)
+                    sourceSetDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData)
                 }
             }
         }
