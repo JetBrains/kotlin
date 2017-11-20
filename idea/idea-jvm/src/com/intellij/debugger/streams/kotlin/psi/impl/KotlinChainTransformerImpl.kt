@@ -2,6 +2,7 @@
 package com.intellij.debugger.streams.kotlin.psi.impl
 
 import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor
+import com.intellij.debugger.streams.kotlin.psi.KotlinPsiUtil
 import com.intellij.debugger.streams.kotlin.psi.callName
 import com.intellij.debugger.streams.kotlin.psi.resolveType
 import com.intellij.debugger.streams.psi.ChainTransformer
@@ -15,10 +16,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * @author Vitaliy.Bibaev
@@ -54,14 +53,12 @@ class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) :
   private fun createCallArgument(callExpression: KtCallExpression, arg: KtValueArgument): CallArgument {
     fun KtValueArgument.toCallArgument(): CallArgument {
       val argExpression = getArgumentExpression()!!
-      return CallArgumentImpl(renderType(argExpression.resolveType()), this.text)
+      return CallArgumentImpl(KotlinPsiUtil.getTypeName(argExpression.resolveType()), this.text)
     }
 
     val bindingContext = callExpression.analyzeFully()
     val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return arg.toCallArgument()
     val parameter = resolvedCall.getParameterForArgument(arg) ?: return arg.toCallArgument()
-    return CallArgumentImpl(renderType(parameter.type), arg.text)
+    return CallArgumentImpl(KotlinPsiUtil.getTypeName(parameter.type), arg.text)
   }
-
-  private fun renderType(type: KotlinType): String = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
 }
