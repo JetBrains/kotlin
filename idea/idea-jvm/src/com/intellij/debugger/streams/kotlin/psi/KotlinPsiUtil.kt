@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
@@ -12,6 +13,11 @@ import org.jetbrains.kotlin.types.KotlinType
 /**
  * @author Vitaliy.Bibaev
  */
+
+object KotlinPsiUtil {
+  fun getTypeName(type: KotlinType): String = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
+
+}
 
 fun KtExpression.resolveType(): KotlinType =
     this.analyze().getType(this)!!
