@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -588,6 +589,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     }
                 }
             }
+        }
+
+
+        if (declaration.descriptor.usedAnnotation || 
+            context.config.configuration.get(KonanConfigKeys.PRODUCE) == CompilerOutputKind.DYNAMIC) {
+            context.llvm.usedFunctions.add(codegen.llvmFunction(declaration.descriptor))
         }
 
         if (context.shouldVerifyBitCode())

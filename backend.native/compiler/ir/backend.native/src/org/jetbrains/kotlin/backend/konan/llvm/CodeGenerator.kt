@@ -69,10 +69,6 @@ internal inline fun<R> generateFunction(codegen: CodeGenerator,
             startLocation,
             endLocation,
             descriptor), code)
-
-    if (descriptor.usedAnnotation) {
-        codegen.context.llvm.usedFunctions.add(llvmFunction)
-    }
 }
 
 
