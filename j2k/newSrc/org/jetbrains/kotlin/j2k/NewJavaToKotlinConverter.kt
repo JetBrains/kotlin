@@ -36,7 +36,7 @@ class NewJavaToKotlinConverter(
         }
     }
 
-    fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()): String {
+    fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()): List<String> {
         val treeBuilder = JavaToJKTreeBuilder()
         val fileTrees = files.mapNotNull(treeBuilder::buildTree)
 
@@ -44,9 +44,10 @@ class NewJavaToKotlinConverter(
 
         ConversionsRunner.doApply(fileTrees)
 
-        val result = fileTrees.prettyPrintTrees()
+        val resultTree = fileTrees.prettyPrintTrees()
 
-        println(result)
-        return result
+        println(resultTree)
+
+        return fileTrees.map { NewCodeBuilder().run { printCodeOut(it) } }
     }
 }
