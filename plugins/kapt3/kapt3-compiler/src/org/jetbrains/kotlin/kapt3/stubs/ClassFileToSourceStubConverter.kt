@@ -80,6 +80,8 @@ class ClassFileToSourceStubConverter(
                 "kotlin.jvm." // Kotlin annotations from runtime
         )
 
+        private val NON_EXISTENT_CLASS_NAME = FqName("error.NonExistentClass")
+
         private val JAVA_KEYWORD_FILTER_REGEX = "[a-z]+".toRegex()
 
         private val JAVA_KEYWORDS = Tokens.TokenKind.values()
@@ -121,13 +123,13 @@ class ClassFileToSourceStubConverter(
     private fun generateNonExistentClass(): JCCompilationUnit {
         val nonExistentClass = treeMaker.ClassDef(
                 treeMaker.Modifiers((Flags.PUBLIC or Flags.FINAL).toLong()),
-                treeMaker.name("NonExistentClass"),
+                treeMaker.name(NON_EXISTENT_CLASS_NAME.shortName().asString()),
                 JavacList.nil(),
                 null,
                 JavacList.nil(),
                 JavacList.nil())
 
-        val topLevel = treeMaker.TopLevelJava9Aware(treeMaker.SimpleName("error"), JavacList.of(nonExistentClass))
+        val topLevel = treeMaker.TopLevelJava9Aware(treeMaker.FqName(NON_EXISTENT_CLASS_NAME.parent()), JavacList.of(nonExistentClass))
 
         topLevel.sourcefile = KaptJavaFileObject(topLevel, nonExistentClass)
 
@@ -641,7 +643,20 @@ class ClassFileToSourceStubConverter(
             }
         }
 
-        return ifNonError()
+        val nonErrorType = ifNonError()
+
+        if (nonErrorType is JCFieldAccess) {
+            val qualifier = nonErrorType.selected
+            if (nonErrorType.name.toString() == NON_EXISTENT_CLASS_NAME.shortName().asString()
+                    && qualifier is JCIdent
+                    && qualifier.name.toString() == NON_EXISTENT_CLASS_NAME.parent().asString()
+            ) {
+                @Suppress("UNCHECKED_CAST")
+                return treeMaker.FqName("java.lang.Object") as T
+            }
+        }
+
+        return nonErrorType
     }
 
     private fun isValidQualifiedName(name: FqName) = name.pathSegments().all { isValidIdentifier(it.asString()) }
