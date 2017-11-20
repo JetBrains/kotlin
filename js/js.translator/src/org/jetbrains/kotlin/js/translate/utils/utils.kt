@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.CoroutineMetadata
-import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
-import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
@@ -41,6 +39,7 @@ import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
@@ -243,4 +242,15 @@ fun createPrototypeStatements(superName: JsName, name: JsName): List<JsStatement
     val constructorStatement = JsAstUtils.assignment(constructorRef, classRef.deepCopy()).makeStmt()
 
     return listOf(prototypeStatement, constructorStatement)
+}
+
+fun TranslationContext.createCoroutineResult(resolvedCall: ResolvedCall<*>): JsExpression {
+    val callElement = resolvedCall.call.callElement
+    val coroutineRef = TranslationUtils.translateContinuationArgument(this).source(callElement)
+    return JsNameRef("\$\$coroutineResult\$\$", coroutineRef).apply {
+        sideEffects = SideEffectKind.DEPENDS_ON_STATE
+        source = callElement
+        coroutineResult = true
+        synthetic = true
+    }
 }

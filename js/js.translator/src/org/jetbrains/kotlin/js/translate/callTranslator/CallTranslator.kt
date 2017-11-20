@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
@@ -59,7 +58,8 @@ object CallTranslator {
                      extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
         val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), null)
-        val result = variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
+        val result = variableAccessInfo.constructSafeCallIfNeeded(variableAccessInfo.translateVariableAccess())
+                .source(resolvedCall.call.callElement)
         result.type = TranslationUtils.getReturnTypeForCoercion(resolvedCall.resultingDescriptor.original)
         return result
     }
@@ -72,7 +72,8 @@ object CallTranslator {
         val type = TranslationUtils.getReturnTypeForCoercion(resolvedCall.resultingDescriptor)
         val coerceValue = TranslationUtils.coerce(context, value, type)
         val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), coerceValue)
-        val result = variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
+        val result = variableAccessInfo.constructSafeCallIfNeeded(variableAccessInfo.translateVariableAccess())
+                .source(resolvedCall.call.callElement)
         result.type = context.currentModule.builtIns.unitType
         return result
     }
@@ -108,7 +109,7 @@ private fun translateCall(
         assert(explicitReceivers.extensionReceiver == null) { "VariableAsFunctionResolvedCall must have one receiver" }
         val variableCall = resolvedCall.variableCall
 
-        val result = if (variableCall.expectedReceivers()) {
+        return if (variableCall.expectedReceivers()) {
             val newReceiver = CallTranslator.translateGet(context, variableCall, explicitReceivers.extensionOrDispatchReceiver)
             translateFunctionCall(context, resolvedCall.functionCall, resolvedCall.variableCall, ExplicitReceivers(newReceiver))
         } else {
@@ -123,8 +124,6 @@ private fun translateCall(
                                       ExplicitReceivers(dispatchReceiver, explicitReceivers.extensionOrDispatchReceiver))
             }
         }
-
-        return result
     }
 
     val call = resolvedCall.call
@@ -145,7 +144,8 @@ private fun translateFunctionCall(
     val rangeCheck = RangeCheckTranslator(context).translateAsRangeCheck(resolvedCall, explicitReceivers)
     if (rangeCheck != null) return rangeCheck
 
-    val callExpression = context.getCallInfo(resolvedCall, explicitReceivers).translateFunctionCall()
+    val callInfo = context.getCallInfo(resolvedCall, explicitReceivers)
+    var callExpression = callInfo.translateFunctionCall()
 
     if (CallExpressionTranslator.shouldBeInlined(inlineResolvedCall.resultingDescriptor, context)) {
         setInlineCallMetadata(callExpression, resolvedCall.call.callElement as KtExpression,
@@ -154,20 +154,19 @@ private fun translateFunctionCall(
 
     if (resolvedCall.resultingDescriptor.isSuspend) {
         if (context.isInStateMachine) {
-            context.currentBlock.statements += JsAstUtils.asSyntheticStatement(callExpression.apply {
+            val statement = callInfo.constructSuspendSafeCallIfNeeded(JsAstUtils.asSyntheticStatement(callExpression.apply {
                 isSuspend = true
                 source = resolvedCall.call.callElement
-            })
-            val coroutineRef = TranslationUtils.translateContinuationArgument(context).apply { source = resolvedCall.call.callElement }
-            return context.defineTemporary(JsNameRef("\$\$coroutineResult\$\$", coroutineRef).apply {
-                sideEffects = SideEffectKind.DEPENDS_ON_STATE
-                source = resolvedCall.call.callElement
-                coroutineResult = true
-            })
+            }))
+            context.currentBlock.statements += statement
+            return context.createCoroutineResult(resolvedCall)
         }
         else {
             callExpression.isTailCallSuspend = true
         }
+    }
+    else {
+        callExpression = callInfo.constructSafeCallIfNeeded(callExpression)
     }
 
     callExpression.type = resolvedCall.getReturnType().let { if (resolvedCall.call.isSafeCall()) it.makeNullable() else it }
@@ -254,7 +253,7 @@ abstract class CallCase<in I : CallInfo> {
     protected open fun I.bothReceivers(): JsExpression = unsupported()
 
     fun translate(callInfo: I): JsExpression {
-        val result = if (callInfo.dispatchReceiver == null) {
+        return if (callInfo.dispatchReceiver == null) {
             if (callInfo.extensionReceiver == null)
                 callInfo.noReceivers()
             else
@@ -265,8 +264,6 @@ abstract class CallCase<in I : CallInfo> {
             } else
                 callInfo.bothReceivers()
         }
-
-        return callInfo.constructSafeCallIfNeeded(result)
     }
 }
 
@@ -279,20 +276,7 @@ interface DelegateIntrinsic<in I : CallInfo> {
     fun I.getDescriptor(): CallableDescriptor
     fun I.getArgs(): List<JsExpression>
 
-    fun intrinsic(callInfo: I): JsExpression? {
-        val result =
-                if (callInfo.canBeApply()) {
-                    callInfo.getIntrinsic()
-                } else {
-                    null
-                }
-
-        return if (result != null) {
-            callInfo.constructSafeCallIfNeeded(result)
-        } else {
-            null
-        }
-    }
+    fun intrinsic(callInfo: I): JsExpression? = if (callInfo.canBeApply()) callInfo.getIntrinsic() else null
 
     private fun I.getIntrinsic(): JsExpression? {
         val descriptor = getDescriptor()
