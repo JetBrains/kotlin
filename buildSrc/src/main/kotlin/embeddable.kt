@@ -18,7 +18,7 @@ val packagesToRelocate =
                 "org.apache",
                 "org.jdom",
                 "org.picocontainer",
-                "jline",
+                "org.jline",
                 "gnu",
                 "org.fusesource")
 
