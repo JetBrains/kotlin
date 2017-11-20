@@ -51,6 +51,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.kotlin.maven.Util.joinArrays;
+
 public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> extends AbstractMojo {
     @Component
     protected PlexusContainer container;
@@ -197,7 +199,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        getLog().info("Kotlin version " + KotlinCompilerVersion.VERSION +
+        getLog().debug("Kotlin version " + KotlinCompilerVersion.VERSION +
                 " (JRE " + System.getProperty("java.runtime.version") + ")");
 
         if (!hasKotlinFilesInSources()) {
@@ -433,7 +435,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         if (sourceRoots.isEmpty()) {
             throw new MojoExecutionException("No source roots to compile");
         }
-        getLog().info("Compiling Kotlin sources from " + sourceRoots);
+        getLog().debug("Compiling Kotlin sources from " + sourceRoots);
         return sourceRoots;
     }
 
@@ -494,7 +496,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 getLog().debug("Plugin options are: " + Joiner.on(", ").join(pluginArguments));
             }
 
-            arguments.setPluginOptions(pluginArguments.toArray(new String[pluginArguments.size()]));
+            arguments.setPluginOptions(joinArrays(
+                    arguments.getPluginOptions(),
+                    pluginArguments.toArray(new String[pluginArguments.size()])));
         }
     }
 

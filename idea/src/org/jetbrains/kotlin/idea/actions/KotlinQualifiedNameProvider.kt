@@ -21,7 +21,6 @@ import com.intellij.ide.actions.QualifiedNameProvider
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -33,11 +32,16 @@ class KotlinQualifiedNameProvider: QualifiedNameProvider {
     override fun getQualifiedName(element: PsiElement?) = when(element) {
         is KtClassOrObject -> element.fqName?.asString()
         is KtNamedFunction -> getJavaQualifiedName(LightClassUtil.getLightClassMethod(element))
-        is KtProperty -> getJavaQualifiedName(LightClassUtil.getLightClassPropertyMethods(element).getter)
+
+        is KtProperty -> {
+            val lightClassPropertyMethods = LightClassUtil.getLightClassPropertyMethods(element)
+            val lightElement: PsiElement? = lightClassPropertyMethods.getter ?: lightClassPropertyMethods.backingField
+            getJavaQualifiedName(lightElement)
+        }
         else -> null
     }
 
-    private fun getJavaQualifiedName(method: PsiMethod?) = method?.let { JavaQualifiedNameProvider().getQualifiedName(method) }
+    private fun getJavaQualifiedName(element: PsiElement?) = element?.let { JavaQualifiedNameProvider().getQualifiedName(element) }
 
     override fun qualifiedNameToElement(fqn: String?, project: Project?) = null
 

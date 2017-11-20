@@ -23,8 +23,8 @@ import org.jetbrains.uast.ULabeledExpression
 
 class KotlinULabeledExpression(
         override val psi: KtLabeledExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), ULabeledExpression {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), ULabeledExpression {
     override val label: String
         get() = psi.getLabelName().orAnonymous("label")
 

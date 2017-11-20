@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.*
@@ -180,7 +180,7 @@ class AddToCollectionTransformation(
         }
 
         private fun canChangeInitializerType(initialization: VariableInitialization, newTypeFqName: FqName, loop: KtForExpression): Boolean {
-            val currentType = (initialization.variable.resolveToDescriptor() as VariableDescriptor).type
+            val currentType = (initialization.variable.unsafeResolveToDescriptor() as VariableDescriptor).type
             if ((currentType.constructor.declarationDescriptor as? ClassDescriptor)?.importableFqName == newTypeFqName) return true // already of the required type
 
             // we do not change explicit type

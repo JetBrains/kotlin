@@ -1,5 +1,6 @@
 // testHelper: to be implemented
+// TEST
 
 package test
 
-impl fun testHelper() {}
+actual fun testHelper() {}

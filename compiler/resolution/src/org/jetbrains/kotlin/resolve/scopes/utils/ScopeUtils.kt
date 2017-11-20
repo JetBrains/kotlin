@@ -122,6 +122,8 @@ private class MemberScopeToImportingScopeAdapter(override val parent: ImportingS
 
     override fun toString() = "${this::class.java.simpleName} for $memberScope"
 
+    override fun computeImportedNames() = memberScope.computeAllNames()
+
     override fun printStructure(p: Printer) {
         p.println(this::class.java.simpleName)
         p.pushIndent()

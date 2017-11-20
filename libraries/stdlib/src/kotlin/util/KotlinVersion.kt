@@ -21,7 +21,7 @@ public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Com
         require(major in 0..MAX_COMPONENT_VALUE && minor in 0..MAX_COMPONENT_VALUE && patch in 0..MAX_COMPONENT_VALUE) {
             "Version components are out of range: $major.$minor.$patch"
         }
-        return major shl 16 + minor shl 8 + patch
+        return major.shl(16) + minor.shl(8) + patch
     }
 
     /**
@@ -68,8 +68,7 @@ public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Com
         /**
          * Returns the current version of the Kotlin standard library.
          */
-        // TODO: get from metadata or hardcode automatically during build
         @kotlin.jvm.JvmField
-        public val CURRENT: KotlinVersion = KotlinVersion(1, 1, 5)
+        public val CURRENT: KotlinVersion = KotlinVersion(1, 2, 0) // value is written here automatically during build
     }
 }

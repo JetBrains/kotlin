@@ -55,7 +55,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
         this.modality = modality;
         this.kind = kind;
 
-        this.typeConstructor = new ClassTypeConstructorImpl(this, false, Collections.<TypeParameterDescriptor>emptyList(), supertypes);
+        this.typeConstructor = new ClassTypeConstructorImpl(this, Collections.<TypeParameterDescriptor>emptyList(), supertypes);
     }
 
     public final void initialize(
@@ -116,12 +116,12 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isHeader() {
+    public boolean isExpect() {
         return false;
     }
 
     @Override
-    public boolean isImpl() {
+    public boolean isActual() {
         return false;
     }
 

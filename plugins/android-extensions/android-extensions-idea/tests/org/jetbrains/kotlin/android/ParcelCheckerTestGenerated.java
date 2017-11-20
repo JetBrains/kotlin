@@ -48,6 +48,12 @@ public class ParcelCheckerTestGenerated extends AbstractParcelCheckerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("customParcelers.kt")
+    public void testCustomParcelers() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/customParcelers.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("customWriteToParcel.kt")
     public void testCustomWriteToParcel() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/customWriteToParcel.kt");
@@ -63,6 +69,12 @@ public class ParcelCheckerTestGenerated extends AbstractParcelCheckerTest {
     @TestMetadata("emptyPrimaryConstructor.kt")
     public void testEmptyPrimaryConstructor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/emptyPrimaryConstructor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt20062.kt")
+    public void testKt20062() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker/kt20062.kt");
         doTest(fileName);
     }
 

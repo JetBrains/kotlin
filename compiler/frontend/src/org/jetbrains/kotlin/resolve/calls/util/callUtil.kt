@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ fun <D : CallableDescriptor> ResolvedCall<D>.usesDefaultArguments(): Boolean {
 fun <C: ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionContext<C>): Boolean {
     val arguments = valueArguments.map { it.getArgumentExpression() }
     return arguments.any (fun (argument: KtExpression?): Boolean {
-        if (argument == null || ArgumentTypeResolver.isFunctionLiteralArgument(argument, context)) return false
+        if (argument == null || ArgumentTypeResolver.isFunctionLiteralOrCallableReference(argument, context)) return false
 
         val resolvedCall = argument.getResolvedCall(context.trace.bindingContext) as MutableResolvedCall<*>?
         if (resolvedCall != null && !resolvedCall.hasInferredReturnType()) return false

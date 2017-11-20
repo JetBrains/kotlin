@@ -1,4 +1,4 @@
 package test
 
-header open class Foo
-header class ChildOfFoo : Foo()
+expect open class Foo
+expect class ChildOfFoo : Foo()

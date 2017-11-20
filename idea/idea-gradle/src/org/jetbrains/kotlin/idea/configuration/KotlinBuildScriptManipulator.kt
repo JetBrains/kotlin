@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -27,7 +28,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBuildScriptManipulator {
     override fun isConfigured(kotlinPluginName: String): Boolean =
-            kotlinScript.containsApplyKotlinPlugin(kotlinPluginName) && kotlinScript.containsCompileStdLib()
+            runReadAction {
+                kotlinScript.containsApplyKotlinPlugin(kotlinPluginName) && kotlinScript.containsCompileStdLib()
+            }
 
     override fun configureProjectBuildScript(version: String): Boolean {
         val originalText = kotlinScript.text
@@ -36,7 +39,11 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
                 addExpressionAfterIfMissing("$GSK_KOTLIN_VERSION_PROPERTY_NAME = \"$version\"", it)
             }
 
-            getRepositoriesBlock()?.addRepositoryIfMissing(version)
+            getRepositoriesBlock()?.apply {
+                addRepositoryIfMissing(version)
+                addMavenCentralIfMissing()
+            }
+
             getDependenciesBlock()?.addPluginToClassPathIfMissing()
         }
 
@@ -54,7 +61,11 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
             script?.blockExpression?.addDeclarationIfMissing("val $GSK_KOTLIN_VERSION_PROPERTY_NAME: String by extra", true)
             getApplyBlock()?.createPluginIfMissing(kotlinPluginName)
             getDependenciesBlock()?.addCompileStdlibIfMissing(stdlibArtifactName)
-            getRepositoriesBlock()?.addRepositoryIfMissing(version)
+            getRepositoriesBlock()?.apply {
+                addRepositoryIfMissing(version)
+                addMavenCentralIfMissing()
+            }
+
             jvmTarget?.let {
                 changeKotlinTaskParameter("jvmTarget", it, forTests = false)
                 changeKotlinTaskParameter("jvmTarget", it, forTests = true)
@@ -121,15 +132,6 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
 
     private fun KtCallExpression.getBlock(): KtBlockExpression? =
             (valueArguments.singleOrNull()?.getArgumentExpression() as? KtLambdaExpression)?.bodyExpression
-
-    private fun getCompileDependencySnippet(groupId: String, artifactId: String, compileScope: String = "compile", version: String? = null): String =
-            if (groupId == KOTLIN_GROUP_ID)
-                "$compileScope(${getKotlinModuleDependencySnippet(artifactId, version)})"
-            else
-                "$compileScope(\"$groupId:$artifactId:$version\")"
-
-    private fun getKotlinModuleDependencySnippet(artifactId: String, version: String? = null): String =
-            "kotlinModule(\"${artifactId.removePrefix("kotlin-")}\", ${version?.let { "\"$it\"" } ?: GSK_KOTLIN_VERSION_PROPERTY_NAME})"
 
     private fun KtFile.getKotlinStdlibVersion(): String? {
         return findScriptInitializer("dependencies")?.getBlock()?.let {
@@ -229,9 +231,11 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
         return addExpressionIfMissing(snippet) as? KtCallExpression
     }
 
-    private fun KtBlockExpression.addPluginToClassPathIfMissing(): KtCallExpression? =
-            addExpressionIfMissing("classpath(${getKotlinModuleDependencySnippet("gradle-plugin")})") as? KtCallExpression
+    private fun KtBlockExpression.addMavenCentralIfMissing(): KtCallExpression? =
+            if (!isRepositoryConfigured(text)) addExpressionIfMissing(MAVEN_CENTRAL) as? KtCallExpression else null
 
+    private fun KtBlockExpression.addPluginToClassPathIfMissing(): KtCallExpression? =
+            addExpressionIfMissing(getKotlinGradlePluginClassPathSnippet()) as? KtCallExpression
 
     private fun KtBlockExpression.addBlock(name: String): KtBlockExpression? {
         return add(psiFactory.createExpression("$name {\n}"))
@@ -310,6 +314,17 @@ class KotlinBuildScriptManipulator(private val kotlinScript: KtFile) : GradleBui
 
     companion object {
         private val STDLIB_ARTIFACT_PREFIX = "org.jetbrains.kotlin:kotlin-stdlib"
-        private val GSK_KOTLIN_VERSION_PROPERTY_NAME = "kotlin_version"
+        val GSK_KOTLIN_VERSION_PROPERTY_NAME = "kotlin_version"
+
+        fun getKotlinGradlePluginClassPathSnippet(): String = "classpath(${getKotlinModuleDependencySnippet("gradle-plugin")})"
+
+        fun getKotlinModuleDependencySnippet(artifactId: String, version: String? = null): String =
+                "kotlinModule(\"${artifactId.removePrefix("kotlin-")}\", ${version?.let { "\"$it\"" } ?: GSK_KOTLIN_VERSION_PROPERTY_NAME})"
+
+        fun getCompileDependencySnippet(groupId: String, artifactId: String, compileScope: String = "compile", version: String? = null): String =
+                if (groupId == KOTLIN_GROUP_ID)
+                    "$compileScope(${Companion.getKotlinModuleDependencySnippet(artifactId, version)})"
+                else
+                    "$compileScope(\"$groupId:$artifactId:$version\")"
     }
 }

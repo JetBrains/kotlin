@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirementTable
 
 class ClassDeserializer(private val components: DeserializationComponents) {
     private val classes: (ClassKey) -> ClassDescriptor? =
@@ -55,18 +55,13 @@ class ClassDeserializer(private val components: DeserializationComponents) {
         }
         else {
             val fragments = components.packageFragmentProvider.getPackageFragments(classId.packageFqName)
-            assert(fragments.size == 1) { "There should be exactly one package: $fragments, class id is $classId" }
-
-            val fragment = fragments.single()
-            if (fragment is DeserializedPackageFragment) {
-                // Similarly, verify that the containing package has information about this class
-                if (!fragment.hasTopLevelClass(classId.shortClassName)) return null
-            }
+            val fragment = fragments.firstOrNull { it !is DeserializedPackageFragment || it.hasTopLevelClass(classId.shortClassName) }
+                           ?: return null
 
             components.createContext(
                     fragment, nameResolver,
                     TypeTable(classProto.typeTable),
-                    SinceKotlinInfoTable.create(classProto.sinceKotlinInfoTable),
+                    VersionRequirementTable.create(classProto.versionRequirementTable),
                     containerSource = null
             )
         }

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
@@ -120,7 +120,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             args: K2JSCompilerArguments,
             environment: GradleCompilerEnvironment
     ): ExitCode {
-        args.freeArgs.addAll(kotlinSources.map { it.absolutePath })
+        args.freeArgs += kotlinSources.map { it.absolutePath }
         return runCompiler(K2JS_COMPILER, args, environment)
     }
 
@@ -129,7 +129,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             args: K2MetadataCompilerArguments,
             environment: GradleCompilerEnvironment
     ): ExitCode {
-        args.freeArgs.addAll(kotlinSources.map { it.absolutePath })
+        args.freeArgs += kotlinSources.map { it.absolutePath }
         return runCompiler(K2METADATA_COMPILER, args, environment)
     }
 
@@ -139,15 +139,14 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             environment: GradleCompilerEnvironment
     ): ExitCode {
         if (compilerArgs.version) {
-            project.logger.lifecycle("Kotlin version " + loadCompilerVersion(environment.compilerJar) +
+            project.logger.lifecycle("Kotlin version " + loadCompilerVersion(environment.compilerClasspath) +
                     " (JRE " + System.getProperty("java.runtime.version") + ")")
             compilerArgs.version = false
         }
-
         val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
         with (project.logger) {
             kotlinDebug { "Kotlin compiler class: $compilerClassName" }
-            kotlinDebug { "Kotlin compiler classpath: ${environment.compilerClasspath.map { it.canonicalPath }.joinToString()}" }
+            kotlinDebug { "Kotlin compiler classpath: ${environment.compilerFullClasspath.map { it.canonicalPath }.joinToString()}" }
             kotlinDebug { "Kotlin compiler args: ${argsArray.joinToString(" ")}" }
         }
 
@@ -193,11 +192,17 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         }
 
         val (daemon, sessionId) = connection
+        val targetPlatform = when (compilerClassName) {
+            K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
+            K2JS_COMPILER -> CompileService.TargetPlatform.JS
+            K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
+            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
+        }
         val exitCode = try {
             val res = if (environment is GradleIncrementalCompilerEnvironment) {
-                incrementalCompilationWithDaemon(daemon, sessionId, environment)
+                incrementalCompilationWithDaemon(daemon, sessionId, targetPlatform, environment)
             } else {
-                nonIncrementalCompilationWithDaemon(daemon, sessionId, compilerClassName, environment)
+                nonIncrementalCompilationWithDaemon(daemon, sessionId, targetPlatform, environment)
             }
             exitCodeFromProcessExitCode(res.get())
         }
@@ -215,16 +220,9 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     private fun nonIncrementalCompilationWithDaemon(
             daemon: CompileService,
             sessionId: Int,
-            compilerClassName: String,
+            targetPlatform: CompileService.TargetPlatform,
             environment: GradleCompilerEnvironment
     ): CompileService.CallResult<Int> {
-        val targetPlatform = when (compilerClassName) {
-            K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
-            K2JS_COMPILER -> CompileService.TargetPlatform.JS
-            K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
-            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
-        }
-
         val verbose = environment.compilerArgs.verbose
         val compilationOptions = CompilationOptions(
                 compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
@@ -240,6 +238,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     private fun incrementalCompilationWithDaemon(
             daemon: CompileService,
             sessionId: Int,
+            targetPlatform: CompileService.TargetPlatform,
             environment: GradleIncrementalCompilerEnvironment
     ): CompileService.CallResult<Int> {
         val knownChangedFiles = environment.changedFiles as? ChangedFiles.Known
@@ -256,8 +255,12 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 reportSeverity = reportSeverity(verbose),
                 requestedCompilationResults = arrayOf(CompilationResultCategory.IC_COMPILE_ITERATION.code),
                 compilerMode = CompilerMode.INCREMENTAL_COMPILER,
-                targetPlatform = CompileService.TargetPlatform.JVM
+                targetPlatform = targetPlatform,
+                resultDifferenceFile = environment.buildHistoryFile,
+                friendDifferenceFile = environment.friendBuildHistoryFile
         )
+
+        log.info("Options for KOTLIN DAEMON: $compilationOptions")
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(project, environment)
         val argsArray = ArgumentUtils.convertArgumentsToStringList(environment.compilerArgs).toTypedArray()
         return daemon.compile(sessionId, argsArray, compilationOptions, servicesFacade, GradleCompilationResults(project))
@@ -284,7 +287,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             compilerClassName: String,
             environment: GradleCompilerEnvironment
     ): ExitCode {
-        return runToolInSeparateProcess(argsArray, compilerClassName, environment.compilerClasspath, log, loggingMessageCollector)
+        return runToolInSeparateProcess(argsArray, compilerClassName, environment.compilerFullClasspath, log, loggingMessageCollector)
     }
 
     private fun compileInProcess(
@@ -317,7 +320,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     private fun logFinish(strategy: String) = log.logFinish(strategy)
 
     override fun getDaemonConnection(environment: GradleCompilerEnvironment): CompileServiceSession? {
-        val compilerId = CompilerId.makeCompilerId(environment.compilerClasspath)
+        val compilerId = CompilerId.makeCompilerId(environment.compilerFullClasspath)
         val clientIsAliveFlagFile = getOrCreateClientFlagFile(project)
         val sessionIsAliveFlagFile = getOrCreateSessionFlagFile(project)
         return newDaemonConnection(compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile, environment)

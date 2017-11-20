@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -40,7 +39,7 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
         if (currentHashCode != 0) return currentHashCode;
 
         ClassifierDescriptor descriptor = getDeclarationDescriptor();
-        if (descriptor instanceof ClassDescriptor && hasMeaningfulFqName(descriptor)) {
+        if (hasMeaningfulFqName(descriptor)) {
             currentHashCode = DescriptorUtils.getFqName(descriptor).hashCode();
         }
         else {
@@ -52,7 +51,13 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
 
     @NotNull
     @Override
-    public abstract ClassifierDescriptor getDeclarationDescriptor();
+    public abstract ClassDescriptor getDeclarationDescriptor();
+
+    @Override
+    public final boolean isFinal() {
+        ClassDescriptor descriptor = getDeclarationDescriptor();
+        return ModalityKt.isFinalClass(descriptor) && !descriptor.isExpect();
+    }
 
     @NotNull
     @Override
@@ -62,6 +67,7 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
 
     @Override
     public final boolean equals(Object other) {
+        if (this == other) return true;
         if (!(other instanceof TypeConstructor)) return false;
 
         // performance optimization: getFqName is slow method
@@ -74,16 +80,14 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
         ClassifierDescriptor myDescriptor = getDeclarationDescriptor();
         ClassifierDescriptor otherDescriptor = ((TypeConstructor) other).getDeclarationDescriptor();
 
-        // descriptor for type is created once per module
-        if (myDescriptor == otherDescriptor) return true;
-
-        // All error types have the same descriptor
         if (!hasMeaningfulFqName(myDescriptor) ||
             otherDescriptor != null && !hasMeaningfulFqName(otherDescriptor)) {
-            return this == other;
+            // All error types and local classes have the same descriptor,
+            // but we've already checked identity equality in the beginning of the method
+            return false;
         }
 
-        if (myDescriptor instanceof ClassDescriptor && otherDescriptor instanceof ClassDescriptor) {
+        if (otherDescriptor instanceof ClassDescriptor) {
             return areFqNamesEqual(((ClassDescriptor) myDescriptor), ((ClassDescriptor) otherDescriptor));
         }
 

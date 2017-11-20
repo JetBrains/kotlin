@@ -2,7 +2,6 @@
 package test.numbers
 
 import java.math.BigDecimal
-import org.junit.Test
 import kotlin.test.*
 
 class NumbersJVMTest {
@@ -41,14 +40,17 @@ class NumbersJVMTest {
         assertEquals(java.lang.Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY)
     }
 
-    @Test fun bigDecimalDivRounding() {
-        val (d1, d2, d3, d4, d5) = (1..5).map { BigDecimal(it.toString()) }
-        val d7 = BigDecimal("7")
+    @Test fun floatToBits() {
+        val PI_F = kotlin.math.PI.toFloat()
+        assertEquals(0x40490fdb, PI_F.toBits())
+        assertEquals(PI_F, Float.fromBits(0x40490fdb))
 
-        assertEquals(d1, d2 / d3)
-        assertEquals(d2, d3 / d2)
-        assertEquals(d2, d5 / d2)
-        assertEquals(d4, d7 / d2)
-        assertEquals(d1, d7 / d5)
+        for (value in listOf(Float.NEGATIVE_INFINITY, -Float.MAX_VALUE, -1.0F, -Float.MIN_VALUE, -0.0F, 0.0F, Float.POSITIVE_INFINITY, Float.MAX_VALUE, 1.0F, Float.MIN_VALUE)) {
+            assertEquals(value, Float.fromBits(value.toBits()))
+            assertEquals(value, Float.fromBits(value.toRawBits()))
+        }
+        assertTrue(Float.NaN.toBits().let(Float.Companion::fromBits).isNaN())
+        assertTrue(Float.NaN.toRawBits().let { Float.fromBits(it) }.isNaN())
     }
+
 }

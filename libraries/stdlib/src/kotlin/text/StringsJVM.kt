@@ -123,22 +123,22 @@ public inline fun String.toCharArray(destination: CharArray, destinationOffset: 
 public inline fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
 
 /**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
+ * Uses the provided [format] as a format string and returns a string obtained by substituting the specified arguments,
  * using the default locale.
  */
 @kotlin.internal.InlineOnly
 public inline fun String.Companion.format(format: String, vararg args: Any?): String = java.lang.String.format(format, *args)
 
 /**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments, using
- * the specified locale.
+ * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
+ * using the specified locale.
  */
 @kotlin.internal.InlineOnly
 public inline fun String.format(locale: Locale, vararg args : Any?) : String = java.lang.String.format(locale, this, *args)
 
 /**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
- * using the default locale.
+ * Uses the provided [format] as a format string and returns a string obtained by substituting the specified arguments,
+ * using the specified locale.
  */
 @kotlin.internal.InlineOnly
 public inline fun String.Companion.format(locale: Locale, format: String, vararg args: Any?): String = java.lang.String.format(locale, format, *args)
@@ -367,6 +367,7 @@ public inline fun String.toUpperCase(locale: java.util.Locale): String = (this a
 
 /**
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.
+ * @sample samples.text.Strings.stringToByteArray
  */
 @kotlin.internal.InlineOnly
 public inline fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)

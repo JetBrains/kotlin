@@ -457,6 +457,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/types"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("ClassLiteralArgument.kt")
+            public void testClassLiteralArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/ClassLiteralArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ReceiverParameter.kt")
             public void testReceiverParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/ReceiverParameter.kt");

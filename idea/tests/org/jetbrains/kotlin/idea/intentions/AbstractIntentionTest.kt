@@ -186,7 +186,7 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     companion object {
-        private val EXTENSIONS = arrayOf(".kt", ".java", ".groovy")
+        private val EXTENSIONS = arrayOf(".kt", ".kts", ".java", ".groovy")
     }
 }
 

@@ -53,6 +53,7 @@ abstract class ConfigureKotlinInProjectAction : AnAction() {
     }
 }
 
+
 class ConfigureKotlinJsInProjectAction: ConfigureKotlinInProjectAction() {
     override fun getApplicableConfigurators(project: Project) = getAbleToRunConfigurators(project).filter {
         it.targetPlatform == JsPlatform

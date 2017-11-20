@@ -11,7 +11,6 @@ import java.lang.Long.MAX_VALUE as MaxL
 import java.lang.Long.MIN_VALUE as MinL
 import java.lang.Character.MAX_VALUE as MaxC
 import java.lang.Character.MIN_VALUE as MinC
-import org.junit.Test
 import kotlin.test.*
 
 // Test data for codegen is generated from this class. If you change it, rerun GenerateTests

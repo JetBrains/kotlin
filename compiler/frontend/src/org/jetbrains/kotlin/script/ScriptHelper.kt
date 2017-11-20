@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.script
 
-import com.intellij.openapi.extensions.ExtensionPointName
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
+import java.util.*
 import kotlin.reflect.KClass
 
 data class ScriptParameter(val name: Name, val type: KotlinType)
@@ -29,8 +29,10 @@ interface ScriptHelper {
     fun getKotlinType(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): KotlinType
 
     companion object {
-        private val EP_NAME = ExtensionPointName.create<ScriptHelper>("org.jetbrains.kotlin.scriptHelper")
+        private val scriptHelperInstance: ScriptHelper =
+                ServiceLoader.load(ScriptHelper::class.java, ScriptHelper::class.java.classLoader).firstOrNull()
+                ?: error("ScriptHelper implementation is not found")
 
-        fun getInstance(): ScriptHelper? = EP_NAME.extensions.firstOrNull()
+        fun getInstance(): ScriptHelper = scriptHelperInstance
     }
 }

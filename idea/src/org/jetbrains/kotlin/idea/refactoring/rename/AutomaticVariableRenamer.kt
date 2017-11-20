@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -66,7 +66,7 @@ class AutomaticVariableRenamer(
             if (parameterOrVariable.typeReference?.isAncestor(usageElement) != true) continue
 
             val descriptor = try {
-                parameterOrVariable.resolveToDescriptor()
+                parameterOrVariable.unsafeResolveToDescriptor()
             } catch(e: NoDescriptorForDeclarationException) {
                 LOG.error(e)
                 continue

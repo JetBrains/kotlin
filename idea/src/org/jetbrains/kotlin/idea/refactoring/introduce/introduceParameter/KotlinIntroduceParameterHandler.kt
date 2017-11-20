@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
@@ -248,11 +248,13 @@ open class KotlinIntroduceParameterHandler(
         val replacementType = expressionType.approximateWithResolvableType(targetParent.getResolutionScope(context, targetParent.getResolutionFacade()), false)
 
         val body = when (targetParent) {
-                       is KtFunction -> targetParent.bodyExpression
-                       is KtClass -> targetParent.getBody()
-                       else -> null
-                   } ?: throw AssertionError("Body element is not found: ${targetParent.getElementTextWithContext()}")
-        val nameValidator = NewDeclarationNameValidator(body, sequenceOf(body), NewDeclarationNameValidator.Target.VARIABLES)
+            is KtFunction -> targetParent.bodyExpression
+            is KtClass -> targetParent.getBody()
+            else -> null
+        }
+        val bodyValidator: ((String) -> Boolean)? =
+                body?.let { NewDeclarationNameValidator(it, sequenceOf(it), NewDeclarationNameValidator.Target.VARIABLES) }
+        val nameValidator = CollectingNameValidator(targetParent.getValueParameters().mapNotNull { it.name }, bodyValidator ?: { true })
 
         val suggestedNames = SmartList<String>().apply {
             if (physicalExpression is KtProperty && !ApplicationManager.getApplication().isUnitTestMode) {
@@ -271,7 +273,7 @@ open class KotlinIntroduceParameterHandler(
         }
         else {
             expression.toRange()
-                    .match(body, KotlinPsiUnifier.DEFAULT)
+                    .match(targetParent, KotlinPsiUnifier.DEFAULT)
                     .filterNot {
                         val textRange = it.range.getPhysicalTextRange()
                         forbiddenRanges.any { it.intersects(textRange) }
@@ -369,6 +371,17 @@ open class KotlinIntroduceParameterHandler(
         }
 
         if (file !is KtFile) return
+
+        val elementAtCaret = file.findElementAt(editor.caretModel.offset) ?: return
+        if (elementAtCaret.getNonStrictParentOfType<KtAnnotationEntry>() != null) {
+            showErrorHint(project, editor, "Introduce Parameter is not available inside of annotation entries", INTRODUCE_PARAMETER)
+            return
+        }
+        if (elementAtCaret.getNonStrictParentOfType<KtParameter>() != null) {
+            showErrorHint(project, editor, "Introduce Parameter is not available for default value", INTRODUCE_PARAMETER)
+            return
+        }
+
         selectNewParameterContext(editor, file) { elements, targetParent ->
             val expression = ((elements.singleOrNull() as? KtBlockExpression)?.statements ?: elements).singleOrNull()
             if (expression is KtExpression) {
@@ -458,7 +471,7 @@ open class KotlinIntroduceLambdaParameterHandler(
                 lambdaExtractionDescriptor: ExtractableCodeDescriptor
         ): KotlinIntroduceParameterDialog? {
             val callable = lambdaExtractionDescriptor.extractionData.targetSibling as KtNamedDeclaration
-            val descriptor = callable.resolveToDescriptor()
+            val descriptor = callable.unsafeResolveToDescriptor()
             val callableDescriptor = descriptor.toFunctionDescriptor(callable)
             val originalRange = lambdaExtractionDescriptor.extractionData.originalRange
             val parametersUsages = findInternalUsagesOfParametersAndReceiver(callable, callableDescriptor) ?: return null

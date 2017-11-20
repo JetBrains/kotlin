@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.inspections.gradle
 
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.inspections.PluginVersionDependentInspection
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -36,8 +37,8 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrCallExpression
 import java.util.*
 
-class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
-    var testVersionMessage: String? = null
+class DifferentKotlinGradleVersionInspection : GradleBaseInspection(), PluginVersionDependentInspection{
+    override var testVersionMessage: String? = null
         @TestOnly set
 
     override fun buildVisitor(): BaseInspectionVisitor = MyVisitor()

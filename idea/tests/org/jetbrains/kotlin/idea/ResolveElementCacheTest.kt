@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
@@ -355,7 +355,7 @@ class C(param1: String = "", param2: Int = 0) {
 
         val function = file.declarations[0] as KtNamedFunction
         val functionType = function.valueParameters.first().typeReference!!.typeElement as KtFunctionType
-        val descriptorsForParameters = functionType.parameters.map { it.resolveToDescriptor() }
+        val descriptorsForParameters = functionType.parameters.map { it.unsafeResolveToDescriptor() }
 
         assert(
                 listOf("key", "next", SpecialNames.NO_NAME_PROVIDED.asString()) ==

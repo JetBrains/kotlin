@@ -119,7 +119,7 @@ class OverridesCompletion(
                     // keep original modifiers
                     val modifierList = KtPsiFactory(context.project).createModifierList(dummyMember.modifierList!!.text)
 
-                    val prototype = memberObject.generateMember(context.project, false)
+                    val prototype = memberObject.generateMember(classOrObject, false)
                     prototype.modifierList!!.replace(modifierList)
                     val insertedMember = dummyMember.replaced(prototype)
 

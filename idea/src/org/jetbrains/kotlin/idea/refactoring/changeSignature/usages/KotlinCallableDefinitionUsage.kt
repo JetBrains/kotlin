@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toKeywordToken
@@ -61,8 +61,8 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
     val currentCallableDescriptor: CallableDescriptor? by lazy {
         val element = declaration
         when (element) {
-            is KtFunction, is KtProperty, is KtParameter -> (element as KtDeclaration).resolveToDescriptor() as CallableDescriptor
-            is KtClass -> (element.resolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
+            is KtFunction, is KtProperty, is KtParameter -> (element as KtDeclaration).unsafeResolveToDescriptor() as CallableDescriptor
+            is KtClass -> (element.unsafeResolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
             is PsiMethod -> element.getJavaMethodDescriptor()
             else -> null
         }

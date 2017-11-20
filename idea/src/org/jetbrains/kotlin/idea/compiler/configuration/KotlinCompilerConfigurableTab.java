@@ -443,10 +443,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                  ComparingUtils.isModified(keepAliveCheckBox, compilerWorkspaceSettings.getEnableDaemon()))) ||
 
                ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.getSourceMap()) ||
-               ComparingUtils.isModified(outputPrefixFile, k2jsCompilerArguments.getOutputPrefix()) ||
-               ComparingUtils.isModified(outputPostfixFile, k2jsCompilerArguments.getOutputPostfix()) ||
+               ComparingUtils.isModified(outputPrefixFile, StringUtil.notNullize(k2jsCompilerArguments.getOutputPrefix())) ||
+               ComparingUtils.isModified(outputPostfixFile, StringUtil.notNullize(k2jsCompilerArguments.getOutputPostfix())) ||
                !getSelectedModuleKind().equals(getModuleKindOrDefault(k2jsCompilerArguments.getModuleKind())) ||
-               ComparingUtils.isModified(sourceMapPrefix, k2jsCompilerArguments.getSourceMapPrefix()) ||
+               ComparingUtils.isModified(sourceMapPrefix, StringUtil.notNullize(k2jsCompilerArguments.getSourceMapPrefix())) ||
                !getSelectedSourceMapSourceEmbedding().equals(
                        getSourceMapSourceEmbeddingOrDefault(k2jsCompilerArguments.getSourceMapEmbedSources())) ||
                !getSelectedJvmVersion().equals(getJvmVersionOrDefault(k2jvmCompilerArguments.getJvmTarget()));

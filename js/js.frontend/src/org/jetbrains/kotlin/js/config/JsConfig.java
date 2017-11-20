@@ -125,7 +125,11 @@ public class JsConfig {
 
     @NotNull
     public List<String> getSourceMapRoots() {
-        return configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, Collections.singletonList("."));
+        return configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, Collections.emptyList());
+    }
+
+    public boolean shouldGenerateRelativePathsInSourceMap() {
+        return getSourceMapPrefix().isEmpty() && getSourceMapRoots().isEmpty();
     }
 
     @NotNull
@@ -137,6 +141,12 @@ public class JsConfig {
     public List<String> getFriends() {
         if (getConfiguration().getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return Collections.emptyList();
         return getConfiguration().getList(JSConfigurationKeys.FRIEND_PATHS);
+    }
+
+    public boolean isAtLeast(@NotNull LanguageVersion expected) {
+        LanguageVersion actual = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration).getLanguageVersion();
+        return actual.getMajor() > expected.getMajor() ||
+               actual.getMajor() == expected.getMajor() && actual.getMinor() >= expected.getMinor();
     }
 
 

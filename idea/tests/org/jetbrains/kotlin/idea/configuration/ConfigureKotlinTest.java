@@ -18,23 +18,32 @@ package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.RootPolicy;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiJavaModule;
+import com.intellij.psi.PsiRequiresStatement;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
 import org.jetbrains.kotlin.idea.facet.FacetUtilsKt;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
 import org.jetbrains.kotlin.idea.project.PlatformKt;
+import org.jetbrains.kotlin.idea.util.Java9StructureUtilKt;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleKt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.StreamSupport;
 
 public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     public void testNewLibrary_copyJar() {
@@ -135,8 +144,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     }
 
     public void testProjectWithoutFacetWithRuntime11WithoutLanguageLevel() {
-        assertEquals(LanguageVersion.KOTLIN_1_1, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
-        assertEquals(LanguageVersion.KOTLIN_1_1, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
+        assertEquals(LanguageVersion.LATEST_STABLE, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.LATEST_STABLE, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
     }
 
     public void testProjectWithoutFacetWithRuntime11WithLanguageLevel10() {
@@ -145,7 +154,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     }
 
     public void testProjectWithFacetWithRuntime11WithLanguageLevel10() {
-        assertEquals(LanguageVersion.KOTLIN_1_1, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.LATEST_STABLE, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
         assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
     }
 
@@ -234,6 +243,56 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
         assertEquals("1.7", arguments.getJvmTarget());
         assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
+    }
+
+    public void testImplementsDependency() {
+        ModuleManager moduleManager = ModuleManager.getInstance(myProject);
+
+        Module module1 = moduleManager.findModuleByName("module1");
+        assert module1 != null;
+
+        Module module2 = moduleManager.findModuleByName("module2");
+        assert module2 != null;
+
+        assertEquals(KotlinFacet.Companion.get(module1).getConfiguration().getSettings().getImplementedModuleName(), null);
+        assertEquals(KotlinFacet.Companion.get(module2).getConfiguration().getSettings().getImplementedModuleName(), "module1");
+    }
+
+    public void testJava9WithModuleInfo() {
+        checkAddStdlibModule();
+    }
+
+    public void testJava9WithModuleInfoWithStdlibAlready() {
+        checkAddStdlibModule();
+    }
+
+    public void testProjectWithFreeArgs() {
+        assertEquals(
+                Collections.singletonList("true"),
+                KotlinCommonCompilerArgumentsHolder.Companion.getInstance(myProject).getSettings().getFreeArgs()
+        );
+    }
+
+    private void checkAddStdlibModule() {
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
+
+        Module module = getModule();
+        Sdk moduleSdk = ModuleRootManager.getInstance(getModule()).getSdk();
+        assertNotNull("Module SDK is not defined", moduleSdk);
+
+        PsiJavaModule javaModule = Java9StructureUtilKt.findFirstPsiJavaModule(module);
+        assertNotNull(javaModule);
+
+        PsiRequiresStatement stdlibDirective =
+                Java9StructureUtilKt.findRequireDirective(javaModule, JavaModuleKt.KOTLIN_STDLIB_MODULE_NAME);
+        assertNotNull("Require directive for " + JavaModuleKt.KOTLIN_STDLIB_MODULE_NAME + " is expected",
+                      stdlibDirective);
+
+        long numberOfStdlib = StreamSupport.stream(javaModule.getRequires().spliterator(), false)
+                .filter((statement) -> JavaModuleKt.KOTLIN_STDLIB_MODULE_NAME.equals(statement.getModuleName()))
+                .count();
+
+        assertTrue("Only one standard library directive is expected", numberOfStdlib == 1);
     }
 
     private void configureFacetAndCheckJvm(JvmTarget jvmTarget) {

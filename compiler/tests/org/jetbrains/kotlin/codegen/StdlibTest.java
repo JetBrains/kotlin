@@ -53,10 +53,11 @@ public class StdlibTest extends KotlinTestWithEnvironment {
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
         @SuppressWarnings("deprecation")
-        File[] runtimeClasspath = ForTestCompileRuntime.runtimeClassesForTests();
+        File[] runtimeClasspath = new File[] { ForTestCompileRuntime.runtimeJarForTests() };
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_NO_RUNTIME, TestJdkKind.FULL_JDK, runtimeClasspath);
 
         JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.kotlinTestJarForTests());
+        JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.kotlinTestJunitJarForTests());
 
         File junitJar = new File("libraries/lib/junit-4.11.jar");
         assertTrue(junitJar.exists());

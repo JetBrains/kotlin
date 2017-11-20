@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
@@ -256,7 +255,7 @@ public class IdeStubIndexService extends StubIndexService {
     public KotlinFileStub createFileStub(@NotNull KtFile file) {
         StringRef packageFqName = StringRef.fromString(file.getPackageFqNameByTree().asString());
         boolean isScript = file.isScriptByTree();
-        if (PackagePartClassUtils.fileHasTopLevelCallables(file)) {
+        if (file.hasTopLevelCallables()) {
             JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file);
             StringRef facadeSimpleName = StringRef.fromString(fileClassInfo.getFacadeClassFqName().shortName().asString());
             StringRef partSimpleName = StringRef.fromString(fileClassInfo.getFileClassFqName().shortName().asString());

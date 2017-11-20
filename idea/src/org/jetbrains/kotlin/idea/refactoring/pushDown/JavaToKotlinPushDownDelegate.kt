@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.refactoring.j2k
@@ -53,7 +53,7 @@ class JavaToKotlinPushDownDelegate : JavaPushDownDelegate() {
         super.checkTargetClassConflicts(targetClass, pushDownData, conflicts, subClassData)
 
         val ktClass = targetClass?.unwrapped as? KtClassOrObject ?: return
-        val targetClassDescriptor = ktClass.resolveToDescriptor() as ClassDescriptor
+        val targetClassDescriptor = ktClass.unsafeResolveToDescriptor() as ClassDescriptor
         for (memberInfo in pushDownData.membersToMove) {
             val member = memberInfo.member ?: continue
             checkExternalUsages(conflicts, member, targetClassDescriptor, ktClass.getResolutionFacade())
@@ -65,7 +65,7 @@ class JavaToKotlinPushDownDelegate : JavaPushDownDelegate() {
         val subClass = targetClass.unwrapped as? KtClassOrObject ?: return
         val resolutionFacade = subClass.getResolutionFacade()
         val superClassDescriptor = superClass.getJavaClassDescriptor(resolutionFacade) ?: return
-        val subClassDescriptor = subClass.resolveToDescriptor() as ClassDescriptor
+        val subClassDescriptor = subClass.unsafeResolveToDescriptor() as ClassDescriptor
         val substitutor = getTypeSubstitutor(superClassDescriptor.defaultType, subClassDescriptor.defaultType) ?: TypeSubstitutor.EMPTY
         val psiFactory = KtPsiFactory(subClass)
         var hasAbstractMembers = false

@@ -66,7 +66,6 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.DFS.*
@@ -514,7 +513,7 @@ internal class MutableParameter(
     private val defaultType: KotlinType by lazy {
         writable = false
         if (defaultTypes.isNotEmpty()) {
-            TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, defaultTypes)!!
+            TypeIntersector.intersectTypes(defaultTypes)!!
         }
         else originalType
     }
@@ -609,7 +608,7 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
 
 fun ExtractionData.isVisibilityApplicable(): Boolean {
     val parent = targetSibling.parent
-    return parent is KtClassBody || (parent is KtFile && !parent.isScript)
+    return parent is KtClassBody || (parent is KtFile && !parent.isScript())
 }
 
 fun ExtractionData.getDefaultVisibility(): String {
@@ -717,7 +716,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false)
     ).generateDeclaration().declaration.getGeneratedBody()
     val virtualContext = body.analyzeFully()
-    if (virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL }) {
+    if (virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL || it.factory == Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS }) {
         descriptor = descriptor.copy(modifiers = listOf(KtTokens.SUSPEND_KEYWORD))
     }
 

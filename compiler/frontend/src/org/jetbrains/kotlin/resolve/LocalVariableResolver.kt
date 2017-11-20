@@ -20,8 +20,12 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorWithInitializerImpl
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -119,11 +123,18 @@ class LocalVariableResolver(
             typeInfo = noTypeInfo(context)
         }
 
-        ExpressionTypingUtils.checkVariableShadowing(context.scope, context.trace, propertyDescriptor)
+        checkLocalVariableDeclaration(context, propertyDescriptor, property)
 
-        modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(property, propertyDescriptor)
-        identifierChecker.checkDeclaration(property, context.trace)
         return Pair(typeInfo.replaceType(dataFlowAnalyzer.checkStatementType(property, context)), propertyDescriptor)
+    }
+
+    private fun checkLocalVariableDeclaration(context: ExpressionTypingContext, descriptor: VariableDescriptor, ktProperty: KtProperty) {
+        ExpressionTypingUtils.checkVariableShadowing(context.scope, context.trace, descriptor)
+
+        modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(ktProperty, descriptor)
+        identifierChecker.checkDeclaration(ktProperty, context.trace)
+
+        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(context.trace, ktProperty, descriptor)
     }
 
     private fun resolveLocalVariableDescriptor(
@@ -147,8 +158,8 @@ class LocalVariableResolver(
                     variable.toSourceElement(),
                     /* lateInit = */ false,
                     /* isConst = */ false,
-                    /* isHeader = */ false,
-                    /* isImpl = */ false,
+                    /* isExpect = */ false,
+                    /* isActual = */ false,
                     /* isExternal = */ false,
                     variable is KtProperty && variable.hasDelegate()
             )
@@ -195,6 +206,7 @@ class LocalVariableResolver(
             trace: BindingTrace
     ): LocalVariableDescriptor {
         val hasDelegate = variable is KtProperty && variable.hasDelegate()
+        val hasLateinit = variable.hasModifier(KtTokens.LATEINIT_KEYWORD)
         val variableDescriptor = LocalVariableDescriptor(
                 scope.ownerDescriptor,
                 annotationResolver.resolveAnnotationsWithArguments(scope, variable.modifierList, trace),
@@ -207,6 +219,7 @@ class LocalVariableResolver(
                 type,
                 variable.isVar,
                 hasDelegate,
+                hasLateinit,
                 variable.toSourceElement()
         )
         trace.record(BindingContext.VARIABLE, variable, variableDescriptor)

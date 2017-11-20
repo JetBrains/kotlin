@@ -47,11 +47,35 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public abstract class MavenTestCase extends UsefulTestCase {
+
+    private static final String mavenMirrorUrl = System.getProperty("idea.maven.test.mirror",
+                                                                    // use JB maven proxy server for internal use by default, see details at
+                                                                    // https://confluence.jetbrains.com/display/JBINT/Maven+proxy+server
+                                                                    "http://maven.labs.intellij.net/repo1");
+    private static boolean mirrorDiscoverable = false;
+
+    static {
+        try {
+            URL url = new URL(mavenMirrorUrl);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(1000);
+            int responseCode = urlConnection.getResponseCode();
+            if(responseCode < 400) {
+                mirrorDiscoverable = true;
+            }
+        }
+        catch (Exception e) {
+            mirrorDiscoverable = false;
+        }
+    }
+
     private File ourTempDir;
 
     protected IdeaProjectTestFixture myTestFixture;
@@ -319,16 +343,22 @@ public abstract class MavenTestCase extends UsefulTestCase {
     }
 
     private static String createSettingsXmlContent(String content) {
-        String mirror = System.getProperty("idea.maven.test.mirror",
-                                           // use JB maven proxy server for internal use by default, see details at
-                                           // https://confluence.jetbrains.com/display/JBINT/Maven+proxy+server
-                                           "http://maven.labs.intellij.net/repo1");
+
+        if (!mirrorDiscoverable) {
+            System.err.println("Maven mirror at " + mavenMirrorUrl + " not reachable, so not using it.");
+
+            return "<settings>" +
+                   content +
+                   "</settings>";
+        }
+
+        System.out.println("Using Maven mirror at " + mavenMirrorUrl);
         return "<settings>" +
                content +
                "<mirrors>" +
                "  <mirror>" +
                "    <id>jb-central-proxy</id>" +
-               "    <url>" + mirror + "</url>" +
+               "    <url>" + mavenMirrorUrl + "</url>" +
                "    <mirrorOf>external:*</mirrorOf>" +
                "  </mirror>" +
                "</mirrors>" +

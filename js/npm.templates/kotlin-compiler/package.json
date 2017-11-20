@@ -1,6 +1,6 @@
 {
   "name": "kotlin-compiler",
-  "version": "0.0.0",
+  "version": "$version",
   "description": "Kotlin compiler",
   "repository": {
     "type": "git",
@@ -21,8 +21,5 @@
   "homepage": "kotlinlang.org",
   "bin": {
     "kotlinc-js": "bin/kotlinc-js-runner.js"
-  },
-  "publishConfig" : {
-    "tag" : "dev"
   }
 }

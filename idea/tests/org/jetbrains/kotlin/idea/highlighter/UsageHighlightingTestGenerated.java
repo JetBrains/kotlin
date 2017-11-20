@@ -36,6 +36,12 @@ public class UsageHighlightingTestGenerated extends AbstractUsageHighlightingTes
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/usageHighlighter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("implicitIt.kt")
+    public void testImplicitIt() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/implicitIt.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("importAlias.kt")
     public void testImportAlias() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/importAlias.kt");

@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
@@ -109,6 +110,11 @@ abstract class KtClassOrObject :
     override fun getSecondaryConstructors(): List<KtSecondaryConstructor> = getBody()?.secondaryConstructors.orEmpty()
 
     fun isAnnotation(): Boolean = hasModifier(KtTokens.ANNOTATION_KEYWORD)
+
+    fun getDeclarationKeyword(): PsiElement? =
+            findChildByType(TokenSet.create(
+                    KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
+            ))
 
     override fun delete() {
         CheckUtil.checkWritable(this)

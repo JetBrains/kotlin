@@ -1,9 +1,9 @@
-header infix fun Int.plus(s: CharSequence): Int
+expect infix fun Int.plus(s: CharSequence): Int
 
-header operator fun Double.times(x: CharArray)
+expect operator fun Double.times(x: CharArray)
 
-header external fun f1()
+expect external fun f1()
 
-header inline fun f2()
+expect inline fun f2()
 
-header tailrec fun f3()
+expect tailrec fun f3()

@@ -95,10 +95,20 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val (extensionAnnotations, notExtensionAnnotations) =
                     annotations.partition { it.classId.asSingleFqName() == KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
 
-            createTypeAnnotationStubs(parent, type, notExtensionAnnotations)
-
             val isExtension = extensionAnnotations.isNotEmpty()
-            createFunctionTypeStub(nullableTypeParent(parent, type), type, isExtension, Flags.SUSPEND_TYPE.get(type.flags))
+            val isSuspend = Flags.SUSPEND_TYPE.get(type.flags)
+
+            val nullableWrapper = if (isSuspend) {
+                val wrapper = nullableTypeParent(parent, type)
+                createTypeAnnotationStubs(wrapper, type, notExtensionAnnotations)
+                wrapper
+            }
+            else {
+                createTypeAnnotationStubs(parent, type, notExtensionAnnotations)
+                nullableTypeParent(parent, type)
+            }
+
+            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend)
 
             return
         }

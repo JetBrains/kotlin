@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 993
+// EXPECTED_REACHABLE_NODES: 1111
 // MODULE_KIND: AMD
 @JsModule("bar")
 external fun foo(vararg arg: String): String

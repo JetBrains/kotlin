@@ -1,0 +1,1 @@
+expect fun <lineMarker descr="Has actuals in JVM">foo</lineMarker>(): Int

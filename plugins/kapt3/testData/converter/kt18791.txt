@@ -1,0 +1,40 @@
+package app;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Bind {
+
+    public abstract int id();
+}
+
+////////////////////
+
+package app;
+
+@kotlin.Metadata()
+public final class MyActivity {
+
+    @Bind(id = lib.R.id.textView)
+    public final void foo() {
+    }
+
+    @Bind(id = lib.R.id.textView)
+    public final void foo2() {
+    }
+
+    @Bind(id = app.R.layout.mainActivity)
+    public final void foo3() {
+    }
+
+    @Bind(id = app.R.layout.mainActivity)
+    public final void foo4() {
+    }
+
+    @Bind(id = 200)
+    public final void notResource() {
+    }
+
+    public MyActivity() {
+        super();
+    }
+}

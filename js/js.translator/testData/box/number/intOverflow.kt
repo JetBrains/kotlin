@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 993
+// EXPECTED_REACHABLE_NODES: 1111
 package foo
 
 fun bigValue() = 0x7FFFFFFC
@@ -26,5 +26,10 @@ fun box(): String {
     v = bigValue() * bigValue()
     if (v != 16) return "fail6: $v"
 
+    v = -minInt()
+    if (v != Int.MIN_VALUE) return "fail7: $v"
+
     return "OK"
 }
+
+fun minInt() = Int.MIN_VALUE

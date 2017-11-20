@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.android.synthetic.codegen
 
 import kotlinx.android.extensions.CacheImplementation
+import kotlinx.android.extensions.LayoutContainer
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.shouldCacheResource
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.CACHED_FIND_VIEW_BY_ID_METHOD_NAME
@@ -78,7 +79,7 @@ class ResourcePropertyStackValue(
                 }
                 AndroidContainerType.LAYOUT_CONTAINER -> {
                     receiver.put(Type.getType("L${containerType.internalClassName};"), v)
-                    v.invokevirtual(containerType.internalClassName, "getEntityView", "()Landroid/view/View;", false)
+                    v.invokeinterface(Type.getType(LayoutContainer::class.java).internalName, "getContainerView", "()Landroid/view/View;")
                     getResourceId(v)
                     v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
                 }

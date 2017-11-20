@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver
@@ -55,11 +56,11 @@ class KotlinCallResolver(
         }
 
         if (collectAllCandidates) {
-            val allCandidates = towerResolver.collectAllCandidates(scopeTower, processor)
+            val allCandidates = towerResolver.collectAllCandidates(scopeTower, processor, kotlinCall.name)
             return kotlinCallCompleter.createAllCandidatesResult(allCandidates, expectedType, resolutionCallbacks)
         }
 
-        val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED)
+        val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = kotlinCall.callKind != KotlinCallKind.UNSUPPORTED, name = kotlinCall.name)
 
         return choseMostSpecific(candidateFactory, resolutionCallbacks, expectedType, candidates)
     }
@@ -98,8 +99,16 @@ class KotlinCallResolver(
     ): CallResolutionResult {
         val isDebuggerContext = candidateFactory.scopeTower.isDebuggerContext
 
+        var refinedCandidates = candidates
+        if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.RefinedSamAdaptersPriority)) {
+            val nonSynthesized = candidates.filter { !it.resolvedCall.candidateDescriptor.isSynthesized }
+            if (!nonSynthesized.isEmpty()) {
+                refinedCandidates = nonSynthesized
+            }
+        }
+
         val maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
-                candidates,
+                refinedCandidates,
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                 discriminateGenerics = true, // todo
                 isDebuggerContext = isDebuggerContext)

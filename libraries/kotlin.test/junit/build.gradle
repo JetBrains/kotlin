@@ -1,12 +1,13 @@
 description = 'Kotlin Test JUnit'
 
-apply plugin: 'kotlin'
+apply plugin: 'kotlin-platform-jvm'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 
 dependencies {
+    expectedBy project(':kotlin-test:kotlin-test-annotations-common')
     compile project(':kotlin-test:kotlin-test-jvm')
     compile('junit:junit:4.12')
 }
@@ -26,7 +27,7 @@ dist {
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-module-name", project.name]
 }
 
 compileTestKotlin {

@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.isEnumCompanionPropertyWithEntryConflict
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
@@ -84,7 +84,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     }
 
     private fun getJvmNames(element: PsiElement): Pair<String?, String?> {
-        val descriptor = (element.unwrapped as? KtDeclaration)?.resolveToDescriptor() as? PropertyDescriptor ?: return null to null
+        val descriptor = (element.unwrapped as? KtDeclaration)?.unsafeResolveToDescriptor() as? PropertyDescriptor ?: return null to null
         val getterName = descriptor.getter?.let { DescriptorUtils.getJvmName(it) }
         val setterName = descriptor.setter?.let { DescriptorUtils.getJvmName(it) }
         return getterName to setterName
@@ -199,7 +199,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     ) {
         if (newName == null) return
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return
-        val descriptor = declaration.resolveToDescriptor() as VariableDescriptor
+        val descriptor = declaration.unsafeResolveToDescriptor() as VariableDescriptor
 
         val collisions = SmartList<UsageInfo>()
         checkRedeclarations(descriptor, newName, collisions)

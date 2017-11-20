@@ -58,15 +58,14 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 
 class BridgeLowering(val state: GenerationState) : ClassLoweringPass {
 
-    val typeMapper = state.typeMapper
+    private val typeMapper = state.typeMapper
 
-    private val IS_PURE_INTERFACE_CHECKER = fun(descriptor: DeclarationDescriptor): Boolean {
-        return JvmCodegenUtil.isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, state)
-    }
+    private val IS_PURE_INTERFACE_CHECKER = fun(descriptor: DeclarationDescriptor): Boolean =
+            JvmCodegenUtil.isInterfaceWithoutDefaults(descriptor, state)
 
     override fun lower(irClass: IrClass) {
         val classDescriptor = irClass.descriptor
-        if (JvmCodegenUtil.isAnnotationOrJvmInterfaceWithoutDefaults(classDescriptor, state) || classDescriptor is FileClassDescriptor) return
+        if (IS_PURE_INTERFACE_CHECKER(classDescriptor) || classDescriptor is FileClassDescriptor) return
 
         if (classDescriptor is DefaultImplsClassDescriptor) {
             return /*TODO?*/

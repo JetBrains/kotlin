@@ -9,7 +9,7 @@ private val inited = AtomicBoolean()
 private val lock = ReentrantLock()
 private val contributors = ArrayList<AsserterContributor>()
 
-internal impl fun lookupAsserter(): Asserter = lookup()
+internal actual fun lookupAsserter(): Asserter = lookup()
 
 private val defaultAsserter = DefaultAsserter()
 

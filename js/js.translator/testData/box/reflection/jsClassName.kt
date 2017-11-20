@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1055
+// EXPECTED_REACHABLE_NODES: 1174
 package foo
 
 fun testWithInstance() {

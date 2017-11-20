@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtExpression
@@ -62,7 +62,7 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
             return
         }
 
-        val descriptor = element.resolveToDescriptor() as SimpleFunctionDescriptor
+        val descriptor = element.unsafeResolveToDescriptor() as SimpleFunctionDescriptor
         val codeToInline = buildCodeToInline(
                 element,
                 descriptor.returnType,

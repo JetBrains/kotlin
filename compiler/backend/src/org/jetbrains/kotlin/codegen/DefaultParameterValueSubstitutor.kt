@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOriginFromPure
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -129,7 +128,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
     ) {
         val typeMapper = state.typeMapper
         val isStatic = AsmUtil.isStaticMethod(contextKind, functionDescriptor)
-        val baseMethodFlags = AsmUtil.getCommonCallableFlags(functionDescriptor) and Opcodes.ACC_VARARGS.inv()
+        val baseMethodFlags = AsmUtil.getCommonCallableFlags(functionDescriptor, state) and Opcodes.ACC_VARARGS.inv()
         val remainingParameters = getRemainingParameters(functionDescriptor.original, substituteCount)
         val flags =
                 baseMethodFlags or

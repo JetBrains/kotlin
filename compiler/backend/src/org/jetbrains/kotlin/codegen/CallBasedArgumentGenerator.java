@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.StackValue.createDefaultValue;
+import static org.jetbrains.kotlin.codegen.StackValue.*;
 
 public class CallBasedArgumentGenerator extends ArgumentGenerator {
     private final ExpressionCodegen codegen;
@@ -74,6 +74,17 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         // while its lower bound may be Nothing-typed after approximation
         StackValue lazyVararg = codegen.genVarargs(argument, FlexibleTypesKt.upperIfFlexible(parameter.getType()));
         callGenerator.putValueIfNeeded(valueParameterTypes.get(i), lazyVararg, ValueKind.GENERAL_VARARG, i);
+    }
+
+    @Override
+    protected void generateDefaultJava(int i, @NotNull DefaultValueArgument argument) {
+        StackValue argumentValue = StackValueKt.findJavaDefaultArgumentValue(
+                valueParameters.get(i),
+                valueParameterTypes.get(i),
+                codegen.typeMapper
+        );
+
+        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), argumentValue);
     }
 
     @Override

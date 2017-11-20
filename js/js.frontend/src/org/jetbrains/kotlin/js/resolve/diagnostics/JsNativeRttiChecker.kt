@@ -36,10 +36,10 @@ class JsNativeRttiChecker : RttiExpressionChecker, ClassLiteralChecker {
         if (sourceType != null && targetDescriptor != null && AnnotationsUtils.isNativeInterface(targetDescriptor)) {
             when (rttiInformation.operation) {
                 RttiOperation.IS,
-                RttiOperation.NOT_IS -> trace.report(ErrorsJs.CANNOT_CHECK_FOR_NATIVE_INTERFACE.on(reportOn, targetType))
+                RttiOperation.NOT_IS -> trace.report(ErrorsJs.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE.on(reportOn, targetType))
 
                 RttiOperation.AS,
-                RttiOperation.SAFE_AS -> trace.report(ErrorsJs.UNCHECKED_CAST_TO_NATIVE_INTERFACE.on(reportOn, sourceType, targetType))
+                RttiOperation.SAFE_AS -> trace.report(ErrorsJs.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE.on(reportOn, sourceType, targetType))
             }
         }
     }
@@ -47,7 +47,7 @@ class JsNativeRttiChecker : RttiExpressionChecker, ClassLiteralChecker {
     override fun check(expression: KtClassLiteralExpression, type: KotlinType, context: ResolutionContext<*>) {
         val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return
         if (AnnotationsUtils.isNativeInterface(descriptor)) {
-            context.trace.report(ErrorsJs.NATIVE_INTERFACE_AS_CLASS_LITERAL.on(expression))
+            context.trace.report(ErrorsJs.EXTERNAL_INTERFACE_AS_CLASS_LITERAL.on(expression))
         }
     }
 }

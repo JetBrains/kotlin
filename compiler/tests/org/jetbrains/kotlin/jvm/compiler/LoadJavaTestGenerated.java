@@ -1604,6 +1604,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             }
         }
 
+        @TestMetadata("compiler/testData/loadJava/compiledJava/signatureAnnotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SignatureAnnotations extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInSignatureAnnotations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signatureAnnotations"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("StableName.java")
+            public void testStableName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signatureAnnotations/StableName.java");
+                doTestCompiledJava(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -2233,6 +2248,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             public static class Types extends AbstractLoadJavaTest {
                 public void testAllFilesPresentInTypes() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/types"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("ClassLiteralArgument.kt")
+                public void testClassLiteralArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/ClassLiteralArgument.kt");
+                    doTestCompiledKotlin(fileName);
                 }
 
                 @TestMetadata("ReceiverParameter.kt")
@@ -4957,6 +4978,75 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("ConstValInMultifileClass.kt")
             public void testConstValInMultifileClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/ConstValInMultifileClass.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Contracts extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInContracts() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("callsEffect.kt")
+            public void testCallsEffect() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/callsEffect.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+
+            @TestMetadata("deeplyNestedExpression.kt")
+            public void testDeeplyNestedExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/deeplyNestedExpression.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+
+            @TestMetadata("embedding.kt")
+            public void testEmbedding() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/embedding.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+
+            @TestMetadata("fromStandardKt.kt")
+            public void testFromStandardKt() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/fromStandardKt.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+
+            @TestMetadata("isInstancePredicate.kt")
+            public void testIsInstancePredicate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/isInstancePredicate.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+
+            @TestMetadata("logicOperators.kt")
+            public void testLogicOperators() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/logicOperators.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+
+            @TestMetadata("multieffectContracts.kt")
+            public void testMultieffectContracts() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/multieffectContracts.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+
+            @TestMetadata("mutualRecursion.kt")
+            public void testMutualRecursion() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/mutualRecursion.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+
+            @TestMetadata("recursion.kt")
+            public void testRecursion() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/recursion.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+
+            @TestMetadata("withReceiver.kt")
+            public void testWithReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/withReceiver.kt");
                 doTestCompiledKotlinWithStdlib(fileName);
             }
         }

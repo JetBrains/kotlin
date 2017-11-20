@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.ContractDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
@@ -68,7 +69,8 @@ class DeserializerForClassfileDecompiler(
         deserializationComponents = DeserializationComponents(
                 storageManager, moduleDescriptor, DeserializationConfiguration.Default, classDataFinder, annotationAndConstantLoader,
                 packageFragmentProvider, ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
-                LookupTracker.DO_NOTHING, JavaFlexibleTypeDeserializer, emptyList(), notFoundClasses
+                LookupTracker.DO_NOTHING, JavaFlexibleTypeDeserializer, emptyList(), notFoundClasses,
+                ContractDeserializer.DEFAULT
         )
     }
 
@@ -87,7 +89,7 @@ class DeserializerForClassfileDecompiler(
         }
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(packageFqName), packageProto, nameResolver,
+                createDummyPackageFragment(header.packageName?.let(::FqName) ?: facadeFqName.parent()), packageProto, nameResolver,
                 JvmPackagePartSource(binaryClassForPackageClass), deserializationComponents
         ) { emptyList() }
         return membersScope.getContributedDescriptors().toList()

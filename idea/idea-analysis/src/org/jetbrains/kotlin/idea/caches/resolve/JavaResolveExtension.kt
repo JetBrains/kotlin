@@ -77,7 +77,7 @@ fun PsiMember.getJavaOrKotlinMemberDescriptor(resolutionFacade: ResolutionFacade
     return when (callable) {
         is PsiMember -> getJavaMemberDescriptor(resolutionFacade)
         is KtDeclaration -> {
-            val descriptor = resolutionFacade?.resolveToDescriptor(callable) ?: callable.resolveToDescriptor()
+            val descriptor = resolutionFacade?.resolveToDescriptor(callable) ?: callable.unsafeResolveToDescriptor()
             if (descriptor is ClassDescriptor && this is PsiMethod) descriptor.unsubstitutedPrimaryConstructor else descriptor
         }
         else -> null

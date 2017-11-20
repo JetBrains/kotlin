@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 
@@ -36,4 +39,10 @@ interface ResolutionScope {
             kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
             nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER
     ): Collection<DeclarationDescriptor>
+
+    fun definitelyDoesNotContainName(name: Name): Boolean = false
+
+    fun recordLookup(name: Name, location: LookupLocation) {
+        getContributedFunctions(name, location)
+    }
 }

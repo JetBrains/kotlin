@@ -1,38 +1,33 @@
-import kotlin.coroutines.experimental.*
+actual fun f1(): String = ""
 
-impl fun f1(): String = ""
+actual fun f2(otherName: String) {}
 
-impl fun f2(otherName: String) {}
+actual fun f3(name: Double) {}
+actual fun Double.f3ext() {}
 
-impl fun f3(name: Double) {}
-impl fun Double.f3ext() {}
+actual fun String.f4() {}
 
-impl fun String.f4() {}
+actual fun f5(name: String) {}
 
-impl fun f5(name: String) {}
+actual fun f6(p2: Int) {}
 
-impl fun f6(p2: Int) {}
+actual fun <K, V> f7() {}
 
-impl fun <K, V> f7() {}
+public actual fun f8() {}
+internal actual fun f10() {}
 
-public impl fun f8() {}
-internal impl fun f9() {}
-private impl fun f10() {}
+actual fun <T : Annotation> f11() {}
+actual fun <U : MutableList<out String>> f12() {}
+actual fun <A, B : Comparable<B>> f13() {}
 
-impl fun <T : Annotation> f11() {}
-impl fun <U : MutableList<out String>> f12() {}
-impl fun <A, B : Continuation<B>> f13() {}
+actual inline fun <reified X> f14() {}
+actual inline fun <Y> f15() {}
 
-impl inline fun <reified X> f14() {}
-impl inline fun <Y> f15() {}
+actual fun f16(s: String = "") {}
 
-impl fun f16(s: String = "") {}
-
-impl fun f17(s: Array<out String>) {}
-impl fun f18(vararg s: String) {}
-impl inline fun f19(s: () -> Unit) {}
-impl inline fun f20(crossinline s: () -> Unit) {}
-impl inline fun f21(s: () -> Unit) {}
-impl inline fun f22(noinline s: () -> Unit) {}
-impl fun f23(c: Unit.() -> Unit) {}
-impl fun f24(c: suspend Unit.() -> Unit) {}
+actual fun f17(s: Array<out String>) {}
+actual fun f18(vararg s: String) {}
+actual inline fun f19(crossinline s: () -> Unit) {}
+actual inline fun f20(noinline s: () -> Unit) {}
+actual fun f21(c: Unit.() -> Unit) {}
+actual fun f22(c: suspend Unit.() -> Unit) {}

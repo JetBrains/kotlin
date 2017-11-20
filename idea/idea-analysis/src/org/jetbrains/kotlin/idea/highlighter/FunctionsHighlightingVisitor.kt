@@ -73,6 +73,8 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
     private fun highlightCall(callee: PsiElement, resolvedCall: ResolvedCall<out CallableDescriptor>) {
         val calleeDescriptor = resolvedCall.resultingDescriptor
 
+        if (applyHighlighterExtensions(callee, calleeDescriptor)) return
+
         if (calleeDescriptor.isDynamic()) {
             highlightName(callee, DYNAMIC_FUNCTION_CALL)
         }

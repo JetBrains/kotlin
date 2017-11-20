@@ -20,6 +20,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -51,6 +52,8 @@ fun KtFile.findFacadeClass(): KtLightClass? {
             .getFacadeClassesInPackage(packageFqName, this.useScope as? GlobalSearchScope ?: GlobalSearchScope.projectScope(project))
             .firstOrNull { it is KtLightClassForFacade && this in it.files } as? KtLightClass
 }
+
+fun KtScript.toLightClass(): KtLightClassForScript? = LightClassGenerationSupport.getInstance(project).getLightClassForScript(this)
 
 fun KtElement.toLightElements(): List<PsiNamedElement> =
         when (this) {
@@ -115,6 +118,10 @@ private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
 
     return LightClassUtil.getLightClassMethod(this)
 }
+
+fun KtParameter.toLightGetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).getter
+
+fun KtParameter.toLightSetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).setter
 
 fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
     val paramList = getNonStrictParentOfType<KtTypeParameterList>() ?: return listOf()

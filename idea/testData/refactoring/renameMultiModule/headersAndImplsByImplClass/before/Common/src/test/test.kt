@@ -1,7 +1,7 @@
 package test
 
-header class Foo
-header class Bar
+expect class Foo
+expect class Bar
 
 fun test() {
     val foo: Foo = Foo()

@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.*
 import java.lang.reflect.Array
 
 internal class AnnotationsCollectorMethodVisitor(
@@ -55,6 +53,27 @@ internal class AnnotationsCollectorMethodVisitor(
 
         return BinaryJavaAnnotation.addAnnotation(annotations, desc, context, signatureParser)
     }
+
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean): AnnotationVisitor? {
+        // TODO: support annotations on type arguments
+        if (typePath != null) return null
+
+        val typeReference = TypeReference(typeRef)
+
+        return when (typeReference.sort) {
+            TypeReference.METHOD_RETURN -> member.safeAs<BinaryJavaMethod>()?.returnType?.let {
+                BinaryJavaAnnotation.addTypeAnnotation(it, desc, context, signatureParser)
+            }
+
+            TypeReference.METHOD_FORMAL_PARAMETER ->
+                    BinaryJavaAnnotation.addTypeAnnotation(
+                            member.valueParameters[typeReference.formalParameterIndex].type,
+                            desc, context, signatureParser
+                    )
+
+            else -> null
+        }
+    }
 }
 
 class BinaryJavaAnnotation private constructor(
@@ -84,6 +103,20 @@ class BinaryJavaAnnotation private constructor(
         ): AnnotationVisitor {
             val (javaAnnotation, annotationVisitor) = createAnnotationAndVisitor(desc, context, signatureParser)
             annotations.add(javaAnnotation)
+
+            return annotationVisitor
+        }
+
+        fun addTypeAnnotation(
+                type: JavaType,
+                desc: String,
+                context: ClassifierResolutionContext,
+                signatureParser: BinaryClassSignatureParser
+        ): AnnotationVisitor? {
+            type as? PlainJavaClassifierType ?: return null
+
+            val (javaAnnotation, annotationVisitor) = createAnnotationAndVisitor(desc, context, signatureParser)
+            type.addAnnotation(javaAnnotation)
 
             return annotationVisitor
         }

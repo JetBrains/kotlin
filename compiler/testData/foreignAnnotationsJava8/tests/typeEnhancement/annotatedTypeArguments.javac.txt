@@ -1,0 +1,66 @@
+package
+
+public/*package*/ open class AnnotatedTypeArguments {
+    public/*package*/ constructor AnnotatedTypeArguments()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public/*package*/ open inner class A {
+        public/*package*/ constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public/*package*/ open fun foo(/*0*/ x: L<P<L<kotlin.String!>!, S<*>!>!>!): L<P<L<kotlin.String!>!, S<*>!>!>!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class B : AnnotatedTypeArguments.A {
+        public/*package*/ constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @org.checkerframework.checker.nullness.qual.Nullable public/*package*/ open override /*1*/ fun foo(/*0*/ @org.checkerframework.checker.nullness.qual.NonNull x: @org.checkerframework.checker.nullness.qual.NonNull L<P<@org.checkerframework.checker.nullness.qual.NonNull L<@org.checkerframework.checker.nullness.qual.Nullable kotlin.String?>, @org.checkerframework.checker.nullness.qual.NonNull S<*>>!>): @org.checkerframework.checker.nullness.qual.Nullable L<P<@org.checkerframework.checker.nullness.qual.NonNull L<@org.checkerframework.checker.nullness.qual.Nullable kotlin.String?>, @org.checkerframework.checker.nullness.qual.NonNull S<*>>!>?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class C : AnnotatedTypeArguments.B {
+        public/*package*/ constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public/*package*/ open override /*1*/ fun foo(/*0*/ x: L<P<L<kotlin.String?>, S<*>>!>): L<P<L<kotlin.String?>, S<*>>!>?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class D1 : AnnotatedTypeArguments.C {
+        public/*package*/ constructor D1()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public/*package*/ open override /*1*/ fun foo(/*0*/ x: L<P<L<@org.checkerframework.checker.nullness.qual.NonNull kotlin.String!>, S<*>>!>): L<P<L<@org.checkerframework.checker.nullness.qual.NonNull kotlin.String!>, S<*>>!>?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class D2 : AnnotatedTypeArguments.C {
+        public/*package*/ constructor D2()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @org.checkerframework.checker.nullness.qual.NonNull public/*package*/ open override /*1*/ fun foo(/*0*/ @org.checkerframework.checker.nullness.qual.Nullable x: @org.checkerframework.checker.nullness.qual.Nullable L<P<L<kotlin.String?>, S<*>>!>!): @org.checkerframework.checker.nullness.qual.NonNull L<P<L<kotlin.String?>, S<*>>!>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public/*package*/ interface L</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ interface P</*0*/ X : kotlin.Any!, /*1*/ Y : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ interface S</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

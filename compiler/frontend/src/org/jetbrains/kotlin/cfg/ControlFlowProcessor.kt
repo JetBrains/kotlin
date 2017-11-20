@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
+import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.canBeRevisited
+import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -58,18 +61,20 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import java.util.*
 
+typealias DeferredGenerator = (ControlFlowBuilder) -> Unit
+
 class ControlFlowProcessor(private val trace: BindingTrace) {
 
     private val builder: ControlFlowBuilder = ControlFlowInstructionsGenerator()
 
     fun generatePseudocode(subroutine: KtElement): Pseudocode {
-        val pseudocode = generate(subroutine)
+        val pseudocode = generate(subroutine, null)
         (pseudocode as PseudocodeImpl).postProcess()
         return pseudocode
     }
 
-    private fun generate(subroutine: KtElement): Pseudocode {
-        builder.enterSubroutine(subroutine)
+    private fun generate(subroutine: KtElement, invocationKind: InvocationKind? = null): Pseudocode {
+        builder.enterSubroutine(subroutine, invocationKind)
         val cfpVisitor = CFPVisitor(builder)
         if (subroutine is KtDeclarationWithBody && subroutine !is KtSecondaryConstructor) {
             val valueParameters = subroutine.valueParameters
@@ -87,7 +92,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         else {
             cfpVisitor.generateInstructions(subroutine)
         }
-        return builder.exitSubroutine(subroutine)
+        return builder.exitSubroutine(subroutine, invocationKind)
     }
 
     private fun generateImplicitReturnValue(bodyExpression: KtExpression, subroutine: KtElement) {
@@ -105,7 +110,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         val afterDeclaration = builder.createUnboundLabel("after local declaration")
 
         builder.nondeterministicJump(afterDeclaration, subroutine, null)
-        generate(subroutine)
+        generate(subroutine, null)
         builder.bindLabel(afterDeclaration)
     }
 
@@ -114,6 +119,13 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
     private inner class CFPVisitor(private val builder: ControlFlowBuilder) : KtVisitorVoid() {
 
         private val catchFinallyStack = Stack<CatchFinallyLabels>()
+
+        // Some language constructs (e.g. inlined lambdas) should be partially processed before call
+        // (to provide argument for call itself), and partially - after (in case of inlined lambdas,
+        // their body should be generated after call). To do so, we store deferred generators, which
+        // will be called after call instruction is emitted.
+        // Stack is necessary to store generators across nested calls
+        private val deferredGeneratorsStack = Stack<MutableList<DeferredGenerator>>()
 
         private val conditionVisitor = object : KtVisitorVoid() {
 
@@ -1020,12 +1032,40 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             return parent.parent is KtDoWhileExpression
         }
 
-        private fun visitFunction(function: KtFunction) {
-            processLocalDeclaration(function)
+        private fun visitFunction(function: KtFunction, invocationKind: InvocationKind? = null) {
+            if (invocationKind == null) {
+                processLocalDeclaration(function)
+            }
+            else {
+                visitInlinedFunction(function, invocationKind)
+            }
+
             val isAnonymousFunction = function is KtFunctionLiteral || function.name == null
             if (isAnonymousFunction || function.isLocal && function.parent !is KtBlockExpression) {
                 builder.createLambda(function)
             }
+        }
+
+        private fun visitInlinedFunction(lambdaFunctionLiteral: KtFunction, invocationKind: InvocationKind) {
+            // Defer emitting of inlined declaration
+            deferredGeneratorsStack.peek().add({ builder ->
+                val beforeDeclaration = builder.createUnboundLabel("before inlined declaration")
+                val afterDeclaration = builder.createUnboundLabel("after inlined declaration")
+
+                builder.bindLabel(beforeDeclaration)
+
+                if (!invocationKind.isDefinitelyVisited()) {
+                    builder.nondeterministicJump(afterDeclaration, lambdaFunctionLiteral, null)
+                }
+
+                generate(lambdaFunctionLiteral, invocationKind)
+
+                if (invocationKind.canBeRevisited()) {
+                    builder.nondeterministicJump(beforeDeclaration, lambdaFunctionLiteral, null)
+                }
+
+                builder.bindLabel(afterDeclaration)
+            })
         }
 
         override fun visitNamedFunction(function: KtNamedFunction) {
@@ -1035,7 +1075,11 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
             mark(lambdaExpression)
             val functionLiteral = lambdaExpression.functionLiteral
-            visitFunction(functionLiteral)
+
+            // NB. Behaviour here is implicitly controlled by the LanguageFeature 'CallsInPlaceEffect'
+            // If this feature is turned off, then slice LAMBDA_INVOCATIONS is never written and invocationKind
+            // in all subsequent calls always 'null', resulting in falling back to old behaviour
+            visitFunction(functionLiteral, trace[BindingContext.LAMBDA_INVOCATIONS, lambdaExpression])
             copyValue(functionLiteral, lambdaExpression)
         }
 
@@ -1485,6 +1529,8 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
             val receivers = getReceiverValues(resolvedCall)
 
+            deferredGeneratorsStack.push(mutableListOf())
+
             var parameterValues = SmartFMap.emptyMap<PseudoValue, ValueParameterDescriptor>()
             for (argument in resolvedCall.call.valueArguments) {
                 val argumentMapping = resolvedCall.getArgumentMapping(argument)
@@ -1507,7 +1553,10 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
 
             mark(resolvedCall.call.callElement)
-            return builder.call(callElement, resolvedCall, receivers, parameterValues)
+            val callInstruction = builder.call(callElement, resolvedCall, receivers, parameterValues)
+            val deferredGeneratorsForCall = deferredGeneratorsStack.pop()
+            deferredGeneratorsForCall.forEach { it.invoke(builder) }
+            return callInstruction
         }
 
         private fun getReceiverValues(resolvedCall: ResolvedCall<*>): Map<PseudoValue, ReceiverValue> {

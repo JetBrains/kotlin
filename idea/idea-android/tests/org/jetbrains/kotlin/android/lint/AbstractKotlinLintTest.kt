@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.android.lint
 
+import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.PathUtil
 import org.jetbrains.android.inspections.klint.AndroidLintInspectionBase
@@ -43,7 +44,7 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
         val ktFile = File(path)
         val fileText = ktFile.readText()
         val mainInspectionClassName = findStringWithPrefixes(fileText, "// INSPECTION_CLASS: ") ?: error("Empty class name")
-        val dependency = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// DEPENDENCY: ")
+        val dependencies = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// DEPENDENCY: ")
 
         val inspectionClassNames = mutableListOf(mainInspectionClassName)
         for (i in 2..100) {
@@ -53,7 +54,7 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
 
         myFixture.enableInspections(*inspectionClassNames.map { className ->
             val inspectionClass = Class.forName(className)
-            inspectionClass.newInstance() as AndroidLintInspectionBase
+            inspectionClass.newInstance() as InspectionProfileEntry
         }.toTypedArray())
 
         val additionalResourcesDir = File(ktFile.parentFile, getTestName(true))
@@ -71,11 +72,11 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
         val virtualFile = myFixture.copyFileToProject(ktFile.absolutePath, "src/${PathUtil.getFileName(path)}")
         myFixture.configureFromExistingVirtualFile(virtualFile)
 
-        if (dependency != null) {
+        dependencies.forEach { dependency ->
             val (dependencyFile, dependencyTargetPath) = dependency.split(" -> ").map(String::trim)
             myFixture.copyFileToProject("${PathUtil.getParentPath(path)}/$dependencyFile", "src/$dependencyTargetPath")
         }
 
-        myFixture.checkHighlighting(true, false, false)
+        myFixture.checkHighlighting(true, false, true)
     }
 }

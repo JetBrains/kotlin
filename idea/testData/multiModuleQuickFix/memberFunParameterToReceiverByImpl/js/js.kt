@@ -1,7 +1,7 @@
 // "Convert parameter to receiver" "true"
 
-impl class Foo {
-    impl fun foo(n: Int, <caret>s: String) {
+actual class Foo {
+    actual fun foo(n: Int, <caret>s: String) {
 
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import java.util.*
 
@@ -76,7 +77,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var skipMetadataVersionCheck: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin'")
+    @Argument(value = "-Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info")
     var allowKotlinPackage: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xreport-output-files", description = "Report source to output files mapping")
@@ -88,8 +89,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-Xmulti-platform", description = "Enable experimental language support for multi-platform projects")
     var multiPlatform: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xno-check-impl", description = "Do not check presence of 'impl' modifier in multi-platform projects")
-    var noCheckImpl: Boolean by FreezableVar(false)
+    @Argument(value = "-Xno-check-actual", description = "Do not check presence of 'actual' modifier in multi-platform projects")
+    var noCheckActual: Boolean by FreezableVar(false)
 
     @Argument(
             value = "-Xintellij-plugin-root",
@@ -105,10 +106,17 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var coroutinesState: String? by FreezableVar(WARN)
 
-    open fun configureAnalysisFlags(): MutableMap<AnalysisFlag<*>, Any> {
+    @Argument(
+            value = "-Xnew-inference",
+            description = "Enable new experimental generic type inference algorithm"
+    )
+    var newInference: Boolean by FreezableVar(false)
+
+    open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
-            put(AnalysisFlag.multiPlatformDoNotCheckImpl, noCheckImpl)
+            put(AnalysisFlag.multiPlatformDoNotCheckActual, noCheckActual)
+            put(AnalysisFlag.allowKotlinPackage, allowKotlinPackage)
         }
     }
 

@@ -18,25 +18,24 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import java.lang.IllegalArgumentException
@@ -61,12 +60,17 @@ fun KtCallExpression.isMethodCall(fqMethodName: String): Boolean {
     return resolvedCall.resultingDescriptor.fqNameUnsafe.asString() == fqMethodName
 }
 
-fun isAutoCreatedItUsage(expression: KtNameReferenceExpression): Boolean {
-    if (expression.getReferencedName() != "it") return false
+fun isAutoCreatedItUsage(expression: KtNameReferenceExpression) = resolveToAutoCreatedItDescriptor(expression) != null
+
+fun resolveToAutoCreatedItDescriptor(expression: KtNameReferenceExpression): ValueParameterDescriptor? {
+    if (expression.getReferencedName() != "it") return null
     val context = expression.analyze(BodyResolveMode.PARTIAL)
-    val target = expression.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return false
-    return context[BindingContext.AUTO_CREATED_IT, target]!!
+    val target = expression.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor ?: return null
+    return if (context[BindingContext.AUTO_CREATED_IT, target] == true) target else null
 }
+
+fun getLambdaByImplicitItReference(expression: KtNameReferenceExpression) =
+        resolveToAutoCreatedItDescriptor(expression)?.containingDeclaration?.source?.getPsi() as? KtFunctionLiteral
 
 // returns assignment which replaces initializer
 fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
@@ -283,5 +287,6 @@ private val ARRAY_OF_METHODS = setOf(CollectionLiteralResolver.ARRAY_OF_FUNCTION
 fun KtCallExpression.isArrayOfMethod(): Boolean {
     val resolvedCall = getResolvedCall(analyze()) ?: return false
     val descriptor = resolvedCall.candidateDescriptor
-    return descriptor.containingDeclaration is BuiltInsPackageFragment && ARRAY_OF_METHODS.contains(descriptor.name)
+    return (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
+           ARRAY_OF_METHODS.contains(descriptor.name)
 }

@@ -29,19 +29,19 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 class FunctionInlineMutator
 private constructor(
         private val call: JsInvocation,
-        private val inliningContext: InliningContext
+        private val inliningContext: InliningContext,
+        function: JsFunction
 ) {
     private val invokedFunction: JsFunction
-    private val namingContext = inliningContext.newNamingContext()
-    private val body: JsBlock
-    private var resultExpr: JsExpression? = null
+    val namingContext = inliningContext.newNamingContext()
+    val body: JsBlock
+    var resultExpr: JsExpression? = null
     private var resultName: JsName? = null
-    private var breakLabel: JsLabel? = null
+    var breakLabel: JsLabel? = null
     private val currentStatement = inliningContext.statementContext.currentNode
 
     init {
-        val functionContext = inliningContext.functionContext
-        invokedFunction = uncoverClosure(functionContext.getFunctionDefinition(call).deepCopy())
+        invokedFunction = uncoverClosure(function.deepCopy())
         body = invokedFunction.body
     }
 
@@ -166,9 +166,11 @@ private constructor(
     }
 
     companion object {
-
-        @JvmStatic fun getInlineableCallReplacement(call: JsInvocation, inliningContext: InliningContext): InlineableResult {
-            val mutator = FunctionInlineMutator(call, inliningContext)
+        @JvmStatic fun getInlineableCallReplacement(
+                call: JsInvocation, function: JsFunction,
+                inliningContext: InliningContext
+        ): InlineableResult {
+            val mutator = FunctionInlineMutator(call, inliningContext, function)
             mutator.process()
 
             var inlineableBody: JsStatement = mutator.body

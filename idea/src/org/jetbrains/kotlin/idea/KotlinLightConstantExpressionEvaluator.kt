@@ -66,7 +66,7 @@ class KotlinLightConstantExpressionEvaluator : ConstantExpressionEvaluator {
             is PsiExpression -> {
                 JavaPsiFacade.getInstance(expressionToCompute.project)
                         .constantEvaluationHelper
-                        .computeExpression(expression, throwExceptionOnOverflow, auxEvaluator)
+                        .computeExpression(expressionToCompute, throwExceptionOnOverflow, auxEvaluator)
             }
 
             else -> null

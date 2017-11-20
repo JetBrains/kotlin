@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
@@ -119,7 +119,7 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
 
                 if (callable is KtNamedFunction) {
                     if (callable.typeReference == null) {
-                        val functionDescriptor = callable.resolveToDescriptor(BodyResolveMode.PARTIAL) as FunctionDescriptor
+                        val functionDescriptor = callable.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL) as FunctionDescriptor
                         val type = functionDescriptor.returnType
                         val typeToInsert = when {
                                                type == null || type.isError -> null

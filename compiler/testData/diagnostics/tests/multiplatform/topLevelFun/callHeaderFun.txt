@@ -2,7 +2,7 @@
 package
 
 public fun callFromCommonCode(/*0*/ x: kotlin.Int): kotlin.Int
-public header fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+public expect fun foo(/*0*/ x: kotlin.Int): kotlin.Int
 
 
 // -- Module: <m2-jvm> --
@@ -10,7 +10,7 @@ package
 
 public fun callFromCommonCode(/*0*/ x: kotlin.Int): kotlin.Int
 public fun callFromJVM(/*0*/ x: kotlin.Int): kotlin.Int
-public impl fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+public actual fun foo(/*0*/ x: kotlin.Int): kotlin.Int
 
 
 // -- Module: <m3-js> --
@@ -18,4 +18,4 @@ package
 
 public fun callFromCommonCode(/*0*/ x: kotlin.Int): kotlin.Int
 public fun callFromJS(/*0*/ x: kotlin.Int): kotlin.Int
-public impl fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+public actual fun foo(/*0*/ x: kotlin.Int): kotlin.Int

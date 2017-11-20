@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.psi.KtTypeParameter
 
 class RenameKotlinTypeParameterProcessor : RenameKotlinPsiProcessor() {
@@ -32,7 +32,7 @@ class RenameKotlinTypeParameterProcessor : RenameKotlinPsiProcessor() {
     ) {
         if (newName == null) return
         val declaration = element as? KtTypeParameter ?: return
-        val descriptor = declaration.resolveToDescriptor()
+        val descriptor = declaration.unsafeResolveToDescriptor()
         checkRedeclarations(descriptor, newName, result)
     }
 }

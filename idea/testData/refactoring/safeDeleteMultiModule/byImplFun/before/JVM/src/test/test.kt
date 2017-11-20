@@ -1,6 +1,6 @@
 package test
 
-impl fun foo(n: Int) {
+actual fun foo(n: Int) {
 
 }
 

@@ -37,8 +37,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.kotlin.fileClasses.FileClasses;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
@@ -98,7 +97,6 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     public final KotlinTypeMapper typeMapper;
     public final BindingContext bindingContext;
 
-    private final JvmFileClassesProvider fileClassesProvider;
     private final MemberCodegen<?> parentCodegen;
     private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
     private final Collection<ClassDescriptor> innerClasses = new LinkedHashSet<>();
@@ -118,7 +116,6 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         this.state = state;
         this.typeMapper = state.getTypeMapper();
         this.bindingContext = state.getBindingContext();
-        this.fileClassesProvider = state.getFileClassesProvider();
         this.element = element;
         this.context = context;
         this.v = builder;
@@ -433,7 +430,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 return implementationOwnerType;
             }
             else {
-                return FileClasses.getFileClassType(fileClassesProvider, element.getContainingKtFile());
+                return Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(element.getContainingKtFile()));
             }
         }
 
@@ -461,7 +458,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     @NotNull
     public NameGenerator getInlineNameGenerator() {
         if (inlineNameGenerator == null) {
-            String prefix = getInlineName(context, typeMapper, fileClassesProvider);
+            String prefix = getInlineName(context, typeMapper);
             inlineNameGenerator = new NameGenerator(prefix);
         }
         return inlineNameGenerator;
@@ -525,7 +522,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
         StackValue.Property propValue = codegen.intermediateValueForProperty(
-                propertyDescriptor, true, false, null, true, StackValue.LOCAL_0, null);
+                propertyDescriptor, true, false, null, true, StackValue.LOCAL_0, null, false
+        );
 
         ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall = bindingContext.get(PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor);
         if (provideDelegateResolvedCall == null) {
@@ -738,6 +736,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
             class PropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
                 private final PropertyAccessorDescriptor callableDescriptor;
+
                 private PropertyAccessorStrategy(@NotNull PropertyAccessorDescriptor callableDescriptor) {
                     super(MemberCodegen.this.state);
                     this.callableDescriptor = callableDescriptor;
@@ -745,7 +744,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                    boolean syntheticBackingField = accessor instanceof AccessorForPropertyBackingFieldFromLocal;
+                    FieldAccessorKind fieldAccessorKind = accessor instanceof AccessorForPropertyBackingField
+                                                          ? ((AccessorForPropertyBackingField) accessor).getFieldAccessorKind() : null;
+                    boolean syntheticBackingField = fieldAccessorKind == FieldAccessorKind.FIELD_FROM_LOCAL;
                     boolean forceFieldForCompanionProperty = JvmAbi.isPropertyWithBackingFieldInOuterClass(original) &&
                                                              !isCompanionObject(accessor.getContainingDeclaration());
                     boolean forceField = forceFieldForCompanionProperty ||
@@ -753,7 +754,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                                          original.getVisibility() == JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
                     StackValue property = codegen.intermediateValueForProperty(
                             original, forceField, syntheticBackingField, accessor.getSuperCallTarget(),
-                            forceFieldForCompanionProperty, StackValue.none(), null
+                            forceFieldForCompanionProperty, StackValue.none(), null,
+                            fieldAccessorKind == FieldAccessorKind.LATEINIT_INTRINSIC
                     );
 
                     InstructionAdapter iv = codegen.v;
@@ -810,28 +812,41 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null
         );
 
-        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) && !isNonDefaultInterfaceMember(functionDescriptor, state);
-        int reg = hasDispatchReceiver ? 1 : 0;
+        boolean isJvmStaticInObjectOrClass = CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor);
+        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) &&
+                                      !isNonDefaultInterfaceMember(functionDescriptor, state) &&
+                                      !isJvmStaticInObjectOrClass;
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
+
+        int accessorParam = (hasDispatchReceiver && !accessorIsConstructor) ? 1 : 0;
+        int reg = hasDispatchReceiver ? 1 : 0;
         if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {
             iv.anew(callableMethod.getOwner());
             iv.dup();
             reg = 0;
+            accessorParam = 0;
         }
-        else if (accessorIsConstructor || (accessorDescriptor != null && KotlinTypeMapper.isAccessor(accessorDescriptor) && hasDispatchReceiver)) {
-            if (!CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor)) {
+        else if (KotlinTypeMapper.isAccessor(accessorDescriptor) && (hasDispatchReceiver || accessorIsConstructor)) {
+            if (!isJvmStaticInObjectOrClass) {
                 iv.load(0, OBJECT_TYPE);
             }
         }
 
-        for (Type argType : callableMethod.getParameterTypes()) {
-            if (AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.equals(argType)) {
+        Type[] calleeParameterTypes = callableMethod.getParameterTypes();
+        Type[] accessorParameterTypes = accessorDescriptor != null
+                                        ? typeMapper.mapToCallableMethod(accessorDescriptor, false).getParameterTypes()
+                                        : calleeParameterTypes;
+        for (Type calleeArgType: calleeParameterTypes) {
+            if (AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.equals(calleeArgType)) {
                 iv.aconst(null);
             }
             else {
-                iv.load(reg, argType);
-                reg += argType.getSize();
+                Type accessorParameterType = accessorParameterTypes[accessorParam];
+                iv.load(reg, accessorParameterType);
+                StackValue.coerce(accessorParameterType, calleeArgType, iv);
+                reg += accessorParameterType.getSize();
             }
+            accessorParam++;
         }
 
         callableMethod.genInvokeInstruction(iv);

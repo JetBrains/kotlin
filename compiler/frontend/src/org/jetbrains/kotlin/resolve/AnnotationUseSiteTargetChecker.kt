@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -35,32 +34,6 @@ object AnnotationUseSiteTargetChecker {
                 if (parameter.hasValOrVar()) continue
                 val parameterDescriptor = trace.bindingContext[BindingContext.VALUE_PARAMETER, parameter] ?: continue
                 trace.checkDeclaration(parameter, parameterDescriptor)
-            }
-        }
-
-        if (descriptor is CallableDescriptor) trace.checkReceiverAnnotations(descriptor)
-    }
-
-    private fun BindingTrace.checkReceiverAnnotations(descriptor: CallableDescriptor) {
-        val extensionReceiver = descriptor.extensionReceiverParameter ?: return
-        for (annotationWithTarget in extensionReceiver.type.annotations.getUseSiteTargetedAnnotations()) {
-            val target = annotationWithTarget.target ?: continue
-            fun annotationEntry() = DescriptorToSourceUtils.getSourceFromAnnotation(annotationWithTarget.annotation)
-
-            when (target) {
-                AnnotationUseSiteTarget.RECEIVER -> {}
-                AnnotationUseSiteTarget.FIELD,
-                AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD,
-                AnnotationUseSiteTarget.PROPERTY,
-                AnnotationUseSiteTarget.PROPERTY_GETTER,
-                AnnotationUseSiteTarget.PROPERTY_SETTER,
-                AnnotationUseSiteTarget.SETTER_PARAMETER -> {
-                    annotationEntry()?.let { report(INAPPLICABLE_TARGET_ON_PROPERTY.on(it, target.renderName)) }
-                }
-                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> annotationEntry()?.let { report(INAPPLICABLE_PARAM_TARGET.on(it)) }
-                AnnotationUseSiteTarget.FILE -> {
-                    annotationEntry()?.useSiteTarget?.let { reportDiagnosticOnce(INAPPLICABLE_FILE_TARGET.on(it)) }
-                }
             }
         }
     }
@@ -92,7 +65,7 @@ object AnnotationUseSiteTargetChecker {
                 }
                 AnnotationUseSiteTarget.SETTER_PARAMETER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.FILE -> reportDiagnosticOnce(INAPPLICABLE_FILE_TARGET.on(useSiteTarget))
-                AnnotationUseSiteTarget.RECEIVER -> report(INAPPLICABLE_RECEIVER_TARGET.on(annotation))
+                AnnotationUseSiteTarget.RECEIVER -> {}
             }
         }
     }

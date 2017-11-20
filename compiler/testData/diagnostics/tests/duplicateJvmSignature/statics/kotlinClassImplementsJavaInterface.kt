@@ -3,7 +3,7 @@
 // FILE: A.java
 
 public interface A {
-    public String a = ""
+    public String a = "";
     public static void foo() {}
     public static void baz(String s) {}
 }

@@ -1,6 +1,6 @@
 {
   "name": "kotlin",
-  "version": "1.0.0",
+  "version": "$version",
   "description": "Standard Library for Kotlin Applications",
   "main": "kotlin.js",
   "repository": {
@@ -19,8 +19,5 @@
   "bugs": {
     "url": "kotl.in/issue"
   },
-  "homepage": "kotlinlang.org",
-  "publishConfig" : {
-    "tag" : "dev"
-  }
+  "homepage": "kotlinlang.org"
 }

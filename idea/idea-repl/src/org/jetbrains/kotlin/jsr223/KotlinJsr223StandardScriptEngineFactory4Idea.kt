@@ -18,13 +18,8 @@ package org.jetbrains.kotlin.jsr223
 
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
 import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
+import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_STDLIB_JAR
-import java.io.File
-import java.io.FileNotFoundException
-import java.net.URL
-import java.net.URLClassLoader
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
 
@@ -34,53 +29,10 @@ class KotlinJsr223StandardScriptEngineFactory4Idea : KotlinJsr223JvmScriptEngine
     override fun getScriptEngine(): ScriptEngine =
             KotlinJsr223JvmScriptEngine4Idea(
                     this,
-                    scriptCompilationClasspathFromContext(Thread.currentThread().contextClassLoader),
+                    scriptCompilationClasspathFromContext(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR),
                     "kotlin.script.templates.standard.ScriptTemplateWithBindings",
                     { ctx, argTypes -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), argTypes ?: emptyArray()) },
                     arrayOf(Map::class)
             )
 }
 
-// TODO: some common parts with the code from script-utils, consider placing in a shared lib
-
-private fun URL.toFile() =
-        try {
-            File(toURI().schemeSpecificPart)
-        }
-        catch (e: java.net.URISyntaxException) {
-            if (protocol != "file") null
-            else File(file)
-        }
-
-fun classpathFromClassloader(classLoader: ClassLoader): List<File>? =
-        generateSequence(classLoader) { it.parent }.toList().flatMap { (it as? URLClassLoader)?.urLs?.mapNotNull(URL::toFile) ?: emptyList() }
-
-private val kotlinCompilerJar: File by lazy {
-    // highest prio - explicit property
-    System.getProperty("kotlin.compiler.jar")?.let(::File)?.takeIf(File::exists)
-    ?: PathUtil.kotlinPathsForIdeaPlugin.compilerPath
-    ?: throw FileNotFoundException("Cannot find kotlin compiler jar, set kotlin.compiler.jar property to proper location")
-}
-
-private fun scriptCompilationClasspathFromContext(classLoader: ClassLoader): List<File> =
-        ( System.getProperty("kotlin.script.classpath")?.split(File.pathSeparator)?.map(::File)
-          ?: classpathFromClassloader(classLoader)
-        ).let {
-            it?.plus(kotlinScriptStandardJars) ?: kotlinScriptStandardJars
-        }
-        .map { it?.canonicalFile }
-        .distinct()
-        .mapNotNull { it?.takeIf(File::exists) }
-
-
-private val kotlinStdlibJar: File? by lazy {
-    System.getProperty("kotlin.java.runtime.jar")?.let(::File)?.takeIf(File::exists)
-    ?: File(kotlinCompilerJar.parentFile, KOTLIN_JAVA_STDLIB_JAR).takeIf(File::exists)
-}
-
-private val kotlinScriptRuntimeJar: File? by lazy {
-    System.getProperty("kotlin.script.runtime.jar")?.let(::File)?.takeIf(File::exists)
-    ?: File(kotlinCompilerJar.parentFile, KOTLIN_JAVA_SCRIPT_RUNTIME_JAR).takeIf(File::exists)
-}
-
-private val kotlinScriptStandardJars by lazy { listOf(kotlinStdlibJar, kotlinScriptRuntimeJar) }

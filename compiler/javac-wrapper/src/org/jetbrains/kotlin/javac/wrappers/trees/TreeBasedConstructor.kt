@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
-import com.sun.source.util.TreePath
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.name.Name
 
 class TreeBasedConstructor(
         tree: JCTree.JCMethodDecl,
-        treePath: TreePath,
+        compilationUnit: CompilationUnitTree,
         containingClass: JavaClass,
         javac: JavacWrapper
-) : TreeBasedMember<JCTree.JCMethodDecl>(tree, treePath, containingClass, javac), JavaConstructor {
+) : TreeBasedMember<JCTree.JCMethodDecl>(tree, compilationUnit, containingClass, javac), JavaConstructor {
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())
@@ -49,9 +49,9 @@ class TreeBasedConstructor(
         get() = tree.modifiers.visibility
 
     override val typeParameters: List<JavaTypeParameter>
-        get() = tree.typeParameters.map { TreeBasedTypeParameter(it, TreePath(treePath, it), javac) }
+        get() = tree.typeParameters.map { TreeBasedTypeParameter(it, compilationUnit, javac, this) }
 
     override val valueParameters: List<JavaValueParameter>
-        get() = tree.parameters.map { TreeBasedValueParameter(it, TreePath(treePath, it), javac) }
+        get() = tree.parameters.map { TreeBasedValueParameter(it, compilationUnit, javac, this) }
 
 }

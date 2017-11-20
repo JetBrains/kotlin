@@ -62,15 +62,12 @@ public class JvmCodegenUtil {
     private JvmCodegenUtil() {
     }
 
-    public static boolean isAnnotationOrJvmInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
+    public static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        return isInterfaceWithoutDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
     }
 
-    private static boolean isAnnotationOrJvmInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
-        if (!isJvmInterface(descriptor)) {
-            return false;
-        }
-        if (ANNOTATION_CLASS == ((ClassDescriptor) descriptor).getKind()) return true;
+    private static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
+        if (!DescriptorUtils.isInterface(descriptor)) return false;
 
         if (descriptor instanceof DeserializedClassDescriptor) {
             SourceElement source = ((DeserializedClassDescriptor) descriptor).getSource();
@@ -90,7 +87,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isJvm8InterfaceWithDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
-        return DescriptorUtils.isInterface(descriptor) && !isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, isJvm8Target, isJvm8TargetWithDefaults);
+        return DescriptorUtils.isInterface(descriptor) && !isInterfaceWithoutDefaults(descriptor, isJvm8Target, isJvm8TargetWithDefaults);
     }
 
     public static boolean isJvm8InterfaceWithDefaultsMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
@@ -294,8 +291,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isInlinedJavaConstProperty(VariableDescriptor descriptor) {
-        if (!(descriptor instanceof JavaPropertyDescriptor)) return false;
-        return descriptor.isConst();
+        return descriptor instanceof JavaPropertyDescriptor && descriptor.isConst();
     }
 
     @Nullable

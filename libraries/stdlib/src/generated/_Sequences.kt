@@ -1332,6 +1332,43 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
 }
 
 /**
+ * Splits this sequence into a sequence of lists each not exceeding the given [size].
+ * 
+ * The last list in the resulting sequence may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ *
+ * The operation is _intermediate_ and _stateful_.
+ */
+@SinceKotlin("1.2")
+public fun <T> Sequence<T>.chunked(size: Int): Sequence<List<T>> {
+    return windowed(size, size, partialWindows = true)
+}
+
+/**
+ * Splits this sequence into several lists each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return sequence of results of the [transform] applied to an each list.
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * The last list may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this sequence.
+ * 
+ * @sample samples.text.Strings.chunkedTransform
+ *
+ * The operation is _intermediate_ and _stateful_.
+ */
+@SinceKotlin("1.2")
+public fun <T, R> Sequence<T>.chunked(size: Int, transform: (List<T>) -> R): Sequence<R> {
+    return windowed(size, size, partialWindows = true, transform = transform)
+}
+
+/**
  * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
  *
  * The operation is _intermediate_ and _stateless_.
@@ -1489,6 +1526,48 @@ public inline fun <T> Sequence<T>.plusElement(element: T): Sequence<T> {
 }
 
 /**
+ * Returns a sequence of snapshots of the window of the given [size]
+ * sliding along this sequence with the given [step], where each
+ * snapshot is a list.
+ * 
+ * Several last lists may have less elements than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
+@SinceKotlin("1.2")
+public fun <T> Sequence<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<List<T>> {
+    return windowedSequence(size, step, partialWindows, reuseBuffer = false)
+}
+
+/**
+ * Returns a sequence of results of applying the given [transform] function to
+ * an each list representing a view over the window of the given [size]
+ * sliding along this sequence with the given [step].
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last lists may have less elements than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
+@SinceKotlin("1.2")
+public fun <T, R> Sequence<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R): Sequence<R> {
+    return windowedSequence(size, step, partialWindows, reuseBuffer = true).map(transform)
+}
+
+/**
  * Returns a sequence of pairs built from elements of both sequences with same indexes.
  * Resulting sequence has length of shortest input sequence.
  *
@@ -1505,6 +1584,44 @@ public infix fun <T, R> Sequence<T>.zip(other: Sequence<R>): Sequence<Pair<T, R>
  */
 public fun <T, R, V> Sequence<T>.zip(other: Sequence<R>, transform: (a: T, b: R) -> V): Sequence<V> {
     return MergingSequence(this, other, transform)
+}
+
+/**
+ * Returns a sequence of pairs of each two adjacent elements in this sequence.
+ * 
+ * The returned sequence is empty if this sequence contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+@SinceKotlin("1.2")
+public fun <T> Sequence<T>.zipWithNext(): Sequence<Pair<T, T>> {
+    return zipWithNext { a, b -> a to b }
+}
+
+/**
+ * Returns a sequence containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this sequence.
+ * 
+ * The returned sequence is empty if this sequence contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+@SinceKotlin("1.2")
+public fun <T, R> Sequence<T>.zipWithNext(transform: (a: T, b: T) -> R): Sequence<R> {
+    return buildSequence result@ {
+        val iterator = iterator()
+        if (!iterator.hasNext()) return@result
+        var current = iterator.next()
+        while (iterator.hasNext()) {
+            val next = iterator.next()
+            yield(transform(current, next))
+            current = next
+        }
+    }
 }
 
 /**

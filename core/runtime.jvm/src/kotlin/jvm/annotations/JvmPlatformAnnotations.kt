@@ -29,9 +29,9 @@ import kotlin.reflect.KClass
 @MustBeDocumented
 public annotation class JvmOverloads
 
-
 /**
- * Specifies that a static method or field needs to be generated from this element.
+ * Specifies that an additional static method needs to be generated from this element if it's a function.
+ * If this element is a property, additional static getter/setter methods should be generated.
  *
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#static-methods)
  * for more information.
@@ -61,6 +61,18 @@ public annotation class JvmName(val name: String)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class JvmMultifileClass
+
+/**
+ * Changes the fully qualified name of the JVM package of the .class file generated from this file.
+ * This does not affect the way Kotlin clients will see the declarations in this file, but Java clients and other JVM language clients
+ * will see the class file as if it was declared in the specified package.
+ * If a file is annotated with this annotation, it can only have function, property and typealias declarations, but no classes.
+ */
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@SinceKotlin("1.2")
+internal annotation class JvmPackageName(val name: String)
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)

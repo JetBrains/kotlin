@@ -2,15 +2,17 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header class Foo
+expect class Foo
 
-header fun getFoo(): Foo
+expect fun getFoo(): Foo
+
+fun <T : Foo> bar() {} // no "Foo is final" warning should be here
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-impl open class Foo
+actual open class Foo
 
 class Bar : Foo()
 
-impl fun getFoo(): Foo = Bar()
+actual fun getFoo(): Foo = Bar()

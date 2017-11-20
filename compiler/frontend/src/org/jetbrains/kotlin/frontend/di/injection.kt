@@ -170,7 +170,7 @@ fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtF
                 moduleContext,
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
                 BindingTraceContext(),
-                TargetPlatform.Default,
+                TargetPlatform.Common,
                 TargetPlatformVersion.NoVersion,
                 CompilerEnvironment,
                 LanguageVersionSettingsImpl.DEFAULT

@@ -23,8 +23,8 @@ import org.jetbrains.uast.UIdentifier
 
 class KotlinUDoWhileExpression(
         override val psi: KtDoWhileExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UDoWhileExpression {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UDoWhileExpression {
     override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
 

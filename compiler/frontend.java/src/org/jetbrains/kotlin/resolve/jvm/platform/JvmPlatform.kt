@@ -26,7 +26,7 @@ import java.util.*
 object JvmPlatform : TargetPlatform("JVM") {
     private val defaultImports = LockBasedStorageManager().createMemoizedFunction<Boolean, List<ImportPath>> { includeKotlinComparisons ->
         ArrayList<ImportPath>().apply {
-            addAll(Default.getDefaultImports(includeKotlinComparisons))
+            addAll(Common.getDefaultImports(includeKotlinComparisons))
 
             add(ImportPath.fromString("java.lang.*"))
             add(ImportPath.fromString("kotlin.jvm.*"))

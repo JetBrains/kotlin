@@ -1,9 +1,9 @@
-impl class Foo impl constructor() {
-    impl constructor(s: String) : this()
+actual class Foo actual constructor() {
+    actual constructor(s: String) : this()
 
-    impl fun nonPlatformFun() {}
+    actual fun nonPlatformFun() {}
 
-    impl val nonPlatformVal = ""
+    actual val nonPlatformVal = ""
 
     private fun nonImplFun() {}
     private val nonImplVal = ""

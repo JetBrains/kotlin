@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
@@ -24,11 +25,17 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.util.CachedValueProvider
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
@@ -56,7 +63,8 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
 fun KotlinFacetSettings.initializeIfNeeded(
         module: Module,
         rootModel: ModuleRootModel?,
-        platformKind: TargetPlatformKind<*>? = null // if null, detect by module dependencies
+        platformKind: TargetPlatformKind<*>? = null, // if null, detect by module dependencies
+        languageVersion: String? = null
 ) {
     val project = module.project
 
@@ -76,7 +84,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
 
     if (languageLevel == null) {
         languageLevel = (if (useProjectSettings) LanguageVersion.fromVersionString(commonArguments.languageVersion) else null)
-                        ?: getDefaultLanguageLevel(module)
+                        ?: getDefaultLanguageLevel(module, languageVersion)
     }
 
     if (apiLevel == null) {
@@ -84,7 +92,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
             LanguageVersion.fromVersionString(commonArguments.apiVersion) ?: languageLevel
         }
         else {
-            languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind!!))
+            languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind))
         }
     }
 }
@@ -99,7 +107,7 @@ fun TargetPlatformKind<*>.getPlatformCompilerArgumentsByProject(project: Project
 
 val TargetPlatformKind<*>.mavenLibraryIds: List<String>
     get() = when (this) {
-        is TargetPlatformKind.Jvm -> listOf(MAVEN_STDLIB_ID, MAVEN_STDLIB_ID_JRE7, MAVEN_STDLIB_ID_JRE8)
+        is TargetPlatformKind.Jvm -> listOf(MAVEN_STDLIB_ID, MAVEN_STDLIB_ID_JRE7, MAVEN_STDLIB_ID_JDK7, MAVEN_STDLIB_ID_JRE8, MAVEN_STDLIB_ID_JDK8)
         is TargetPlatformKind.JavaScript -> listOf(MAVEN_JS_STDLIB_ID, MAVEN_OLD_JS_STDLIB_ID)
         is TargetPlatformKind.Common -> listOf(MAVEN_COMMON_STDLIB_ID)
     }
@@ -110,6 +118,70 @@ val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
             .sortedByDescending { it.first.length }
             .toMap()
 }
+
+private fun Module.findImplementedModuleName(modelsProvider: IdeModifiableModelsProvider): String? {
+    val facetModel = modelsProvider.getModifiableFacetModel(this)
+    val facet = facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
+    return facet?.configuration?.settings?.implementedModuleName
+}
+
+private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider): List<Module> {
+    return modelsProvider.modules.filter { module ->
+        module.findImplementedModuleName(modelsProvider) == name
+    }
+}
+
+val Module.implementingModules: List<Module>
+    get() = cached(CachedValueProvider {
+        CachedValueProvider.Result(
+                findImplementingModules(IdeModifiableModelsProviderImpl(project)),
+                ProjectRootModificationTracker.getInstance(project)
+        )
+    })
+
+private fun Module.getModuleInfo(baseModuleSourceInfo: ModuleSourceInfo): ModuleSourceInfo? =
+        when (baseModuleSourceInfo) {
+            is ModuleProductionSourceInfo -> productionSourceInfo()
+            is ModuleTestSourceInfo -> testSourceInfo()
+            else -> null
+        }
+
+private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInfo): List<ModuleSourceInfo> {
+    val modelsProvider = IdeModifiableModelsProviderImpl(project)
+    val implementingModules = findImplementingModules(modelsProvider)
+    return implementingModules.mapNotNull { it.getModuleInfo(moduleSourceInfo) }
+}
+
+val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
+    get() {
+        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
+        val module = moduleSourceInfo.module
+        return module.cached(CachedValueProvider {
+            val implementingModuleInfos = module.findImplementingModuleInfos(moduleSourceInfo)
+            val implementingModuleDescriptors = implementingModuleInfos.mapNotNull {
+                KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
+            }
+            CachedValueProvider.Result(
+                    implementingModuleDescriptors,
+                    *(implementingModuleInfos.map { it.createModificationTracker() } +
+                      ProjectRootModificationTracker.getInstance(module.project)).toTypedArray()
+            )
+        })
+    }
+
+val ModuleDescriptor.implementedDescriptor: ModuleDescriptor?
+    get() {
+        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return null
+        val module = moduleSourceInfo.module
+
+        val modelsProvider = IdeModifiableModelsProviderImpl(module.project)
+        val implementedModuleName = module.findImplementedModuleName(modelsProvider)
+        val implementedModule = implementedModuleName?.let { modelsProvider.findIdeModule(it) }
+        val implementedModuleInfo = implementedModule?.getModuleInfo(moduleSourceInfo)
+        return implementedModuleInfo?.let {
+            KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
+        }
+    }
 
 fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider,
                             useProjectSettings: Boolean,
@@ -138,8 +210,12 @@ fun KotlinFacet.configureFacet(
     with(configuration.settings) {
         compilerArguments = null
         compilerSettings = null
-        initializeIfNeeded(module, modelsProvider.getModifiableRootModel(module), platformKind)
-        languageLevel = LanguageVersion.fromFullVersionString(compilerVersion) ?: LanguageVersion.LATEST_STABLE
+        initializeIfNeeded(
+                module,
+                modelsProvider.getModifiableRootModel(module),
+                platformKind,
+                compilerVersion
+        )
         // Both apiLevel and languageLevel should be initialized in the lines above
         if (apiLevel!! > languageLevel!!) {
             apiLevel = languageLevel
@@ -238,5 +314,13 @@ fun parseCompilerArgumentsToFacet(
         with(compilerArguments::class.java.newInstance()) {
             copyFieldsSatisfying(this, compilerArguments) { exposeAsAdditionalArgument(it) || it.name in ignoredFields }
         }
+
+        val languageLevel = languageLevel
+        val apiLevel = apiLevel
+        if (languageLevel != null && apiLevel != null && apiLevel > languageLevel) {
+            this.apiLevel = languageLevel
+        }
+
+        updateMergedArguments()
     }
 }

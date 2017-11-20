@@ -37,11 +37,6 @@ public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
         return KotlinBundle.message("surround.with.when.template");
     }
 
-    @Override
-    public boolean isApplicable(@NotNull KtExpression expression) {
-        return true;
-    }
-
     @Nullable
     @Override
     public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull KtExpression expression) {

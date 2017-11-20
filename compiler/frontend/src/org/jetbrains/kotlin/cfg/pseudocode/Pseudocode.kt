@@ -45,6 +45,10 @@ interface Pseudocode {
 
     val enterInstruction: SubroutineEnterInstruction
 
+    val isInlined: Boolean
+    val containsDoWhile: Boolean
+    val rootPseudocode: Pseudocode
+
     fun getElementValue(element: KtElement?): PseudoValue?
 
     fun getValueElements(value: PseudoValue?): List<KtElement>

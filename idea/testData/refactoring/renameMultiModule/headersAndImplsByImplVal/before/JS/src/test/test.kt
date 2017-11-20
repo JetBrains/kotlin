@@ -1,10 +1,10 @@
 package test
 
-impl var /*rename*/foo: Int
+actual var /*rename*/foo: Int
     get() = 1
     set(value) {}
 
-impl var bar: Int
+actual var bar: Int
     get() = 1
     set(value) {}
 

@@ -97,9 +97,12 @@ class AnnotationSerializer(private val stringTable: StringTable) {
                 intValue = value.value.toLong()
             }
 
-            override fun visitKClassValue(value: KClassValue?, data: Unit?) {
-                // TODO: support class literals
-                throw UnsupportedOperationException("Class literal annotation arguments are not yet supported: $value")
+            override fun visitKClassValue(value: KClassValue, data: Unit) {
+                val descriptor = value.value.constructor.declarationDescriptor as? ClassDescriptor
+                ?: throw UnsupportedOperationException("Class literal annotation argument should be a class: $value")
+
+                type = Type.CLASS
+                classId = stringTable.getFqNameIndex(descriptor)
             }
 
             override fun visitLongValue(value: LongValue, data: Unit) {

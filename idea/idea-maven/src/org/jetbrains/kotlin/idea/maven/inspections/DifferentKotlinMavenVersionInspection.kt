@@ -24,13 +24,14 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.project.MavenProjectsManager
+import org.jetbrains.kotlin.idea.inspections.PluginVersionDependentInspection
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
-class DifferentKotlinMavenVersionInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
+class DifferentKotlinMavenVersionInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java), PluginVersionDependentInspection {
     private val idePluginVersion by lazy { bundledRuntimeVersion() }
 
-    var testVersionMessage: String? = null
+    override var testVersionMessage: String? = null
         @TestOnly set
 
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {

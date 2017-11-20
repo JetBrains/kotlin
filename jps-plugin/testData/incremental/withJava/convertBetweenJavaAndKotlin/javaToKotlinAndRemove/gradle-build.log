@@ -1,0 +1,14 @@
+================ Step #1 =================
+Compiling files:
+  src/TheClass.kt
+  src/other.kt
+End of files
+Exit code: OK
+------------------------------------------
+
+================ Step #2 =================
+
+Compiling files:
+End of files
+Exit code: OK
+------------------------------------------

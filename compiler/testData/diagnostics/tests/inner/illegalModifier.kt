@@ -1,3 +1,4 @@
+// !LANGUAGE: -InnerClassInEnumEntryClass
 <!WRONG_MODIFIER_TARGET!>inner<!> fun foo() {}
 <!WRONG_MODIFIER_TARGET!>inner<!> val prop = 42
 

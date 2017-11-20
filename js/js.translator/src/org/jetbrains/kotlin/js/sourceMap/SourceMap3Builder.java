@@ -21,11 +21,13 @@ import gnu.trove.TObjectIntHashMap;
 import kotlin.io.TextStreamsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor;
 import org.jetbrains.kotlin.js.util.TextOutput;
+import org.json.JSONWriter;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -70,55 +72,44 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
     @Override
     public String build() {
-        StringBuilder sb = new StringBuilder(out.length() + (128 * orderedSources.size()));
-        sb.append("{\"version\":3,\"file\":\"").append(generatedFile.getName()).append('"').append(',');
+        try {
+            StringWriter stringWriter = new StringWriter();
+            JSONWriter writer = new JSONWriter(stringWriter);
+            writer.object();
+            writer.key("version").value(3);
+            writer.key("file").value(generatedFile.getName());
 
-        appendSources(sb);
-        sb.append(",");
-        appendSourcesContent(sb);
+            appendSources(writer);
+            appendSourcesContent(writer);
 
-        sb.append(",\"names\":[");
-        sb.append("],\"mappings\":\"");
-        sb.append(out);
-        sb.append("\"}");
-        return sb.toString();
+            writer.key("names").array().endArray();
+            writer.key("mappings").value(out.toString());
+
+            writer.endObject();
+            stringWriter.close();
+
+            return stringWriter.toString();
+        }
+        catch (IOException e) {
+            throw new AssertionError("This exception should have not been thrown from StringWriter", e);
+        }
     }
 
-    private void appendSources(StringBuilder sb) {
-        boolean isNotFirst = false;
-        sb.append('"').append("sources").append("\":[");
+    private void appendSources(JSONWriter writer) {
+        writer.key("sources").array();
         for (String source : orderedSources) {
-            if (isNotFirst) {
-                sb.append(',');
-            }
-            else {
-                isNotFirst = true;
-            }
-            sb.append(JsToStringGenerationVisitor.javaScriptString(pathPrefix + source, true));
+            writer.value(pathPrefix + source);
         }
-        sb.append(']');
+        writer.endArray();
     }
 
-    private void appendSourcesContent(StringBuilder sb) {
-        boolean isNotFirst = false;
-        sb.append('"').append("sourcesContent").append("\":[");
+    private void appendSourcesContent(JSONWriter writer) {
+        writer.key("sourcesContent").array();
         for (Supplier<Reader> contentSupplier : orderedSourceContentSuppliers) {
-            if (isNotFirst) {
-                sb.append(',');
-            }
-            else {
-                isNotFirst = true;
-            }
-
             Reader reader = contentSupplier.get();
-            if (reader != null) {
-                sb.append(JsToStringGenerationVisitor.javaScriptString(TextStreamsKt.readText(reader), true));
-            }
-            else {
-                sb.append("null");
-            }
+            writer.value(reader != null ? TextStreamsKt.readText(reader) : null);
         }
-        sb.append(']');
+        writer.endArray();
     }
 
     @Override

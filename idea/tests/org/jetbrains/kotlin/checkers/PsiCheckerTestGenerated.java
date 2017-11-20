@@ -1004,6 +1004,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("lateinitOfATypeWithNullableUpperBound.kt")
+        public void testLateinitOfATypeWithNullableUpperBound() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/lateinitOfATypeWithNullableUpperBound.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nArgumentsExpectedMessage.kt")
         public void testNArgumentsExpectedMessage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/diagnosticsMessage/nArgumentsExpectedMessage.kt");

@@ -53,8 +53,17 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         val TEST_DATA_DIR = File("plugins/kapt3/testData/kotlinRunner")
     }
 
-    private lateinit var processors: List<Processor>
-    private lateinit var options: Map<String, String>
+    private var _processors: List<Processor>? = null
+    private val processors get() = _processors!!
+
+    private var _options: Map<String, String>? = null
+    private val options get() = _options!!
+
+    override fun tearDown() {
+        _processors = null
+        _options = null
+        super.tearDown()
+    }
 
     protected fun test(
             name: String,
@@ -70,7 +79,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit,
             vararg supportedAnnotations: String
     ) {
-        this.options = options
+        this._options = options
 
         val ktFileName = File(TEST_DATA_DIR, name + ".kt")
         var started = false
@@ -104,7 +113,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             override fun getSupportedAnnotationTypes() = supportedAnnotations.toSet()
         }
 
-        processors = listOf(processor)
+        _processors = listOf(processor)
         doTest(ktFileName.canonicalPath)
 
         if (started != shouldRun) {

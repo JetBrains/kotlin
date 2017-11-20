@@ -26,7 +26,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
@@ -113,7 +113,7 @@ fun performDelayedRefactoringRequests(project: Project) {
             for (requestForFile in requestsForFile) {
                 val elementToImport = requestForFile.elementToImportPointer.element?.unwrapped ?: continue
                 val descriptorToImport = when (elementToImport) {
-                    is KtDeclaration -> elementToImport.resolveToDescriptor(BodyResolveMode.PARTIAL)
+                    is KtDeclaration -> elementToImport.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL)
                     is PsiMember -> elementToImport.getJavaMemberDescriptor()
                     else -> null
                 } ?: continue

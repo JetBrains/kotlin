@@ -24,8 +24,8 @@ import org.jetbrains.uast.UExpression
 
 class KotlinUClassLiteralExpression(
         override val psi: KtClassLiteralExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UClassLiteralExpression, KotlinUElementWithType {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UClassLiteralExpression, KotlinUElementWithType {
     override val type by lz {
         val ktType = psi.analyze()[DOUBLE_COLON_LHS, psi.receiverExpression]?.type ?: return@lz null
         ktType.toPsiType(this, psi, boxed = true)
@@ -35,6 +35,6 @@ class KotlinUClassLiteralExpression(
         get() {
             if (type != null) return null
             val receiverExpression = psi.receiverExpression ?: return null
-            return KotlinConverter.convertExpression(receiverExpression, { this })
+            return KotlinConverter.convertExpression(receiverExpression, this)
         }
 }

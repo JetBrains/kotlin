@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
-import org.jetbrains.kotlin.resolve.calls.KotlinResolutionConfigurationKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.checkers.*;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
@@ -366,6 +365,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         if (actualType == null || noExpectedType(targetType) || KotlinTypeKt.isError(targetType)) return;
 
+        if (Boolean.TRUE.equals(context.trace.get(BindingContext.CAST_TYPE_USED_AS_EXPECTED_TYPE, expression))) return;
+
         if (DynamicTypesKt.isDynamic(targetType)) {
             KtTypeReference right = expression.getRight();
             assert right != null : "We know target is dynamic, but RHS is missing";
@@ -378,13 +379,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return;
         }
 
-        KotlinTypeChecker typeChecker = KotlinTypeChecker.DEFAULT;
-        if (CastDiagnosticsUtil.INSTANCE.castIsUseless(expression, context, targetType, actualType, typeChecker)) {
+        if (CastDiagnosticsUtil.INSTANCE.castIsUseless(expression, context, targetType, actualType)) {
             context.trace.report(USELESS_CAST.on(expression));
             return;
         }
 
-        if (CastDiagnosticsUtil.isCastErased(actualType, targetType, typeChecker)) {
+        if (CastDiagnosticsUtil.isCastErased(actualType, targetType, KotlinTypeChecker.DEFAULT)) {
             context.trace.report(UNCHECKED_CAST.on(expression, actualType, targetType));
         }
     }
@@ -634,7 +634,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         trace.record(CALL, expression, call);
 
         if (context.trace.wantsDiagnostics()) {
-            CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageVersionSettings);
+            CallCheckerContext callCheckerContext =
+                    createCallCheckerContext(context);
             for (CallChecker checker : components.callCheckers) {
                 checker.check(resolvedCall, expression, callCheckerContext);
             }
@@ -855,7 +856,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.nullValue(components.builtIns),
                                                                                    components.languageVersionSettings));
         }
-        KotlinType resultingType = KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE()
+        KotlinType resultingType = components.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
                                    ? resolvedCall.getResultingDescriptor().getReturnType()
                                    : TypeUtils.makeNotNullable(baseType);
         if (context.contextDependency == DEPENDENT) {
@@ -935,7 +936,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (resolvedCall != null && trace.wantsDiagnostics()) {
                     // Call must be validated with the actual, not temporary trace in order to report operator diagnostic
                     // Only unary assignment expressions (++, --) and +=/... must be checked, normal assignments have the proper trace
-                    CallCheckerContext callCheckerContext = new CallCheckerContext(context, trace, components.languageVersionSettings);
+                    CallCheckerContext callCheckerContext =
+                            new CallCheckerContext(context, trace, components.languageVersionSettings, components.deprecationResolver);
                     for (CallChecker checker : components.callCheckers) {
                         checker.check(resolvedCall, expression, callCheckerContext);
                     }
@@ -1002,11 +1004,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         resolvedCall.markCallAsCompleted();
 
         if (context.trace.wantsDiagnostics()) {
-            CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageVersionSettings);
+            CallCheckerContext callCheckerContext =
+                    createCallCheckerContext(context);
             for (CallChecker checker : components.callCheckers) {
                 checker.check(resolvedCall, expression, callCheckerContext);
             }
         }
+    }
+
+    @NotNull
+    private CallCheckerContext createCallCheckerContext(@NotNull ExpressionTypingContext context) {
+        return new CallCheckerContext(context, components.languageVersionSettings, components.deprecationResolver);
     }
 
     @Override
@@ -1362,7 +1370,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 CallMaker.makeCall(callElement, receiver, null, operationSign, Collections.singletonList(leftArgument)),
                 operationSign,
                 OperatorNameConventions.CONTAINS);
-        KotlinType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context.contextDependency);
+        KotlinType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context);
         ensureBooleanResult(operationSign, OperatorNameConventions.CONTAINS, containsType, context);
 
         if (left != null) {
@@ -1508,7 +1516,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             typeInfo = typeInfo.replaceDataFlowInfo(resolutionResults.getResultingCall().getDataFlowInfoForArguments().getResultInfo());
         }
 
-        return typeInfo.replaceType(OverloadResolutionResultsUtil.getResultingType(resolutionResults, context.contextDependency));
+        return typeInfo.replaceType(OverloadResolutionResultsUtil.getResultingType(resolutionResults, context));
     }
 
     @Override

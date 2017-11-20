@@ -3,10 +3,7 @@ package test.collections
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
-import kotlin.test.assertEquals
-import kotlin.test.assertFails
-import kotlin.test.expect
-import org.junit.Test
+import kotlin.test.*
 import kotlin.comparisons.*
 
 class MapJVMTest {

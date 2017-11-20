@@ -19,47 +19,57 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 import kotlin.reflect.KMutableProperty1
 
 fun mapKotlinTaskProperties(project: Project, task: AbstractKotlinCompile<*>) {
-    propertyMappings.forEach { it.apply(project, task) }
+    PropertiesProvider(project).apply {
+        coroutines?.let { task.coroutinesFromGradleProperties = it }
 
-    val localPropertiesFile = project.rootProject.file("local.properties")
-    if (localPropertiesFile.isFile) {
-        val properties = Properties()
-        localPropertiesFile.inputStream().use {
-            properties.load(it)
+        if (task is KotlinCompile) {
+            incrementalJvm?.let { task.incremental = it }
         }
-        propertyMappings.forEach { it.apply(properties, task) }
+
+        if (task is Kotlin2JsCompile) {
+            incrementalJs?.let { task.incremental = it }
+        }
     }
 }
 
-private val propertyMappings = listOf(
-        KotlinPropertyMapping("kotlin.incremental", AbstractKotlinCompile<*>::incremental, String::toBoolean),
-        KotlinPropertyMapping("kotlin.coroutines", AbstractKotlinCompile<*>::coroutinesFromGradleProperties) { Coroutines.byCompilerArgument(it) }
-)
+internal class PropertiesProvider(private val project: Project) {
+    private val localProperties = Properties()
 
-private class KotlinPropertyMapping<T>(
-        private val projectPropName: String,
-        private val taskProperty: KMutableProperty1<AbstractKotlinCompile<*>, T>,
-        private val transform: (String) -> T
-) {
-    fun apply(project: Project, task: AbstractKotlinCompile<*>) {
-        if (!project.hasProperty(projectPropName)) return
-
-        setPropertyValue(task, project.property(projectPropName))
+    init {
+        val localPropertiesFile = project.rootProject.file("local.properties")
+        if (localPropertiesFile.isFile) {
+            localPropertiesFile.inputStream().use {
+                localProperties.load(it)
+            }
+        }
     }
 
-    fun apply(properties: Properties, task: AbstractKotlinCompile<*>) {
-        setPropertyValue(task, properties.getProperty(projectPropName))
-    }
+    val coroutines: Coroutines?
+        get() = property("kotlin.coroutines")?.let { Coroutines.byCompilerArgument(it) }
 
-    private fun setPropertyValue(task: AbstractKotlinCompile<*>, value: Any?) {
-        if (value !is String) return
+    val incrementalJvm: Boolean?
+        get() = booleanProperty("kotlin.incremental")
 
-        val transformedValue = transform(value) ?: return
-        taskProperty.set(task, transformedValue)
-    }
+    val incrementalJs: Boolean?
+        get() = booleanProperty("kotlin.incremental.js")
+
+    val incrementalMultiplatform: Boolean?
+        get() = booleanProperty("kotlin.incremental.multiplatform")
+
+    private fun booleanProperty(propName: String): Boolean? =
+            property(propName)?.toBoolean()
+
+    private fun property(propName: String): String? =
+            if (project.hasProperty(propName)) {
+                project.property(propName) as? String
+            }
+            else {
+                localProperties.getProperty(propName)
+            }
 }

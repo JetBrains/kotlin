@@ -37,10 +37,11 @@
 
 package com.google.gwt.dev.js.rhino;
 
-import org.jetbrains.kotlin.js.parser.ParserEvents;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.Observable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class implements the JavaScript parser.
@@ -51,10 +52,19 @@ import java.util.Observable;
  * @see TokenStream
  */
 
-public class Parser extends Observable {
+public class Parser {
+    private List<ParserListener> listeners;
+
     public Parser(IRFactory nf, boolean insideFunction) {
         this.nf = nf;
         this.insideFunction = insideFunction;
+    }
+
+    public void addListener(ParserListener listener) {
+        if (listeners == null) {
+            listeners = new ArrayList<>();
+        }
+        listeners.add(listener);
     }
 
     private void mustMatchToken(TokenStream ts, int toMatch, String messageId) throws IOException, JavaScriptException {
@@ -167,7 +177,11 @@ public class Parser extends Observable {
     }
 
     private Node function(TokenStream ts, boolean isExpr) throws IOException, JavaScriptException {
-        notifyObservers(new ParserEvents.OnFunctionParsingStart());
+        if (listeners != null) {
+            for (ParserListener listener : listeners) {
+                listener.functionStarted();
+            }
+        }
         CodePosition basePosition = ts.tokenPosition;
 
         Node nameNode;
@@ -247,7 +261,11 @@ public class Parser extends Observable {
             wellTerminated(ts, TokenStream.FUNCTION);
         }
 
-        notifyObservers(new ParserEvents.OnFunctionParsingEnd(ts));
+        if (listeners != null) {
+            for (ParserListener listener : listeners) {
+                listener.functionEnded(ts);
+            }
+        }
         return pn;
     }
 
@@ -709,7 +727,7 @@ public class Parser extends Observable {
         return pn;
     }
 
-    private Node expr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
+    public Node expr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
         Node pn = assignExpr(ts, inForInit);
         while (ts.matchToken(TokenStream.COMMA)) {
             CodePosition position = ts.tokenPosition;
@@ -874,8 +892,13 @@ public class Parser extends Observable {
             case TokenStream.DEC:
                 return nf.createUnary(tt, TokenStream.PRE, memberExpr(ts, true), position);
 
-            case TokenStream.DELPROP:
-                return nf.createUnary(TokenStream.DELPROP, unaryExpr(ts), position);
+            case TokenStream.DELPROP: {
+                Node argument = unaryExpr(ts);
+                if (!isValidDeleteArgument(argument)) {
+                    Context.reportError("msg.wrong.delete argument", argument.getPosition(), ts.lastPosition);
+                }
+                return nf.createUnary(TokenStream.DELPROP, argument, position);
+            }
 
             case TokenStream.ERROR:
                 break;
@@ -904,6 +927,10 @@ public class Parser extends Observable {
                 return pn;
         }
         return nf.createName("err", position); // Only reached on error. Try to continue.
+    }
+
+    private static boolean isValidDeleteArgument(@NotNull Node node) {
+        return node.type == TokenStream.GETPROP || node.type == TokenStream.GETELEM;
     }
 
     private Node argumentList(TokenStream ts, Node listNode) throws IOException, JavaScriptException {

@@ -59,7 +59,24 @@ fun charArray(size: Int, init: dynamic): Array<Char> {
 }
 
 @JsName("charArrayF")
-inline fun charArrayWithFun(size: Int, init: (Int) -> Char): Array<Char> = fillArrayFun(charArray(size, null), init)
+inline fun charArrayWithFun(size: Int, init: (Int) -> Char): Array<Char> {
+    val array = charArray(size, null)
+    for (i in 0..array.size - 1) {
+        val value = init(i)
+        js("array[i] = value;")
+    }
+    return array
+}
+
+@JsName("untypedCharArrayF")
+inline fun untypedCharArrayWithFun(size: Int, init: (Int) -> Char): Array<Char> {
+    val array = Array<Char>(size)
+    for (i in 0..array.size - 1) {
+        val value = init(i)
+        js("array[i] = value;")
+    }
+    return array
+}
 
 @JsName("longArray")
 fun longArray(size: Int, init: dynamic): Array<Long> {

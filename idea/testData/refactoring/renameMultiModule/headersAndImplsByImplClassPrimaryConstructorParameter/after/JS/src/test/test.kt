@@ -1,6 +1,6 @@
 package test
 
-impl class Foo(x: Int) {
+actual class Foo(x: Int) {
     constructor(s: String): this(0)
 }
 

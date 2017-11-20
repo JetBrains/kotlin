@@ -47,11 +47,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 Flags.IS_CONST.get(flags),
                 Flags.IS_EXTERNAL_PROPERTY.get(flags),
                 Flags.IS_DELEGATED.get(flags),
-                Flags.IS_HEADER_PROPERTY.get(flags),
+                Flags.IS_EXPECT_PROPERTY.get(flags),
                 proto,
                 c.nameResolver,
                 c.typeTable,
-                c.sinceKotlinInfoTable,
+                c.versionRequirementTable,
                 c.containerSource
         )
 
@@ -75,10 +75,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
             val isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags)
             val isExternal = proto.hasGetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
             val isInline = proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(getterFlags)
+            val annotations = getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER)
             val getter = if (isNotDefault) {
                 PropertyGetterDescriptorImpl(
                         property,
-                        getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER),
+                        annotations,
                         Deserialization.modality(Flags.MODALITY.get(getterFlags)),
                         Deserialization.visibility(Flags.VISIBILITY.get(getterFlags)),
                         /* isDefault = */ !isNotDefault,
@@ -88,7 +89,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 )
             }
             else {
-                DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY)
+                DescriptorFactory.createDefaultGetter(property, annotations)
             }
             getter.initialize(property.returnType)
             getter
@@ -102,10 +103,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
             val isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags)
             val isExternal = proto.hasSetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
             val isInline = proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(setterFlags)
+            val annotations = getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER)
             if (isNotDefault) {
                 val setter = PropertySetterDescriptorImpl(
                         property,
-                        getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER),
+                        annotations,
                         Deserialization.modality(Flags.MODALITY.get(setterFlags)),
                         Deserialization.visibility(Flags.VISIBILITY.get(setterFlags)),
                         /* isDefault = */ !isNotDefault,
@@ -121,7 +123,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 setter
             }
             else {
-                DescriptorFactory.createDefaultSetter(property, Annotations.EMPTY)
+                DescriptorFactory.createDefaultSetter(property, annotations)
             }
         }
         else {
@@ -156,10 +158,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
         else Annotations.EMPTY
         val function = DeserializedSimpleFunctionDescriptor(
                 c.containingDeclaration, /* original = */ null, annotations, c.nameResolver.getName(proto.name),
-                Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, c.sinceKotlinInfoTable,
+                Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, c.versionRequirementTable,
                 c.containerSource
         )
         val local = c.childContext(function, proto.typeParameterList)
+
         function.initialize(
                 proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) },
                 getDispatchReceiverParameter(),
@@ -167,7 +170,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
                 local.typeDeserializer.type(proto.returnType(c.typeTable)),
                 Deserialization.modality(Flags.MODALITY.get(flags)),
-                Deserialization.visibility(Flags.VISIBILITY.get(flags))
+                Deserialization.visibility(Flags.VISIBILITY.get(flags)),
+                emptyMap<FunctionDescriptor.UserDataKey<*>, Any?>()
         )
         function.isOperator = Flags.IS_OPERATOR.get(flags)
         function.isInfix = Flags.IS_INFIX.get(flags)
@@ -175,7 +179,13 @@ class MemberDeserializer(private val c: DeserializationContext) {
         function.isInline = Flags.IS_INLINE.get(flags)
         function.isTailrec = Flags.IS_TAILREC.get(flags)
         function.isSuspend = Flags.IS_SUSPEND.get(flags)
-        function.isHeader = Flags.IS_HEADER_FUNCTION.get(flags)
+        function.isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
+
+        val mapValueForContract = c.components.contractDeserializer.deserializeContractFromFunction(proto, function, c.typeTable, c.typeDeserializer)
+        if (mapValueForContract != null) {
+            function.putInUserDataMap(mapValueForContract.first, mapValueForContract.second)
+        }
+
         return function
     }
 
@@ -185,7 +195,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         val visibility = Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
         val typeAlias = DeserializedTypeAliasDescriptor(
                 c.storageManager, c.containingDeclaration, annotations, c.nameResolver.getName(proto.name),
-                visibility, proto, c.nameResolver, c.typeTable, c.sinceKotlinInfoTable, c.containerSource
+                visibility, proto, c.nameResolver, c.typeTable, c.versionRequirementTable, c.containerSource
         )
 
         val local = c.childContext(typeAlias, proto.typeParameterList)
@@ -206,7 +216,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         val classDescriptor = c.containingDeclaration as ClassDescriptor
         val descriptor = DeserializedClassConstructorDescriptor(
                 classDescriptor, null, getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION),
-                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver, c.typeTable, c.sinceKotlinInfoTable,
+                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver, c.typeTable, c.versionRequirementTable,
                 c.containerSource
         )
         val local = c.childContext(descriptor, listOf())

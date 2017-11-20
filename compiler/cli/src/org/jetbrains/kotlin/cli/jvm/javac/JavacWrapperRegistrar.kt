@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.cli.jvm.javac
 
 import com.intellij.mock.MockProject
 import com.sun.tools.javac.util.Context
+import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -36,7 +37,10 @@ object JavacWrapperRegistrar {
             configuration: CompilerConfiguration,
             javaFiles: List<File>,
             kotlinFiles: List<KtFile>,
-            arguments: Array<String>?
+            arguments: Array<String>?,
+            bootClasspath: List<File>?,
+            sourcePath: List<File>?,
+            lightClassGenerationSupport: LightClassGenerationSupport
     ): Boolean {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -44,7 +48,7 @@ object JavacWrapperRegistrar {
             Class.forName(JAVAC_CONTEXT_CLASS)
         }
         catch (e: ClassNotFoundException) {
-            messageCollector.report(STRONG_WARNING, "'$JAVAC_CONTEXT_CLASS' class can't be found ('tools.jar' is not found)")
+            messageCollector.report(ERROR, "'$JAVAC_CONTEXT_CLASS' class can't be found ('tools.jar' is not found)")
             return false
         }
 
@@ -53,8 +57,11 @@ object JavacWrapperRegistrar {
 
         val jvmClasspathRoots = configuration.jvmClasspathRoots
         val outputDirectory = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
+        val compileJava = configuration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)
+        val kotlinSupertypesResolver = JavacWrapperKotlinResolverImpl(lightClassGenerationSupport)
 
-        val javacWrapper = JavacWrapper(javaFiles, kotlinFiles, arguments, jvmClasspathRoots, outputDirectory, context)
+        val javacWrapper = JavacWrapper(javaFiles, kotlinFiles, arguments, jvmClasspathRoots, bootClasspath, sourcePath,
+                                        kotlinSupertypesResolver, compileJava, outputDirectory, context)
 
         project.registerService(JavacWrapper::class.java, javacWrapper)
 

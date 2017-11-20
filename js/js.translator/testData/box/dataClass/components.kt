@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1005
+// EXPECTED_REACHABLE_NODES: 1123
 package foo
 
 data class Dat(val start: String, val middle: String, val end: String) {

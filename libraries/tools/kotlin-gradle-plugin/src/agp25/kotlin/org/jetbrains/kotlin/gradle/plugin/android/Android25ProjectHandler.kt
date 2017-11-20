@@ -8,7 +8,7 @@ import com.android.ide.common.res2.ResourceSet
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.com.intellij.util.ReflectionUtil
+import com.intellij.util.ReflectionUtil
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptTask
@@ -53,7 +53,7 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
             }
             if (Kapt3GradleSubplugin.isEnabled(project)) {
                 // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
-                val kaptClasssesDir = Kapt3KotlinGradleSubplugin.getKaptClasssesDir(project, getVariantName(variantData))
+                val kaptClasssesDir = Kapt3GradleSubplugin.getKaptGeneratedClassesDir(project, getVariantName(variantData))
                 add(kaptClasssesDir)
             }
         }

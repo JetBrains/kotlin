@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
 interface ICReporter {
-    fun report(message: ()->String)
+    fun report(message: () -> String)
 
     // used in Gradle plugin
     @Suppress("unused")

@@ -31,5 +31,7 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
         JpsUtils.resetCaches()
         System.clearProperty("kotlin.jps.tests")
         super.tearDown()
+        myModel = null
+        myBuildParams.clear()
     }
 }

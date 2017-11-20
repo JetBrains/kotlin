@@ -33,7 +33,7 @@ public class KotlinStringTemplateSurrounder extends KotlinExpressionSurrounder {
 
     @Override
     public boolean isApplicable(@NotNull KtExpression expression) {
-        return !(expression instanceof KtStringTemplateExpression);
+        return !(expression instanceof KtStringTemplateExpression) && super.isApplicable(expression);
     }
 
     @Nullable

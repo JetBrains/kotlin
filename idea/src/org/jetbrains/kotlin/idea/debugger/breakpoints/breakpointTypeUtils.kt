@@ -43,7 +43,7 @@ import java.util.*
 fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
     val psiFile = PsiManager.getInstance(project).findFile(file)
 
-    if (psiFile == null || psiFile.virtualFile.fileType != KotlinFileType.INSTANCE) {
+    if (psiFile == null || psiFile.virtualFile?.fileType != KotlinFileType.INSTANCE) {
         return false
     }
 
@@ -106,8 +106,11 @@ fun computeVariants(
     }
 
     lambdas.forEachIndexed { ordinal, lambda ->
-        result.add(kotlinBreakpointType.KotlinLambdaBreakpointVariant(
-                XSourcePositionImpl.createByElement(lambda.bodyExpression), lambda, ordinal))
+        val positionImpl = XSourcePositionImpl.createByElement(lambda.bodyExpression)
+
+        if (positionImpl != null) {
+            result.add(kotlinBreakpointType.KotlinLambdaBreakpointVariant(positionImpl, lambda, ordinal))
+        }
     }
 
     val allBreakpoint = (kotlinBreakpointType as JavaLineBreakpointType).JavaBreakpointVariant(position)

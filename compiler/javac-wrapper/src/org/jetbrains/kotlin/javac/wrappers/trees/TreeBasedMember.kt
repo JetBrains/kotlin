@@ -16,29 +16,29 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
-import com.sun.source.util.TreePath
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.name.FqName
 
 abstract class TreeBasedMember<out T : JCTree>(
         tree: T,
-        treePath: TreePath,
+        compilationUnit: CompilationUnitTree,
         override val containingClass: JavaClass,
         javac: JavacWrapper
-) : TreeBasedElement<T>(tree, treePath, javac), JavaMember {
+) : TreeBasedElement<T>(tree, compilationUnit, javac), JavaMember {
 
     override val isDeprecatedInJavaDoc: Boolean
-        get() = false
+        get() = javac.isDeprecatedInJavaDoc(tree, compilationUnit)
 
-    override val annotations: Collection<JavaAnnotation> by lazy {
-        tree.annotations().map { TreeBasedAnnotation(it, treePath, javac) }
-    }
+    override val annotations: Collection<TreeBasedAnnotation> by lazy {
+        tree.annotations().map { TreeBasedAnnotation(it, compilationUnit, javac, containingClass) } }
 
     override fun findAnnotation(fqName: FqName) =
-            annotations.find { it.classId?.asSingleFqName() == fqName }
+            annotations
+                    .filter { it.annotation.annotationType.toString().endsWith(fqName.shortName().asString()) }
+                    .find { it.classId?.asSingleFqName() == fqName }
 
 }

@@ -153,8 +153,8 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
             return delegateFactory.getPackageMemberDeclarationProvider(packageFqName)
         }
 
-        override fun diagnoseMissingPackageFragment(file: KtFile) {
-            delegateFactory.diagnoseMissingPackageFragment(file)
+        override fun diagnoseMissingPackageFragment(fqName: FqName, file: KtFile?) {
+            delegateFactory.diagnoseMissingPackageFragment(fqName, file)
         }
 
         class AdaptablePackageMemberDeclarationProvider(

@@ -122,6 +122,25 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                      k2JsDceArgumentsFqName,
                      commonOptions + jsDceOptions)
     }
+
+    // generate multiplatform common interface and implementation
+    val multiplatformCommonInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions")
+    val multiplatformCommonOptions = gradleOptions<K2MetadataCompilerArguments>()
+    withPrinterToFile(File(srcDir, multiplatformCommonInterfaceFqName)) {
+        generateInterface(multiplatformCommonInterfaceFqName,
+                          multiplatformCommonOptions,
+                          parentType = commonCompilerInterfaceFqName)
+    }
+
+    val k2metadataCompilerArgumentsFqName = FqName(K2MetadataCompilerArguments::class.qualifiedName!!)
+    val multiplatformCommonImplFqName = FqName(multiplatformCommonInterfaceFqName.asString() + "Base")
+    withPrinterToFile(File(srcDir, multiplatformCommonImplFqName)) {
+        generateImpl(multiplatformCommonImplFqName,
+                     multiplatformCommonInterfaceFqName,
+                     k2metadataCompilerArgumentsFqName,
+                     commonOptions + commonCompilerOptions + multiplatformCommonOptions)
+    }
+
 }
 
 fun main(args: Array<String>) {

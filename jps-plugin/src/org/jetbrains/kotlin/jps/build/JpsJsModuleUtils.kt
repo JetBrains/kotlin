@@ -50,11 +50,11 @@ object JpsJsModuleUtils {
             override fun consume(module: JpsModule) {
                 if (module.moduleType != JpsJavaModuleType.INSTANCE) return
 
-                if ((module != target.module || target.isTests) && module.sourceRoots.any { it.rootType == JavaSourceRootType.SOURCE}) {
+                if ((module != target.module || target.isTests) && module.hasProductionSourceRoot) {
                     addTarget(module, isTests = false)
                 }
 
-                if (module != target.module && target.isTests && module.sourceRoots.any { it.rootType == JavaSourceRootType.TEST_SOURCE}) {
+                if (module != target.module && target.isTests && module.hasTestSourceRoot) {
                     addTarget(module, isTests = true)
                 }
             }
@@ -85,3 +85,9 @@ object JpsJsModuleUtils {
 
     private fun suffix(isTests: Boolean) = if (isTests) "_test" else ""
 }
+
+val JpsModule.hasProductionSourceRoot
+    get() = sourceRoots.any { it.rootType == JavaSourceRootType.SOURCE}
+
+val JpsModule.hasTestSourceRoot
+    get() = sourceRoots.any { it.rootType == JavaSourceRootType.TEST_SOURCE}

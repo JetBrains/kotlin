@@ -48,11 +48,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var sourceMapPrefix: String? by FreezableVar(null)
 
     @Argument(
-            value = "-source-map-source-roots",
+            value = "-source-map-base-dirs",
+            deprecatedName = "-source-map-source-roots",
             valueDescription = "<path>",
             description = "Base directories which are used to calculate relative paths to source files in source map"
     )
-    var sourceMapSourceRoots: String? by FreezableVar(null)
+    var sourceMapBaseDirs: String? by FreezableVar(null)
 
     @GradleOption(DefaultValues.JsSourceMapContentModes::class)
     @Argument(
@@ -98,9 +99,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays to JS typed arrays")
-    var typedArrays: Boolean by FreezableVar(false)
+    var typedArrays: Boolean by FreezableVar(true)
 
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-Xfriend-modules-disabled", description = "Disable internal declaration export")

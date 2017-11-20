@@ -28,8 +28,8 @@ import org.jetbrains.uast.*
 
 class KotlinUBinaryExpression(
         override val psi: KtBinaryExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UBinaryExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     private companion object {
         val BITWISE_OPERATORS = mapOf(
                 "or" to UastBinaryOperator.BITWISE_OR,
@@ -88,8 +88,8 @@ class KotlinUBinaryExpression(
 
 class KotlinCustomUBinaryExpression(
         override val psi: PsiElement,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpression {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UBinaryExpression {
     lateinit override var leftOperand: UExpression
         internal set
 

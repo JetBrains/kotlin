@@ -35,21 +35,17 @@ import kotlin.script.templates.AcceptedAnnotations
 
 open class KotlinScriptDefinitionFromAnnotatedTemplate(
         template: KClass<out Any>,
-        providedResolver: DependenciesResolver? = null,
-        providedScriptFilePattern: String? = null,
         val environment: Map<String, Any?>? = null,
         val templateClasspath: List<File> = emptyList()
 ) : KotlinScriptDefinition(template) {
 
     val scriptFilePattern by lazy {
-        providedScriptFilePattern
-        ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()?.scriptFilePattern }
+        takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()?.scriptFilePattern }
         ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>()?.scriptFilePattern }
         ?: DEFAULT_SCRIPT_FILE_PATTERN
     }
 
     override val dependencyResolver: DependenciesResolver by lazy {
-        providedResolver ?:
         resolverFromAnnotation(template) ?:
         resolverFromLegacyAnnotation(template) ?:
         DependenciesResolver.NoDependencies
@@ -80,6 +76,9 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     private fun <T : Any> instantiateResolver(resolverClass: KClass<T>): T? {
         try {
+            resolverClass.objectInstance?.let {
+                return it
+            }
             val constructorWithoutParameters = resolverClass.constructors.find { it.parameters.all { it.isOptional } }
             if (constructorWithoutParameters == null) {
                 log.warn("[kts] ${resolverClass.qualifiedName} must have a constructor without required parameters")

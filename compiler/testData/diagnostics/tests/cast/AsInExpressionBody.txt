@@ -1,0 +1,10 @@
+package
+
+public val functionLiteral1: () -> kotlin.Any
+public val functionLiteral2: () -> kotlin.Any
+public val functionLiteral3: () -> kotlin.Any
+public fun bar(): kotlin.Any
+public fun baz(): kotlin.Any
+public fun baz(/*0*/ b: kotlin.Boolean): kotlin.Any?
+public fun foo(): kotlin.Any
+public fun </*0*/ T> id(/*0*/ x: T): T

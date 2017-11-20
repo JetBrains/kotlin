@@ -13,6 +13,7 @@ where possible options include:
   -script                    Evaluate the script file
   -script-templates <fully qualified class name[,]>
                              Script definition template classes
+  -Werror                    Report an error if there are any warnings
   -api-version <version>     Allow to use declarations only from the specified version of bundled libraries
   -X                         Print a synopsis of advanced options
   -help (-h)                 Print a synopsis of standard options

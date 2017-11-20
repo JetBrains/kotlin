@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.After
 import org.junit.AfterClass
@@ -38,7 +38,7 @@ abstract class BaseGradleIT {
         val sdkLicense = File(sdkLicenses, "android-sdk-license")
         if (!sdkLicense.exists()) {
             sdkLicense.createNewFile()
-            sdkLicense.writeText("8933bad161af4178b1185d1a37fbf41ea5269c55")
+            sdkLicense.writeText("d56f5187479451eabf01fb78af6dfcb131a6481e")
         }
 
         val sdkPreviewLicense = File(sdkLicenses, "android-sdk-preview-license")
@@ -145,7 +145,8 @@ abstract class BaseGradleIT {
             val forceOutputToStdout: Boolean = false,
             val debug: Boolean = false,
             val freeCommandLineArgs: List<String> = emptyList(),
-            val kotlinVersion: String = KOTLIN_VERSION)
+            val kotlinVersion: String = KOTLIN_VERSION,
+            val kotlinDaemonDebugPort: Int? = null)
 
     open inner class Project(
             val projectName: String,
@@ -403,6 +404,12 @@ abstract class BaseGradleIT {
         }
     }
 
+    val Project.allKotlinFiles: Iterable<File>
+        get() = projectDir.allKotlinFiles()
+
+    fun Project.projectFile(name: String): File =
+        projectDir.getFileByName(name)
+
     fun CompiledProject.assertCompiledJavaSources(
             sources: Iterable<String>,
             weakTesting: Boolean = false
@@ -418,7 +425,16 @@ abstract class BaseGradleIT {
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
             params.toMutableList().apply {
                 add("--stacktrace")
-                add("--${minLogLevel.name.toLowerCase()}")
+                when (minLogLevel) {
+                    // Do not allow to configure Gradle project with `ERROR` log level (error logs visible on all log levels)
+                    LogLevel.ERROR -> error("Log level ERROR is not supported by Gradle command-line")
+                    // Omit log level argument for default `LIFECYCLE` log level,
+                    // because there is no such command-line option `--lifecycle`
+                    // see https://docs.gradle.org/current/userguide/logging.html#sec:choosing_a_log_level
+                    LogLevel.LIFECYCLE -> Unit
+                    //Command line option for other log levels
+                    else -> add("--${minLogLevel.name.toLowerCase()}")
+                }
                 if (options.daemonOptionSupported) {
                     add(if (options.withDaemon) "--daemon" else "--no-daemon")
                 }
@@ -428,6 +444,12 @@ abstract class BaseGradleIT {
                 options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it")}
                 if (options.debug) {
                     add("-Dorg.gradle.debug=true")
+                }
+                options.kotlinDaemonDebugPort?.let { port ->
+                    add("-Dkotlin.daemon.jvm.options=-agentlib:jdwp=transport=dt_socket\\,server=y\\,suspend=y\\,address=$port")
+                }
+                System.getProperty("maven.repo.local")?.let {
+                    add("-Dmaven.repo.local=$it") // TODO: proper escaping
                 }
                 addAll(options.freeCommandLineArgs)
             }

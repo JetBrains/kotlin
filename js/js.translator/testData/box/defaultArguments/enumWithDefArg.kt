@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1017
+// EXPECTED_REACHABLE_NODES: 1135
 package foo
 
 enum class A(val a: Int = 1) {

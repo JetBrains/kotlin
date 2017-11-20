@@ -19,17 +19,17 @@ package org.jetbrains.kotlin.cfg.pseudocode
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.*
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-
 import java.util.*
 
 class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
@@ -48,8 +48,8 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
     private val allBlocks = Stack<BlockInfo>()
 
-    private fun pushBuilder(scopingElement: KtElement, subroutine: KtElement) {
-        val worker = ControlFlowInstructionsGeneratorWorker(scopingElement, subroutine)
+    private fun pushBuilder(scopingElement: KtElement, subroutine: KtElement, shouldInline: Boolean) {
+        val worker = ControlFlowInstructionsGeneratorWorker(scopingElement, subroutine, shouldInline)
         builders.push(worker)
         builder = worker
     }
@@ -65,32 +65,42 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         return worker
     }
 
-    override fun enterSubroutine(subroutine: KtElement) {
+    override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
         val builder = builder
+        val shouldInlnie = invocationKind != null
         if (builder != null && subroutine is KtFunctionLiteral) {
-            pushBuilder(subroutine, builder.returnSubroutine)
+            pushBuilder(subroutine, builder.returnSubroutine, shouldInlnie)
         }
         else {
-            pushBuilder(subroutine, subroutine)
+            pushBuilder(subroutine, subroutine, shouldInlnie)
         }
         delegateBuilder.enterBlockScope(subroutine)
         delegateBuilder.enterSubroutine(subroutine)
     }
 
-    override fun exitSubroutine(subroutine: KtElement): Pseudocode {
-        super.exitSubroutine(subroutine)
+    override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode {
+        super.exitSubroutine(subroutine, invocationKind)
         delegateBuilder.exitBlockScope(subroutine)
         val worker = popBuilder()
         if (!builders.empty()) {
             val builder = builders.peek()
-            builder.declareFunction(subroutine, worker.pseudocode)
+            if (invocationKind == null) {
+                builder.declareFunction(subroutine, worker.pseudocode)
+            }
+            else {
+                builder.declareInlinedFunction(subroutine, worker.pseudocode, invocationKind)
+            }
         }
         return worker.pseudocode
     }
 
-    private inner class ControlFlowInstructionsGeneratorWorker(scopingElement: KtElement, override val returnSubroutine: KtElement) : ControlFlowBuilder {
+    private inner class ControlFlowInstructionsGeneratorWorker(
+            scopingElement: KtElement,
+            override val returnSubroutine: KtElement,
+            shouldInline: Boolean
+    ) : ControlFlowBuilder {
 
-        val pseudocode: PseudocodeImpl = PseudocodeImpl(scopingElement)
+        val pseudocode: PseudocodeImpl = PseudocodeImpl(scopingElement, shouldInline)
         private val error: Label = pseudocode.createLabel("error", null)
         private val sink: Label = pseudocode.createLabel("sink", null)
 
@@ -113,6 +123,10 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override fun createUnboundLabel(name: String): Label = pseudocode.createLabel("L" + labelCount++, name)
 
         override fun enterLoop(expression: KtLoopExpression): LoopInfo {
+            if (expression is KtDoWhileExpression) {
+                (pseudocode.rootPseudocode as PseudocodeImpl).containsDoWhile = true
+            }
+
             val info = LoopInfo(
                     expression,
                     createUnboundLabel("loop entry point"),
@@ -142,7 +156,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override val currentLoop: KtLoopExpression?
             get() = if (loopInfo.empty()) null else loopInfo.peek().element
 
-        override fun enterSubroutine(subroutine: KtElement) {
+        override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
             val blockInfo = SubroutineInfo(
                     subroutine,
                     /* entry point */ createUnboundLabel(),
@@ -201,7 +215,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             }
         }
 
-        override fun exitSubroutine(subroutine: KtElement): Pseudocode {
+        override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode {
             getSubroutineExitPoint(subroutine)?.let { bindLabel(it) }
             pseudocode.addExitInstruction(SubroutineExitInstruction(subroutine, currentScope, false))
             bindLabel(error)
@@ -256,6 +270,10 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
         override fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode) {
             add(LocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope))
+        }
+
+        override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationKind: InvocationKind) {
+            add(InlinedLocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope, invocationKind))
         }
 
         override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {

@@ -1,7 +1,7 @@
 package test
 
-header var /*rename*/foo: Int
-header var bar: Int
+expect var /*rename*/foo: Int
+expect var bar: Int
 
 fun test() {
     foo

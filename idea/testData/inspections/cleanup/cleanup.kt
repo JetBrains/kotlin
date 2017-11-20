@@ -112,3 +112,7 @@ object X {
         yield::toInt
     }
 }
+
+header class Expected
+
+impl class Actual

@@ -25,73 +25,73 @@ fun foo(f: Boolean) {
 ---------------------
 L0:
   1 <START>                                                                  INIT: in: {} out: {}
-    v(f: Boolean)                                                            INIT: in: {} out: {f=D}
-    magic[FAKE_INITIALIZER](f: Boolean) -> <v0>                              INIT: in: {f=D} out: {f=D}
-    w(f|<v0>)                                                                INIT: in: {f=D} out: {f=ID}
-  2 mark({ try { if (f) { x = 0 } } finally { fun bar() {} } })              INIT: in: {f=ID} out: {f=ID}
+    v(f: Boolean)                                                            INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](f: Boolean) -> <v0>                              INIT: in: {} out: {}
+    w(f|<v0>)                                                                INIT: in: {} out: {}
+  2 mark({ try { if (f) { x = 0 } } finally { fun bar() {} } })              INIT: in: {} out: {}
     mark(try { if (f) { x = 0 } } finally { fun bar() {} })
     jmp?(L2)
   3 mark({ if (f) { x = 0 } })
-    mark(if (f) { x = 0 })                                                                                             USE: in: {f=READ, x=ONLY_WRITTEN_NEVER_READ} out: {f=READ, x=ONLY_WRITTEN_NEVER_READ}
-    r(f) -> <v1>                                                                                                       USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {f=READ, x=ONLY_WRITTEN_NEVER_READ}
+    mark(if (f) { x = 0 })
+    r(f) -> <v1>
     jf(L3|<v1>)
   4 mark({ x = 0 })
-    r(0) -> <v2>                                                                                                       USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
-    w(x|<v2>)                                                                INIT: in: {f=ID} out: {f=ID, x=I}         USE: in: {} out: {x=ONLY_WRITTEN_NEVER_READ}
-  3 jmp(L4)                                                                  INIT: in: {f=ID, x=I} out: {f=ID, x=I}
+    r(0) -> <v2>
+    w(x|<v2>)
+  3 jmp(L4)
 L3 [else branch]:
-    read (Unit)                                                              INIT: in: {f=ID} out: {f=ID}
+    read (Unit)
 L4 ['if' expression result]:
-    merge(if (f) { x = 0 }|!<v3>) -> <v4>                                    INIT: in: {f=ID, x=I} out: {f=ID, x=I}
+    merge(if (f) { x = 0 }|!<v3>) -> <v4>
   2 jmp?(L2)
     jmp(L5)
 L2 [onExceptionToFinallyBlock]:
 L6 [start finally]:
   3 mark({ fun bar() {} })
     jmp?(L7)
-    d(fun bar() {})                                                          INIT: in: {f=I, x=I} out: {f=I, x=I}
+    d(fun bar() {})
 L7 [after local declaration]:
 L10 [finish finally]:
-  2 jmp(error)                                                               INIT: in: {f=ID, x=I} out: {f=ID, x=I}
+  2 jmp(error)
 L5 [skipFinallyToErrorBlock]:
 L11 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ fun bar() {} })
     jmp?(L12)
-    d(fun bar() {})                                                          INIT: in: {f=I, x=I} out: {f=I, x=I}
+    d(fun bar() {})
 L12 [copy of L7, after local declaration]:
-  2 merge(try { if (f) { x = 0 } } finally { fun bar() {} }|<v4>) -> <v5>    INIT: in: {f=ID, x=I} out: {f=ID, x=I}
+  2 merge(try { if (f) { x = 0 } } finally { fun bar() {} }|<v4>) -> <v5>
 L1:
   1 <END>
 error:
     <ERROR>
 sink:
-    <SINK>                                                                   INIT: in: {f=I, x=I} out: {f=I, x=I}      USE: in: {} out: {}
+    <SINK>                                                                                           USE: in: {} out: {}
 =====================
 == bar ==
 fun bar() {}
 ---------------------
 L8:
-  4 <START>        INIT: in: {f=ID, x=I} out: {f=ID, x=I}
+  4 <START>        INIT: in: {} out: {}
   5 mark({})
     read (Unit)
 L9:
   4 <END>
 error:
-    <ERROR>        INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>         INIT: in: {f=I, x=I} out: {f=I, x=I}      USE: in: {} out: {}
+    <SINK>                                 USE: in: {} out: {}
 =====================
 == bar ==
 fun bar() {}
 ---------------------
 L2 [copy of L8, null]:
-  4 <START>        INIT: in: {f=ID, x=I} out: {f=ID, x=I}
+  4 <START>        INIT: in: {} out: {}
   5 mark({})
     read (Unit)
 L3 [copy of L9, null]:
   4 <END>
 L0 [copy of error, null]:
-    <ERROR>        INIT: in: {} out: {}
+    <ERROR>
 L1 [copy of sink, null]:
-    <SINK>         INIT: in: {f=I, x=I} out: {f=I, x=I}      USE: in: {} out: {}
+    <SINK>                                 USE: in: {} out: {}
 =====================

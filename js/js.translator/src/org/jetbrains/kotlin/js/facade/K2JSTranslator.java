@@ -19,8 +19,11 @@ package org.jetbrains.kotlin.js.facade;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.backend.ast.JsImportedModule;
@@ -29,9 +32,9 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.coroutine.CoroutineTransformer;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.js.inline.JsInliner;
 import org.jetbrains.kotlin.js.inline.clean.LabeledBlockToDoWhileTransformation;
+import org.jetbrains.kotlin.js.inline.clean.RemoveDuplicateImportsKt;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedImportsKt;
 import org.jetbrains.kotlin.js.inline.clean.ResolveTemporaryNamesKt;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
@@ -51,7 +54,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError;
 
@@ -127,7 +129,10 @@ public final class K2JSTranslator {
         ModuleDescriptor moduleDescriptor = analysisResult.getModuleDescriptor();
         Diagnostics diagnostics = bindingTrace.getBindingContext().getDiagnostics();
 
-        AstGenerationResult translationResult = Translation.generateAst(bindingTrace, units, mainCallParameters, moduleDescriptor, config);
+        SourceFilePathResolver pathResolver = SourceFilePathResolver.create(config);
+
+        AstGenerationResult translationResult = Translation.generateAst(
+                bindingTrace, units, mainCallParameters, moduleDescriptor, config, pathResolver);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
@@ -135,7 +140,7 @@ public final class K2JSTranslator {
         List<JsProgramFragment> allFragments = new ArrayList<>(translationResult.getFragments());
 
         JsInliner.process(reporter, config, analysisResult.getBindingTrace(), translationResult.getInnerModuleName(),
-                          allFragments, newFragments);
+                          allFragments, newFragments, translationResult.getImportStatements());
 
         LabeledBlockToDoWhileTransformation.INSTANCE.apply(newFragments);
 
@@ -150,10 +155,6 @@ public final class K2JSTranslator {
 
         ExpandIsCallsKt.expandIsCalls(newFragments);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-
-        List<File> sourceRoots = config.getSourceMapRoots().stream().map(File::new).collect(Collectors.toList());
-        SourceFilePathResolver pathResolver = new SourceFilePathResolver(sourceRoots);
-
         JsAstSerializer serializer = new JsAstSerializer(file -> {
             try {
                 return pathResolver.getPathRelativeToSourceRoots(file);
@@ -182,9 +183,11 @@ public final class K2JSTranslator {
                 incrementalResults.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst);
             }
 
-            incrementalResults.processHeader(serializationUtil.serializeHeader(null).toByteArray());
+            LanguageVersionSettings settings = CommonConfigurationKeysKt.getLanguageVersionSettings(config.getConfiguration());
+            incrementalResults.processHeader(serializationUtil.serializeHeader(null, settings).toByteArray());
         }
 
+        RemoveDuplicateImportsKt.removeDuplicateImports(translationResult.getProgram());
         ResolveTemporaryNamesKt.resolveTemporaryNames(translationResult.getProgram());
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);

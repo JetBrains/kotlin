@@ -59,7 +59,6 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.psi.KtPsiUtil.getLastElementDeparenthesized;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getRecordedTypeInfo;
-import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
@@ -109,13 +108,8 @@ public class ArgumentTypeResolver {
         return KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
     }
 
-    public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context) {
-        checkTypesWithNoCallee(context, SHAPE_FUNCTION_ARGUMENTS);
-    }
-
     public void checkTypesWithNoCallee(
-            @NotNull CallResolutionContext<?> context,
-            @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies
+            @NotNull CallResolutionContext<?> context
     ) {
         if (context.checkArguments != CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) return;
 
@@ -126,9 +120,7 @@ public class ArgumentTypeResolver {
             }
         }
 
-        if (resolveFunctionArgumentBodies == RESOLVE_FUNCTION_ARGUMENTS) {
-            checkTypesForFunctionArgumentsWithNoCallee(context);
-        }
+        checkTypesForFunctionArgumentsWithNoCallee(context);
 
         for (KtTypeProjection typeProjection : context.call.getTypeArguments()) {
             KtTypeReference typeReference = typeProjection.getTypeReference();
@@ -141,7 +133,7 @@ public class ArgumentTypeResolver {
         }
     }
 
-    public void checkTypesForFunctionArgumentsWithNoCallee(@NotNull CallResolutionContext<?> context) {
+    private void checkTypesForFunctionArgumentsWithNoCallee(@NotNull CallResolutionContext<?> context) {
         if (context.checkArguments != CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) return;
 
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
@@ -173,15 +165,6 @@ public class ArgumentTypeResolver {
             @NotNull KtExpression expression, @NotNull ResolutionContext context
     ) {
         return isFunctionLiteralArgument(expression, context) || isCallableReferenceArgument(expression, context);
-    }
-
-    @NotNull
-    public static KtFunction getFunctionLiteralArgument(
-            @NotNull KtExpression expression, @NotNull ResolutionContext context
-    ) {
-        assert isFunctionLiteralArgument(expression, context);
-        //noinspection ConstantConditions
-        return getFunctionLiteralArgumentIfAny(expression, context);
     }
 
     @Nullable
@@ -280,8 +263,7 @@ public class ArgumentTypeResolver {
         if (overloadResolutionResults == null) return null;
 
         if (isSingleAndPossibleTransformToSuccess(overloadResolutionResults)) {
-            ResolvedCall<?> resolvedCall =
-                    OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency);
+            ResolvedCall<?> resolvedCall = OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context);
             if (resolvedCall == null) return null;
 
             return DoubleColonExpressionResolver.Companion.createKCallableTypeForReference(

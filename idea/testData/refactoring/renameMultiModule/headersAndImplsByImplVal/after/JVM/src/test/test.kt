@@ -1,10 +1,10 @@
 package test
 
-impl var baz: Int
+actual var baz: Int
     get() = 1
     set(value) {}
 
-impl var bar: Int
+actual var bar: Int
     get() = 1
     set(value) {}
 

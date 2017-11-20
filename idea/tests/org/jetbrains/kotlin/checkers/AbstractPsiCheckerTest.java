@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.checkers;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
-import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.highlighter.NameHighlighter;
@@ -84,7 +83,7 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
             @Override
             public void visitDeclaration(@NotNull KtDeclaration dcl) {
                 if (areDescriptorsCreatedForDeclaration(dcl)) {
-                    ResolutionUtils.resolveToDescriptor(dcl, BodyResolveMode.FULL); // check for exceptions
+                    ResolutionUtils.unsafeResolveToDescriptor(dcl, BodyResolveMode.FULL); // check for exceptions
                 }
                 dcl.acceptChildren(this, null);
             }

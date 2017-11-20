@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.parameterInfo
 
 import com.intellij.codeInsight.hints.InlayInfo
+import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -30,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-fun provideArgumentNameHints(element: KtCallExpression): List<InlayInfo> {
+fun provideArgumentNameHints(element: KtCallElement): List<InlayInfo> {
     if (element.valueArguments.none { it.getArgumentExpression()?.isUnclearExpression() == true }) return emptyList()
     val ctx = element.analyze(BodyResolveMode.PARTIAL)
     val call = element.getCall(ctx) ?: return emptyList()
@@ -53,6 +55,11 @@ fun provideArgumentNameHints(element: KtCallExpression): List<InlayInfo> {
 
 private fun getParameterInfoForCallCandidate(resolvedCall: ResolvedCall<out CallableDescriptor>): List<InlayInfo> {
     return resolvedCall.valueArguments.mapNotNull { (valueParam: ValueParameterDescriptor, resolvedArg) ->
+        if (resolvedCall.resultingDescriptor is FunctionInvokeDescriptor &&
+            valueParam.type.extractParameterNameFromFunctionTypeArgument() == null) {
+            return@mapNotNull null
+        }
+
         resolvedArg.arguments.firstOrNull()?.let { arg ->
             arg.getArgumentExpression()?.let { argExp ->
                 if (!arg.isNamed() && !valueParam.name.isSpecial && argExp.isUnclearExpression()) {

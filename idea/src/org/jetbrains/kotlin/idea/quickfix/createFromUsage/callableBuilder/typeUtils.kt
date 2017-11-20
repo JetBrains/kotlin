@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,14 @@ private fun KotlinType.renderSingle(typeParameterNameMap: Map<TypeParameterDescr
                     override fun getTypeConstructor() = wrappingTypeConstructor
                 }
 
-                val wrappingType = KotlinTypeFactory.simpleType(typeParameter.defaultType, constructor = wrappingTypeConstructor)
+                val defaultType = typeParameter.defaultType
+                val wrappingType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+                        defaultType.annotations,
+                        wrappingTypeConstructor,
+                        defaultType.arguments,
+                        defaultType.isMarkedNullable,
+                        defaultType.memberScope
+                )
                 TypeProjectionImpl(wrappingType)
             }
             .mapKeys { it.key.typeConstructor }
@@ -255,7 +262,7 @@ private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinT
     if (expectedTypes.isEmpty() || expectedTypes.any { expectedType -> ErrorUtils.containsErrorType(expectedType) }) {
         return arrayOf()
     }
-    val theType = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, expectedTypes)
+    val theType = TypeIntersector.intersectTypes(expectedTypes)
     return if (theType != null) {
         arrayOf(theType)
     }
@@ -286,7 +293,7 @@ internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, varianc
             val (projection, typeParameter) = pair
             TypeProjectionImpl(Variance.INVARIANT, projection.type.substitute(substitution, typeParameter.variance))
         }
-        KotlinTypeFactory.simpleType(annotations, constructor, newArguments, isMarkedNullable, memberScope)
+        KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations, constructor, newArguments, isMarkedNullable, memberScope)
     }
 }
 

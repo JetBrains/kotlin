@@ -22,6 +22,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.SmartHashSet
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
@@ -31,7 +33,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
+import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractFakeOverride
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.types.*
@@ -41,7 +43,8 @@ import java.util.*
 
 class OverrideResolver(
         private val trace: BindingTrace,
-        private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper
+        private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     fun check(c: TopDownAnalysisContext) {
@@ -208,7 +211,7 @@ class OverrideResolver(
         }
 
         internal fun doReportErrors() {
-            val canHaveAbstractMembers = classCanHaveAbstractMembers(classDescriptor)
+            val canHaveAbstractMembers = classCanHaveAbstractFakeOverride(classDescriptor)
             if (abstractInBaseClassNoImpl.isNotEmpty() && !canHaveAbstractMembers) {
                 trace.report(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.on(klass, klass, abstractInBaseClassNoImpl.first()))
             }
@@ -243,6 +246,9 @@ class OverrideResolver(
         if (declared.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) {
             if (DataClassDescriptorResolver.isComponentLike(declared.name)) {
                 checkOverrideForComponentFunction(declared)
+            }
+            else if (declared.name == DataClassDescriptorResolver.COPY_METHOD_NAME) {
+                checkOverrideForCopyFunction(declared)
             }
             return
         }
@@ -339,6 +345,20 @@ class OverrideResolver(
                 throw IllegalStateException("Component functions are not properties")
             }
         })
+    }
+
+    private fun checkOverrideForCopyFunction(copyFunction: CallableMemberDescriptor) {
+        val overridden = copyFunction.overriddenDescriptors.firstOrNull()
+        if (overridden != null) {
+            val baseClassifier = overridden.containingDeclaration
+            val dataModifier = findDataModifierForDataClass(copyFunction.containingDeclaration)
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitDataClassesOverridingCopy)) {
+                trace.report(DATA_CLASS_OVERRIDE_DEFAULT_VALUES_ERROR.on(dataModifier, copyFunction, baseClassifier))
+            }
+            else {
+                trace.report(DATA_CLASS_OVERRIDE_DEFAULT_VALUES_WARNING.on(dataModifier, copyFunction, baseClassifier))
+            }
+        }
     }
 
     private fun checkParameterOverridesForAllClasses(c: TopDownAnalysisContext) {

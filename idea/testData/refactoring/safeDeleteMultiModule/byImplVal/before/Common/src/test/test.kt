@@ -1,5 +1,5 @@
 package test
 
-header val foo: Int
+expect val foo: Int
 
 fun test() = foo

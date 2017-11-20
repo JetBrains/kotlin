@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
@@ -108,8 +110,14 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
                     }
             )
         }
-        val lambdaResult = element.replace(lambdaExpression) as KtLambdaExpression
-        ShortenReferences.DEFAULT.process(lambdaResult)
+
+        val needParentheses = lambdaParameterNamesAndTypes.isEmpty() && when (element.parent.node.elementType) {
+            KtNodeTypes.WHEN_ENTRY, KtNodeTypes.THEN, KtNodeTypes.ELSE -> true
+            else -> false
+        }
+        val wrappedExpression =
+                if (needParentheses) factory.createExpressionByPattern("($0)", lambdaExpression) else lambdaExpression
+        ShortenReferences.DEFAULT.process(element.replaced(wrappedExpression))
 
         if (valueArgumentParent != null && callGrandParent != null) {
             val moveOutOfParenthesis = MoveLambdaOutsideParenthesesIntention()

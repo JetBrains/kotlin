@@ -31,4 +31,6 @@ interface AnalysisResult {
     val functionsToEnter: Set<JsFunction>
 
     val invocationsToSkip: Set<JsInvocation>
+
+    val functionsToSkip: Set<Context.Node>
 }

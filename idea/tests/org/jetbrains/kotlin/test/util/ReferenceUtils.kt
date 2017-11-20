@@ -23,13 +23,15 @@ import com.intellij.psi.PsiAnonymousClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.plainContent
 import org.junit.Assert
 
-fun PsiElement.renderAsGotoImplementation(): String {
+@JvmOverloads
+fun PsiElement.renderAsGotoImplementation(renderModule: Boolean = false): String {
     val navigationElement = navigationElement
 
     if (navigationElement is KtObjectDeclaration && navigationElement.isCompanion()) {
@@ -54,6 +56,9 @@ fun PsiElement.renderAsGotoImplementation(): String {
     var locationString = presentation.locationString
     if (locationString == null && parent is PsiAnonymousClass) {
         locationString = "<anonymous>"
+    }
+    if (renderModule) {
+        locationString = "[${navigationElement.module?.name ?: ""}] $locationString"
     }
     return if (locationString == null || navigationElement is PsiPackage)
         presentableText!!

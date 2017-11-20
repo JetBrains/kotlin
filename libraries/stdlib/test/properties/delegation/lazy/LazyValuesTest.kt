@@ -1,6 +1,5 @@
 package test.properties.delegation.lazy
 
-import org.junit.Test
 import kotlin.properties.*
 import kotlin.test.*
 

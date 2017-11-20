@@ -2,13 +2,13 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header class Foo(zzz: Int) {
+expect class Foo(zzz: Int) {
     constructor(aaa: Boolean)
 
     fun f1(xxx: String): String
 }
 
-header fun f2(xxx: Int)
+expect fun f2(xxx: Int)
 
 fun testCommon() {
     Foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>zzz<!> = 0)
@@ -20,13 +20,13 @@ fun testCommon() {
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-impl class Foo(val aaa: Boolean) {
-    impl constructor(zzz: Int) : this(zzz == 0)
+actual class Foo actual constructor(val aaa: Boolean) {
+    actual constructor(zzz: Int) : this(zzz == 0)
 
-    impl fun f1(xxx: String) = xxx
+    actual fun f1(xxx: String) = xxx
 }
 
-impl fun f2(xxx: Int) {}
+actual fun f2(xxx: Int) {}
 
 fun testPlatform() {
     Foo(zzz = 0)

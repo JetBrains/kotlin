@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsNullLiteral
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.util.*
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
@@ -51,19 +51,25 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val isNegated = expression.isNegated()
+            val anyType = context.currentModule.builtIns.anyType
             if (right is JsNullLiteral || left is JsNullLiteral) {
-                return TranslationUtils.nullCheck(if (right is JsNullLiteral) left else right, isNegated)
+                val (subject, ktSubject) = if (right is JsNullLiteral) Pair(left, expression.left!!) else Pair(right, expression.right!!)
+                val type = context.bindingContext().getType(ktSubject) ?: anyType
+                val coercedSubject = TranslationUtils.coerce(context, subject, type.makeNullable())
+                return TranslationUtils.nullCheck(coercedSubject, isNegated)
             }
 
             val ktLeft = checkNotNull(expression.left) { "No left-hand side: " + expression.text }
             val ktRight = checkNotNull(expression.right) { "No right-hand side: " + expression.text }
-            val leftType = getRefinedType(ktLeft, context)?.let { KotlinBuiltIns.getPrimitiveType(it) }
-            val rightType = getRefinedType(ktRight, context)?.let { KotlinBuiltIns.getPrimitiveType(it) }
+            val leftKotlinType = getRefinedType(ktLeft, context)
+            val rightKotlinType = getRefinedType(ktRight, context)
+            val leftType = leftKotlinType?.let { KotlinBuiltIns.getPrimitiveType(it) }
+            val rightType = rightKotlinType?.let { KotlinBuiltIns.getPrimitiveType(it) }
 
             if (leftType != null && (leftType in SIMPLE_PRIMITIVES || leftType == rightType && leftType != PrimitiveType.LONG)) {
-                return JsBinaryOperation(if (isNegated) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ,
-                                         Translation.unboxIfNeeded(left, leftType == PrimitiveType.CHAR),
-                                         Translation.unboxIfNeeded(right, rightType == PrimitiveType.CHAR))
+                val coercedLeft = TranslationUtils.coerce(context, left, leftKotlinType)
+                val coercedRight = TranslationUtils.coerce(context, right, rightKotlinType!!)
+                return JsBinaryOperation(if (isNegated) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ, coercedLeft, coercedRight)
             }
 
             val resolvedCall = expression.getResolvedCall(context.bindingContext())
@@ -77,10 +83,9 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
                 return JsBinaryOperation(if (isNegated) JsBinaryOperator.NEQ else JsBinaryOperator.EQ, left, right)
             }
 
-            val maybeBoxedLeft = if (leftType == PrimitiveType.CHAR) JsAstUtils.charToBoxedChar(left) else left
-            val maybeBoxedRight = if (rightType == PrimitiveType.CHAR) JsAstUtils.charToBoxedChar(right) else right
-
-            val result = TopLevelFIF.KOTLIN_EQUALS.apply(maybeBoxedLeft, Arrays.asList<JsExpression>(maybeBoxedRight), context)
+            val coercedLeft = TranslationUtils.coerce(context, left, anyType)
+            val coercedRight = TranslationUtils.coerce(context, right, anyType)
+            val result = TopLevelFIF.KOTLIN_EQUALS.apply(coercedLeft, listOf(coercedRight), context)
             return if (isNegated) JsAstUtils.not(result) else result
         }
 

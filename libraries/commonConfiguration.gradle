@@ -1,21 +1,30 @@
-String jdkPath(String version) {
-    String varName = "JDK_${version.replace('.', '')}"
-    String path = System.getenv(varName)
-    if (path == null) throw new GradleException("Please set environment variable $varName to point to JDK $version installation")
-    return path
-}
-
-ext {
-    JDK_16 = jdkPath("1.6")
-    JDK_17 = jdkPath("1.7")
-    JDK_18 = jdkPath("1.8")
-    distDir = file("$kotlin_root/dist")
-    distLibDir = file("$kotlin_root/dist/kotlinc/lib")
-    bootstrapCompilerFile = file("$distDir/kotlin-compiler-for-maven.jar")
-}
-
 ext.configureJvmProject = { Project project ->
     project.configure(project) {
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = 'sources'
+            from sourceSets.main.kotlin
+        }
+
+        tasks.withType(JavaCompile) {
+            options.fork = true
+            options.forkOptions.javaHome = file(JDK_18)
+        }
+
+        tasks.withType(project.compileKotlin.class) {
+            kotlinOptions.jdkHome = JDK_18
+        }
+
+        test {
+            executable = "$JDK_16/bin/java"
+        }
+    }
+}
+
+ext.configureJvm6Project = { Project project ->
+    project.configure(project) {
+        project.ext.jvmTarget = "1.6"
+        project.ext.javaHome = JDK_16
+
         task sourcesJar(type: Jar, dependsOn: classes) {
             classifier = 'sources'
             from sourceSets.main.kotlin
@@ -30,9 +39,7 @@ ext.configureJvmProject = { Project project ->
 
         tasks.withType(project.compileKotlin.class) {
             kotlinOptions.jdkHome = JDK_16
-            doFirst {
-                System.setProperty("kotlin.colors.enabled", "false")
-            }
+            kotlinOptions.jvmTarget = "1.6"
         }
 
         test {
@@ -46,13 +53,13 @@ ext.manifestAttributes = { Manifest manifest, Project project, String component 
         attributes \
                 'Implementation-Vendor': 'JetBrains',
                 'Implementation-Title': project.archivesBaseName,
-                'Implementation-Version': project.version,
+                'Implementation-Version': project.buildNumber,
                 'Build-Jdk': System.getProperty('java.version')
 
         if (component != null) {
             attributes \
                 'Kotlin-Runtime-Component': component,
-                'Kotlin-Version': project.kotlin_language_version
+                'Kotlin-Version': project.kotlinLanguageVersion
         }
     }
 }
@@ -64,7 +71,7 @@ task preparePublication {
     Map<String, String> repositoryProviders = ['sonatype-nexus-staging' : 'sonatype', 'sonatype-nexus-snapshots' : 'sonatype']
     project.ext.isRelease = !project.version.toString().contains('-SNAPSHOT')
 
-    String repo = properties['deploy-repo']
+    String repo = properties["deployRepo"] ?: properties['deploy-repo']
     String repoProvider = repositoryProviders.get(repo, repo)
     project.ext.isSonatypePublish = repoProvider == 'sonatype'
     project.ext.isSonatypeRelease = isSonatypePublish && isRelease
@@ -74,12 +81,21 @@ task preparePublication {
 
     String sonatypeSnapshotsUrl = (isSonatypePublish && !isRelease) ? "https://oss.sonatype.org/content/repositories/snapshots/" : null
 
-    ext.repoUrl = properties["deployRepoUrl"] ?: sonatypeSnapshotsUrl ?: properties["deploy-url"] ?: "file://${rootProject.buildDir}/repo"
+    ext.repoUrl = properties["deployRepoUrl"] ?: sonatypeSnapshotsUrl ?: properties["deploy-url"] ?: "file://${rootProject.buildDir}/repo".toString()
     ext.username = properties["deployRepoUsername"] ?: properties["kotlin.${repoProvider}.user"]
     ext.password = properties["deployRepoPassword"] ?: properties["kotlin.${repoProvider}.password"]
 
+    logger.info("Deployment repository preliminary url: $repoUrl ($repoProvider)")
+
     doLast {
-        println("Deployment respository url: $repoUrl")
+        println("Deployment repository url: $repoUrl")
+    }
+}
+
+ext.signPom = { Project project, MavenDeployer deployer ->
+    deployer.beforeDeployment { MavenDeployment deployment ->
+        if (project.signing.required)
+            project.signing.signPom(deployment)
     }
 }
 
@@ -100,9 +116,18 @@ ext.configurePublishing = { Project project ->
             }
         }
 
+        configurations {
+            distJar
+        }
+
         task dist(type: Copy, dependsOn: assemble) {
             rename "-${java.util.regex.Pattern.quote(version)}", ''
             into distLibDir
+            afterEvaluate {
+                project.artifacts {
+                    distJar file: file("$distLibDir${File.separator}${archivesBaseName}.jar"), builtBy: "dist"
+                }
+            }
         }
 
         uploadArchives {
@@ -115,10 +140,7 @@ ext.configurePublishing = { Project project ->
 
             repositories {
                 mavenDeployer {
-                    beforeDeployment { MavenDeployment deployment ->
-                        if (signing.required)
-                            signing.signPom(deployment)
-                    }
+                    signPom(project, it)
 
                     repository(url: prepareTask.repoUrl) {
                         authentication(userName: prepareTask.username, password: prepareTask.password)
@@ -159,28 +181,12 @@ ext.configurePublishing = { Project project ->
 
 ext.createPreprocessorTask = { Project project, def name, def sourceDir, def targetDir, def profile = "JS" ->
     return project.tasks.create("preprocessSources$name", JavaExec) {
+//        dependsOn(rootProject.prepareBootstrap)
         inputs.dir(sourceDir)
         outputs.dir(targetDir)
-        classpath = project.files(bootstrapCompilerFile)
+        classpath = rootProject.configurations.bootstrapCompile
+//        classpath = project.files(bootstrapCompilerFile)
         main = "org.jetbrains.kotlin.preprocessor.PreprocessorCLI"
         args = [sourceDir, targetDir, profile]
-    }
-}
-
-ext.createScriptTask = { Project project, def name, Closure<JavaExec> configureClosure = null ->
-    JavaExec task = project.tasks.create(name, JavaExec)
-    return project.configure(task) {
-        classpath = project.configurations.scriptCompile
-        main = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
-        args = [
-                "-script",
-                "-version",
-                "-no-stdlib",
-                "-cp", project.configurations.scriptRuntime.asPath]
-
-        if (configureClosure != null) {
-            configureClosure.delegate = it
-            configureClosure.call()
-        }
     }
 }

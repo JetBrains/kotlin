@@ -82,7 +82,7 @@ class SpecifyOverrideExplicitlyFix(
                         project, delegatedDescriptor, overriddenDescriptor,
                         OverrideMemberChooserObject.BodyType.Delegate(delegateTargetDescriptor.name.asString())
                 )
-                val member = overrideMemberChooserObject.generateMember(project, copyDoc = false)
+                val member = overrideMemberChooserObject.generateMember(element, copyDoc = false)
                 val insertedMember = element.addDeclaration(member)
                 ShortenReferences.DEFAULT.process(insertedMember)
                 return

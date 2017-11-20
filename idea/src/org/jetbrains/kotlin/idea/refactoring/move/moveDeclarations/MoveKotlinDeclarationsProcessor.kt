@@ -41,6 +41,7 @@ import com.intellij.util.containers.MultiMap
 import gnu.trove.THashMap
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
@@ -48,6 +49,9 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler
 import org.jetbrains.kotlin.idea.search.projectScope
+import org.jetbrains.kotlin.idea.util.projectStructure.getModule
+import org.jetbrains.kotlin.idea.util.projectStructure.module
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -92,7 +96,8 @@ class MoveDeclarationsDescriptor @JvmOverloads constructor(
         val deleteSourceFiles: Boolean = false,
         val moveCallback: MoveCallback? = null,
         val openInEditor: Boolean = false,
-        val allElementsToMove: List<PsiElement>? = null
+        val allElementsToMove: List<PsiElement>? = null,
+        val analyzeConflicts: Boolean = true
 )
 
 class ConflictUsageInfo(element: PsiElement, val messages: Collection<String>) : UsageInfo(element)
@@ -149,8 +154,18 @@ class MoveKotlinDeclarationsProcessor(
 
         val newContainerName = descriptor.moveTarget.targetContainerFqName?.asString() ?: ""
 
+        fun canSkipUsages(element: PsiElement): Boolean {
+            val ktDeclaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return false
+            if (ktDeclaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) return false
+            val (oldContainer, newContainer) = descriptor.delegate.getContainerChangeInfo(ktDeclaration, descriptor.moveTarget)
+            val targetModule = descriptor.moveTarget.targetFile?.getModule(project) ?: return false
+            return oldContainer == newContainer && ktDeclaration.module == targetModule
+        }
+
         fun collectUsages(kotlinToLightElements: Map<KtNamedDeclaration, List<PsiNamedElement>>, result: MutableCollection<UsageInfo>) {
             kotlinToLightElements.values.flatten().flatMapTo(result) { lightElement ->
+                if (canSkipUsages(lightElement)) return@flatMapTo emptyList()
+
                 val newFqName = StringUtil.getQualifiedName(newContainerName, lightElement.name)
 
                 val foundReferences = HashSet<PsiReference>()
@@ -212,8 +227,10 @@ class MoveKotlinDeclarationsProcessor(
 
             internalUsages += descriptor.delegate.findInternalUsages(descriptor)
             collectUsages(kotlinToLightElements, externalUsages)
-            conflictChecker.checkAllConflicts(externalUsages, internalUsages, conflicts)
-            descriptor.delegate.collectConflicts(descriptor, internalUsages, conflicts)
+            if (descriptor.analyzeConflicts) {
+                conflictChecker.checkAllConflicts(externalUsages, internalUsages, conflicts)
+                descriptor.delegate.collectConflicts(descriptor, internalUsages, conflicts)
+            }
 
             usages += internalUsages
             usages += externalUsages

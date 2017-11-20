@@ -1,6 +1,5 @@
 package test.properties.delegation
 
-import org.junit.Test
 import kotlin.test.*
 import kotlin.properties.*
 

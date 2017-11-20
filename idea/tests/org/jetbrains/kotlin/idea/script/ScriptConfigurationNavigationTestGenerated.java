@@ -36,6 +36,12 @@ public class ScriptConfigurationNavigationTestGenerated extends AbstractScriptCo
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/navigation"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
+    @TestMetadata("conflictingModule")
+    public void testConflictingModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/conflictingModule/");
+        doTest(fileName);
+    }
+
     @TestMetadata("customBaseClass")
     public void testCustomBaseClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/customBaseClass/");

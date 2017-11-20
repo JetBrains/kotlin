@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@ package test.text
 
 import kotlin.test.*
 import test.*
-import org.junit.Test
+import test.collections.behaviors.iteratorBehavior
+import test.collections.compare
 
 
 fun createString(content: String): CharSequence = content
@@ -835,6 +836,91 @@ class StringTest {
         val pair = data.partition { it.isAsciiDigit() }
         assertContentEquals("123", pair.first, "pair.first")
         assertContentEquals("abc", pair.second, "pair.second")
+    }
+
+    @Test fun zipWithNext() = withOneCharSequenceArg { arg1 ->
+        assertEquals(listOf("ab", "bc"), arg1("abc").zipWithNext { a: Char, b: Char -> a.toString() + b })
+        assertTrue(arg1("").zipWithNext { a: Char, b: Char -> a.toString() + b }.isEmpty())
+        assertTrue(arg1("a").zipWithNext { a: Char, b: Char -> a.toString() + b }.isEmpty())
+    }
+
+    @Test fun zipWithNextPairs() = withOneCharSequenceArg { arg1 ->
+        assertEquals(listOf('a' to 'b', 'b' to 'c'), arg1("abc").zipWithNext())
+        assertTrue(arg1("").zipWithNext().isEmpty())
+        assertTrue(arg1("a").zipWithNext().isEmpty())
+    }
+
+
+    @Test
+    fun chunked() = withOneCharSequenceArg { arg1 ->
+        val size = 7
+        val data = arg1("abcdefg")
+        val result = data.chunked(4)
+        assertEquals(listOf("abcd", "efg"), result)
+
+        val result2 = data.chunked(3) { it.reversed().toString() }
+        assertEquals(listOf("cba", "fed", "g"), result2)
+
+        data.toString().let { expectedSingleChunk ->
+            assertEquals(expectedSingleChunk, data.chunked(size).single())
+            assertEquals(expectedSingleChunk, data.chunked(size + 3).single())
+        }
+
+        assertTrue(arg1("").chunked(3).isEmpty())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { data.chunked(illegalValue) }
+        }
+
+        for (chunkSize in 1..size + 1) {
+            compare(data.chunked(chunkSize).iterator(), data.chunkedSequence(chunkSize).iterator()) { iteratorBehavior() }
+        }
+    }
+
+
+    @Test
+    fun windowed() = withOneCharSequenceArg { arg1 ->
+        val size = 7
+        val data = arg1("abcdefg")
+        val result = data.windowed(4, 2)
+        assertEquals(listOf("abcd", "cdef"), result)
+
+        val resultPartial = data.windowed(4, 2, partialWindows = true)
+        assertEquals(listOf("abcd", "cdef", "efg", "g"), resultPartial)
+
+        val result2 = data.windowed(2, 3) { it.reversed().toString() }
+        assertEquals(listOf("ba", "ed"), result2)
+        val result2partial = data.windowed(2, 3, partialWindows = true) { it.reversed().toString() }
+        assertEquals(listOf("ba", "ed", "g"), result2partial)
+
+        assertEquals(data.chunked(2), data.windowed(2, 2, partialWindows = true))
+
+        assertEquals(data.take(2), data.windowed(2, size).single())
+        assertEquals(data.take(3), data.windowed(3, size + 3).single())
+
+
+        assertEquals(data.toString(), data.windowed(size, 1).single())
+        assertTrue(data.windowed(size + 1, 1).isEmpty())
+
+        val result3partial = data.windowed(size, 1, partialWindows = true)
+        result3partial.forEachIndexed { index, window ->
+            assertEquals(size - index, window.length, "size of window#$index")
+        }
+
+        assertTrue(arg1("").windowed(3, 2).isEmpty())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { data.windowed(illegalValue, 1) }
+            assertFailsWith<IllegalArgumentException>("step $illegalValue") { data.windowed(1, illegalValue) }
+        }
+
+        for (window in 1..size + 1) {
+            for (step in 1..size + 1) {
+                compare(data.windowed(window, step).iterator(), data.windowedSequence(window, step).iterator()) { iteratorBehavior() }
+                compare(data.windowed(window, step, partialWindows = true).iterator(),
+                        data.windowedSequence(window, step, partialWindows = true).iterator()) { iteratorBehavior() }
+            }
+        }
     }
 
     @Test fun map() = withOneCharSequenceArg { arg1 ->

@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 
 open class FakeFileForLightClass(
-        protected val ktFile: KtFile,
+        val ktFile: KtFile,
         private val lightClass: () -> KtLightClass,
         private val stub: () -> PsiClassHolderFileStub<*>,
         private val packageFqName: FqName = ktFile.packageFqName
-) : ClsFileImpl(ClassFileViewProvider(ktFile.manager, ktFile.virtualFile)) {
+) : ClsFileImpl(ClassFileViewProvider(ktFile.manager, ktFile.virtualFile ?:
+                                                      ktFile.originalFile.virtualFile ?:
+                                                      ktFile.viewProvider.virtualFile)) {
     override fun getPackageName() = packageFqName.asString()
 
     override fun getStub() = stub()

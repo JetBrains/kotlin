@@ -78,8 +78,11 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
     ): Boolean {
         val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
+        environment.configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
         environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, outDir)
-        environment.registerJavac(javaFiles, kotlinFiles = listOf(KotlinTestUtils.loadJetFile(environment.project, ktFiles.first())))
+        environment.registerJavac(javaFiles = javaFiles,
+                                  kotlinFiles = listOf(KotlinTestUtils.loadJetFile(environment.project, ktFiles.first())),
+                                  arguments = arrayOf("-proc:none"))
         if (!ktFiles.isEmpty()) {
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
         }

@@ -29,8 +29,11 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -38,6 +41,8 @@ class ConvertCamelCaseTestFunctionToSpacedIntention : SelfTargetingRangeIntentio
         KtNamedFunction::class.java, "Replace camel-case name with spaces"
 ) {
     override fun applicabilityRange(element: KtNamedFunction): TextRange? {
+        val platform = element.platform
+        if (platform == TargetPlatform.Common || platform == JsPlatform) return null
         val range = element.nameIdentifier?.textRange ?: return null
 
         val name = element.name ?: return null
@@ -62,7 +67,7 @@ class ConvertCamelCaseTestFunctionToSpacedIntention : SelfTargetingRangeIntentio
         val result = SmartList<String>()
         var previousCase = Case.OTHER
         var from = 0
-        for (i in 0..name.length - 1) {
+        for (i in 0 until name.length) {
             val c = name[i]
             val currentCase = when {
                 Character.isUpperCase(c) -> Case.UPPER

@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
+import org.jetbrains.kotlin.resolve.calls.util.isLowPriorityFromStdlibJre7Or8
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasHidesMembersAnnotation
@@ -59,18 +59,18 @@ internal abstract class AbstractScopeTowerLevel(
             diagnostics.add(ErrorDescriptorDiagnostic)
         }
         else {
-            if (descriptor.hasLowPriorityInOverloadResolution()) diagnostics.add(LowPriorityDescriptorDiagnostic)
+            if (descriptor.hasLowPriorityInOverloadResolution() || descriptor.isLowPriorityFromStdlibJre7Or8()) {
+                diagnostics.add(LowPriorityDescriptorDiagnostic)
+            }
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
-            if (!USE_NEW_INFERENCE) {
-                val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext
-                if (!shouldSkipVisibilityCheck) {
-                    Visibilities.findInvisibleMember(
-                            getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
-                            descriptor,
-                            scopeTower.lexicalScope.ownerDescriptor
-                    )?.let { diagnostics.add(VisibilityError(it)) }
-                }
+            val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext || scopeTower.isNewInferenceEnabled
+            if (!shouldSkipVisibilityCheck) {
+                Visibilities.findInvisibleMember(
+                        getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
+                        descriptor,
+                        scopeTower.lexicalScope.ownerDescriptor
+                )?.let { diagnostics.add(VisibilityError(it)) }
             }
         }
         return CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, descriptor, diagnostics)
@@ -86,6 +86,7 @@ internal class MemberScopeTowerLevel(
 ): AbstractScopeTowerLevel(scopeTower) {
 
     private val syntheticScopes = scopeTower.syntheticScopes
+    private val isNewInferenceEnabled = scopeTower.isNewInferenceEnabled
 
     private fun collectMembers(
             getMembers: ResolutionScope.(KotlinType?) -> Collection<CallableDescriptor>
@@ -134,7 +135,7 @@ internal class MemberScopeTowerLevel(
      * And we should chose get(Int): String.
      */
     private fun CallableDescriptor.approximateCapturedTypes(): CallableDescriptor {
-        if (!USE_NEW_INFERENCE) return this
+        if (!isNewInferenceEnabled) return this
 
         val approximator = TypeApproximator()
         val wrappedSubstitution = object : TypeSubstitution() {
@@ -169,6 +170,13 @@ internal class MemberScopeTowerLevel(
             syntheticScopes.collectSyntheticMemberFunctions(listOfNotNull(it), name, location)
         }
     }
+
+    override fun recordLookup(name: Name) {
+        dispatchReceiver.receiverValue.type.memberScope.recordLookup(name, location)
+        dispatchReceiver.possibleTypes.forEach {
+            it.memberScope.recordLookup(name, location)
+        }
+    }
 }
 
 internal class QualifierScopeTowerLevel(scopeTower: ImplicitScopeTower, val qualifier: QualifierReceiver) : AbstractScopeTowerLevel(scopeTower) {
@@ -189,6 +197,8 @@ internal class QualifierScopeTowerLevel(scopeTower: ImplicitScopeTower, val qual
                                                     qualifier.staticScope).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
+
+    override fun recordLookup(name: Name) {}
 }
 
 // KT-3335 Creating imported super class' inner class fails in codegen
@@ -216,6 +226,10 @@ internal open class ScopeBasedTowerLevel protected constructor(
                                                                      resolutionScope).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
+
+    override fun recordLookup(name: Name) {
+        resolutionScope.recordLookup(name, location)
+    }
 }
 internal class ImportingScopeBasedTowerLevel(
         scopeTower: ImplicitScopeTower,
@@ -247,6 +261,10 @@ internal class SyntheticScopeBasedTowerLevel(
             extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<CandidateWithBoundDispatchReceiver> =
             emptyList()
+
+    override fun recordLookup(name: Name) {
+
+    }
 }
 
 internal class HidesMembersTowerLevel(scopeTower: ImplicitScopeTower): AbstractScopeTowerLevel(scopeTower) {
@@ -272,6 +290,8 @@ internal class HidesMembersTowerLevel(scopeTower: ImplicitScopeTower): AbstractS
             createCandidateDescriptor(it, dispatchReceiver = null)
         }
     }
+
+    override fun recordLookup(name: Name) {}
 }
 
 private fun KotlinType.getClassifierFromMeAndSuperclasses(name: Name, location: LookupLocation): ClassifierDescriptor? {

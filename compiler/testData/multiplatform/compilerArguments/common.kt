@@ -4,6 +4,6 @@ fun f(g: suspend () -> Unit): Any = g
 
 suspend fun h() = f { }
 
-header suspend fun k()
+expect suspend fun k()
 
-header fun l(g: suspend () -> Unit): Any
+expect fun l(g: suspend () -> Unit): Any

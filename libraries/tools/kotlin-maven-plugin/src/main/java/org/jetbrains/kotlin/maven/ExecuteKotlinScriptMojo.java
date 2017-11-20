@@ -169,7 +169,6 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
 
             List<File> deps = new ArrayList<>();
 
-            deps.addAll(PathUtil.getJdkClassesRootsFromCurrentJre());
             deps.addAll(getDependenciesForScript());
 
             for (File item: deps) {

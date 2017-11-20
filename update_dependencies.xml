@@ -3,7 +3,8 @@
     <import file="node_utils.xml" optional="false"/>
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="172-SNAPSHOT"/>
+    <property name="ideaVersion" value="172.4343.14"/>
+    <property name="idea.repository.type" value="releases"/> <!-- releases or snapshots -->
     <property name="idea.kotlin.branch" value="rc"/>
 
 
@@ -20,19 +21,6 @@
 
     <property name="sdk.version.prefix" value="IU" if:set="use.ultimate.by.default"/>
     <property name="sdk.version.prefix" value="IC" unless:set="use.ultimate.by.default"/>
-
-    <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
-    <!--
-    <property name="override.version.branch" value="${kotlin.bootstrap.branch.locator}"/>
-    <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1,branch:${override.version.branch}"/>
-    -->
-    <!--<property name="override.version.disabled" value="true"/>-->
-
-    <condition property="kotlinc.executable.path" value="kotlinc.bat" else="kotlinc">
-        <os family="windows"/>
-    </condition>
-
-    <property name="uast.version" value="1.0.12"/>
 
     <property name="kotlinx.coroutines.version" value="0.14.1"/>
 
@@ -51,7 +39,7 @@
 
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies">
         <execute_update_with_idea_maven_artifacts
-            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
+            base.url="https://www.jetbrains.com/intellij-repository/${idea.repository.type}/com/jetbrains/intellij/idea"
             idea.maven.version="${ideaVersion}"/>
     </target>
 
@@ -63,7 +51,7 @@
 
     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies for JB local network">
         <execute_update_with_idea_maven_artifacts
-            base.url="http://jetbrains-com-mirror.labs.intellij.net/intellij-repository/snapshots/com/jetbrains/intellij/idea"
+            base.url="http://jetbrains-com-mirror.labs.intellij.net/intellij-repository/${idea.repository.type}/com/jetbrains/intellij/idea"
             idea.maven.version="${ideaVersion}"/>
     </target>
 
@@ -111,7 +99,7 @@
         <sequential>
             <mkdir dir="${dependencies}/@{target.dir}"/>
 
-            <java classname="org.apache.ivy.Main">
+            <java classname="org.apache.ivy.Main" fork="true">
                 <arg value="-dependency"/>
                 <arg value="@{group}"/>
                 <arg value="@{artifact}"/>
@@ -188,8 +176,6 @@
     </target>
 
     <target name="fetch-third-party" depends="get-ivy-library, make-dependency-dirs, make-native-platform-uberjar">
-        <antcall target="override-version"/>
-
         <!-- ProGuard -->
         <get-maven-library prefix="net/sf/proguard" lib="proguard-base" version="5.3" target.jar.name.base="proguard" src="false"/>
         <get-maven-library prefix="net/sf/proguard" lib="proguard-anttask" version="5.3" target.jar.name.base="proguard-anttask" src="false"/>
@@ -218,7 +204,7 @@
         <untar src="${dependencies}/download/${android-sources.tgz}" dest="${dependencies}/dx-src" compression="gzip"/>
 
         <mkdir dir="${dependencies}/jflex"/>
-        <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/jflex-1.7.0-SNAPSHOT.jar"
+        <get src="https://jetbrains.bintray.com/intellij-third-party-dependencies/org/jetbrains/intellij/deps/jflex/jflex/1.7.0/jflex-1.7.0.jar"
              dest="${dependencies}/jflex/JFlex.jar" usetimestamp="true"/>
         <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
              dest="${dependencies}/jflex/idea-flex.skeleton" usetimestamp="true"/>
@@ -246,15 +232,14 @@
         <!-- Javaslang -->
         <get-maven-library prefix="io/javaslang" lib="javaslang" version="2.0.6"/>
 
-        <!-- Uast -->
-        <property name="uast.server" value="http://dl.bintray.com/kotlin/uast"/>
-        <get-maven-library prefix="org/jetbrains/uast" lib="uast-tests" version="${uast.version}" target.jar.name.base="uast-tests" server="${uast.server}"/>
-
         <get-maven-library-with-dependencies
             group="org.robolectric"
             artifact="robolectric"
-            version="3.3.2"
+            version="3.1"
             target.dir="robolectric"/>
+
+        <get-maven-library prefix="org/apache/maven" lib="maven-ant-tasks" version="2.1.3"
+                           target.jar.name.base="maven-ant-tasks" download="${dependencies}/robolectric" />
 
         <!-- kotlinx.coroutines -->
         <get-maven-library prefix="org/jetbrains/kotlinx" lib="kotlinx-coroutines-core" version="${kotlinx.coroutines.version}"
@@ -273,53 +258,6 @@
             </patternset>
             <mapper type="flatten"/>
         </unzip>
-
-        <local name="download.bootstrap.compiler"/>
-        <condition property="download.bootstrap.compiler">
-            <or>
-                <not>
-                    <isset property="teamcity.version"/>
-                </not>
-                <and>
-                    <istrue value="${kotlin.bootstrap.locator.force}"/>
-                    <istrue value="${bootstrap.build.no.tests}"/>
-                </and>
-            </or>
-        </condition>
-
-        <sequential if:set="download.bootstrap.compiler">
-            <!-- Download bootstrap compiler for local build -->
-            <download_teamcity_artifact
-                teamcity.server.url="https://teamcity.jetbrains.com"
-                build.locator.request="${kotlin.bootstrap.locator}"
-                artifact.path="kotlin-plugin-{build.number}.zip"
-                dest="${dependencies}/download/bootstrap-compiler.zip"
-                build.number.pattern="[\w-+\.]+"
-                usetimestamp="true"/>
-
-            <delete dir="${dependencies}/bootstrap-compiler" failonerror="false"/>
-            <unzip src="${dependencies}/download/bootstrap-compiler.zip" dest="${dependencies}/bootstrap-compiler"/>
-        </sequential>
-
-        <sequential unless:set="download.bootstrap.compiler">
-            <available file="${dependencies}/bootstrap-compiler/Kotlin" property="have.bootstrap.compiler"/>
-            <fail message="Bootstrap compiler is expected to be downloaded to '${dependencies}/bootstrap-compiler' by TeamCity" unless:set="have.bootstrap.compiler"/>
-            <echo message="Bootstrap compiler found in '${dependencies}/bootstrap-compiler'" if:set="have.bootstrap.compiler"/>
-        </sequential>
-
-        <local name="bootstrap.need.chmod"/>
-        <condition property="bootstrap.need.chmod">
-            <or>
-                <isset property="isMac" />
-                <isset property="isLinux" />
-            </or>
-        </condition>
-
-        <!-- Java can't manipulate permissions -->
-        <exec executable="find" if:set="bootstrap.need.chmod">
-            <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin"/>
-            <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
-        </exec>
 
         <get-protobuf-and-rename-packages/>
 
@@ -883,49 +821,5 @@
             <arg path="${android.destination.dir}/bin/studio.sh"/>
             <arg path="${android.destination.dir}/bin/update_studio.sh"/>
         </exec>
-    </target>
-
-    <target name="override-version">
-        <condition property="need.version.override">
-            <and>
-                <isset property="override.version.url"/>
-                <equals arg1="${override.version.branch}" arg2="${teamcity.build.branch}"/>
-                <not>
-                    <isset property="override.version.disabled"/>
-                </not>
-                <not>
-                    <istrue value="${bootstrap.build.no.tests}"/>
-                </not>
-                <isset property="teamcity.version"/>
-            </and>
-        </condition>
-
-        <sequential if:set="need.version.override">
-            <local name="override.version.build.number"/>
-            <loadresource property="override.version.build.number">
-                <url url="${override.version.url}"/>
-                <filterchain>
-                    <tokenfilter>
-                        <filetokenizer/>
-                        <replaceregex pattern="^(.*)\snumber=&quot;([\w-+\.]+)&quot;(.*)$" replace="\2" flags="s"/>
-                    </tokenfilter>
-                </filterchain>
-            </loadresource>
-
-            <echo message="URL: ${override.version.url} Version: ${override.version.build.number}"/>
-
-            <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false">
-                <arg value="-cp"/>
-                <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
-                <arg value="-script"/>
-                <arg value="${generators}/infrastructure/increment-version.kts"/>
-                <arg value="${override.version.build.number}"/>
-                <arg value="${dependencies}/updated-version.txt"/>
-            </exec>
-
-            <loadfile property="updated.version.number" srcFile="${dependencies}/updated-version.txt"/>
-
-            <echo message="##teamcity[buildNumber '${updated.version.number}']"/>
-        </sequential>
     </target>
 </project>

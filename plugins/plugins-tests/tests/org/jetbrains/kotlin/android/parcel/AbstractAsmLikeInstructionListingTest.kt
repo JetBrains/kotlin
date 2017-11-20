@@ -32,6 +32,7 @@ private val LINE_SEPARATOR = System.getProperty("line.separator")
 abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
     private companion object {
         val CURIOUS_ABOUT_DIRECTIVE = "// CURIOUS_ABOUT "
+        val LOCAL_VARIABLES_TABLE_DIRECTIVE = "// LOCAL_VARIABLES_TABLE"
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
@@ -43,17 +44,21 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
                 .sortedBy { it.relativePath }
                 .map { file -> ClassNode().also { ClassReader(file.asByteArray()).accept(it, ClassReader.EXPAND_FRAMES) } }
 
-        val printBytecodeForTheseMethods = wholeFile.readLines()
+        val testFileLines = wholeFile.readLines()
+
+        val printBytecodeForTheseMethods = testFileLines
                 .filter { it.startsWith(CURIOUS_ABOUT_DIRECTIVE) }
                 .map { it.substring(CURIOUS_ABOUT_DIRECTIVE.length) }
                 .flatMap { it.split(',').map { it.trim() } }
 
+        val showLocalVariables = testFileLines.any { it.trim() == LOCAL_VARIABLES_TABLE_DIRECTIVE }
+
         KotlinTestUtils.assertEqualsToFile(txtFile, classes.joinToString(LINE_SEPARATOR.repeat(2)) {
-            renderClassNode(it, printBytecodeForTheseMethods)
+            renderClassNode(it, printBytecodeForTheseMethods, showLocalVariables)
         })
     }
 
-    private fun renderClassNode(clazz: ClassNode, printBytecodeForTheseMethods: List<String>): String {
+    private fun renderClassNode(clazz: ClassNode, printBytecodeForTheseMethods: List<String>, showLocalVariables: Boolean): String {
         val fields = (clazz.fields ?: emptyList()).sortedBy { it.name }
         val methods = (clazz.methods ?: emptyList()).sortedBy { it.name }
 
@@ -79,7 +84,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
 
             methods.joinTo(this, LINE_SEPARATOR.repeat(2)) {
                 val printBytecode = printBytecodeForTheseMethods.contains(it.name)
-                renderMethod(it, printBytecode).withMargin()
+                renderMethod(it, printBytecode, showLocalVariables).withMargin()
             }
 
             appendln().append("}")
@@ -93,7 +98,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         append(field.name)
     }
 
-    private fun renderMethod(method: MethodNode, printBytecode: Boolean) = buildString {
+    private fun renderMethod(method: MethodNode, printBytecode: Boolean, showLocalVariables: Boolean) = buildString {
         renderVisibilityModifiers(method.access)
         renderModalityModifiers(method.access)
         val (returnType, parameterTypes) = with(Type.getMethodType(method.desc)) { returnType to argumentTypes }
@@ -104,7 +109,26 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         if (printBytecode && (method.access and ACC_ABSTRACT) == 0) {
             appendln(" {")
             append(renderBytecodeInstructions(method.instructions).trimEnd().withMargin())
+
+            if (showLocalVariables) {
+                val localVariableTable = buildLocalVariableTable(method)
+                if (localVariableTable.isNotEmpty()) {
+                    appendln().appendln()
+                    append(localVariableTable.withMargin())
+                }
+            }
+
             appendln().append("}")
+        }
+    }
+
+    private fun buildLocalVariableTable(method: MethodNode): String {
+        val localVariables = method.localVariables?.takeIf { it.isNotEmpty() } ?: return ""
+        return buildString {
+            append("Local variables:")
+            for (variable in localVariables) {
+                appendln().append((variable.name + ": " + variable.desc).withMargin())
+            }
         }
     }
 

@@ -99,6 +99,7 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention())
         registerIntentionBasedProcessing(DestructureIntention())
         registerIntentionBasedProcessing(SimplifyAssertNotNullIntention())
+        registerIntentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention())
 
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
             val expression = RemoveUselessCastFix.invoke(element)

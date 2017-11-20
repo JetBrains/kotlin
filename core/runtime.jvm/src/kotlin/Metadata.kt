@@ -57,6 +57,12 @@ internal annotation class Metadata(
          */
         val xs: String = "",
         /**
+         * Fully qualified name of the package this class is located in, from Kotlin's point of view, or empty string if this name
+         * does not differ from the JVM's package FQ name. These names can be different in case the [JvmPackageName] annotation is used.
+         * Note that this information is also stored in the corresponding module's `.kotlin_module` file.
+         */
+        val pn: String = "",
+        /**
          * An extra int. Bits of this number represent the following flags:
          *
          * 0 - this is a multi-file class facade or part, compiled with `-Xmultifile-parts-inherit`.

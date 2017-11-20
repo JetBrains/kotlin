@@ -1,4 +1,5 @@
 // CURIOUS_ABOUT writeToParcel
+// WITH_RUNTIME
 
 import android.util.Size
 import kotlinx.android.parcel.*

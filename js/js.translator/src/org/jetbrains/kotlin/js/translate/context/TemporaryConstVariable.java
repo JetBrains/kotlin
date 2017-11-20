@@ -24,7 +24,7 @@ public final class TemporaryConstVariable extends TemporaryVariable{
     private boolean initialized = false;
 
     public TemporaryConstVariable(@NotNull JsName variableName, @NotNull JsExpression assignmentExpression) {
-        super(variableName, assignmentExpression);
+        super(variableName, assignmentExpression, null);
     }
 
     @NotNull

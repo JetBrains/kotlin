@@ -1,5 +1,16 @@
 package
 
+package module1 {
+
+    public abstract class AbstractModule</*0*/ S : kotlin.Any!> {
+        public constructor AbstractModule</*0*/ S : kotlin.Any!>()
+        protected/*protected and package*/ open fun </*0*/ T : kotlin.Any!> bind(/*0*/ clazz: java.lang.Class<T!>!): S!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
 package module2 {
     public fun </*0*/ T> javaClass(): java.lang.Class<T>
 

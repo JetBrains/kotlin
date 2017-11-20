@@ -36,6 +36,27 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("idea/testData/android/lintQuickfix/findViewById")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FindViewById extends AbstractAndroidLintQuickfixTest {
+        public void testAllFilesPresentInFindViewById() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/findViewById"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("nullableType.kt")
+        public void testNullableType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/findViewById/nullableType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/findViewById/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/android/lintQuickfix/parcelable")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

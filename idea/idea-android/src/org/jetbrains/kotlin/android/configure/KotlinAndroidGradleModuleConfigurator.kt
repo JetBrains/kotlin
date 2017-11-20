@@ -25,6 +25,8 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
+import org.jetbrains.kotlin.idea.util.projectStructure.version
+import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID_JDK7
 import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID_JRE7
 import org.jetbrains.kotlin.idea.versions.hasJreSpecificRuntime
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -62,10 +64,10 @@ class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithG
 
     override fun getStdlibArtifactName(sdk: Sdk?, version: String): String {
         if (sdk != null && hasJreSpecificRuntime(version)) {
-            val sdkVersion = JavaSdk.getInstance().getVersion(sdk)
+            val sdkVersion = sdk.version
             if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
                 // Android dex can't convert our kotlin-stdlib-jre8 artifact, so use jre7 instead (KT-16530)
-                return MAVEN_STDLIB_ID_JRE7
+                return MAVEN_STDLIB_ID_JDK7
             }
         }
 

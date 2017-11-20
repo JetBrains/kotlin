@@ -39,7 +39,7 @@ open class DeserializedPackageMemberScope(
         classNames: () -> Collection<Name>
 ) : DeserializedMemberScope(
         components.createContext(packageDescriptor, nameResolver, TypeTable(proto.typeTable),
-                                 SinceKotlinInfoTable.create(proto.sinceKotlinInfoTable), containerSource),
+                                 VersionRequirementTable.create(proto.versionRequirementTable), containerSource),
         proto.functionList, proto.propertyList, proto.typeAliasList, classNames
 ) {
     private val packageFqName = packageDescriptor.fqName
@@ -55,8 +55,12 @@ open class DeserializedPackageMemberScope(
 
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        c.components.lookupTracker.record(location, packageDescriptor, name)
+        recordLookup(name, location)
         return super.getContributedClassifier(name, location)
+    }
+
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        c.components.lookupTracker.record(location, packageDescriptor, name)
     }
 
     override fun getNonDeclaredFunctionNames(): Set<Name> = emptySet()

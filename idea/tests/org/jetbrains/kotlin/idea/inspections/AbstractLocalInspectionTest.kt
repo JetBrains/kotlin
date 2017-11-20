@@ -18,18 +18,14 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.google.common.collect.Lists
 import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.idea.facet.configureFacet
-import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.configureLanguageVersion
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -86,19 +82,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         val fileText = FileUtil.loadFile(mainFile, true)
         TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))
 
-        val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// LANGUAGE_VERSION: ")
-        if (version != null) {
-            val accessToken = WriteAction.start()
-            try {
-                val modelsProvider = IdeModifiableModelsProviderImpl(project)
-                val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
-                facet.configureFacet(version, LanguageFeature.State.DISABLED, null, modelsProvider)
-                modelsProvider.commit()
-            }
-            finally {
-                accessToken.finish()
-            }
-        }
+        configureLanguageVersion(fileText, project, module)
 
         val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")
         if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return

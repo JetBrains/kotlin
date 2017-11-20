@@ -1,0 +1,24 @@
+description = 'Kotlin Test Annotations Common'
+
+apply plugin: 'kotlin-platform-common'
+
+configurePublishing(project)
+
+
+dependencies {
+    compile project(':kotlin-stdlib-common')
+}
+
+jar {
+    manifestAttributes(manifest, project, 'Test')
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.kotlin
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}

@@ -194,7 +194,7 @@ interface DescriptorRendererOptions {
     var unitReturnType: Boolean
     var withoutReturnType: Boolean
     var normalizedVisibilities: Boolean
-    var showInternalKeyword: Boolean
+    var renderDefaultVisibility: Boolean
     var uninferredTypeParameterAsName: Boolean
     var overrideRenderingPolicy: OverrideRenderingPolicy
     var valueParametersHandler: DescriptorRenderer.ValueParametersHandler
@@ -222,6 +222,7 @@ interface DescriptorRendererOptions {
     var renderUnabbreviatedType: Boolean
     var includeAdditionalModifiers: Boolean
     var parameterNamesInFunctionalTypes: Boolean
+    var renderFunctionContracts: Boolean
 }
 
 object ExcludedTypeAnnotations {
@@ -233,7 +234,7 @@ object ExcludedTypeAnnotations {
 
 enum class RenderingFormat {
     PLAIN {
-        override fun escape(string: String) = string;
+        override fun escape(string: String) = string
     },
     HTML {
         override fun escape(string: String) = string.replace("<", "&lt;").replace(">", "&gt;")
@@ -262,8 +263,8 @@ enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
     INNER(true),
     MEMBER_KIND(true),
     DATA(true),
-    HEADER(true),
-    IMPL(true),
+    EXPECT(true),
+    ACTUAL(true),
     ;
 
     companion object {

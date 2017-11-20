@@ -524,7 +524,7 @@ class DoubleColonExpressionResolver(
     ): KotlinType? {
         val descriptor =
                 if (resolutionResults != null && !resolutionResults.isNothing) {
-                    val resolvedCall = OverloadResolutionResultsUtil.getResultingCall(resolutionResults, context.contextDependency)
+                    val resolvedCall = OverloadResolutionResultsUtil.getResultingCall(resolutionResults, context)
                     resolvedCall?.resultingDescriptor ?: return null
                 }
                 else {
@@ -550,9 +550,13 @@ class DoubleColonExpressionResolver(
             descriptor: CallableDescriptor, trace: BindingTrace, expression: KtCallableReferenceExpression
     ) {
         val simpleName = expression.callableReference
-        if (expression.isEmptyLHS &&
-            (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null)) {
-            trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(simpleName))
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.CallableReferencesToClassMembersWithEmptyLHS)) {
+            if (expression.isEmptyLHS &&
+                (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null)) {
+                trace.report(UNSUPPORTED_FEATURE.on(
+                        simpleName, LanguageFeature.CallableReferencesToClassMembersWithEmptyLHS to languageVersionSettings
+                ))
+            }
         }
         if (descriptor is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) {
             trace.report(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR.on(simpleName))
@@ -592,8 +596,8 @@ class DoubleColonExpressionResolver(
 
     internal fun bindPropertyReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
         val localVariable = LocalVariableDescriptor(
-                context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"), referenceType, /* mutable = */ false,
-                /* isDelegated = */ false, expression.toSourceElement()
+                context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"), referenceType,
+                expression.toSourceElement()
         )
 
         context.trace.record(BindingContext.VARIABLE, expression, localVariable)

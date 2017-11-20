@@ -109,3 +109,8 @@ fun createIntrinsicCallable(
 ): IntrinsicCallable {
     return IntrinsicCallable(callable, invoke)
 }
+
+/**
+ * A marker interface that signifies that this [IntrinsicCallable] instance generates the receiver of the intrinsic function call itself.
+ */
+interface IntrinsicWithSpecialReceiver : Callable

@@ -48,10 +48,49 @@ public class ForeignJava8AnnotationsTestGenerated extends AbstractForeignJava8An
         doTest(fileName);
     }
 
-    @TestMetadata("springNullableWithTypeUse.kt")
-    public void testSpringNullableWithTypeUse() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/springNullableWithTypeUse.kt");
+    @TestMetadata("typeUseOnObject.kt")
+    public void testTypeUseOnObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeUseOnObject.kt");
         doTest(fileName);
+    }
+
+    @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Jsr305 extends AbstractForeignJava8AnnotationsTest {
+        public void testAllFilesPresentInJsr305() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("defaultAnnotationAppliedToType.kt")
+        public void testDefaultAnnotationAppliedToType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/defaultAnnotationAppliedToType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultAnnotationAppliedToTypeForCompiledJava.kt")
+        public void testDefaultAnnotationAppliedToTypeForCompiledJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/defaultAnnotationAppliedToTypeForCompiledJava.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("springNullableWithTypeUse.kt")
+        public void testSpringNullableWithTypeUse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/springNullableWithTypeUse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeArguments.kt")
+        public void testTypeArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/typeArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeUseVsMethodConflict.kt")
+        public void testTypeUseVsMethodConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/typeUseVsMethodConflict.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement")

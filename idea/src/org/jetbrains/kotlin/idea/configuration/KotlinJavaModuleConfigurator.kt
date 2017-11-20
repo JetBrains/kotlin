@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.LibraryOrderEntry
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
+import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.isKotlinJavaRuntime
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -76,12 +76,12 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
                       LibraryJarDescriptor.REFLECT_JAR,
                       LibraryJarDescriptor.RUNTIME_SRC_JAR,
                       LibraryJarDescriptor.TEST_JAR)
-        val sdkVersion = sdk?.let { JavaSdk.getInstance().getVersion(it) } ?: return result
+        val sdkVersion = sdk?.version ?: return result
         if (sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_7)) {
-            result += listOf(LibraryJarDescriptor.RUNTIME_JRE7_JAR, LibraryJarDescriptor.RUNTIME_JRE7_SOURCES_JAR)
+            result += listOf(LibraryJarDescriptor.RUNTIME_JDK7_JAR, LibraryJarDescriptor.RUNTIME_JDK7_SOURCES_JAR)
         }
         if (sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
-            result += listOf(LibraryJarDescriptor.RUNTIME_JRE8_JAR, LibraryJarDescriptor.RUNTIME_JRE8_SOURCES_JAR)
+            result += listOf(LibraryJarDescriptor.RUNTIME_JDK8_JAR, LibraryJarDescriptor.RUNTIME_JDK8_SOURCES_JAR)
         }
 
         return result
@@ -93,7 +93,7 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
     override fun configureKotlinSettings(modules: List<Module>) {
         val project = modules.firstOrNull()?.project ?: return
         val canChangeProjectSettings = project.allModules().all {
-            it.sdk?.let { JavaSdk.getInstance().getVersion(it)?.isAtLeast(JavaSdkVersion.JDK_1_8) } ?: true
+            it.sdk?.version?.isAtLeast(JavaSdkVersion.JDK_1_8) ?: true
         }
         if (canChangeProjectSettings) {
             Kotlin2JvmCompilerArgumentsHolder.getInstance(project).update {
@@ -102,8 +102,8 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
         }
         else {
             for (module in modules) {
-                val hasJdk8 = module.sdk?.let { JavaSdk.getInstance().getVersion(it)?.isAtLeast(JavaSdkVersion.JDK_1_8) }
-                if (hasJdk8 == true) {
+                val sdkVersion = module.sdk?.version
+                if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
                     val modelsProvider = IdeModifiableModelsProviderImpl(project)
                     val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false, commitModel = true)
                     val facetSettings = facet.configuration.settings
@@ -112,6 +112,18 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
                 }
             }
         }
+    }
+
+    override fun configureModule(
+            module: Module,
+            classesPath: String,
+            sourcesPath: String,
+            collector: NotificationMessageCollector,
+            forceJarState: FileState?,
+            useBundled: Boolean
+    ) {
+        super.configureModule(module, classesPath, sourcesPath, collector, forceJarState, useBundled)
+        addStdlibToJavaModuleInfo(module, collector)
     }
 
     companion object {

@@ -38,7 +38,7 @@ import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
+import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -78,14 +78,27 @@ class KotlinLanguageInjector(
         val modificationCount = PsiManager.getInstance(project).modificationTracker.modificationCount
 
         val baseInjection = when {
-            needImmediateAnswer -> kotlinCachedInjection?.baseInjection ?: ABSENT_KOTLIN_INJECTION
+            needImmediateAnswer -> {
+                // Can't afford long counting or typing will be laggy. Force cache reuse even if it's outdated.
+                kotlinCachedInjection?.baseInjection ?: ABSENT_KOTLIN_INJECTION
+            }
             kotlinCachedInjection != null && (modificationCount == kotlinCachedInjection.modificationCount) ->
+                // Cache is up-to-date
                 kotlinCachedInjection.baseInjection
             else -> {
-                runInReadActionWithWriteActionPriorityWithPCE {
+                fun computeAndCache(): BaseInjection {
                     val computedInjection = computeBaseInjection(ktHost, support, registrar) ?: ABSENT_KOTLIN_INJECTION
                     ktHost.cachedInjectionWithModification = KotlinCachedInjection(modificationCount, computedInjection)
-                    computedInjection
+                    return computedInjection
+                }
+
+                if (ApplicationManager.getApplication().isReadAccessAllowed && ProgressManager.getInstance().progressIndicator == null) {
+                    // The action cannot be canceled by caller and by internal checkCanceled() calls.
+                    // Force creating new indicator that is canceled on write action start, otherwise there might be lags in typing.
+                    runInReadActionWithWriteActionPriority(::computeAndCache) ?: kotlinCachedInjection?.baseInjection ?: ABSENT_KOTLIN_INJECTION
+                }
+                else {
+                    computeAndCache()
                 }
             }
         }

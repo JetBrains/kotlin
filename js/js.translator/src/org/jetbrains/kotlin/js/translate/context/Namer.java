@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.backend.ast.metadata.TypeCheck;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -86,9 +86,10 @@ public final class Namer {
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     public static final String ANOTHER_THIS_PARAMETER_NAME = "$this";
 
-    private static final String THROW_NPE_FUN_NAME = "throwNPE";
-    private static final String THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE";
-    private static final String THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME = "throwISE";
+    public static final String THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE";
+    public static final String THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME = "throwISE";
+    public static final String THROW_UNINITIALIZED_PROPERTY_ACCESS_EXCEPTION = "throwUPAE";
+    public static final String NULL_CHECK_INTRINSIC_NAME = "ensureNotNull";
     private static final String PROTOTYPE_NAME = "prototype";
     private static final String CAPTURED_VAR_FIELD = "v";
 
@@ -158,16 +159,6 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getDelegateName(@NotNull String propertyName) {
-        return propertyName + DELEGATE;
-    }
-
-    @NotNull
-    public static JsNameRef getDelegateNameRef(String propertyName) {
-        return new JsNameRef(getDelegateName(propertyName), new JsThisRef());
-    }
-
-    @NotNull
     public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
         return pureFqn(CALL_FUNCTION, functionExpression);
     }
@@ -184,7 +175,9 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getCapturedVarAccessor(@NotNull JsExpression ref) {
-        return pureFqn(CAPTURED_VAR_FIELD, ref);
+        JsNameRef result = new JsNameRef(CAPTURED_VAR_FIELD, ref);
+        MetadataProperties.setSideEffects(result, SideEffectKind.DEPENDS_ON_STATE);
+        return result;
     }
 
     @NotNull
@@ -224,21 +217,6 @@ public final class Namer {
         SuggestedName suggested = new NameSuggestion().suggest(functions.iterator().next());
         assert suggested != null : "Suggested name for class members is always non-null: " + functions.iterator().next();
         return suggested.getNames().get(0);
-    }
-
-    @NotNull
-    public static JsExpression throwNPEFunctionRef() {
-        return new JsNameRef(THROW_NPE_FUN_NAME, kotlinObject());
-    }
-
-    @NotNull
-    public static JsExpression throwClassCastExceptionFunRef() {
-        return new JsNameRef(THROW_CLASS_CAST_EXCEPTION_FUN_NAME, kotlinObject());
-    }
-
-    @NotNull
-    public static JsExpression throwIllegalStateExceptionFunRef() {
-        return new JsNameRef(THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME, kotlinObject());
     }
 
     @NotNull
@@ -327,11 +305,6 @@ public final class Namer {
     }
 
     @NotNull
-    static String generatePackageName(@NotNull FqName packageFqName) {
-        return packageFqName.isRoot() ? getRootPackageName() : packageFqName.shortName().asString();
-    }
-
-    @NotNull
     public static JsExpression getUndefinedExpression() {
         return new JsPrefixOperation(JsUnaryOperator.VOID, new JsIntLiteral(0));
     }
@@ -351,8 +324,8 @@ public final class Namer {
     }
 
     @NotNull
-    public static JsNameRef createInlineFunction() {
-        return pureFqn(DEFINE_INLINE_FUNCTION, kotlinObject());
+    public static JsExpression createSpecialFunction(@NotNull SpecialFunction specialFunction) {
+        return pureFqn(specialFunction.getSuggestedName(), kotlinObject());
     }
 
     @NotNull

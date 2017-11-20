@@ -530,11 +530,19 @@ public class KtPsiUtil {
             return false;
         }
 
-        // '(x operator y)' case
-        if (innerExpression instanceof KtBinaryExpression &&
-            innerOperation != KtTokens.ELVIS &&
-            isKeepBinaryExpressionParenthesized((KtBinaryExpression) innerExpression)) {
-            return true;
+        if (innerExpression instanceof KtBinaryExpression) {
+            // '(x operator return [...]) operator ...' case
+            if (parentElement instanceof KtBinaryExpression) {
+                KtBinaryExpression innerBinary = (KtBinaryExpression) innerExpression;
+                if (innerBinary.getRight() instanceof KtReturnExpression) {
+                    return true;
+                }
+            }
+            // '(x operator y)' case
+            if (innerOperation != KtTokens.ELVIS &&
+                isKeepBinaryExpressionParenthesized((KtBinaryExpression) innerExpression)) {
+                return true;
+            }
         }
 
         int innerPriority = getPriority(innerExpression);
@@ -776,6 +784,16 @@ public class KtPsiUtil {
         return PsiTreeUtil.getStubOrPsiParent(grandparent) instanceof KtObjectLiteralExpression;
     }
 
+    private static boolean isNonLocalCallable(@Nullable KtDeclaration declaration) {
+        if (declaration instanceof KtProperty) {
+            return !((KtProperty) declaration).isLocal();
+        }
+        else if (declaration instanceof KtFunction) {
+            return !((KtFunction) declaration).isLocal();
+        }
+        return false;
+    }
+
     @Nullable
     public static KtElement getEnclosingElementForLocalDeclaration(@NotNull KtDeclaration declaration, boolean skipParameters) {
         if (declaration instanceof KtTypeParameter && skipParameters) {
@@ -793,7 +811,9 @@ public class KtPsiUtil {
             if (((KtParameter) declaration).hasValOrVar() && parent != null && parent.getParent() instanceof KtPrimaryConstructor) {
                 return getEnclosingElementForLocalDeclaration(((KtPrimaryConstructor) parent.getParent()).getContainingClassOrObject(), skipParameters);
             }
-            else if (skipParameters && parent != null && parent.getParent() instanceof KtNamedFunction) {
+            else if (skipParameters && parent != null &&
+                     !(parent instanceof KtForExpression) &&
+                     parent.getParent() instanceof KtNamedFunction) {
                 declaration = (KtNamedFunction) parent.getParent();
             }
         }
@@ -804,6 +824,7 @@ public class KtPsiUtil {
 
         // No appropriate stub-tolerant method in PsiTreeUtil, nor JetStubbedPsiUtil, writing manually
         PsiElement current = PsiTreeUtil.getStubOrPsiParent(declaration);
+        boolean isNonLocalCallable = isNonLocalCallable(declaration);
         while (current != null) {
             PsiElement parent = PsiTreeUtil.getStubOrPsiParent(current);
             if (parent instanceof KtScript) return null;
@@ -818,10 +839,22 @@ public class KtPsiUtil {
                     return (KtElement) parent;
                 }
             }
-            if (current instanceof KtBlockExpression || current instanceof KtParameter || current instanceof KtValueArgument) {
+            if (current instanceof KtParameter) {
                 return (KtElement) current;
             }
-            if (current instanceof KtDelegatedSuperTypeEntry) {
+            if (current instanceof KtValueArgument) {
+                // for members, value argument is never enough, see KT-10546
+                if (!isNonLocalCallable) {
+                    return (KtElement) current;
+                }
+            }
+            if (current instanceof KtBlockExpression) {
+                // For members also not applicable if has function literal parent
+                if (!isNonLocalCallable || !(current.getParent() instanceof KtFunctionLiteral)) {
+                    return (KtElement) current;
+                }
+            }
+            if (current instanceof KtDelegatedSuperTypeEntry || current instanceof KtSuperTypeCallEntry) {
                 PsiElement grandParent = current.getParent().getParent();
                 if (grandParent instanceof KtClassOrObject && !(grandParent.getParent() instanceof KtObjectLiteralExpression)) {
                     return (KtElement) grandParent;

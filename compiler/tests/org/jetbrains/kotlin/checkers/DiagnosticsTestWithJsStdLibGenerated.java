@@ -54,9 +54,21 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         doTest(fileName);
     }
 
+    @TestMetadata("platformDependent.kt")
+    public void testPlatformDependent() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/platformDependent.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("runtimeAnnotations.kt")
     public void testRuntimeAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/runtimeAnnotations.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("wrongMultipleInheritance.kt")
+    public void testWrongMultipleInheritance() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/wrongMultipleInheritance.kt");
         doTest(fileName);
     }
 
@@ -362,6 +374,18 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("badAssignment.kt")
+        public void testBadAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/badAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deleteOperation.kt")
+        public void testDeleteOperation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/deleteOperation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("error.kt")
         public void testError() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/error.kt");
@@ -407,6 +431,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @TestMetadata("dualModuleFromUmd.kt")
         public void testDualModuleFromUmd() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/dualModuleFromUmd.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incompleteReifiedArg.kt")
+        public void testIncompleteReifiedArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/incompleteReifiedArg.kt");
             doTest(fileName);
         }
 
@@ -459,6 +489,18 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     public static class Name extends AbstractDiagnosticsTestWithJsStdLib {
         public void testAllFilesPresentInName() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/name"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("bridgeClash.kt")
+        public void testBridgeClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/bridgeClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("builtinClash.kt")
+        public void testBuiltinClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/builtinClash.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("classAndFunction.kt")
@@ -578,6 +620,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @TestMetadata("methodAndMethod.kt")
         public void testMethodAndMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/methodAndMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nameSwapInOverride.kt")
+        public void testNameSwapInOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/nameSwapInOverride.kt");
             doTest(fileName);
         }
 

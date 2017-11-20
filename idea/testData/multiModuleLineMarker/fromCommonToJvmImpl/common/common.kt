@@ -1,9 +1,9 @@
 // !CHECK_HIGHLIGHTING
 
-header class Header {
+expect class Header {
     fun foo(): Int
 }
 
-header fun foo(arg: Int): String
+expect fun foo(arg: Int): String
 
-header val flag: Boolean
+expect val flag: Boolean

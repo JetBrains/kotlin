@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 996
+// EXPECTED_REACHABLE_NODES: 1114
 interface I
 
 class MyException: Exception(), I

@@ -37,7 +37,7 @@ import org.jetbrains.android.util.AndroidUtils
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -209,7 +209,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
     private fun KtClassOrObject.isInnerClass() = (this as? KtClass)?.isInner() ?: false
 
     private fun KtFunction.isSubclassExtensionOfAny(baseClasses: Collection<String>): Boolean {
-        val descriptor = resolveToDescriptor() as FunctionDescriptor
+        val descriptor = unsafeResolveToDescriptor() as FunctionDescriptor
         val extendedTypeDescriptor = descriptor.extensionReceiverParameter?.type?.constructor?.declarationDescriptor
         return extendedTypeDescriptor != null && baseClasses.any { extendedTypeDescriptor.isSubclassOf(it) }
     }

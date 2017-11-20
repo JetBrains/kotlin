@@ -20,8 +20,20 @@ interface DeserializationConfiguration {
     val skipMetadataVersionCheck: Boolean
         get() = false
 
+    val reportErrorsOnPreReleaseDependencies: Boolean
+        get() = false
+
     val typeAliasesAllowed: Boolean
         get() = true
+
+    val isJvmPackageNameSupported: Boolean
+        get() = true
+
+    val returnsEffectAllowed: Boolean
+        get() = false
+
+    val callsInPlaceEffectAllowed: Boolean
+        get() = false
 
     object Default : DeserializationConfiguration
 }

@@ -16,7 +16,6 @@
 
 package test.collections
 
-import org.junit.Test
 import test.*
 import kotlin.test.*
 
@@ -116,6 +115,99 @@ abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out
         expect(null) { empty.lastOrNull() }
         expect("foo") { data.lastOrNull { it.startsWith("f") } }
     }
+
+
+    @Test
+    fun zipWithNext() {
+        val data = createFrom("", "a", "xyz")
+        val lengthDeltas = data.zipWithNext { a: String, b: String -> b.length - a.length }
+        assertEquals(listOf(1, 2), lengthDeltas)
+
+        assertTrue(empty.zipWithNext { a: String, b: String -> a + b }.isEmpty())
+        assertTrue(createFrom("foo").zipWithNext { a: String, b: String -> a + b }.isEmpty())
+    }
+
+    @Test
+    fun zipWithNextPairs() {
+        assertTrue(empty.zipWithNext().isEmpty())
+        assertTrue(createFrom("foo").zipWithNext().isEmpty())
+        assertEquals(listOf("a" to "b"), createFrom("a", "b").zipWithNext())
+        assertEquals(listOf("a" to "b", "b" to "c"), createFrom("a", "b", "c").zipWithNext())
+    }
+
+    @Test
+    fun chunked() {
+        val size = 7
+        val data = createFrom(Array(size) { "$it" })
+        val result = data.chunked(4)
+        assertEquals(listOf(
+                listOf("0", "1", "2", "3"),
+                listOf("4", "5", "6")
+        ), result)
+
+        val result2 = data.chunked(3) { it.joinToString("") }
+        assertEquals(listOf("012", "345", "6"), result2)
+
+        data.toList().let { expectedSingleChunk ->
+            assertEquals(expectedSingleChunk, data.chunked(size).single())
+            assertEquals(expectedSingleChunk, data.chunked(size + 3).single())
+        }
+
+        assertTrue(empty.chunked(3).isEmpty())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { data.chunked(illegalValue) }
+        }
+    }
+
+
+    @Test
+    fun windowed() {
+        val size = 7
+        val data = createFrom(Array(size) { "$it" })
+        val result = data.windowed(4, 2)
+        assertEquals(listOf(
+                listOf("0", "1", "2", "3"),
+                listOf("2", "3", "4", "5")
+        ), result)
+
+        val resultPartial = data.windowed(4, 2, partialWindows = true)
+        assertEquals(listOf(
+                listOf("0", "1", "2", "3"),
+                listOf("2", "3", "4", "5"),
+                listOf("4", "5", "6"),
+                listOf("6")
+        ), resultPartial)
+
+
+        val result2 = data.windowed(2, 3) { it.joinToString("") }
+        assertEquals(listOf("01", "34"), result2)
+
+        val result2partial = data.windowed(2, 3, partialWindows = true) { it.joinToString("") }
+        assertEquals(listOf("01", "34", "6"), result2partial)
+
+        assertEquals(data.chunked(2), data.windowed(2, 2, partialWindows = true))
+
+        assertEquals(data.take(2), data.windowed(2, size).single())
+        assertEquals(data.take(3), data.windowed(3, size + 3).single())
+
+        assertEquals(data.toList(), data.windowed(size, 1).single())
+        assertTrue(data.windowed(size + 1, 1).isEmpty())
+
+        val result3partial = data.windowed(size, 1, partialWindows = true)
+        result3partial.forEachIndexed { index, window ->
+            assertEquals(size - index, window.size, "size of window#$index")
+        }
+
+        assertTrue(empty.windowed(3, 2).isEmpty())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { data.windowed(illegalValue, 1) }
+            assertFailsWith<IllegalArgumentException>("step $illegalValue") { data.windowed(1, illegalValue) }
+        }
+    }
+
+
 }
 
 abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out String>) -> T, val empty: T) {

@@ -1,26 +1,26 @@
 // -- Module: <m1-common> --
 package
 
-public final header class Bar {
+public final expect class Bar {
     public constructor Bar(/*0*/ z: kotlin.Double)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class Baz {
+public final expect class Baz {
     public constructor Baz(/*0*/ w: kotlin.collections.List<kotlin.String>)
-    public header final val w: kotlin.collections.List<kotlin.String>
-    public final operator header fun component1(): kotlin.collections.List<kotlin.String>
-    public open header override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open header override /*1*/ fun hashCode(): kotlin.Int
-    public open header override /*1*/ fun toString(): kotlin.String
+    public expect final val w: kotlin.collections.List<kotlin.String>
+    public final operator expect fun component1(): kotlin.collections.List<kotlin.String>
+    public open expect override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open expect override /*1*/ fun hashCode(): kotlin.Int
+    public open expect override /*1*/ fun toString(): kotlin.String
 }
 
-public final header class Foo {
+public final expect class Foo {
     public constructor Foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)
-    public header final val x: kotlin.Int
-    public header final val y: kotlin.String
+    public expect final val x: kotlin.Int
+    public expect final val y: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -30,7 +30,7 @@ public final header class Foo {
 // -- Module: <m2-jvm> --
 package
 
-public final impl data class Bar {
+public final actual data class Bar {
     public constructor Bar(/*0*/ z: kotlin.Double)
     public final val z: kotlin.Double
     public final operator /*synthesized*/ fun component1(): kotlin.Double
@@ -40,9 +40,9 @@ public final impl data class Bar {
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
-public final impl data class Baz {
+public final actual data class Baz {
     public constructor Baz(/*0*/ w: kotlin.collections.List<kotlin.String>)
-    public impl final val w: kotlin.collections.List<kotlin.String>
+    public actual final val w: kotlin.collections.List<kotlin.String>
     public final operator /*synthesized*/ fun component1(): kotlin.collections.List<kotlin.String>
     public final /*synthesized*/ fun copy(/*0*/ w: kotlin.collections.List<kotlin.String> = ...): Baz
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -50,10 +50,10 @@ public final impl data class Baz {
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
-public final impl data class Foo {
+public final actual data class Foo {
     public constructor Foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)
-    public impl final val x: kotlin.Int
-    public impl final val y: kotlin.String
+    public actual final val x: kotlin.Int
+    public actual final val y: kotlin.String
     public final operator /*synthesized*/ fun component1(): kotlin.Int
     public final operator /*synthesized*/ fun component2(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ...): Foo

@@ -21,8 +21,9 @@ public class KotlinCompilerVersion {
     // DON'T MODIFY IT
     public static final String VERSION = "@snapshot@";
 
-    // True if this compiler is of a non-stable (EAP or Beta) version.
-    // Binaries produced by this compiler can not be loaded by release versions of the compiler.
+    // True if the latest stable language version supported by this compiler has not yet been released.
+    // Binaries produced by this compiler with that language version (or any future language version) are going to be marked
+    // as "pre-release" and will not be loaded by release versions of the compiler.
     // Change this value before and after every major release
     private static final boolean IS_PRE_RELEASE = false;
 
@@ -38,6 +39,7 @@ public class KotlinCompilerVersion {
     }
 
     static {
+        //noinspection ConstantConditions
         if (!VERSION.equals("@snapshot@") && !VERSION.contains("-") && IS_PRE_RELEASE) {
             throw new IllegalStateException(
                     "IS_PRE_RELEASE cannot be true for a compiler without '-' in its version.\n" +

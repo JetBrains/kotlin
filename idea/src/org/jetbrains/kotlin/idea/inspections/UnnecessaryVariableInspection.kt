@@ -46,9 +46,9 @@ class UnnecessaryVariableInspection : AbstractKotlinInspection() {
                     holder.registerProblem(
                             nameIdentifier,
                             when (status) {
-                                UnnecessaryVariableInspection.Companion.Status.RETURN_ONLY ->
+                                Status.RETURN_ONLY ->
                                     "Variable used only in following return and can be inlined"
-                                UnnecessaryVariableInspection.Companion.Status.EXACT_COPY ->
+                                Status.EXACT_COPY ->
                                     "Variable is an exact copy of another variable and can be inlined"
                             },
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,

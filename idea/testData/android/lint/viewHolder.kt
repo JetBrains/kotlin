@@ -29,7 +29,7 @@ abstract class ViewHolderTest : BaseAdapter() {
             // Should use View Holder pattern here
             convertView = mInflater.<warning descr="Unconditional layout inflation from view adapter: Should use View Holder pattern (use recycled view passed into this method as the second parameter) for smoother scrolling">inflate(R.layout.your_layout, null)</warning>
 
-            val text = convertView.findViewById(R.id.text) as TextView
+            val text: TextView = convertView.findViewById(R.id.text)
             text.text = "Position " + position
 
             return convertView
@@ -46,7 +46,7 @@ abstract class ViewHolderTest : BaseAdapter() {
                 convertView = mInflater.inflate(R.layout.your_layout, null)
             }
 
-            val text = convertView!!.findViewById(R.id.text) as TextView
+            val text: TextView = convertView!!.findViewById(R.id.text)
             text.text = "Position " + position
 
             return convertView
@@ -65,7 +65,7 @@ abstract class ViewHolderTest : BaseAdapter() {
                 convertView = mInflater.inflate(R.layout.your_layout, null)
             }
 
-            val text = convertView!!.findViewById(R.id.text) as TextView
+            val text: TextView = convertView!!.findViewById(R.id.text)
             text.text = "Position " + position
 
             return convertView
@@ -80,7 +80,7 @@ abstract class ViewHolderTest : BaseAdapter() {
             // Already using View Holder pattern
             convertView = if (convertView == null) mInflater.inflate(R.layout.your_layout, null) else convertView
 
-            val text = convertView!!.findViewById(R.id.text) as TextView
+            val text: TextView = convertView!!.findViewById(R.id.text)
             text.text = "Position " + position
 
             return convertView
@@ -99,16 +99,16 @@ abstract class ViewHolderTest : BaseAdapter() {
             var v: View? = convertView
             if (v == null) v = mLayoutInflator!!.inflate(R.layout.your_layout, null)
 
-            val listItemHolder = v!!.findViewById(R.id.laptimes_list_item_holder) as LinearLayout
+            val listItemHolder: LinearLayout = v!!.findViewById(R.id.laptimes_list_item_holder)
             listItemHolder.removeAllViews()
 
             for (i in 1..5) {
-                val lapItemView = mLayoutInflator!!.inflate(R.layout.laptime_item, null)
+                val lapItemView: View  = mLayoutInflator!!.inflate(R.layout.laptime_item, null)
                 if (i == 0) {
-                    val t = lapItemView.findViewById(R.id.laptime_text) as TextView
+                    val t: TextView = lapItemView.findViewById(R.id.laptime_text)
                 }
 
-                val t2 = lapItemView.findViewById(R.id.laptime_text2) as TextView
+                val t2: TextView = lapItemView.findViewById(R.id.laptime_text2)
                 if (i < mLapTimes.size - 1 && mLapTimes.size > 1) {
                     var laptime = mLapTimes[i] - mLapTimes[i + 1]
                     if (laptime < 0) laptime = mLapTimes[i]

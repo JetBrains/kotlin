@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.js.test.BasicBoxTest
 
 abstract class BorrowedInlineTest(relativePath: String) : BasicBoxTest(
         "compiler/testData/codegen/boxInline/$relativePath",
-        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/codegen/boxInline/$relativePath/"
+        "codegen/boxInline/$relativePath"
 ) {
     init {
         additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
@@ -41,25 +41,25 @@ abstract class AbstractInlineDefaultValuesTests : BorrowedInlineTest("defaultVal
 
 abstract class AbstractBoxJsTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
-        BasicBoxTest.TEST_DATA_DIR_PATH + "out/box/"
+        "box/"
 ) {
     override val runMinifierByDefault: Boolean = true
 }
 
 abstract class AbstractJsCodegenBoxTest : BasicBoxTest(
         "compiler/testData/codegen/box/",
-        BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/"
+        "codegen/box/"
 )
 
-abstract class AbstractJsTypedArraysBoxTest : BasicBoxTest(
+abstract class AbstractJsLegacyPrimitiveArraysBoxTest : BasicBoxTest(
         "compiler/testData/codegen/box/arrays/",
-        BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/arrays-typedarrays/",
-        typedArraysEnabled = true
+        "codegen/box/arrays-legacy-primitivearrays/",
+        typedArraysEnabled = false
 )
 
 abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "sourcemap/",
-        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/sourcemap/",
+        "sourcemap/",
         generateSourceMap = true,
         generateNodeJsRunner = false
 )

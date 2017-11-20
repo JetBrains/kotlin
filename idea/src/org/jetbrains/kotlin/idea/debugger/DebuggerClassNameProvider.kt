@@ -25,8 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
-import org.jetbrains.kotlin.fileClasses.getFileClassInternalName
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Companion.getOrComputeClassNames
@@ -93,7 +92,9 @@ class DebuggerClassNameProvider(
     }
 
     private fun doGetClassesForPosition(position: SourcePosition): Set<String> {
-        val relevantElement = runReadAction { getRelevantElement(position.elementAt) }
+        val relevantElement = runReadAction {
+            position.elementAt?.let { getRelevantElement(it) }
+        }
 
         val result = getOrComputeClassNames(relevantElement) { element ->
             getOuterClassNamesForElement(element)
@@ -115,7 +116,7 @@ class DebuggerClassNameProvider(
 
         return when (element) {
             is KtFile -> {
-                val fileClassName = runReadAction { NoResolveFileClassesProvider.getFileClassInternalName(element) }.toJdiName()
+                val fileClassName = runReadAction { JvmFileClassUtil.getFileClassInternalName(element) }.toJdiName()
                 ComputedClassNames.Cached(fileClassName)
             }
             is KtClassOrObject -> {

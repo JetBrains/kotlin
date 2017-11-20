@@ -1,0 +1,23 @@
+public class SimpleScript : kotlin.script.templates.standard.ScriptTemplateWithArgs {
+    public final fun getBarOrNull(flag: boolean) : SimpleScript.Bar {
+        return if (flag) <init>(42) else null
+    }
+    public fun SimpleScript(p: java.lang.String[]) {
+        println("Hello World!")
+        getBarOrNull(true)
+        println("Goodbye World!")
+    }
+    public static final class Bar {
+        private final var b: int = 0
+        private final var a: int
+        public final fun getB() : int = UastEmptyExpression
+        public final fun getAPlusB() : int = a + b
+        public final fun getA() : int = UastEmptyExpression
+        public fun Bar(a: int) = UastEmptyExpression
+        public static final class Baz {
+            public final fun doSomething() : void {
+            }
+            public fun Baz() = UastEmptyExpression
+        }
+    }
+}

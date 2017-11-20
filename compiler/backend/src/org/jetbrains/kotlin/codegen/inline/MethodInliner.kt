@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
@@ -46,7 +47,8 @@ class MethodInliner(
         private val errorPrefix: String,
         private val sourceMapper: SourceMapper,
         private val inlineCallSiteInfo: InlineCallSiteInfo,
-        private val inlineOnlySmapSkipper: InlineOnlySmapSkipper? //non null only for root
+        private val inlineOnlySmapSkipper: InlineOnlySmapSkipper?, //non null only for root
+        private val shouldPreprocessApiVersionCalls: Boolean = false
 ) {
     private val typeMapper = inliningContext.state.typeMapper
     private val invokeCalls = ArrayList<InvokeCall>()
@@ -82,8 +84,12 @@ class MethodInliner(
 
         //substitute returns with "goto end" instruction to keep non local returns in lambdas
         val end = Label()
+        val isTransformingAnonymousObject = nodeRemapper is RegeneratedLambdaFieldRemapper
         transformedNode = doInline(transformedNode)
-        removeClosureAssertions(transformedNode)
+        if (!isTransformingAnonymousObject) {
+            //don't remove assertion in transformed anonymous object
+            removeClosureAssertions(transformedNode)
+        }
         transformedNode.instructions.resetLabels()
 
         val resultNode = MethodNode(
@@ -93,7 +99,7 @@ class MethodInliner(
         val visitor = RemapVisitor(
                 resultNode, remapper, nodeRemapper,
                 /*copy annotation and attributes*/
-                nodeRemapper is RegeneratedLambdaFieldRemapper
+                isTransformingAnonymousObject
         )
         try {
             transformedNode.accept(visitor)
@@ -390,9 +396,9 @@ class MethodInliner(
     ): MethodNode {
         val processingNode = prepareNode(node, finallyDeepShift)
 
-        normalizeLocalReturns(processingNode, labelOwner)
+        preprocessNodeBeforeInline(processingNode, labelOwner)
 
-        val sources = analyzeMethodNodeWithoutMandatoryTransformations(processingNode)
+        val sources = analyzeMethodNodeBeforeInline(processingNode)
 
         val toDelete = SmartSet.create<AbstractInsnNode>()
         val instructions = processingNode.instructions
@@ -504,7 +510,19 @@ class MethodInliner(
         return processingNode
     }
 
-    private fun normalizeLocalReturns(node: MethodNode, labelOwner: LabelOwner) {
+    private fun preprocessNodeBeforeInline(node: MethodNode, labelOwner: LabelOwner) {
+        try {
+            FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
+        }
+        catch (e: Throwable) {
+            throw wrapException(e, node, "couldn't inline method call")
+        }
+
+        if (shouldPreprocessApiVersionCalls) {
+            val targetApiVersion = inliningContext.state.languageVersionSettings.apiVersion
+            ApiVersionCallsPreprocessingMethodTransformer(targetApiVersion).transform("fake", node)
+        }
+
         val frames = analyzeMethodNodeBeforeInline(node)
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
@@ -534,17 +552,6 @@ class MethodInliner(
         if (type == null || type.sort != Type.OBJECT) return false
         val info = inliningContext.findAnonymousObjectTransformationInfo(type.internalName)
         return info != null && info.shouldRegenerate(true)
-    }
-
-    private fun analyzeMethodNodeBeforeInline(node: MethodNode): Array<Frame<SourceValue>?> {
-        try {
-            FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
-        }
-        catch (e: Throwable) {
-            throw wrapException(e, node, "couldn't inline method call")
-        }
-
-        return analyzeMethodNodeWithoutMandatoryTransformations(node)
     }
 
     private fun buildConstructorInvocation(
@@ -725,7 +732,7 @@ class MethodInliner(
             )
         }
 
-        private fun analyzeMethodNodeWithoutMandatoryTransformations(node: MethodNode): Array<Frame<SourceValue>?> {
+        private fun analyzeMethodNodeBeforeInline(node: MethodNode): Array<Frame<SourceValue>?> {
             val analyzer = object : Analyzer<SourceValue>(SourceInterpreter()) {
                 override fun newFrame(nLocals: Int, nStack: Int): Frame<SourceValue> {
                     return object : Frame<SourceValue>(nLocals, nStack) {

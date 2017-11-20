@@ -11,11 +11,9 @@ Marked as dirty by Kotlin:
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
-  out/production/module/test/Object.class
   out/production/module/test/Usage.class
 End of files
 Compiling files:
-  src/const.kt
   src/usage.kt
 End of files
 Exit code: OK

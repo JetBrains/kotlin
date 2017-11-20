@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
+import org.jetbrains.kotlin.idea.framework.getCommonRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
 class KotlinVersionInfoProviderByModuleDependencies : KotlinVersionInfoProvider {
@@ -33,7 +34,7 @@ class KotlinVersionInfoProviderByModuleDependencies : KotlinVersionInfoProvider 
         val versionProvider: (Library) -> String? = when (targetPlatform) {
             is TargetPlatformKind.JavaScript -> JsLibraryStdDetectionUtil::getJsLibraryStdVersion
             is TargetPlatformKind.Jvm -> JavaRuntimeDetectionUtil::getJavaRuntimeVersion
-            is TargetPlatformKind.Common -> return emptyList()
+            is TargetPlatformKind.Common -> ::getCommonRuntimeLibraryVersion
         }
         return (rootModel ?: ModuleRootManager.getInstance(module))
                 .orderEntries

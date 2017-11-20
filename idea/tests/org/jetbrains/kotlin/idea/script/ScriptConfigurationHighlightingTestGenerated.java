@@ -54,6 +54,12 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         doTest(fileName);
     }
 
+    @TestMetadata("conflictingModule")
+    public void testConflictingModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/conflictingModule/");
+        doTest(fileName);
+    }
+
     @TestMetadata("customBaseClass")
     public void testCustomBaseClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/customBaseClass/");
@@ -81,6 +87,12 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
     @TestMetadata("emptyAsyncResolver")
     public void testEmptyAsyncResolver() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/emptyAsyncResolver/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("javaNestedClass")
+    public void testJavaNestedClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/javaNestedClass/");
         doTest(fileName);
     }
 

@@ -131,10 +131,12 @@ class KotlinCompletionContributor : CompletionContributor() {
                 }
             }
 
-            if (tokenAt.node.elementType == KtTokens.IDENTIFIER) {
+            // IDENTIFIER when 'f<caret>oo: Foo'
+            // COLON when 'foo<caret>: Foo'
+            if (tokenAt.node.elementType == KtTokens.IDENTIFIER || tokenAt.node.elementType == KtTokens.COLON) {
                 val parameter = tokenAt.parent as? KtParameter
                 if (parameter != null) {
-                    context.offsetMap.addOffset(ParameterNameAndTypeCompletion.REPLACEMENT_OFFSET, parameter.endOffset)
+                    context.offsetMap.addOffset(VariableOrParameterNameWithTypeCompletion.REPLACEMENT_OFFSET, parameter.endOffset)
                 }
             }
         }
@@ -331,9 +333,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                 val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
                 psiDocumentManager.commitAllDocuments()
 
-                assert(startOffset > 1 && document.charsSequence[startOffset - 1] == '.')
-                val token = context.file.findElementAt(startOffset - 2)!!
-                assert(token.node.elementType == KtTokens.IDENTIFIER || token.node.elementType == KtTokens.THIS_KEYWORD)
+                val token = getToken(context.file, document.charsSequence, startOffset)
                 val nameRef = token.parent as KtNameReferenceExpression
 
                 document.insertString(nameRef.startOffset, "{")
@@ -343,6 +343,15 @@ class KotlinCompletionContributor : CompletionContributor() {
                 context.tailOffset = tailOffset
 
                 super.handleInsert(context)
+            }
+
+            private fun getToken(file: PsiFile, charsSequence: CharSequence, startOffset: Int): PsiElement {
+                assert(startOffset > 1 && charsSequence[startOffset - 1] == '.')
+                val token = file.findElementAt(startOffset - 2)!!
+                return if (token.node.elementType == KtTokens.IDENTIFIER || token.node.elementType == KtTokens.THIS_KEYWORD)
+                    token
+                else
+                    getToken(file, charsSequence, token.startOffset + 1)
             }
         }
     }

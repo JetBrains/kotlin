@@ -5,21 +5,18 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/functionIncorrectSignature/common.kt:1:14: error: header declaration 'Foo' has no implementation in module
-The following declaration is incompatible because some members are not implemented:
-    public final impl class Foo
-No implementations are found for members listed below:
+compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:1:14: error: actual class 'Foo' has no corresponding members for expected class members:
 
-    public final header fun function(b: ByteArray): Int
+    public final expect fun function(b: ByteArray): Int
 
     The following declaration is incompatible because return type is different:
-        public final impl fun function(b: ByteArray): Long
+        public final actual fun function(b: ByteArray): Long
 
-header class Foo {
+actual class Foo {
              ^
-compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl class Foo {
-^
-compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-    impl fun function(b: ByteArray): Long = b.size.toLong()
-    ^
+compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:40: error: actual function 'function' has no corresponding expected declaration
+The following declaration is incompatible because return type is different:
+    public final expect fun function(b: ByteArray): Int
+
+    actual fun function(b: ByteArray): Long = b.size.toLong()
+                                       ^

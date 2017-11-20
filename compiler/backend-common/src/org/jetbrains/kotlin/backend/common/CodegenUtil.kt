@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -145,21 +146,24 @@ object CodegenUtil {
 
 
     @JvmStatic
-    fun BindingContext.isExhaustive(whenExpression: KtWhenExpression, isStatement: Boolean): Boolean {
-        val slice = if (isStatement && !whenExpression.isUsedAsExpression(this)) {
+    fun isExhaustive(bindingContext: BindingContext, whenExpression: KtWhenExpression, isStatement: Boolean): Boolean {
+        val slice = if (isStatement && !whenExpression.isUsedAsExpression(bindingContext)) {
             BindingContext.IMPLICIT_EXHAUSTIVE_WHEN
         }
         else {
             BindingContext.EXHAUSTIVE_WHEN
         }
-        return this[slice, whenExpression] == true
+        return bindingContext[slice, whenExpression] == true
     }
 
     @JvmStatic
-    fun constructFakeFunctionCall(project: Project, referencedFunction: FunctionDescriptor): KtCallExpression {
-        val fakeFunctionCall = StringBuilder("callableReferenceFakeCall(")
-        fakeFunctionCall.append(referencedFunction.valueParameters.joinToString(", ") { "p${it.index}" })
-        fakeFunctionCall.append(")")
-        return KtPsiFactory(project, markGenerated = false).createExpression(fakeFunctionCall.toString()) as KtCallExpression
+    fun constructFakeFunctionCall(project: Project, arity: Int): KtCallExpression {
+        val fakeFunctionCall =
+                (1..arity).joinToString(prefix = "callableReferenceFakeCall(", separator = ", ", postfix = ")") { "p$it" }
+        return KtPsiFactory(project, markGenerated = false).createExpression(fakeFunctionCall) as KtCallExpression
     }
+
+    @JvmStatic
+    fun getActualDeclarations(file: KtFile): List<KtDeclaration> =
+            file.declarations.filterNot(KtDeclaration::hasExpectModifier)
 }

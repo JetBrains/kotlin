@@ -1,0 +1,148 @@
+== myRun ==
+inline fun myRun(block: () -> Unit): Unit {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+L0:
+  1 <START>
+    v(block: () -> Unit)
+    magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>
+    w(block|<v0>)
+  2 mark({ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() })
+    mark({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    jmp?(L2)                                                                                      NEXT:[r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>, d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })]
+    d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })                                       NEXT:[<SINK>]
+L2 [after local declaration]:
+    r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>                               PREV:[jmp?(L2)]
+    mark(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+    r(block) -> <v3>
+    mark(block())
+    call(block(), invoke|<v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+  1 <END>                                                                                         NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                       PREV:[]
+sink:
+    <SINK>                                                                                        PREV:[<ERROR>, <END>, d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })]
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+L3:
+  3 <START>
+  4 mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+    r(block) -> <v1>
+    mark(InvocationKind.EXACTLY_ONCE)
+    r(EXACTLY_ONCE) -> <v2>
+    mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+L4:
+  3 <END>                                                                                            NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                          PREV:[]
+sink:
+    <SINK>                                                                                           PREV:[<ERROR>, <END>]
+=====================
+== getBool ==
+fun getBool(): Boolean = false
+---------------------
+L0:
+  1 <START>
+    r(false) -> <v0>
+    ret(*|<v0>) L1
+L1:
+    <END>               NEXT:[<SINK>]
+error:
+    <ERROR>             PREV:[]
+sink:
+    <SINK>              PREV:[<ERROR>, <END>]
+=====================
+== withLabeledReturn ==
+fun withLabeledReturn(y: Int) {
+    val x = myRun outer@ {
+        myRun { return@outer Unit }
+        println(y)
+    }
+
+    println(y)
+    println(x)
+}
+---------------------
+L0:
+  1 <START>
+    v(y: Int)
+    magic[FAKE_INITIALIZER](y: Int) -> <v0>
+    w(y|<v0>)
+  2 mark({ val x = myRun outer@ { myRun { return@outer Unit } println(y) } println(y) println(x) })
+    v(val x = myRun outer@ { myRun { return@outer Unit } println(y) })
+    mark(outer@ { myRun { return@outer Unit } println(y) })
+    mark({ myRun { return@outer Unit } println(y) })
+    r({ myRun { return@outer Unit } println(y) }) -> <v1>
+    mark(myRun outer@ { myRun { return@outer Unit } println(y) })
+    call(myRun outer@ { myRun { return@outer Unit } println(y) }, myRun|<v1>) -> <v2>
+L2 [before inlined declaration]:
+    inlined({ myRun { return@outer Unit } println(y) })
+L3 [after inlined declaration]:
+    w(x|<v2>)
+    r(y) -> <v3>
+    mark(println(y))
+    call(println(y), println|<v3>) -> <v4>
+    r(x) -> <v5>
+    mark(println(x))
+    call(println(x), println|<v5>) -> <v6>
+L1:
+  1 <END>                                                                                              NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                            PREV:[]
+sink:
+    <SINK>                                                                                             PREV:[<ERROR>, <END>]
+=====================
+== inlined anonymous_1 ==
+{
+        myRun { return@outer Unit }
+        println(y)
+    }
+---------------------
+L4:
+  3 <START>
+  4 mark(myRun { return@outer Unit } println(y))
+    mark({ return@outer Unit })
+    r({ return@outer Unit }) -> <v0>
+    mark(myRun { return@outer Unit })
+    call(myRun { return@outer Unit }, myRun|<v0>) -> <v1>
+L6 [before inlined declaration]:
+    inlined({ return@outer Unit })                           NEXT:[<SINK>]
+L7 [after inlined declaration]:
+-   r(y) -> <v2>                                             PREV:[]
+-   mark(println(y))                                         PREV:[]
+-   call(println(y), println|<v2>) -> <v3>                   PREV:[]
+L5:
+  3 <END>                                                    NEXT:[<SINK>]                                                   PREV:[ret(*|<v0>) L5]
+error:
+-   <ERROR>                                                  PREV:[]
+sink:
+    <SINK>                                                   PREV:[<END>, inlined({ return@outer Unit })]
+=====================
+== inlined anonymous_2 ==
+{ return@outer Unit }
+---------------------
+L8:
+  5 <START>
+  6 mark(return@outer Unit)
+    r(Unit) -> <v0>
+    ret(*|<v0>) L5             NEXT:[<END>]
+L9:
+- 5 <END>                      NEXT:[<SINK>]                     PREV:[]
+error:
+-   <ERROR>                    PREV:[]
+sink:
+-   <SINK>                     PREV:[]
+=====================

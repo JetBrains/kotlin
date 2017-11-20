@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.isHeaderOrHeaderClassMember
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
+import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
@@ -98,9 +98,9 @@ class KotlinChangeSignatureData(
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
             val primaryDeclaration = primaryFunction.declaration as? KtDeclaration ?: return@flatMapTo emptyList()
 
-            if (primaryDeclaration.isHeaderOrHeaderClassMember()) {
-                return@flatMapTo primaryDeclaration.headerImplementations().mapNotNull {
-                    val descriptor = it.resolveToDescriptor()
+            if (primaryDeclaration.isExpectedOrExpectedClassMember()) {
+                return@flatMapTo primaryDeclaration.actualsForExpected().mapNotNull {
+                    val descriptor = it.unsafeResolveToDescriptor()
                     val callableDescriptor = when (descriptor) {
                         is CallableDescriptor -> descriptor
                         is ClassDescriptor -> descriptor.unsubstitutedPrimaryConstructor ?: return@mapNotNull null
@@ -118,7 +118,7 @@ class KotlinChangeSignatureData(
                         .mapNotNullTo(HashSet<UsageInfo>()) { overridingMethod ->
                             if (overridingMethod is KtLightMethod) {
                                 val overridingDeclaration = overridingMethod.namedUnwrappedElement as KtNamedDeclaration
-                                val overridingDescriptor = overridingDeclaration.resolveToDescriptor() as CallableDescriptor
+                                val overridingDescriptor = overridingDeclaration.unsafeResolveToDescriptor() as CallableDescriptor
                                 KotlinCallableDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)
                             }
                             else OverriderUsageInfo(overridingMethod, baseMethod, true, true, true)

@@ -28,24 +28,39 @@ configurations {
 
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
+    compileOnly project(':compiler')
+    compileOnly project(':compiler:incremental-compilation-impl')
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-compiler-runner:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-annotation-processing:$kotlin_version"
+    compile project(':kotlin-stdlib')
+    compileOnly project(':kotlin-android-extensions')
+    compileOnly project(':kotlin-build-common')
+    compileOnly project(':kotlin-compiler-runner')
+    compileOnly project(':kotlin-annotation-processing')
+    compileOnly project(':kotlin-annotation-processing-gradle')
 
     compileOnly 'com.android.tools.build:gradle:2.0.0'
     compileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
     compileOnly 'org.jetbrains.kotlin:gradle-api:2.2'
 
+    runtime project(path: ':kotlin-compiler-embeddable', configuration: "runtimeJar")
+    runtime project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
+    runtime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
+    runtime project(path: ':kotlin-compiler-runner', configuration: 'runtimeJar')
+
     agp25CompileOnly 'com.android.tools.build:gradle:3.0.0-alpha1'
     agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
     agp25CompileOnly gradleApi()
+    agp25CompileOnly project(':kotlin-annotation-processing')
+    agp25CompileOnly project(':kotlin-annotation-processing-gradle')
 
-    testCompile "org.jetbrains.kotlin:kotlin-build-common-test:$kotlin_version"
-    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompileOnly project(':compiler')
+    testCompile project (path: ':kotlin-build-common', configuration: 'tests-jar')
+    testCompile project(':kotlin-android-extensions')
+    testCompile project(':kotlin-compiler-runner')
+    testCompile project(':kotlin-test::kotlin-test-junit')
     testCompile "junit:junit:4.12"
+    testCompileOnly project(':kotlin-annotation-processing')
+    testCompileOnly project(':kotlin-annotation-processing-gradle')
 }
 
 tasks.withType(project.compileKotlin.class) {
@@ -78,7 +93,15 @@ jar.dependsOn agp25Classes
 
 jar {
     from compileGroovy.destinationDir
-    from sourceSets.agp25.output.classesDir
+    from sourceSets.agp25.output.classesDirs
+    manifestAttributes(manifest, project)
+}
+
+ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
 
 test.executable = "${JDK_18}/bin/java"

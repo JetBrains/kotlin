@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.RangeToIntrinsic;
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -190,14 +191,18 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         // Temporary hack to get '%' for deprecated 'mod' operator
         Name descriptorName = descriptor.getName().equals(OperatorNameConventions.MOD) ? OperatorNameConventions.REM : descriptor.getName();
 
+        switch (descriptorName.asString()) {
+            case "or":
+                return JsBinaryOperator.BIT_OR;
+            case "and":
+                return JsBinaryOperator.BIT_AND;
+            case "xor":
+                return JsBinaryOperator.BIT_XOR;
+            default:
+                break;
+        }
+
         KtToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(descriptorName);
-        if (token == null) {
-            token = OperatorConventions.BOOLEAN_OPERATIONS.inverse().get(descriptorName);
-        }
-        if (token == null) {
-            assert descriptorName.asString().equals("xor");
-            return JsBinaryOperator.BIT_XOR;
-        }
         return OperatorTable.getBinaryOperator(token);
     }
 
@@ -283,7 +288,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         @NotNull
         @Override
         public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            return JsAstUtils.toChar(functionIntrinsic.doApply(left, right, context));
+            return AstUtilsKt.toChar(context, functionIntrinsic.doApply(left, right, context));
         }
     }
 

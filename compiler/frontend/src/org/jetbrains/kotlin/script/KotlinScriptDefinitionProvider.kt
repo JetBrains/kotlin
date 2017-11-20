@@ -17,67 +17,23 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import kotlin.concurrent.read
-import kotlin.concurrent.write
 
-class KotlinScriptDefinitionProvider {
-
-    private val definitions: MutableList<KotlinScriptDefinition> = arrayListOf(StandardScriptDefinition)
-    private val definitionsLock = java.util.concurrent.locks.ReentrantReadWriteLock()
-
-    fun setScriptDefinitions(newDefinitions: List<KotlinScriptDefinition>): Boolean {
-        var changed = false
-        definitionsLock.read {
-            if (newDefinitions != definitions) {
-                definitionsLock.write {
-                    definitions.clear()
-                    definitions.addAll(newDefinitions)
-                }
-                changed = true
-            }
-        }
-        return changed
-    }
-
+interface ScriptDefinitionProvider {
+    fun findScriptDefinition(fileName: String): KotlinScriptDefinition?
+    fun isScript(fileName: String): Boolean
     fun findScriptDefinition(file: VirtualFile): KotlinScriptDefinition? = findScriptDefinition(file.name)
 
-    fun findScriptDefinition(fileName: String): KotlinScriptDefinition? = definitionsLock.read {
-        definitions.firstOrNull { it.isScript(fileName) }
-    }
-
-    fun isScript(fileName: String): Boolean = definitionsLock.read {
-        definitions.any { it.isScript(fileName) }
-    }
-
-    fun addScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
-        definitionsLock.write {
-            definitions.add(0, scriptDefinition)
-        }
-    }
-
-    fun removeScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
-        definitionsLock.write {
-            definitions.remove(scriptDefinition)
-        }
-    }
-
-    fun getAllKnownFileTypes(): Iterable<LanguageFileType> = definitionsLock.read {
-        definitions.map { it.fileType }.distinct()
-    }
-
     companion object {
-        @JvmStatic
-        fun getInstance(project: Project): KotlinScriptDefinitionProvider? =
-                ServiceManager.getService(project, KotlinScriptDefinitionProvider::class.java)
+        fun getInstance(project: Project): ScriptDefinitionProvider =
+                ServiceManager.getService(project, ScriptDefinitionProvider::class.java)
     }
 }
 
 fun getScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? =
-        KotlinScriptDefinitionProvider.getInstance(project)?.findScriptDefinition(file)
+        ScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)
 
 fun getScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? =
-        KotlinScriptDefinitionProvider.getInstance(psiFile.project)?.findScriptDefinition(psiFile.name)
+        ScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile.name)

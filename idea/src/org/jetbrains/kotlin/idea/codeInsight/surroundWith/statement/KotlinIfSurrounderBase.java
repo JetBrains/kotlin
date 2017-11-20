@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,11 @@ import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 
 public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder {
 
+    @Override
+    protected boolean isApplicableWhenUsedAsExpression() {
+        return false;
+    }
+
     @Nullable
     @Override
     protected TextRange surroundStatements(Project project, Editor editor, PsiElement container, PsiElement[] statements) {
@@ -58,6 +63,11 @@ public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder 
 
         ifExpression = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(ifExpression);
 
+        return getRange(editor, ifExpression);
+    }
+
+    @NotNull
+    public static TextRange getRange(Editor editor, @NotNull KtIfExpression ifExpression) {
         KtExpression condition = ifExpression.getCondition();
         assert condition != null : "Condition should exists for created if expression: " + ifExpression.getText();
         // Delete condition from created if

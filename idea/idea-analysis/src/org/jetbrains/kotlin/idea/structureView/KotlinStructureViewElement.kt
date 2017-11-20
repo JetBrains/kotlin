@@ -27,7 +27,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 
@@ -81,7 +81,7 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
 
             return runReadAction {
                 if (!DumbService.isDumb(element.getProject())) {
-                    return@runReadAction element.resolveToDescriptor()
+                    return@runReadAction element.resolveToDescriptorIfAny()
                 }
                 null
             }

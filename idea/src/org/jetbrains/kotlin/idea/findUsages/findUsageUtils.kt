@@ -24,7 +24,7 @@ fun KtDeclaration.processAllExactUsages(
         options: () -> FindUsagesOptions,
         processor: (UsageInfo) -> Unit
 ) {
-    val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandler(this, false, false)
+    val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandler(this, true)
     findUsagesHandler.processElementUsages(
             this,
             {
@@ -41,7 +41,7 @@ fun KtDeclaration.processAllUsages(
         options: FindUsagesOptions,
         processor: (UsageInfo) -> Unit
 ) {
-    val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandler(this, false, false)
+    val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandler(this, true)
     findUsagesHandler.processElementUsages(
             this,
             {

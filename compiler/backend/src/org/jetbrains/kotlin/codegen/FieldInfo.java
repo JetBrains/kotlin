@@ -34,7 +34,7 @@ public class FieldInfo {
         }
 
         if (isNonCompanionObject(classDescriptor) || CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject(classDescriptor)) {
-            return createSingletonViaInstance(classDescriptor, typeMapper);
+            return createSingletonViaInstance(classDescriptor, typeMapper, JvmAbi.INSTANCE_FIELD);
         }
 
         ClassDescriptor ownerDescriptor = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
@@ -46,10 +46,11 @@ public class FieldInfo {
     @NotNull
     public static FieldInfo createSingletonViaInstance(
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull KotlinTypeMapper typeMapper
+            @NotNull KotlinTypeMapper typeMapper,
+            @NotNull String name
     ) {
         Type type = typeMapper.mapType(classDescriptor);
-        return new FieldInfo(type, type, JvmAbi.INSTANCE_FIELD, true);
+        return new FieldInfo(type, type, name, true);
     }
 
     @NotNull

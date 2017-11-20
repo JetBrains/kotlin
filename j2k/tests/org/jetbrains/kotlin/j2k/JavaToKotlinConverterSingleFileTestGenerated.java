@@ -1018,6 +1018,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass3.java");
             doTest(fileName);
         }
+
+        @TestMetadata("utilityClass4.java")
+        public void testUtilityClass4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass4.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("utilityClass5.java")
+        public void testUtilityClass5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass5.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/classExpression")
@@ -1793,6 +1805,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("deprecatedDocTagWithAnnotation.java")
         public void testDeprecatedDocTagWithAnnotation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTagWithAnnotation.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deprecatedDocTagWithMultiLineMessage.java")
+        public void testDeprecatedDocTagWithMultiLineMessage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTagWithMultiLineMessage.java");
             doTest(fileName);
         }
 
@@ -2951,6 +2969,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("kt-19943.java")
+        public void testKt_19943() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-19943.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt-5294.java")
         public void testKt_5294() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-5294.java");
@@ -3341,6 +3365,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("charToNumber.java")
+        public void testCharToNumber() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/charToNumber.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("charToString.java")
+        public void testCharToString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/charToString.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("dollarInsideString.java")
         public void testDollarInsideString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/dollarInsideString.java");
@@ -3632,6 +3668,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("FunctionReturnValue2.java")
         public void testFunctionReturnValue2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/FunctionReturnValue2.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Iterator.java")
+        public void testIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/Iterator.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Iterator2.java")
+        public void testIterator2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/Iterator2.java");
             doTest(fileName);
         }
 

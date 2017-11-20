@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class CopyAsDiagnosticTestAction extends AnAction {
         BindingContext bindingContext = ResolutionUtils.analyzeFully((KtFile) psiFile);
 
         List<CheckerTestUtil.ActualDiagnostic> diagnostics =
-                CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null, null);
+                CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null, null, false);
         String result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, diagnostics).toString();
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

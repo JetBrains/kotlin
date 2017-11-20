@@ -1,7 +1,7 @@
 // FULL_JDK
 // FILE: RepeatableAnnotation.java
 
-import java.lang.annotation.Repeatable
+import java.lang.annotation.Repeatable;
 
 @Repeatable(RepeatableAnnotations.class)
 public @interface RepeatableAnnotation {

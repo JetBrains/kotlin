@@ -289,12 +289,19 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
                 wrapInLambdaCall(delegateExpressionOrInitializer)
             }
             else {
-                val getter = contextElement.getter!!
-                if (!getter.hasBlockBody()) {
-                    wrapInLambdaCall(getter.bodyExpression!!)
+                val getter = contextElement.getter
+                val bodyExpression = getter?.bodyExpression
+
+                if (getter != null && bodyExpression != null) {
+                    if (!getter.hasBlockBody()) {
+                        wrapInLambdaCall(bodyExpression)
+                    }
+                    else {
+                        (bodyExpression as KtBlockExpression).statements.first()
+                    }
                 }
                 else {
-                    (getter.bodyExpression as KtBlockExpression).statements.first()
+                    contextElement
                 }
             }
         }

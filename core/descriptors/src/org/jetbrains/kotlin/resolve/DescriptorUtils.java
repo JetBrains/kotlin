@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
@@ -457,7 +458,11 @@ public class DescriptorUtils {
                KotlinTypeChecker.DEFAULT.equalTypes(builtIns.getAnyType(), type);
     }
 
-    public static boolean classCanHaveAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
+    public static boolean classCanHaveAbstractFakeOverride(@NotNull ClassDescriptor classDescriptor) {
+        return classCanHaveAbstractDeclaration(classDescriptor) || classDescriptor.isExpect();
+    }
+
+    public static boolean classCanHaveAbstractDeclaration(@NotNull ClassDescriptor classDescriptor) {
         return classDescriptor.getModality() == Modality.ABSTRACT
                || isSealedClass(classDescriptor)
                || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
@@ -586,11 +591,10 @@ public class DescriptorUtils {
 
     @Nullable
     public static FunctionDescriptor getFunctionByNameOrNull(@NotNull MemberScope scope, @NotNull Name name) {
-        Collection<DeclarationDescriptor> functions = scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS,
-                                                                                      MemberScope.Companion.getALL_NAME_FILTER());
-        for (DeclarationDescriptor d : functions) {
-            if (d instanceof FunctionDescriptor && name.equals(d.getOriginal().getName())) {
-                return (FunctionDescriptor) d;
+        Collection<SimpleFunctionDescriptor> functions = scope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND);
+        for (SimpleFunctionDescriptor d : functions) {
+            if (name.equals(d.getOriginal().getName())) {
+                return d;
             }
         }
 
@@ -599,11 +603,10 @@ public class DescriptorUtils {
 
     @NotNull
     public static PropertyDescriptor getPropertyByName(@NotNull MemberScope scope, @NotNull Name name) {
-        Collection<DeclarationDescriptor> callables = scope.getContributedDescriptors(
-                DescriptorKindFilter.CALLABLES, MemberScope.Companion.getALL_NAME_FILTER());
-        for (DeclarationDescriptor d : callables) {
-            if (d instanceof PropertyDescriptor && name.equals(d.getOriginal().getName())) {
-                return (PropertyDescriptor) d;
+        Collection<PropertyDescriptor> properties = scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND);
+        for (PropertyDescriptor d : properties) {
+            if (name.equals(d.getOriginal().getName())) {
+                return d;
             }
         }
 

@@ -16,41 +16,50 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
-import com.sun.source.util.TreePath
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class TreeBasedTypeParameter(
         tree: JCTree.JCTypeParameter,
-        treePath: TreePath,
-        javac: JavacWrapper
-) : TreeBasedElement<JCTree.JCTypeParameter>(tree, treePath, javac), JavaTypeParameter {
+        compilationUnit: CompilationUnitTree,
+        javac: JavacWrapper,
+        private val containingElement: JavaElement
+) : TreeBasedElement<JCTree.JCTypeParameter>(tree, compilationUnit, javac), JavaTypeParameter {
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())
 
     override val annotations: Collection<JavaAnnotation> by lazy {
-        tree.annotations().map { TreeBasedAnnotation(it, treePath, javac) }
+        tree.annotations().map { TreeBasedAnnotation(it, compilationUnit, javac, containingElement) }
     }
 
     override fun findAnnotation(fqName: FqName) =
             annotations.firstOrNull { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc: Boolean
-        get() = false
+        get() = javac.isDeprecatedInJavaDoc(tree, compilationUnit)
 
     override val upperBounds: Collection<JavaClassifierType>
         get() = tree.bounds.mapNotNull {
-            when (it) {
-                is JCTree.JCTypeApply -> TreeBasedGenericClassifierType(it, TreePath(treePath, it), javac)
-                is JCTree.JCIdent -> TreeBasedNonGenericClassifierType(it, TreePath(treePath, it), javac)
-                else -> null
-            }
+            TreeBasedType.create(it, compilationUnit, javac, emptyList(), containingElement) as? JavaClassifierType
         }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is TreeBasedTypeParameter) return false
+        return other.name == name && other.upperBounds == upperBounds
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        upperBounds.forEach { result = 37 * result + it.hashCode() }
+        return result
+    }
 
 }

@@ -34,7 +34,7 @@ class ContainerOptionsProxy(val containerType: AndroidContainerType, val cache: 
         private val CACHE_NAME = ContainerOptions::cache.name
 
         fun create(container: ClassDescriptor): ContainerOptionsProxy {
-            if (container.kind != ClassKind.CLASS) {
+            if (container.kind != ClassKind.CLASS && container.kind != ClassKind.INTERFACE) {
                 return ContainerOptionsProxy(AndroidContainerType.UNKNOWN, NO_CACHE)
             }
 
@@ -44,7 +44,10 @@ class ContainerOptionsProxy(val containerType: AndroidContainerType, val cache: 
 
             if (anno == null) {
                 // Java classes (and Kotlin classes from other modules) does not support cache by default
-                val supportsCache = container.source is KotlinSourceElement && containerType.doesSupportCache
+                val supportsCache = container.kind == ClassKind.CLASS
+                                    && container.source is KotlinSourceElement
+                                    && containerType.doesSupportCache
+
                 return ContainerOptionsProxy(
                         containerType,
                         if (supportsCache) null else NO_CACHE) // `null` here means "use global cache implementation setting"

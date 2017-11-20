@@ -6,7 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains s.r.o.</vendor>
 
-  <idea-version since-build="172.1" until-build="173.*"/>
+  <idea-version since-build="172.1" until-build="172.*"/>
 
   <depends>com.intellij.modules.java</depends>
 
@@ -150,9 +150,9 @@
               class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"
               text="Benchmark highlighting"/>
 
-      <action id="CompletionBindingContextCachingToggleAction"
-              class="org.jetbrains.kotlin.idea.actions.internal.CompletionBindingContextCachingToggleAction"
-              text="Enable completion binding context caching"/>
+      <action id="CacheResetOnProcessCanceledToggleAction"
+              class="org.jetbrains.kotlin.idea.actions.internal.CacheResetOnProcessCanceledToggleAction"
+              text="Reset caches on ProcessCanceledException"/>
 
       <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
               text="Check Component Functions Usage Search"/>
@@ -162,9 +162,6 @@
 
       <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
               text="Search Not Property Candidates"/>
-
-      <action id="CheckPartialBodyResolve" class="org.jetbrains.kotlin.idea.actions.internal.CheckPartialBodyResolveAction"
-              text="Check Partial Body Resolve"/>
 
       <action id="CreateIncrementalCompilationBackup"
               class="org.jetbrains.kotlin.idea.internal.makeBackup.CreateIncrementalCompilationBackup"/>
@@ -283,8 +280,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer"
                     serviceImplementation="org.jetbrains.kotlin.resolve.DummyCodeAnalyzerInitializer"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"
-                    serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptDefinitionProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptDependenciesProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptDependenciesProvider"/>
@@ -367,6 +364,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.ScriptBinariesScopeCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.ScriptBinariesScopeCache"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.util.ProjectJob"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>
@@ -385,7 +385,7 @@
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinBuiltInFileTypeFactory"/>
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinModuleFileFactory"/>
 
-    <compileServer.plugin classpath="jps/kotlin-jps-plugin.jar;kotlin-runtime.jar;kotlin-reflect.jar;kotlin-plugin.jar;android-extensions-ide.jar;android-extensions-compiler.jar"/>
+    <compileServer.plugin classpath="jps/kotlin-jps-plugin.jar;kotlin-stdlib.jar;kotlin-reflect.jar;kotlin-plugin.jar;android-extensions-ide.jar;android-extensions-compiler.jar"/>
     <compiler.task execute="BEFORE" implementation="org.jetbrains.kotlin.idea.internal.makeBackup.MakeBackupCompileTask"/>
     <buildProcess.parametersProvider implementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinBuildProcessParametersProvider"/>
     <jps.plugin />
@@ -587,7 +587,7 @@
 
     <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.DebugInfoAnnotator"/>
     <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.DuplicateJvmSignatureAnnotator"/>
-    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.PlatformHeaderAnnotator"/>
+    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.PlatformExpectedAnnotator"/>
     <problemHighlightFilter implementation="org.jetbrains.kotlin.idea.highlighter.KotlinProblemHighlightFilter"/>
 
     <highlightVisitor implementation="org.jetbrains.kotlin.idea.highlighter.KotlinRainbowVisitor"/>
@@ -626,7 +626,7 @@
 
     <lang.documentationProvider language="JAVA" implementationClass="org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider" order="first"/>
     <documentationProvider implementation="org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider"/>
-    <configurationType implementation="org.jetbrains.kotlin.idea.run.JetRunConfigurationType"/>
+    <configurationType implementation="org.jetbrains.kotlin.idea.run.KotlinRunConfigurationType"/>
     <configurationType implementation="org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationType"/>
     <configurationType implementation="org.jetbrains.kotlin.idea.k2jsrun.K2JSRunConfigurationType"/>
     <programRunner implementation="org.jetbrains.kotlin.idea.k2jsrun.K2JSBrowserProgramRunner"/>
@@ -662,6 +662,7 @@
     <elementDescriptionProvider
         implementation="org.jetbrains.kotlin.idea.findUsages.KotlinNonCodeSearchElementDescriptionProvider"/>
     <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightExitPointsHandlerFactory"/>
+    <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightImplicitItHandlerFactory"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
     <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinUsageTypeProvider"/>
 
@@ -828,6 +829,8 @@
 
     <problemFileHighlightFilter implementation="org.jetbrains.kotlin.idea.projectView.KotlinProblemFileHighlightFilter"/>
 
+    <consoleFilterProvider implementation="org.jetbrains.kotlin.idea.run.KotlinConsoleFilterProvider"/>
+
     <codeInsight.typeInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinExpressionTypeProvider"/>
 
     <testCreator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.testIntegration.KotlinTestCreator"/>
@@ -854,6 +857,8 @@
 
     <library.type implementation="org.jetbrains.kotlin.idea.framework.JSLibraryType"/>
     <library.type implementation="org.jetbrains.kotlin.idea.framework.CommonLibraryType"/>
+
+    <gotoRelatedProvider implementation="org.jetbrains.kotlin.idea.goto.KotlinExpectOrActualGotoRelatedProvider"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
@@ -1630,6 +1635,26 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddPropertyAccessorsIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddPropertyGetterIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddPropertySetterIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.MoveMemberToTopLevelIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupPath="Kotlin"
@@ -1645,6 +1670,15 @@
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReformatInspection"
+                     displayName="File is not formatted according to project settings"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="false"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 
@@ -1716,6 +1750,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -1842,7 +1877,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocMissingDocumentationInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.kdoc.KDocMissingDocumentationInspection"
                      displayName="Missing KDoc comments for public declarations"
                      groupPath="Kotlin"
                      groupName="Other problems"
@@ -1928,7 +1963,7 @@
                      displayName="Use destructuring declaration"
                      groupPath="Kotlin"
                      groupName="Style issues"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      cleanupTool="false"
                      level="INFO"
                      language="kotlin"
@@ -2096,6 +2131,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2105,6 +2141,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="INFO"
                      language="kotlin"
     />
@@ -2178,6 +2215,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2187,6 +2225,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2322,6 +2361,7 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="INFO"
                      language="kotlin"
     />
@@ -2448,6 +2488,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2547,6 +2588,7 @@
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2559,6 +2601,92 @@
                      level="WEAK WARNING"
                      language="kotlin"
     />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantGetterInspection"
+                     displayName="Redundant property getter"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSetterInspection"
+                     displayName="Redundant property setter"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MigrateDiagnosticSuppressionInspection"
+                     displayName="Diagnostic name should be replaced"
+                     groupPath="Kotlin"
+                     groupName="Other problems"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+	<localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitThisInspection"
+                     displayName="Redundant explicit 'this'"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ImplicitThisInspection"
+                     displayName="Implicit 'this'"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantUnitExpressionInspection"
+                     displayName="Redundant 'Unit'"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SelfAssignmentInspection"
+                     displayName="Assignment of variable to itself"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ImplicitNullableNothingTypeInspection"
+                     displayName="Implicit `Nothing?` type"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimplifyWhenWithBooleanConstantConditionInspection"
+                     displayName="Simplifiable 'when'"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
@@ -2581,10 +2709,12 @@
     <indexedRootsProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptDependenciesIndexableSetContributor"/>
     <psi.clsCustomNavigationPolicy implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependencySourceNavigationPolicyForJavaClasses"/>
     <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptResolveScopeProvider"/>
-    <projectOpenProcessor implementation="org.jetbrains.kotlin.gradle.GradleKotlinDSLProjectOpenProcessor"/>
-    <projectImportProvider implementation="org.jetbrains.kotlin.gradle.GradleKotlinDSLProjectImportProvider"/>
+    <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesResolveScopeProvider"/>
 
     <codeInsight.intention.jvmCommonIntentionActionsFactory language="kotlin" implementationClass="org.jetbrains.kotlin.idea.intentions.KotlinCommonIntentionActionsFactory"/>
+
+    <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService"
+                  serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.uast">
@@ -2596,12 +2726,10 @@
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensionPoints>
-    <xi:include href="extensions/common.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
+    <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
-    <xi:include href="extensions/kotlin2jvm.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
-    <xi:include href="extensions/kotlin2js.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
     <quickFixContributor implementation="org.jetbrains.kotlin.idea.quickfix.QuickFixRegistrar"/>
 
     <declarationAttributeAltererExtension implementation="org.jetbrains.kotlin.allopen.ide.IdeAllOpenDeclarationAttributeAltererExtension"/>
@@ -2610,7 +2738,6 @@
 
     <expressionCodegenExtension implementation="org.jetbrains.kotlin.noarg.NoArgExpressionCodegenExtension"/>
     <storageComponentContainerContributor implementation="org.jetbrains.kotlin.noarg.ide.IdeNoArgComponentContainerContributor"/>
-    <defaultErrorMessages implementation="org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg"/>
     <versionInfoProvider implementation="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProviderByModuleDependencies"/>
   </extensions>
 

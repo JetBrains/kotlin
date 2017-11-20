@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.cast
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
@@ -37,7 +37,7 @@ fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostic
     fun getDiagnosticsForFileFacade(file: KtFile): Diagnostics? {
         val project = file.project
         val cache = KtLightClassForFacade.FacadeStubCache.getInstance(project)
-        val facadeFqName = NoResolveFileClassesProvider.getFileClassInfo(file).facadeClassFqName
+        val facadeFqName = JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
         return cache[facadeFqName, moduleScope].value?.extraDiagnostics
     }
 
@@ -51,7 +51,7 @@ fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostic
 
     fun doGetDiagnostics(): Diagnostics? {
         //TODO: enable this diagnostic when light classes for scripts are ready
-        if ((element.containingFile as? KtFile)?.isScript ?: false) return null
+        if ((element.containingFile as? KtFile)?.isScript() ?: false) return null
 
         var parent = element.parent
         if (element is KtPropertyAccessor) {

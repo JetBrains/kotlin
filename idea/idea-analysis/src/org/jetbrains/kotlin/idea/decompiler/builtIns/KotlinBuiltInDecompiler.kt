@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
 import java.io.ByteArrayInputStream
 
 class KotlinBuiltInDecompiler : KotlinMetadataDecompiler<BuiltInsBinaryVersion>(
-        KotlinBuiltInFileType, TargetPlatform.Default, BuiltInSerializerProtocol,
+        KotlinBuiltInFileType, TargetPlatform.Common, BuiltInSerializerProtocol,
         FlexibleTypeDeserializer.ThrowException, BuiltInsBinaryVersion.INSTANCE, BuiltInsBinaryVersion.INVALID_VERSION,
         KotlinStubVersions.BUILTIN_STUB_VERSION
 ) {

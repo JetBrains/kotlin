@@ -58,6 +58,7 @@ class KotlinColorSettingsPage : ColorSettingsPage, RainbowColorSettingsPage {
         <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>
         dyn.<DYNAMIC_FUNCTION_CALL>dynamicCall</DYNAMIC_FUNCTION_CALL>()
         dyn.<DYNAMIC_PROPERTY_CALL>dynamicProp</DYNAMIC_PROPERTY_CALL> = 5
+        val <LOCAL_VARIABLE>klass</LOCAL_VARIABLE> = <CLASS>MyClass</CLASS>::<KEYWORD>class</KEYWORD>
     }
 
     <BUILTIN_ANNOTATION>override</BUILTIN_ANNOTATION> fun hashCode(): Int {
@@ -123,6 +124,8 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
                        OptionsBundle.message("options.java.attribute.descriptor.brackets") to KotlinHighlightingColors.BRACKETS,
                        OptionsBundle.message("options.java.attribute.descriptor.comma") to KotlinHighlightingColors.COMMA,
                        OptionsBundle.message("options.java.attribute.descriptor.semicolon") to KotlinHighlightingColors.SEMICOLON,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.colon") to KotlinHighlightingColors.COLON,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.double.colon") to KotlinHighlightingColors.DOUBLE_COLON,
                        OptionsBundle.message("options.java.attribute.descriptor.dot") to KotlinHighlightingColors.DOT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.safe.access") to KotlinHighlightingColors.SAFE_ACCESS,
                        OptionsBundle.message("options.java.attribute.descriptor.line.comment") to KotlinHighlightingColors.LINE_COMMENT,

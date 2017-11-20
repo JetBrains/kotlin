@@ -19,13 +19,22 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.types.KotlinType
 
-abstract class AccessorForPropertyBackingField(property: PropertyDescriptor,
-                                               type: KotlinType,
-                                               receiverType: KotlinType?,
-                                               dispatchReceiver: ReceiverParameterDescriptor?,
-                                               containingDeclaration: DeclarationDescriptor,
-                                               suffix: String
-) : AccessorForPropertyDescriptor(property, type, receiverType, dispatchReceiver, containingDeclaration, null, suffix)
+class AccessorForPropertyBackingField(
+        property: PropertyDescriptor,
+        containingDeclaration: DeclarationDescriptor,
+        delegateType: KotlinType?,
+        extensionReceiverParameter: ReceiverParameterDescriptor?,
+        dispatchReceiverParameter: ReceiverParameterDescriptor?,
+        nameSuffix: String,
+        val fieldAccessorKind: FieldAccessorKind
+) : AccessorForPropertyDescriptor(
+        property,
+        delegateType ?: property.type,
+        extensionReceiverParameter?.type,
+        dispatchReceiverParameter,
+        containingDeclaration,
+        null,
+        nameSuffix
+)

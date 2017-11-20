@@ -82,13 +82,13 @@ enum class HintType(desc: String, enabled: Boolean) {
     },
     PARAMETER_HINT("Show argument name hints", true) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
-            (elem as? KtCallExpression)?.let {
+            (elem as? KtCallElement)?.let {
                 return provideArgumentNameHints(it)
             }
             return emptyList()
         }
 
-        override fun isApplicable(elem: PsiElement): Boolean = elem is KtCallExpression
+        override fun isApplicable(elem: PsiElement): Boolean = elem is KtCallElement
     };
 
     companion object {
@@ -122,7 +122,7 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
     override fun getHintInfo(element: PsiElement): HintInfo? {
         val hintType = HintType.resolve(element) ?: return null
         return when (hintType) {
-            HintType.PARAMETER_HINT -> (element as? KtCallExpression)?.let { getMethodInfo(it) }
+            HintType.PARAMETER_HINT -> (element as? KtCallElement)?.let { getMethodInfo(it) }
             else -> HintInfo.OptionInfo(hintType.option)
         }
     }
@@ -138,7 +138,7 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         super.getInlayPresentation(inlayText)
     }
 
-    private fun getMethodInfo(elem: KtCallExpression): HintInfo.MethodInfo? {
+    private fun getMethodInfo(elem: KtCallElement): HintInfo.MethodInfo? {
         val ctx = elem.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = elem.getResolvedCall(ctx)
         val resolvedCallee = resolvedCall?.candidateDescriptor

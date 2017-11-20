@@ -16,14 +16,6 @@
 
 package org.jetbrains.kotlin.android.parcel
 
-import org.junit.Test
-import org.junit.runner.RunWith
-//import org.robolectric.RobolectricTestRunner
-//import org.robolectric.annotation.Config
-
-// This class is not generated because it uses the custom test runner
-//@RunWith(RobolectricTestRunner::class)
-//@Config(manifest = Config.NONE)
 class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testSimple() = doTest("simple")
     fun testPrimitiveTypes() = doTest("primitiveTypes")
@@ -46,4 +38,12 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testEnums() = doTest("enums")
     fun testObjects() = doTest("objects")
     fun testNestedParcelable() = doTest("nestedParcelable")
+    fun testKt19749() = doTest("kt19749")
+    fun testKt19747() = doTest("kt19747")
+    fun testKt19747_2() = doTest("kt19747_2")
+    fun test20002() = doTest("kt20002")
+    fun test20021() = doTest("kt20021")
+    fun testCustomSerializerSimple() = doTest("customSerializerSimple")
+    fun testCustomSerializerWriteWith() = doTest("customSerializerWriteWith")
+    fun testCustomSerializerBoxing() = doTest("customSerializerBoxing")
 }

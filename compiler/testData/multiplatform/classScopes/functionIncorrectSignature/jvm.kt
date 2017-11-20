@@ -1,3 +1,3 @@
-impl class Foo {
-    impl fun function(b: ByteArray): Long = b.size.toLong()
+actual class Foo {
+    actual fun function(b: ByteArray): Long = b.size.toLong()
 }

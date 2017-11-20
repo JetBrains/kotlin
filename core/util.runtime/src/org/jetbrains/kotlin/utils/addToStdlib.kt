@@ -138,3 +138,11 @@ fun <T, C : MutableCollection<in T>> Iterable<Iterable<T>>.flattenTo(c: C): C {
     }
     return c
 }
+
+inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapToNullable(destination: C, transform: (T) -> Iterable<R>?): C? {
+    for (element in this) {
+        val list = transform(element) ?: return null
+        destination.addAll(list)
+    }
+    return destination
+}

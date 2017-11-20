@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -226,8 +226,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                         context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope),
                         receiver, expression, name
                 );
-        KotlinType assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors,
-                                                                                            context.contextDependency);
+        KotlinType assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors, context);
 
         OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors;
         KotlinType binaryOperationType;
@@ -243,7 +242,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                     receiver, expression, counterpartName
             );
 
-            binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context.contextDependency);
+            binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context);
         }
         else {
             binaryOperationDescriptors = OverloadResolutionResultsImpl.nameNotFound();

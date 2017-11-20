@@ -68,6 +68,10 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testAutoPopupInStringTemplateAfterDollar() {
+        doTest();
+    }
+
     public void testNoAutoPopupInStringTemplateAfterSpace() {
         doTest();
     }

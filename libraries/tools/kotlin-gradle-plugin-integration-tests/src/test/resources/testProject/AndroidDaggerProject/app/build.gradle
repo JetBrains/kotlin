@@ -51,3 +51,7 @@ dependencies {
 kapt {
     generateStubs = true
 }
+
+androidExtensions {
+    experimental = true
+}

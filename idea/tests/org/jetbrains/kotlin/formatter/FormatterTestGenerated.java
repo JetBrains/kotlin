@@ -68,6 +68,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ArrayLiteral.after.kt")
+        public void testArrayLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ArrayLiteral.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("BinaryExpressionAlignmentSpread.after.kt")
         public void testBinaryExpressionAlignmentSpread() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionAlignmentSpread.after.kt");
@@ -809,6 +815,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("TryCatchLineBreak.after.kt")
         public void testTryCatchLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/TryCatchLineBreak.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeAliasSpacing.after.kt")
+        public void testTypeAliasSpacing() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/TypeAliasSpacing.after.kt");
             doTest(fileName);
         }
 

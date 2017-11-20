@@ -54,7 +54,7 @@ class KotlinInlineCallableProcessor(
     override fun findUsages(): Array<UsageInfo> {
         if (inlineThisOnly && reference != null) return arrayOf(UsageInfo(reference))
         val usages = runReadAction {
-            val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(myProject), myProject)
+            val searchScope = GlobalSearchScope.projectScope(myProject)
             ReferencesSearch.search(declaration, searchScope)
         }
         return usages.map(::UsageInfo).toTypedArray()

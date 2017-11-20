@@ -50,6 +50,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("AfterClasses_LangLevel11.kt")
+    public void testAfterClasses_LangLevel11() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterClasses_LangLevel11.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AfterDot.kt")
     public void testAfterDot() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterDot.kt");

@@ -1,1 +1,3 @@
-fun getCorD() = if (Math.random() > 0.5) getC() else getD()
+private var cOrDCounter = 0
+
+fun getCorD() = if (cOrDCounter++ % 2 == 0) getC() else getD()

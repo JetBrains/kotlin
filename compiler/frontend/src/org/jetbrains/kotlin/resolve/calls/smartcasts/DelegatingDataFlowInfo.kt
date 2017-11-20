@@ -96,9 +96,14 @@ internal class DelegatingDataFlowInfo private constructor(
             nullability: Nullability,
             languageVersionSettings: LanguageVersionSettings,
             typeInfo: SetMultimap<DataFlowValue, KotlinType>? = null,
-            affectReceiver: Boolean = true
+            affectReceiver: Boolean = true,
+            // TODO: remove me in version 1.3! I'm very dirty hack!
+            // In normal circumstances this should be always true
+            recordUnstable: Boolean = true
     ): Boolean {
-        map.put(value, nullability)
+        if (value.isStable || recordUnstable) {
+            map.put(value, nullability)
+        }
 
         val identifierInfo = value.identifierInfo
         if (affectReceiver && !nullability.canBeNull() &&
@@ -108,7 +113,8 @@ internal class DelegatingDataFlowInfo private constructor(
                     val receiverType = identifierInfo.receiverType
                     if (identifierInfo.safe && receiverType != null) {
                         val receiverValue = DataFlowValue(identifierInfo.receiverInfo, receiverType)
-                        putNullabilityAndTypeInfo(map, receiverValue, nullability, languageVersionSettings, typeInfo)
+                        putNullabilityAndTypeInfo(map, receiverValue, nullability,
+                                                  languageVersionSettings, typeInfo, recordUnstable = recordUnstable)
                     }
                 }
                 is IdentifierInfo.SafeCast -> {
@@ -118,12 +124,16 @@ internal class DelegatingDataFlowInfo private constructor(
                         languageVersionSettings.supportsFeature(LanguageFeature.SafeCastCheckBoundSmartCasts)) {
 
                         val subjectValue = DataFlowValue(identifierInfo.subjectInfo, subjectType)
-                        putNullabilityAndTypeInfo(map, subjectValue, nullability, languageVersionSettings, typeInfo)
-                        typeInfo?.put(subjectValue, targetType)
+                        putNullabilityAndTypeInfo(map, subjectValue, nullability,
+                                                  languageVersionSettings, typeInfo, recordUnstable = false)
+                        if (subjectValue.isStable) {
+                            typeInfo?.put(subjectValue, targetType)
+                        }
                     }
                 }
                 is IdentifierInfo.Variable -> identifierInfo.bound?.let {
-                    putNullabilityAndTypeInfo(map, it, nullability, languageVersionSettings, typeInfo)
+                    putNullabilityAndTypeInfo(map, it, nullability,
+                                              languageVersionSettings, typeInfo, recordUnstable = recordUnstable)
                 }
             }
         }

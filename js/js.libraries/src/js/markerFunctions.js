@@ -25,6 +25,16 @@ Kotlin.defineInlineFunction = function(tag, fun) {
     return fun;
 };
 
+Kotlin.wrapFunction = function(fun) {
+    var f = function() {
+        f = fun();
+        return f.apply(this, arguments);
+    };
+    return function() {
+        return f.apply(this, arguments);
+    };
+};
+
 Kotlin.isTypeOf = function(type) {
     return function (object) {
         return typeof object === type;
@@ -50,4 +60,23 @@ Kotlin.andPredicate = function (a, b) {
 };
 
 Kotlin.kotlinModuleMetadata = function (abiVersion, moduleName, data) {
+};
+
+Kotlin.suspendCall = function(value) {
+    return value;
+};
+
+Kotlin.coroutineResult = function(qualifier) {
+};
+
+Kotlin.coroutineController = function(qualifier) {
+};
+
+Kotlin.coroutineReceiver = function(qualifier) {
+};
+
+Kotlin.getFunctionById = function(id, defaultValue) {
+    return function() {
+        return defaultValue;
+    }
 };

@@ -17,25 +17,25 @@ L0:
   2 mark({ "before" val bar = object { init { val x = 1 } fun foo() { val a = 2 } } "after" })
     mark("before")
     r("before") -> <v0>
-    v(val bar = object { init { val x = 1 } fun foo() { val a = 2 } })                            INIT: in: {} out: {bar=D}
-    mark(object { init { val x = 1 } fun foo() { val a = 2 } })                                   INIT: in: {bar=D} out: {bar=D}
+    v(val bar = object { init { val x = 1 } fun foo() { val a = 2 } })                            INIT: in: {} out: {}
+    mark(object { init { val x = 1 } fun foo() { val a = 2 } })                                   INIT: in: {} out: {}
   3 mark({ val x = 1 })
-    v(val x = 1)                                                                                  INIT: in: {bar=D} out: {bar=D, x=D}
-    r(1) -> <v1>                                                                                  INIT: in: {bar=D, x=D} out: {bar=D, x=D}
-    w(x|<v1>)                                                                                     INIT: in: {bar=D, x=D} out: {bar=D, x=ID}
-  2 jmp?(L2)                                                                                      INIT: in: {bar=D} out: {bar=D}
-    d(fun foo() { val a = 2 })                                                                    INIT: in: {bar=I?} out: {bar=I?}
+    v(val x = 1)                                                                                  INIT: in: {} out: {}
+    r(1) -> <v1>                                                                                  INIT: in: {} out: {}
+    w(x|<v1>)                                                                                     INIT: in: {} out: {}
+  2 jmp?(L2)                                                                                      INIT: in: {} out: {}
+    d(fun foo() { val a = 2 })                                                                    INIT: in: {} out: {}
 L2 [after local declaration]:
-    r(object { init { val x = 1 } fun foo() { val a = 2 } }) -> <v2>                              INIT: in: {bar=D} out: {bar=D}
-    w(bar|<v2>)                                                                                   INIT: in: {bar=D} out: {bar=ID}
-    mark("after")                                                                                 INIT: in: {bar=ID} out: {bar=ID}
+    r(object { init { val x = 1 } fun foo() { val a = 2 } }) -> <v2>
+    w(bar|<v2>)                                                                                   INIT: in: {} out: {}
+    mark("after")                                                                                 INIT: in: {} out: {}
     r("after") -> <v3>
 L1:
-  1 <END>                                                                                         INIT: in: {} out: {}
+  1 <END>
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                                                     USE: in: {} out: {}
+    <SINK>                                                                                                                USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {
@@ -43,15 +43,15 @@ fun foo() {
         }
 ---------------------
 L3:
-  3 <START>                INIT: in: {bar=D} out: {bar=D}
+  3 <START>                INIT: in: {} out: {}
   4 mark({ val a = 2 })
-    v(val a = 2)           INIT: in: {bar=D} out: {a=D, bar=D}
-    r(2) -> <v0>           INIT: in: {a=D, bar=D} out: {a=D, bar=D}
-    w(a|<v0>)              INIT: in: {a=D, bar=D} out: {a=ID, bar=D}
+    v(val a = 2)           INIT: in: {} out: {}
+    r(2) -> <v0>           INIT: in: {} out: {}
+    w(a|<v0>)              INIT: in: {} out: {}
 L4:
-  3 <END>                  INIT: in: {bar=D} out: {bar=D}
+  3 <END>                  INIT: in: {} out: {}
 error:
-    <ERROR>                INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                 INIT: in: {bar=I?} out: {bar=I?}             USE: in: {} out: {}
+    <SINK>                                         USE: in: {} out: {}
 =====================

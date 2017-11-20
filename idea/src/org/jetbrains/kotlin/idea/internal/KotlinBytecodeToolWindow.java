@@ -34,7 +34,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.java.decompiler.IdeaLogger;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory;
@@ -213,7 +212,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                         try {
                             KotlinDecompilerAdapterKt.showDecompiledCode(file);
                         }
-                        catch (IdeaLogger.InternalException ex) {
+                        catch (DecompileFailedException ex) {
                             LOG.info(ex);
                             Messages.showErrorDialog(myProject, "Failed to decompile " + file.getName() + ": " + ex, "Kotlin Bytecode Decompiler");
                         }

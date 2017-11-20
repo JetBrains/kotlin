@@ -88,6 +88,27 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
         currentBlock = jointBlock
     }
 
+    override fun visit(x: JsSwitch) = splitIfNecessary(x) {
+        val switchBlock = currentBlock
+        val jointBlock = CoroutineBlock()
+
+        withBreakAndContinue(x, jointBlock, null) {
+            for (jsCase in x.cases) {
+                val caseBlock = CoroutineBlock()
+                currentBlock = caseBlock
+
+                jsCase.statements.forEach { accept(it) }
+                currentBlock.statements += stateAndJump(jointBlock, x)
+
+                jsCase.statements.clear()
+                jsCase.statements += caseBlock.statements
+            }
+        }
+        switchBlock.statements += x
+
+        currentBlock = jointBlock
+    }
+
     override fun visitLabel(x: JsLabel) {
         val inner = x.statement
         when (inner) {
@@ -338,6 +359,10 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
         currentStatements += x
     }
 
+    override fun visitDebugger(x: JsDebugger) {
+        currentStatements += x
+    }
+
     private fun handleExpression(expression: JsExpression): JsExpression? {
         val assignment = JsAstUtils.decomposeAssignment(expression)
         if (assignment != null) {
@@ -366,7 +391,7 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
         val invocationStatement = JsAstUtils.assignment(resultRef, invocation).makeStmt()
         val suspendCondition = JsAstUtils.equality(resultRef.deepCopy(), context.metadata.suspendObjectRef.deepCopy()).source(psi)
         val suspendIfNeeded = JsIf(suspendCondition, JsReturn(context.metadata.suspendObjectRef.deepCopy().source(psi)))
-        currentStatements += listOf(invocationStatement, suspendIfNeeded, JsBreak().apply { source = psi })
+        currentStatements += listOf(invocationStatement, suspendIfNeeded, JsContinue().apply { source = psi })
         currentBlock = nextBlock
     }
 

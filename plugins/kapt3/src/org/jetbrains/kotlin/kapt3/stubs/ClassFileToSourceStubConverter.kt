@@ -25,6 +25,8 @@ import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
@@ -32,7 +34,13 @@ import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -202,7 +210,7 @@ class ClassFileToSourceStubConverter(
 
         val modifiers = convertModifiers(flags,
                 if (isEnum) ElementKind.ENUM else ElementKind.CLASS,
-                packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations)
+                packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations, descriptor.annotations)
 
         val isDefaultImpls = clazz.name.endsWith("${descriptor.name.asString()}\$DefaultImpls")
                              && isPublic(clazz.access) && isFinal(clazz.access)
@@ -360,7 +368,8 @@ class ClassFileToSourceStubConverter(
         val origin = kaptContext.origins[field]
         val descriptor = origin?.descriptor
 
-        val modifiers = convertModifiers(field.access, ElementKind.FIELD, packageFqName, field.visibleAnnotations, field.invisibleAnnotations)
+        val modifiers = convertModifiers(field.access, ElementKind.FIELD, packageFqName,
+                                         field.visibleAnnotations, field.invisibleAnnotations, descriptor?.annotations ?: Annotations.EMPTY)
         val name = getValidIdentifierName(field.name) ?: return null
         val type = Type.getType(field.desc)
 
@@ -410,7 +419,7 @@ class ClassFileToSourceStubConverter(
                     (method.access.toLong() and VISIBILITY_MODIFIERS.inv())
                 else
                     method.access.toLong(),
-                ElementKind.METHOD, packageFqName, visibleAnnotations, method.invisibleAnnotations)
+                ElementKind.METHOD, packageFqName, visibleAnnotations, method.invisibleAnnotations, descriptor.annotations)
 
         val asmReturnType = Type.getReturnType(method.desc)
         val jcReturnType = if (isConstructor) null else treeMaker.Type(asmReturnType)
@@ -432,7 +441,8 @@ class ClassFileToSourceStubConverter(
                     ElementKind.PARAMETER,
                     packageFqName,
                     info.visibleAnnotations,
-                    info.invisibleAnnotations)
+                    info.invisibleAnnotations,
+                    Annotations.EMPTY /* TODO */)
 
             val name = treeMaker.name(getValidIdentifierName(info.name) ?: "p${index}_" + info.name.hashCode().ushr(1))
             val type = treeMaker.Type(info.type)
@@ -550,7 +560,7 @@ class ClassFileToSourceStubConverter(
         return name.pathSegments().all { getValidIdentifierName(it.asString(), false) != null }
     }
 
-    fun getValidIdentifierName(name: String, canBeConstructor: Boolean = false): String? {
+    private fun getValidIdentifierName(name: String, canBeConstructor: Boolean = false): String? {
         if (canBeConstructor && name == "<init>") {
             return name
         }
@@ -573,21 +583,28 @@ class ClassFileToSourceStubConverter(
             kind: ElementKind,
             packageFqName: String,
             visibleAnnotations: List<AnnotationNode>?,
-            invisibleAnnotations: List<AnnotationNode>?
-    ): JCModifiers = convertModifiers(access.toLong(), kind, packageFqName, visibleAnnotations, invisibleAnnotations)
+            invisibleAnnotations: List<AnnotationNode>?,
+            descriptorAnnotations: Annotations
+    ): JCModifiers = convertModifiers(access.toLong(), kind, packageFqName, visibleAnnotations, invisibleAnnotations, descriptorAnnotations)
 
     private fun convertModifiers(
             access: Long,
             kind: ElementKind,
             packageFqName: String,
             visibleAnnotations: List<AnnotationNode>?,
-            invisibleAnnotations: List<AnnotationNode>?
+            invisibleAnnotations: List<AnnotationNode>?,
+            descriptorAnnotations: Annotations
     ): JCModifiers {
+        fun findDescriptorAnnotation(anno: AnnotationNode): AnnotationDescriptor? {
+            val annoFqName = treeMaker.getQualifiedName(Type.getType(anno.desc))
+            return descriptorAnnotations.findAnnotation(FqName(annoFqName))
+        }
+
         var annotations = visibleAnnotations?.fold(JavacList.nil<JCAnnotation>()) { list, anno ->
-            convertAnnotation(anno, packageFqName)?.let { list.prepend(it) } ?: list
+            convertAnnotation(anno, packageFqName, findDescriptorAnnotation(anno))?.let { list.prepend(it) } ?: list
         } ?: JavacList.nil()
         annotations = invisibleAnnotations?.fold(annotations) { list, anno ->
-            convertAnnotation(anno, packageFqName)?.let { list.prepend(it) } ?: list
+            convertAnnotation(anno, packageFqName, findDescriptorAnnotation(anno))?.let { list.prepend(it) } ?: list
         } ?: annotations
 
         val flags = when (kind) {
@@ -601,7 +618,12 @@ class ClassFileToSourceStubConverter(
         return treeMaker.Modifiers(flags, annotations)
     }
 
-    private fun convertAnnotation(annotation: AnnotationNode, packageFqName: String? = "", filtered: Boolean = true): JCAnnotation? {
+    private fun convertAnnotation(
+            annotation: AnnotationNode,
+            packageFqName: String? = "",
+            annotationDescriptor: AnnotationDescriptor? = null,
+            filtered: Boolean = true
+    ): JCAnnotation? {
         val annotationType = Type.getType(annotation.desc)
         val fqName = treeMaker.getQualifiedName(annotationType)
 
@@ -609,13 +631,133 @@ class ClassFileToSourceStubConverter(
             if (BLACKLISTED_ANNOTATIONS.any { fqName.startsWith(it) }) return null
         }
 
+        val ktAnnotation = (annotationDescriptor?.source as? PsiSourceElement)?.psi as? KtAnnotationEntry
+        val argMapping = ktAnnotation?.calleeExpression
+                ?.getResolvedCall(kaptContext.bindingContext)?.valueArguments
+                ?.mapKeys { it.key.name.asString() }
+                ?: emptyMap()
+
         val useSimpleName = '.' in fqName && fqName.substringBeforeLast('.', "") == packageFqName
-        val name = if (useSimpleName) treeMaker.FqName(fqName.substring(packageFqName!!.length + 1)) else treeMaker.Type(annotationType)
-        val values = mapPairedValuesJList<JCExpression>(annotation.values) { key, value ->
-            val name = getValidIdentifierName(key) ?: return@mapPairedValuesJList null
-            treeMaker.Assign(treeMaker.SimpleName(name), convertLiteralExpression(value))
+
+        val annotationFqName = when {
+            useSimpleName -> treeMaker.FqName(fqName.substring(packageFqName!!.length + 1))
+            else -> treeMaker.Type(annotationType)
         }
-        return treeMaker.Annotation(name, values)
+
+        val constantValues = pairedListToMap(annotation.values)
+
+        val values = if (argMapping.isNotEmpty()) {
+            argMapping.mapNotNull { (parameterName, arg) ->
+                if (arg is DefaultValueArgument) return@mapNotNull null
+                convertAnnotationArgumentWithName(constantValues[parameterName], arg, parameterName)
+            }
+        } else {
+            constantValues.mapNotNull { (parameterName, arg) ->
+                convertAnnotationArgumentWithName(arg, null, parameterName)
+            }
+        }
+
+        return treeMaker.Annotation(annotationFqName, JavacList.from(values))
+    }
+
+    private fun convertAnnotationArgumentWithName(constantValue: Any?, value: ResolvedValueArgument?, name: String): JCExpression? {
+        val validName = getValidIdentifierName(name) ?: return null
+        val expr = convertAnnotationArgument(constantValue, value) ?: return null
+        return treeMaker.Assign(treeMaker.SimpleName(validName), expr)
+    }
+
+    private fun convertAnnotationArgument(constantValue: Any?, value: ResolvedValueArgument?): JCExpression? {
+        val args = value?.arguments?.mapNotNull { it.getArgumentExpression() } ?: emptyList()
+        val singleArg by lazy { args.singleOrNull() }
+
+        if (constantValue is Int) {
+            // This may be a resource identifier, we should not inline the id int
+            tryParseReferenceToAndroidResource(singleArg)?.let { return it }
+        }
+
+        fun tryParseTypeExpression(expression: KtExpression?): JCExpression? {
+            return when (expression) {
+                is KtSimpleNameExpression -> treeMaker.SimpleName(expression.getReferencedName())
+                is KtDotQualifiedExpression -> {
+                    val selector = expression.selectorExpression as? KtSimpleNameExpression ?: return null
+                    val receiver = tryParseTypeExpression(expression.receiverExpression) ?: return null
+                    return treeMaker.Select(receiver, treeMaker.name(selector.getReferencedName()))
+                }
+                else -> null
+            }
+        }
+
+        fun tryParseTypeLiteralExpression(expression: KtExpression?): JCExpression? {
+            val literalExpression = expression as? KtClassLiteralExpression ?: return null
+            val typeExpression = tryParseTypeExpression(literalExpression.receiverExpression) ?: return null
+            return treeMaker.Select(typeExpression, treeMaker.name("class"))
+        }
+
+        // Unresolved class literal
+        if (constantValue == null && singleArg is KtClassLiteralExpression) {
+            tryParseTypeLiteralExpression(singleArg)?.let { return it }
+        }
+
+        // Some of class literals in vararg list are unresolved
+        if (args.isNotEmpty() && args[0] is KtClassLiteralExpression && constantValue is List<*> && args.size != constantValue.size) {
+            val literalExpressions = mapJList(args, ::tryParseTypeLiteralExpression)
+            if (literalExpressions.size == args.size) {
+                return treeMaker.NewArray(null, null, literalExpressions)
+            }
+        }
+
+        // Probably arrayOf(SomeUnresolvedType::class, ...)
+        if (constantValue is List<*>) {
+            val callArgs = when (singleArg) {
+                is KtCallExpression -> {
+                    val resultingDescriptor = singleArg.getResolvedCall(kaptContext.bindingContext)?.resultingDescriptor
+
+                    if (resultingDescriptor is FunctionDescriptor && resultingDescriptor.fqNameSafe.asString() == "kotlin.arrayOf")
+                        singleArg.valueArguments.map { it.getArgumentExpression() }
+                    else
+                        null
+                }
+                is KtCollectionLiteralExpression -> singleArg.getInnerExpressions()
+                else -> null
+            }
+
+            // So we make sure something is absent in the constant value
+            if (callArgs != null && callArgs.size != constantValue.size) {
+                val literalExpressions = mapJList(callArgs, ::tryParseTypeLiteralExpression)
+                if (literalExpressions.size == callArgs.size) {
+                    return treeMaker.NewArray(null, null, literalExpressions)
+                }
+            }
+        }
+
+        return convertLiteralExpression(constantValue)
+    }
+
+    private fun tryParseReferenceToAndroidResource(expression: KtExpression?): JCExpression? {
+        val bindingContext = kaptContext.bindingContext
+
+        val expressionToResolve = when (expression) {
+            is KtDotQualifiedExpression -> expression.selectorExpression
+            else -> expression
+        }
+
+        val resolvedCall = expressionToResolve.getResolvedCall(bindingContext) ?: return null
+        val fqName = resolvedCall.resultingDescriptor.fqNameOrNull() ?: return null
+        val jcExpression = treeMaker.FqName(fqName)
+
+        return if (doesLookLikeAndroidIdentifier(jcExpression)) jcExpression else null
+    }
+
+    private fun doesLookLikeAndroidIdentifier(expression: JCExpression): Boolean {
+        // 'expression' here is always a fqName, so we can forget about imports here
+        val rId = (expression as? JCFieldAccess)?.selected ?: return false
+        val r = (rId as? JCFieldAccess)?.selected ?: return false
+
+        return when {
+            r is JCIdent && r.name.toString() == "R" -> true
+            r is JCFieldAccess && r.name.toString() == "R" -> true
+            else -> false
+        }
     }
 
     private fun convertValueOfPrimitiveTypeOrString(value: Any?): JCExpression? {

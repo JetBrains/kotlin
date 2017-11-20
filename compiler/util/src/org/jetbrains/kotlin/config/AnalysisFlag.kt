@@ -39,8 +39,8 @@ class AnalysisFlag<out T> internal constructor(
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, false)
         }
 
-        object Jsr305StateIgnoreByDefault {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, Jsr305State.IGNORE)
+        object Jsr305StateWarnByDefault {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, Jsr305State.DEFAULT)
         }
     }
 
@@ -49,9 +49,12 @@ class AnalysisFlag<out T> internal constructor(
         val skipMetadataVersionCheck by Flag.Boolean
 
         @JvmStatic
-        val multiPlatformDoNotCheckImpl by Flag.Boolean
+        val multiPlatformDoNotCheckActual by Flag.Boolean
 
         @JvmStatic
-        val jsr305GlobalState by Flag.Jsr305StateIgnoreByDefault
+        val jsr305 by Flag.Jsr305StateWarnByDefault
+
+        @JvmStatic
+        val allowKotlinPackage by Flag.Boolean
     }
 }

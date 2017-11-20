@@ -55,16 +55,14 @@ Kotlin.isArrayish = function (a) {
 };
 
 Kotlin.arrayToString = function (a) {
-    return "[" + a.map(Kotlin.toString).join(", ") + "]";
+    var toString = Kotlin.isCharArray(a) ? String.fromCharCode : Kotlin.toString;
+    return "[" + Array.prototype.map.call(a, function(e) { return toString(e); }).join(", ") + "]";
 };
 
 Kotlin.arrayDeepToString = function (a, visited) {
     visited = visited || [a];
-    var toString = Kotlin.toString;
-    if (Kotlin.isCharArray(a)) {
-        toString = String.fromCharCode;
-    }
-    return "[" + a.map(function (e) {
+    var toString = Kotlin.isCharArray(a) ? String.fromCharCode : Kotlin.toString;
+    return "[" + Array.prototype.map.call(a, function (e) {
             if (Kotlin.isArrayish(e) && visited.indexOf(e) < 0) {
                 visited.push(e);
                 var result = Kotlin.arrayDeepToString(e, visited);

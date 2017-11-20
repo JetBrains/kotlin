@@ -18,6 +18,6 @@ package org.jetbrains.kotlin.gradle.utils
 
 import java.util.*
 
-// Based on org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfoRt from Intellij platform
+// Based on com.intellij.openapi.util.SystemInfoRt from Intellij platform
 internal val isWindows: Boolean =
         System.getProperty("os.name")?.toLowerCase(Locale.US)?.startsWith("windows") ?: false

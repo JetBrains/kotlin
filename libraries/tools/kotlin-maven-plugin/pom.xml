@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -119,9 +119,15 @@
                         <version>2.0.0</version>
                         <configuration>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <properties>
+                                <kotlin.version>${project.version}</kotlin.version>
+                            </properties>
                             <settingsFile>src/it/settings.xml</settingsFile>
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                             <postBuildHookScript>verify</postBuildHookScript> <!-- no extension required -->
+                            <scriptVariables>
+                                <kotlinVersion>${project.version}</kotlinVersion>
+                            </scriptVariables>
                         </configuration>
                         <executions>
                             <execution>

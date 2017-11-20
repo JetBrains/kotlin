@@ -39,7 +39,7 @@ import kotlin.reflect.KClass
 class KotlinJsr223JvmDaemonCompileScriptEngine(
         disposable: Disposable,
         factory: ScriptEngineFactory,
-        compilerJar: File,
+        compilerClasspath: List<File>,
         templateClasspath: List<File>,
         templateClassName: String,
         val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
@@ -47,7 +47,7 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
         compilerOut: OutputStream = System.err
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
-    private val daemon by lazy { connectToCompileService(compilerJar) }
+    private val daemon by lazy { connectToCompileService(compilerClasspath) }
 
     override val replCompiler by lazy {
         daemon.let {
@@ -73,8 +73,8 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
 
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context, scriptArgsTypes)
 
-    private fun connectToCompileService(compilerJar: File): CompileService {
-        val compilerId = CompilerId.makeCompilerId(compilerJar)
+    private fun connectToCompileService(compilerCP: List<File>): CompileService {
+        val compilerId = CompilerId.makeCompilerId(*compilerCP.toTypedArray())
         val daemonOptions = configureDaemonOptions()
         val daemonJVMOptions = DaemonJVMOptions()
 

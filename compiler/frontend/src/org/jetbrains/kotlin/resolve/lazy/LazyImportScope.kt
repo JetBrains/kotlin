@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import java.util.*
 
 interface IndexedImports {
@@ -81,7 +82,8 @@ class LazyImportResolver(
         val indexedImports: IndexedImports,
         excludedImportNames: Collection<FqName>,
         private val traceForImportResolve: BindingTrace,
-        private val packageFragment: PackageFragmentDescriptor
+        private val packageFragment: PackageFragmentDescriptor?,
+        val deprecationResolver: DeprecationResolver
 ) : ImportResolver {
     private val importedScopesProvider = storageManager.createMemoizedFunctionWithNullableValues {
         directive: KtImportDirective ->
@@ -190,6 +192,19 @@ class LazyImportResolver(
     fun getImportScope(directive: KtImportDirective): ImportingScope {
         return importedScopesProvider(directive) ?: ImportingScope.Empty
     }
+
+    val allNames: Set<Name>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        indexedImports.imports.flatMapToNullable(hashSetOf()) { getImportScope(it).computeImportedNames() }
+    }
+
+    fun definitelyDoesNotContainName(name: Name) = allNames?.let { name !in it } == true
+
+    fun recordLookup(name: Name, location: LookupLocation) {
+        if (allNames == null) return
+        indexedImports.importsForName(name).forEach {
+            getImportScope(it).recordLookup(name, location)
+        }
+    }
 }
 
 class LazyImportScope(
@@ -208,7 +223,7 @@ class LazyImportScope(
     private fun isClassifierVisible(descriptor: ClassifierDescriptor): Boolean {
         if (filteringKind == FilteringKind.ALL) return true
 
-        if (descriptor.isHiddenInResolution(importResolver.languageVersionSettings)) return false
+        if (importResolver.deprecationResolver.isHiddenInResolution(descriptor)) return false
 
         val visibility = (descriptor as DeclarationDescriptorWithVisibility).visibility
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
@@ -268,4 +283,12 @@ class LazyImportScope(
         p.popIndent()
         p.println("}")
     }
+
+    override fun definitelyDoesNotContainName(name: Name) = importResolver.definitelyDoesNotContainName(name)
+
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        importResolver.recordLookup(name, location)
+    }
+
+    override fun computeImportedNames() = importResolver.allNames
 }

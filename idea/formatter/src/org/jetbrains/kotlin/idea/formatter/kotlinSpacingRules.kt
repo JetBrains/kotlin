@@ -98,6 +98,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             inPosition(left = PROPERTY, right = FUN).emptyLinesIfLineBreakInLeft(1)
             inPosition(left = FUN, right = PROPERTY).emptyLinesIfLineBreakInLeft(1)
             inPosition(left = SECONDARY_CONSTRUCTOR, right = SECONDARY_CONSTRUCTOR).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = TYPEALIAS, right = TYPEALIAS).emptyLinesIfLineBreakInLeft(1)
 
             // Case left for alternative constructors
             inPosition(left = FUN, right = CLASS).emptyLinesIfLineBreakInLeft(1)
@@ -123,12 +124,18 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     null
                 }
                 else {
-                    Spacing.createDependentLFSpacing(
-                            0, 0,
-                            TextRange(parentPsi.textRange.startOffset, left.node.psi.textRange.startOffset),
+                    val minLineFeeds = if (right.node.elementType == FUN || right.node.elementType == PROPERTY)
+                        1
+                    else
+                        0
+
+                    builderUtil.createLineFeedDependentSpacing(
+                            1, 1, minLineFeeds,
                             settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_DECLARATIONS,
+                            TextRange(parentPsi.textRange.startOffset, left.node.psi.textRange.startOffset),
                             DependentSpacingRule(DependentSpacingRule.Trigger.HAS_LINE_FEEDS)
-                                .registerData(DependentSpacingRule.Anchor.MIN_LINE_FEEDS, commonCodeStyleSettings.BLANK_LINES_AFTER_CLASS_HEADER + 1))
+                                .registerData(DependentSpacingRule.Anchor.MIN_LINE_FEEDS, commonCodeStyleSettings.BLANK_LINES_AFTER_CLASS_HEADER + 1)
+                    )
                 }
             }
 
@@ -172,6 +179,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             between(OBJECT_DECLARATION, DECLARATIONS).blankLines(1)
             between(SECONDARY_CONSTRUCTOR, DECLARATIONS).blankLines(1)
             between(CLASS_INITIALIZER, DECLARATIONS).blankLines(1)
+
+            // TYPEALIAS - TYPEALIAS is an exception
+            between(TYPEALIAS, DECLARATIONS).blankLines(1)
 
             // ENUM_ENTRY - ENUM_ENTRY is exception
             between(ENUM_ENTRY, DECLARATIONS).blankLines(1)
@@ -313,6 +323,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(IDENTIFIER, PROPERTY_DELEGATE, PROPERTY).spaces(1)
 
             before(INDICES).spaces(0)
+            before(WHERE_KEYWORD).spaces(1)
         }
         custom {
 

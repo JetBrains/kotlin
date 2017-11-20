@@ -1,0 +1,10 @@
+package
+
+public fun myEqualsNotNull(/*0*/ x: kotlin.Int?): kotlin.Boolean
+    Returns(TRUE) -> x != null
+
+public fun myEqualsNull(/*0*/ x: kotlin.Int?): kotlin.Boolean
+    Returns(FALSE) -> x != null
+
+public fun testBasicEquals(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun testBasicNotEquals(/*0*/ x: kotlin.Int?): kotlin.Unit

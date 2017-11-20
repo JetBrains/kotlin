@@ -1,7 +1,7 @@
 package test
 
-header class /*rename*/Foo
-header class Bar
+expect class /*rename*/Foo
+expect class Bar
 
 fun test() {
     val foo: Foo = Foo()

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.daemon.common
 
 import java.io.File
 import java.io.Serializable
+import java.util.*
 
 open class CompilationOptions(
         val compilerMode: CompilerMode,
@@ -31,6 +32,16 @@ open class CompilationOptions(
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
+    }
+
+    override fun toString(): String {
+        return "CompilationOptions(" +
+               "compilerMode=$compilerMode, " +
+               "targetPlatform=$targetPlatform, " +
+               "reportCategories=${Arrays.toString(reportCategories)}, " +
+               "reportSeverity=$reportSeverity, " +
+               "requestedCompilationResults=${Arrays.toString(requestedCompilationResults)}" +
+               ")"
     }
 }
 
@@ -48,10 +59,26 @@ class IncrementalCompilationOptions(
         /** @See [ReportSeverity] */
         reportSeverity: Int,
         /** @See [CompilationResultCategory]] */
-        requestedCompilationResults: Array<Int>
+        requestedCompilationResults: Array<Int>,
+        val resultDifferenceFile: File? = null,
+        val friendDifferenceFile: File? = null
 ) : CompilationOptions(compilerMode, targetPlatform, reportCategories, reportSeverity, requestedCompilationResults) {
     companion object {
         const val serialVersionUID: Long = 0
+    }
+
+    override fun toString(): String {
+        return "IncrementalCompilationOptions(" +
+               "super=${super.toString()}, " +
+               "areFileChangesKnown=$areFileChangesKnown, " +
+               "modifiedFiles=$modifiedFiles, " +
+               "deletedFiles=$deletedFiles, " +
+               "workingDir=$workingDir, " +
+               "customCacheVersionFileName='$customCacheVersionFileName', " +
+               "customCacheVersion=$customCacheVersion, " +
+               "resultDifferenceFile=$resultDifferenceFile, " +
+               "friendDifferenceFile=$friendDifferenceFile" +
+               ")"
     }
 }
 

@@ -2,45 +2,57 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header class OuterClass {
-    header class NestedClass {
-        header class DeepNested {
-            header class Another
+expect class OuterClass {
+    class NestedClass {
+        class DeepNested {
+            class Another {
+                fun f(s: String)
+                val p: Int
+            }
         }
     }
 
-    header inner class InnerClass
+    inner class InnerClass {
+        fun f(x: Int)
+        val p: String
+    }
 
-    header companion object
+    companion object
 }
 
-header class OuterClassWithNamedCompanion {
-    header companion object Factory
+expect class OuterClassWithNamedCompanion {
+    companion object Factory
 }
 
-header object OuterObject {
-    header object NestedObject
+expect object OuterObject {
+    object NestedObject
 }
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-impl class OuterClass {
-    impl class NestedClass {
-        impl class DeepNested {
-            impl class Another
+actual class OuterClass {
+    actual class NestedClass {
+        actual class DeepNested {
+            actual class Another {
+                actual fun f(s: String) {}
+                actual val p: Int = 42
+            }
         }
     }
 
-    impl inner class InnerClass
+    actual inner class InnerClass {
+        actual fun f(x: Int) {}
+        actual val p: String = ""
+    }
 
-    impl companion object
+    actual companion object
 }
 
-impl class OuterClassWithNamedCompanion {
-    impl companion object Factory
+actual class OuterClassWithNamedCompanion {
+    actual companion object Factory
 }
 
-impl object OuterObject {
-    impl object NestedObject
+actual object OuterObject {
+    actual object NestedObject
 }

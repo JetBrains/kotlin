@@ -22,6 +22,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -51,25 +52,63 @@ import kotlin.properties.Delegates
 
 const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
-const val USING_INCREMENTAL_COMPILATION_MESSAGE = "Using kotlin incremental compilation"
+const val USING_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin incremental compilation"
+const val USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using experimental Kotlin/JS incremental compilation"
 
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCompile() {
+    // TODO: deprecate and remove
     var compilerJarFile: File? = null
-    internal val compilerJar: File
-        get() = compilerJarFile
-                ?: findKotlinCompilerJar(project)
-                ?: throw IllegalStateException("Could not find Kotlin Compiler jar. Please specify $name.compilerJarFile")
-    protected abstract fun findKotlinCompilerJar(project: Project): File?
+    var compilerClasspath: List<File>? = null
+
+    @get:InputFiles
+    internal val computedCompilerClasspath: List<File>
+        get() = compilerClasspath?.takeIf { it.isNotEmpty() }
+                ?: compilerJarFile?.let {
+                    // a hack to remove compiler jar from the cp, will be dropped when compilerJarFile will be removed
+                    listOf(it) + findKotlinCompilerClasspath(project).filter { !it.name.startsWith("kotlin-compiler") }
+                }
+                ?: findKotlinCompilerClasspath(project).takeIf { it.isNotEmpty() }
+                ?: throw IllegalStateException("Could not find Kotlin Compiler classpath. Please specify $name.compilerClasspath")
+
+    protected abstract fun findKotlinCompilerClasspath(project: Project): List<File>
 }
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKotlinCompileTool<T>(), CompilerArgumentAware {
+    internal val taskBuildDirectory: File
+        get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
+
+    private val cacheVersions: List<CacheVersion>
+        get() =
+            listOf(normalCacheVersion(taskBuildDirectory, enabled = incremental),
+                   dataContainerCacheVersion(taskBuildDirectory, enabled = incremental),
+                   gradleCacheVersion(taskBuildDirectory, enabled = incremental))
+
+    // indicates that task should compile kotlin incrementally if possible
+    // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
+    var incremental: Boolean = false
+        get() = field
+        set(value) {
+            field = value
+            logger.kotlinDebug { "Set $this.incremental=$value" }
+        }
+
+    internal val isCacheFormatUpToDate: Boolean
+        get() {
+            if (!incremental) return true
+
+            return cacheVersions.all { it.checkVersion() == CacheVersion.Action.DO_NOTHING }
+        }
+
     abstract protected fun createCompilerArgs(): T
+
+    internal val pluginOptions = CompilerPluginOptions()
 
     protected val additionalClasspath = arrayListOf<File>()
     protected val compileClasspath: Iterable<File>
         get() = (classpath + additionalClasspath)
                 .filterTo(LinkedHashSet(), File::exists)
 
+    @get:Input
     override val serializedCompilerArguments: List<String>
         get() {
             val arguments = createCompilerArgs()
@@ -87,16 +126,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     private val kotlinExt: KotlinProjectExtension
             get() = project.extensions.findByType(KotlinProjectExtension::class.java)!!
 
-    // indicates that task should compile kotlin incrementally if possible
-    // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
-    var incremental: Boolean = false
-        get() = field
-        set(value) {
-            field = value
-            logger.kotlinDebug { "Set $this.incremental=$value" }
-            System.setProperty("kotlin.incremental.compilation", value.toString())
-        }
-
     private lateinit var destinationDirProvider: Lazy<File>
 
     override fun getDestinationDir(): File {
@@ -109,10 +138,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     override fun setDestinationDir(destinationDir: File) {
         destinationDirProvider = lazyOf(destinationDir)
-    }
-
-    init {
-        incremental = true //to execute the setter as well
     }
 
     internal var coroutinesFromGradleProperties: Coroutines? = null
@@ -204,6 +229,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         if (project.logger.isDebugEnabled) {
             args.verbose = true
         }
+
+        setupPlugins(args)
+    }
+
+    open fun setupPlugins(compilerArgs: T) {
+        compilerArgs.pluginClasspaths = pluginOptions.classpath.toTypedArray()
+        compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
     }
 }
 
@@ -214,21 +246,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             get() = kotlinOptionsImpl
     internal open val sourceRootsContainer = FilteringSourceRootsContainer()
 
-    internal val taskBuildDirectory: File
-        get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
-    private val cacheVersions by lazy {
-        listOf(normalCacheVersion(taskBuildDirectory),
-               dataContainerCacheVersion(taskBuildDirectory),
-               gradleCacheVersion(taskBuildDirectory))
-    }
-    internal val isCacheFormatUpToDate: Boolean
-        get() {
-            if (!incremental) return true
-
-            return cacheVersions.all { it.checkVersion() == CacheVersion.Action.DO_NOTHING }
-        }
-
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
+    val buildHistoryFile: File = File(taskBuildDirectory, "build-history.bin")
 
     val kaptOptions = KaptOptions()
 
@@ -241,24 +260,29 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     @get:Input
     internal val javaPackagePrefixInputString get() = javaPackagePrefix ?: ""
 
-    internal val pluginOptions = CompilerPluginOptions()
     internal var artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null
     internal var artifactFile: File? = null
 
-    override fun findKotlinCompilerJar(project: Project): File? =
-            findKotlinJvmCompilerJar(project)
+    init {
+        incremental = true
+    }
+
+    override fun findKotlinCompilerClasspath(project: Project): List<File> =
+            findKotlinJvmCompilerClasspath(project)
 
     override fun createCompilerArgs(): K2JVMCompilerArguments =
             K2JVMCompilerArguments()
 
-    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
-        super.setupCompilerArgs(args, defaultsOnly)
-        args.apply { fillDefaultValues() }
-
-        args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
+    override fun setupPlugins(compilerArgs: K2JVMCompilerArguments) {
+        compilerArgs.pluginClasspaths = pluginOptions.classpath.toTypedArray()
 
         val kaptPluginOptions = getKaptPluginOptions()
-        args.pluginOptions = (pluginOptions.arguments + kaptPluginOptions.arguments).toTypedArray()
+        compilerArgs.pluginOptions = (pluginOptions.arguments + kaptPluginOptions.arguments).toTypedArray()
+    }
+
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
+        args.apply { fillDefaultValues() }
+        super.setupCompilerArgs(args, defaultsOnly)
 
         args.addCompilerBuiltIns = true
 
@@ -294,13 +318,16 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val reporter = GradleICReporter(project.rootProject.projectDir)
 
         val environment = when {
-            !incremental -> GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector, args)
+            !incremental -> GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
             else -> {
-                logger.warn(USING_INCREMENTAL_COMPILATION_MESSAGE)
-                GradleIncrementalCompilerEnvironment(compilerJar, changedFiles, reporter, taskBuildDirectory,
-                        messageCollector, outputItemCollector, kaptAnnotationsFileUpdater,
+                logger.info(USING_INCREMENTAL_COMPILATION_MESSAGE)
+                val friendTask = friendTaskName?.let { project.tasks.findByName(it) as? KotlinCompile }
+                GradleIncrementalCompilerEnvironment(computedCompilerClasspath, changedFiles, reporter, taskBuildDirectory,
+                        messageCollector, outputItemCollector, args, kaptAnnotationsFileUpdater,
                         artifactDifferenceRegistryProvider,
-                        artifactFile, args)
+                        artifactFile = artifactFile,
+                        buildHistoryFile = buildHistoryFile,
+                        friendBuildHistoryFile = friendTask?.buildHistoryFile)
             }
         }
 
@@ -391,15 +418,16 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     val outputFile: String
         get() = kotlinOptions.outputFile ?: defaultOutputFile.canonicalPath
 
-    override fun findKotlinCompilerJar(project: Project): File? =
-            findKotlinJsCompilerJar(project)
+    override fun findKotlinCompilerClasspath(project: Project): List<File> =
+            findKotlinJsCompilerClasspath(project)
 
     override fun createCompilerArgs(): K2JSCompilerArguments =
             K2JSCompilerArguments()
 
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean) {
-        super.setupCompilerArgs(args, defaultsOnly)
         args.apply { fillDefaultValues() }
+        super.setupCompilerArgs(args, defaultsOnly)
+
         args.outputFile = outputFile
 
         if (defaultsOnly) return
@@ -434,19 +462,29 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
 
         args.friendModules = friendDependency
 
-        args.sourceMapSourceRoots = source.orEmpty()
-                .asSequence()
-                .filterIsInstance<SourceDirectorySet>()
-                .flatMap { it.srcDirs.asSequence() }
-                .joinToString(File.pathSeparator) { it.absolutePath }
+        if (args.sourceMapBaseDirs == null && !args.sourceMapPrefix.isNullOrEmpty()) {
+            args.sourceMapBaseDirs = project.projectDir.absolutePath
+        }
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
-
         val compilerRunner = GradleCompilerRunner(project)
-        val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector, args)
+        val reporter = GradleICReporter(project.rootProject.projectDir)
+
+        val environment = when {
+            incremental -> {
+                logger.warn(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
+                GradleIncrementalCompilerEnvironment(
+                        computedCompilerClasspath, changedFiles, reporter, taskBuildDirectory,
+                        messageCollector, outputItemCollector, args)
+            }
+            else -> {
+                GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
+            }
+        }
+
         val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, args, environment)
         throwGradleExceptionIfError(exitCode)
     }

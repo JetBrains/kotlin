@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.isFinalClass
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
@@ -27,8 +29,10 @@ import org.jetbrains.kotlin.types.checker.TypeCheckerContext.LowerCapturedTypePo
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SeveralSupertypesWithSameConstructorPolicy.*
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object StrictEqualityTypeChecker {
     /**
@@ -91,10 +95,26 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
     fun TypeCheckerContext.equalTypes(a: UnwrappedType, b: UnwrappedType): Boolean {
         if (a === b) return true
 
+        if (isCommonDenotableType(a) && isCommonDenotableType(b)) {
+            if (!areEqualTypeConstructors(a.constructor, b.constructor)) return false
+            if (a.arguments.isEmpty()) {
+                if (a.hasFlexibleNullability() || b.hasFlexibleNullability()) return true
+
+                return a.isMarkedNullable == b.isMarkedNullable
+            }
+        }
+
         return isSubtypeOf(a, b) && isSubtypeOf(b, a)
     }
 
+    private fun KotlinType.hasFlexibleNullability() =
+            lowerIfFlexible().isMarkedNullable != upperIfFlexible().isMarkedNullable
+
+    private fun isCommonDenotableType(type: KotlinType) =
+            type.constructor.isDenotable && !type.isDynamic() && type.lowerIfFlexible().constructor == type.upperIfFlexible().constructor
+
     fun TypeCheckerContext.isSubtypeOf(subType: UnwrappedType, superType: UnwrappedType): Boolean {
+        if (subType === superType) return true
         val newSubType = transformToNewType(subType)
         val newSuperType = transformToNewType(superType)
 
@@ -123,13 +143,13 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
 
             is IntegerValueTypeConstructor -> {
                 val newConstructor = IntersectionTypeConstructor(constructor.supertypes.map { TypeUtils.makeNullableAsSpecified(it, type.isMarkedNullable) })
-                return KotlinTypeFactory.simpleType(type.annotations, newConstructor, listOf(), false, type.memberScope)
+                return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(type.annotations, newConstructor, listOf(), false, type.memberScope)
             }
 
             is IntersectionTypeConstructor -> if (type.isMarkedNullable) {
                 val newSuperTypes = constructor.supertypes.map { it.makeNullable() }
                 val newConstructor = IntersectionTypeConstructor(newSuperTypes)
-                return KotlinTypeFactory.simpleType(type.annotations, newConstructor, listOf(), false, newConstructor.createScopeForKotlinType())
+                return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(type.annotations, newConstructor, listOf(), false, newConstructor.createScopeForKotlinType())
             }
         }
 
@@ -197,6 +217,10 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         if (!NullabilityChecker.isPossibleSubtype(this, subType, superType)) return false
 
         val superConstructor = superType.constructor
+
+        if (subType.constructor == superConstructor && superConstructor.parameters.isEmpty()) return true
+        if (superType.isAnyOrNullableAny()) return true
+
         val supertypesWithSameConstructor = findCorrespondingSupertypes(subType, superConstructor)
         when (supertypesWithSameConstructor.size) {
             0 -> return hasNothingSupertype(subType) // todo Nothing & Array<Number> <: Array<String>
@@ -229,21 +253,21 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         }
     }
 
+    private fun TypeCheckerContext.collectAndFilter(classType: SimpleType, constructor: TypeConstructor) =
+            selectOnlyPureKotlinSupertypes(collectAllSupertypesWithGivenTypeConstructor(classType, constructor))
+
     // nullability was checked earlier via nullabilityChecker
     // should be used only if you really sure that it is correct
     fun TypeCheckerContext.findCorrespondingSupertypes(
             baseType: SimpleType,
             constructor: TypeConstructor
     ): List<SimpleType> {
-        fun TypeCheckerContext.collectAndFilter(classType: SimpleType, constructor: TypeConstructor) =
-                selectOnlyPureKotlinSupertypes(collectAllSupertypesWithGivenTypeConstructor(classType, constructor))
-
         if (baseType.isClassType) {
             return collectAndFilter(baseType, constructor)
         }
 
         // i.e. superType is not a classType
-        if (constructor !is ClassDescriptor) {
+        if (constructor.declarationDescriptor !is ClassDescriptor) {
             return collectAllSupertypesWithGivenTypeConstructor(baseType, constructor)
         }
 
@@ -266,19 +290,21 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             baseType: SimpleType,
             constructor: TypeConstructor
     ): List<SimpleType> {
+        if (constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.isCommonFinalClass == true) {
+            return if (areEqualTypeConstructors(baseType.constructor, constructor))
+                listOf(captureFromArguments(baseType, CaptureStatus.FOR_SUBTYPING) ?: baseType)
+            else
+                emptyList()
+        }
 
-        var result: MutableList<SimpleType>? = null
+        val result: MutableList<SimpleType> = SmartList()
 
         anySupertype(baseType, { false }) {
             val current = captureFromArguments(it, CaptureStatus.FOR_SUBTYPING) ?: it
 
             when {
                 areEqualTypeConstructors(current.constructor, constructor) -> {
-                    if (result == null) {
-                        result = SmartList()
-                    }
-                    result!!.add(current)
-
+                    result.add(current)
                     SupertypesPolicy.None
                 }
                 current.arguments.isEmpty() -> {
@@ -290,8 +316,11 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             }
         }
 
-        return result ?: emptyList()
+        return result
     }
+
+    private val ClassDescriptor.isCommonFinalClass: Boolean
+        get() = isFinalClass && kind != ClassKind.ENUM_ENTRY && kind != ClassKind.ANNOTATION_CLASS
 
     /**
      * If we have several paths to some interface, we should prefer pure kotlin path.
@@ -356,7 +385,6 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
     }
 
 }
-
 
 object NullabilityChecker {
 

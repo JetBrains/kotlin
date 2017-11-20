@@ -72,12 +72,13 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
-import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
@@ -148,7 +149,8 @@ fun PsiElement.getUsageContext(): PsiElement {
                 this,
                 KtPropertyAccessor::class.java,
                 KtProperty::class.java,
-                KtFunction::class.java,
+                KtNamedFunction::class.java,
+                KtConstructor::class.java,
                 KtClassOrObject::class.java
         ) ?: containingFile
         else -> ConflictsUtil.getContainer(this)
@@ -578,7 +580,7 @@ fun createJavaField(property: KtNamedDeclaration, targetClass: PsiClass): PsiFie
 }
 
 fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boolean = false): PsiClass {
-    val kind = if (forcePlainClass) ClassKind.CLASS else (klass.resolveToDescriptor() as ClassDescriptor).kind
+    val kind = if (forcePlainClass) ClassKind.CLASS else (klass.unsafeResolveToDescriptor() as ClassDescriptor).kind
 
     val factory = PsiElementFactory.SERVICE.getInstance(klass.project)
     val className = klass.name!!
@@ -783,7 +785,7 @@ fun KtExpression.removeTemplateEntryBracesIfPossible(): KtExpression {
 }
 
 fun dropOverrideKeywordIfNecessary(element: KtNamedDeclaration) {
-    val callableDescriptor = element.resolveToDescriptor(BodyResolveMode.PARTIAL) as? CallableDescriptor ?: return
+    val callableDescriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return
     if (callableDescriptor.overriddenDescriptors.isEmpty()) {
         element.removeModifier(KtTokens.OVERRIDE_KEYWORD)
     }
@@ -885,7 +887,7 @@ fun checkSuperMethods(
     }
 
 
-    val declarationDescriptor = declaration.resolveToDescriptor() as CallableDescriptor
+    val declarationDescriptor = declaration.unsafeResolveToDescriptor() as CallableDescriptor
 
     if (declarationDescriptor is LocalVariableDescriptor) return listOf(declaration)
 
@@ -966,13 +968,13 @@ fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
     return containingObject.isCompanion() && containingObject.containingClassOrObject == klass
 }
 
-internal fun KtDeclaration.withHeaderImplementations(): List<KtDeclaration> {
-    val header = liftToHeader() ?: return listOf(this)
-    val implementations = header.headerImplementations()
-    return listOf(header) + implementations
+internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
+    val expect = liftToExpected() ?: return listOf(this)
+    val actuals = expect.actualsForExpected()
+    return listOf(expect) + actuals
 }
 
-internal fun KtDeclaration.resolveToHeaderDescriptorIfPossible(): DeclarationDescriptor {
-    val descriptor = resolveToDescriptor()
-    return descriptor.liftToHeader() ?: descriptor
+internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationDescriptor {
+    val descriptor = unsafeResolveToDescriptor()
+    return descriptor.liftToExpected() ?: descriptor
 }

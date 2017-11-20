@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.SmartList;
@@ -42,11 +43,12 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.ContentRootsKt;
-import org.jetbrains.kotlin.config.Services;
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
+import org.jetbrains.kotlin.incremental.js.TranslationResultValue;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
@@ -56,11 +58,9 @@ import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
-import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.facade.TranslationUnit;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
@@ -115,12 +115,33 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         K2JSTranslator translator = new K2JSTranslator(config);
         IncrementalDataProvider incrementalDataProvider = config.getConfiguration().get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER);
         if (incrementalDataProvider != null) {
-            List<TranslationUnit> translationUnits = new ArrayList<>();
+            Map<File, KtFile> nonCompiledSources = new HashMap<File, KtFile>(allKotlinFiles.size());
             for (KtFile ktFile : allKotlinFiles) {
-                translationUnits.add(new TranslationUnit.SourceFile(ktFile));
+                nonCompiledSources.put(VfsUtilCore.virtualToIoFile(ktFile.getVirtualFile()), ktFile);
             }
-            for (byte[] binaryTree : incrementalDataProvider.getBinaryTrees()) {
-                translationUnits.add(new TranslationUnit.BinaryAst(binaryTree));
+
+            Map<File, TranslationResultValue> compiledParts = incrementalDataProvider.getCompiledPackageParts();
+
+            File[] allSources = new File[compiledParts.size() + allKotlinFiles.size()];
+            int i = 0;
+            for (File file : compiledParts.keySet()) {
+                allSources[i++] = file;
+            }
+            for (File file : nonCompiledSources.keySet()) {
+                allSources[i++] = file;
+            }
+            Arrays.sort(allSources);
+
+            List<TranslationUnit> translationUnits = new ArrayList<>();
+            for (i = 0; i < allSources.length; i++) {
+                KtFile nonCompiled = nonCompiledSources.get(allSources[i]);
+                if (nonCompiled != null) {
+                    translationUnits.add(new TranslationUnit.SourceFile(nonCompiled));
+                }
+                else {
+                    TranslationResultValue translatedValue = compiledParts.get(allSources[i]);
+                    translationUnits.add(new TranslationUnit.BinaryAst(translatedValue.getBinaryAst()));
+                }
             }
             return translator.translateUnits(reporter, translationUnits, mainCallParameters, jsAnalysisResult);
         }
@@ -138,13 +159,16 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
-        if (arguments.getFreeArgs().isEmpty()) {
+        if (arguments.getFreeArgs().isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
             if (arguments.getVersion()) {
                 return OK;
             }
             messageCollector.report(ERROR, "Specify at least one source file or directory", null);
             return COMPILATION_ERROR;
         }
+
+        ExitCode plugLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration);
+        if (plugLoadResult != ExitCode.OK) return plugLoadResult;
 
         configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
 
@@ -168,7 +192,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return ExitCode.COMPILATION_ERROR;
         }
 
-        if (sourcesFiles.isEmpty()) {
+        if (sourcesFiles.isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
             messageCollector.report(ERROR, "No source files", null);
             return COMPILATION_ERROR;
         }
@@ -227,8 +251,20 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             }
         }
 
+        File outputDir = outputFile.getParentFile();
+        if (outputDir == null) {
+            outputDir = outputFile.getAbsoluteFile().getParentFile();
+        }
+        try {
+            config.getConfiguration().put(JSConfigurationKeys.OUTPUT_DIR, outputDir.getCanonicalFile());
+        }
+        catch (IOException e) {
+            messageCollector.report(ERROR, "Could not resolve output directory", null);
+            return ExitCode.COMPILATION_ERROR;
+        }
+
         if (config.getConfiguration().getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
-            checkDuplicateSourceFileNames(messageCollector, sourcesFiles, config.getSourceMapRoots());
+            checkDuplicateSourceFileNames(messageCollector, sourcesFiles, config);
         }
 
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.getMain());
@@ -256,11 +292,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return ExitCode.COMPILATION_ERROR;
         }
 
-        File outputDir = outputFile.getParentFile();
-        if (outputDir == null) {
-            outputDir = outputFile.getAbsoluteFile().getParentFile();
-        }
-
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         OutputUtilsKt.writeAll(outputFiles, outputDir, messageCollector,
@@ -272,12 +303,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static void checkDuplicateSourceFileNames(
             @NotNull MessageCollector log,
             @NotNull List<KtFile> sourceFiles,
-            @NotNull List<String> sourceRoots
+            @NotNull JsConfig config
     ) {
-        if (sourceRoots.isEmpty()) return;
+        if (config.getSourceMapRoots().isEmpty()) return;
 
-        List<File> sourceRootFiles = sourceRoots.stream().map(File::new).collect(Collectors.toList());
-        SourceFilePathResolver pathResolver = new SourceFilePathResolver(sourceRootFiles);
+        SourceFilePathResolver pathResolver = SourceFilePathResolver.create(config);
         Map<String, String> pathMap = new HashMap<>();
         Set<String> duplicatePaths = new HashSet<>();
 
@@ -333,17 +363,21 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                 configuration.put(JSConfigurationKeys.SOURCE_MAP_PREFIX, arguments.getSourceMapPrefix());
             }
 
-            String sourceMapSourceRoots = arguments.getSourceMapSourceRoots() != null ?
-                                          arguments.getSourceMapSourceRoots() :
-                                          calculateSourceMapSourceRoot(messageCollector, arguments);
-            List<String> sourceMapSourceRootList = StringUtil.split(sourceMapSourceRoots, File.pathSeparator);
-            configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceMapSourceRootList);
+            String sourceMapSourceRoots = arguments.getSourceMapBaseDirs();
+            if (sourceMapSourceRoots == null && StringUtil.isNotEmpty(arguments.getSourceMapPrefix())) {
+                sourceMapSourceRoots = calculateSourceMapSourceRoot(messageCollector, arguments);
+            }
+
+            if (sourceMapSourceRoots != null) {
+                List<String> sourceMapSourceRootList = StringUtil.split(sourceMapSourceRoots, File.pathSeparator);
+                configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceMapSourceRootList);
+            }
         }
         else {
             if (arguments.getSourceMapPrefix() != null) {
                 messageCollector.report(WARNING, "source-map-prefix argument has no effect without source map", null);
             }
-            if (arguments.getSourceMapSourceRoots() != null) {
+            if (arguments.getSourceMapBaseDirs() != null) {
                 messageCollector.report(WARNING, "source-map-source-root argument has no effect without source map", null);
             }
         }
@@ -351,9 +385,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             configuration.put(JSConfigurationKeys.META_INFO, true);
         }
 
-        if (arguments.getTypedArrays()) {
-            configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true);
-        }
+        configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, arguments.getTypedArrays());
 
         configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.getFriendModulesDisabled());
 

@@ -134,7 +134,8 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpr
 
             context.usageTracker()?.used(classifierDescriptor)
 
-            context.getNameForDescriptor(classifierDescriptor).makeRef()
+            context.captureTypeIfNeedAndGetCapturedName(classifierDescriptor) ?:
+                    context.getNameForDescriptor(classifierDescriptor).makeRef()
         }
         else -> {
             throw IllegalStateException("Can't get reference for $type")
@@ -212,3 +213,34 @@ val PsiElement.finalElement: PsiElement
         is KtLambdaExpression -> bodyExpression?.rBrace ?: this
         else -> this
     }
+
+fun TranslationContext.addFunctionButNotExport(descriptor: FunctionDescriptor, expression: JsExpression): JsName =
+        addFunctionButNotExport(getInnerNameForDescriptor(descriptor), expression)
+
+fun TranslationContext.addFunctionButNotExport(name: JsName, expression: JsExpression): JsName {
+    when (expression) {
+        is JsFunction -> {
+            expression.name = name
+            addDeclarationStatement(expression.makeStmt())
+        }
+        else -> {
+            addDeclarationStatement(JsAstUtils.newVar(name, expression))
+        }
+    }
+    return name
+}
+
+fun createPrototypeStatements(superName: JsName, name: JsName): List<JsStatement> {
+    val superclassRef = superName.makeRef()
+    val superPrototype = JsAstUtils.prototypeOf(superclassRef)
+    val superPrototypeInstance = JsInvocation(JsNameRef("create", "Object"), superPrototype)
+
+    val classRef = name.makeRef()
+    val prototype = JsAstUtils.prototypeOf(classRef)
+    val prototypeStatement = JsAstUtils.assignment(prototype, superPrototypeInstance).makeStmt()
+
+    val constructorRef = JsNameRef("constructor", prototype.deepCopy())
+    val constructorStatement = JsAstUtils.assignment(constructorRef, classRef.deepCopy()).makeStmt()
+
+    return listOf(prototypeStatement, constructorStatement)
+}

@@ -366,7 +366,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 insertNodeBefore(finallyNode, intoNode, curInstr)
 
                 val splitBy = SimpleInterval(start.info as LabelNode, extension.finallyIntervalEnd)
-                processor.tryBlocksMetaInfo.splitCurrentIntervals(splitBy, true)
+                processor.tryBlocksMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
 
                 //processor.getLocalVarsMetaInfo().splitAndRemoveIntervalsFromCurrents(splitBy);
 

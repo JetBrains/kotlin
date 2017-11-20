@@ -1,4 +1,4 @@
-header class <error>My</error> {
+expect class My {
 
     fun foo(): Int
 
@@ -6,7 +6,7 @@ header class <error>My</error> {
 
 }
 
-header class <error>Your</error> {
+expect class Your {
 
     fun foo(): Int
 
@@ -14,7 +14,7 @@ header class <error>Your</error> {
 
 }
 
-header class His {
+expect class His {
 
     fun foo(): Int
 

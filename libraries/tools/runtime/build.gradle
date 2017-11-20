@@ -1,8 +1,8 @@
-description 'Kotlin Runtime (deprecated, use koltin-stdlib artifact instead)'
+description 'Kotlin Runtime (deprecated, use kotlin-stdlib artifact instead)'
 
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 dependencies {
@@ -10,28 +10,30 @@ dependencies {
 }
 
 sourceSets {
-    if(!System.properties.'idea.active')
     main {
-        java {
-            srcDir "${rootDir}/../core/builtins/src"
-            srcDir "${rootDir}/../core/runtime.jvm/src"
-            exclude 'org/jetbrains/annotations/**'
-        }
-        kotlin {
-            exclude 'org/jetbrains/annotations/**'
+        if(!System.properties.'idea.active') {
+            java {
+                srcDir "${rootDir}/core/builtins/src"
+                srcDir "${rootDir}/core/runtime.jvm/src"
+                exclude 'org/jetbrains/annotations/**'
+            }
+            kotlin {
+                exclude 'org/jetbrains/annotations/**'
+            }
         }
     }
+
 }
 
 jar {
     manifestAttributes(manifest, project, 'Main')
-    from("${rootDir}/../dist/builtins")
+    from("${rootDir}/dist/builtins")
 }
 
 sourcesJar {
     classifier = 'sources'
     from sourceSets.main.kotlin
-    from "${rootDir}/../core/builtins/native"
+    from "${rootDir}/core/builtins/native"
 }
 
 artifacts {
@@ -43,8 +45,9 @@ compileKotlin {
     kotlinOptions {
         freeCompilerArgs = [
                 "-Xallow-kotlin-package",
-                "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
-                "-cp", "${rootDir}/../dist/builtins",
+                "-Xnormalize-constructor-calls=enable",
+                "-Xdump-declarations-to=${buildDir}/runtime-declarations.json",
+                "-cp", "${rootDir}/dist/builtins",
                 "-module-name", project.name
         ]
     }

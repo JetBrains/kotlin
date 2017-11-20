@@ -31,7 +31,7 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.core.copied
@@ -134,7 +134,7 @@ internal fun buildCodeToInline(
                                          expectedType = expectedType)
     }
 
-    val descriptor = declaration.resolveToDescriptor()
+    val descriptor = declaration.unsafeResolveToDescriptor()
     val builder = CodeToInlineBuilder(descriptor as CallableDescriptor, declaration.getResolutionFacade())
     if (isBlockBody) {
         bodyCopy as KtBlockExpression

@@ -322,7 +322,10 @@ class NameSuggestion {
 
         @JvmStatic fun getPrivateMangledName(baseName: String, descriptor: CallableDescriptor): String {
             val ownerName = descriptor.containingDeclaration.fqNameUnsafe.asString()
-            return getStableMangledName(baseName, ownerName + ":" + encodeSignature(descriptor))
+
+            // Base name presents here since name part gets sanitized, so we have to produce different suffixes to distinguish
+            // between, say `.` and `;`.
+            return getStableMangledName(sanitizeName(baseName), ownerName + "." + baseName + ":" + encodeSignature(descriptor))
         }
 
         fun getInternalMangledName(suggestedName: String, forCalculateId: String): String {

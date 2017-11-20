@@ -28,7 +28,8 @@ class ReplTerminalDiagnosticMessageHolder : MessageCollectorBasedReporter, Diagn
     private val outputStream = ByteArrayOutputStream()
 
     override val messageCollector: GroupingMessageCollector = GroupingMessageCollector(
-            PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.WITHOUT_PATHS, false)
+            PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.WITHOUT_PATHS, false),
+            false
     )
 
     override val renderedDiagnostics: String

@@ -70,6 +70,8 @@ public class KotlinHighlighter extends SyntaxHighlighterBase {
         keys1.put(KtTokens.RBRACKET, KotlinHighlightingColors.BRACKETS);
         keys1.put(KtTokens.COMMA, KotlinHighlightingColors.COMMA);
         keys1.put(KtTokens.SEMICOLON, KotlinHighlightingColors.SEMICOLON);
+        keys1.put(KtTokens.COLON, KotlinHighlightingColors.COLON);
+        keys1.put(KtTokens.COLONCOLON, KotlinHighlightingColors.DOUBLE_COLON);
         keys1.put(KtTokens.DOT, KotlinHighlightingColors.DOT);
         keys1.put(KtTokens.ARROW, KotlinHighlightingColors.ARROW);
 

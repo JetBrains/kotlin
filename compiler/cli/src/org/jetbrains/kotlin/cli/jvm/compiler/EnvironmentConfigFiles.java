@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,9 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
-import java.util.Arrays;
-import java.util.List;
-
 public enum EnvironmentConfigFiles {
-    JVM_CONFIG_FILES("extensions/common.xml", "extensions/kotlin2jvm.xml"),
-    JS_CONFIG_FILES("extensions/common.xml", "extensions/kotlin2js.xml"),
-    NATIVE_CONFIG_FILES("extensions/common.xml"),
-    EMPTY();
-
-    private final List<String> files;
-
-    EnvironmentConfigFiles(String... fileArray) {
-        files = Arrays.asList(fileArray);
-    }
-
-    public List<String> getFiles() {
-        return files;
-    }
+    JVM_CONFIG_FILES,
+    JS_CONFIG_FILES,
+    NATIVE_CONFIG_FILES,
+    METADATA_CONFIG_FILES,
 }

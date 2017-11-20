@@ -97,9 +97,8 @@
 
             <actions/>
 
-            <npm command="version" dir="${package_deploy_dir}">
-                <arg value="@{version}"/>
-            </npm>
+            <replace file="${package_deploy_dir}/package.json" token="$version" value="@{version}" />
+
             <npm command="publish" dir="${package_deploy_dir}">
                 <arg value="--//registry.npmjs.org/:_authToken=${kotlin.npmjs.auth.token}"/>
                 <arg value="--tag"/>
@@ -112,6 +111,10 @@
         <publish-to-npm template="kotlin" version="${kotlin.deploy.version}" tag="${kotlin.deploy.tag}">
             <copy file="${js.stdlib.output.dir}/kotlin.js" todir="${package_deploy_dir}" failonerror="true" />
             <copy file="${js.stdlib.output.dir}/kotlin.meta.js" todir="${package_deploy_dir}" failonerror="true" />
+            <copy file="${js.stdlib.output.dir}/kotlin.js.map"  todir="${package_deploy_dir}" failonerror="true" />
+            <copy todir="${package_deploy_dir}/kotlin" failonerror="true">
+                 <fileset dir="${js.stdlib.output.dir}/kotlin"/>
+            </copy>
         </publish-to-npm>
     </target>
 
@@ -124,10 +127,27 @@
         </publish-to-npm>
     </target>
 
+    <target name="publish-kotlin-test-js-to-npm">
+        <publish-to-npm template="kotlin-test" version="${kotlin.deploy.version}" tag="${kotlin.deploy.tag}">
+            <copy file="${js.stdlib.output.dir}/kotlin-test.js" todir="${package_deploy_dir}" failonerror="true" />
+            <copy file="${js.stdlib.output.dir}/kotlin-test.meta.js" todir="${package_deploy_dir}" failonerror="true" />
+            <copy file="${js.stdlib.output.dir}/kotlin-test.js.map"  todir="${package_deploy_dir}" failonerror="true" />
+            <copy todir="${package_deploy_dir}/kotlin-test" failonerror="true">
+                 <fileset dir="${js.stdlib.output.dir}/kotlin-test"/>
+            </copy>
+        </publish-to-npm>
+    </target>
+
     <!-- Used on TeamCity-->
     <target name="unzip-jslib.jar">
         <unzip src="${output}/kotlinc/lib/kotlin-stdlib-js.jar" dest="${js.stdlib.output.dir}"/>
     </target>
+
+    <!-- Used on TeamCity-->
+    <target name="unzip-test-jslib.jar">
+        <unzip src="${output}/kotlinc/lib/kotlin-test-js.jar" dest="${js.stdlib.output.dir}"/>
+    </target>
+
 
     <target name="run-nodejs-tests" description="Run JS backend tests in node.js" depends="download-nodejs-and-npm">
         <npm command="install" dir="js/js.translator/testData" />

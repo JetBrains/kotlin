@@ -495,6 +495,11 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 accept(right)
                 sideEffectOccurred = true
             }
+            else if (x.operator == JsBinaryOperator.AND || x.operator == JsBinaryOperator.OR) {
+                accept(x.arg1)
+                sideEffectOccurred = true
+                accept(x.arg2)
+            }
             else {
                 super.visitBinaryExpression(x)
             }
@@ -615,7 +620,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
         is JsNameRef -> {
             val qualifier = expr.qualifier
             if (expr.sideEffects == SideEffectKind.PURE && (qualifier == null || isTrivial(qualifier))) {
-                true
+                expr.name !in temporary
             }
             else {
                 val name = expr.name

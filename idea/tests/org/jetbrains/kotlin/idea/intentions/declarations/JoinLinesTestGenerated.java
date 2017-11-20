@@ -359,6 +359,12 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             doTest(fileName);
         }
 
+        @TestMetadata("FunctionWithOneLineReturn.kt")
+        public void testFunctionWithOneLineReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/FunctionWithOneLineReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("If.kt")
         public void testIf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/If.kt");

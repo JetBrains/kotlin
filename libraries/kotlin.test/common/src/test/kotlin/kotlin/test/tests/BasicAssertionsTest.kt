@@ -1,12 +1,17 @@
 package kotlin.test.tests
 
 import kotlin.test.*
-import org.junit.Test
 
 class BasicAssertionsTest {
     @Test
     fun testAssertEquals() {
         assertEquals(1, 1)
+    }
+
+    @Test
+    fun testAssertSame() {
+        val instance: Any = object {}
+        assertSame(instance, instance)
     }
 
     @Test
@@ -68,6 +73,13 @@ class BasicAssertionsTest {
     }
 
     @Test
+    fun testAssertSameFails() {
+        val instance1: Any = object {}
+        val instance2: Any = object {}
+        checkFailedAssertion { assertSame(instance1, instance2) }
+    }
+
+    @Test
     fun testAssertTrue() {
         assertTrue(true)
         assertTrue { true }
@@ -107,9 +119,22 @@ class BasicAssertionsTest {
         assertNotEquals(1, 2)
     }
 
+    @Test
+    fun testAssertNotSame() {
+        val instance1: Any = object {}
+        val instance2: Any = object {}
+        assertNotSame(instance1, instance2)
+    }
+
     @Test()
     fun testAssertNotEqualsFails() {
         checkFailedAssertion { assertNotEquals(1, 1) }
+    }
+
+    @Test
+    fun testAssertNotSameFails() {
+        val instance: Any = object {}
+        checkFailedAssertion { assertNotSame(instance, instance) }
     }
 
     @Test

@@ -1,7 +1,7 @@
 package test
 
-impl class Foo {
-    impl val foo get() = 1
+actual class Foo {
+    actual val foo get() = 1
 }
 
 fun test(f: Foo) = f.foo

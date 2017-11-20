@@ -37,13 +37,13 @@
         <!-- Otherwise (on the second step of the build) we distribute the same runtime in the compiler and the plugin -->
         <condition property="runtime.to.copy"
                    value="${bootstrap.runtime}"
-                   else="${basedir}/../dist/kotlinc/lib/kotlin-runtime.jar">
+                   else="${basedir}/../build/dist/kotlinc/lib/kotlin-runtime.jar">
             <isset property="bootstrap.or.local.build"/>
         </condition>
 
         <condition property="reflect.to.copy"
                    value="${bootstrap.reflect}"
-                   else="${basedir}/../dist/kotlinc/lib/kotlin-reflect.jar">
+                   else="${basedir}/../build/dist/kotlinc/lib/kotlin-reflect.jar">
             <isset property="bootstrap.or.local.build"/>
         </condition>
 

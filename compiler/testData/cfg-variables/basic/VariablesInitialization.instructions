@@ -7,21 +7,21 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                    INIT: in: {} out: {}                        USE: in: {} out: {}
+  1 <START>                                    INIT: in: {} out: {}            USE: in: {} out: {}
   2 mark({ val a = 1 val b: Int b = 2 42 })
-    v(val a = 1)                               INIT: in: {} out: {a=D}
-    r(1) -> <v0>                               INIT: in: {a=D} out: {a=D}
-    w(a|<v0>)                                  INIT: in: {a=D} out: {a=ID}
-    v(val b: Int)                              INIT: in: {a=ID} out: {a=ID, b=D}
-    r(2) -> <v1>                               INIT: in: {a=ID, b=D} out: {a=ID, b=D}      USE: in: {b=ONLY_WRITTEN_NEVER_READ} out: {b=ONLY_WRITTEN_NEVER_READ}
-    w(b|<v1>)                                  INIT: in: {a=ID, b=D} out: {a=ID, b=ID}     USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
-    r(42) -> <v2>                              INIT: in: {a=ID, b=ID} out: {a=ID, b=ID}
+    v(val a = 1)                               INIT: in: {} out: {}
+    r(1) -> <v0>                               INIT: in: {} out: {}
+    w(a|<v0>)                                  INIT: in: {} out: {}
+    v(val b: Int)                              INIT: in: {} out: {b=D}
+    r(2) -> <v1>                               INIT: in: {b=D} out: {b=D}      USE: in: {b=ONLY_WRITTEN_NEVER_READ} out: {b=ONLY_WRITTEN_NEVER_READ}
+    w(b|<v1>)                                  INIT: in: {b=D} out: {b=ID}     USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
+    r(42) -> <v2>                              INIT: in: {b=ID} out: {b=ID}
 L1:
   1 <END>                                      INIT: in: {} out: {}
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                 USE: in: {} out: {}
+    <SINK>                                                                     USE: in: {} out: {}
 =====================
 == bar ==
 fun bar(foo: Foo) {
@@ -32,23 +32,23 @@ fun bar(foo: Foo) {
 ---------------------
 L0:
   1 <START>                                      INIT: in: {} out: {}
-    v(foo: Foo)                                  INIT: in: {} out: {foo=D}
-    magic[FAKE_INITIALIZER](foo: Foo) -> <v0>    INIT: in: {foo=D} out: {foo=D}
-    w(foo|<v0>)                                  INIT: in: {foo=D} out: {foo=ID}
-  2 mark({ foo.c foo.c = 2 42 })                 INIT: in: {foo=ID} out: {foo=ID}
+    v(foo: Foo)                                  INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](foo: Foo) -> <v0>    INIT: in: {} out: {}
+    w(foo|<v0>)                                  INIT: in: {} out: {}
+  2 mark({ foo.c foo.c = 2 42 })                 INIT: in: {} out: {}
     mark(foo.c)
-    r(foo) -> <v1>                                                                   USE: in: {c=READ, foo=READ} out: {c=READ, foo=READ}
-    r(c|<v1>) -> <v2>                                                                USE: in: {c=ONLY_WRITTEN_NEVER_READ, foo=READ} out: {c=READ, foo=READ}
-    r(foo) -> <v3>                                                                   USE: in: {c=ONLY_WRITTEN_NEVER_READ} out: {c=ONLY_WRITTEN_NEVER_READ, foo=READ}
-    r(2) -> <v4>                                                                     USE: in: {c=ONLY_WRITTEN_NEVER_READ} out: {c=ONLY_WRITTEN_NEVER_READ}
-    w(foo.c|<v3>, <v4>)                                                              USE: in: {} out: {c=ONLY_WRITTEN_NEVER_READ}
+    r(foo) -> <v1>
+    r(c|<v1>) -> <v2>
+    r(foo) -> <v3>
+    r(2) -> <v4>
+    w(foo.c|<v3>, <v4>)
     r(42) -> <v5>
 L1:
   1 <END>
 error:
-    <ERROR>                                      INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                       INIT: in: {foo=I?} out: {foo=I?}    USE: in: {} out: {}
+    <SINK>                                                               USE: in: {} out: {}
 =====================
 == Foo ==
 interface Foo {
@@ -57,11 +57,11 @@ interface Foo {
 ---------------------
 L0:
   1 <START>          INIT: in: {} out: {}
-    v(var c: Int)    INIT: in: {} out: {c=D}
+    v(var c: Int)    INIT: in: {} out: {}
 L1:
-    <END>            INIT: in: {c=D} out: {c=D}
+    <END>            INIT: in: {} out: {}
 error:
-    <ERROR>          INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>           INIT: in: {c=-} out: {c=-}    USE: in: {} out: {}
+    <SINK>                                   USE: in: {} out: {}
 =====================

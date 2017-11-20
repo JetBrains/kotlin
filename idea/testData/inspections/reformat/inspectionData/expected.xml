@@ -1,0 +1,42 @@
+<problems>
+  <problem>
+    <file>reformat.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/reformat.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">File is not formatted according to project settings</problem_class>
+    <description>File is not properly formatted</description>
+  </problem>
+  <problem>
+    <file>reformat.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/reformat.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">File is not formatted according to project settings</problem_class>
+    <description>File is not properly formatted</description>
+  </problem>
+  <problem>
+    <file>reformat.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/reformat.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">File is not formatted according to project settings</problem_class>
+    <description>File is not properly formatted</description>
+  </problem>
+  <problem>
+    <file>reformat.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/reformat.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">File is not formatted according to project settings</problem_class>
+    <description>File is not properly formatted</description>
+  </problem>
+  <problem>
+    <file>reformat.kt</file>
+    <line>10</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/reformat.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">File is not formatted according to project settings</problem_class>
+    <description>File is not properly formatted</description>
+  </problem>
+</problems>

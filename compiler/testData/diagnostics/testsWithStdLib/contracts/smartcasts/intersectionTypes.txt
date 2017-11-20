@@ -1,0 +1,10 @@
+package
+
+public fun notIsInt(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(FALSE) -> x is Int
+
+public fun notIsString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(FALSE) -> x is String
+
+public fun testDeMorgan(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testDeMorgan2(/*0*/ x: kotlin.Any?): kotlin.Unit

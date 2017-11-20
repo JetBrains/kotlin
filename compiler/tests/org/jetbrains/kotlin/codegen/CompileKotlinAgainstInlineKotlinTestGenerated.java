@@ -642,6 +642,21 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/bytecodePreprocessing")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class BytecodePreprocessing extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public void testAllFilesPresentInBytecodePreprocessing() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/bytecodePreprocessing"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("apiVersionAtLeast1.kt")
+        public void testApiVersionAtLeast1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/bytecodePreprocessing/apiVersionAtLeast1.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1469,6 +1484,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("kt18254.kt")
+        public void testKt18254() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/kt18254.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("valueOf.kt")
         public void testValueOf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOf.kt");
@@ -1568,6 +1589,21 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("kt10259.kt")
         public void testKt10259() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/innerClasses/kt10259.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxInline/jvmPackageName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmPackageName extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public void testAllFilesPresentInJvmPackageName() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/jvmPackageName/simple.kt");
             doTest(fileName);
         }
     }
@@ -1844,6 +1880,30 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         public static class TryFinally extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInTryFinally() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("kt20433.kt")
+            public void testKt20433() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt20433_2.kt")
+            public void testKt20433_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt20433_2_void.kt")
+            public void testKt20433_2_void() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2_void.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt20433_void.kt")
+            public void testKt20433_void() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_void.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("kt6956.kt")
@@ -2178,6 +2238,21 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                     doTest(fileName);
                 }
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxInline/optimizations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Optimizations extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public void testAllFilesPresentInOptimizations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/optimizations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("kt20844.kt")
+        public void testKt20844() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/optimizations/kt20844.kt");
+            doTest(fileName);
         }
     }
 

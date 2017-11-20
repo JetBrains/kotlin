@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,27 +24,30 @@ import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import org.jetbrains.kotlin.codegen.CompilationException
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -65,26 +68,13 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf)
 
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        setupJdkClasspathRoots(arguments, configuration, messageCollector).let {
+
+        configureJdkHome(arguments, configuration, messageCollector).let {
             if (it != OK) return it
         }
 
-        try {
-            PluginCliParser.loadPlugins(arguments, configuration)
-        }
-        catch (e: PluginCliOptionProcessingException) {
-            val message = e.message + "\n\n" + cliPluginUsageString(e.pluginId, e.options)
-            messageCollector.report(ERROR, message)
-            return INTERNAL_ERROR
-        }
-        catch (e: CliOptionProcessingException) {
-            messageCollector.report(ERROR, e.message!!)
-            return INTERNAL_ERROR
-        }
-        catch (t: Throwable) {
-            MessageCollectorUtil.reportException(messageCollector, t)
-            return INTERNAL_ERROR
-        }
+        val plugLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration)
+        if (plugLoadResult != ExitCode.OK) return plugLoadResult
 
         if (!arguments.script && arguments.buildFile == null) {
             for (arg in arguments.freeArgs) {
@@ -176,7 +166,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
 
-                val scriptDefinitionProvider = KotlinScriptDefinitionProvider.getInstance(environment.project)!!
+                val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(environment.project)!!
                 val scriptFile = File(sourcePath)
                 if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)) {
                     val extensionHint =
@@ -238,10 +228,24 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
+    override fun setupPlatformSpecificLanguageFeatureSettings(
+            extraLanguageFeatures: MutableMap<LanguageFeature, LanguageFeature.State>,
+            commandLineArguments: K2JVMCompilerArguments
+    ) {
+        if (commandLineArguments.strictJavaNullabilityAssertions) {
+            extraLanguageFeatures[LanguageFeature.StrictJavaNullabilityAssertions] = LanguageFeature.State.ENABLED
+        }
+
+        super.setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, commandLineArguments)
+    }
+
     private fun registerJavacIfNeeded(environment: KotlinCoreEnvironment,
                                       arguments: K2JVMCompilerArguments): Boolean {
         if (arguments.useJavac) {
             environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
+            if (arguments.compileJava) {
+                environment.configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
+            }
             return environment.registerJavac(arguments = arguments.javacArguments)
         }
 
@@ -250,7 +254,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     private fun compileJavaFilesIfNeeded(environment: KotlinCoreEnvironment,
                                          arguments: K2JVMCompilerArguments): Boolean  {
-        if (arguments.useJavac) {
+        if (arguments.compileJava) {
             return JavacWrapper.getInstance(environment.project).use { it.compile() }
         }
         return true
@@ -351,9 +355,23 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         private fun putAdvancedOptions(configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments) {
+            configuration.put(CommonConfigurationKeys.USE_NEW_INFERENCE, arguments.newInference)
+
             configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions)
+            configuration.put(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS, arguments.noReceiverAssertions)
             configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions)
+            configuration.put(JVMConfigurationKeys.NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL, arguments.noExceptionOnExplicitEqualsForBoxedNull);
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
+
+            val constructorCallNormalizationMode = JVMConstructorCallNormalizationMode.fromStringOrNull(arguments.constructorCallNormalizationMode)
+            if (constructorCallNormalizationMode == null) {
+                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                        .report(ERROR, "Unknown constructor call normalization mode: ${arguments.constructorCallNormalizationMode}, " +
+                                       "supported modes: ${JVMConstructorCallNormalizationMode.values().map { it.description }}")
+            }
+            configuration.put(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
+                              constructorCallNormalizationMode ?: JVMConstructorCallNormalizationMode.DEFAULT)
+
             configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)
             configuration.put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
             configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, !arguments.useOldClassFilesReading)
@@ -405,42 +423,28 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
-        private fun setupJdkClasspathRoots(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration, messageCollector: MessageCollector): ExitCode {
-            try {
-                if (arguments.noJdk) {
-                    if (arguments.jdkHome != null) {
-                        messageCollector.report(STRONG_WARNING, "The '-jdk-home' option is ignored because '-no-jdk' is specified")
-                    }
-                    return OK
+        private fun configureJdkHome(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration, messageCollector: MessageCollector): ExitCode {
+            if (arguments.noJdk) {
+                configuration.put(JVMConfigurationKeys.NO_JDK, true)
+
+                if (arguments.jdkHome != null) {
+                    messageCollector.report(STRONG_WARNING, "The '-jdk-home' option is ignored because '-no-jdk' is specified")
+                }
+                return OK
+            }
+
+            if (arguments.jdkHome != null) {
+                val jdkHome = File(arguments.jdkHome)
+                if (!jdkHome.exists()) {
+                    messageCollector.report(ERROR, "JDK home directory does not exist: $jdkHome")
+                    return COMPILATION_ERROR
                 }
 
-                val (jdkHome, classesRoots) = if (arguments.jdkHome != null) {
-                    val jdkHome = File(arguments.jdkHome)
-                    if (!jdkHome.exists()) {
-                        messageCollector.report(ERROR, "JDK home directory does not exist: $jdkHome")
-                        return COMPILATION_ERROR
-                    }
-                    messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
-                    jdkHome to PathUtil.getJdkClassesRoots(jdkHome)
-                }
-                else {
-                    File(System.getProperty("java.home")) to PathUtil.getJdkClassesRootsFromCurrentJre()
-                }
+                messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
 
                 configuration.put(JVMConfigurationKeys.JDK_HOME, jdkHome)
+            }
 
-                if (!CoreJrtFileSystem.isModularJdk(jdkHome)) {
-                    configuration.addJvmClasspathRoots(classesRoots)
-                    if (classesRoots.isEmpty()) {
-                        messageCollector.report(ERROR, "No class roots are found in the JDK path: $jdkHome")
-                        return COMPILATION_ERROR
-                    }
-                }
-            }
-            catch (t: Throwable) {
-                MessageCollectorUtil.reportException(messageCollector, t)
-                return INTERNAL_ERROR
-            }
             return OK
         }
 
@@ -456,7 +460,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 for (template in scriptTemplates) {
                     try {
                         val cls = classloader.loadClass(template)
-                        val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, scriptResolverEnv)
+                        val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, scriptResolverEnv)
                         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
                         messageCollector.report(
                                 INFO,

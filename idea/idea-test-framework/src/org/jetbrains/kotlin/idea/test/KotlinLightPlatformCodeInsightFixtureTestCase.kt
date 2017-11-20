@@ -22,6 +22,8 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestMetadata
+import kotlin.reflect.full.findAnnotation
 
 abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatformCodeInsightFixtureTestCase() {
     private var kotlinInternalModeOriginalValue: Boolean = false
@@ -44,4 +46,6 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatformCodeI
             super.tearDown()
         }
     }
+
+    override fun getTestDataPath(): String = this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
 }

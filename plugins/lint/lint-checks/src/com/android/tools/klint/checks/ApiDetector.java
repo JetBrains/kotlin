@@ -1806,8 +1806,8 @@ public class ApiDetector extends ResourceXmlDetector
                         }
                     }
                     if (level != -1) {
-                        boolean fromThen = ifStatement == null || prev == ifStatement.getThenExpression();
-                        boolean fromElse = ifStatement != null && prev == ifStatement.getElseExpression();
+                        boolean fromThen = ifStatement == null || prev.equals(ifStatement.getThenExpression());
+                        boolean fromElse = ifStatement != null && prev.equals(ifStatement.getElseExpression());
                         assert fromThen == !fromElse;
                         if (tokenType == UastBinaryOperator.GREATER_OR_EQUALS) {
                             // if (SDK_INT >= ICE_CREAM_SANDWICH) { <call> } else { ... }

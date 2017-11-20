@@ -1,7 +1,7 @@
 package test
 
-impl class Foo {
-    impl fun <caret>foo(n: Int) {
+actual class Foo {
+    actual fun <caret>foo(n: Int) {
 
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
     EXPRESSION("expression", false),           // includes FUNCTION_LITERAL, OBJECT_LITERAL
     FILE("file", false),
     TYPEALIAS("typealias", false),
+
+    RECEIVER("receiver", true),
 
     TYPE_PROJECTION("type projection", false),
     STAR_PROJECTION("star projection", false),
@@ -124,7 +126,7 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
                 AnnotationUseSiteTarget.FILE to FILE,
                 AnnotationUseSiteTarget.PROPERTY_GETTER to PROPERTY_GETTER,
                 AnnotationUseSiteTarget.PROPERTY_SETTER to PROPERTY_SETTER,
-                AnnotationUseSiteTarget.RECEIVER to VALUE_PARAMETER,
+                AnnotationUseSiteTarget.RECEIVER to RECEIVER,
                 AnnotationUseSiteTarget.SETTER_PARAMETER to VALUE_PARAMETER,
                 AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD to FIELD)
 

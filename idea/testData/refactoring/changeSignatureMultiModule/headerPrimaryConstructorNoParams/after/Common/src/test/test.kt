@@ -1,6 +1,6 @@
 package test
 
-header class C(n: Int)
+expect class C(n: Int)
 
 fun test() {
     C(1)

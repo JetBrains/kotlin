@@ -19,7 +19,6 @@ package test.numbers
 
 import kotlin.test.*
 
-import org.junit.Test
 
 class CompanionIntrinsicObjectsJVMTest {
     @Test fun intTest() {

@@ -23,12 +23,14 @@ import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
@@ -39,7 +41,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
@@ -203,6 +204,8 @@ class SmartCompletion(
         }
 
         if (expectedInfos.isNotEmpty()) {
+            items.addArrayLiteralsInAnnotationsCompletions()
+
             if (!forBasicCompletion && (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT || callTypeAndReceiver is CallTypeAndReceiver.UNKNOWN /* after this@ */)) {
                 items.addThisItems(expression, expectedInfos, smartCastCalculator)
             }
@@ -340,7 +343,7 @@ class SmartCompletion(
         if (declaration != null) {
             val originalDeclaration = toFromOriginalFileMapper.toOriginalFile(declaration)
             if (originalDeclaration != null) {
-                val originalDescriptor = originalDeclaration.resolveToDescriptor(BodyResolveMode.PARTIAL) as? CallableDescriptor
+                val originalDescriptor = originalDeclaration.resolveToDescriptorIfAny() as? CallableDescriptor
                 val returnType = originalDescriptor?.returnType
                 if (returnType != null && !returnType.isError) {
                     return listOf(ExpectedInfo(returnType, declaration.name, null))
@@ -438,6 +441,12 @@ class SmartCompletion(
             items.add(lookupElement.addTailAndNameSimilarity(infos))
         }
         return items
+    }
+
+    private fun MutableCollection<LookupElement>.addArrayLiteralsInAnnotationsCompletions() {
+        if (expression.languageVersionSettings.supportsFeature(LanguageFeature.ArrayLiteralsInAnnotations)) {
+            this.addAll(ArrayLiteralsInAnnotationItems.collect(expectedInfos, expression))
+        }
     }
 
     companion object {

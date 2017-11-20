@@ -1,16 +1,16 @@
 // -- Module: <m1-common> --
 package
 
-public header var foo: kotlin.String
+public expect var foo: kotlin.String
 
 
 // -- Module: <m2-jvm> --
 package
 
-public impl var foo: kotlin.String
+public actual var foo: kotlin.String
 
 
 // -- Module: <m3-js> --
 package
 
-public impl var foo: kotlin.String
+public actual var foo: kotlin.String

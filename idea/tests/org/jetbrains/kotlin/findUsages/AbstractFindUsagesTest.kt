@@ -147,7 +147,7 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
 
 
     companion object {
-        val SUPPORTED_EXTENSIONS = setOf("kt", "java", "xml", "properties", "txt", "groovy")
+        val SUPPORTED_EXTENSIONS = setOf("kt", "kts", "java", "xml", "properties", "txt", "groovy")
 
         val USAGE_VIEW_PRESENTATION = UsageViewPresentation()
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -275,6 +275,8 @@ class TypeResolver(
 
                     override fun isVar() = false
 
+                    override fun isLateInit() = false
+
                     override fun getCompileTimeInitializer() = null
 
                     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
@@ -367,11 +369,11 @@ class TypeResolver(
         return if (scopeForTypeParameter is ErrorUtils.ErrorScope)
             ErrorUtils.createErrorType("?")
         else
-            KotlinTypeFactory.simpleType(annotations,
-                                         typeParameter.typeConstructor,
-                                         listOf(),
-                                         false,
-                                         scopeForTypeParameter)
+            KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations,
+                                                                  typeParameter.typeConstructor,
+                                                                  listOf(),
+                                                                  false,
+                                                                  scopeForTypeParameter)
     }
 
     private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): MemberScope {
@@ -851,7 +853,8 @@ class TypeResolver(
         if (userType.qualifier != null) { // we must resolve all type references in arguments of qualifier type
             for (typeArgument in userType.qualifier!!.typeArguments) {
                 typeArgument.typeReference?.let {
-                    forceResolveTypeContents(resolveType(scope, it, trace, true))
+                    // in qualified expression, type argument can have bounds only in incorrect code
+                    forceResolveTypeContents(resolveType(scope, it, trace, false))
                 }
             }
         }

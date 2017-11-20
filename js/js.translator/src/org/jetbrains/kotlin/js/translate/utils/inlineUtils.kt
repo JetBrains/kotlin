@@ -55,7 +55,7 @@ fun setInlineCallMetadata(
         override fun visitInvocation(invocation: JsInvocation) {
             super.visitInvocation(invocation)
 
-            if (invocation.name in candidateNames) {
+            if (invocation.name in candidateNames || invocation.name?.descriptor?.original == descriptor.original) {
                 invocation.descriptor = descriptor
                 invocation.inlineStrategy = InlineStrategy.IN_PLACE
                 invocation.psiElement = psiElement
@@ -81,6 +81,7 @@ fun setInlineCallMetadata(
         descriptor: CallableDescriptor,
         context: TranslationContext
 ) {
+    if (nameRef.inlineStrategy != null) return
     nameRef.descriptor = descriptor
     nameRef.inlineStrategy = InlineStrategy.IN_PLACE
     nameRef.psiElement = psiElement

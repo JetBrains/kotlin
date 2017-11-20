@@ -1263,11 +1263,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
         LOCAL(true, false),
         SCRIPT_TOPLEVEL(true, true);
 
-        public final boolean desctructuringAllowed;
+        public final boolean destructuringAllowed;
         public final boolean accessorsAllowed;
 
-        PropertyParsingMode(boolean desctructuringAllowed, boolean accessorsAllowed) {
-            this.desctructuringAllowed = desctructuringAllowed;
+        PropertyParsingMode(boolean destructuringAllowed, boolean accessorsAllowed) {
+            this.destructuringAllowed = destructuringAllowed;
             this.accessorsAllowed = accessorsAllowed;
         }
     }
@@ -1295,7 +1295,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (multiDeclaration) {
             PsiBuilder.Marker multiDecl = mark();
             parseMultiDeclarationName(propertyNameFollow);
-            errorIf(multiDecl, !mode.desctructuringAllowed, "Destructuring declarations are only allowed for local variables/values");
+            errorIf(multiDecl, !mode.destructuringAllowed, "Destructuring declarations are only allowed for local variables/values");
         }
         else {
             parseFunctionOrPropertyName(receiverTypeDeclared, "property", propertyNameFollow, /*nameRequired = */ true);

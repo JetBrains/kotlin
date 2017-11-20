@@ -21,7 +21,9 @@ import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.testFramework.ModuleTestCase
+import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
@@ -271,6 +273,33 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         lib3.classes.assertAdditionalLibraryDependencies(lib1.classes, lib2.classes)
     }
 
+    fun testRoots() {
+        val a = module("a", hasProductionRoot = true, hasTestRoot = false)
+
+        val empty = module("empty", hasProductionRoot = false, hasTestRoot = false)
+        a.addDependency(empty)
+
+        val b = module("b", hasProductionRoot = false, hasTestRoot = true)
+        b.addDependency(a)
+
+        val c = module("c")
+        c.addDependency(b)
+        c.addDependency(a)
+
+        assertNotNull(a.productionSourceInfo())
+        assertNull(a.testSourceInfo())
+
+        assertNull(empty.productionSourceInfo())
+        assertNull(empty.testSourceInfo())
+
+        assertNull(b.productionSourceInfo())
+        assertNotNull(b.testSourceInfo())
+
+        b.test.assertDependenciesEqual(b.test, a.production)
+        c.test.assertDependenciesEqual(c.test, c.production, b.test, a.production)
+        c.production.assertDependenciesEqual(c.production, a.production)
+    }
+
     fun testCommonLibraryDoesNotDependOnPlatform() {
         val stdlibCommon = stdlibCommon()
         val stdlibJvm = stdlibJvm()
@@ -296,17 +325,24 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
 
     private val Module.production: ModuleProductionSourceInfo
-        get() = productionSourceInfo()
+        get() = productionSourceInfo()!!
 
     private val Module.test: ModuleTestSourceInfo
-        get() = testSourceInfo()
+        get() = testSourceInfo()!!
 
     private val Library.classes: LibraryInfo
         get() = LibraryInfo(project!!, this)
 
-    private fun module(name: String): Module {
-        return createModuleFromTestData(createTempDirectory()!!.absolutePath, name, StdModuleTypes.JAVA, false)!!
+    private fun module(name: String, hasProductionRoot: Boolean = true, hasTestRoot: Boolean = true): Module {
+        return createModuleFromTestData(createTempDirectory()!!.absolutePath, name, StdModuleTypes.JAVA, false)!!.apply {
+            if (hasProductionRoot)
+                PsiTestUtil.addSourceContentToRoots(this, dir(), false)
+            if (hasTestRoot)
+                PsiTestUtil.addSourceContentToRoots(this, dir(), true)
+        }
     }
+
+    private fun dir() = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(createTempDirectory())!!
 
     private fun modules(name1: String = "a", name2: String = "b", name3: String = "c") = Triple(module(name1), module(name2), module(name3))
 

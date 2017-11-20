@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
@@ -29,10 +28,12 @@ import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.ReportLevel
+import org.jetbrains.kotlin.utils.ReportLevel.Companion.findByDescription
 
 class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        val foreignAnnotationsJar = MockLibraryUtil.compileJvmLibraryToJar("compiler/testData/foreignAnnotations/annotations", "foreign-annotations")
+        val foreignAnnotationsJar = MockLibraryUtil.compileJvmLibraryToJar("third-party/annotations", "foreign-annotations")
         val libraryJar = MockLibraryUtil.compileJvmLibraryToJar("idea/testData/highlighterJsr305/library", "jsr305-library",
                                                                 extraClasspath = listOf(foreignAnnotationsJar.absolutePath))
         return object : KotlinJdkAndLibraryProjectDescriptor(
@@ -46,13 +47,36 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
                 super.configureModule(module, model)
                 module.createFacet(TargetPlatformKind.Jvm(JvmTarget.JVM_1_8))
                 val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(module)
-                (facetSettings.compilerArguments as K2JVMCompilerArguments).jsr305GlobalState = Jsr305State.ENABLE.description
+
+                facetSettings.apply {
+                    val jsrStateByTestName =
+                            ReportLevel.findByDescription(getTestName(true)) ?: return@apply
+
+                    compilerSettings!!.additionalArguments += " -Xjsr305=${jsrStateByTestName.description}"
+                    updateMergedArguments()
+                }
             }
         }
     }
 
-    fun testSimple() {
-        myFixture.configureByFile("A.kt")
+    fun testIgnore() {
+        doTest()
+    }
+
+    fun testWarn() {
+        doTest()
+    }
+
+    fun testStrict() {
+        doTest()
+    }
+
+    fun testDefault() {
+        doTest()
+    }
+
+    private fun doTest() {
+        myFixture.configureByFile("${getTestName(false)}.kt")
         myFixture.checkHighlighting()
     }
 

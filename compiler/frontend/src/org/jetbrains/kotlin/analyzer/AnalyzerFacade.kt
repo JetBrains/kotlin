@@ -118,7 +118,6 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         moduleDescriptor.setDependencies(LazyModuleDependencies(
                 projectContext.storageManager,
                 module,
-                modulePlatforms,
                 firstDependency,
                 this))
 
@@ -234,7 +233,7 @@ interface ModuleInfo {
     // but if they are present, they should come after JVM built-ins in the dependencies list, because JVM built-ins contain
     // additional members dependent on the JDK
     fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-            if (platform == TargetPlatform.Default)
+            if (platform == TargetPlatform.Common)
                 ModuleInfo.DependencyOnBuiltIns.AFTER_SDK
             else
                 ModuleInfo.DependencyOnBuiltIns.LAST
@@ -270,7 +269,6 @@ abstract class AnalyzerFacade {
 class LazyModuleDependencies<M: ModuleInfo>(
         storageManager: StorageManager,
         private val module: M,
-        modulePlatforms: (M) -> MultiTargetPlatform?,
         firstDependency: M? = null,
         private val resolverForProject: ResolverForProjectImpl<M>
 ) : ModuleDependencies {
@@ -292,14 +290,6 @@ class LazyModuleDependencies<M: ModuleInfo>(
         }.toList()
     }
 
-    private val implementingModules = storageManager.createLazyValue {
-        if (modulePlatforms(module) != MultiTargetPlatform.Common) emptySet<M>()
-        else resolverForProject.modules
-                .filterTo(mutableSetOf()) {
-                    modulePlatforms(it) != MultiTargetPlatform.Common && module in it.dependencies()
-                }
-    }
-
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
 
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
@@ -308,8 +298,6 @@ class LazyModuleDependencies<M: ModuleInfo>(
                 resolverForProject.descriptorForModule(it as M)
             }
 
-    override val allImplementingModules: Set<ModuleDescriptorImpl>
-        get() = implementingModules().mapTo(mutableSetOf()) { resolverForProject.descriptorForModule(it) }
 }
 
 

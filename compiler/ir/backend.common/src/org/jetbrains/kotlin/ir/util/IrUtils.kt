@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -121,16 +120,6 @@ fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.
 
 fun IrCall.usesDefaultArguments(): Boolean =
         this.descriptor.valueParameters.any { this.getValueArgument(it) == null }
-
-fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? {
-    val sourceRangeInfo = containingFile.fileEntry.getSourceRangeInfo(this.startOffset, this.endOffset)
-    return CompilerMessageLocation.create(
-            path = sourceRangeInfo.filePath,
-            line = sourceRangeInfo.startLineNumber,
-            column = sourceRangeInfo.startColumnNumber,
-            lineContent = null // TODO: retrieve the line content.
-    )
-}
 
 fun IrFunction.createParameterDeclarations() {
     fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(

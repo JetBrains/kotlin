@@ -42,6 +42,8 @@ interface ImplicitScopeTower {
     val location: LookupLocation
 
     val isDebuggerContext: Boolean
+
+    val isNewInferenceEnabled: Boolean
 }
 
 interface ScopeTowerLevel {
@@ -50,6 +52,8 @@ interface ScopeTowerLevel {
     fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
 
     fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
+
+    fun recordLookup(name: Name)
 }
 
 interface CandidateWithBoundDispatchReceiver {

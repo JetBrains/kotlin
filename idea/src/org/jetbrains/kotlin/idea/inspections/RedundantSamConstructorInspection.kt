@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
@@ -58,6 +59,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                     override fun getName() = "Remove redundant SAM-constructor"
                     override fun getFamilyName() = name
                     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+                        if (!FileModificationService.getInstance().preparePsiElementForWrite(expression)) return
                         replaceSamConstructorCall(expression)
                     }
                 }
@@ -69,6 +71,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                     override fun getFamilyName() = name
                     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
                         for (callExpression in expressions) {
+                            if (!FileModificationService.getInstance().preparePsiElementForWrite(callExpression)) return
                             replaceSamConstructorCall(callExpression)
                         }
                     }

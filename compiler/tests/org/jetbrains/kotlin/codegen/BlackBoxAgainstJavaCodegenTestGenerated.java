@@ -335,6 +335,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
             doTest(fileName);
         }
 
+        @TestMetadata("explicitEqualsCall_lv12.kt")
+        public void testExplicitEqualsCall_lv12() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCall_lv12.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("float.kt")
         public void testFloat() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/ieee754/float.kt");
@@ -350,6 +356,21 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
         @TestMetadata("nullableAnyToReal.kt")
         public void testNullableAnyToReal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/ieee754/nullableAnyToReal.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/inline")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inline extends AbstractBlackBoxAgainstJavaCodegenTest {
+        public void testAllFilesPresentInInline() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("kt19910.kt")
+        public void testKt19910() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/inline/kt19910.kt");
             doTest(fileName);
         }
     }

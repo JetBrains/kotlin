@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -40,7 +40,7 @@ class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, Ove
 
         val declaration = method.kotlinOrigin as? KtCallableDeclaration ?: return true
 
-        val callDescriptor = runReadAction { declaration.resolveToDescriptor() }
+        val callDescriptor = runReadAction { declaration.unsafeResolveToDescriptor() }
         if (callDescriptor !is CallableDescriptor) return true
 
         // Java overriding method search can't find overloads with primitives types, so
@@ -66,7 +66,7 @@ class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, Ove
         val methodsByName = inheritor.findMethodsByName(name, false)
 
         for (lightMethodCandidate in methodsByName) {
-            val candidateDescriptor = (lightMethodCandidate as? KtLightMethod)?.kotlinOrigin?.resolveToDescriptor() ?: continue
+            val candidateDescriptor = (lightMethodCandidate as? KtLightMethod)?.kotlinOrigin?.unsafeResolveToDescriptor() ?: continue
             if (candidateDescriptor !is CallableMemberDescriptor) continue
 
             val overriddenDescriptors = candidateDescriptor.getDirectlyOverriddenDeclarations()

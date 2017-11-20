@@ -82,6 +82,7 @@ private fun ConstraintSystemBuilderImpl.addConstraintFromBounds(old: Bound, new:
 }
 
 private fun ConstraintSystemBuilderImpl.generateNewBound(bound: Bound, substitution: Bound) {
+    if (bound === substitution) return
     // Let's have a bound 'T <=> My<R>', and a substitution 'R <=> Type'.
     // Here <=> means lower_bound, upper_bound or exact_bound constraint.
     // Then a new bound 'T <=> My<_/in/out Type>' can be generated.

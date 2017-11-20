@@ -30,7 +30,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions
@@ -119,7 +119,7 @@ class KotlinCallerTreeStructure(
     override fun buildChildren(nodeDescriptor: HierarchyNodeDescriptor): Array<Any> {
         val element = nodeDescriptor.psiElement as? KtDeclaration ?: return ArrayUtil.EMPTY_OBJECT_ARRAY
         val callerToDescriptorMap = Maps.newHashMap<PsiElement, NodeDescriptor<*>>()
-        val descriptor = element.resolveToDescriptor()
+        val descriptor = element.unsafeResolveToDescriptor()
         if (descriptor is CallableMemberDescriptor) {
             return descriptor.getDeepestSuperDeclarations().flatMap { rootDescriptor ->
                 val rootElement = DescriptorToSourceUtilsIde.getAnyDeclaration(myProject, rootDescriptor)

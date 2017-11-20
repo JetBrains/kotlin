@@ -7,7 +7,6 @@ import kotlin.test.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.Timer
 
-import org.junit.Test
 
 class TimerTest {
     @Test fun scheduledTask() {
@@ -22,6 +21,6 @@ class TimerTest {
         task.cancel()
 
         val value = counter.get()
-        assertTrue(value > 4, "Expected to fire at least 4 times, but was $value")
+        assertTrue(value >= 4, "Expected to fire at least 4 times, but was $value")
     }
 }

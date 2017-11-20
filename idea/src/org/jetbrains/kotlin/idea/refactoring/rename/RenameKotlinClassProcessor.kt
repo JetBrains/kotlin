@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtConstructor
@@ -79,17 +79,6 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
         }
     }
 
-    override fun getQualifiedNameAfterRename(element: PsiElement, newName: String?, nonJava: Boolean): String? {
-        if (!nonJava) return newName
-
-        val qualifiedName = when (element) {
-            is KtClassOrObject -> element.fqName?.asString() ?: element.name
-            is PsiClass -> element.qualifiedName ?: element.name
-            else -> return null
-        }
-        return PsiUtilCore.getQualifiedNameAfterRename(qualifiedName, newName)
-    }
-
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
         if (element is KtObjectDeclaration && element.isCompanion()) {
             return super.findReferences(element).filter { !it.isCompanionObjectClassReference() }
@@ -113,7 +102,7 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
     ) {
         if (newName == null) return
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return
-        val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
+        val descriptor = declaration.unsafeResolveToDescriptor() as ClassDescriptor
 
         val collisions = SmartList<UsageInfo>()
         checkRedeclarations(descriptor, newName, collisions)

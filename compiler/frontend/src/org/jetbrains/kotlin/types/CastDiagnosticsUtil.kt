@@ -44,6 +44,7 @@ object CastDiagnosticsUtil {
     ): Boolean {
         val rhsNullable = TypeUtils.isNullableType(rhsType)
         val lhsNullable = TypeUtils.isNullableType(lhsType)
+        if (KotlinBuiltIns.isNothing(lhsType)) return true
         if (KotlinBuiltIns.isNullableNothing(lhsType) && !rhsNullable) return false
         if (KotlinBuiltIns.isNothing(rhsType)) return false
         if (KotlinBuiltIns.isNullableNothing(rhsType)) return lhsNullable
@@ -69,13 +70,13 @@ object CastDiagnosticsUtil {
      * (i.e. java.lang.String -> kotlin.String) and ignore mappings that go the other way.
      */
     private fun isRelated(a: KotlinType, b: KotlinType, platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {
-        val aClasses = mapToPlatformClasses(a, platformToKotlinClassMap)
-        val bClasses = mapToPlatformClasses(b, platformToKotlinClassMap)
+        val aClasses = mapToPlatformIndependentClasses(a, platformToKotlinClassMap)
+        val bClasses = mapToPlatformIndependentClasses(b, platformToKotlinClassMap)
 
         return aClasses.any { DescriptorUtils.isSubtypeOfClass(b, it) } || bClasses.any { DescriptorUtils.isSubtypeOfClass(a, it) }
     }
 
-    private fun mapToPlatformClasses(
+    private fun mapToPlatformIndependentClasses(
             type: KotlinType,
             platformToKotlinClassMap: PlatformToKotlinClassMap
     ): List<ClassDescriptor> {
@@ -203,28 +204,26 @@ object CastDiagnosticsUtil {
             expression: KtBinaryExpressionWithTypeRHS,
             context: ExpressionTypingContext,
             targetType: KotlinType,
-            actualType: KotlinType,
-            typeChecker: KotlinTypeChecker
+            actualType: KotlinType
     ): Boolean {
         // Here: x as? Type <=> x as Type?
         val refinedTargetType = if (KtPsiUtil.isSafeCast(expression)) TypeUtils.makeNullable(targetType) else targetType
         val possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(expression.left, actualType, context)
-        return isRefinementUseless(possibleTypes, refinedTargetType, typeChecker, shouldCheckForExactType(expression, context.expectedType))
+        return isRefinementUseless(possibleTypes, refinedTargetType, shouldCheckForExactType(expression, context.expectedType))
     }
 
     // It is a warning "useless cast" for `as` and a warning "redundant is" for `is`
     fun isRefinementUseless(
             possibleTypes: Collection<KotlinType>,
             targetType: KotlinType,
-            typeChecker: KotlinTypeChecker,
             shouldCheckForExactType: Boolean
     ): Boolean {
-        val intersectedType = TypeIntersector.intersectTypes(typeChecker, possibleTypes.map { it.upperIfFlexible() }) ?: return false
+        val intersectedType = TypeIntersector.intersectTypes(possibleTypes.map { it.upperIfFlexible() }) ?: return false
 
         return if (shouldCheckForExactType)
             isExactTypeCast(intersectedType, targetType)
         else
-            isUpcast(intersectedType, targetType, typeChecker)
+            isUpcast(intersectedType, targetType)
     }
 
     private fun shouldCheckForExactType(expression: KtBinaryExpressionWithTypeRHS, expectedType: KotlinType): Boolean {
@@ -241,8 +240,8 @@ object CastDiagnosticsUtil {
         return candidateType == targetType && candidateType.isExtensionFunctionType == targetType.isExtensionFunctionType
     }
 
-    private fun isUpcast(candidateType: KotlinType, targetType: KotlinType, typeChecker: KotlinTypeChecker): Boolean {
-        if (!typeChecker.isSubtypeOf(candidateType, targetType)) return false
+    private fun isUpcast(candidateType: KotlinType, targetType: KotlinType): Boolean {
+        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateType, targetType)) return false
 
         if (candidateType.isFunctionType && targetType.isFunctionType) {
             return candidateType.isExtensionFunctionType == targetType.isExtensionFunctionType
@@ -273,8 +272,9 @@ object CastDiagnosticsUtil {
             // in unary expression, left argument can be a receiver
             is KtBinaryExpression, is KtUnaryExpression -> true
 
-            // Previously we've checked that there is no expected type, therefore cast in property has an effect on inference
-            is KtProperty, is KtPropertyAccessor -> true
+            // Previously we've checked that there is no expected type, therefore cast in property or
+            // in function has an effect on inference and thus isn't useless
+            is KtProperty, is KtPropertyAccessor, is KtNamedFunction, is KtFunctionLiteral -> true
 
             else -> false
         }

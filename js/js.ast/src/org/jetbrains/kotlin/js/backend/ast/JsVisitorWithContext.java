@@ -59,19 +59,26 @@ public abstract class JsVisitorWithContext {
         doAcceptStatementList(statements);
     }
 
+    public void endVisit(@NotNull JsExpression x, @NotNull JsContext ctx) {
+    }
+
     public void endVisit(@NotNull JsArrayAccess x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsArrayLiteral x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsBinaryOperation x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsBlock x, @NotNull JsContext ctx) {
     }
 
     public void endVisit(@NotNull JsBooleanLiteral x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsBreak x, @NotNull JsContext ctx) {
@@ -84,6 +91,7 @@ public abstract class JsVisitorWithContext {
     }
 
     public void endVisit(@NotNull JsConditional x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsContinue x, @NotNull JsContext ctx) {
@@ -111,12 +119,14 @@ public abstract class JsVisitorWithContext {
     }
 
     public void endVisit(@NotNull JsFunction x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsIf x, @NotNull JsContext ctx) {
     }
 
     public void endVisit(@NotNull JsInvocation x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsLabel x, @NotNull JsContext ctx) {
@@ -126,27 +136,33 @@ public abstract class JsVisitorWithContext {
     }
 
     public void endVisit(@NotNull JsNameRef x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsNew x, @NotNull JsContext ctx) {
     }
 
     public void endVisit(@NotNull JsNullLiteral x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsNumberLiteral x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsObjectLiteral x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsParameter x, @NotNull JsContext ctx) {
     }
 
     public void endVisit(@NotNull JsPostfixOperation x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsPrefixOperation x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsProgram x, @NotNull JsContext ctx) {
@@ -156,18 +172,21 @@ public abstract class JsVisitorWithContext {
     }
 
     public void endVisit(@NotNull JsRegExp x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsReturn x, @NotNull JsContext ctx) {
     }
 
     public void endVisit(@NotNull JsStringLiteral x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsSwitch x, @NotNull JsContext ctx) {
     }
 
     public void endVisit(@NotNull JsThisRef x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
     }
 
     public void endVisit(@NotNull JsThrow x, @NotNull JsContext ctx) {

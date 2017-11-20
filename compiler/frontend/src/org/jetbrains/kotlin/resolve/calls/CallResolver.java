@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -62,7 +63,6 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -168,6 +168,17 @@ public class CallResolver {
         return computeTasksAndResolveCall(
                 callResolutionContext, name, functionReference,
                 NewResolutionOldInference.ResolutionKind.Function.INSTANCE);
+    }
+
+    @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
+            @NotNull ResolutionContext<?> context,
+            @NotNull Call call,
+            @NotNull Name name,
+            @NotNull TracingStrategy tracing
+    ) {
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
+        return computeTasksAndResolveCall(callResolutionContext, name, tracing, NewResolutionOldInference.ResolutionKind.Function.INSTANCE);
     }
 
     @NotNull
@@ -292,7 +303,7 @@ public class CallResolver {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
                         trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                        isAnnotationContext
+                        isAnnotationContext, languageVersionSettings
                 )
         );
     }
@@ -418,7 +429,8 @@ public class CallResolver {
                 CallMaker.makeCall(null, null, call),
                 NO_EXPECTED_TYPE,
                 dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                false);
+                false,
+                languageVersionSettings);
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 
@@ -560,12 +572,13 @@ public class CallResolver {
         Call call = context.call;
         tracing.bindCall(context.trace, call);
 
-        if (KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE() && (resolutionTask.resolutionKind.getKotlinCallKind() != KotlinCallKind.UNSUPPORTED)) {
+        boolean newInferenceEnabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference);
+        if (newInferenceEnabled && (resolutionTask.resolutionKind.getKotlinCallKind() != KotlinCallKind.UNSUPPORTED)) {
             assert resolutionTask.name != null;
             return PSICallResolver.runResolutionAndInference(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
         }
 
-        if (KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE() && resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
+        if (newInferenceEnabled && resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
             assert resolutionTask.givenCandidates != null;
             return PSICallResolver.runResolutionAndInferenceForGivenCandidates(context, resolutionTask.givenCandidates, tracing);
         }
@@ -609,7 +622,7 @@ public class CallResolver {
         if (CallResolverUtilKt.isInvokeCallOnVariable(context.call)) return;
         if (!results.isSingleResult()) {
             if (results.getResultCode() == INCOMPLETE_TYPE_INFERENCE) {
-                argumentTypeResolver.checkTypesWithNoCallee(context, RESOLVE_FUNCTION_ARGUMENTS);
+                argumentTypeResolver.checkTypesWithNoCallee(context);
             }
             return;
         }
@@ -636,7 +649,7 @@ public class CallResolver {
     }
 
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> checkArgumentTypesAndFail(BasicCallResolutionContext context) {
-        argumentTypeResolver.checkTypesWithNoCallee(context, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS);
+        argumentTypeResolver.checkTypesWithNoCallee(context);
         return OverloadResolutionResultsImpl.nameNotFound();
     }
 

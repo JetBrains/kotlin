@@ -1,0 +1,136 @@
+== callsAndInverts ==
+fun callsAndInverts(b: Boolean, block: () -> Unit): Boolean {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        returns(true) implies (!b)
+        returns(false) implies b
+    }
+
+    block()
+    return !b
+}
+---------------------
+                                                                                                                                          <v0>: Boolean                           NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+                                                                                                                                          <v1>: {<: () -> Unit}                   NEW: magic[FAKE_INITIALIZER](block: () -> Unit) -> <v1>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b }                                  <v2>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b }) -> <v2>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b }                         <v3>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b }, contract|<v2>) -> <v3>
+block                                                                                                                                     <v4>: {<: () -> Unit}                   NEW: r(block) -> <v4>
+block()                                                                                                                                   <v5>: *                                 NEW: call(block(), invoke|<v4>) -> <v5>
+b                                                                                                                                         <v6>: Boolean                           NEW: r(b) -> <v6>
+!b                                                                                                                                        <v7>: Boolean                           NEW: call(!b, not|<v6>) -> <v7>
+return !b                                                                                                                                 !<v8>: *
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b } block() return !b }   !<v8>: *                                COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        returns(true) implies (!b)
+        returns(false) implies b
+    }
+---------------------
+                                                                                                       <v0>: {<: ContractBuilder}    NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+                                                                                                       <v10>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](returns(false)) -> <v10>
+                                                                                                       <v4>: {<: ContractBuilder}    NEW: magic[IMPLICIT_RECEIVER](returns(true)) -> <v4>
+block                                                                                                  <v1>: {<: Function<Unit>}     NEW: r(block) -> <v1>
+EXACTLY_ONCE                                                                                           <v2>: {<: InvocationKind}     NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                                                                            <v2>: {<: InvocationKind}     COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)                                                       <v3>: *                       NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+true                                                                                                   <v5>: *                       NEW: r(true) -> <v5>
+returns(true)                                                                                          <v6>: {<: SimpleEffect}       NEW: call(returns(true), returns|<v4>, <v5>) -> <v6>
+b                                                                                                      <v7>: Boolean                 NEW: r(b) -> <v7>
+!b                                                                                                     <v8>: Boolean                 NEW: call(!b, not|<v7>) -> <v8>
+(!b)                                                                                                   <v8>: Boolean                 COPY
+returns(true) implies (!b)                                                                             <v9>: *                       NEW: call(returns(true) implies (!b), implies|<v6>, <v8>) -> <v9>
+false                                                                                                  <v11>: *                      NEW: r(false) -> <v11>
+returns(false)                                                                                         <v12>: {<: SimpleEffect}      NEW: call(returns(false), returns|<v10>, <v11>) -> <v12>
+b                                                                                                      <v13>: Boolean                NEW: r(b) -> <v13>
+returns(false) implies b                                                                               <v14>: *                      NEW: call(returns(false) implies b, implies|<v12>, <v13>) -> <v14>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b   <v14>: *                      COPY
+=====================
+== smartcastAndInitialization ==
+fun smartcastAndInitialization(x: Any?) {
+    val y: Int
+
+    if (callsAndInverts(x !is String) { y = 42 }) {
+        println(y)
+        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    }
+    else {
+        println(y)
+        x.<!UNRESOLVED_REFERENCE!>length<!>
+    }
+    println(y)
+}
+---------------------
+                                                                                                                                                                                     <v0>: *                 NEW: magic[FAKE_INITIALIZER](x: Any?) -> <v0>
+x                                                                                                                                                                                    <v1>: *                 NEW: r(x) -> <v1>
+x !is String                                                                                                                                                                         <v2>: Boolean           NEW: magic[IS](x !is String|<v1>) -> <v2>
+{ y = 42 }                                                                                                                                                                           <v3>: {<: () -> Unit}   NEW: r({ y = 42 }) -> <v3>
+callsAndInverts(x !is String) { y = 42 }                                                                                                                                             <v4>: Boolean           NEW: call(callsAndInverts(x !is String) { y = 42 }, callsAndInverts|<v2>, <v3>) -> <v4>
+y                                                                                                                                                                                    <v5>: Int               NEW: r(y) -> <v5>
+println(y)                                                                                                                                                                           <v6>: *                 NEW: call(println(y), println|<v5>) -> <v6>
+DEBUG_INFO_SMARTCAST                                                                                                                                                                 <v7>: *                 NEW: magic[UNRESOLVED_CALL](DEBUG_INFO_SMARTCAST) -> <v7>
+!DEBUG_INFO_SMARTCAST                                                                                                                                                                <v8>: *                 NEW: call(!DEBUG_INFO_SMARTCAST, <ERROR FUNCTION>|<v7>) -> <v8>
+{ println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length }                                                                                                                                   <v8>: *                 COPY
+y                                                                                                                                                                                    <v9>: Int               NEW: r(y) -> <v9>
+println(y)                                                                                                                                                                           <v10>: *                NEW: call(println(y), println|<v9>) -> <v10>
+x                                                                                                                                                                                    <v11>: *                NEW: r(x) -> <v11>
+x.<                                                                                                                                                                                  <v12>: *                NEW: magic[UNSUPPORTED_ELEMENT](x.<|<v11>) -> <v12>
+{ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }                                                                                                                                   <v12>: *                COPY
+if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }                             <v13>: *                NEW: merge(if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }|<v8>, <v12>) -> <v13>
+y                                                                                                                                                                                    <v14>: Int              NEW: r(y) -> <v14>
+println(y)                                                                                                                                                                           <v15>: *                NEW: call(println(y), println|<v14>) -> <v15>
+{ val y: Int if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> } println(y) }   <v15>: *                COPY
+=====================
+== inlined anonymous_1 ==
+{ y = 42 }
+---------------------
+42       <v0>: Int   NEW: r(42) -> <v0>
+y = 42   !<v1>: *
+y = 42   !<v1>: *    COPY
+=====================
+== inPresenceOfLazy ==
+fun inPresenceOfLazy(x: Any?, unknownBoolean: Boolean) {
+    val y: Int
+
+    if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) {
+        println(y)
+        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    }
+    else {
+        println(y)
+        x.<!UNRESOLVED_REFERENCE!>length<!>
+    }
+    println(y)
+}
+---------------------
+                                                                                                                                                                                                       <v0>: *                 NEW: magic[FAKE_INITIALIZER](x: Any?) -> <v0>
+                                                                                                                                                                                                       <v1>: Boolean           NEW: magic[FAKE_INITIALIZER](unknownBoolean: Boolean) -> <v1>
+unknownBoolean                                                                                                                                                                                         <v2>: Boolean           NEW: r(unknownBoolean) -> <v2>
+x                                                                                                                                                                                                      <v3>: *                 NEW: r(x) -> <v3>
+x !is String                                                                                                                                                                                           <v4>: Boolean           NEW: magic[IS](x !is String|<v3>) -> <v4>
+{ y = 42 }                                                                                                                                                                                             <v5>: {<: () -> Unit}   NEW: r({ y = 42 }) -> <v5>
+callsAndInverts(x !is String) { y = 42 }                                                                                                                                                               <v6>: Boolean           NEW: call(callsAndInverts(x !is String) { y = 42 }, callsAndInverts|<v4>, <v5>) -> <v6>
+unknownBoolean && callsAndInverts(x !is String) { y = 42 }                                                                                                                                             <v7>: Boolean           NEW: magic[AND](unknownBoolean && callsAndInverts(x !is String) { y = 42 }|<v2>, <v6>) -> <v7>
+y                                                                                                                                                                                                      <v8>: Int               NEW: r(y) -> <v8>
+println(y)                                                                                                                                                                                             <v9>: *                 NEW: call(println(y), println|<v8>) -> <v9>
+DEBUG_INFO_SMARTCAST                                                                                                                                                                                   <v10>: *                NEW: magic[UNRESOLVED_CALL](DEBUG_INFO_SMARTCAST) -> <v10>
+!DEBUG_INFO_SMARTCAST                                                                                                                                                                                  <v11>: *                NEW: call(!DEBUG_INFO_SMARTCAST, <ERROR FUNCTION>|<v10>) -> <v11>
+{ println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length }                                                                                                                                                     <v11>: *                COPY
+y                                                                                                                                                                                                      <v12>: Int              NEW: r(y) -> <v12>
+println(y)                                                                                                                                                                                             <v13>: *                NEW: call(println(y), println|<v12>) -> <v13>
+x                                                                                                                                                                                                      <v14>: *                NEW: r(x) -> <v14>
+x.<                                                                                                                                                                                                    <v15>: *                NEW: magic[UNSUPPORTED_ELEMENT](x.<|<v14>) -> <v15>
+{ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }                                                                                                                                                     <v15>: *                COPY
+if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }                             <v16>: *                NEW: merge(if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }|<v11>, <v15>) -> <v16>
+y                                                                                                                                                                                                      <v17>: Int              NEW: r(y) -> <v17>
+println(y)                                                                                                                                                                                             <v18>: *                NEW: call(println(y), println|<v17>) -> <v18>
+{ val y: Int if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> } println(y) }   <v18>: *                COPY
+=====================
+== inlined anonymous_2 ==
+{ y = 42 }
+---------------------
+42       <v0>: Int   NEW: r(42) -> <v0>
+y = 42   !<v1>: *
+y = 42   !<v1>: *    COPY
+=====================

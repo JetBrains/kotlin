@@ -1,0 +1,19 @@
+@kotlin.Metadata
+final class CoroutineContextIntrinsicKt$notTailCall$1 {
+    synthetic field data: java.lang.Object
+    synthetic field exception: java.lang.Throwable
+    inner class CoroutineContextIntrinsicKt$notTailCall$1
+    method <init>(p0: kotlin.coroutines.experimental.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
+    synthetic final method getLabel(): int
+    synthetic final method setLabel(p0: int): void
+}
+
+@kotlin.Metadata
+public final class CoroutineContextIntrinsicKt {
+    inner class CoroutineContextIntrinsicKt$notTailCall$1
+    public final static @org.jetbrains.annotations.Nullable method mustBeTailCall(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method notTailCall(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method retrieveCoroutineContext(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.CoroutineContext, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
+}

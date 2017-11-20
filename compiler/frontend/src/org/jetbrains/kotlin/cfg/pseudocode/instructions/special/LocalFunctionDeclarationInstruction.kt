@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 
-class LocalFunctionDeclarationInstruction(
+open class LocalFunctionDeclarationInstruction(
         element: KtElement,
         val body: Pseudocode,
         blockScope: BlockScope

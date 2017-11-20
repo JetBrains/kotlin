@@ -1,6 +1,6 @@
 package test
 
-header class C {
+expect class C {
     var baz: Int
     var bar: Int
 }

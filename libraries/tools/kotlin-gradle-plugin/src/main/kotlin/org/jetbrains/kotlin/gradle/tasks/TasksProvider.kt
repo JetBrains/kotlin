@@ -25,7 +25,6 @@ internal open class KotlinTasksProvider {
     fun createKotlinJVMTask(project: Project, name: String, sourceSetName: String): KotlinCompile =
             project.tasks.create(name, KotlinCompile::class.java).apply {
                 configure(project, sourceSetName)
-                outputs.upToDateWhen { isCacheFormatUpToDate }
             }
 
     fun createKotlinJSTask(project: Project, name: String, sourceSetName: String): Kotlin2JsCompile =
@@ -42,6 +41,7 @@ internal open class KotlinTasksProvider {
         this.sourceSetName = sourceSetName
         this.friendTaskName = taskToFriendTaskMapper[this]
         mapKotlinTaskProperties(project, this)
+        outputs.upToDateWhen { isCacheFormatUpToDate }
     }
 
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =

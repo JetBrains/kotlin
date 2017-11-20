@@ -40,12 +40,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
-import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
+import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.formatClass
 import org.jetbrains.kotlin.idea.refactoring.formatFunction
-import org.jetbrains.kotlin.idea.refactoring.withHeaderImplementations
+import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
@@ -64,10 +64,10 @@ import java.util.*
 class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     companion object {
         @set:TestOnly
-        internal var Project.ALLOW_LIFTING_IMPL_PARAMETER_TO_HEADER
-                by NotNullableUserDataProperty(Key.create("ALLOW_LIFTING_IMPL_PARAMETER_TO_HEADER"), true)
+        internal var Project.ALLOW_LIFTING_ACTUAL_PARAMETER_TO_EXPECTED
+                by NotNullableUserDataProperty(Key.create("ALLOW_LIFTING_ACTUAL_PARAMETER_TO_EXPECTED"), true)
 
-        private var KtDeclaration.dropImplModifier: Boolean? by UserDataProperty(Key.create("DROP_IMPL_MODIFIER"))
+        private var KtDeclaration.dropActualModifier: Boolean? by UserDataProperty(Key.create("DROP_ACTUAL_MODIFIER"))
     }
 
     override fun handlesElement(element: PsiElement): Boolean = element.canDeleteElement()
@@ -86,7 +86,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         fun getSearchInfo(element: PsiElement) = NonCodeUsageSearchInfo(getIgnoranceCondition(), element)
 
         fun searchKotlinDeclarationReferences(declaration: KtDeclaration): Sequence<PsiReference> {
-            val elementsToSearch = if (declaration is KtParameter) declaration.withHeaderImplementations() else listOf(declaration)
+            val elementsToSearch = if (declaration is KtParameter) declaration.withExpectedActuals() else listOf(declaration)
             return elementsToSearch.asSequence().flatMap {
                 val searchParameters = KotlinReferencesSearchParameters(
                         it,
@@ -362,12 +362,13 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
     override fun prepareForDeletion(element: PsiElement) {
         if (element is KtDeclaration) {
-            element.headerImplementations().forEach {
+            element.actualsForExpected().forEach {
                 if (it is KtParameter) {
                     (it.parent as? KtParameterList)?.removeParameter(it)
                 }
                 else {
                     it.removeModifier(KtTokens.IMPL_KEYWORD)
+                    it.removeModifier(KtTokens.ACTUAL_KEYWORD)
                 }
             }
         }
@@ -390,9 +391,10 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
             is KtParameter -> {
                 element.ownerFunction?.let {
-                    if (it.dropImplModifier == true) {
+                    if (it.dropActualModifier == true) {
                         it.removeModifier(KtTokens.IMPL_KEYWORD)
-                        it.dropImplModifier = null
+                        it.removeModifier(KtTokens.ACTUAL_KEYWORD)
+                        it.dropActualModifier = null
                     }
                 }
                 (element.parent as KtParameterList).removeParameter(element)
@@ -400,11 +402,11 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         }
     }
 
-    private fun shouldAllowPropagationToHeader(parameter: KtParameter): Boolean {
-        if (ApplicationManager.getApplication().isUnitTestMode) return parameter.project.ALLOW_LIFTING_IMPL_PARAMETER_TO_HEADER
+    private fun shouldAllowPropagationToExpected(parameter: KtParameter): Boolean {
+        if (ApplicationManager.getApplication().isUnitTestMode) return parameter.project.ALLOW_LIFTING_ACTUAL_PARAMETER_TO_EXPECTED
 
         return Messages.showYesNoDialog(
-                "Do you want to delete this parameter in header declaration and all its implementations?",
+                "Do you want to delete this parameter in expected declaration and all related actual ones?",
                 RefactoringBundle.message("safe.delete.title"),
                 Messages.getQuestionIcon()
         ) == Messages.YES
@@ -415,12 +417,12 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     ): Collection<PsiElement>? {
         when (element) {
             is KtParameter -> {
-                val headerParameter = element.liftToHeader() as? KtParameter
-                if (headerParameter != null && headerParameter != element) {
-                    if (shouldAllowPropagationToHeader(element)) {
-                        return listOf(headerParameter)
+                val expectParameter = element.liftToExpected() as? KtParameter
+                if (expectParameter != null && expectParameter != element) {
+                    if (shouldAllowPropagationToExpected(element)) {
+                        return listOf(expectParameter)
                     } else {
-                        element.ownerFunction?.dropImplModifier = true
+                        element.ownerFunction?.dropActualModifier = true
                         return listOf(element)
                     }
                 }

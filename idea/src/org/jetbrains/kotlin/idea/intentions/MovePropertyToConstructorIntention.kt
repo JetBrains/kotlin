@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -106,7 +106,7 @@ class MovePropertyToConstructorIntention :
         }
         else {
             val typeText = element.typeReference?.text ?:
-                           (element.resolveToDescriptor(BodyResolveMode.PARTIAL) as? PropertyDescriptor)?.type?.render() ?: return
+                           (element.resolveToDescriptorIfAny() as? PropertyDescriptor)?.type?.render() ?: return
             val parameterText = buildString {
                 element.modifierList?.getModifiersText()?.let(this::append)
                 propertyAnnotationsText?.takeIf(String::isNotBlank)?.let { appendWithSpaceBefore(it) }

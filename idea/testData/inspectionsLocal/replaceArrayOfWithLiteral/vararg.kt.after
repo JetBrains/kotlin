@@ -2,5 +2,5 @@
 
 annotation class Some(vararg val strings: String)
 
-@Some(strings = *["alpha", "beta", "omega"])
+@Some(strings = ["alpha", "beta", "omega"])
 class My

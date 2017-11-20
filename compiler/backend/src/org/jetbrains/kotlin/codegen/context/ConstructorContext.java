@@ -27,6 +27,7 @@ import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 
 public class ConstructorContext extends MethodContext {
     private static final StackValue LOCAL_1 = StackValue.local(1, OBJECT_TYPE);
+    private boolean thisInitialized = false;
 
     public ConstructorContext(
             @NotNull ConstructorDescriptor contextDescriptor,
@@ -46,8 +47,25 @@ public class ConstructorContext extends MethodContext {
         return stackValue;
     }
 
+    public ConstructorDescriptor getConstructorDescriptor() {
+        return (ConstructorDescriptor) getContextDescriptor();
+    }
+
+    public boolean isThisInitialized() {
+        return thisInitialized;
+    }
+
+    public void setThisInitialized(boolean thisInitialized) {
+        this.thisInitialized = thisInitialized;
+    }
+
+    @Override
+    public boolean isContextWithUninitializedThis() {
+        return !isThisInitialized();
+    }
+
     @Override
     public String toString() {
-        return "Constructor: " + getContextDescriptor();
+        return "Constructor: " + (isThisInitialized() ? "" : "UNINITIALIZED ") + getContextDescriptor();
     }
 }

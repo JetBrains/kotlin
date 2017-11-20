@@ -8,7 +8,6 @@ import java.io.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
-import org.junit.Test
 import test.io.serializeAndDeserialize
 
 class LazyJVMTest {

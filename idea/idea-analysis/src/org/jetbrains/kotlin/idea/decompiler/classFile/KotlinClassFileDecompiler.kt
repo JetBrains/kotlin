@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
-import java.io.IOException
 
 class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinClsStubBuilder()
@@ -47,11 +47,8 @@ class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     override fun getStubBuilder() = stubBuilder
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): KotlinDecompiledFileViewProvider {
-        val project = manager.project
         return KotlinDecompiledFileViewProvider(manager, file, physical) factory@{ provider ->
             val virtualFile = provider.virtualFile
-            val fileIndex = ServiceManager.getService(project, FileIndexFacade::class.java)
-            if (!fileIndex.isInLibraryClasses(virtualFile) && fileIndex.isInSource(virtualFile)) return@factory null
 
             if (isKotlinInternalCompiledFile(virtualFile))
                 null
@@ -80,7 +77,8 @@ fun buildDecompiledTextForClassFile(
     }
 
     fun buildText(declarations: List<DeclarationDescriptor>) =
-            buildDecompiledText(classId.packageFqName, declarations, decompilerRendererForClassFiles, listOf(ByDescriptorIndexer, BySignatureIndexer))
+            buildDecompiledText(classHeader.packageName?.let(::FqName) ?: classId.packageFqName,
+                                declarations, decompilerRendererForClassFiles, listOf(ByDescriptorIndexer, BySignatureIndexer))
 
     return when (classHeader.kind) {
         KotlinClassHeader.Kind.FILE_FACADE ->

@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 
 abstract class AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest : AbstractForeignAnnotationsNoAnnotationInClasspathTest() {
-    override fun performCustomConfiguration(environment: KotlinCoreEnvironment) {
-        super.performCustomConfiguration(environment)
-        environment.configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, true)
+    override fun performCustomConfiguration(configuration: CompilerConfiguration) {
+        super.performCustomConfiguration(configuration)
+        configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, true)
     }
 }

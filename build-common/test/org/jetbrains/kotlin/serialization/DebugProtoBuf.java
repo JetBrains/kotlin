@@ -9743,7 +9743,7 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     boolean hasFlags();
@@ -9757,7 +9757,7 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     int getFlags();
@@ -10001,34 +10001,34 @@ public final class DebugProtoBuf {
     org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder getTypeTableOrBuilder();
 
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    boolean hasSinceKotlinInfo();
+    boolean hasVersionRequirement();
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    int getSinceKotlinInfo();
+    int getVersionRequirement();
 
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    boolean hasSinceKotlinInfoTable();
+    boolean hasVersionRequirementTable();
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable getSinceKotlinInfoTable();
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable getVersionRequirementTable();
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder getSinceKotlinInfoTableOrBuilder();
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder getVersionRequirementTableOrBuilder();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Class}
@@ -10232,18 +10232,18 @@ public final class DebugProtoBuf {
             }
             case 248: {
               bitField0_ |= 0x00000010;
-              sinceKotlinInfo_ = input.readInt32();
+              versionRequirement_ = input.readInt32();
               break;
             }
             case 258: {
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder subBuilder = null;
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder subBuilder = null;
               if (((bitField0_ & 0x00000020) == 0x00000020)) {
-                subBuilder = sinceKotlinInfoTable_.toBuilder();
+                subBuilder = versionRequirementTable_.toBuilder();
               }
-              sinceKotlinInfoTable_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.PARSER, extensionRegistry);
+              versionRequirementTable_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.PARSER, extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom(sinceKotlinInfoTable_);
-                sinceKotlinInfoTable_ = subBuilder.buildPartial();
+                subBuilder.mergeFrom(versionRequirementTable_);
+                versionRequirementTable_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000020;
               break;
@@ -10465,7 +10465,7 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     public boolean hasFlags() {
@@ -10481,7 +10481,7 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
-     *isHeader
+     *isExpect
      * </pre>
      */
     public int getFlags() {
@@ -10853,48 +10853,48 @@ public final class DebugProtoBuf {
       return typeTable_;
     }
 
-    public static final int SINCEKOTLININFO_FIELD_NUMBER = 31;
-    private int sinceKotlinInfo_;
+    public static final int VERSION_REQUIREMENT_FIELD_NUMBER = 31;
+    private int versionRequirement_;
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    public boolean hasSinceKotlinInfo() {
+    public boolean hasVersionRequirement() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    public int getSinceKotlinInfo() {
-      return sinceKotlinInfo_;
+    public int getVersionRequirement() {
+      return versionRequirement_;
     }
 
-    public static final int SINCE_KOTLIN_INFO_TABLE_FIELD_NUMBER = 32;
-    private org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable sinceKotlinInfoTable_;
+    public static final int VERSION_REQUIREMENT_TABLE_FIELD_NUMBER = 32;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable versionRequirementTable_;
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    public boolean hasSinceKotlinInfoTable() {
+    public boolean hasVersionRequirementTable() {
       return ((bitField0_ & 0x00000020) == 0x00000020);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable getSinceKotlinInfoTable() {
-      return sinceKotlinInfoTable_;
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable getVersionRequirementTable() {
+      return versionRequirementTable_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder getSinceKotlinInfoTableOrBuilder() {
-      return sinceKotlinInfoTable_;
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder getVersionRequirementTableOrBuilder() {
+      return versionRequirementTable_;
     }
 
     private void initFields() {
@@ -10912,8 +10912,8 @@ public final class DebugProtoBuf {
       enumEntry_ = java.util.Collections.emptyList();
       sealedSubclassFqName_ = java.util.Collections.emptyList();
       typeTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.getDefaultInstance();
-      sinceKotlinInfo_ = 0;
-      sinceKotlinInfoTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance();
+      versionRequirement_ = 0;
+      versionRequirementTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -11042,10 +11042,10 @@ public final class DebugProtoBuf {
         output.writeMessage(30, typeTable_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        output.writeInt32(31, sinceKotlinInfo_);
+        output.writeInt32(31, versionRequirement_);
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        output.writeMessage(32, sinceKotlinInfoTable_);
+        output.writeMessage(32, versionRequirementTable_);
       }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
@@ -11145,11 +11145,11 @@ public final class DebugProtoBuf {
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(31, sinceKotlinInfo_);
+          .computeInt32Size(31, versionRequirement_);
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(32, sinceKotlinInfoTable_);
+          .computeMessageSize(32, versionRequirementTable_);
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -11270,7 +11270,7 @@ public final class DebugProtoBuf {
           getTypeAliasFieldBuilder();
           getEnumEntryFieldBuilder();
           getTypeTableFieldBuilder();
-          getSinceKotlinInfoTableFieldBuilder();
+          getVersionRequirementTableFieldBuilder();
         }
       }
       private static Builder create() {
@@ -11339,12 +11339,12 @@ public final class DebugProtoBuf {
           typeTableBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00002000);
-        sinceKotlinInfo_ = 0;
+        versionRequirement_ = 0;
         bitField0_ = (bitField0_ & ~0x00004000);
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          sinceKotlinInfoTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance();
+        if (versionRequirementTableBuilder_ == null) {
+          versionRequirementTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance();
         } else {
-          sinceKotlinInfoTableBuilder_.clear();
+          versionRequirementTableBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00008000);
         return this;
@@ -11476,14 +11476,14 @@ public final class DebugProtoBuf {
         if (((from_bitField0_ & 0x00004000) == 0x00004000)) {
           to_bitField0_ |= 0x00000010;
         }
-        result.sinceKotlinInfo_ = sinceKotlinInfo_;
+        result.versionRequirement_ = versionRequirement_;
         if (((from_bitField0_ & 0x00008000) == 0x00008000)) {
           to_bitField0_ |= 0x00000020;
         }
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          result.sinceKotlinInfoTable_ = sinceKotlinInfoTable_;
+        if (versionRequirementTableBuilder_ == null) {
+          result.versionRequirementTable_ = versionRequirementTable_;
         } else {
-          result.sinceKotlinInfoTable_ = sinceKotlinInfoTableBuilder_.build();
+          result.versionRequirementTable_ = versionRequirementTableBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -11725,11 +11725,11 @@ public final class DebugProtoBuf {
         if (other.hasTypeTable()) {
           mergeTypeTable(other.getTypeTable());
         }
-        if (other.hasSinceKotlinInfo()) {
-          setSinceKotlinInfo(other.getSinceKotlinInfo());
+        if (other.hasVersionRequirement()) {
+          setVersionRequirement(other.getVersionRequirement());
         }
-        if (other.hasSinceKotlinInfoTable()) {
-          mergeSinceKotlinInfoTable(other.getSinceKotlinInfoTable());
+        if (other.hasVersionRequirementTable()) {
+          mergeVersionRequirementTable(other.getVersionRequirementTable());
         }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
@@ -11826,7 +11826,7 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public boolean hasFlags() {
@@ -11842,7 +11842,7 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public int getFlags() {
@@ -11858,7 +11858,7 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -11877,7 +11877,7 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder clearFlags() {
@@ -13945,168 +13945,168 @@ public final class DebugProtoBuf {
         return typeTableBuilder_;
       }
 
-      private int sinceKotlinInfo_ ;
+      private int versionRequirement_ ;
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public boolean hasSinceKotlinInfo() {
+      public boolean hasVersionRequirement() {
         return ((bitField0_ & 0x00004000) == 0x00004000);
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public int getSinceKotlinInfo() {
-        return sinceKotlinInfo_;
+      public int getVersionRequirement() {
+        return versionRequirement_;
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder setSinceKotlinInfo(int value) {
+      public Builder setVersionRequirement(int value) {
         bitField0_ |= 0x00004000;
-        sinceKotlinInfo_ = value;
+        versionRequirement_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder clearSinceKotlinInfo() {
+      public Builder clearVersionRequirement() {
         bitField0_ = (bitField0_ & ~0x00004000);
-        sinceKotlinInfo_ = 0;
+        versionRequirement_ = 0;
         onChanged();
         return this;
       }
 
-      private org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable sinceKotlinInfoTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance();
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable versionRequirementTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance();
       private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder> sinceKotlinInfoTableBuilder_;
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder> versionRequirementTableBuilder_;
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public boolean hasSinceKotlinInfoTable() {
+      public boolean hasVersionRequirementTable() {
         return ((bitField0_ & 0x00008000) == 0x00008000);
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable getSinceKotlinInfoTable() {
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          return sinceKotlinInfoTable_;
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable getVersionRequirementTable() {
+        if (versionRequirementTableBuilder_ == null) {
+          return versionRequirementTable_;
         } else {
-          return sinceKotlinInfoTableBuilder_.getMessage();
+          return versionRequirementTableBuilder_.getMessage();
         }
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public Builder setSinceKotlinInfoTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable value) {
-        if (sinceKotlinInfoTableBuilder_ == null) {
+      public Builder setVersionRequirementTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable value) {
+        if (versionRequirementTableBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          sinceKotlinInfoTable_ = value;
+          versionRequirementTable_ = value;
           onChanged();
         } else {
-          sinceKotlinInfoTableBuilder_.setMessage(value);
+          versionRequirementTableBuilder_.setMessage(value);
         }
         bitField0_ |= 0x00008000;
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public Builder setSinceKotlinInfoTable(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder builderForValue) {
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          sinceKotlinInfoTable_ = builderForValue.build();
+      public Builder setVersionRequirementTable(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder builderForValue) {
+        if (versionRequirementTableBuilder_ == null) {
+          versionRequirementTable_ = builderForValue.build();
           onChanged();
         } else {
-          sinceKotlinInfoTableBuilder_.setMessage(builderForValue.build());
+          versionRequirementTableBuilder_.setMessage(builderForValue.build());
         }
         bitField0_ |= 0x00008000;
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public Builder mergeSinceKotlinInfoTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable value) {
-        if (sinceKotlinInfoTableBuilder_ == null) {
+      public Builder mergeVersionRequirementTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable value) {
+        if (versionRequirementTableBuilder_ == null) {
           if (((bitField0_ & 0x00008000) == 0x00008000) &&
-              sinceKotlinInfoTable_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance()) {
-            sinceKotlinInfoTable_ =
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.newBuilder(sinceKotlinInfoTable_).mergeFrom(value).buildPartial();
+              versionRequirementTable_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance()) {
+            versionRequirementTable_ =
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.newBuilder(versionRequirementTable_).mergeFrom(value).buildPartial();
           } else {
-            sinceKotlinInfoTable_ = value;
+            versionRequirementTable_ = value;
           }
           onChanged();
         } else {
-          sinceKotlinInfoTableBuilder_.mergeFrom(value);
+          versionRequirementTableBuilder_.mergeFrom(value);
         }
         bitField0_ |= 0x00008000;
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public Builder clearSinceKotlinInfoTable() {
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          sinceKotlinInfoTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance();
+      public Builder clearVersionRequirementTable() {
+        if (versionRequirementTableBuilder_ == null) {
+          versionRequirementTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance();
           onChanged();
         } else {
-          sinceKotlinInfoTableBuilder_.clear();
+          versionRequirementTableBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00008000);
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder getSinceKotlinInfoTableBuilder() {
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder getVersionRequirementTableBuilder() {
         bitField0_ |= 0x00008000;
         onChanged();
-        return getSinceKotlinInfoTableFieldBuilder().getBuilder();
+        return getVersionRequirementTableFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder getSinceKotlinInfoTableOrBuilder() {
-        if (sinceKotlinInfoTableBuilder_ != null) {
-          return sinceKotlinInfoTableBuilder_.getMessageOrBuilder();
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder getVersionRequirementTableOrBuilder() {
+        if (versionRequirementTableBuilder_ != null) {
+          return versionRequirementTableBuilder_.getMessageOrBuilder();
         } else {
-          return sinceKotlinInfoTable_;
+          return versionRequirementTable_;
         }
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
       private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder> 
-          getSinceKotlinInfoTableFieldBuilder() {
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          sinceKotlinInfoTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder>(
-                  getSinceKotlinInfoTable(),
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder> 
+          getVersionRequirementTableFieldBuilder() {
+        if (versionRequirementTableBuilder_ == null) {
+          versionRequirementTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder>(
+                  getVersionRequirementTable(),
                   getParentForChildren(),
                   isClean());
-          sinceKotlinInfoTable_ = null;
+          versionRequirementTable_ = null;
         }
-        return sinceKotlinInfoTableBuilder_;
+        return versionRequirementTableBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Class)
@@ -14211,17 +14211,17 @@ public final class DebugProtoBuf {
     org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder getTypeTableOrBuilder();
 
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    boolean hasSinceKotlinInfoTable();
+    boolean hasVersionRequirementTable();
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable getSinceKotlinInfoTable();
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable getVersionRequirementTable();
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder getSinceKotlinInfoTableOrBuilder();
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder getVersionRequirementTableOrBuilder();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Package}
@@ -14314,14 +14314,14 @@ public final class DebugProtoBuf {
               break;
             }
             case 258: {
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder subBuilder = null;
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder subBuilder = null;
               if (((bitField0_ & 0x00000002) == 0x00000002)) {
-                subBuilder = sinceKotlinInfoTable_.toBuilder();
+                subBuilder = versionRequirementTable_.toBuilder();
               }
-              sinceKotlinInfoTable_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.PARSER, extensionRegistry);
+              versionRequirementTable_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.PARSER, extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom(sinceKotlinInfoTable_);
-                sinceKotlinInfoTable_ = subBuilder.buildPartial();
+                subBuilder.mergeFrom(versionRequirementTable_);
+                versionRequirementTable_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000002;
               break;
@@ -14501,25 +14501,25 @@ public final class DebugProtoBuf {
       return typeTable_;
     }
 
-    public static final int SINCE_KOTLIN_INFO_TABLE_FIELD_NUMBER = 32;
-    private org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable sinceKotlinInfoTable_;
+    public static final int VERSION_REQUIREMENT_TABLE_FIELD_NUMBER = 32;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable versionRequirementTable_;
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    public boolean hasSinceKotlinInfoTable() {
+    public boolean hasVersionRequirementTable() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable getSinceKotlinInfoTable() {
-      return sinceKotlinInfoTable_;
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable getVersionRequirementTable() {
+      return versionRequirementTable_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
      */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder getSinceKotlinInfoTableOrBuilder() {
-      return sinceKotlinInfoTable_;
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder getVersionRequirementTableOrBuilder() {
+      return versionRequirementTable_;
     }
 
     private void initFields() {
@@ -14527,7 +14527,7 @@ public final class DebugProtoBuf {
       property_ = java.util.Collections.emptyList();
       typeAlias_ = java.util.Collections.emptyList();
       typeTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.getDefaultInstance();
-      sinceKotlinInfoTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance();
+      versionRequirementTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -14586,7 +14586,7 @@ public final class DebugProtoBuf {
         output.writeMessage(30, typeTable_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeMessage(32, sinceKotlinInfoTable_);
+        output.writeMessage(32, versionRequirementTable_);
       }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
@@ -14616,7 +14616,7 @@ public final class DebugProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(32, sinceKotlinInfoTable_);
+          .computeMessageSize(32, versionRequirementTable_);
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -14733,7 +14733,7 @@ public final class DebugProtoBuf {
           getPropertyFieldBuilder();
           getTypeAliasFieldBuilder();
           getTypeTableFieldBuilder();
-          getSinceKotlinInfoTableFieldBuilder();
+          getVersionRequirementTableFieldBuilder();
         }
       }
       private static Builder create() {
@@ -14766,10 +14766,10 @@ public final class DebugProtoBuf {
           typeTableBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000008);
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          sinceKotlinInfoTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance();
+        if (versionRequirementTableBuilder_ == null) {
+          versionRequirementTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance();
         } else {
-          sinceKotlinInfoTableBuilder_.clear();
+          versionRequirementTableBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000010);
         return this;
@@ -14838,10 +14838,10 @@ public final class DebugProtoBuf {
         if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
           to_bitField0_ |= 0x00000002;
         }
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          result.sinceKotlinInfoTable_ = sinceKotlinInfoTable_;
+        if (versionRequirementTableBuilder_ == null) {
+          result.versionRequirementTable_ = versionRequirementTable_;
         } else {
-          result.sinceKotlinInfoTable_ = sinceKotlinInfoTableBuilder_.build();
+          result.versionRequirementTable_ = versionRequirementTableBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -14940,8 +14940,8 @@ public final class DebugProtoBuf {
         if (other.hasTypeTable()) {
           mergeTypeTable(other.getTypeTable());
         }
-        if (other.hasSinceKotlinInfoTable()) {
-          mergeSinceKotlinInfoTable(other.getSinceKotlinInfoTable());
+        if (other.hasVersionRequirementTable()) {
+          mergeVersionRequirementTable(other.getVersionRequirementTable());
         }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
@@ -15835,120 +15835,120 @@ public final class DebugProtoBuf {
         return typeTableBuilder_;
       }
 
-      private org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable sinceKotlinInfoTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance();
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable versionRequirementTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance();
       private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder> sinceKotlinInfoTableBuilder_;
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder> versionRequirementTableBuilder_;
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public boolean hasSinceKotlinInfoTable() {
+      public boolean hasVersionRequirementTable() {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable getSinceKotlinInfoTable() {
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          return sinceKotlinInfoTable_;
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable getVersionRequirementTable() {
+        if (versionRequirementTableBuilder_ == null) {
+          return versionRequirementTable_;
         } else {
-          return sinceKotlinInfoTableBuilder_.getMessage();
+          return versionRequirementTableBuilder_.getMessage();
         }
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public Builder setSinceKotlinInfoTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable value) {
-        if (sinceKotlinInfoTableBuilder_ == null) {
+      public Builder setVersionRequirementTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable value) {
+        if (versionRequirementTableBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          sinceKotlinInfoTable_ = value;
+          versionRequirementTable_ = value;
           onChanged();
         } else {
-          sinceKotlinInfoTableBuilder_.setMessage(value);
+          versionRequirementTableBuilder_.setMessage(value);
         }
         bitField0_ |= 0x00000010;
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public Builder setSinceKotlinInfoTable(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder builderForValue) {
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          sinceKotlinInfoTable_ = builderForValue.build();
+      public Builder setVersionRequirementTable(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder builderForValue) {
+        if (versionRequirementTableBuilder_ == null) {
+          versionRequirementTable_ = builderForValue.build();
           onChanged();
         } else {
-          sinceKotlinInfoTableBuilder_.setMessage(builderForValue.build());
+          versionRequirementTableBuilder_.setMessage(builderForValue.build());
         }
         bitField0_ |= 0x00000010;
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public Builder mergeSinceKotlinInfoTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable value) {
-        if (sinceKotlinInfoTableBuilder_ == null) {
+      public Builder mergeVersionRequirementTable(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable value) {
+        if (versionRequirementTableBuilder_ == null) {
           if (((bitField0_ & 0x00000010) == 0x00000010) &&
-              sinceKotlinInfoTable_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance()) {
-            sinceKotlinInfoTable_ =
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.newBuilder(sinceKotlinInfoTable_).mergeFrom(value).buildPartial();
+              versionRequirementTable_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance()) {
+            versionRequirementTable_ =
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.newBuilder(versionRequirementTable_).mergeFrom(value).buildPartial();
           } else {
-            sinceKotlinInfoTable_ = value;
+            versionRequirementTable_ = value;
           }
           onChanged();
         } else {
-          sinceKotlinInfoTableBuilder_.mergeFrom(value);
+          versionRequirementTableBuilder_.mergeFrom(value);
         }
         bitField0_ |= 0x00000010;
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public Builder clearSinceKotlinInfoTable() {
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          sinceKotlinInfoTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance();
+      public Builder clearVersionRequirementTable() {
+        if (versionRequirementTableBuilder_ == null) {
+          versionRequirementTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance();
           onChanged();
         } else {
-          sinceKotlinInfoTableBuilder_.clear();
+          versionRequirementTableBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder getSinceKotlinInfoTableBuilder() {
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder getVersionRequirementTableBuilder() {
         bitField0_ |= 0x00000010;
         onChanged();
-        return getSinceKotlinInfoTableFieldBuilder().getBuilder();
+        return getVersionRequirementTableFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder getSinceKotlinInfoTableOrBuilder() {
-        if (sinceKotlinInfoTableBuilder_ != null) {
-          return sinceKotlinInfoTableBuilder_.getMessageOrBuilder();
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder getVersionRequirementTableOrBuilder() {
+        if (versionRequirementTableBuilder_ != null) {
+          return versionRequirementTableBuilder_.getMessageOrBuilder();
         } else {
-          return sinceKotlinInfoTable_;
+          return versionRequirementTable_;
         }
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfoTable since_kotlin_info_table = 32;</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirementTable version_requirement_table = 32;</code>
        */
       private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder> 
-          getSinceKotlinInfoTableFieldBuilder() {
-        if (sinceKotlinInfoTableBuilder_ == null) {
-          sinceKotlinInfoTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder>(
-                  getSinceKotlinInfoTable(),
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder> 
+          getVersionRequirementTableFieldBuilder() {
+        if (versionRequirementTableBuilder_ == null) {
+          versionRequirementTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder>(
+                  getVersionRequirementTable(),
                   getParentForChildren(),
                   isClean());
-          sinceKotlinInfoTable_ = null;
+          versionRequirementTable_ = null;
         }
-        return sinceKotlinInfoTableBuilder_;
+        return versionRequirementTableBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Package)
@@ -16822,21 +16822,21 @@ public final class DebugProtoBuf {
         int index);
 
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    boolean hasSinceKotlinInfo();
+    boolean hasVersionRequirement();
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    int getSinceKotlinInfo();
+    int getVersionRequirement();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Constructor}
@@ -16906,7 +16906,7 @@ public final class DebugProtoBuf {
             }
             case 248: {
               bitField0_ |= 0x00000002;
-              sinceKotlinInfo_ = input.readInt32();
+              versionRequirement_ = input.readInt32();
               break;
             }
           }
@@ -17014,33 +17014,33 @@ public final class DebugProtoBuf {
       return valueParameter_.get(index);
     }
 
-    public static final int SINCEKOTLININFO_FIELD_NUMBER = 31;
-    private int sinceKotlinInfo_;
+    public static final int VERSION_REQUIREMENT_FIELD_NUMBER = 31;
+    private int versionRequirement_;
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    public boolean hasSinceKotlinInfo() {
+    public boolean hasVersionRequirement() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    public int getSinceKotlinInfo() {
-      return sinceKotlinInfo_;
+    public int getVersionRequirement() {
+      return versionRequirement_;
     }
 
     private void initFields() {
       flags_ = 6;
       valueParameter_ = java.util.Collections.emptyList();
-      sinceKotlinInfo_ = 0;
+      versionRequirement_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -17075,7 +17075,7 @@ public final class DebugProtoBuf {
         output.writeMessage(2, valueParameter_.get(i));
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(31, sinceKotlinInfo_);
+        output.writeInt32(31, versionRequirement_);
       }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
@@ -17097,7 +17097,7 @@ public final class DebugProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(31, sinceKotlinInfo_);
+          .computeInt32Size(31, versionRequirement_);
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -17227,7 +17227,7 @@ public final class DebugProtoBuf {
         } else {
           valueParameterBuilder_.clear();
         }
-        sinceKotlinInfo_ = 0;
+        versionRequirement_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
@@ -17273,7 +17273,7 @@ public final class DebugProtoBuf {
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.sinceKotlinInfo_ = sinceKotlinInfo_;
+        result.versionRequirement_ = versionRequirement_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -17319,8 +17319,8 @@ public final class DebugProtoBuf {
             }
           }
         }
-        if (other.hasSinceKotlinInfo()) {
-          setSinceKotlinInfo(other.getSinceKotlinInfo());
+        if (other.hasVersionRequirement()) {
+          setVersionRequirement(other.getVersionRequirement());
         }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
@@ -17656,50 +17656,50 @@ public final class DebugProtoBuf {
         return valueParameterBuilder_;
       }
 
-      private int sinceKotlinInfo_ ;
+      private int versionRequirement_ ;
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public boolean hasSinceKotlinInfo() {
+      public boolean hasVersionRequirement() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public int getSinceKotlinInfo() {
-        return sinceKotlinInfo_;
+      public int getVersionRequirement() {
+        return versionRequirement_;
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder setSinceKotlinInfo(int value) {
+      public Builder setVersionRequirement(int value) {
         bitField0_ |= 0x00000004;
-        sinceKotlinInfo_ = value;
+        versionRequirement_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder clearSinceKotlinInfo() {
+      public Builder clearVersionRequirement() {
         bitField0_ = (bitField0_ & ~0x00000004);
-        sinceKotlinInfo_ = 0;
+        versionRequirement_ = 0;
         onChanged();
         return this;
       }
@@ -17734,7 +17734,7 @@ public final class DebugProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     boolean hasFlags();
@@ -17752,7 +17752,7 @@ public final class DebugProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     int getFlags();
@@ -17881,21 +17881,34 @@ public final class DebugProtoBuf {
     org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTableOrBuilder getTypeTableOrBuilder();
 
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    boolean hasSinceKotlinInfo();
+    boolean hasVersionRequirement();
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    int getSinceKotlinInfo();
+    int getVersionRequirement();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+     */
+    boolean hasContract();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract getContract();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.ContractOrBuilder getContractOrBuilder();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Function}
@@ -18032,7 +18045,20 @@ public final class DebugProtoBuf {
             }
             case 248: {
               bitField0_ |= 0x00000100;
-              sinceKotlinInfo_ = input.readInt32();
+              versionRequirement_ = input.readInt32();
+              break;
+            }
+            case 258: {
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000200) == 0x00000200)) {
+                subBuilder = contract_.toBuilder();
+              }
+              contract_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(contract_);
+                contract_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000200;
               break;
             }
           }
@@ -18097,7 +18123,7 @@ public final class DebugProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     public boolean hasFlags() {
@@ -18117,7 +18143,7 @@ public final class DebugProtoBuf {
      *isTailrec
      *isExternal
      *isSuspend
-     *isHeader
+     *isExpect
      * </pre>
      */
     public int getFlags() {
@@ -18317,27 +18343,48 @@ public final class DebugProtoBuf {
       return typeTable_;
     }
 
-    public static final int SINCEKOTLININFO_FIELD_NUMBER = 31;
-    private int sinceKotlinInfo_;
+    public static final int VERSION_REQUIREMENT_FIELD_NUMBER = 31;
+    private int versionRequirement_;
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    public boolean hasSinceKotlinInfo() {
+    public boolean hasVersionRequirement() {
       return ((bitField0_ & 0x00000100) == 0x00000100);
     }
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    public int getSinceKotlinInfo() {
-      return sinceKotlinInfo_;
+    public int getVersionRequirement() {
+      return versionRequirement_;
+    }
+
+    public static final int CONTRACT_FIELD_NUMBER = 32;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract contract_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+     */
+    public boolean hasContract() {
+      return ((bitField0_ & 0x00000200) == 0x00000200);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract getContract() {
+      return contract_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.ContractOrBuilder getContractOrBuilder() {
+      return contract_;
     }
 
     private void initFields() {
@@ -18351,7 +18398,8 @@ public final class DebugProtoBuf {
       receiverTypeId_ = 0;
       valueParameter_ = java.util.Collections.emptyList();
       typeTable_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeTable.getDefaultInstance();
-      sinceKotlinInfo_ = 0;
+      versionRequirement_ = 0;
+      contract_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -18389,6 +18437,12 @@ public final class DebugProtoBuf {
       }
       if (hasTypeTable()) {
         if (!getTypeTable().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasContract()) {
+        if (!getContract().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -18438,7 +18492,10 @@ public final class DebugProtoBuf {
         output.writeMessage(30, typeTable_);
       }
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
-        output.writeInt32(31, sinceKotlinInfo_);
+        output.writeInt32(31, versionRequirement_);
+      }
+      if (((bitField0_ & 0x00000200) == 0x00000200)) {
+        output.writeMessage(32, contract_);
       }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
@@ -18492,7 +18549,11 @@ public final class DebugProtoBuf {
       }
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(31, sinceKotlinInfo_);
+          .computeInt32Size(31, versionRequirement_);
+      }
+      if (((bitField0_ & 0x00000200) == 0x00000200)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(32, contract_);
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -18610,6 +18671,7 @@ public final class DebugProtoBuf {
           getReceiverTypeFieldBuilder();
           getValueParameterFieldBuilder();
           getTypeTableFieldBuilder();
+          getContractFieldBuilder();
         }
       }
       private static Builder create() {
@@ -18658,8 +18720,14 @@ public final class DebugProtoBuf {
           typeTableBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000200);
-        sinceKotlinInfo_ = 0;
+        versionRequirement_ = 0;
         bitField0_ = (bitField0_ & ~0x00000400);
+        if (contractBuilder_ == null) {
+          contract_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.getDefaultInstance();
+        } else {
+          contractBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000800);
         return this;
       }
 
@@ -18753,7 +18821,15 @@ public final class DebugProtoBuf {
         if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
           to_bitField0_ |= 0x00000100;
         }
-        result.sinceKotlinInfo_ = sinceKotlinInfo_;
+        result.versionRequirement_ = versionRequirement_;
+        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+          to_bitField0_ |= 0x00000200;
+        }
+        if (contractBuilder_ == null) {
+          result.contract_ = contract_;
+        } else {
+          result.contract_ = contractBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -18846,8 +18922,11 @@ public final class DebugProtoBuf {
         if (other.hasTypeTable()) {
           mergeTypeTable(other.getTypeTable());
         }
-        if (other.hasSinceKotlinInfo()) {
-          setSinceKotlinInfo(other.getSinceKotlinInfo());
+        if (other.hasVersionRequirement()) {
+          setVersionRequirement(other.getVersionRequirement());
+        }
+        if (other.hasContract()) {
+          mergeContract(other.getContract());
         }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
@@ -18885,6 +18964,12 @@ public final class DebugProtoBuf {
         }
         if (hasTypeTable()) {
           if (!getTypeTable().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasContract()) {
+          if (!getContract().isInitialized()) {
             
             return false;
           }
@@ -18930,7 +19015,7 @@ public final class DebugProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public boolean hasFlags() {
@@ -18950,7 +19035,7 @@ public final class DebugProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public int getFlags() {
@@ -18970,7 +19055,7 @@ public final class DebugProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -18993,7 +19078,7 @@ public final class DebugProtoBuf {
        *isTailrec
        *isExternal
        *isSuspend
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder clearFlags() {
@@ -19959,52 +20044,168 @@ public final class DebugProtoBuf {
         return typeTableBuilder_;
       }
 
-      private int sinceKotlinInfo_ ;
+      private int versionRequirement_ ;
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public boolean hasSinceKotlinInfo() {
+      public boolean hasVersionRequirement() {
         return ((bitField0_ & 0x00000400) == 0x00000400);
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public int getSinceKotlinInfo() {
-        return sinceKotlinInfo_;
+      public int getVersionRequirement() {
+        return versionRequirement_;
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder setSinceKotlinInfo(int value) {
+      public Builder setVersionRequirement(int value) {
         bitField0_ |= 0x00000400;
-        sinceKotlinInfo_ = value;
+        versionRequirement_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder clearSinceKotlinInfo() {
+      public Builder clearVersionRequirement() {
         bitField0_ = (bitField0_ & ~0x00000400);
-        sinceKotlinInfo_ = 0;
+        versionRequirement_ = 0;
         onChanged();
         return this;
+      }
+
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract contract_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.getDefaultInstance();
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract, org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ContractOrBuilder> contractBuilder_;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+       */
+      public boolean hasContract() {
+        return ((bitField0_ & 0x00000800) == 0x00000800);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract getContract() {
+        if (contractBuilder_ == null) {
+          return contract_;
+        } else {
+          return contractBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+       */
+      public Builder setContract(org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract value) {
+        if (contractBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          contract_ = value;
+          onChanged();
+        } else {
+          contractBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000800;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+       */
+      public Builder setContract(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.Builder builderForValue) {
+        if (contractBuilder_ == null) {
+          contract_ = builderForValue.build();
+          onChanged();
+        } else {
+          contractBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000800;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+       */
+      public Builder mergeContract(org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract value) {
+        if (contractBuilder_ == null) {
+          if (((bitField0_ & 0x00000800) == 0x00000800) &&
+              contract_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.getDefaultInstance()) {
+            contract_ =
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.newBuilder(contract_).mergeFrom(value).buildPartial();
+          } else {
+            contract_ = value;
+          }
+          onChanged();
+        } else {
+          contractBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000800;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+       */
+      public Builder clearContract() {
+        if (contractBuilder_ == null) {
+          contract_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.getDefaultInstance();
+          onChanged();
+        } else {
+          contractBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000800);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.Builder getContractBuilder() {
+        bitField0_ |= 0x00000800;
+        onChanged();
+        return getContractFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ContractOrBuilder getContractOrBuilder() {
+        if (contractBuilder_ != null) {
+          return contractBuilder_.getMessageOrBuilder();
+        } else {
+          return contract_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Contract contract = 32;</code>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract, org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ContractOrBuilder> 
+          getContractFieldBuilder() {
+        if (contractBuilder_ == null) {
+          contractBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract, org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ContractOrBuilder>(
+                  getContract(),
+                  getParentForChildren(),
+                  isClean());
+          contract_ = null;
+        }
+        return contractBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Function)
@@ -20039,7 +20240,7 @@ public final class DebugProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     boolean hasFlags();
@@ -20059,7 +20260,7 @@ public final class DebugProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     int getFlags();
@@ -20200,21 +20401,21 @@ public final class DebugProtoBuf {
     int getSetterFlags();
 
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    boolean hasSinceKotlinInfo();
+    boolean hasVersionRequirement();
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    int getSinceKotlinInfo();
+    int getVersionRequirement();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Property}
@@ -20353,7 +20554,7 @@ public final class DebugProtoBuf {
             }
             case 248: {
               bitField0_ |= 0x00000400;
-              sinceKotlinInfo_ = input.readInt32();
+              versionRequirement_ = input.readInt32();
               break;
             }
           }
@@ -20417,7 +20618,7 @@ public final class DebugProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     public boolean hasFlags() {
@@ -20439,7 +20640,7 @@ public final class DebugProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
-     *isHeader
+     *isExpect
      * </pre>
      */
     public int getFlags() {
@@ -20652,27 +20853,27 @@ public final class DebugProtoBuf {
       return setterFlags_;
     }
 
-    public static final int SINCEKOTLININFO_FIELD_NUMBER = 31;
-    private int sinceKotlinInfo_;
+    public static final int VERSION_REQUIREMENT_FIELD_NUMBER = 31;
+    private int versionRequirement_;
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    public boolean hasSinceKotlinInfo() {
+    public boolean hasVersionRequirement() {
       return ((bitField0_ & 0x00000400) == 0x00000400);
     }
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    public int getSinceKotlinInfo() {
-      return sinceKotlinInfo_;
+    public int getVersionRequirement() {
+      return versionRequirement_;
     }
 
     private void initFields() {
@@ -20687,7 +20888,7 @@ public final class DebugProtoBuf {
       setterValueParameter_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.getDefaultInstance();
       getterFlags_ = 0;
       setterFlags_ = 0;
-      sinceKotlinInfo_ = 0;
+      versionRequirement_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -20771,7 +20972,7 @@ public final class DebugProtoBuf {
         output.writeInt32(11, flags_);
       }
       if (((bitField0_ & 0x00000400) == 0x00000400)) {
-        output.writeInt32(31, sinceKotlinInfo_);
+        output.writeInt32(31, versionRequirement_);
       }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
@@ -20829,7 +21030,7 @@ public final class DebugProtoBuf {
       }
       if (((bitField0_ & 0x00000400) == 0x00000400)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(31, sinceKotlinInfo_);
+          .computeInt32Size(31, versionRequirement_);
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -20992,7 +21193,7 @@ public final class DebugProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000200);
         setterFlags_ = 0;
         bitField0_ = (bitField0_ & ~0x00000400);
-        sinceKotlinInfo_ = 0;
+        versionRequirement_ = 0;
         bitField0_ = (bitField0_ & ~0x00000800);
         return this;
       }
@@ -21086,7 +21287,7 @@ public final class DebugProtoBuf {
         if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
           to_bitField0_ |= 0x00000400;
         }
-        result.sinceKotlinInfo_ = sinceKotlinInfo_;
+        result.versionRequirement_ = versionRequirement_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -21159,8 +21360,8 @@ public final class DebugProtoBuf {
         if (other.hasSetterFlags()) {
           setSetterFlags(other.getSetterFlags());
         }
-        if (other.hasSinceKotlinInfo()) {
-          setSinceKotlinInfo(other.getSinceKotlinInfo());
+        if (other.hasVersionRequirement()) {
+          setVersionRequirement(other.getVersionRequirement());
         }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
@@ -21239,7 +21440,7 @@ public final class DebugProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public boolean hasFlags() {
@@ -21261,7 +21462,7 @@ public final class DebugProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public int getFlags() {
@@ -21283,7 +21484,7 @@ public final class DebugProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -21308,7 +21509,7 @@ public final class DebugProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
-       *isHeader
+       *isExpect
        * </pre>
        */
       public Builder clearFlags() {
@@ -22134,50 +22335,50 @@ public final class DebugProtoBuf {
         return this;
       }
 
-      private int sinceKotlinInfo_ ;
+      private int versionRequirement_ ;
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public boolean hasSinceKotlinInfo() {
+      public boolean hasVersionRequirement() {
         return ((bitField0_ & 0x00000800) == 0x00000800);
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public int getSinceKotlinInfo() {
-        return sinceKotlinInfo_;
+      public int getVersionRequirement() {
+        return versionRequirement_;
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder setSinceKotlinInfo(int value) {
+      public Builder setVersionRequirement(int value) {
         bitField0_ |= 0x00000800;
-        sinceKotlinInfo_ = value;
+        versionRequirement_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder clearSinceKotlinInfo() {
+      public Builder clearVersionRequirement() {
         bitField0_ = (bitField0_ & ~0x00000800);
-        sinceKotlinInfo_ = 0;
+        versionRequirement_ = 0;
         onChanged();
         return this;
       }
@@ -23433,21 +23634,21 @@ public final class DebugProtoBuf {
         int index);
 
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    boolean hasSinceKotlinInfo();
+    boolean hasVersionRequirement();
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    int getSinceKotlinInfo();
+    int getVersionRequirement();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.TypeAlias}
@@ -23566,7 +23767,7 @@ public final class DebugProtoBuf {
             }
             case 248: {
               bitField0_ |= 0x00000040;
-              sinceKotlinInfo_ = input.readInt32();
+              versionRequirement_ = input.readInt32();
               break;
             }
           }
@@ -23797,27 +23998,27 @@ public final class DebugProtoBuf {
       return annotation_.get(index);
     }
 
-    public static final int SINCEKOTLININFO_FIELD_NUMBER = 31;
-    private int sinceKotlinInfo_;
+    public static final int VERSION_REQUIREMENT_FIELD_NUMBER = 31;
+    private int versionRequirement_;
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    public boolean hasSinceKotlinInfo() {
+    public boolean hasVersionRequirement() {
       return ((bitField0_ & 0x00000040) == 0x00000040);
     }
     /**
-     * <code>optional int32 sinceKotlinInfo = 31;</code>
+     * <code>optional int32 version_requirement = 31;</code>
      *
      * <pre>
-     * Index into the SinceKotlinInfoTable
+     * Index into the VersionRequirementTable
      * </pre>
      */
-    public int getSinceKotlinInfo() {
-      return sinceKotlinInfo_;
+    public int getVersionRequirement() {
+      return versionRequirement_;
     }
 
     private void initFields() {
@@ -23829,7 +24030,7 @@ public final class DebugProtoBuf {
       expandedType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
       expandedTypeId_ = 0;
       annotation_ = java.util.Collections.emptyList();
-      sinceKotlinInfo_ = 0;
+      versionRequirement_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -23904,7 +24105,7 @@ public final class DebugProtoBuf {
         output.writeMessage(8, annotation_.get(i));
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        output.writeInt32(31, sinceKotlinInfo_);
+        output.writeInt32(31, versionRequirement_);
       }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
@@ -23950,7 +24151,7 @@ public final class DebugProtoBuf {
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(31, sinceKotlinInfo_);
+          .computeInt32Size(31, versionRequirement_);
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -24107,7 +24308,7 @@ public final class DebugProtoBuf {
         } else {
           annotationBuilder_.clear();
         }
-        sinceKotlinInfo_ = 0;
+        versionRequirement_ = 0;
         bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
@@ -24190,7 +24391,7 @@ public final class DebugProtoBuf {
         if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
           to_bitField0_ |= 0x00000040;
         }
-        result.sinceKotlinInfo_ = sinceKotlinInfo_;
+        result.versionRequirement_ = versionRequirement_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -24277,8 +24478,8 @@ public final class DebugProtoBuf {
             }
           }
         }
-        if (other.hasSinceKotlinInfo()) {
-          setSinceKotlinInfo(other.getSinceKotlinInfo());
+        if (other.hasVersionRequirement()) {
+          setVersionRequirement(other.getVersionRequirement());
         }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
@@ -25200,50 +25401,50 @@ public final class DebugProtoBuf {
         return annotationBuilder_;
       }
 
-      private int sinceKotlinInfo_ ;
+      private int versionRequirement_ ;
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public boolean hasSinceKotlinInfo() {
+      public boolean hasVersionRequirement() {
         return ((bitField0_ & 0x00000100) == 0x00000100);
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public int getSinceKotlinInfo() {
-        return sinceKotlinInfo_;
+      public int getVersionRequirement() {
+        return versionRequirement_;
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder setSinceKotlinInfo(int value) {
+      public Builder setVersionRequirement(int value) {
         bitField0_ |= 0x00000100;
-        sinceKotlinInfo_ = value;
+        versionRequirement_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 sinceKotlinInfo = 31;</code>
+       * <code>optional int32 version_requirement = 31;</code>
        *
        * <pre>
-       * Index into the SinceKotlinInfoTable
+       * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder clearSinceKotlinInfo() {
+      public Builder clearVersionRequirement() {
         bitField0_ = (bitField0_ & ~0x00000100);
-        sinceKotlinInfo_ = 0;
+        versionRequirement_ = 0;
         onChanged();
         return this;
       }
@@ -25673,8 +25874,8 @@ public final class DebugProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.EnumEntry)
   }
 
-  public interface SinceKotlinInfoOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.SinceKotlinInfo)
+  public interface VersionRequirementOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.VersionRequirement)
       org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     /**
@@ -25718,7 +25919,7 @@ public final class DebugProtoBuf {
     int getVersionFull();
 
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfo.Level level = 3 [default = ERROR];</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.Level level = 3 [default = ERROR];</code>
      *
      * <pre>
      * Level of the reported diagnostic
@@ -25726,13 +25927,13 @@ public final class DebugProtoBuf {
      */
     boolean hasLevel();
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfo.Level level = 3 [default = ERROR];</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.Level level = 3 [default = ERROR];</code>
      *
      * <pre>
      * Level of the reported diagnostic
      * </pre>
      */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level getLevel();
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level getLevel();
 
     /**
      * <code>optional int32 error_code = 4;</code>
@@ -25767,27 +25968,46 @@ public final class DebugProtoBuf {
      * </pre>
      */
     int getMessage();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+     *
+     * <pre>
+     * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+     * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+     * </pre>
+     */
+    boolean hasVersionKind();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+     *
+     * <pre>
+     * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+     * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind getVersionKind();
   }
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.serialization.SinceKotlinInfo}
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.VersionRequirement}
    */
-  public static final class SinceKotlinInfo extends
+  public static final class VersionRequirement extends
       org.jetbrains.kotlin.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.SinceKotlinInfo)
-      SinceKotlinInfoOrBuilder {
-    // Use SinceKotlinInfo.newBuilder() to construct.
-    private SinceKotlinInfo(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.VersionRequirement)
+      VersionRequirementOrBuilder {
+    // Use VersionRequirement.newBuilder() to construct.
+    private VersionRequirement(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private SinceKotlinInfo(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private VersionRequirement(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
-    private static final SinceKotlinInfo defaultInstance;
-    public static SinceKotlinInfo getDefaultInstance() {
+    private static final VersionRequirement defaultInstance;
+    public static VersionRequirement getDefaultInstance() {
       return defaultInstance;
     }
 
-    public SinceKotlinInfo getDefaultInstanceForType() {
+    public VersionRequirement getDefaultInstanceForType() {
       return defaultInstance;
     }
 
@@ -25797,7 +26017,7 @@ public final class DebugProtoBuf {
         getUnknownFields() {
       return this.unknownFields;
     }
-    private SinceKotlinInfo(
+    private VersionRequirement(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -25832,7 +26052,7 @@ public final class DebugProtoBuf {
             }
             case 24: {
               int rawValue = input.readEnum();
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level value = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level.valueOf(rawValue);
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level value = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level.valueOf(rawValue);
               if (value == null) {
                 unknownFields.mergeVarintField(3, rawValue);
               } else {
@@ -25851,6 +26071,17 @@ public final class DebugProtoBuf {
               message_ = input.readInt32();
               break;
             }
+            case 48: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind value = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(6, rawValue);
+              } else {
+                bitField0_ |= 0x00000020;
+                versionKind_ = value;
+              }
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -25865,33 +26096,33 @@ public final class DebugProtoBuf {
     }
     public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfo_descriptor;
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_descriptor;
     }
 
     protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfo_fieldAccessorTable
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder.class);
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder.class);
     }
 
-    public static org.jetbrains.kotlin.protobuf.Parser<SinceKotlinInfo> PARSER =
-        new org.jetbrains.kotlin.protobuf.AbstractParser<SinceKotlinInfo>() {
-      public SinceKotlinInfo parsePartialFrom(
+    public static org.jetbrains.kotlin.protobuf.Parser<VersionRequirement> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<VersionRequirement>() {
+      public VersionRequirement parsePartialFrom(
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return new SinceKotlinInfo(input, extensionRegistry);
+        return new VersionRequirement(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public org.jetbrains.kotlin.protobuf.Parser<SinceKotlinInfo> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<VersionRequirement> getParserForType() {
       return PARSER;
     }
 
     /**
-     * Protobuf enum {@code org.jetbrains.kotlin.serialization.SinceKotlinInfo.Level}
+     * Protobuf enum {@code org.jetbrains.kotlin.serialization.VersionRequirement.Level}
      */
     public enum Level
         implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
@@ -25956,7 +26187,7 @@ public final class DebugProtoBuf {
       }
       public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.getDescriptor().getEnumTypes().get(0);
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.getDescriptor().getEnumTypes().get(0);
       }
 
       private static final Level[] VALUES = values();
@@ -25978,7 +26209,98 @@ public final class DebugProtoBuf {
         this.value = value;
       }
 
-      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.SinceKotlinInfo.Level)
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.VersionRequirement.Level)
+    }
+
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind}
+     */
+    public enum VersionKind
+        implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>LANGUAGE_VERSION = 0;</code>
+       */
+      LANGUAGE_VERSION(0, 0),
+      /**
+       * <code>COMPILER_VERSION = 1;</code>
+       */
+      COMPILER_VERSION(1, 1),
+      /**
+       * <code>API_VERSION = 2;</code>
+       */
+      API_VERSION(2, 2),
+      ;
+
+      /**
+       * <code>LANGUAGE_VERSION = 0;</code>
+       */
+      public static final int LANGUAGE_VERSION_VALUE = 0;
+      /**
+       * <code>COMPILER_VERSION = 1;</code>
+       */
+      public static final int COMPILER_VERSION_VALUE = 1;
+      /**
+       * <code>API_VERSION = 2;</code>
+       */
+      public static final int API_VERSION_VALUE = 2;
+
+
+      public final int getNumber() { return value; }
+
+      public static VersionKind valueOf(int value) {
+        switch (value) {
+          case 0: return LANGUAGE_VERSION;
+          case 1: return COMPILER_VERSION;
+          case 2: return API_VERSION;
+          default: return null;
+        }
+      }
+
+      public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<VersionKind>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<VersionKind>
+          internalValueMap =
+            new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<VersionKind>() {
+              public VersionKind findValueByNumber(int number) {
+                return VersionKind.valueOf(number);
+              }
+            };
+
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.getDescriptor().getEnumTypes().get(1);
+      }
+
+      private static final VersionKind[] VALUES = values();
+
+      public static VersionKind valueOf(
+          org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int index;
+      private final int value;
+
+      private VersionKind(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind)
     }
 
     private int bitField0_;
@@ -26035,9 +26357,9 @@ public final class DebugProtoBuf {
     }
 
     public static final int LEVEL_FIELD_NUMBER = 3;
-    private org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level level_;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level level_;
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfo.Level level = 3 [default = ERROR];</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.Level level = 3 [default = ERROR];</code>
      *
      * <pre>
      * Level of the reported diagnostic
@@ -26047,13 +26369,13 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfo.Level level = 3 [default = ERROR];</code>
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.Level level = 3 [default = ERROR];</code>
      *
      * <pre>
      * Level of the reported diagnostic
      * </pre>
      */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level getLevel() {
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level getLevel() {
       return level_;
     }
 
@@ -26103,12 +26425,38 @@ public final class DebugProtoBuf {
       return message_;
     }
 
+    public static final int VERSION_KIND_FIELD_NUMBER = 6;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind versionKind_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+     *
+     * <pre>
+     * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+     * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+     * </pre>
+     */
+    public boolean hasVersionKind() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+     *
+     * <pre>
+     * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+     * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind getVersionKind() {
+      return versionKind_;
+    }
+
     private void initFields() {
       version_ = 0;
       versionFull_ = 0;
-      level_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level.ERROR;
+      level_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level.ERROR;
       errorCode_ = 0;
       message_ = 0;
+      versionKind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -26137,6 +26485,9 @@ public final class DebugProtoBuf {
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeInt32(5, message_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeEnum(6, versionKind_.getNumber());
       }
       getUnknownFields().writeTo(output);
     }
@@ -26167,6 +26518,10 @@ public final class DebugProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(5, message_);
       }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(6, versionKind_.getNumber());
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
       return size;
@@ -26179,53 +26534,53 @@ public final class DebugProtoBuf {
       return super.writeReplace();
     }
 
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parseFrom(byte[] data)
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parseFrom(byte[] data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parseFrom(
         byte[] data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parseFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parseFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parseDelimitedFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parseDelimitedFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parseDelimitedFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -26234,7 +26589,7 @@ public final class DebugProtoBuf {
 
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo prototype) {
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
@@ -26246,25 +26601,25 @@ public final class DebugProtoBuf {
       return builder;
     }
     /**
-     * Protobuf type {@code org.jetbrains.kotlin.serialization.SinceKotlinInfo}
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.VersionRequirement}
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.SinceKotlinInfo)
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoOrBuilder {
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.VersionRequirement)
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementOrBuilder {
       public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfo_descriptor;
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_descriptor;
       }
 
       protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfo_fieldAccessorTable
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder.class);
+                org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder.class);
       }
 
-      // Construct using org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.newBuilder()
+      // Construct using org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -26288,12 +26643,14 @@ public final class DebugProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         versionFull_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        level_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level.ERROR;
+        level_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level.ERROR;
         bitField0_ = (bitField0_ & ~0x00000004);
         errorCode_ = 0;
         bitField0_ = (bitField0_ & ~0x00000008);
         message_ = 0;
         bitField0_ = (bitField0_ & ~0x00000010);
+        versionKind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION;
+        bitField0_ = (bitField0_ & ~0x00000020);
         return this;
       }
 
@@ -26303,23 +26660,23 @@ public final class DebugProtoBuf {
 
       public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfo_descriptor;
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_descriptor;
       }
 
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo getDefaultInstanceForType() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.getDefaultInstance();
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.getDefaultInstance();
       }
 
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo build() {
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo result = buildPartial();
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement build() {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo buildPartial() {
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo(this);
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement buildPartial() {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -26342,22 +26699,26 @@ public final class DebugProtoBuf {
           to_bitField0_ |= 0x00000010;
         }
         result.message_ = message_;
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.versionKind_ = versionKind_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
 
       public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
-        if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo) {
-          return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo)other);
+        if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement) {
+          return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo other) {
-        if (other == org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement other) {
+        if (other == org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.getDefaultInstance()) return this;
         if (other.hasVersion()) {
           setVersion(other.getVersion());
         }
@@ -26373,6 +26734,9 @@ public final class DebugProtoBuf {
         if (other.hasMessage()) {
           setMessage(other.getMessage());
         }
+        if (other.hasVersionKind()) {
+          setVersionKind(other.getVersionKind());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -26385,11 +26749,11 @@ public final class DebugProtoBuf {
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo parsedMessage = null;
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo) e.getUnfinishedMessage();
+          parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -26508,9 +26872,9 @@ public final class DebugProtoBuf {
         return this;
       }
 
-      private org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level level_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level.ERROR;
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level level_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level.ERROR;
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfo.Level level = 3 [default = ERROR];</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.Level level = 3 [default = ERROR];</code>
        *
        * <pre>
        * Level of the reported diagnostic
@@ -26520,23 +26884,23 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfo.Level level = 3 [default = ERROR];</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.Level level = 3 [default = ERROR];</code>
        *
        * <pre>
        * Level of the reported diagnostic
        * </pre>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level getLevel() {
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level getLevel() {
         return level_;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfo.Level level = 3 [default = ERROR];</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.Level level = 3 [default = ERROR];</code>
        *
        * <pre>
        * Level of the reported diagnostic
        * </pre>
        */
-      public Builder setLevel(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level value) {
+      public Builder setLevel(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -26546,7 +26910,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional .org.jetbrains.kotlin.serialization.SinceKotlinInfo.Level level = 3 [default = ERROR];</code>
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.Level level = 3 [default = ERROR];</code>
        *
        * <pre>
        * Level of the reported diagnostic
@@ -26554,7 +26918,7 @@ public final class DebugProtoBuf {
        */
       public Builder clearLevel() {
         bitField0_ = (bitField0_ & ~0x00000004);
-        level_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Level.ERROR;
+        level_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Level.ERROR;
         onChanged();
         return this;
       }
@@ -26655,65 +27019,120 @@ public final class DebugProtoBuf {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.SinceKotlinInfo)
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind versionKind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+       *
+       * <pre>
+       * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+       * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+       * </pre>
+       */
+      public boolean hasVersionKind() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+       *
+       * <pre>
+       * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+       * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind getVersionKind() {
+        return versionKind_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+       *
+       * <pre>
+       * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+       * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+       * </pre>
+       */
+      public Builder setVersionKind(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000020;
+        versionKind_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.VersionRequirement.VersionKind version_kind = 6 [default = LANGUAGE_VERSION];</code>
+       *
+       * <pre>
+       * Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+       * (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+       * </pre>
+       */
+      public Builder clearVersionKind() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        versionKind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.VersionRequirement)
     }
 
     static {
-      defaultInstance = new SinceKotlinInfo(true);
+      defaultInstance = new VersionRequirement(true);
       defaultInstance.initFields();
     }
 
-    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.SinceKotlinInfo)
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.VersionRequirement)
   }
 
-  public interface SinceKotlinInfoTableOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.SinceKotlinInfoTable)
+  public interface VersionRequirementTableOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.VersionRequirementTable)
       org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
      */
-    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo> 
-        getInfoList();
+    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement> 
+        getRequirementList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
      */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo getInfo(int index);
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement getRequirement(int index);
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
      */
-    int getInfoCount();
+    int getRequirementCount();
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
      */
-    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoOrBuilder> 
-        getInfoOrBuilderList();
+    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementOrBuilder> 
+        getRequirementOrBuilderList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
      */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoOrBuilder getInfoOrBuilder(
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementOrBuilder getRequirementOrBuilder(
         int index);
   }
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.serialization.SinceKotlinInfoTable}
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.VersionRequirementTable}
    */
-  public static final class SinceKotlinInfoTable extends
+  public static final class VersionRequirementTable extends
       org.jetbrains.kotlin.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.SinceKotlinInfoTable)
-      SinceKotlinInfoTableOrBuilder {
-    // Use SinceKotlinInfoTable.newBuilder() to construct.
-    private SinceKotlinInfoTable(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.VersionRequirementTable)
+      VersionRequirementTableOrBuilder {
+    // Use VersionRequirementTable.newBuilder() to construct.
+    private VersionRequirementTable(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private SinceKotlinInfoTable(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private VersionRequirementTable(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
-    private static final SinceKotlinInfoTable defaultInstance;
-    public static SinceKotlinInfoTable getDefaultInstance() {
+    private static final VersionRequirementTable defaultInstance;
+    public static VersionRequirementTable getDefaultInstance() {
       return defaultInstance;
     }
 
-    public SinceKotlinInfoTable getDefaultInstanceForType() {
+    public VersionRequirementTable getDefaultInstanceForType() {
       return defaultInstance;
     }
 
@@ -26723,7 +27142,7 @@ public final class DebugProtoBuf {
         getUnknownFields() {
       return this.unknownFields;
     }
-    private SinceKotlinInfoTable(
+    private VersionRequirementTable(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -26748,10 +27167,10 @@ public final class DebugProtoBuf {
             }
             case 10: {
               if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                info_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo>();
+                requirement_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement>();
                 mutable_bitField0_ |= 0x00000001;
               }
-              info_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.PARSER, extensionRegistry));
+              requirement_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.PARSER, extensionRegistry));
               break;
             }
           }
@@ -26763,7 +27182,7 @@ public final class DebugProtoBuf {
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-          info_ = java.util.Collections.unmodifiableList(info_);
+          requirement_ = java.util.Collections.unmodifiableList(requirement_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -26771,68 +27190,68 @@ public final class DebugProtoBuf {
     }
     public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfoTable_descriptor;
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_descriptor;
     }
 
     protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfoTable_fieldAccessorTable
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder.class);
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder.class);
     }
 
-    public static org.jetbrains.kotlin.protobuf.Parser<SinceKotlinInfoTable> PARSER =
-        new org.jetbrains.kotlin.protobuf.AbstractParser<SinceKotlinInfoTable>() {
-      public SinceKotlinInfoTable parsePartialFrom(
+    public static org.jetbrains.kotlin.protobuf.Parser<VersionRequirementTable> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<VersionRequirementTable>() {
+      public VersionRequirementTable parsePartialFrom(
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return new SinceKotlinInfoTable(input, extensionRegistry);
+        return new VersionRequirementTable(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public org.jetbrains.kotlin.protobuf.Parser<SinceKotlinInfoTable> getParserForType() {
+    public org.jetbrains.kotlin.protobuf.Parser<VersionRequirementTable> getParserForType() {
       return PARSER;
     }
 
-    public static final int INFO_FIELD_NUMBER = 1;
-    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo> info_;
+    public static final int REQUIREMENT_FIELD_NUMBER = 1;
+    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement> requirement_;
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo> getInfoList() {
-      return info_;
+    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement> getRequirementList() {
+      return requirement_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
      */
-    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoOrBuilder> 
-        getInfoOrBuilderList() {
-      return info_;
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementOrBuilder> 
+        getRequirementOrBuilderList() {
+      return requirement_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
      */
-    public int getInfoCount() {
-      return info_.size();
+    public int getRequirementCount() {
+      return requirement_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
      */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo getInfo(int index) {
-      return info_.get(index);
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement getRequirement(int index) {
+      return requirement_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
      */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoOrBuilder getInfoOrBuilder(
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementOrBuilder getRequirementOrBuilder(
         int index) {
-      return info_.get(index);
+      return requirement_.get(index);
     }
 
     private void initFields() {
-      info_ = java.util.Collections.emptyList();
+      requirement_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -26847,8 +27266,8 @@ public final class DebugProtoBuf {
     public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      for (int i = 0; i < info_.size(); i++) {
-        output.writeMessage(1, info_.get(i));
+      for (int i = 0; i < requirement_.size(); i++) {
+        output.writeMessage(1, requirement_.get(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -26859,9 +27278,9 @@ public final class DebugProtoBuf {
       if (size != -1) return size;
 
       size = 0;
-      for (int i = 0; i < info_.size(); i++) {
+      for (int i = 0; i < requirement_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(1, info_.get(i));
+          .computeMessageSize(1, requirement_.get(i));
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -26875,53 +27294,53 @@ public final class DebugProtoBuf {
       return super.writeReplace();
     }
 
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parseFrom(byte[] data)
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parseFrom(byte[] data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parseFrom(
         byte[] data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parseFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parseFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parseDelimitedFrom(java.io.InputStream input)
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parseDelimitedFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parseDelimitedFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parseFrom(
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -26930,7 +27349,7 @@ public final class DebugProtoBuf {
 
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable prototype) {
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
@@ -26942,25 +27361,25 @@ public final class DebugProtoBuf {
       return builder;
     }
     /**
-     * Protobuf type {@code org.jetbrains.kotlin.serialization.SinceKotlinInfoTable}
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.VersionRequirementTable}
      */
     public static final class Builder extends
         org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.SinceKotlinInfoTable)
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTableOrBuilder {
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.VersionRequirementTable)
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTableOrBuilder {
       public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfoTable_descriptor;
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_descriptor;
       }
 
       protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfoTable_fieldAccessorTable
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.Builder.class);
+                org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.Builder.class);
       }
 
-      // Construct using org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.newBuilder()
+      // Construct using org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -26972,7 +27391,7 @@ public final class DebugProtoBuf {
       }
       private void maybeForceBuilderInitialization() {
         if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          getInfoFieldBuilder();
+          getRequirementFieldBuilder();
         }
       }
       private static Builder create() {
@@ -26981,11 +27400,11 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        if (infoBuilder_ == null) {
-          info_ = java.util.Collections.emptyList();
+        if (requirementBuilder_ == null) {
+          requirement_ = java.util.Collections.emptyList();
           bitField0_ = (bitField0_ & ~0x00000001);
         } else {
-          infoBuilder_.clear();
+          requirementBuilder_.clear();
         }
         return this;
       }
@@ -26996,71 +27415,71 @@ public final class DebugProtoBuf {
 
       public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfoTable_descriptor;
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_descriptor;
       }
 
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable getDefaultInstanceForType() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance();
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance();
       }
 
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable build() {
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable result = buildPartial();
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable build() {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable buildPartial() {
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable(this);
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable buildPartial() {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable(this);
         int from_bitField0_ = bitField0_;
-        if (infoBuilder_ == null) {
+        if (requirementBuilder_ == null) {
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
-            info_ = java.util.Collections.unmodifiableList(info_);
+            requirement_ = java.util.Collections.unmodifiableList(requirement_);
             bitField0_ = (bitField0_ & ~0x00000001);
           }
-          result.info_ = info_;
+          result.requirement_ = requirement_;
         } else {
-          result.info_ = infoBuilder_.build();
+          result.requirement_ = requirementBuilder_.build();
         }
         onBuilt();
         return result;
       }
 
       public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
-        if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable) {
-          return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable)other);
+        if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable) {
+          return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable other) {
-        if (other == org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable.getDefaultInstance()) return this;
-        if (infoBuilder_ == null) {
-          if (!other.info_.isEmpty()) {
-            if (info_.isEmpty()) {
-              info_ = other.info_;
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable other) {
+        if (other == org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable.getDefaultInstance()) return this;
+        if (requirementBuilder_ == null) {
+          if (!other.requirement_.isEmpty()) {
+            if (requirement_.isEmpty()) {
+              requirement_ = other.requirement_;
               bitField0_ = (bitField0_ & ~0x00000001);
             } else {
-              ensureInfoIsMutable();
-              info_.addAll(other.info_);
+              ensureRequirementIsMutable();
+              requirement_.addAll(other.requirement_);
             }
             onChanged();
           }
         } else {
-          if (!other.info_.isEmpty()) {
-            if (infoBuilder_.isEmpty()) {
-              infoBuilder_.dispose();
-              infoBuilder_ = null;
-              info_ = other.info_;
+          if (!other.requirement_.isEmpty()) {
+            if (requirementBuilder_.isEmpty()) {
+              requirementBuilder_.dispose();
+              requirementBuilder_ = null;
+              requirement_ = other.requirement_;
               bitField0_ = (bitField0_ & ~0x00000001);
-              infoBuilder_ = 
+              requirementBuilder_ = 
                 org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getInfoFieldBuilder() : null;
+                   getRequirementFieldBuilder() : null;
             } else {
-              infoBuilder_.addAllMessages(other.info_);
+              requirementBuilder_.addAllMessages(other.requirement_);
             }
           }
         }
@@ -27076,11 +27495,11 @@ public final class DebugProtoBuf {
           org.jetbrains.kotlin.protobuf.CodedInputStream input,
           org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable parsedMessage = null;
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoTable) e.getUnfinishedMessage();
+          parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementTable) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -27091,255 +27510,255 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo> info_ =
+      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement> requirement_ =
         java.util.Collections.emptyList();
-      private void ensureInfoIsMutable() {
+      private void ensureRequirementIsMutable() {
         if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          info_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo>(info_);
+          requirement_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement>(requirement_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoOrBuilder> infoBuilder_;
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementOrBuilder> requirementBuilder_;
 
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo> getInfoList() {
-        if (infoBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(info_);
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement> getRequirementList() {
+        if (requirementBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(requirement_);
         } else {
-          return infoBuilder_.getMessageList();
+          return requirementBuilder_.getMessageList();
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public int getInfoCount() {
-        if (infoBuilder_ == null) {
-          return info_.size();
+      public int getRequirementCount() {
+        if (requirementBuilder_ == null) {
+          return requirement_.size();
         } else {
-          return infoBuilder_.getCount();
+          return requirementBuilder_.getCount();
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo getInfo(int index) {
-        if (infoBuilder_ == null) {
-          return info_.get(index);
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement getRequirement(int index) {
+        if (requirementBuilder_ == null) {
+          return requirement_.get(index);
         } else {
-          return infoBuilder_.getMessage(index);
+          return requirementBuilder_.getMessage(index);
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public Builder setInfo(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo value) {
-        if (infoBuilder_ == null) {
+      public Builder setRequirement(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement value) {
+        if (requirementBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureInfoIsMutable();
-          info_.set(index, value);
+          ensureRequirementIsMutable();
+          requirement_.set(index, value);
           onChanged();
         } else {
-          infoBuilder_.setMessage(index, value);
+          requirementBuilder_.setMessage(index, value);
         }
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public Builder setInfo(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder builderForValue) {
-        if (infoBuilder_ == null) {
-          ensureInfoIsMutable();
-          info_.set(index, builderForValue.build());
+      public Builder setRequirement(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder builderForValue) {
+        if (requirementBuilder_ == null) {
+          ensureRequirementIsMutable();
+          requirement_.set(index, builderForValue.build());
           onChanged();
         } else {
-          infoBuilder_.setMessage(index, builderForValue.build());
+          requirementBuilder_.setMessage(index, builderForValue.build());
         }
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public Builder addInfo(org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo value) {
-        if (infoBuilder_ == null) {
+      public Builder addRequirement(org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement value) {
+        if (requirementBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureInfoIsMutable();
-          info_.add(value);
+          ensureRequirementIsMutable();
+          requirement_.add(value);
           onChanged();
         } else {
-          infoBuilder_.addMessage(value);
+          requirementBuilder_.addMessage(value);
         }
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public Builder addInfo(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo value) {
-        if (infoBuilder_ == null) {
+      public Builder addRequirement(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement value) {
+        if (requirementBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureInfoIsMutable();
-          info_.add(index, value);
+          ensureRequirementIsMutable();
+          requirement_.add(index, value);
           onChanged();
         } else {
-          infoBuilder_.addMessage(index, value);
+          requirementBuilder_.addMessage(index, value);
         }
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public Builder addInfo(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder builderForValue) {
-        if (infoBuilder_ == null) {
-          ensureInfoIsMutable();
-          info_.add(builderForValue.build());
+      public Builder addRequirement(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder builderForValue) {
+        if (requirementBuilder_ == null) {
+          ensureRequirementIsMutable();
+          requirement_.add(builderForValue.build());
           onChanged();
         } else {
-          infoBuilder_.addMessage(builderForValue.build());
+          requirementBuilder_.addMessage(builderForValue.build());
         }
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public Builder addInfo(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder builderForValue) {
-        if (infoBuilder_ == null) {
-          ensureInfoIsMutable();
-          info_.add(index, builderForValue.build());
+      public Builder addRequirement(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder builderForValue) {
+        if (requirementBuilder_ == null) {
+          ensureRequirementIsMutable();
+          requirement_.add(index, builderForValue.build());
           onChanged();
         } else {
-          infoBuilder_.addMessage(index, builderForValue.build());
+          requirementBuilder_.addMessage(index, builderForValue.build());
         }
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public Builder addAllInfo(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo> values) {
-        if (infoBuilder_ == null) {
-          ensureInfoIsMutable();
+      public Builder addAllRequirement(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement> values) {
+        if (requirementBuilder_ == null) {
+          ensureRequirementIsMutable();
           org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-              values, info_);
+              values, requirement_);
           onChanged();
         } else {
-          infoBuilder_.addAllMessages(values);
+          requirementBuilder_.addAllMessages(values);
         }
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public Builder clearInfo() {
-        if (infoBuilder_ == null) {
-          info_ = java.util.Collections.emptyList();
+      public Builder clearRequirement() {
+        if (requirementBuilder_ == null) {
+          requirement_ = java.util.Collections.emptyList();
           bitField0_ = (bitField0_ & ~0x00000001);
           onChanged();
         } else {
-          infoBuilder_.clear();
+          requirementBuilder_.clear();
         }
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public Builder removeInfo(int index) {
-        if (infoBuilder_ == null) {
-          ensureInfoIsMutable();
-          info_.remove(index);
+      public Builder removeRequirement(int index) {
+        if (requirementBuilder_ == null) {
+          ensureRequirementIsMutable();
+          requirement_.remove(index);
           onChanged();
         } else {
-          infoBuilder_.remove(index);
+          requirementBuilder_.remove(index);
         }
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder getInfoBuilder(
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder getRequirementBuilder(
           int index) {
-        return getInfoFieldBuilder().getBuilder(index);
+        return getRequirementFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoOrBuilder getInfoOrBuilder(
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementOrBuilder getRequirementOrBuilder(
           int index) {
-        if (infoBuilder_ == null) {
-          return info_.get(index);  } else {
-          return infoBuilder_.getMessageOrBuilder(index);
+        if (requirementBuilder_ == null) {
+          return requirement_.get(index);  } else {
+          return requirementBuilder_.getMessageOrBuilder(index);
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoOrBuilder> 
-           getInfoOrBuilderList() {
-        if (infoBuilder_ != null) {
-          return infoBuilder_.getMessageOrBuilderList();
+      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementOrBuilder> 
+           getRequirementOrBuilderList() {
+        if (requirementBuilder_ != null) {
+          return requirementBuilder_.getMessageOrBuilderList();
         } else {
-          return java.util.Collections.unmodifiableList(info_);
+          return java.util.Collections.unmodifiableList(requirement_);
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder addInfoBuilder() {
-        return getInfoFieldBuilder().addBuilder(
-            org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.getDefaultInstance());
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder addRequirementBuilder() {
+        return getRequirementFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.getDefaultInstance());
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder addInfoBuilder(
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder addRequirementBuilder(
           int index) {
-        return getInfoFieldBuilder().addBuilder(
-            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.getDefaultInstance());
+        return getRequirementFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.getDefaultInstance());
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.SinceKotlinInfo info = 1;</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.VersionRequirement requirement = 1;</code>
        */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder> 
-           getInfoBuilderList() {
-        return getInfoFieldBuilder().getBuilderList();
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder> 
+           getRequirementBuilderList() {
+        return getRequirementFieldBuilder().getBuilderList();
       }
       private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoOrBuilder> 
-          getInfoFieldBuilder() {
-        if (infoBuilder_ == null) {
-          infoBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfo.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.SinceKotlinInfoOrBuilder>(
-                  info_,
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementOrBuilder> 
+          getRequirementFieldBuilder() {
+        if (requirementBuilder_ == null) {
+          requirementBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirement.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.VersionRequirementOrBuilder>(
+                  requirement_,
                   ((bitField0_ & 0x00000001) == 0x00000001),
                   getParentForChildren(),
                   isClean());
-          info_ = null;
+          requirement_ = null;
         }
-        return infoBuilder_;
+        return requirementBuilder_;
       }
 
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.SinceKotlinInfoTable)
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.VersionRequirementTable)
     }
 
     static {
-      defaultInstance = new SinceKotlinInfoTable(true);
+      defaultInstance = new VersionRequirementTable(true);
       defaultInstance.initFields();
     }
 
-    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.SinceKotlinInfoTable)
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.VersionRequirementTable)
   }
 
   public interface PackageFragmentOrBuilder extends
@@ -28651,6 +29070,4228 @@ public final class DebugProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.PackageFragment)
   }
 
+  public interface ContractOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Contract)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect> 
+        getEffectList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect getEffect(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+     */
+    int getEffectCount();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.EffectOrBuilder> 
+        getEffectOrBuilderList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.EffectOrBuilder getEffectOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.Contract}
+   */
+  public static final class Contract extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Contract)
+      ContractOrBuilder {
+    // Use Contract.newBuilder() to construct.
+    private Contract(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private Contract(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final Contract defaultInstance;
+    public static Contract getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public Contract getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Contract(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                effect_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              effect_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.PARSER, extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          effect_ = java.util.Collections.unmodifiableList(effect_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Contract_descriptor;
+    }
+
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Contract_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.Builder.class);
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Parser<Contract> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Contract>() {
+      public Contract parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new Contract(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<Contract> getParserForType() {
+      return PARSER;
+    }
+
+    public static final int EFFECT_FIELD_NUMBER = 1;
+    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect> effect_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect> getEffectList() {
+      return effect_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.EffectOrBuilder> 
+        getEffectOrBuilderList() {
+      return effect_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+     */
+    public int getEffectCount() {
+      return effect_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect getEffect(int index) {
+      return effect_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.EffectOrBuilder getEffectOrBuilder(
+        int index) {
+      return effect_.get(index);
+    }
+
+    private void initFields() {
+      effect_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      for (int i = 0; i < getEffectCount(); i++) {
+        if (!getEffect(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      for (int i = 0; i < effect_.size(); i++) {
+        output.writeMessage(1, effect_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < effect_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(1, effect_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.Contract}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Contract)
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.ContractOrBuilder {
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Contract_descriptor;
+      }
+
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Contract_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.Builder.class);
+      }
+
+      // Construct using org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getEffectFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        if (effectBuilder_ == null) {
+          effect_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          effectBuilder_.clear();
+        }
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Contract_descriptor;
+      }
+
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract build() {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract buildPartial() {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract(this);
+        int from_bitField0_ = bitField0_;
+        if (effectBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            effect_ = java.util.Collections.unmodifiableList(effect_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.effect_ = effect_;
+        } else {
+          result.effect_ = effectBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+        if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract) {
+          return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract other) {
+        if (other == org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract.getDefaultInstance()) return this;
+        if (effectBuilder_ == null) {
+          if (!other.effect_.isEmpty()) {
+            if (effect_.isEmpty()) {
+              effect_ = other.effect_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureEffectIsMutable();
+              effect_.addAll(other.effect_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.effect_.isEmpty()) {
+            if (effectBuilder_.isEmpty()) {
+              effectBuilder_.dispose();
+              effectBuilder_ = null;
+              effect_ = other.effect_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              effectBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getEffectFieldBuilder() : null;
+            } else {
+              effectBuilder_.addAllMessages(other.effect_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        for (int i = 0; i < getEffectCount(); i++) {
+          if (!getEffect(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Contract) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect> effect_ =
+        java.util.Collections.emptyList();
+      private void ensureEffectIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          effect_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect>(effect_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect, org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.EffectOrBuilder> effectBuilder_;
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect> getEffectList() {
+        if (effectBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(effect_);
+        } else {
+          return effectBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public int getEffectCount() {
+        if (effectBuilder_ == null) {
+          return effect_.size();
+        } else {
+          return effectBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect getEffect(int index) {
+        if (effectBuilder_ == null) {
+          return effect_.get(index);
+        } else {
+          return effectBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public Builder setEffect(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect value) {
+        if (effectBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureEffectIsMutable();
+          effect_.set(index, value);
+          onChanged();
+        } else {
+          effectBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public Builder setEffect(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder builderForValue) {
+        if (effectBuilder_ == null) {
+          ensureEffectIsMutable();
+          effect_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          effectBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public Builder addEffect(org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect value) {
+        if (effectBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureEffectIsMutable();
+          effect_.add(value);
+          onChanged();
+        } else {
+          effectBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public Builder addEffect(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect value) {
+        if (effectBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureEffectIsMutable();
+          effect_.add(index, value);
+          onChanged();
+        } else {
+          effectBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public Builder addEffect(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder builderForValue) {
+        if (effectBuilder_ == null) {
+          ensureEffectIsMutable();
+          effect_.add(builderForValue.build());
+          onChanged();
+        } else {
+          effectBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public Builder addEffect(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder builderForValue) {
+        if (effectBuilder_ == null) {
+          ensureEffectIsMutable();
+          effect_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          effectBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public Builder addAllEffect(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect> values) {
+        if (effectBuilder_ == null) {
+          ensureEffectIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, effect_);
+          onChanged();
+        } else {
+          effectBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public Builder clearEffect() {
+        if (effectBuilder_ == null) {
+          effect_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          effectBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public Builder removeEffect(int index) {
+        if (effectBuilder_ == null) {
+          ensureEffectIsMutable();
+          effect_.remove(index);
+          onChanged();
+        } else {
+          effectBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder getEffectBuilder(
+          int index) {
+        return getEffectFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.EffectOrBuilder getEffectOrBuilder(
+          int index) {
+        if (effectBuilder_ == null) {
+          return effect_.get(index);  } else {
+          return effectBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.EffectOrBuilder> 
+           getEffectOrBuilderList() {
+        if (effectBuilder_ != null) {
+          return effectBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(effect_);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder addEffectBuilder() {
+        return getEffectFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder addEffectBuilder(
+          int index) {
+        return getEffectFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Effect effect = 1;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder> 
+           getEffectBuilderList() {
+        return getEffectFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect, org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.EffectOrBuilder> 
+          getEffectFieldBuilder() {
+        if (effectBuilder_ == null) {
+          effectBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect, org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.EffectOrBuilder>(
+                  effect_,
+                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  getParentForChildren(),
+                  isClean());
+          effect_ = null;
+        }
+        return effectBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Contract)
+    }
+
+    static {
+      defaultInstance = new Contract(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Contract)
+  }
+
+  public interface EffectOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Effect)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Effect.EffectType effect_type = 1;</code>
+     */
+    boolean hasEffectType();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Effect.EffectType effect_type = 1;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType getEffectType();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> 
+        getEffectConstructorArgumentList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getEffectConstructorArgument(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+     */
+    int getEffectConstructorArgumentCount();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+        getEffectConstructorArgumentOrBuilderList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getEffectConstructorArgumentOrBuilder(
+        int index);
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * is given by other fields in this message, and 'Expression' is stored in this field.
+     * </pre>
+     */
+    boolean hasConclusionOfConditionalEffect();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * is given by other fields in this message, and 'Expression' is stored in this field.
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getConclusionOfConditionalEffect();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * is given by other fields in this message, and 'Expression' is stored in this field.
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getConclusionOfConditionalEffectOrBuilder();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Effect.InvocationKind kind = 4;</code>
+     */
+    boolean hasKind();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Effect.InvocationKind kind = 4;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind getKind();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.Effect}
+   */
+  public static final class Effect extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Effect)
+      EffectOrBuilder {
+    // Use Effect.newBuilder() to construct.
+    private Effect(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private Effect(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final Effect defaultInstance;
+    public static Effect getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public Effect getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Effect(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType value = org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(1, rawValue);
+              } else {
+                bitField0_ |= 0x00000001;
+                effectType_ = value;
+              }
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                effectConstructorArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              effectConstructorArgument_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.PARSER, extensionRegistry));
+              break;
+            }
+            case 26: {
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = conclusionOfConditionalEffect_.toBuilder();
+              }
+              conclusionOfConditionalEffect_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(conclusionOfConditionalEffect_);
+                conclusionOfConditionalEffect_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+            case 32: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind value = org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(4, rawValue);
+              } else {
+                bitField0_ |= 0x00000004;
+                kind_ = value;
+              }
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          effectConstructorArgument_ = java.util.Collections.unmodifiableList(effectConstructorArgument_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Effect_descriptor;
+    }
+
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Effect_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder.class);
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Parser<Effect> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Effect>() {
+      public Effect parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new Effect(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<Effect> getParserForType() {
+      return PARSER;
+    }
+
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.serialization.Effect.EffectType}
+     *
+     * <pre>
+     * This enum controls which effect this message contains and how 'effectConstructorArguments'
+     * should be parsed.
+     * Each enum value documented in the following syntax: "EffectName(arg1: T1, arg2: T2, ...)"
+     * Those arguments are expected to be found in 'effectConstructorArguments' in exactly the same
+     * order and amount as defined by signature, otherwise message should be dropped.
+     * </pre>
+     */
+    public enum EffectType
+        implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>RETURNS_CONSTANT = 0;</code>
+       *
+       * <pre>
+       * Returns(value: ConstantValue?)
+       * </pre>
+       */
+      RETURNS_CONSTANT(0, 0),
+      /**
+       * <code>CALLS = 1;</code>
+       *
+       * <pre>
+       * CallsInPlace(callable: ParameterReference)
+       * Additionally, InvocationKind in the field 'kind' may be provided to define exact amount of invocations.
+       * </pre>
+       */
+      CALLS(1, 1),
+      /**
+       * <code>RETURNS_NOT_NULL = 2;</code>
+       *
+       * <pre>
+       * ReturnsNotNull()
+       * </pre>
+       */
+      RETURNS_NOT_NULL(2, 2),
+      ;
+
+      /**
+       * <code>RETURNS_CONSTANT = 0;</code>
+       *
+       * <pre>
+       * Returns(value: ConstantValue?)
+       * </pre>
+       */
+      public static final int RETURNS_CONSTANT_VALUE = 0;
+      /**
+       * <code>CALLS = 1;</code>
+       *
+       * <pre>
+       * CallsInPlace(callable: ParameterReference)
+       * Additionally, InvocationKind in the field 'kind' may be provided to define exact amount of invocations.
+       * </pre>
+       */
+      public static final int CALLS_VALUE = 1;
+      /**
+       * <code>RETURNS_NOT_NULL = 2;</code>
+       *
+       * <pre>
+       * ReturnsNotNull()
+       * </pre>
+       */
+      public static final int RETURNS_NOT_NULL_VALUE = 2;
+
+
+      public final int getNumber() { return value; }
+
+      public static EffectType valueOf(int value) {
+        switch (value) {
+          case 0: return RETURNS_CONSTANT;
+          case 1: return CALLS;
+          case 2: return RETURNS_NOT_NULL;
+          default: return null;
+        }
+      }
+
+      public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<EffectType>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<EffectType>
+          internalValueMap =
+            new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<EffectType>() {
+              public EffectType findValueByNumber(int number) {
+                return EffectType.valueOf(number);
+              }
+            };
+
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final EffectType[] VALUES = values();
+
+      public static EffectType valueOf(
+          org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int index;
+      private final int value;
+
+      private EffectType(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.Effect.EffectType)
+    }
+
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.serialization.Effect.InvocationKind}
+     */
+    public enum InvocationKind
+        implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>AT_MOST_ONCE = 0;</code>
+       */
+      AT_MOST_ONCE(0, 0),
+      /**
+       * <code>EXACTLY_ONCE = 1;</code>
+       */
+      EXACTLY_ONCE(1, 1),
+      /**
+       * <code>AT_LEAST_ONCE = 2;</code>
+       */
+      AT_LEAST_ONCE(2, 2),
+      ;
+
+      /**
+       * <code>AT_MOST_ONCE = 0;</code>
+       */
+      public static final int AT_MOST_ONCE_VALUE = 0;
+      /**
+       * <code>EXACTLY_ONCE = 1;</code>
+       */
+      public static final int EXACTLY_ONCE_VALUE = 1;
+      /**
+       * <code>AT_LEAST_ONCE = 2;</code>
+       */
+      public static final int AT_LEAST_ONCE_VALUE = 2;
+
+
+      public final int getNumber() { return value; }
+
+      public static InvocationKind valueOf(int value) {
+        switch (value) {
+          case 0: return AT_MOST_ONCE;
+          case 1: return EXACTLY_ONCE;
+          case 2: return AT_LEAST_ONCE;
+          default: return null;
+        }
+      }
+
+      public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<InvocationKind>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<InvocationKind>
+          internalValueMap =
+            new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<InvocationKind>() {
+              public InvocationKind findValueByNumber(int number) {
+                return InvocationKind.valueOf(number);
+              }
+            };
+
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.getDescriptor().getEnumTypes().get(1);
+      }
+
+      private static final InvocationKind[] VALUES = values();
+
+      public static InvocationKind valueOf(
+          org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int index;
+      private final int value;
+
+      private InvocationKind(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.Effect.InvocationKind)
+    }
+
+    private int bitField0_;
+    public static final int EFFECT_TYPE_FIELD_NUMBER = 1;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType effectType_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Effect.EffectType effect_type = 1;</code>
+     */
+    public boolean hasEffectType() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Effect.EffectType effect_type = 1;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType getEffectType() {
+      return effectType_;
+    }
+
+    public static final int EFFECT_CONSTRUCTOR_ARGUMENT_FIELD_NUMBER = 2;
+    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> effectConstructorArgument_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> getEffectConstructorArgumentList() {
+      return effectConstructorArgument_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+        getEffectConstructorArgumentOrBuilderList() {
+      return effectConstructorArgument_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+     */
+    public int getEffectConstructorArgumentCount() {
+      return effectConstructorArgument_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getEffectConstructorArgument(int index) {
+      return effectConstructorArgument_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getEffectConstructorArgumentOrBuilder(
+        int index) {
+      return effectConstructorArgument_.get(index);
+    }
+
+    public static final int CONCLUSION_OF_CONDITIONAL_EFFECT_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression conclusionOfConditionalEffect_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * is given by other fields in this message, and 'Expression' is stored in this field.
+     * </pre>
+     */
+    public boolean hasConclusionOfConditionalEffect() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * is given by other fields in this message, and 'Expression' is stored in this field.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getConclusionOfConditionalEffect() {
+      return conclusionOfConditionalEffect_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * is given by other fields in this message, and 'Expression' is stored in this field.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getConclusionOfConditionalEffectOrBuilder() {
+      return conclusionOfConditionalEffect_;
+    }
+
+    public static final int KIND_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind kind_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Effect.InvocationKind kind = 4;</code>
+     */
+    public boolean hasKind() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Effect.InvocationKind kind = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind getKind() {
+      return kind_;
+    }
+
+    private void initFields() {
+      effectType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType.RETURNS_CONSTANT;
+      effectConstructorArgument_ = java.util.Collections.emptyList();
+      conclusionOfConditionalEffect_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance();
+      kind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      for (int i = 0; i < getEffectConstructorArgumentCount(); i++) {
+        if (!getEffectConstructorArgument(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasConclusionOfConditionalEffect()) {
+        if (!getConclusionOfConditionalEffect().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeEnum(1, effectType_.getNumber());
+      }
+      for (int i = 0; i < effectConstructorArgument_.size(); i++) {
+        output.writeMessage(2, effectConstructorArgument_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(3, conclusionOfConditionalEffect_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeEnum(4, kind_.getNumber());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(1, effectType_.getNumber());
+      }
+      for (int i = 0; i < effectConstructorArgument_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(2, effectConstructorArgument_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(3, conclusionOfConditionalEffect_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(4, kind_.getNumber());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.Effect}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Effect)
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.EffectOrBuilder {
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Effect_descriptor;
+      }
+
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Effect_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.Builder.class);
+      }
+
+      // Construct using org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getEffectConstructorArgumentFieldBuilder();
+          getConclusionOfConditionalEffectFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        effectType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType.RETURNS_CONSTANT;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        if (effectConstructorArgumentBuilder_ == null) {
+          effectConstructorArgument_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          effectConstructorArgumentBuilder_.clear();
+        }
+        if (conclusionOfConditionalEffectBuilder_ == null) {
+          conclusionOfConditionalEffect_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance();
+        } else {
+          conclusionOfConditionalEffectBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
+        kind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Effect_descriptor;
+      }
+
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect build() {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect buildPartial() {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.effectType_ = effectType_;
+        if (effectConstructorArgumentBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002)) {
+            effectConstructorArgument_ = java.util.Collections.unmodifiableList(effectConstructorArgument_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.effectConstructorArgument_ = effectConstructorArgument_;
+        } else {
+          result.effectConstructorArgument_ = effectConstructorArgumentBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        if (conclusionOfConditionalEffectBuilder_ == null) {
+          result.conclusionOfConditionalEffect_ = conclusionOfConditionalEffect_;
+        } else {
+          result.conclusionOfConditionalEffect_ = conclusionOfConditionalEffectBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.kind_ = kind_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+        if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect) {
+          return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect other) {
+        if (other == org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.getDefaultInstance()) return this;
+        if (other.hasEffectType()) {
+          setEffectType(other.getEffectType());
+        }
+        if (effectConstructorArgumentBuilder_ == null) {
+          if (!other.effectConstructorArgument_.isEmpty()) {
+            if (effectConstructorArgument_.isEmpty()) {
+              effectConstructorArgument_ = other.effectConstructorArgument_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureEffectConstructorArgumentIsMutable();
+              effectConstructorArgument_.addAll(other.effectConstructorArgument_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.effectConstructorArgument_.isEmpty()) {
+            if (effectConstructorArgumentBuilder_.isEmpty()) {
+              effectConstructorArgumentBuilder_.dispose();
+              effectConstructorArgumentBuilder_ = null;
+              effectConstructorArgument_ = other.effectConstructorArgument_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              effectConstructorArgumentBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getEffectConstructorArgumentFieldBuilder() : null;
+            } else {
+              effectConstructorArgumentBuilder_.addAllMessages(other.effectConstructorArgument_);
+            }
+          }
+        }
+        if (other.hasConclusionOfConditionalEffect()) {
+          mergeConclusionOfConditionalEffect(other.getConclusionOfConditionalEffect());
+        }
+        if (other.hasKind()) {
+          setKind(other.getKind());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        for (int i = 0; i < getEffectConstructorArgumentCount(); i++) {
+          if (!getEffectConstructorArgument(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasConclusionOfConditionalEffect()) {
+          if (!getConclusionOfConditionalEffect().isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType effectType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType.RETURNS_CONSTANT;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Effect.EffectType effect_type = 1;</code>
+       */
+      public boolean hasEffectType() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Effect.EffectType effect_type = 1;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType getEffectType() {
+        return effectType_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Effect.EffectType effect_type = 1;</code>
+       */
+      public Builder setEffectType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000001;
+        effectType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Effect.EffectType effect_type = 1;</code>
+       */
+      public Builder clearEffectType() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        effectType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.EffectType.RETURNS_CONSTANT;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> effectConstructorArgument_ =
+        java.util.Collections.emptyList();
+      private void ensureEffectConstructorArgumentIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          effectConstructorArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression>(effectConstructorArgument_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> effectConstructorArgumentBuilder_;
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> getEffectConstructorArgumentList() {
+        if (effectConstructorArgumentBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(effectConstructorArgument_);
+        } else {
+          return effectConstructorArgumentBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public int getEffectConstructorArgumentCount() {
+        if (effectConstructorArgumentBuilder_ == null) {
+          return effectConstructorArgument_.size();
+        } else {
+          return effectConstructorArgumentBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getEffectConstructorArgument(int index) {
+        if (effectConstructorArgumentBuilder_ == null) {
+          return effectConstructorArgument_.get(index);
+        } else {
+          return effectConstructorArgumentBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public Builder setEffectConstructorArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (effectConstructorArgumentBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureEffectConstructorArgumentIsMutable();
+          effectConstructorArgument_.set(index, value);
+          onChanged();
+        } else {
+          effectConstructorArgumentBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public Builder setEffectConstructorArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder builderForValue) {
+        if (effectConstructorArgumentBuilder_ == null) {
+          ensureEffectConstructorArgumentIsMutable();
+          effectConstructorArgument_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          effectConstructorArgumentBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public Builder addEffectConstructorArgument(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (effectConstructorArgumentBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureEffectConstructorArgumentIsMutable();
+          effectConstructorArgument_.add(value);
+          onChanged();
+        } else {
+          effectConstructorArgumentBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public Builder addEffectConstructorArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (effectConstructorArgumentBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureEffectConstructorArgumentIsMutable();
+          effectConstructorArgument_.add(index, value);
+          onChanged();
+        } else {
+          effectConstructorArgumentBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public Builder addEffectConstructorArgument(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder builderForValue) {
+        if (effectConstructorArgumentBuilder_ == null) {
+          ensureEffectConstructorArgumentIsMutable();
+          effectConstructorArgument_.add(builderForValue.build());
+          onChanged();
+        } else {
+          effectConstructorArgumentBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public Builder addEffectConstructorArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder builderForValue) {
+        if (effectConstructorArgumentBuilder_ == null) {
+          ensureEffectConstructorArgumentIsMutable();
+          effectConstructorArgument_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          effectConstructorArgumentBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public Builder addAllEffectConstructorArgument(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> values) {
+        if (effectConstructorArgumentBuilder_ == null) {
+          ensureEffectConstructorArgumentIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, effectConstructorArgument_);
+          onChanged();
+        } else {
+          effectConstructorArgumentBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public Builder clearEffectConstructorArgument() {
+        if (effectConstructorArgumentBuilder_ == null) {
+          effectConstructorArgument_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          effectConstructorArgumentBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public Builder removeEffectConstructorArgument(int index) {
+        if (effectConstructorArgumentBuilder_ == null) {
+          ensureEffectConstructorArgumentIsMutable();
+          effectConstructorArgument_.remove(index);
+          onChanged();
+        } else {
+          effectConstructorArgumentBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder getEffectConstructorArgumentBuilder(
+          int index) {
+        return getEffectConstructorArgumentFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getEffectConstructorArgumentOrBuilder(
+          int index) {
+        if (effectConstructorArgumentBuilder_ == null) {
+          return effectConstructorArgument_.get(index);  } else {
+          return effectConstructorArgumentBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+           getEffectConstructorArgumentOrBuilderList() {
+        if (effectConstructorArgumentBuilder_ != null) {
+          return effectConstructorArgumentBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(effectConstructorArgument_);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder addEffectConstructorArgumentBuilder() {
+        return getEffectConstructorArgumentFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder addEffectConstructorArgumentBuilder(
+          int index) {
+        return getEffectConstructorArgumentFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression effect_constructor_argument = 2;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder> 
+           getEffectConstructorArgumentBuilderList() {
+        return getEffectConstructorArgumentFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+          getEffectConstructorArgumentFieldBuilder() {
+        if (effectConstructorArgumentBuilder_ == null) {
+          effectConstructorArgumentBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder>(
+                  effectConstructorArgument_,
+                  ((bitField0_ & 0x00000002) == 0x00000002),
+                  getParentForChildren(),
+                  isClean());
+          effectConstructorArgument_ = null;
+        }
+        return effectConstructorArgumentBuilder_;
+      }
+
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression conclusionOfConditionalEffect_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance();
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> conclusionOfConditionalEffectBuilder_;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public boolean hasConclusionOfConditionalEffect() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getConclusionOfConditionalEffect() {
+        if (conclusionOfConditionalEffectBuilder_ == null) {
+          return conclusionOfConditionalEffect_;
+        } else {
+          return conclusionOfConditionalEffectBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder setConclusionOfConditionalEffect(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (conclusionOfConditionalEffectBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          conclusionOfConditionalEffect_ = value;
+          onChanged();
+        } else {
+          conclusionOfConditionalEffectBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder setConclusionOfConditionalEffect(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder builderForValue) {
+        if (conclusionOfConditionalEffectBuilder_ == null) {
+          conclusionOfConditionalEffect_ = builderForValue.build();
+          onChanged();
+        } else {
+          conclusionOfConditionalEffectBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder mergeConclusionOfConditionalEffect(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (conclusionOfConditionalEffectBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004) &&
+              conclusionOfConditionalEffect_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance()) {
+            conclusionOfConditionalEffect_ =
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.newBuilder(conclusionOfConditionalEffect_).mergeFrom(value).buildPartial();
+          } else {
+            conclusionOfConditionalEffect_ = value;
+          }
+          onChanged();
+        } else {
+          conclusionOfConditionalEffectBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder clearConclusionOfConditionalEffect() {
+        if (conclusionOfConditionalEffectBuilder_ == null) {
+          conclusionOfConditionalEffect_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance();
+          onChanged();
+        } else {
+          conclusionOfConditionalEffectBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder getConclusionOfConditionalEffectBuilder() {
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return getConclusionOfConditionalEffectFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getConclusionOfConditionalEffectOrBuilder() {
+        if (conclusionOfConditionalEffectBuilder_ != null) {
+          return conclusionOfConditionalEffectBuilder_.getMessageOrBuilder();
+        } else {
+          return conclusionOfConditionalEffect_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression conclusion_of_conditional_effect = 3;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+          getConclusionOfConditionalEffectFieldBuilder() {
+        if (conclusionOfConditionalEffectBuilder_ == null) {
+          conclusionOfConditionalEffectBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder>(
+                  getConclusionOfConditionalEffect(),
+                  getParentForChildren(),
+                  isClean());
+          conclusionOfConditionalEffect_ = null;
+        }
+        return conclusionOfConditionalEffectBuilder_;
+      }
+
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind kind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Effect.InvocationKind kind = 4;</code>
+       */
+      public boolean hasKind() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Effect.InvocationKind kind = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind getKind() {
+        return kind_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Effect.InvocationKind kind = 4;</code>
+       */
+      public Builder setKind(org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000008;
+        kind_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Effect.InvocationKind kind = 4;</code>
+       */
+      public Builder clearKind() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        kind_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Effect)
+    }
+
+    static {
+      defaultInstance = new Effect(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Effect)
+  }
+
+  public interface ExpressionOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.Expression)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *isNegated =&gt; this expression should be negated
+     *isIsNullPredicate =&gt; this expression is IsNullPredicate with 'variableName' as argument
+     * </pre>
+     */
+    boolean hasFlags();
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *isNegated =&gt; this expression should be negated
+     *isIsNullPredicate =&gt; this expression is IsNullPredicate with 'variableName' as argument
+     * </pre>
+     */
+    int getFlags();
+
+    /**
+     * <code>optional int32 value_parameter_reference = 2;</code>
+     *
+     * <pre>
+     * stored as index in valueParameters list of owner-function in 1-indexation
+     * Index '0' is reserved for extension receiver
+     * </pre>
+     */
+    boolean hasValueParameterReference();
+    /**
+     * <code>optional int32 value_parameter_reference = 2;</code>
+     *
+     * <pre>
+     * stored as index in valueParameters list of owner-function in 1-indexation
+     * Index '0' is reserved for extension receiver
+     * </pre>
+     */
+    int getValueParameterReference();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Expression.ConstantValue constant_value = 3;</code>
+     */
+    boolean hasConstantValue();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Expression.ConstantValue constant_value = 3;</code>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue getConstantValue();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+     *
+     * <pre>
+     * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+     * and with type encoded in either one of next two fields as RHS.
+     * </pre>
+     */
+    boolean hasIsInstanceType();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+     *
+     * <pre>
+     * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+     * and with type encoded in either one of next two fields as RHS.
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getIsInstanceType();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+     *
+     * <pre>
+     * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+     * and with type encoded in either one of next two fields as RHS.
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getIsInstanceTypeOrBuilder();
+
+    /**
+     * <code>optional int32 is_instance_type_id = 5;</code>
+     */
+    boolean hasIsInstanceTypeId();
+    /**
+     * <code>optional int32 is_instance_type_id = 5;</code>
+     */
+    int getIsInstanceTypeId();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message
+     * </pre>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> 
+        getAndArgumentList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getAndArgument(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message
+     * </pre>
+     */
+    int getAndArgumentCount();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message
+     * </pre>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+        getAndArgumentOrBuilderList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getAndArgumentOrBuilder(
+        int index);
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message.
+     * </pre>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> 
+        getOrArgumentList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message.
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getOrArgument(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message.
+     * </pre>
+     */
+    int getOrArgumentCount();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message.
+     * </pre>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+        getOrArgumentOrBuilderList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message.
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getOrArgumentOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.Expression}
+   *
+   * <pre>
+   * We use some trickery to optimize memory footprint of contract-expressions:
+   * exact type of Expression is determined based on its contents.
+   * </pre>
+   */
+  public static final class Expression extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.Expression)
+      ExpressionOrBuilder {
+    // Use Expression.newBuilder() to construct.
+    private Expression(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private Expression(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final Expression defaultInstance;
+    public static Expression getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public Expression getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Expression(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              flags_ = input.readInt32();
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              valueParameterReference_ = input.readInt32();
+              break;
+            }
+            case 24: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue value = org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(3, rawValue);
+              } else {
+                bitField0_ |= 0x00000004;
+                constantValue_ = value;
+              }
+              break;
+            }
+            case 34: {
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = isInstanceType_.toBuilder();
+              }
+              isInstanceType_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(isInstanceType_);
+                isInstanceType_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000008;
+              break;
+            }
+            case 40: {
+              bitField0_ |= 0x00000010;
+              isInstanceTypeId_ = input.readInt32();
+              break;
+            }
+            case 50: {
+              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+                andArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression>();
+                mutable_bitField0_ |= 0x00000020;
+              }
+              andArgument_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.PARSER, extensionRegistry));
+              break;
+            }
+            case 58: {
+              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+                orArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression>();
+                mutable_bitField0_ |= 0x00000040;
+              }
+              orArgument_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.PARSER, extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+          andArgument_ = java.util.Collections.unmodifiableList(andArgument_);
+        }
+        if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+          orArgument_ = java.util.Collections.unmodifiableList(orArgument_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Expression_descriptor;
+    }
+
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Expression_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder.class);
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Parser<Expression> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Expression>() {
+      public Expression parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new Expression(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<Expression> getParserForType() {
+      return PARSER;
+    }
+
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.serialization.Expression.ConstantValue}
+     */
+    public enum ConstantValue
+        implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>TRUE = 0;</code>
+       */
+      TRUE(0, 0),
+      /**
+       * <code>FALSE = 1;</code>
+       */
+      FALSE(1, 1),
+      /**
+       * <code>NULL = 2;</code>
+       */
+      NULL(2, 2),
+      ;
+
+      /**
+       * <code>TRUE = 0;</code>
+       */
+      public static final int TRUE_VALUE = 0;
+      /**
+       * <code>FALSE = 1;</code>
+       */
+      public static final int FALSE_VALUE = 1;
+      /**
+       * <code>NULL = 2;</code>
+       */
+      public static final int NULL_VALUE = 2;
+
+
+      public final int getNumber() { return value; }
+
+      public static ConstantValue valueOf(int value) {
+        switch (value) {
+          case 0: return TRUE;
+          case 1: return FALSE;
+          case 2: return NULL;
+          default: return null;
+        }
+      }
+
+      public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<ConstantValue>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<ConstantValue>
+          internalValueMap =
+            new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<ConstantValue>() {
+              public ConstantValue findValueByNumber(int number) {
+                return ConstantValue.valueOf(number);
+              }
+            };
+
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final ConstantValue[] VALUES = values();
+
+      public static ConstantValue valueOf(
+          org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int index;
+      private final int value;
+
+      private ConstantValue(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.Expression.ConstantValue)
+    }
+
+    private int bitField0_;
+    public static final int FLAGS_FIELD_NUMBER = 1;
+    private int flags_;
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *isNegated =&gt; this expression should be negated
+     *isIsNullPredicate =&gt; this expression is IsNullPredicate with 'variableName' as argument
+     * </pre>
+     */
+    public boolean hasFlags() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *isNegated =&gt; this expression should be negated
+     *isIsNullPredicate =&gt; this expression is IsNullPredicate with 'variableName' as argument
+     * </pre>
+     */
+    public int getFlags() {
+      return flags_;
+    }
+
+    public static final int VALUE_PARAMETER_REFERENCE_FIELD_NUMBER = 2;
+    private int valueParameterReference_;
+    /**
+     * <code>optional int32 value_parameter_reference = 2;</code>
+     *
+     * <pre>
+     * stored as index in valueParameters list of owner-function in 1-indexation
+     * Index '0' is reserved for extension receiver
+     * </pre>
+     */
+    public boolean hasValueParameterReference() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int32 value_parameter_reference = 2;</code>
+     *
+     * <pre>
+     * stored as index in valueParameters list of owner-function in 1-indexation
+     * Index '0' is reserved for extension receiver
+     * </pre>
+     */
+    public int getValueParameterReference() {
+      return valueParameterReference_;
+    }
+
+    public static final int CONSTANT_VALUE_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue constantValue_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Expression.ConstantValue constant_value = 3;</code>
+     */
+    public boolean hasConstantValue() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Expression.ConstantValue constant_value = 3;</code>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue getConstantValue() {
+      return constantValue_;
+    }
+
+    public static final int IS_INSTANCE_TYPE_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type isInstanceType_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+     *
+     * <pre>
+     * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+     * and with type encoded in either one of next two fields as RHS.
+     * </pre>
+     */
+    public boolean hasIsInstanceType() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+     *
+     * <pre>
+     * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+     * and with type encoded in either one of next two fields as RHS.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getIsInstanceType() {
+      return isInstanceType_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+     *
+     * <pre>
+     * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+     * and with type encoded in either one of next two fields as RHS.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getIsInstanceTypeOrBuilder() {
+      return isInstanceType_;
+    }
+
+    public static final int IS_INSTANCE_TYPE_ID_FIELD_NUMBER = 5;
+    private int isInstanceTypeId_;
+    /**
+     * <code>optional int32 is_instance_type_id = 5;</code>
+     */
+    public boolean hasIsInstanceTypeId() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional int32 is_instance_type_id = 5;</code>
+     */
+    public int getIsInstanceTypeId() {
+      return isInstanceTypeId_;
+    }
+
+    public static final int AND_ARGUMENT_FIELD_NUMBER = 6;
+    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> andArgument_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message
+     * </pre>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> getAndArgumentList() {
+      return andArgument_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message
+     * </pre>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+        getAndArgumentOrBuilderList() {
+      return andArgument_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message
+     * </pre>
+     */
+    public int getAndArgumentCount() {
+      return andArgument_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getAndArgument(int index) {
+      return andArgument_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getAndArgumentOrBuilder(
+        int index) {
+      return andArgument_.get(index);
+    }
+
+    public static final int OR_ARGUMENT_FIELD_NUMBER = 7;
+    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> orArgument_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message.
+     * </pre>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> getOrArgumentList() {
+      return orArgument_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message.
+     * </pre>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+        getOrArgumentOrBuilderList() {
+      return orArgument_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message.
+     * </pre>
+     */
+    public int getOrArgumentCount() {
+      return orArgument_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getOrArgument(int index) {
+      return orArgument_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+     *
+     * <pre>
+     * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+     * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+     * it is optimized and embedded straight into this message.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getOrArgumentOrBuilder(
+        int index) {
+      return orArgument_.get(index);
+    }
+
+    private void initFields() {
+      flags_ = 0;
+      valueParameterReference_ = 0;
+      constantValue_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue.TRUE;
+      isInstanceType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
+      isInstanceTypeId_ = 0;
+      andArgument_ = java.util.Collections.emptyList();
+      orArgument_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (hasIsInstanceType()) {
+        if (!getIsInstanceType().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getAndArgumentCount(); i++) {
+        if (!getAndArgument(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getOrArgumentCount(); i++) {
+        if (!getOrArgument(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, flags_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, valueParameterReference_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeEnum(3, constantValue_.getNumber());
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(4, isInstanceType_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeInt32(5, isInstanceTypeId_);
+      }
+      for (int i = 0; i < andArgument_.size(); i++) {
+        output.writeMessage(6, andArgument_.get(i));
+      }
+      for (int i = 0; i < orArgument_.size(); i++) {
+        output.writeMessage(7, orArgument_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(1, flags_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(2, valueParameterReference_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(3, constantValue_.getNumber());
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(4, isInstanceType_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(5, isInstanceTypeId_);
+      }
+      for (int i = 0; i < andArgument_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(6, andArgument_.get(i));
+      }
+      for (int i = 0; i < orArgument_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(7, orArgument_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.Expression}
+     *
+     * <pre>
+     * We use some trickery to optimize memory footprint of contract-expressions:
+     * exact type of Expression is determined based on its contents.
+     * </pre>
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.Expression)
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder {
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Expression_descriptor;
+      }
+
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Expression_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder.class);
+      }
+
+      // Construct using org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getIsInstanceTypeFieldBuilder();
+          getAndArgumentFieldBuilder();
+          getOrArgumentFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        flags_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        valueParameterReference_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        constantValue_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue.TRUE;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        if (isInstanceTypeBuilder_ == null) {
+          isInstanceType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
+        } else {
+          isInstanceTypeBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        isInstanceTypeId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000010);
+        if (andArgumentBuilder_ == null) {
+          andArgument_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000020);
+        } else {
+          andArgumentBuilder_.clear();
+        }
+        if (orArgumentBuilder_ == null) {
+          orArgument_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000040);
+        } else {
+          orArgumentBuilder_.clear();
+        }
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Expression_descriptor;
+      }
+
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression build() {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression buildPartial() {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.flags_ = flags_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.valueParameterReference_ = valueParameterReference_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.constantValue_ = constantValue_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        if (isInstanceTypeBuilder_ == null) {
+          result.isInstanceType_ = isInstanceType_;
+        } else {
+          result.isInstanceType_ = isInstanceTypeBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.isInstanceTypeId_ = isInstanceTypeId_;
+        if (andArgumentBuilder_ == null) {
+          if (((bitField0_ & 0x00000020) == 0x00000020)) {
+            andArgument_ = java.util.Collections.unmodifiableList(andArgument_);
+            bitField0_ = (bitField0_ & ~0x00000020);
+          }
+          result.andArgument_ = andArgument_;
+        } else {
+          result.andArgument_ = andArgumentBuilder_.build();
+        }
+        if (orArgumentBuilder_ == null) {
+          if (((bitField0_ & 0x00000040) == 0x00000040)) {
+            orArgument_ = java.util.Collections.unmodifiableList(orArgument_);
+            bitField0_ = (bitField0_ & ~0x00000040);
+          }
+          result.orArgument_ = orArgument_;
+        } else {
+          result.orArgument_ = orArgumentBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+        if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression) {
+          return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression other) {
+        if (other == org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance()) return this;
+        if (other.hasFlags()) {
+          setFlags(other.getFlags());
+        }
+        if (other.hasValueParameterReference()) {
+          setValueParameterReference(other.getValueParameterReference());
+        }
+        if (other.hasConstantValue()) {
+          setConstantValue(other.getConstantValue());
+        }
+        if (other.hasIsInstanceType()) {
+          mergeIsInstanceType(other.getIsInstanceType());
+        }
+        if (other.hasIsInstanceTypeId()) {
+          setIsInstanceTypeId(other.getIsInstanceTypeId());
+        }
+        if (andArgumentBuilder_ == null) {
+          if (!other.andArgument_.isEmpty()) {
+            if (andArgument_.isEmpty()) {
+              andArgument_ = other.andArgument_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+            } else {
+              ensureAndArgumentIsMutable();
+              andArgument_.addAll(other.andArgument_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.andArgument_.isEmpty()) {
+            if (andArgumentBuilder_.isEmpty()) {
+              andArgumentBuilder_.dispose();
+              andArgumentBuilder_ = null;
+              andArgument_ = other.andArgument_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+              andArgumentBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getAndArgumentFieldBuilder() : null;
+            } else {
+              andArgumentBuilder_.addAllMessages(other.andArgument_);
+            }
+          }
+        }
+        if (orArgumentBuilder_ == null) {
+          if (!other.orArgument_.isEmpty()) {
+            if (orArgument_.isEmpty()) {
+              orArgument_ = other.orArgument_;
+              bitField0_ = (bitField0_ & ~0x00000040);
+            } else {
+              ensureOrArgumentIsMutable();
+              orArgument_.addAll(other.orArgument_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.orArgument_.isEmpty()) {
+            if (orArgumentBuilder_.isEmpty()) {
+              orArgumentBuilder_.dispose();
+              orArgumentBuilder_ = null;
+              orArgument_ = other.orArgument_;
+              bitField0_ = (bitField0_ & ~0x00000040);
+              orArgumentBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getOrArgumentFieldBuilder() : null;
+            } else {
+              orArgumentBuilder_.addAllMessages(other.orArgument_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (hasIsInstanceType()) {
+          if (!getIsInstanceType().isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getAndArgumentCount(); i++) {
+          if (!getAndArgument(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getOrArgumentCount(); i++) {
+          if (!getOrArgument(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private int flags_ ;
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *isNegated =&gt; this expression should be negated
+       *isIsNullPredicate =&gt; this expression is IsNullPredicate with 'variableName' as argument
+       * </pre>
+       */
+      public boolean hasFlags() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *isNegated =&gt; this expression should be negated
+       *isIsNullPredicate =&gt; this expression is IsNullPredicate with 'variableName' as argument
+       * </pre>
+       */
+      public int getFlags() {
+        return flags_;
+      }
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *isNegated =&gt; this expression should be negated
+       *isIsNullPredicate =&gt; this expression is IsNullPredicate with 'variableName' as argument
+       * </pre>
+       */
+      public Builder setFlags(int value) {
+        bitField0_ |= 0x00000001;
+        flags_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *isNegated =&gt; this expression should be negated
+       *isIsNullPredicate =&gt; this expression is IsNullPredicate with 'variableName' as argument
+       * </pre>
+       */
+      public Builder clearFlags() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        flags_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int valueParameterReference_ ;
+      /**
+       * <code>optional int32 value_parameter_reference = 2;</code>
+       *
+       * <pre>
+       * stored as index in valueParameters list of owner-function in 1-indexation
+       * Index '0' is reserved for extension receiver
+       * </pre>
+       */
+      public boolean hasValueParameterReference() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional int32 value_parameter_reference = 2;</code>
+       *
+       * <pre>
+       * stored as index in valueParameters list of owner-function in 1-indexation
+       * Index '0' is reserved for extension receiver
+       * </pre>
+       */
+      public int getValueParameterReference() {
+        return valueParameterReference_;
+      }
+      /**
+       * <code>optional int32 value_parameter_reference = 2;</code>
+       *
+       * <pre>
+       * stored as index in valueParameters list of owner-function in 1-indexation
+       * Index '0' is reserved for extension receiver
+       * </pre>
+       */
+      public Builder setValueParameterReference(int value) {
+        bitField0_ |= 0x00000002;
+        valueParameterReference_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 value_parameter_reference = 2;</code>
+       *
+       * <pre>
+       * stored as index in valueParameters list of owner-function in 1-indexation
+       * Index '0' is reserved for extension receiver
+       * </pre>
+       */
+      public Builder clearValueParameterReference() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        valueParameterReference_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue constantValue_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue.TRUE;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression.ConstantValue constant_value = 3;</code>
+       */
+      public boolean hasConstantValue() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression.ConstantValue constant_value = 3;</code>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue getConstantValue() {
+        return constantValue_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression.ConstantValue constant_value = 3;</code>
+       */
+      public Builder setConstantValue(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        constantValue_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Expression.ConstantValue constant_value = 3;</code>
+       */
+      public Builder clearConstantValue() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        constantValue_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.ConstantValue.TRUE;
+        onChanged();
+        return this;
+      }
+
+      private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type isInstanceType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> isInstanceTypeBuilder_;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+       *
+       * <pre>
+       * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+       * and with type encoded in either one of next two fields as RHS.
+       * </pre>
+       */
+      public boolean hasIsInstanceType() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+       *
+       * <pre>
+       * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+       * and with type encoded in either one of next two fields as RHS.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getIsInstanceType() {
+        if (isInstanceTypeBuilder_ == null) {
+          return isInstanceType_;
+        } else {
+          return isInstanceTypeBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+       *
+       * <pre>
+       * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+       * and with type encoded in either one of next two fields as RHS.
+       * </pre>
+       */
+      public Builder setIsInstanceType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type value) {
+        if (isInstanceTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          isInstanceType_ = value;
+          onChanged();
+        } else {
+          isInstanceTypeBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+       *
+       * <pre>
+       * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+       * and with type encoded in either one of next two fields as RHS.
+       * </pre>
+       */
+      public Builder setIsInstanceType(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder builderForValue) {
+        if (isInstanceTypeBuilder_ == null) {
+          isInstanceType_ = builderForValue.build();
+          onChanged();
+        } else {
+          isInstanceTypeBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+       *
+       * <pre>
+       * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+       * and with type encoded in either one of next two fields as RHS.
+       * </pre>
+       */
+      public Builder mergeIsInstanceType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type value) {
+        if (isInstanceTypeBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
+              isInstanceType_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance()) {
+            isInstanceType_ =
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.newBuilder(isInstanceType_).mergeFrom(value).buildPartial();
+          } else {
+            isInstanceType_ = value;
+          }
+          onChanged();
+        } else {
+          isInstanceTypeBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+       *
+       * <pre>
+       * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+       * and with type encoded in either one of next two fields as RHS.
+       * </pre>
+       */
+      public Builder clearIsInstanceType() {
+        if (isInstanceTypeBuilder_ == null) {
+          isInstanceType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
+          onChanged();
+        } else {
+          isInstanceTypeBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+       *
+       * <pre>
+       * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+       * and with type encoded in either one of next two fields as RHS.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder getIsInstanceTypeBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getIsInstanceTypeFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+       *
+       * <pre>
+       * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+       * and with type encoded in either one of next two fields as RHS.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getIsInstanceTypeOrBuilder() {
+        if (isInstanceTypeBuilder_ != null) {
+          return isInstanceTypeBuilder_.getMessageOrBuilder();
+        } else {
+          return isInstanceType_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type is_instance_type = 4;</code>
+       *
+       * <pre>
+       * present =&gt; this expression is IsInstancePredicate,  with 'variableName' as LHS
+       * and with type encoded in either one of next two fields as RHS.
+       * </pre>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
+          getIsInstanceTypeFieldBuilder() {
+        if (isInstanceTypeBuilder_ == null) {
+          isInstanceTypeBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
+                  getIsInstanceType(),
+                  getParentForChildren(),
+                  isClean());
+          isInstanceType_ = null;
+        }
+        return isInstanceTypeBuilder_;
+      }
+
+      private int isInstanceTypeId_ ;
+      /**
+       * <code>optional int32 is_instance_type_id = 5;</code>
+       */
+      public boolean hasIsInstanceTypeId() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional int32 is_instance_type_id = 5;</code>
+       */
+      public int getIsInstanceTypeId() {
+        return isInstanceTypeId_;
+      }
+      /**
+       * <code>optional int32 is_instance_type_id = 5;</code>
+       */
+      public Builder setIsInstanceTypeId(int value) {
+        bitField0_ |= 0x00000010;
+        isInstanceTypeId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 is_instance_type_id = 5;</code>
+       */
+      public Builder clearIsInstanceTypeId() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        isInstanceTypeId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> andArgument_ =
+        java.util.Collections.emptyList();
+      private void ensureAndArgumentIsMutable() {
+        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+          andArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression>(andArgument_);
+          bitField0_ |= 0x00000020;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> andArgumentBuilder_;
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> getAndArgumentList() {
+        if (andArgumentBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(andArgument_);
+        } else {
+          return andArgumentBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public int getAndArgumentCount() {
+        if (andArgumentBuilder_ == null) {
+          return andArgument_.size();
+        } else {
+          return andArgumentBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getAndArgument(int index) {
+        if (andArgumentBuilder_ == null) {
+          return andArgument_.get(index);
+        } else {
+          return andArgumentBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public Builder setAndArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (andArgumentBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAndArgumentIsMutable();
+          andArgument_.set(index, value);
+          onChanged();
+        } else {
+          andArgumentBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public Builder setAndArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder builderForValue) {
+        if (andArgumentBuilder_ == null) {
+          ensureAndArgumentIsMutable();
+          andArgument_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          andArgumentBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public Builder addAndArgument(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (andArgumentBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAndArgumentIsMutable();
+          andArgument_.add(value);
+          onChanged();
+        } else {
+          andArgumentBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public Builder addAndArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (andArgumentBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAndArgumentIsMutable();
+          andArgument_.add(index, value);
+          onChanged();
+        } else {
+          andArgumentBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public Builder addAndArgument(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder builderForValue) {
+        if (andArgumentBuilder_ == null) {
+          ensureAndArgumentIsMutable();
+          andArgument_.add(builderForValue.build());
+          onChanged();
+        } else {
+          andArgumentBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public Builder addAndArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder builderForValue) {
+        if (andArgumentBuilder_ == null) {
+          ensureAndArgumentIsMutable();
+          andArgument_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          andArgumentBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public Builder addAllAndArgument(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> values) {
+        if (andArgumentBuilder_ == null) {
+          ensureAndArgumentIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, andArgument_);
+          onChanged();
+        } else {
+          andArgumentBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public Builder clearAndArgument() {
+        if (andArgumentBuilder_ == null) {
+          andArgument_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000020);
+          onChanged();
+        } else {
+          andArgumentBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public Builder removeAndArgument(int index) {
+        if (andArgumentBuilder_ == null) {
+          ensureAndArgumentIsMutable();
+          andArgument_.remove(index);
+          onChanged();
+        } else {
+          andArgumentBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder getAndArgumentBuilder(
+          int index) {
+        return getAndArgumentFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getAndArgumentOrBuilder(
+          int index) {
+        if (andArgumentBuilder_ == null) {
+          return andArgument_.get(index);  } else {
+          return andArgumentBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+           getAndArgumentOrBuilderList() {
+        if (andArgumentBuilder_ != null) {
+          return andArgumentBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(andArgument_);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder addAndArgumentBuilder() {
+        return getAndArgumentFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder addAndArgumentBuilder(
+          int index) {
+        return getAndArgumentFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression and_argument = 6;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'andArguments[0] &amp;&amp; andArguments[1] &amp;&amp; ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message
+       * </pre>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder> 
+           getAndArgumentBuilderList() {
+        return getAndArgumentFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+          getAndArgumentFieldBuilder() {
+        if (andArgumentBuilder_ == null) {
+          andArgumentBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder>(
+                  andArgument_,
+                  ((bitField0_ & 0x00000020) == 0x00000020),
+                  getParentForChildren(),
+                  isClean());
+          andArgument_ = null;
+        }
+        return andArgumentBuilder_;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> orArgument_ =
+        java.util.Collections.emptyList();
+      private void ensureOrArgumentIsMutable() {
+        if (!((bitField0_ & 0x00000040) == 0x00000040)) {
+          orArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression>(orArgument_);
+          bitField0_ |= 0x00000040;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> orArgumentBuilder_;
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> getOrArgumentList() {
+        if (orArgumentBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(orArgument_);
+        } else {
+          return orArgumentBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public int getOrArgumentCount() {
+        if (orArgumentBuilder_ == null) {
+          return orArgument_.size();
+        } else {
+          return orArgumentBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression getOrArgument(int index) {
+        if (orArgumentBuilder_ == null) {
+          return orArgument_.get(index);
+        } else {
+          return orArgumentBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public Builder setOrArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (orArgumentBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOrArgumentIsMutable();
+          orArgument_.set(index, value);
+          onChanged();
+        } else {
+          orArgumentBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public Builder setOrArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder builderForValue) {
+        if (orArgumentBuilder_ == null) {
+          ensureOrArgumentIsMutable();
+          orArgument_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          orArgumentBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public Builder addOrArgument(org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (orArgumentBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOrArgumentIsMutable();
+          orArgument_.add(value);
+          onChanged();
+        } else {
+          orArgumentBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public Builder addOrArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression value) {
+        if (orArgumentBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOrArgumentIsMutable();
+          orArgument_.add(index, value);
+          onChanged();
+        } else {
+          orArgumentBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public Builder addOrArgument(
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder builderForValue) {
+        if (orArgumentBuilder_ == null) {
+          ensureOrArgumentIsMutable();
+          orArgument_.add(builderForValue.build());
+          onChanged();
+        } else {
+          orArgumentBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public Builder addOrArgument(
+          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder builderForValue) {
+        if (orArgumentBuilder_ == null) {
+          ensureOrArgumentIsMutable();
+          orArgument_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          orArgumentBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public Builder addAllOrArgument(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression> values) {
+        if (orArgumentBuilder_ == null) {
+          ensureOrArgumentIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, orArgument_);
+          onChanged();
+        } else {
+          orArgumentBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public Builder clearOrArgument() {
+        if (orArgumentBuilder_ == null) {
+          orArgument_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000040);
+          onChanged();
+        } else {
+          orArgumentBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public Builder removeOrArgument(int index) {
+        if (orArgumentBuilder_ == null) {
+          ensureOrArgumentIsMutable();
+          orArgument_.remove(index);
+          onChanged();
+        } else {
+          orArgumentBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder getOrArgumentBuilder(
+          int index) {
+        return getOrArgumentFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder getOrArgumentOrBuilder(
+          int index) {
+        if (orArgumentBuilder_ == null) {
+          return orArgument_.get(index);  } else {
+          return orArgumentBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+           getOrArgumentOrBuilderList() {
+        if (orArgumentBuilder_ != null) {
+          return orArgumentBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(orArgument_);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder addOrArgumentBuilder() {
+        return getOrArgumentFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder addOrArgumentBuilder(
+          int index) {
+        return getOrArgumentFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Expression or_argument = 7;</code>
+       *
+       * <pre>
+       * non-empty =&gt; this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+       * Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+       * it is optimized and embedded straight into this message.
+       * </pre>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder> 
+           getOrArgumentBuilderList() {
+        return getOrArgumentFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder> 
+          getOrArgumentFieldBuilder() {
+        if (orArgumentBuilder_ == null) {
+          orArgumentBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression, org.jetbrains.kotlin.serialization.DebugProtoBuf.Expression.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ExpressionOrBuilder>(
+                  orArgument_,
+                  ((bitField0_ & 0x00000040) == 0x00000040),
+                  getParentForChildren(),
+                  isClean());
+          orArgument_ = null;
+        }
+        return orArgumentBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Expression)
+    }
+
+    static {
+      defaultInstance = new Expression(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Expression)
+  }
+
   private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_StringTable_descriptor;
   private static
@@ -28742,20 +33383,35 @@ public final class DebugProtoBuf {
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_EnumEntry_fieldAccessorTable;
   private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
-    internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfo_descriptor;
+    internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfo_fieldAccessorTable;
+      internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_fieldAccessorTable;
   private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
-    internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfoTable_descriptor;
+    internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfoTable_fieldAccessorTable;
+      internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_fieldAccessorTable;
   private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_PackageFragment_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_PackageFragment_fieldAccessorTable;
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_serialization_Contract_descriptor;
+  private static
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_serialization_Contract_fieldAccessorTable;
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_serialization_Effect_descriptor;
+  private static
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_serialization_Effect_fieldAccessorTable;
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_serialization_Expression_descriptor;
+  private static
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_serialization_Expression_fieldAccessorTable;
 
   public static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -28823,7 +33479,7 @@ public final class DebugProtoBuf {
       "ter.Variance:\003INV\022=\n\013upper_bound\030\005 \003(\0132(" +
       ".org.jetbrains.kotlin.serialization.Type" +
       "\022\026\n\016upper_bound_id\030\006 \003(\005\"$\n\010Variance\022\006\n\002" +
-      "IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002*\005\010d\020\350\007\"\307\007\n\005Class\022" +
+      "IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002*\005\010d\020\350\007\"\320\007\n\005Class\022" +
       "\020\n\005flags\030\001 \001(\005:\0016\022\025\n\007fq_name\030\003 \002(\005B\004\220\265\030\001",
       "\022#\n\025companion_object_name\030\004 \001(\005B\004\210\265\030\001\022I\n" +
       "\016type_parameter\030\005 \003(\01321.org.jetbrains.ko" +
@@ -28841,93 +33497,125 @@ public final class DebugProtoBuf {
       "-.org.jetbrains.kotlin.serialization.Enu" +
       "mEntry\022\'\n\027sealed_subclass_fq_name\030\020 \003(\005B" +
       "\006\020\001\220\265\030\001\022A\n\ntype_table\030\036 \001(\0132-.org.jetbra" +
-      "ins.kotlin.serialization.TypeTable\022\027\n\017si" +
-      "nceKotlinInfo\030\037 \001(\005\022Y\n\027since_kotlin_info" +
-      "_table\030  \001(\01328.org.jetbrains.kotlin.seri" +
-      "alization.SinceKotlinInfoTable\"x\n\004Kind\022\t",
-      "\n\005CLASS\020\000\022\r\n\tINTERFACE\020\001\022\016\n\nENUM_CLASS\020\002" +
-      "\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATION_CLASS\020\004\022\n" +
-      "\n\006OBJECT\020\005\022\024\n\020COMPANION_OBJECT\020\006*\005\010d\020\310\001\"" +
-      "\361\002\n\007Package\022>\n\010function\030\003 \003(\0132,.org.jetb" +
-      "rains.kotlin.serialization.Function\022>\n\010p" +
-      "roperty\030\004 \003(\0132,.org.jetbrains.kotlin.ser" +
-      "ialization.Property\022A\n\ntype_alias\030\005 \003(\0132" +
-      "-.org.jetbrains.kotlin.serialization.Typ" +
-      "eAlias\022A\n\ntype_table\030\036 \001(\0132-.org.jetbrai" +
-      "ns.kotlin.serialization.TypeTable\022Y\n\027sin",
-      "ce_kotlin_info_table\030  \001(\01328.org.jetbrai" +
-      "ns.kotlin.serialization.SinceKotlinInfoT" +
-      "able*\005\010d\020\310\001\"_\n\tTypeTable\0226\n\004type\030\001 \003(\0132(" +
-      ".org.jetbrains.kotlin.serialization.Type" +
-      "\022\032\n\016first_nullable\030\002 \001(\005:\002-1\"\214\001\n\013Constru" +
-      "ctor\022\020\n\005flags\030\001 \001(\005:\0016\022K\n\017value_paramete" +
-      "r\030\002 \003(\01322.org.jetbrains.kotlin.serializa" +
-      "tion.ValueParameter\022\027\n\017sinceKotlinInfo\030\037" +
-      " \001(\005*\005\010d\020\310\001\"\363\003\n\010Function\022\020\n\005flags\030\t \001(\005:" +
-      "\0016\022\024\n\told_flags\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004",
-      "\210\265\030\001\022=\n\013return_type\030\003 \001(\0132(.org.jetbrain" +
-      "s.kotlin.serialization.Type\022\026\n\016return_ty" +
-      "pe_id\030\007 \001(\005\022I\n\016type_parameter\030\004 \003(\01321.or" +
-      "g.jetbrains.kotlin.serialization.TypePar" +
-      "ameter\022?\n\rreceiver_type\030\005 \001(\0132(.org.jetb" +
-      "rains.kotlin.serialization.Type\022\030\n\020recei" +
-      "ver_type_id\030\010 \001(\005\022K\n\017value_parameter\030\006 \003" +
-      "(\01322.org.jetbrains.kotlin.serialization." +
-      "ValueParameter\022A\n\ntype_table\030\036 \001(\0132-.org" +
-      ".jetbrains.kotlin.serialization.TypeTabl",
-      "e\022\027\n\017sinceKotlinInfo\030\037 \001(\005*\005\010d\020\310\001\"\350\003\n\010Pr" +
-      "operty\022\022\n\005flags\030\013 \001(\005:\003518\022\027\n\told_flags\030" +
-      "\001 \001(\005:\0042054\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022=\n\013retur" +
-      "n_type\030\003 \001(\0132(.org.jetbrains.kotlin.seri" +
-      "alization.Type\022\026\n\016return_type_id\030\t \001(\005\022I" +
-      "\n\016type_parameter\030\004 \003(\01321.org.jetbrains.k" +
-      "otlin.serialization.TypeParameter\022?\n\rrec" +
-      "eiver_type\030\005 \001(\0132(.org.jetbrains.kotlin." +
-      "serialization.Type\022\030\n\020receiver_type_id\030\n" +
-      " \001(\005\022R\n\026setter_value_parameter\030\006 \001(\01322.o",
-      "rg.jetbrains.kotlin.serialization.ValueP" +
-      "arameter\022\024\n\014getter_flags\030\007 \001(\005\022\024\n\014setter" +
-      "_flags\030\010 \001(\005\022\027\n\017sinceKotlinInfo\030\037 \001(\005*\005\010" +
-      "d\020\310\001\"\355\001\n\016ValueParameter\022\020\n\005flags\030\001 \001(\005:\001" +
-      "0\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0226\n\004type\030\003 \001(\0132(.or" +
-      "g.jetbrains.kotlin.serialization.Type\022\017\n" +
-      "\007type_id\030\005 \001(\005\022E\n\023vararg_element_type\030\004 " +
+      "ins.kotlin.serialization.TypeTable\022\033\n\023ve" +
+      "rsion_requirement\030\037 \001(\005\022^\n\031version_requi" +
+      "rement_table\030  \001(\0132;.org.jetbrains.kotli" +
+      "n.serialization.VersionRequirementTable\"",
+      "x\n\004Kind\022\t\n\005CLASS\020\000\022\r\n\tINTERFACE\020\001\022\016\n\nENU" +
+      "M_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATION_" +
+      "CLASS\020\004\022\n\n\006OBJECT\020\005\022\024\n\020COMPANION_OBJECT\020" +
+      "\006*\005\010d\020\310\001\"\366\002\n\007Package\022>\n\010function\030\003 \003(\0132," +
+      ".org.jetbrains.kotlin.serialization.Func" +
+      "tion\022>\n\010property\030\004 \003(\0132,.org.jetbrains.k" +
+      "otlin.serialization.Property\022A\n\ntype_ali" +
+      "as\030\005 \003(\0132-.org.jetbrains.kotlin.serializ" +
+      "ation.TypeAlias\022A\n\ntype_table\030\036 \001(\0132-.or" +
+      "g.jetbrains.kotlin.serialization.TypeTab",
+      "le\022^\n\031version_requirement_table\030  \001(\0132;." +
+      "org.jetbrains.kotlin.serialization.Versi" +
+      "onRequirementTable*\005\010d\020\310\001\"_\n\tTypeTable\0226" +
+      "\n\004type\030\001 \003(\0132(.org.jetbrains.kotlin.seri" +
+      "alization.Type\022\032\n\016first_nullable\030\002 \001(\005:\002" +
+      "-1\"\220\001\n\013Constructor\022\020\n\005flags\030\001 \001(\005:\0016\022K\n\017" +
+      "value_parameter\030\002 \003(\01322.org.jetbrains.ko" +
+      "tlin.serialization.ValueParameter\022\033\n\023ver" +
+      "sion_requirement\030\037 \001(\005*\005\010d\020\310\001\"\267\004\n\010Functi" +
+      "on\022\020\n\005flags\030\t \001(\005:\0016\022\024\n\told_flags\030\001 \001(\005:",
+      "\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_type\030\003 " +
       "\001(\0132(.org.jetbrains.kotlin.serialization" +
-      ".Type\022\036\n\026vararg_element_type_id\030\006 \001(\005*\005\010" +
-      "d\020\310\001\"\232\003\n\tTypeAlias\022\020\n\005flags\030\001 \001(\005:\0016\022\022\n\004",
-      "name\030\002 \002(\005B\004\210\265\030\001\022I\n\016type_parameter\030\003 \003(\013" +
-      "21.org.jetbrains.kotlin.serialization.Ty" +
-      "peParameter\022A\n\017underlying_type\030\004 \001(\0132(.o" +
-      "rg.jetbrains.kotlin.serialization.Type\022\032" +
-      "\n\022underlying_type_id\030\005 \001(\005\022?\n\rexpanded_t" +
-      "ype\030\006 \001(\0132(.org.jetbrains.kotlin.seriali" +
-      "zation.Type\022\030\n\020expanded_type_id\030\007 \001(\005\022B\n" +
-      "\nannotation\030\010 \003(\0132..org.jetbrains.kotlin" +
-      ".serialization.Annotation\022\027\n\017sinceKotlin" +
-      "Info\030\037 \001(\005*\005\010d\020\310\001\"&\n\tEnumEntry\022\022\n\004name\030\001",
-      " \001(\005B\004\210\265\030\001*\005\010d\020\310\001\"\341\001\n\017SinceKotlinInfo\022\017\n" +
-      "\007version\030\001 \001(\005\022\024\n\014version_full\030\002 \001(\005\022O\n\005" +
-      "level\030\003 \001(\01629.org.jetbrains.kotlin.seria" +
-      "lization.SinceKotlinInfo.Level:\005ERROR\022\022\n" +
-      "\nerror_code\030\004 \001(\005\022\025\n\007message\030\005 \001(\005B\004\230\265\030\001" +
-      "\"+\n\005Level\022\013\n\007WARNING\020\000\022\t\n\005ERROR\020\001\022\n\n\006HID" +
-      "DEN\020\002\"Y\n\024SinceKotlinInfoTable\022A\n\004info\030\001 " +
-      "\003(\01323.org.jetbrains.kotlin.serialization" +
-      ".SinceKotlinInfo\"\243\002\n\017PackageFragment\022@\n\007" +
-      "strings\030\001 \001(\0132/.org.jetbrains.kotlin.ser",
-      "ialization.StringTable\022O\n\017qualified_name" +
-      "s\030\002 \001(\01326.org.jetbrains.kotlin.serializa" +
-      "tion.QualifiedNameTable\022<\n\007package\030\003 \001(\013" +
-      "2+.org.jetbrains.kotlin.serialization.Pa" +
-      "ckage\0228\n\005class\030\004 \003(\0132).org.jetbrains.kot" +
-      "lin.serialization.Class*\005\010d\020\310\001*9\n\010Modali" +
-      "ty\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n" +
-      "\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n" +
-      "\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n" +
-      "\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberK",
-      "ind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022" +
-      "\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebu" +
-      "gProtoBuf"
+      ".Type\022\026\n\016return_type_id\030\007 \001(\005\022I\n\016type_pa" +
+      "rameter\030\004 \003(\01321.org.jetbrains.kotlin.ser" +
+      "ialization.TypeParameter\022?\n\rreceiver_typ" +
+      "e\030\005 \001(\0132(.org.jetbrains.kotlin.serializa" +
+      "tion.Type\022\030\n\020receiver_type_id\030\010 \001(\005\022K\n\017v" +
+      "alue_parameter\030\006 \003(\01322.org.jetbrains.kot" +
+      "lin.serialization.ValueParameter\022A\n\ntype" +
+      "_table\030\036 \001(\0132-.org.jetbrains.kotlin.seri",
+      "alization.TypeTable\022\033\n\023version_requireme" +
+      "nt\030\037 \001(\005\022>\n\010contract\030  \001(\0132,.org.jetbrai" +
+      "ns.kotlin.serialization.Contract*\005\010d\020\310\001\"" +
+      "\354\003\n\010Property\022\022\n\005flags\030\013 \001(\005:\003518\022\027\n\told_" +
+      "flags\030\001 \001(\005:\0042054\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022=\n" +
+      "\013return_type\030\003 \001(\0132(.org.jetbrains.kotli" +
+      "n.serialization.Type\022\026\n\016return_type_id\030\t" +
+      " \001(\005\022I\n\016type_parameter\030\004 \003(\01321.org.jetbr" +
+      "ains.kotlin.serialization.TypeParameter\022" +
+      "?\n\rreceiver_type\030\005 \001(\0132(.org.jetbrains.k",
+      "otlin.serialization.Type\022\030\n\020receiver_typ" +
+      "e_id\030\n \001(\005\022R\n\026setter_value_parameter\030\006 \001" +
+      "(\01322.org.jetbrains.kotlin.serialization." +
+      "ValueParameter\022\024\n\014getter_flags\030\007 \001(\005\022\024\n\014" +
+      "setter_flags\030\010 \001(\005\022\033\n\023version_requiremen" +
+      "t\030\037 \001(\005*\005\010d\020\310\001\"\355\001\n\016ValueParameter\022\020\n\005fla" +
+      "gs\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0226\n\004type\030" +
+      "\003 \001(\0132(.org.jetbrains.kotlin.serializati" +
+      "on.Type\022\017\n\007type_id\030\005 \001(\005\022E\n\023vararg_eleme" +
+      "nt_type\030\004 \001(\0132(.org.jetbrains.kotlin.ser",
+      "ialization.Type\022\036\n\026vararg_element_type_i" +
+      "d\030\006 \001(\005*\005\010d\020\310\001\"\236\003\n\tTypeAlias\022\020\n\005flags\030\001 " +
+      "\001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022I\n\016type_param" +
+      "eter\030\003 \003(\01321.org.jetbrains.kotlin.serial" +
+      "ization.TypeParameter\022A\n\017underlying_type" +
+      "\030\004 \001(\0132(.org.jetbrains.kotlin.serializat" +
+      "ion.Type\022\032\n\022underlying_type_id\030\005 \001(\005\022?\n\r" +
+      "expanded_type\030\006 \001(\0132(.org.jetbrains.kotl" +
+      "in.serialization.Type\022\030\n\020expanded_type_i" +
+      "d\030\007 \001(\005\022B\n\nannotation\030\010 \003(\0132..org.jetbra",
+      "ins.kotlin.serialization.Annotation\022\033\n\023v" +
+      "ersion_requirement\030\037 \001(\005*\005\010d\020\310\001\"&\n\tEnumE" +
+      "ntry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001*\005\010d\020\310\001\"\237\003\n\022Vers" +
+      "ionRequirement\022\017\n\007version\030\001 \001(\005\022\024\n\014versi" +
+      "on_full\030\002 \001(\005\022R\n\005level\030\003 \001(\0162<.org.jetbr" +
+      "ains.kotlin.serialization.VersionRequire" +
+      "ment.Level:\005ERROR\022\022\n\nerror_code\030\004 \001(\005\022\025\n" +
+      "\007message\030\005 \001(\005B\004\230\265\030\001\022j\n\014version_kind\030\006 \001" +
+      "(\0162B.org.jetbrains.kotlin.serialization." +
+      "VersionRequirement.VersionKind:\020LANGUAGE",
+      "_VERSION\"+\n\005Level\022\013\n\007WARNING\020\000\022\t\n\005ERROR\020" +
+      "\001\022\n\n\006HIDDEN\020\002\"J\n\013VersionKind\022\024\n\020LANGUAGE" +
+      "_VERSION\020\000\022\024\n\020COMPILER_VERSION\020\001\022\017\n\013API_" +
+      "VERSION\020\002\"f\n\027VersionRequirementTable\022K\n\013" +
+      "requirement\030\001 \003(\01326.org.jetbrains.kotlin" +
+      ".serialization.VersionRequirement\"\243\002\n\017Pa" +
+      "ckageFragment\022@\n\007strings\030\001 \001(\0132/.org.jet" +
+      "brains.kotlin.serialization.StringTable\022" +
+      "O\n\017qualified_names\030\002 \001(\01326.org.jetbrains" +
+      ".kotlin.serialization.QualifiedNameTable",
+      "\022<\n\007package\030\003 \001(\0132+.org.jetbrains.kotlin" +
+      ".serialization.Package\0228\n\005class\030\004 \003(\0132)." +
+      "org.jetbrains.kotlin.serialization.Class" +
+      "*\005\010d\020\310\001\"F\n\010Contract\022:\n\006effect\030\001 \003(\0132*.or" +
+      "g.jetbrains.kotlin.serialization.Effect\"" +
+      "\332\003\n\006Effect\022J\n\013effect_type\030\001 \001(\01625.org.je" +
+      "tbrains.kotlin.serialization.Effect.Effe" +
+      "ctType\022S\n\033effect_constructor_argument\030\002 " +
+      "\003(\0132..org.jetbrains.kotlin.serialization" +
+      ".Expression\022X\n conclusion_of_conditional",
+      "_effect\030\003 \001(\0132..org.jetbrains.kotlin.ser" +
+      "ialization.Expression\022G\n\004kind\030\004 \001(\01629.or" +
+      "g.jetbrains.kotlin.serialization.Effect." +
+      "InvocationKind\"C\n\nEffectType\022\024\n\020RETURNS_" +
+      "CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_NOT_NUL" +
+      "L\020\002\"G\n\016InvocationKind\022\020\n\014AT_MOST_ONCE\020\000\022" +
+      "\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"\260\003\n" +
+      "\nExpression\022\r\n\005flags\030\001 \001(\005\022!\n\031value_para" +
+      "meter_reference\030\002 \001(\005\022T\n\016constant_value\030" +
+      "\003 \001(\0162<.org.jetbrains.kotlin.serializati",
+      "on.Expression.ConstantValue\022B\n\020is_instan" +
+      "ce_type\030\004 \001(\0132(.org.jetbrains.kotlin.ser" +
+      "ialization.Type\022\033\n\023is_instance_type_id\030\005" +
+      " \001(\005\022D\n\014and_argument\030\006 \003(\0132..org.jetbrai" +
+      "ns.kotlin.serialization.Expression\022C\n\013or" +
+      "_argument\030\007 \003(\0132..org.jetbrains.kotlin.s" +
+      "erialization.Expression\".\n\rConstantValue" +
+      "\022\010\n\004TRUE\020\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002*9\n\010Modal" +
+      "ity\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n" +
+      "\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013",
+      "\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023" +
+      "\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMember" +
+      "Kind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001" +
+      "\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDeb" +
+      "ugProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -29001,13 +33689,13 @@ public final class DebugProtoBuf {
     internal_static_org_jetbrains_kotlin_serialization_Class_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_Class_descriptor,
-        new java.lang.String[] { "Flags", "FqName", "CompanionObjectName", "TypeParameter", "Supertype", "SupertypeId", "NestedClassName", "Constructor", "Function", "Property", "TypeAlias", "EnumEntry", "SealedSubclassFqName", "TypeTable", "SinceKotlinInfo", "SinceKotlinInfoTable", });
+        new java.lang.String[] { "Flags", "FqName", "CompanionObjectName", "TypeParameter", "Supertype", "SupertypeId", "NestedClassName", "Constructor", "Function", "Property", "TypeAlias", "EnumEntry", "SealedSubclassFqName", "TypeTable", "VersionRequirement", "VersionRequirementTable", });
     internal_static_org_jetbrains_kotlin_serialization_Package_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_org_jetbrains_kotlin_serialization_Package_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_Package_descriptor,
-        new java.lang.String[] { "Function", "Property", "TypeAlias", "TypeTable", "SinceKotlinInfoTable", });
+        new java.lang.String[] { "Function", "Property", "TypeAlias", "TypeTable", "VersionRequirementTable", });
     internal_static_org_jetbrains_kotlin_serialization_TypeTable_descriptor =
       getDescriptor().getMessageTypes().get(7);
     internal_static_org_jetbrains_kotlin_serialization_TypeTable_fieldAccessorTable = new
@@ -29019,19 +33707,19 @@ public final class DebugProtoBuf {
     internal_static_org_jetbrains_kotlin_serialization_Constructor_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_Constructor_descriptor,
-        new java.lang.String[] { "Flags", "ValueParameter", "SinceKotlinInfo", });
+        new java.lang.String[] { "Flags", "ValueParameter", "VersionRequirement", });
     internal_static_org_jetbrains_kotlin_serialization_Function_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_org_jetbrains_kotlin_serialization_Function_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_Function_descriptor,
-        new java.lang.String[] { "Flags", "OldFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "ValueParameter", "TypeTable", "SinceKotlinInfo", });
+        new java.lang.String[] { "Flags", "OldFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "ValueParameter", "TypeTable", "VersionRequirement", "Contract", });
     internal_static_org_jetbrains_kotlin_serialization_Property_descriptor =
       getDescriptor().getMessageTypes().get(10);
     internal_static_org_jetbrains_kotlin_serialization_Property_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_Property_descriptor,
-        new java.lang.String[] { "Flags", "OldFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "SetterValueParameter", "GetterFlags", "SetterFlags", "SinceKotlinInfo", });
+        new java.lang.String[] { "Flags", "OldFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "SetterValueParameter", "GetterFlags", "SetterFlags", "VersionRequirement", });
     internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor =
       getDescriptor().getMessageTypes().get(11);
     internal_static_org_jetbrains_kotlin_serialization_ValueParameter_fieldAccessorTable = new
@@ -29043,31 +33731,49 @@ public final class DebugProtoBuf {
     internal_static_org_jetbrains_kotlin_serialization_TypeAlias_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_TypeAlias_descriptor,
-        new java.lang.String[] { "Flags", "Name", "TypeParameter", "UnderlyingType", "UnderlyingTypeId", "ExpandedType", "ExpandedTypeId", "Annotation", "SinceKotlinInfo", });
+        new java.lang.String[] { "Flags", "Name", "TypeParameter", "UnderlyingType", "UnderlyingTypeId", "ExpandedType", "ExpandedTypeId", "Annotation", "VersionRequirement", });
     internal_static_org_jetbrains_kotlin_serialization_EnumEntry_descriptor =
       getDescriptor().getMessageTypes().get(13);
     internal_static_org_jetbrains_kotlin_serialization_EnumEntry_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_EnumEntry_descriptor,
         new java.lang.String[] { "Name", });
-    internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfo_descriptor =
+    internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_descriptor =
       getDescriptor().getMessageTypes().get(14);
-    internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfo_fieldAccessorTable = new
+    internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfo_descriptor,
-        new java.lang.String[] { "Version", "VersionFull", "Level", "ErrorCode", "Message", });
-    internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfoTable_descriptor =
+        internal_static_org_jetbrains_kotlin_serialization_VersionRequirement_descriptor,
+        new java.lang.String[] { "Version", "VersionFull", "Level", "ErrorCode", "Message", "VersionKind", });
+    internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_descriptor =
       getDescriptor().getMessageTypes().get(15);
-    internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfoTable_fieldAccessorTable = new
+    internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_org_jetbrains_kotlin_serialization_SinceKotlinInfoTable_descriptor,
-        new java.lang.String[] { "Info", });
+        internal_static_org_jetbrains_kotlin_serialization_VersionRequirementTable_descriptor,
+        new java.lang.String[] { "Requirement", });
     internal_static_org_jetbrains_kotlin_serialization_PackageFragment_descriptor =
       getDescriptor().getMessageTypes().get(16);
     internal_static_org_jetbrains_kotlin_serialization_PackageFragment_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_PackageFragment_descriptor,
         new java.lang.String[] { "Strings", "QualifiedNames", "Package", "Class_", });
+    internal_static_org_jetbrains_kotlin_serialization_Contract_descriptor =
+      getDescriptor().getMessageTypes().get(17);
+    internal_static_org_jetbrains_kotlin_serialization_Contract_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_Contract_descriptor,
+        new java.lang.String[] { "Effect", });
+    internal_static_org_jetbrains_kotlin_serialization_Effect_descriptor =
+      getDescriptor().getMessageTypes().get(18);
+    internal_static_org_jetbrains_kotlin_serialization_Effect_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_Effect_descriptor,
+        new java.lang.String[] { "EffectType", "EffectConstructorArgument", "ConclusionOfConditionalEffect", "Kind", });
+    internal_static_org_jetbrains_kotlin_serialization_Expression_descriptor =
+      getDescriptor().getMessageTypes().get(19);
+    internal_static_org_jetbrains_kotlin_serialization_Expression_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_Expression_descriptor,
+        new java.lang.String[] { "Flags", "ValueParameterReference", "ConstantValue", "IsInstanceType", "IsInstanceTypeId", "AndArgument", "OrArgument", });
     org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
         org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);

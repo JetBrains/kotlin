@@ -1,0 +1,8 @@
+package
+
+public fun catchThrowIfNotCalled(): kotlin.Unit
+public inline fun myRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun throwIfNotCalled(): kotlin.Unit
+public inline fun </*0*/ T> unknownRun(/*0*/ block: () -> T): T

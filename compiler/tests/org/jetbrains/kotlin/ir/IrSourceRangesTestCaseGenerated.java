@@ -47,4 +47,10 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/sourceRanges/kt17108.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("synthesizedDataClassMembers.kt")
+    public void testSynthesizedDataClassMembers() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/sourceRanges/synthesizedDataClassMembers.kt");
+        doTest(fileName);
+    }
 }

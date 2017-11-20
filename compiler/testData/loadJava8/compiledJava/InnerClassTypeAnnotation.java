@@ -1,3 +1,4 @@
+// JAVAC_EXPECTED_FILE
 package test;
 
 // SKIP_IN_RUNTIME_TEST
@@ -12,6 +13,8 @@ public class InnerClassTypeAnnotation {
     public class Inner {
         public Inner(@Foo String foo) {
         }
+
+        public @Foo String bar(String x, @Foo String y) { return null; }
     }
 
     @Retention(RetentionPolicy.CLASS)

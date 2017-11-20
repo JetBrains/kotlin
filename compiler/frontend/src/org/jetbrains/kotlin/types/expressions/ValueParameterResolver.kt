@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtParameter
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 class ValueParameterResolver(
         private val expressionTypingServices: ExpressionTypingServices,
-        private val constantExpressionEvaluator: ConstantExpressionEvaluator
+        private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     fun resolveValueParameters(
@@ -44,7 +46,8 @@ class ValueParameterResolver(
     ) {
         val scopeForDefaultValue = LexicalScopeImpl(declaringScope, declaringScope.ownerDescriptor, false, null, LexicalScopeKind.DEFAULT_VALUE)
 
-        val contextForDefaultValue = ExpressionTypingContext.newContext(trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE)
+        val contextForDefaultValue = ExpressionTypingContext.newContext(trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
+                                                                        languageVersionSettings)
 
         for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {
             ForceResolveUtil.forceResolveAllContents(descriptor.annotations)

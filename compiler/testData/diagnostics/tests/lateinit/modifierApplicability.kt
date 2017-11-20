@@ -1,3 +1,4 @@
+// !LANGUAGE: -LateinitTopLevelProperties -LateinitLocalVariables
 import kotlin.reflect.KProperty
 
 class CustomDelegate {
@@ -19,7 +20,7 @@ public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER!>la
         private set
 
     fun a() {
-        <!WRONG_MODIFIER_TARGET!>lateinit<!> var <!UNUSED_VARIABLE!>a<!>: String
+        <!UNSUPPORTED_FEATURE!>lateinit<!> var <!UNUSED_VARIABLE!>a<!>: String
     }
 
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e1: V
@@ -46,8 +47,8 @@ public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER!>la
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var String.e12: String
 }
 
-<!INAPPLICABLE_LATEINIT_MODIFIER, WRONG_MODIFIER_TARGET!>lateinit<!> val topLevel: String
-<!WRONG_MODIFIER_TARGET!>lateinit<!> var topLevelMutable: String
+<!INAPPLICABLE_LATEINIT_MODIFIER, UNSUPPORTED_FEATURE!>lateinit<!> val topLevel: String
+<!UNSUPPORTED_FEATURE!>lateinit<!> var topLevelMutable: String
 
 public interface Intf {
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var str: String

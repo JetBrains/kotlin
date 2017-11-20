@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.idea.refactoring.invokeOnceOnCommandFinish
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinDirectoryMoveTarget
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessor
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.analyzeConflictsInFile
+import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
@@ -68,7 +70,7 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
             project: Project) {
         filesToMove
                 .filterIsInstance<KtFile>()
-                .mapTo(result) { FileUsagesWrapper(it, fileHandler.findUsages(it, null, searchInComments, searchInNonJavaFiles), null) }
+                .mapTo(result) { FileUsagesWrapper(it, fileHandler.findUsages(it, null, false), null) }
     }
 
     override fun preprocessUsages(
@@ -83,8 +85,12 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
         for ((index, usageInfo) in infos.withIndex()) {
             if (usageInfo !is FileUsagesWrapper) continue
 
-            analyzeConflictsInFile(usageInfo.psiFile, usageInfo.usages, moveTarget, files, conflicts) {
-                infos[index] = usageInfo.copy(usages = it)
+            project.runSynchronouslyWithProgress("Analyzing conflicts in ${usageInfo.psiFile.name}", false) {
+                runReadAction {
+                    analyzeConflictsInFile(usageInfo.psiFile, usageInfo.usages, moveTarget, files, conflicts) {
+                        infos[index] = usageInfo.copy(usages = it)
+                    }
+                }
             }
         }
     }
@@ -103,7 +109,7 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
     ): Boolean {
         if (file !is KtFile) return false
 
-        val moveDeclarationsProcessor = fileHandler.initMoveProcessor(file, moveDestination)
+        val moveDeclarationsProcessor = fileHandler.initMoveProcessor(file, moveDestination, false)
         val moveContextMap = getOrCreateMoveContextMap()
         moveContextMap[file] = MoveContext(moveDestination, moveDeclarationsProcessor)
         if (moveDeclarationsProcessor != null) {

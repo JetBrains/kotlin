@@ -22,7 +22,7 @@ fun test1_2() {}
 @Ann2(*[])
 fun test2() {}
 
-@Ann3(a = *[0f, <!DIVISION_BY_ZERO!>1 / 0f<!>])
+@Ann3(a = *<!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION!>[0f, <!DIVISION_BY_ZERO!>1 / 0f<!>]<!>)
 fun test3() {}
 
 @Ann5(Ann4(*["/"]))

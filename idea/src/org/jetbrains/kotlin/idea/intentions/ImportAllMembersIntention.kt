@@ -20,11 +20,11 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.conversion.copy.range
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -59,26 +59,33 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtDotQualifiedExpressio
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
-        val target = target(element)!!
-        val classFqName = target.importableFqName!!.parent()
-
-        ImportInsertHelper.getInstance(element.project).importDescriptor(element.containingKtFile, target, forceAllUnderImport = true)
-
-        val qualifiedExpressions = element.containingKtFile.collectDescendantsOfType<KtDotQualifiedExpression> { qualifiedExpression ->
-            val qualifierName = qualifiedExpression.receiverExpression.getQualifiedElementSelector() as? KtNameReferenceExpression
-            qualifierName?.getReferencedNameAsName() == classFqName.shortName() && target(qualifiedExpression)?.importableFqName?.parent() == classFqName
-        }
-
-        //TODO: not deep
-        ShortenReferences.DEFAULT.process(qualifiedExpressions)
+        element.importReceiverMembers()
     }
 
-    private fun target(expression: KtDotQualifiedExpression): DeclarationDescriptor? {
-        val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-        if (bindingContext[BindingContext.QUALIFIER, expression.receiverExpression] !is ClassQualifier) {
-            return null
+    companion object {
+        fun KtDotQualifiedExpression.importReceiverMembers() {
+            val target = target(this)!!
+            val classFqName = target.importableFqName!!.parent()
+
+            ImportInsertHelper.getInstance(project).importDescriptor(containingKtFile, target, forceAllUnderImport = true)
+
+            val qualifiedExpressions = containingKtFile.collectDescendantsOfType<KtDotQualifiedExpression> { qualifiedExpression ->
+                val qualifierName = qualifiedExpression.receiverExpression.getQualifiedElementSelector() as? KtNameReferenceExpression
+                qualifierName?.getReferencedNameAsName() == classFqName.shortName() && target(qualifiedExpression)?.importableFqName?.parent() == classFqName
+            }
+
+            //TODO: not deep
+            ShortenReferences.DEFAULT.process(qualifiedExpressions)
         }
-        val selector = expression.getQualifiedElementSelector() as? KtNameReferenceExpression ?: return null
-        return selector.mainReference.resolveToDescriptors(bindingContext).firstOrNull()
+
+        private fun target(expression: KtDotQualifiedExpression): DeclarationDescriptor? {
+            val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
+            if (bindingContext[BindingContext.QUALIFIER, expression.receiverExpression] !is ClassQualifier) {
+                return null
+            }
+            val selector = expression.getQualifiedElementSelector() as? KtNameReferenceExpression ?: return null
+            return selector.mainReference.resolveToDescriptors(bindingContext).firstOrNull()
+        }
     }
+
 }

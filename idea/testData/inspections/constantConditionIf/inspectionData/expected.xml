@@ -39,4 +39,20 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Condition of 'if' expression is constant</problem_class>
         <description>Condition is always 'true'</description>
     </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>31</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Condition of 'if' expression is constant</problem_class>
+        <description>Condition is always 'true'</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>37</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Condition of 'if' expression is constant</problem_class>
+        <description>Condition is always 'true'</description>
+    </problem>
 </problems>

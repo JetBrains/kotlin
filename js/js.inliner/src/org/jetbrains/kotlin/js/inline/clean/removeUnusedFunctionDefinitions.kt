@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.js.inline.util.collectFunctionReferencesInside
  * At now, it only removes unused local functions and function literals,
  * because named functions can be referenced from another module.
  */
-fun removeUnusedFunctionDefinitions(roots: List<JsNode>, functions: Map<JsName, JsFunction>) {
+fun removeUnusedFunctionDefinitions(root: JsNode, functions: Map<JsName, JsFunction>) {
     val removable = with(UnusedLocalFunctionsCollector(functions)) {
         process()
-        roots.forEach { accept(it) }
+        accept(root)
         removableFunctions
     }.toSet()
 
@@ -45,7 +45,7 @@ fun removeUnusedFunctionDefinitions(roots: List<JsNode>, functions: Map<JsName, 
         expression is JsFunction && expression in removable
     }
 
-    roots.forEach { remover.accept(it) }
+    remover.accept(root)
 }
 
 private class UnusedLocalFunctionsCollector(private val functions: Map<JsName, JsFunction>) : JsVisitorWithContextImpl() {
@@ -79,9 +79,7 @@ private class UnusedLocalFunctionsCollector(private val functions: Map<JsName, J
         }
     }
 
-    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
-        return !(wasProcessed(x))
-    }
+    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean = !wasProcessed(x)
 
     override fun endVisit(x: JsFunction, ctx: JsContext<*>) {
         processed.add(x)

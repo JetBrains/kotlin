@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.sun.jdi.ClassType
 import com.sun.jdi.InvalidStackFrameException
 import com.sun.jdi.ObjectReference
@@ -27,6 +28,7 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.obj
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
+import org.jetbrains.kotlin.codegen.inline.INLINE_TRANSFORMATION_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
 import org.jetbrains.kotlin.idea.debugger.isInsideInlineFunctionBody
 import org.jetbrains.kotlin.idea.debugger.numberOfInlinedFunctions
@@ -78,11 +80,10 @@ class FrameVisitor(context: EvaluationContextImpl) {
                         return localVariable
                     }
 
-                    val capturedValName = getCapturedFieldName(name)
-                    val capturedVal = findCapturedLocalVariable(capturedValName, asmType, checkType)
-                    if (capturedVal != null) {
-                        return capturedVal
-                    }
+                    getCapturedFieldNames(name).asSequence()
+                            .mapNotNull { findCapturedLocalVariable(it, asmType, checkType) }
+                            .firstOrNull()
+                            ?.let { return it }
                 }
             }
 
@@ -221,12 +222,15 @@ class FrameVisitor(context: EvaluationContextImpl) {
         return null
     }
 
-    private fun getCapturedFieldName(name: String) = when (name) {
-        RECEIVER_NAME -> AsmUtil.CAPTURED_RECEIVER_FIELD
-        THIS_NAME -> AsmUtil.CAPTURED_THIS_FIELD
-        AsmUtil.CAPTURED_RECEIVER_FIELD -> name
-        AsmUtil.CAPTURED_THIS_FIELD -> name
-        else -> "$$name"
+    private fun getCapturedFieldNames(name: String): List<String> = when (name) {
+        RECEIVER_NAME -> listOf(AsmUtil.CAPTURED_RECEIVER_FIELD)
+        THIS_NAME -> listOf(AsmUtil.CAPTURED_THIS_FIELD)
+        AsmUtil.CAPTURED_RECEIVER_FIELD -> listOf(name)
+        AsmUtil.CAPTURED_THIS_FIELD -> listOf(name)
+        else -> {
+            val simpleName = "$$name"
+            listOf(simpleName, simpleName + INLINE_TRANSFORMATION_SUFFIX)
+        }
     }
 
     private fun com.sun.jdi.Type?.isSubclass(superClassName: String): Boolean {

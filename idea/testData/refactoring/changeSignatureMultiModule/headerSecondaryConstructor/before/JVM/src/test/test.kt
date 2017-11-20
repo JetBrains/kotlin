@@ -1,6 +1,6 @@
 package test
 
-impl class C(n: Int) {
+actual class C(n: Int) {
     constructor(s: String): this(1)
 }
 

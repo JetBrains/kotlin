@@ -72,12 +72,12 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                 .mapNotNull{irFunction.getDefault(it)}
 
 
-        log("detected ${functionDescriptor.name.asString()} has got #${bodies.size} default expressions")
+        log { "detected ${functionDescriptor.name.asString()} has got #${bodies.size} default expressions" }
         functionDescriptor.overriddenDescriptors.forEach { context.log{"DEFAULT-REPLACER: $it"} }
         if (bodies.isNotEmpty()) {
             val newIrFunction = functionDescriptor.generateDefaultsFunction(context)
             val descriptor = newIrFunction.descriptor
-            log("$functionDescriptor -> $descriptor")
+            log { "$functionDescriptor -> $descriptor" }
             val builder = context.createIrBuilder(newIrFunction.symbol)
             val body = builder.irBlockBody(irFunction) {
                 val params = mutableListOf<IrVariableSymbol>()
@@ -104,7 +104,7 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                         /* Use previously calculated values in next expression. */
                         expressionBody.transformChildrenVoid(object:IrElementTransformerVoid() {
                             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                                log("GetValue: ${expression.descriptor}")
+                                log { "GetValue: ${expression.descriptor}" }
                                 val valueSymbol = variables[expression.descriptor] ?: return expression
                                 return irGet(valueSymbol)
                             }
@@ -174,7 +174,7 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
     }
 
 
-    private fun log(msg:String) = context.log{"DEFAULT-REPLACER: $msg"}
+    private fun log(msg: () -> String) = context.log { "DEFAULT-REPLACER: ${msg()}" }
 }
 
 private fun Scope.createTemporaryVariableDescriptor(parameterDescriptor: ParameterDescriptor?): VariableDescriptor =
@@ -239,7 +239,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                         descriptor  = symbolForCall.descriptor)
                         .apply {
                             params.forEach {
-                                log("call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}")
+                                log { "call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}" }
                                 putValueArgument(it.first.index, it.second)
                             }
                             dispatchReceiver = expression.dispatchReceiver
@@ -259,8 +259,8 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                     return expression
                 val (symbol, params) = parametersForCall(expression)
                 val descriptor = symbol.descriptor
-                descriptor.typeParameters.forEach { log("$descriptor [${it.index}]: $it") }
-                descriptor.original.typeParameters.forEach { log("${descriptor.original}[${it.index}] : $it") }
+                descriptor.typeParameters.forEach { log { "$descriptor [${it.index}]: $it" } }
+                descriptor.original.typeParameters.forEach { log { "${descriptor.original}[${it.index}] : $it" } }
                 return IrCallImpl(
                         startOffset   = expression.startOffset,
                         endOffset     = expression.endOffset,
@@ -269,7 +269,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                         typeArguments = expression.descriptor.typeParameters.map{it to (expression.getTypeArgument(it) ?: it.defaultType) }.toMap())
                         .apply {
                             params.forEach {
-                                log("call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}")
+                                log { "call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}" }
                                 putValueArgument(it.first.index, it.second)
                             }
                             expression.extensionReceiver?.apply{
@@ -278,8 +278,8 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                             expression.dispatchReceiver?.apply {
                                 dispatchReceiver = expression.dispatchReceiver
                             }
-                            log("call::extension@: ${ir2string(expression.extensionReceiver)}")
-                            log("call::dispatch@: ${ir2string(expression.dispatchReceiver)}")
+                            log { "call::extension@: ${ir2string(expression.extensionReceiver)}" }
+                            log { "call::dispatch@: ${ir2string(expression.dispatchReceiver)}" }
                         }
             }
 
@@ -292,7 +292,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                 val realFunction = keyDescriptor.generateDefaultsFunction(context)
                 val realDescriptor = realFunction.descriptor
 
-                log("$descriptor -> $realDescriptor")
+                log { "$descriptor -> $realDescriptor" }
                 val maskValues = Array(descriptor.valueParameters.size / 32 + 1, {0})
                 val params = mutableListOf<Pair<ValueParameterDescriptor, IrExpression?>>()
                 params.addAll(descriptor.valueParameters.mapIndexed { i, _ ->
@@ -325,7 +325,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                             IrConstImpl.constNull(irBody.startOffset, irBody.endOffset, context.builtIns.any.defaultType)
                 }
                 params.forEach {
-                    log("descriptor::${realDescriptor.name.asString()}#${it.first.index}: ${it.first.name.asString()}")
+                    log { "descriptor::${realDescriptor.name.asString()}#${it.first.index}: ${it.first.name.asString()}" }
                 }
                 return Pair(realFunction.symbol, params)
             }
@@ -335,7 +335,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
         })
     }
 
-    private fun log(msg: String) = context.log{"DEFAULT-INJECTOR: $msg"}
+    private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
 }
 
 private val CallableMemberDescriptor.needsDefaultArgumentsLowering

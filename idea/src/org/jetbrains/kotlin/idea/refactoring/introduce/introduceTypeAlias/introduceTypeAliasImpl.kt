@@ -24,7 +24,7 @@ import com.intellij.util.containers.LinkedMultiMap
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
 sealed class IntroduceTypeAliasAnalysisResult {
@@ -157,7 +158,7 @@ fun IntroduceTypeAliasDescriptor.validate(): IntroduceTypeAliasDescriptorWithCon
 fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
     val aliasName = typeAlias.name?.quoteIfNeeded() ?: return emptyMap()
     val aliasRange = typeAlias.textRange
-    val typeAliasDescriptor = typeAlias.resolveToDescriptor() as TypeAliasDescriptor
+    val typeAliasDescriptor = typeAlias.unsafeResolveToDescriptor() as TypeAliasDescriptor
 
     val unifierParameters = typeAliasDescriptor.declaredTypeParameters.map { UnifierParameter(it, null) }
     val unifier = KotlinPsiUnifier(unifierParameters)
@@ -214,6 +215,9 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
                 else continue
             }
             if (arguments.size != typeAliasDescriptor.declaredTypeParameters.size) continue
+            if (TypeUtils.isNullableType(typeAliasDescriptor.underlyingType)
+                && occurrence is KtUserType
+                && occurrence.parent !is KtNullableType) continue
             rangesWithReplacers += occurrence.toRange() to { replaceOccurrence(occurrence, arguments) }
         }
     }

@@ -26,7 +26,7 @@ import kotlin.coroutines.experimental.Continuation
  * coroutine using a reference to the suspending function.
  */
 @SinceKotlin("1.1")
-public header inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
+public expect inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
         completion: Continuation<T>
 ): Any?
 
@@ -38,18 +38,18 @@ public header inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
  * coroutine using a reference to the suspending function.
  */
 @SinceKotlin("1.1")
-public header inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
+public expect inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
         receiver: R,
         completion: Continuation<T>
 ): Any?
 
 @SinceKotlin("1.1")
-public header fun <T> (suspend () -> T).createCoroutineUnchecked(
+public expect fun <T> (suspend () -> T).createCoroutineUnchecked(
         completion: Continuation<T>
 ): Continuation<Unit>
 
 @SinceKotlin("1.1")
-public header fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
+public expect fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
         receiver: R,
         completion: Continuation<T>
 ): Continuation<Unit>

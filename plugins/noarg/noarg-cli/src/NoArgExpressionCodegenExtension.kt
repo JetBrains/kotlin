@@ -44,13 +44,18 @@ class NoArgExpressionCodegenExtension(val invokeInitializers: Boolean = false) :
 
         val constructorDescriptor = createNoArgConstructorDescriptor(descriptor)
 
-        val isParentASealedClass = (descriptor.containingDeclaration as? ClassDescriptor)?.modality == Modality.SEALED
+        val superClass = descriptor.getSuperClassOrAny()
+
+        // If a parent sealed class has not a zero-parameter constructor, user must write @NoArg annotation for the parent class as well,
+        // and then we generate <init>()V
+        val isParentASealedClassWithDefaultConstructor =
+                superClass.modality == Modality.SEALED && superClass.constructors.any { it.isZeroParameterConstructor() }
 
         functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, constructorDescriptor, object: CodegenBased(state) {
             override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                 codegen.v.load(0, AsmTypes.OBJECT_TYPE)
 
-                if (isParentASealedClass) {
+                if (isParentASealedClassWithDefaultConstructor) {
                     codegen.v.aconst(null)
                     codegen.v.visitMethodInsn(Opcodes.INVOKESPECIAL, superClassInternalName, "<init>",
                                               "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V", false)

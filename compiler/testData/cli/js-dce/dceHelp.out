@@ -3,6 +3,7 @@ where possible options include:
   -keep <fully.qualified.name[,]>
                              List of fully-qualified names of declarations that shouldn't be eliminated
   -output-dir <path>         Output directory
+  -Werror                    Report an error if there are any warnings
   -X                         Print a synopsis of advanced options
   -help (-h)                 Print a synopsis of standard options
   -nowarn                    Generate no warnings

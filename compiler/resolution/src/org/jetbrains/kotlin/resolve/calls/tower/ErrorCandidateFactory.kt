@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ enum class WrongResolutionToClassifier(val message: (Name) -> String) {
     TYPE_PARAMETER_AS_FUNCTION({ "Type parameter $it cannot be called as function" }),
     INTERFACE_AS_VALUE({ "Interface $it does not have companion object" }),
     INTERFACE_AS_FUNCTION({ "Interface $it does not have constructors" }),
+    EXPECT_CLASS_AS_FUNCTION({ "Expected class $it does not have default constructor" }),
     CLASS_AS_VALUE({ "Class $it does not have companion object" }),
     INNER_CLASS_CONSTRUCTOR_NO_RECEIVER({ "Constructor of inner class $it can be called only with receiver of containing class" }),
     OBJECT_AS_FUNCTION({ "Function 'invoke()' is not found in object $it" })
@@ -105,6 +106,7 @@ private fun ErrorCandidateContext.getWrongResolutionToClassifier(classifier: Cla
 
                     ClassKind.CLASS -> when {
                         asFunction && explicitReceiver is QualifierReceiver? && classifier.isInner -> INNER_CLASS_CONSTRUCTOR_NO_RECEIVER
+                        asFunction && classifier.isExpect -> EXPECT_CLASS_AS_FUNCTION
                         !asFunction -> CLASS_AS_VALUE
                         else -> null
                     }

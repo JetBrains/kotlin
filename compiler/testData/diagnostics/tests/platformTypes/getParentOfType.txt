@@ -2,3 +2,29 @@ package
 
 public fun </*0*/ T> javaClass(): java.lang.Class<T>
 public fun test(/*0*/ e: p.JetExpression): kotlin.Unit
+
+package p {
+
+    public interface JetExpression : p.PsiElement {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface PsiElement {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class Util {
+        public constructor Util()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public open fun </*0*/ T : p.PsiElement!> getParentOfType(/*0*/ @Nullable /* annotation class not found */ element: p.PsiElement!, /*1*/ @NotNull /* annotation class not found */ aClass: java.lang.Class<T!>!): T!
+        public open fun on(/*0*/ e: p.JetExpression!): kotlin.Unit
+    }
+}

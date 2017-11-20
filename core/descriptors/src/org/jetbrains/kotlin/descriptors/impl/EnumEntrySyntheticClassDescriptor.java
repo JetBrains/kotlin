@@ -80,7 +80,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         this.annotations = annotations;
         this.typeConstructor = new ClassTypeConstructorImpl(
-                this, true, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(supertype)
+                this, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(supertype)
         );
 
         this.scope = new EnumEntryScope(storageManager);
@@ -155,12 +155,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isHeader() {
+    public boolean isExpect() {
         return false;
     }
 
     @Override
-    public boolean isImpl() {
+    public boolean isActual() {
         return false;
     }
 
@@ -308,6 +308,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         @Override
         public Set<Name> getFunctionNames() {
             return enumMemberNames.invoke();
+        }
+
+        @NotNull
+        @Override
+        public Set<Name> getClassifierNames() {
+            return Collections.emptySet();
         }
 
         @NotNull

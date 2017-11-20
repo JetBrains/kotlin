@@ -10,22 +10,22 @@ open class Open(val foo: String) : Parcelable
 class Final(val foo: String) : Parcelable
 
 @Parcelize
-<error descr="[PLUGIN_ERROR] PARCELABLE_SHOULD_BE_INSTANTIABLE: 'Parcelable' should not be a 'sealed' or 'abstract' class">abstract</error> class Abstract(val foo: String) : Parcelable
+<error descr="[PLUGIN_ERROR] 'Parcelable' should not be a 'sealed' or 'abstract' class">abstract</error> class Abstract(val foo: String) : Parcelable
 
 @Parcelize
-<error descr="[PLUGIN_ERROR] PARCELABLE_SHOULD_BE_INSTANTIABLE: 'Parcelable' should not be a 'sealed' or 'abstract' class">sealed</error> class Sealed(val foo: String) : Parcelable {
+<error descr="[PLUGIN_ERROR] 'Parcelable' should not be a 'sealed' or 'abstract' class">sealed</error> class Sealed(val foo: String) : Parcelable {
     class X : Sealed("")
 }
 
 class Outer {
     @Parcelize
-    <error descr="[PLUGIN_ERROR] PARCELABLE_CANT_BE_INNER_CLASS: 'Parcelable' can't be an inner class">inner</error> class Inner(val foo: String) : Parcelable
+    <error descr="[PLUGIN_ERROR] 'Parcelable' can't be an inner class">inner</error> class Inner(val foo: String) : Parcelable
 }
 
 fun foo() {
     @Parcelize
-    <error descr="[PLUGIN_ERROR] PARCELABLE_SHOULD_BE_CLASS: 'Parcelable' should be a class">object</error> : Parcelable {}
+    <error descr="[PLUGIN_ERROR] 'Parcelable' should be a class">object</error> : Parcelable {}
 
     @Parcelize
-    class <error descr="[PLUGIN_ERROR] NO_PARCELABLE_SUPERTYPE: No 'Parcelable' supertype"><error descr="[PLUGIN_ERROR] PARCELABLE_CANT_BE_LOCAL_CLASS: 'Parcelable' can't be a local class">Local</error></error> {}
+    class <error descr="[PLUGIN_ERROR] 'Parcelable' can't be a local class"><error descr="[PLUGIN_ERROR] No 'Parcelable' supertype">Local</error></error> {}
 }

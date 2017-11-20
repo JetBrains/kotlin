@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.folding;
 
-import com.google.common.base.Function;
 import com.intellij.codeInsight.folding.JavaCodeFoldingSettings;
 import com.intellij.codeInsight.folding.impl.JavaCodeFoldingSettingsImpl;
 import com.intellij.openapi.util.io.FileUtil;
@@ -31,10 +30,10 @@ import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.test.SettingsConfigurator;
 import org.junit.Assert;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.function.Consumer;
 
 public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFixtureTestCaseBase {
     protected void doTest(@NotNull String path) {
@@ -47,14 +46,7 @@ public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFi
         String directText = fileText.replaceAll("~true~", "true").replaceAll("~false~", "false");
         directText += "\n\n// Generated from: " + path;
 
-        Function<String, Void> doExpandSettingsTestFunction = new Function<String, Void>() {
-            @Nullable
-            @Override
-            public Void apply(@Nullable String fileText) {
-                doExpandSettingsTest(fileText);
-                return null;
-            }
-        };
+        Consumer<String> doExpandSettingsTestFunction = this::doExpandSettingsTest;
 
         doTestWithSettings(directText, doExpandSettingsTestFunction);
 
@@ -68,7 +60,7 @@ public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFi
         doTestWithSettings(invertedText, doExpandSettingsTestFunction);
     }
 
-    protected static void doTestWithSettings(@NotNull String fileText, @NotNull Function<String, Void> runnable) {
+    protected static void doTestWithSettings(@NotNull String fileText, @NotNull Consumer<String> runnable) {
         JavaCodeFoldingSettings settings = JavaCodeFoldingSettings.getInstance();
         JavaCodeFoldingSettingsImpl restoreSettings = new JavaCodeFoldingSettingsImpl();
         restoreSettings.loadState((JavaCodeFoldingSettingsImpl) settings);
@@ -77,7 +69,7 @@ public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFi
             SettingsConfigurator configurator = new SettingsConfigurator(fileText, settings);
             configurator.configureSettings();
 
-            runnable.apply(fileText);
+            runnable.accept(fileText);
         }
         finally {
             ((JavaCodeFoldingSettingsImpl) JavaCodeFoldingSettings.getInstance()).loadState(restoreSettings);
@@ -87,7 +79,7 @@ public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFi
     private void doExpandSettingsTest(String fileText) {
         try {
             VirtualFile tempFile = PlatformTestCase.createTempFile("kt", null, fileText, Charset.defaultCharset());
-            assertFoldingRegionsForFile(tempFile.getPath(), true);
+            assertFoldingRegionsForFile(tempFile.getPath());
         }
         catch (IOException e) {
             throw new IllegalStateException(e);
@@ -96,7 +88,7 @@ public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFi
 
     // Rewritten version of CodeInsightTestFixtureImpl.testFoldingRegions(verificationFileName, true).
     // Configure test with custom file name to force creating different editors for normal and inverted tests.
-    private void assertFoldingRegionsForFile(String verificationFileName, boolean doCheckCollapseStatus) {
+    private void assertFoldingRegionsForFile(String verificationFileName) {
         String START_FOLD = "<fold\\stext=\'[^\']*\'(\\sexpand=\'[^\']*\')*>";
         String END_FOLD = "</fold>";
 
@@ -115,7 +107,7 @@ public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFi
         String cleanContent = expectedContent.replaceAll(START_FOLD, "").replaceAll(END_FOLD, "");
 
         myFixture.configureByText(file.getName(), cleanContent);
-        String actual = ((CodeInsightTestFixtureImpl)myFixture).getFoldingDescription(doCheckCollapseStatus);
+        String actual = ((CodeInsightTestFixtureImpl)myFixture).getFoldingDescription(true);
 
         Assert.assertEquals(expectedContent, actual);
     }

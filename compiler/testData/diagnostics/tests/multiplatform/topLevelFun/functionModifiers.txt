@@ -1,18 +1,18 @@
 // -- Module: <m1-common> --
 package
 
-public header fun external(): kotlin.Unit
-public header fun inline(): kotlin.Unit
-public header fun tailrec(): kotlin.Unit
-public header fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
-public header fun kotlin.String.unaryMinus(): kotlin.String
+public expect fun external(): kotlin.Unit
+public expect fun inline(): kotlin.Unit
+public expect fun tailrec(): kotlin.Unit
+public expect fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
+public expect fun kotlin.String.unaryMinus(): kotlin.String
 
 
 // -- Module: <m2-jvm> --
 package
 
-public external impl fun external(): kotlin.Unit
-public impl inline fun inline(): kotlin.Unit
-public impl tailrec fun tailrec(): kotlin.Unit
-public infix impl fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
-public operator impl fun kotlin.String.unaryMinus(): kotlin.String
+public external actual fun external(): kotlin.Unit
+public actual inline fun inline(): kotlin.Unit
+public actual tailrec fun tailrec(): kotlin.Unit
+public infix actual fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
+public operator actual fun kotlin.String.unaryMinus(): kotlin.String

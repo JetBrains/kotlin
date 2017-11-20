@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -61,7 +62,9 @@ class CallCompleter(
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val callCheckers: Iterable<CallChecker>,
         private val builtIns: KotlinBuiltIns,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val deprecationResolver: DeprecationResolver,
+        private val effectSystem: EffectSystem
 ) {
     fun <D : CallableDescriptor> completeCall(
             context: BasicCallResolutionContext,
@@ -74,13 +77,8 @@ class CallCompleter(
         // for the case 'foo(a)' where 'foo' is a variable, the call 'foo.invoke(a)' shouldn't be completed separately,
         // it's completed when the outer (variable as function call) is completed
         if (!isInvokeCallOnVariable(context.call)) {
-            val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a resulting call")
-
-            completeResolvedCallAndArguments(resolvedCall, results, context.replaceBindingTrace(temporaryTrace), tracing)
-
+            completeResolvedCallAndArguments(resolvedCall, results, context, tracing)
             completeAllCandidates(context, results)
-
-            temporaryTrace.commit()
         }
 
         if (resolvedCall != null && context.trace.wantsDiagnostics()) {
@@ -92,7 +90,7 @@ class CallCompleter(
                     if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
                     else resolvedCall.call.callElement
 
-            val callCheckerContext = CallCheckerContext(context, languageVersionSettings)
+            val callCheckerContext = CallCheckerContext(context, languageVersionSettings, deprecationResolver)
             for (callChecker in callCheckers) {
                 callChecker.check(resolvedCall, reportOn, callCheckerContext)
 
@@ -120,10 +118,10 @@ class CallCompleter(
             results.resultingCalls
         }) as Collection<MutableResolvedCall<D>>
 
+        val temporaryBindingTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a candidate that is not a resulting call")
         candidates.filterNot { resolvedCall -> resolvedCall.isCompleted }.forEach {
             resolvedCall ->
 
-            val temporaryBindingTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a candidate that is not a resulting call")
             completeResolvedCallAndArguments(resolvedCall, results, context.replaceBindingTrace(temporaryBindingTrace), TracingStrategy.EMPTY)
         }
     }
@@ -136,6 +134,7 @@ class CallCompleter(
     ) {
         if (resolvedCall == null || resolvedCall.isCompleted || resolvedCall.constraintSystem == null) {
             completeArguments(context, results)
+            resolvedCall?.updateResultDataFlowInfoUsingEffects(context.trace)
             resolvedCall?.markCallAsCompleted()
             return
         }
@@ -145,6 +144,7 @@ class CallCompleter(
         completeArguments(context, results)
 
         resolvedCall.updateResolutionStatusFromConstraintSystem(context, tracing)
+        resolvedCall.updateResultDataFlowInfoUsingEffects(context.trace)
         resolvedCall.markCallAsCompleted()
     }
 
@@ -278,7 +278,7 @@ class CallCompleter(
             val argumentMapping = getArgumentMapping(valueArgument!!)
             val (expectedType, callPosition) = when (argumentMapping) {
                 is ArgumentMatch -> Pair(
-                        getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument),
+                        getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument, context),
                         CallPosition.ValueArgumentPosition(results.resultingCall, argumentMapping.valueParameter, valueArgument))
                 else -> Pair(TypeUtils.NO_EXPECTED_TYPE, CallPosition.Unknown)
             }
@@ -397,5 +397,15 @@ class CallCompleter(
         //If a receiver type is not null, then this safe expression is useless, and we don't need to make the result type nullable.
         val expressionType = trace.getType(expression.receiverExpression)
         return expressionType != null && TypeUtils.isNullableType(expressionType)
+    }
+
+    private fun MutableResolvedCall<*>.updateResultDataFlowInfoUsingEffects(bindingTrace: BindingTrace) {
+        if (dataFlowInfoForArguments is MutableDataFlowInfoForArguments.WithoutArgumentsCheck) return
+
+        val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor?.containingDeclaration ?: return)
+        val resultDFIfromES = effectSystem.getDataFlowInfoForFinishedCall(this, bindingTrace, moduleDescriptor)
+        dataFlowInfoForArguments.updateResultInfo(resultDFIfromES)
+
+        effectSystem.recordDefiniteInvocations(this, bindingTrace, moduleDescriptor)
     }
 }

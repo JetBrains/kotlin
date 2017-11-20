@@ -22,15 +22,13 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
-import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
@@ -60,7 +58,7 @@ object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
 
 object FileClassAnnotationsChecker: AdditionalAnnotationChecker {
     // JvmName & JvmMultifileClass annotations are applicable to multi-file class parts regardless of their retention.
-    private val ALWAYS_APPLICABLE = hashSetOf(JvmFileClassUtil.JVM_NAME, JvmFileClassUtil.JVM_MULTIFILE_CLASS)
+    private val alwaysApplicable = hashSetOf(JvmFileClassUtil.JVM_NAME, JvmFileClassUtil.JVM_MULTIFILE_CLASS)
 
     override fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
         val fileAnnotationsToCheck = arrayListOf<Pair<KtAnnotationEntry, ClassDescriptor>>()
@@ -74,13 +72,40 @@ object FileClassAnnotationsChecker: AdditionalAnnotationChecker {
             fileAnnotationsToCheck.add(Pair(entry, classDescriptor))
         }
 
-        if (!fileAnnotationsToCheck.any { it.second.classId?.asSingleFqName() == JvmFileClassUtil.JVM_MULTIFILE_CLASS }) return
+        val isMultifileClass = fileAnnotationsToCheck.any { it.second.fqNameSafe == JvmFileClassUtil.JVM_MULTIFILE_CLASS }
 
-        for ((entry, classDescriptor) in fileAnnotationsToCheck) {
-            val classFqName = classDescriptor.classId!!.asSingleFqName()
-            if (classFqName in ALWAYS_APPLICABLE) continue
-            if (classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE) {
-                trace.report(ErrorsJvm.ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES.on(entry, classFqName))
+        if (isMultifileClass) {
+            for ((entry, classDescriptor) in fileAnnotationsToCheck) {
+                val classFqName = classDescriptor.fqNameSafe
+                if (classFqName in alwaysApplicable) continue
+                if (classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE) {
+                    trace.report(ErrorsJvm.ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES.on(entry, classFqName))
+                }
+                if (classFqName == JvmFileClassUtil.JVM_PACKAGE_NAME) {
+                    trace.report(ErrorsJvm.JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_MULTIFILE_CLASSES.on(entry))
+                }
+            }
+        }
+        else {
+            for ((entry, classDescriptor) in fileAnnotationsToCheck) {
+                if (classDescriptor.fqNameSafe != JvmFileClassUtil.JVM_PACKAGE_NAME) continue
+
+                val argumentExpression = entry.valueArguments.firstOrNull()?.getArgumentExpression() ?: continue
+                val stringTemplateEntries = (argumentExpression as? KtStringTemplateExpression)?.entries ?: continue
+                if (stringTemplateEntries.size > 1) continue
+
+                val value = (stringTemplateEntries.singleOrNull() as? KtLiteralStringTemplateEntry)?.text
+                if (value == null) {
+                    trace.report(ErrorsJvm.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY.on(entry))
+                }
+                else if (!isValidJavaFqName(value)) {
+                    trace.report(ErrorsJvm.JVM_PACKAGE_NAME_MUST_BE_VALID_NAME.on(entry))
+                }
+                else if (entry.containingKtFile.declarations.any {
+                    it !is KtFunction && it !is KtProperty && it !is KtTypeAlias
+                }) {
+                    trace.report(ErrorsJvm.JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES.on(entry))
+                }
             }
         }
     }

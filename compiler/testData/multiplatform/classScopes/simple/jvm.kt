@@ -1,5 +1,5 @@
-impl class Foo impl constructor(param: String) {
-    impl var property: Int = param.length
+actual class Foo actual constructor(param: String) {
+    actual var property: Int = param.length
 
-    impl fun <T> function(p: List<T>): T = p.first()
+    actual fun <T> function(p: List<T>): T = p.first()
 }

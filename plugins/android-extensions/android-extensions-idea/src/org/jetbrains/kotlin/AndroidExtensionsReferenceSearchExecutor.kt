@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 
-class AndroidExtensionsReferenceSearchExecutor : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
+class AndroidExtensionsReferenceSearchExecutor : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
     override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
         val elementToSearch = queryParameters.elementToSearch as? XmlAttributeValue ?: return
         val scopeElements = (queryParameters.effectiveSearchScope as? LocalSearchScope)?.scope ?: return

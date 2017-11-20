@@ -41,6 +41,14 @@ class RuntimePublicAPITest {
         snapshotAPIAndCompare("../../stdlib/build/libs", "kotlin-stdlib", listOf("../stdlib-declarations.json", "../runtime-declarations.json"), listOf("kotlin.jvm.internal"))
     }
 
+    @Test fun kotlinStdlibJdk7() {
+        snapshotAPIAndCompare("../../stdlib/jdk7/build/libs", "kotlin-stdlib-jdk7", listOf("../stdlib-jdk7-declarations.json"))
+    }
+
+    @Test fun kotlinStdlibJdk8() {
+        snapshotAPIAndCompare("../../stdlib/jdk8/build/libs", "kotlin-stdlib-jdk8", listOf("../stdlib-jdk8-declarations.json"))
+    }
+
     @Test fun kotlinStdlibJre7() {
         snapshotAPIAndCompare("../../stdlib/jre7/build/libs", "kotlin-stdlib-jre7", listOf("../stdlib-jre7-declarations.json"))
     }

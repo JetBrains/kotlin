@@ -14,7 +14,7 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-/**
+/*
  * Taken from GWT project with modifications.
  * Original:
  *  repository: https://gwt.googlesource.com/gwt
@@ -33,15 +33,15 @@ import java.util.*;
  */
 public class JsVisitorWithContextImpl extends JsVisitorWithContext {
 
-    private final Stack<JsContext<JsStatement>> statementContexts = new Stack<JsContext<JsStatement>>();
+    protected final Stack<JsContext<JsStatement>> statementContexts = new Stack<>();
 
     public class ListContext<T extends JsNode> extends JsContext<T> {
         private List<T> nodes;
         private int index;
 
         // Those are reset in every iteration of traverse()
-        private final List<T> previous = new SmartList<T>();
-        private final List<T> next = new SmartList<T>();
+        private final List<T> previous = new SmartList<>();
+        private final List<T> next = new SmartList<>();
         private boolean removed = false;
 
         @Override
@@ -76,7 +76,7 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
             return null;
         }
 
-        protected void traverse(List<T> nodes) {
+        public void traverse(List<T> nodes) {
             assert previous.isEmpty(): "addPrevious() was called before traverse()";
             assert next.isEmpty(): "addNext() was called before traverse()";
             this.nodes = nodes;
@@ -102,6 +102,9 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
                     index += next.size();
                 }
             }
+
+            previous.clear();
+            next.clear();
         }
     }
 
@@ -135,7 +138,7 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
         }
     }
 
-    protected static void checkReplacement(@SuppressWarnings("UnusedParameters") JsNode origNode, JsNode newNode) {
+    private static void checkReplacement(@SuppressWarnings("UnusedParameters") JsNode origNode, JsNode newNode) {
         if (newNode == null) throw new RuntimeException("Cannot replace with null");
     }
 
@@ -151,7 +154,7 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
 
     @Override
     protected <T extends JsStatement> JsStatement doAcceptStatement(T statement) {
-        List<JsStatement> statements = new SmartList<JsStatement>(statement);
+        List<JsStatement> statements = new SmartList<>(statement);
         doAcceptStatementList(statements);
 
         if (statements.size() == 1) {
@@ -163,7 +166,7 @@ public class JsVisitorWithContextImpl extends JsVisitorWithContext {
 
     @Override
     protected void doAcceptStatementList(List<JsStatement> statements) {
-        ListContext<JsStatement> context = new ListContext<JsStatement>();
+        ListContext<JsStatement> context = new ListContext<>();
         statementContexts.push(context);
         context.traverse(statements);
         statementContexts.pop();

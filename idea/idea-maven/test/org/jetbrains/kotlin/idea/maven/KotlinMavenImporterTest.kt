@@ -23,12 +23,17 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
+import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.refactoring.toPsiFile
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.junit.Assert
 import java.io.File
 
@@ -735,7 +740,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -783,7 +788,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -831,7 +836,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -879,7 +884,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -927,7 +932,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -975,7 +980,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1023,12 +1028,12 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1081,7 +1086,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1123,7 +1128,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1165,7 +1170,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1211,7 +1216,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1259,7 +1264,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1307,7 +1312,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1355,7 +1360,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.1.0</version>
+                <version>$kotlinVersion</version>
             </dependency>
         </dependencies>
 
@@ -1379,7 +1384,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                         <dependency>
                             <groupId>org.jetbrains.kotlin</groupId>
                             <artifactId>kotlin-maven-allopen</artifactId>
-                            <version>1.1.0</version>
+                            <version>$kotlinVersion</version>
                         </dependency>
                     </dependencies>
 
@@ -1405,7 +1410,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                     listOf("plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.stereotype.Component",
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional",
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async",
-                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable"),
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable",
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.boot.test.context.SpringBootTest"),
                     compilerArguments!!.pluginOptions!!.toList()
             )
         }
@@ -1710,13 +1716,200 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         with (facetSettings("myModule3")) {
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
-            Assert.assertEquals("1.1", languageLevel!!.description)
-            Assert.assertEquals("1.1", apiLevel!!.description)
+            Assert.assertEquals(LanguageVersion.LATEST_STABLE, languageLevel)
+            Assert.assertEquals(LanguageVersion.LATEST_STABLE, apiLevel)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
                     listOf("-kotlin-home", "temp2"),
                     compilerSettings!!.additionalArgumentsAsList
             )
+        }
+    }
+
+    fun testMultiModuleImport() {
+        createProjectSubDirs("src/main/kotlin", "my-common-module/src/main/kotlin", "my-jvm-module/src/main/kotlin", "my-js-module/src/main/kotlin")
+
+        val mainPom = createProjectPom("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+        <packaging>pom</packaging>
+
+        <modules>
+            <module>my-common-module</module>
+            <module>my-jvm-module</module>
+            <module>my-js-module</module>
+        </modules>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>$kotlinVersion</version>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        val commonModule = createModulePom(
+                "my-common-module",
+                """
+
+                <parent>
+                    <groupId>test</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                </parent>
+
+                <groupId>test</groupId>
+                <artifactId>my-common-module</artifactId>
+                <version>1.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib-common</artifactId>
+                        <version>$kotlinVersion</version>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+
+                            <executions>
+                                <execution>
+                                    <id>meta</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>metadata</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </build>
+                """
+        )
+
+        val jvmModule = createModulePom(
+                "my-jvm-module",
+                """
+
+                <parent>
+                    <groupId>test</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                </parent>
+
+                <groupId>test</groupId>
+                <artifactId>my-jvm-module</artifactId>
+                <version>1.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib</artifactId>
+                        <version>$kotlinVersion</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>test</groupId>
+                        <artifactId>my-common-module</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+
+                            <executions>
+                                <execution>
+                                    <id>compile</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>compile</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </build>
+                """
+        )
+
+        val jsModule = createModulePom(
+                "my-js-module",
+                """
+
+                <parent>
+                    <groupId>test</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                </parent>
+
+                <groupId>test</groupId>
+                <artifactId>my-js-module</artifactId>
+                <version>1.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib-js</artifactId>
+                        <version>$kotlinVersion</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>test</groupId>
+                        <artifactId>my-common-module</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+
+                            <executions>
+                                <execution>
+                                    <id>js</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>js</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </build>
+                """
+        )
+
+        importProjects(mainPom, commonModule, jvmModule, jsModule)
+
+        assertModules("project", "my-common-module", "my-jvm-module", "my-js-module")
+        assertImporterStatePresent()
+
+        with (facetSettings("my-common-module")) {
+            Assert.assertEquals(TargetPlatformKind.Common.description, targetPlatformKind!!.description)
+        }
+
+        with (facetSettings("my-jvm-module")) {
+            Assert.assertEquals(TargetPlatformKind.Jvm(JvmTarget.JVM_1_6).description, targetPlatformKind!!.description)
+            Assert.assertEquals("my-common-module", implementedModuleName)
+        }
+
+        with (facetSettings("my-js-module")) {
+            Assert.assertEquals(TargetPlatformKind.JavaScript.description, targetPlatformKind!!.description)
+            Assert.assertEquals("my-common-module", implementedModuleName)
         }
     }
 
@@ -1785,6 +1978,217 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                 }
             }.execute()
         }
+    }
+
+    fun testProductionOnTestDependency() {
+        createProjectSubDirs(
+                "module-with-java/src/main/java",
+                "module-with-java/src/test/java",
+                "module-with-kotlin/src/main/kotlin",
+                "module-with-kotlin/src/test/kotlin"
+        )
+
+        val dummyFile = createProjectSubFile(
+                "module-with-kotlin/src/main/kotlin/foo/dummy.kt",
+                """
+                    package foo
+
+                    fun dummy() {
+                    }
+
+                """.trimIndent()
+        )
+
+        val pomA = createModulePom(
+                "module-with-java",
+                """
+                <parent>
+                    <groupId>test-group</groupId>
+                    <artifactId>mvnktest</artifactId>
+                    <version>0.0.0.0-SNAPSHOT</version>
+                </parent>
+
+                <artifactId>module-with-java</artifactId>
+
+                <build>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-jar-plugin</artifactId>
+                            <version>2.6</version>
+                            <executions>
+                                <execution>
+                                    <goals>
+                                        <goal>test-jar</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </build>
+                """.trimIndent()
+        )
+
+        val pomB = createModulePom(
+                "module-with-kotlin",
+                """
+                <parent>
+                    <groupId>test-group</groupId>
+                    <artifactId>mvnktest</artifactId>
+                    <version>0.0.0.0-SNAPSHOT</version>
+                </parent>
+
+                <artifactId>module-with-kotlin</artifactId>
+
+                <properties>
+                    <kotlin.version>1.1.4</kotlin.version>
+                    <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
+                    <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+                </properties>
+
+                <dependencies>
+
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib</artifactId>
+                        <version>${"$"}{kotlin.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-runtime</artifactId>
+                        <version>${"$"}{kotlin.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-reflect</artifactId>
+                        <version>${"$"}{kotlin.version}</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>test-group</groupId>
+                        <artifactId>module-with-java</artifactId>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>test-group</groupId>
+                        <artifactId>module-with-java</artifactId>
+                        <type>test-jar</type>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <plugins>
+                        <plugin>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <version>${"$"}{kotlin.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>compile</id>
+                                    <goals> <goal>compile</goal> </goals>
+                                    <configuration>
+                                        <sourceDirs>
+                                            <sourceDir>${"$"}{project.basedir}/src/main/kotlin</sourceDir>
+                                            <sourceDir>${"$"}{project.basedir}/src/main/java</sourceDir>
+                                        </sourceDirs>
+                                    </configuration>
+                                </execution>
+                                <execution>
+                                    <id>test-compile</id>
+                                    <goals> <goal>test-compile</goal> </goals>
+                                    <configuration>
+                                        <sourceDirs>
+                                            <sourceDir>${"$"}{project.basedir}/src/test/kotlin</sourceDir>
+                                            <sourceDir>${"$"}{project.basedir}/src/test/java</sourceDir>
+                                        </sourceDirs>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                            <version>3.5.1</version>
+                            <executions>
+                                <!-- Replacing default-compile as it is treated specially by maven -->
+                                <execution>
+                                    <id>default-compile</id>
+                                    <phase>none</phase>
+                                </execution>
+                                <!-- Replacing default-testCompile as it is treated specially by maven -->
+                                <execution>
+                                    <id>default-testCompile</id>
+                                    <phase>none</phase>
+                                </execution>
+                                <execution>
+                                    <id>java-compile</id>
+                                    <phase>compile</phase>
+                                    <goals> <goal>compile</goal> </goals>
+                                </execution>
+                                <execution>
+                                    <id>java-test-compile</id>
+                                    <phase>test-compile</phase>
+                                    <goals> <goal>testCompile</goal> </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </build>
+                """.trimIndent()
+        )
+
+        val pomMain = createModulePom(
+                "",
+                """
+                <groupId>test-group</groupId>
+                <artifactId>mvnktest</artifactId>
+                <version>0.0.0.0-SNAPSHOT</version>
+
+                <packaging>pom</packaging>
+
+                <properties>
+                    <kotlin.version>1.1.4</kotlin.version>
+                    <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
+                    <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+                </properties>
+
+                <modules>
+                    <module>module-with-java</module>
+                    <module>module-with-kotlin</module>
+                </modules>
+
+                <dependencyManagement>
+                    <dependencies>
+                        <dependency>
+                            <groupId>test-group</groupId>
+                            <artifactId>module-with-kotlin</artifactId>
+                            <version>${"$"}{project.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>test-group</groupId>
+                            <artifactId>module-with-java</artifactId>
+                            <version>${"$"}{project.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>test-group</groupId>
+                            <artifactId>module-with-java</artifactId>
+                            <version>${"$"}{project.version}</version>
+                            <type>test-jar</type>
+                            <scope>test</scope>
+                        </dependency>
+                    </dependencies>
+                </dependencyManagement>
+                """.trimIndent()
+        )
+
+        importProjects(pomMain, pomA, pomB)
+
+        assertModules("module-with-kotlin", "module-with-java", "mvnktest")
+
+        val dependencies = (dummyFile.toPsiFile(myProject) as KtFile).analyzeAndGetResult().moduleDescriptor.allDependencyModules
+        TestCase.assertTrue(dependencies.any { it.name.asString() == "<production sources for module module-with-java>" })
+        TestCase.assertTrue(dependencies.any { it.name.asString() == "<test sources for module module-with-java>" })
     }
 
     private fun assertImporterStatePresent() {

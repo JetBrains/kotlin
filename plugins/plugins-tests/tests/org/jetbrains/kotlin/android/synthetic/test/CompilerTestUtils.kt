@@ -35,6 +35,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 fun KtUsefulTestCase.createTestEnvironment(configuration: CompilerConfiguration, resDirectories: List<String>): KotlinCoreEnvironment {
@@ -59,7 +62,7 @@ fun KtUsefulTestCase.createTestEnvironment(configuration: CompilerConfiguration,
 
 fun addAndroidExtensionsRuntimeLibrary(environment: KotlinCoreEnvironment) {
     environment.apply {
-        val runtimeLibrary = File("out/production/android-extensions-runtime")
+        val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, "android-extensions-compiler.jar")
         updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary)))
     }
 }

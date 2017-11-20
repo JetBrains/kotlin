@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -43,6 +44,8 @@ class MoveReceiverAnnotationFix(element: KtAnnotationEntry) : KotlinQuickFixActi
     companion object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val entry = diagnostic.psiElement as? KtAnnotationEntry ?: return null
+
+            if (entry.useSiteTarget?.getAnnotationUseSiteTarget() != AnnotationUseSiteTarget.RECEIVER) return null
 
             val declaration = entry.getParentOfType<KtCallableDeclaration>(true) ?: return null
             if (declaration.receiverTypeReference == null) return null

@@ -74,6 +74,10 @@ sealed class LazyLightClassDataHolder(
             builder: LightClassBuilder, exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
     ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForFacade
 
+    class ForScript(
+            builder: LightClassBuilder, exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
+    ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForScript
+
     private inner class LazyLightClassData(
             findDelegate: (LightClassBuilderResult) -> PsiClass
     ) : LightClassData {

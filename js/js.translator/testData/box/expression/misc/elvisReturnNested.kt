@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 995
+// EXPECTED_REACHABLE_NODES: 1113
 /*
  * Issue: KT-4159 Kotlin to JS compiler crashes on code with ?: return
  *

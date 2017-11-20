@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addDelayedImportRequest
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -70,12 +70,20 @@ sealed class ContainerInfo {
         override fun matches(descriptor: DeclarationDescriptor): Boolean {
             return descriptor is PackageFragmentDescriptor && descriptor.fqName == fqName
         }
+
+        override fun equals(other: Any?) = other is Package && other.fqName == fqName
+
+        override fun hashCode() = fqName.hashCode()
     }
 
     class Class(override val fqName: FqName) : ContainerInfo() {
         override fun matches(descriptor: DeclarationDescriptor): Boolean {
             return descriptor is ClassDescriptor && descriptor.importableFqName == fqName
         }
+
+        override fun equals(other: Any?) = other is Class && other.fqName == fqName
+
+        override fun hashCode() = fqName.hashCode()
     }
 }
 
@@ -484,7 +492,7 @@ fun traverseOuterInstanceReferences(member: KtNamedDeclaration, stopAtFirst: Boo
 
     val context = member.analyzeFully()
     val containingClassOrObject = member.containingClassOrObject ?: return false
-    val outerClassDescriptor = containingClassOrObject.resolveToDescriptor() as ClassDescriptor
+    val outerClassDescriptor = containingClassOrObject.unsafeResolveToDescriptor() as ClassDescriptor
     var found = false
     member.accept(
             object : PsiRecursiveElementWalkingVisitor() {

@@ -28,8 +28,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
-import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
-import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -366,6 +365,9 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val projectFacade = globalFacade(settings)
         return ResolutionFacadeImpl(projectFacade, moduleInfo)
     }
+
+    override fun getResolutionFacadeByModuleInfo(moduleInfo: ModuleInfo, platform: TargetPlatform): ResolutionFacade? =
+            (moduleInfo as? IdeaModuleInfo)?.let { getResolutionFacadeByModuleInfo(it, platform) }
 
     private fun Collection<KtFile>.filterNotInProjectSource(moduleInfo: IdeaModuleInfo) = mapNotNull {
         if (it is KtCodeFragment) it.getContextFile() else it

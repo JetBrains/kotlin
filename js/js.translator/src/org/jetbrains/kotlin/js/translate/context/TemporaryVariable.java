@@ -21,33 +21,40 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class TemporaryVariable {
 
     /*package*/ static TemporaryVariable create(@NotNull JsName temporaryName, @Nullable JsExpression initExpression) {
         JsBinaryOperation rhs = null;
+        KotlinType type = null;
         if (initExpression != null) {
             rhs = JsAstUtils.assignment(temporaryName.makeRef(), initExpression);
             rhs.source(initExpression.getSource());
             MetadataProperties.setSynthetic(rhs, true);
+            type = MetadataProperties.getType(initExpression);
         }
-        return new TemporaryVariable(temporaryName, rhs);
+        return new TemporaryVariable(temporaryName, rhs, type);
     }
 
     @Nullable
     private final JsExpression assignmentExpression;
     @NotNull
     private final JsName variableName;
+    @Nullable
+    private final KotlinType type;
 
-    protected TemporaryVariable(@NotNull JsName temporaryName, @Nullable JsExpression assignmentExpression) {
+    protected TemporaryVariable(@NotNull JsName temporaryName, @Nullable JsExpression assignmentExpression, @Nullable KotlinType type) {
         this.variableName = temporaryName;
         this.assignmentExpression = assignmentExpression;
+        this.type = type;
     }
 
     @NotNull
     public JsNameRef reference() {
         JsNameRef result = variableName.makeRef();
         MetadataProperties.setSynthetic(result, true);
+        MetadataProperties.setType(result, type);
         return result;
     }
 

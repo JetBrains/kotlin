@@ -1,0 +1,7 @@
+package
+
+public fun foo(): kotlin.Unit
+public inline fun myRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public inline fun unknownRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit

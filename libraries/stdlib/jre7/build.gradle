@@ -1,9 +1,10 @@
-description = 'Kotlin Standard Library JRE 7 extension'
+description = 'Kotlin Standard Library JRE 7 extension (deprecated)'
 
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
+ext.javaHome = JDK_17
 
 dependencies {
     compile project(':kotlin-stdlib')
@@ -48,7 +49,8 @@ compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
-            "-Xdump-declarations-to", "${buildDir}/stdlib-jre7-declarations.json",
+            "-Xnormalize-constructor-calls=enable",
+            "-Xdump-declarations-to=${buildDir}/stdlib-jre7-declarations.json",
             "-module-name", project.name
     ]
 }
@@ -64,13 +66,18 @@ test {
 }
 
 task testJre6Tests(type: Test) {
-    dependsOn project(':kotlin-stdlib').tasks.testClasses
+    dependsOn(':kotlin-stdlib:testClasses')
     group = "verification"
 
     executable = "$JDK_17/bin/java"
 
-    testClassesDir = project.file('../build/classes/test')
-    classpath = project.files('../build/classes/test') + sourceSets.test.compileClasspath
+    doFirst {
+        testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
+        classpath = files(
+                testClassesDirs,
+                configurations.testCompile
+        )
+    }
 }
 
 check.dependsOn testJre6Tests

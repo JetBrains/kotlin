@@ -67,7 +67,9 @@ class KtLightAnnotationForSourceEntry(
             val delegate: D,
             private val parent: PsiElement,
             valueOrigin: AnnotationValueOrigin
-    ) : PsiAnnotationMemberValue, PsiElement by delegate {
+    ) : PsiAnnotationMemberValue, PsiCompiledElement, PsiElement by delegate {
+        override fun getMirror(): PsiElement = delegate
+
         val originalExpression: PsiElement? by lazyPub(valueOrigin)
 
         fun getConstantValue(): Any? {
@@ -81,9 +83,11 @@ class KtLightAnnotationForSourceEntry(
         override fun getReferences() = originalExpression?.references.orEmpty()
         override fun getLanguage() = KotlinLanguage.INSTANCE
         override fun getNavigationElement() = originalExpression
+        override fun isPhysical(): Boolean = originalExpression?.containingFile == kotlinOrigin.containingFile
         override fun getTextRange() = originalExpression?.textRange ?: TextRange.EMPTY_RANGE
         override fun getParent() = parent
         override fun getText() = originalExpression?.text.orEmpty()
+        override fun getContainingFile(): PsiFile? = if (isPhysical) kotlinOrigin.containingFile else delegate.containingFile
 
         override fun replace(newElement: PsiElement): PsiElement {
             val value = (newElement as? PsiLiteral)?.value as? String ?: return this
@@ -107,7 +111,7 @@ class KtLightAnnotationForSourceEntry(
         val annotationConstructor = resolvedCall.resultingDescriptor
         val parameterName =
                 memberValue.getNonStrictParentOfType<PsiNameValuePair>()?.name ?:
-                memberValue.getNonStrictParentOfType<PsiAnnotationMethod>()?.name ?:
+                memberValue.getNonStrictParentOfType<PsiAnnotationMethod>()?.takeIf { it.containingClass?.isAnnotationType == true }?.name ?:
                 "value"
 
         val parameter = annotationConstructor.valueParameters.singleOrNull { it.name.asString() == parameterName } ?: return null
@@ -179,7 +183,13 @@ class KtLightAnnotationForSourceEntry(
         private val _initializers by lazyPub {
             delegate.initializers.mapIndexed { i, it ->
                 wrapAnnotationValue(it, this, {
-                    (originalExpression as KtCallElement).valueArguments[i].getArgumentExpression()!!
+                    originalExpression.let {
+                        when (it) {
+                            is KtCallElement -> it.valueArguments[i].getArgumentExpression()!!
+                            is KtCollectionLiteralExpression -> it.getInnerExpressions()[i]
+                            else -> throw UnsupportedOperationException("cant process $it of type ${it?.javaClass}")
+                        }
+                    }
                 })
             }.toTypedArray()
         }

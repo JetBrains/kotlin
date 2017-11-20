@@ -206,10 +206,11 @@ class ForConverter(
         if (indicesRange != null) return indicesRange
 
         val startConverted = codeConverter.convertExpression(start)
-        return if (reversed)
-            DownToExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else +1))
-        else
-            RangeExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else -1))
+        return when {
+            reversed -> DownToExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else +1))
+            bound !is PsiLiteralExpression && !inclusiveComparison -> UntilExpression(startConverted, convertBound(bound, 0))
+            else -> RangeExpression(startConverted, convertBound(bound, if (inclusiveComparison) 0 else -1))
+        }
     }
 
     private fun indicesIterationRange(start: PsiExpression, bound: PsiExpression, reversed: Boolean, inclusiveComparison: Boolean): Expression? {

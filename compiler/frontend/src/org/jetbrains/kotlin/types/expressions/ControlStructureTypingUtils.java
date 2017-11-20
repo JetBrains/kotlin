@@ -206,6 +206,9 @@ public class ControlStructureTypingUtils {
             dataFlowInfoForArgumentsMap.put(valueArgument, dataFlowInfo);
         }
 
+        @Override
+        public void updateResultInfo(@NotNull DataFlowInfo dataFlowInfo) { }
+
         @NotNull
         @Override
         public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
@@ -358,7 +361,8 @@ public class ControlStructureTypingUtils {
                                 .replaceExpectedType(c.expectedType)
                                 .replaceDataFlowInfo(typeInfo.getDataFlowInfo())
                                 .replaceBindingTrace(c.trace),
-                        hasError
+                        hasError,
+                        true
                 );
                 return hasError.get();
             }

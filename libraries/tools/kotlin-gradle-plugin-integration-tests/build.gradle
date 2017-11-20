@@ -13,13 +13,51 @@ dependencies {
     testCompile project(':kotlin-gradle-plugin').sourceSets.test.output
     testCompile project(':kotlin-gradle-subplugin-example')
     testCompile project(':kotlin-allopen')
+    testCompile project(':kotlin-test:kotlin-test-jvm')
 
-    testCompile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
-    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    testCompile "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
-    testCompile "org.jetbrains.kotlin:kotlin-build-common-test:$kotlin_version"
+    testCompile project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+    testCompile project(path: ':examples:annotation-processor-example')
+    testCompile project(':kotlin-stdlib-jre8')
+    testCompile project(':kotlin-reflect')
+    testCompile project(':kotlin-android-extensions')
+    testCompile project(path: ':kotlin-build-common', configuration: 'tests-jar')
+    testCompile project(path: ':compiler:incremental-compilation-impl', configuration: 'tests-jar')
 
     testCompile 'org.jetbrains.kotlin:gradle-api:2.2'
+
+    testRuntime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
+}
+
+test.dependsOn(":kotlin-allopen:install",
+               ":kotlin-android-extensions:install",
+               ":kotlin-build-common:install",
+               ":kotlin-compiler-embeddable:install",
+               ":kotlin-gradle-plugin:install",
+               ":kotlin-reflect:install",
+               ":kotlin-test:kotlin-test-jvm:install",
+               ":kotlin-gradle-subplugin-example:install",
+               ":kotlin-stdlib-jre8:install",
+               ":examples:annotation-processor-example:install")
+
+// Validate that all dependencies 'install' tasks are added to 'test' dependencies
+// Test dependencies are specified as paths to avoid forcing dependency resolution
+// and also to avoid specifying evaluationDependsOn for each testCompile dependency.
+gradle.taskGraph.whenReady {
+    def notAddedTestTasks = []
+    def testDependencies = test.dependsOn
+
+    for (dependency in configurations.getByName("testCompile").allDependencies) {
+        if (!(dependency instanceof ProjectDependency)) continue
+
+        def task = dependency.dependencyProject.tasks.findByName("install")
+        if (task != null && !testDependencies.contains(task.path)) {
+            notAddedTestTasks.add("\"${task.path}\"")
+        }
+    }
+
+    if (!notAddedTestTasks.isEmpty()) {
+        throw new GradleException("Add the following tasks to ${test.path} dependencies:\n  ${notAddedTestTasks.join(",\n  ")}")
+    }
 }
 
 processResources {
@@ -33,6 +71,12 @@ tasks.withType(Test) {
     onlyIf { !project.hasProperty("noTest") }
 
     executable = "${JDK_18}/bin/java"
+
+    systemProperty("kotlinVersion", kotlinVersion)
+    def mavenLocalRepo = System.getProperty("maven.repo.local")
+    if (mavenLocalRepo != null) {
+        systemProperty("maven.repo.local", mavenLocalRepo)
+    }
 
     testLogging {
         // set options for log level LIFECYCLE

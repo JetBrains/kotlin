@@ -22,70 +22,124 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestUtil
-import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager.Companion.updateScriptDependenciesSynchronously
 import org.jetbrains.kotlin.idea.navigation.GotoCheck
-import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
-import org.jetbrains.kotlin.script.ScriptTemplatesProvider
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.util.addDependency
+import org.jetbrains.kotlin.test.util.projectLibrary
 import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
 import java.util.regex.Pattern
+import kotlin.script.dependencies.Environment
 
 
 abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfigurationTest() {
-    override fun doTest(path: String) {
-        configureScriptEnvironment(path)
-
-        super.doTest(setupScriptFile(path))
+    fun doTest(path: String) {
+        configureScriptFile(path)
+        checkHighlighting(editor, false, false)
     }
 }
 
 abstract class AbstractScriptConfigurationNavigationTest : AbstractScriptConfigurationTest() {
 
-    override fun doTest(path: String) {
-        configureScriptEnvironment(path)
-
-        myFixture.configureFromExistingVirtualFile(setupScriptFile(path))
-        val reference = myFixture.getReferenceAtCaretPosition()!!
+    fun doTest(path: String) {
+        configureScriptFile(path)
+        val reference = file!!.findReferenceAt(myEditor.caretModel.offset)!!
 
         val resolved = reference.resolve()!!.navigationElement!!
 
-        val expectedReference = InTextDirectivesUtils.findStringWithPrefixes(myFixture.file.text, "// REF:")
+        val expectedReference = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// REF:")
         val actualReference = resolved.renderAsGotoImplementation()
 
         Assert.assertEquals(expectedReference, actualReference)
 
-        val expectedFile = InTextDirectivesUtils.findStringWithPrefixes(myFixture.file.text, "// FILE:")
+        val expectedFile = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// FILE:")
         val actualFile = GotoCheck.getFileWithDir(resolved)
 
         Assert.assertEquals(expectedFile, actualFile)
     }
 }
 
-abstract class AbstractScriptConfigurationTest : AbstractPsiCheckerTest() {
-    protected fun configureScriptEnvironment(path: String) {
-        val templateOutDir = compileLibToDir(
-                File("${path}template"),
-                PathUtil.kotlinPathsForDistDirectory.scriptRuntimePath.path
-        )
+private val validKeys = setOf("sources", "classpath", "imports")
+private const val useDefaultTemplate = "// DEPENDENCIES:"
+// some bugs can only be reproduced when some module and script have intersecting library dependencies
+private const val configureConflictingModule = "// CONFLICTING_MODULE"
 
-        val libSrcDir = File("${path}lib")
-        val libClasses = if (libSrcDir.isDirectory) {
-            compileLibToDir(libSrcDir)
+private fun String.splitOrEmpty(delimeters: String) = split(delimeters).takeIf { it.size > 1 } ?: emptyList()
+private val switches = listOf(
+        useDefaultTemplate,
+        configureConflictingModule
+)
+
+abstract class AbstractScriptConfigurationTest : KotlinDaemonAnalyzerTestCase() {
+
+    protected fun configureScriptFile(path: String) {
+        val environment = createScriptEnvironment(path)
+        registerScriptTemplateProvider(environment)
+
+        if (configureConflictingModule in environment) {
+            val sharedLib = LocalFileSystem.getInstance ().findFileByIoFile(environment["lib-classes"] as File)!!
+            module.addDependency(projectLibrary("sharedLib", classesRoot = sharedLib))
         }
-        else null
 
-        registerScriptTemplateProvider(templateOutDir, libClasses, libSrcDir)
+        val scriptFile = createFileAndSyncDependencies(path)
+        configureByExistingFile(scriptFile)
     }
 
-    protected fun setupScriptFile(path: String): VirtualFile {
+
+    private fun createScriptEnvironment(path: String): Environment {
+        val defaultEnvironment = defaultEnvironment(path)
+        val env = mutableMapOf<String, Any?>()
+        File("${path}script.kts").forEachLine { line ->
+            line.trim().takeIf { useDefaultTemplate in it }?.substringAfter(useDefaultTemplate)?.split(";")?.forEach { entry ->
+                val (key, values) = entry.splitOrEmpty(":").map { it.trim() }
+                assert(key in validKeys) { "Unexpected key: $key" }
+                env[key] = values.split(",").map {
+                    val str = it.trim()
+                    defaultEnvironment[str] ?: str
+                }
+            }
+
+            switches.forEach {
+                if (it in line) {
+                    env[it] = true
+                }
+            }
+        }
+        if (env[useDefaultTemplate] == true && defaultEnvironment["template-classes"] != null) {
+            error("Script configuration should be defined by either '$useDefaultTemplate' clause or via template in 'template' directory")
+        }
+        env.putAll(defaultEnvironment)
+        return env
+    }
+
+    private fun defaultEnvironment(path: String): Map<String, File?> {
+        val templateOutDir = File("${path}template").takeIf { it.isDirectory }?.let {
+            compileLibToDir(it, PathUtil.kotlinPathsForDistDirectory.scriptRuntimePath.path)
+        }
+
+        val libSrcDir = File("${path}lib").takeIf { it.isDirectory }
+
+        val libClasses = libSrcDir?.let { compileLibToDir(it) }
+
+        return mapOf(
+                "runtime-classes" to ForTestCompileRuntime.runtimeJarForTests(),
+                "runtime-source" to File("libraries/stdlib/src"),
+                "lib-classes" to libClasses,
+                "lib-source" to libSrcDir,
+                "template-classes" to templateOutDir
+        )
+    }
+
+    private fun createFileAndSyncDependencies(path: String): VirtualFile {
         val scriptDir = KotlinTestUtils.tmpDir("scriptDir")
         val target = File(scriptDir, "script.kts")
         File("${path}script.kts").copyTo(target)
@@ -112,36 +166,20 @@ abstract class AbstractScriptConfigurationTest : AbstractPsiCheckerTest() {
         return outDir
     }
 
-    private fun registerScriptTemplateProvider(templateDir: File, libClasses: File?, libSource: File?) {
-        val provider = TestScriptTemplateProvider(
-                templateDir,
-                mapOf(
-                        "runtime-classes" to ForTestCompileRuntime.runtimeJarForTests(),
-                        "runtime-source" to File("libraries/stdlib/src"),
-                        "lib-classes" to libClasses,
-                        "lib-source" to libSource,
-                        "template-classes" to templateDir
-                )
-        )
+    private fun registerScriptTemplateProvider(environment: Environment) {
+        val provider = if (environment[useDefaultTemplate] == true) {
+            FromTextTemplateProvider(environment)
+        }
+        else {
+            CustomScriptTemplateProvider(environment)
+        }
 
         PlatformTestUtil.registerExtension(
                 Extensions.getArea(project),
-                ScriptTemplatesProvider.EP_NAME,
+                ScriptDefinitionContributor.EP_NAME,
                 provider,
                 testRootDisposable
         )
-        ScriptDependenciesManager.reloadScriptDefinitions(project)
+        ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitions()
     }
-
-    override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
-}
-
-class TestScriptTemplateProvider(
-        compiledTemplateDir: File,
-        override val environment: Map<String, Any?>
-) : ScriptTemplatesProvider {
-    override val id = "Test"
-    override val isValid = true
-    override val templateClassNames = listOf("custom.scriptDefinition.Template")
-    override val templateClasspath = listOf(compiledTemplateDir)
 }

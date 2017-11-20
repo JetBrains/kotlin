@@ -50,6 +50,11 @@ fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
  * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
  */
 fun isKotlinInternalCompiledFile(file: VirtualFile, fileContent: ByteArray? = null): Boolean {
+    // Don't crash on invalid files (EA-97751)
+    if (!file.isValid || fileContent?.size == 0) {
+        return false
+    }
+
     if (!IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file, fileContent)) {
         return false
     }

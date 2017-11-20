@@ -884,11 +884,15 @@ open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {
 @ScriptTemplateDefinition(resolver = TestKotlinScriptDummyDependenciesResolver::class)
 abstract class ScriptWithNoParam
 
-internal fun classpathFromClassloader(): List<File> =
-        (TestKotlinScriptDummyDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
-                ?.mapNotNull(URL::toFile)
-                ?.filter { it.path.contains("out") && it.path.contains("test") }
-        ?: emptyList()
+internal fun classpathFromClassloader(): List<File> {
+    val additionalClasspath = System.getProperty("kotlin.test.script.classpath")?.split(File.pathSeparator)
+            ?.map{ File(it) }.orEmpty()
+    return ((TestKotlinScriptDummyDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
+                   ?.mapNotNull(URL::toFile)
+                   ?.filter { it.path.contains("out") && it.path.contains("test") }
+           ?: emptyList()
+           ) + additionalClasspath
+}
 
 internal fun URL.toFile() =
         try {

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.android.synthetic
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import kotlinx.android.extensions.CacheImplementation
+import org.jetbrains.kotlin.android.parcel.ParcelableAnnotationChecker
 import org.jetbrains.kotlin.android.parcel.ParcelableCodegenExtension
 import org.jetbrains.kotlin.android.parcel.ParcelableDeclarationChecker
 import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension
@@ -135,5 +136,6 @@ class AndroidExtensionPropertiesComponentContainerContributor : StorageComponent
 
         container.useInstance(AndroidExtensionPropertiesCallChecker())
         container.useInstance(ParcelableDeclarationChecker())
+        container.useInstance(ParcelableAnnotationChecker())
     }
 }

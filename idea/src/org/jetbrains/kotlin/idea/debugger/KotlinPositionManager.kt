@@ -36,7 +36,6 @@ import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
@@ -234,8 +233,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         if (psiFile is ClsFileImpl) {
             val decompiledPsiFile = psiFile.readAction { it.decompiledPsiFile }
             if (decompiledPsiFile is KtClsFile && sourcePosition.line == -1) {
-                val className =
-                        JvmFileClassUtil.getFileClassInfoNoResolve(decompiledPsiFile).fileClassFqName.internalNameWithoutInnerClasses
+                val className = JvmFileClassUtil.getFileClassInternalName(decompiledPsiFile)
                 return myDebugProcess.virtualMachineProxy.classesByName(className)
             }
         }

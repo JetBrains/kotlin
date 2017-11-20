@@ -21,6 +21,7 @@ import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -55,7 +56,7 @@ public class KotlinCodegenFacade {
         for (KtFile file : files) {
             if (file == null) throw new IllegalArgumentException("A null file given for compilation");
 
-            JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
+            JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file);
 
             if (fileClassInfo.getWithJvmMultifileClass()) {
                 filesInMultifileClasses.putValue(fileClassInfo.getFacadeClassFqName(), file);

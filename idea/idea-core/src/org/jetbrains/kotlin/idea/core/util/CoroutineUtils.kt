@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.idea.core.util
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.experimental.Job
 import kotlin.coroutines.experimental.AbstractCoroutineContextElement
 import kotlin.coroutines.experimental.CoroutineContext
 
@@ -35,5 +40,21 @@ public object EDT : CoroutineDispatcher() {
 
     class ModalityStateElement(val modalityState: ModalityState) : AbstractCoroutineContextElement(Key) {
         companion object Key : CoroutineContext.Key<ModalityStateElement>
+    }
+
+    operator fun invoke(project: Project) = this + project.cancelOnDisposal
+}
+
+// job that is cancelled when the project is disposed
+val Project.cancelOnDisposal: Job
+    get() = service<ProjectJob>().sharedJob
+
+internal class ProjectJob(project: Project) {
+    internal val sharedJob: Job = Job()
+
+    init {
+        Disposer.register(project, Disposable {
+            sharedJob.cancel()
+        })
     }
 }

@@ -67,6 +67,8 @@ open class FakeCallableDescriptorForObject(
 
     override fun isConst(): Boolean = false
 
+    override fun isLateInit(): Boolean = false
+
     override fun equals(other: Any?) = other is FakeCallableDescriptorForObject && classDescriptor == other.classDescriptor
 
     override fun hashCode() = classDescriptor.hashCode()

@@ -38,6 +38,8 @@ abstract class AbstractAndroidIntentionTest : KotlinAndroidTestCase() {
         val checkManifest = InTextDirectivesUtils.isDirectiveDefined(testFileText, "// CHECK_MANIFEST")
 
         try {
+            ConfigLibraryUtil.addLibrary(myModule, "androidExtensionsRuntime",
+                                         "dist/kotlinc/lib", arrayOf("android-extensions-runtime.jar"))
             if (withRuntime) {
                 ConfigLibraryUtil.configureKotlinRuntime(myFixture.module)
             }
@@ -74,6 +76,7 @@ abstract class AbstractAndroidIntentionTest : KotlinAndroidTestCase() {
             }
         }
         finally {
+            ConfigLibraryUtil.removeLibrary(myModule, "androidExtensionsRuntime")
             if (withRuntime) {
                 ConfigLibraryUtil.unConfigureKotlinRuntime(myFixture.module)
             }

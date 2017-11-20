@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
+// JAVAC_SKIP
 // FILE: p/J.java
 
 package p;

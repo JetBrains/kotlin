@@ -1,9 +1,9 @@
-impl fun Int.plus(s: CharSequence): Int = 0
+actual fun Int.plus(s: CharSequence): Int = 0
 
-impl fun Double.times(x: CharArray) {}
+actual fun Double.times(x: CharArray) {}
 
-impl fun f1() {}
+actual fun f1() {}
 
-impl fun f2() {}
+actual fun f2() {}
 
-impl fun f3() {}
+actual fun f3() {}

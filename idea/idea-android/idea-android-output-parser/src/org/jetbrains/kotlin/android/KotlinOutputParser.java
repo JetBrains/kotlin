@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.android;
 
 import com.android.ide.common.blame.parser.PatternAwareOutputParser;
 import com.android.ide.common.blame.parser.util.OutputLineReader;
+import com.android.ide.common.blame.Message;
 import com.android.utils.ILogger;
 
 import java.util.List;
 
 public class KotlinOutputParser implements PatternAwareOutputParser {
     @Override
-    public boolean parse(String s, OutputLineReader reader, List list, ILogger logger) {
-        return KotlinOutputParserHelperKt.parse(s, reader, list, logger);
+    public boolean parse(String s, OutputLineReader reader, List<Message> list, ILogger logger) {
+        return KotlinOutputParserHelperKt.parse(s, reader, list);
     }
 }

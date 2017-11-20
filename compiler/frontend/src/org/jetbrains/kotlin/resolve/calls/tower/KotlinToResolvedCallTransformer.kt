@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.DiagnosticReporterByTrackingStrategy
-import org.jetbrains.kotlin.resolve.calls.REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isFakeElement
@@ -66,10 +65,16 @@ class KotlinToResolvedCallTransformer(
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+        private val deprecationResolver: DeprecationResolver,
         private val expressionTypingServices: ExpressionTypingServices,
         private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
         private val additionalDiagnosticReporter: AdditionalDiagnosticReporter
- ) {
+) {
+
+    companion object {
+        private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
+            get() = false
+    }
 
     fun <D : CallableDescriptor> onlyTransform(
             resolvedCallAtom: ResolvedCallAtom
@@ -82,7 +87,13 @@ class KotlinToResolvedCallTransformer(
         val candidate = baseResolvedCall.resultCallAtom!!
         when (baseResolvedCall.type) {
             CallResolutionResult.Type.PARTIAL -> {
-                context.trace.record(BindingContext.ONLY_RESOLVED_CALL, candidate.atom.psiKotlinCall.psiCall, baseResolvedCall)
+                val psiKotlinCall = candidate.atom.psiKotlinCall
+                val psiCall = if (psiKotlinCall is PSIKotlinCallForInvoke)
+                    psiKotlinCall.baseCall.psiCall
+                else
+                    psiKotlinCall.psiCall
+
+                context.trace.record(BindingContext.ONLY_RESOLVED_CALL, psiCall, baseResolvedCall)
 
                 return createStubResolvedCallAndWriteItToTrace(candidate, context.trace)
             }
@@ -90,7 +101,7 @@ class KotlinToResolvedCallTransformer(
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(resultSubstitutor, context.trace, context, this,
                                                                  expressionTypingServices, argumentTypeResolver, doubleColonExpressionResolver,
-                                                                 languageFeatureSettings)
+                                                                 languageFeatureSettings, deprecationResolver)
 
                 for (subKtPrimitive in candidate.subResolvedAtoms) {
                     ktPrimitiveCompleter.completeAll(subKtPrimitive)
@@ -175,7 +186,7 @@ class KotlinToResolvedCallTransformer(
             val argumentMapping = resolvedCall.getArgumentMapping(valueArgument!!)
             val (expectedType, callPosition) = when (argumentMapping) {
                 is ArgumentMatch -> Pair(
-                        getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument),
+                        getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument, context),
                         CallPosition.ValueArgumentPosition(resolvedCall, argumentMapping.valueParameter, valueArgument))
                 else -> Pair(TypeUtils.NO_EXPECTED_TYPE, CallPosition.Unknown)
             }
@@ -188,14 +199,15 @@ class KotlinToResolvedCallTransformer(
             // todo external argument
 
             val argumentExpression = valueArgument.getArgumentExpression() ?: continue
-            updateRecordedType(argumentExpression, newContext)
+            updateRecordedType(argumentExpression, newContext, resolvedCall.isReallySuccess())
         }
 
     }
 
     fun updateRecordedType(
             expression: KtExpression,
-            context: BasicCallResolutionContext
+            context: BasicCallResolutionContext,
+            reportErrorForTypeMismatch: Boolean
     ): KotlinType? {
         val deparenthesized = expression.let {
             KtPsiUtil.getLastElementDeparenthesized(it, context.statementFilter)
@@ -214,7 +226,7 @@ class KotlinToResolvedCallTransformer(
 
         updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context)
 
-        dataFlowAnalyzer.checkType(updatedType, deparenthesized, context)
+        dataFlowAnalyzer.checkType(updatedType, deparenthesized, context, reportErrorForTypeMismatch)
 
         return updatedType
     }

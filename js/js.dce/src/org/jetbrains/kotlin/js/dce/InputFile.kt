@@ -16,4 +16,4 @@
 
 package org.jetbrains.kotlin.js.dce
 
-class InputFile(val path: String, val outputPath: String, val moduleName: String? = null)
+class InputFile(val path: String, val pathToSourceMap: String?, val outputPath: String, val moduleName: String? = null)

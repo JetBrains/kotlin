@@ -28,8 +28,8 @@ enum class Test {
 // EXIST:  suspend
 // EXIST: fun
 // EXIST:  typealias
-// EXIST:  header
-// EXIST:  impl
+// EXIST:  expect
+// EXIST:  actual
 
 /* TODO: items below are not valid here */
 // EXIST: class

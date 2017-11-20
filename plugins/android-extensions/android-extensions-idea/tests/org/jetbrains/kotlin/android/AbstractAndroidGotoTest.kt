@@ -17,17 +17,12 @@
 package org.jetbrains.kotlin.android
 
 import com.intellij.codeInsight.TargetElementUtil
-import org.jetbrains.kotlin.psi.KtProperty
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
-import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.psi.xml.XmlAttributeValue
-import org.apache.xmlbeans.impl.common.ResolverUtil
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.test.KotlinTestUtils
 
 abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
 

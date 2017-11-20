@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallDataHtmlRenderer;
 import java.net.URL;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
-import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING;
+import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextElementType;
 import static org.jetbrains.kotlin.idea.highlighter.HtmlTabledDescriptorRenderer.tableForTypes;
 import static org.jetbrains.kotlin.idea.highlighter.IdeRenderers.*;
@@ -175,6 +174,14 @@ public class IdeErrorMessages {
         MAP.put(UNSUPPORTED_FEATURE, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED, true));
         MAP.put(EXPERIMENTAL_FEATURE_WARNING, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.WARNING, true));
         MAP.put(EXPERIMENTAL_FEATURE_ERROR, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.ERROR, true));
+
+        MAP.put(NO_ACTUAL_FOR_EXPECT, "<html>Expected {0} has no actual declaration in module{1}{2}</html>", DECLARATION_NAME_WITH_KIND,
+                PLATFORM, new PlatformIncompatibilityDiagnosticRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
+        MAP.put(ACTUAL_WITHOUT_EXPECT, "<html>{0} has no corresponding expected declaration{1}</html>", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
+                new PlatformIncompatibilityDiagnosticRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
+
+        MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "<html>Actual class ''{0}'' has no corresponding members for expected class members:{1}</html>",
+                NAME, new IncompatibleExpectedActualClassScopesRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
 
         MAP.setImmutable();
     }

@@ -1,0 +1,160 @@
+public final class k/KotlinParcelable$Companion : java/lang/Object {
+    private void <init>()
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker p0)
+}
+
+public final class k/KotlinParcelable$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public k.KotlinParcelable createFromParcel(android.os.Parcel p0) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (source)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+        LINENUMBER (23)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          ISTORE (2)
+        LABEL (L2)
+        LINENUMBER (24)
+          NEW
+          DUP
+          ILOAD (2)
+          INVOKESPECIAL (k/KotlinParcelable, <init>, (I)V)
+          ARETURN
+        LABEL (L3)
+    }
+
+    public java.lang.Object createFromParcel(android.os.Parcel p0) {
+        LABEL (L0)
+        LINENUMBER (21)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (k/KotlinParcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Lk/KotlinParcelable;)
+          ARETURN
+    }
+
+    public k.KotlinParcelable[] newArray(int p0)
+
+    public java.lang.Object[] newArray(int p0)
+}
+
+public final class k/KotlinParcelable : java/lang/Object, android/os/Parcelable {
+    public final static k.KotlinParcelable$Creator CREATOR
+
+    public final static k.KotlinParcelable$Companion Companion
+
+    private int data
+
+    static void <clinit>() {
+          NEW
+          DUP
+          ACONST_NULL
+          INVOKESPECIAL (k/KotlinParcelable$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          PUTSTATIC (Companion, Lk/KotlinParcelable$Companion;)
+        LABEL (L0)
+        LINENUMBER (18)
+          NEW
+          DUP
+          INVOKESPECIAL (k/KotlinParcelable$Creator, <init>, ()V)
+          PUTSTATIC (CREATOR, Lk/KotlinParcelable$Creator;)
+          RETURN
+    }
+
+    public void <init>(int p0)
+
+    public final int component1()
+
+    public final k.KotlinParcelable copy(int p0)
+
+    public static k.KotlinParcelable copy$default(k.KotlinParcelable p0, int p1, int p2, java.lang.Object p3)
+
+    public int describeContents()
+
+    public boolean equals(java.lang.Object p0)
+
+    public final int getData()
+
+    public int hashCode()
+
+    public final void setData(int p0)
+
+    public java.lang.String toString()
+
+    public void writeToParcel(android.os.Parcel p0, int p1) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (dest)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+        LINENUMBER (13)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (data, I)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+        LABEL (L2)
+        LINENUMBER (14)
+          RETURN
+        LABEL (L3)
+    }
+}
+
+public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (in)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          NEW
+          DUP
+          ALOAD (1)
+          GETSTATIC (CREATOR, Lk/KotlinParcelable$Creator;)
+          SWAP
+          INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
+          CHECKCAST
+          INVOKESPECIAL (test/Foo, <init>, (Lk/KotlinParcelable;)V)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final test.Foo[] newArray(int p0)
+}
+
+public final class test/Foo : java/lang/Object, android/os/Parcelable {
+    public final static test.Foo$Creator CREATOR
+
+    private final k.KotlinParcelable kp
+
+    static void <clinit>() {
+          NEW
+          DUP
+          INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
+          PUTSTATIC (CREATOR, Ltest/Foo$Creator;)
+          RETURN
+    }
+
+    public void <init>(k.KotlinParcelable p0)
+
+    public final int describeContents()
+
+    public final k.KotlinParcelable getKp()
+
+    public final void writeToParcel(android.os.Parcel p0, int p1) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (kp, Lk/KotlinParcelable;)
+          SWAP
+          LDC (0)
+          INVOKEINTERFACE (android/os/Parcelable, writeToParcel, (Landroid/os/Parcel;I)V)
+          RETURN
+        LABEL (L1)
+    }
+}

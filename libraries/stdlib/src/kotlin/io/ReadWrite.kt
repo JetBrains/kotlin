@@ -43,6 +43,7 @@ public fun Reader.readLines(): List<String> {
  * the processing is complete.
  * @return the value returned by [block].
  */
+@RequireKotlin("1.2", versionKind = RequireKotlinVersionKind.COMPILER_VERSION, message = "Requires newer compiler version to be inlined correctly.")
 public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
         buffered().use { block(it.lineSequence()) }
 

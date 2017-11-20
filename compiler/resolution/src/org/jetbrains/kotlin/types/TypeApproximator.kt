@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
-import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntersectionStrategy.*
 import org.jetbrains.kotlin.types.checker.*
@@ -80,8 +81,8 @@ class TypeApproximator {
     private val referenceApproximateToSuperType = this::approximateSimpleToSuperType
     private val referenceApproximateToSubType = this::approximateSimpleToSubType
 
-    fun approximateDeclarationType(baseType: KotlinType, local: Boolean): UnwrappedType {
-        if (!USE_NEW_INFERENCE) return baseType.unwrap()
+    fun approximateDeclarationType(baseType: KotlinType, local: Boolean, languageVersionSettings: LanguageVersionSettings): UnwrappedType {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return baseType.unwrap()
 
         val configuration = if (local) TypeApproximatorConfiguration.LocalDeclaration else TypeApproximatorConfiguration.PublicDeclaration
         return approximateToSuperType(baseType.unwrap(), configuration) ?: baseType.unwrap()
@@ -126,7 +127,8 @@ class TypeApproximator {
                     return if (conf.rawType) null else type.bound()
                 }
 
-                assert(type is FlexibleTypeImpl) {
+                // TODO: currently we can lose information about enhancement, should be fixed later
+                assert(type is FlexibleTypeImpl || type is FlexibleTypeWithEnhancement) {
                     "Unexpected subclass of FlexibleType: ${type::class.java.canonicalName}, type = $type"
                 }
 
@@ -153,7 +155,7 @@ class TypeApproximator {
                      * If U_1 <: U_2.lower .. U_2.upper, then we know only that U_1 <: U_2.upper.
                      */
                     return KotlinTypeFactory.flexibleType(lowerResult?.lowerIfFlexible() ?: type.lowerBound,
-                                            upperResult?.upperIfFlexible() ?: type.upperBound)
+                                                          upperResult?.upperIfFlexible() ?: type.upperBound)
                 }
                 else {
                     return type.bound().let { approximateTo(it, conf, depth) ?: it }
@@ -201,7 +203,25 @@ class TypeApproximator {
         val baseSuperType = when (supertypes.size) {
             0 -> type.builtIns.nullableAnyType // Let C = in Int, then superType for C and C? is Any?
             1 -> supertypes.single()
-            else -> intersectTypes(supertypes)
+
+            // Consider the following example:
+            // A.getA()::class.java, where `getA()` returns some class from Java
+            // From `::class` we are getting type KClass<Cap<out A!>>, where Cap<out A!> have two supertypes:
+            // - Any (from declared upper bound of type parameter for KClass)
+            // - (A..A?) -- from A!, projection type of captured type
+
+            // Now, after approximation we were getting type `KClass<out A>`, because { Any & (A..A?) } = A,
+            // but in old inference type was equal to `KClass<out A!>`.
+
+            // Important note that from the point of type system first type is more specific:
+            // Here, approximation of KClass<Cap<out A!>> is a type KClass<T> such that KClass<Cap<out A!>> <: KClass<out T> =>
+            // So, the the more specific type for T would be "some non-null (because of declared upper bound type) subtype of A", which is `out A`
+
+            // But for now, to reduce differences in behaviour of old and new inference, we'll approximate such types to `KClass<out A!>`
+
+            // Once NI will be more stabilized, we'll use more specific type
+
+            else -> type.constructor.projection.type.unwrap()
         }
         val baseSubType = type.lowerType ?: type.builtIns.nothingType
 

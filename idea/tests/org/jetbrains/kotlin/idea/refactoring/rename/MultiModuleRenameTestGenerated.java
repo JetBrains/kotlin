@@ -149,4 +149,16 @@ public class MultiModuleRenameTestGenerated extends AbstractMultiModuleRenameTes
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplVal/headersAndImplsByImplVal.test");
         doTest(fileName);
     }
+
+    @TestMetadata("suspendFunImplInImplModule/suspendFunImplInImplModule.test")
+    public void testSuspendFunImplInImplModule_SuspendFunImplInImplModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/suspendFunImplInImplModule/suspendFunImplInImplModule.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("suspendFunInCommonModule/suspendFunInCommonModule.test")
+    public void testSuspendFunInCommonModule_SuspendFunInCommonModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/suspendFunInCommonModule/suspendFunInCommonModule.test");
+        doTest(fileName);
+    }
 }

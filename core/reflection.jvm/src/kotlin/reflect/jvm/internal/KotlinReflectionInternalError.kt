@@ -16,10 +16,8 @@
 
 package kotlin.reflect.jvm.internal
 
-import kotlin.reflect.KotlinReflectionInternalError
-
 /**
  * Signals that Kotlin reflection had reached an inconsistent state from which it cannot recover.
  * @suppress
  */
-class KotlinReflectionInternalError(message: String) : KotlinReflectionInternalError(message)
+class KotlinReflectionInternalError(message: String) : Error(message)

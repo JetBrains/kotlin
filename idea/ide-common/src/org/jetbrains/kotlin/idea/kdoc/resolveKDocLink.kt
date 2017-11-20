@@ -119,6 +119,10 @@ private fun resolveDefaultKDocLink(
         descriptorsByName.addAll(contextScope.collectFunctions(shortName, NoLookupLocation.FROM_IDE))
         descriptorsByName.addAll(contextScope.collectVariables(shortName, NoLookupLocation.FROM_IDE))
 
+        if (fromDescriptor is FunctionDescriptor && fromDescriptor.isExtension && shortName.asString() == "this") {
+            return listOfNotNull(fromDescriptor.extensionReceiverParameter)
+        }
+
         // Try to find a matching local descriptor (parameter or type parameter) first
         val localDescriptors = descriptorsByName.filter { it.containingDeclaration == fromDescriptor }
         if (localDescriptors.isNotEmpty()) return localDescriptors
@@ -252,6 +256,8 @@ private class ExtensionsScope(
                 .map { it.name }
                 .toSet()
     }
+
+    override fun getClassifierNames() = null
 
     override fun printScopeStructure(p: Printer) {
         p.println("Extensions for ${receiverClass.name} in:")

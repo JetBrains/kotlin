@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
+import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -333,6 +335,10 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             if (property != null && property.isVar) return null
 
             val descriptor = qualifiedExpression.getResolvedCall(context)?.resultingDescriptor ?: return null
+            if (!descriptor.isVisible(dataClassUsage, qualifiedExpression.receiverExpression,
+                                      context, dataClassUsage.containingKtFile.getResolutionFacade())) {
+                return null
+            }
             return SingleUsageData(descriptor = descriptor, usageToReplace = qualifiedExpression, declarationToDrop = property)
         }
 

@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
@@ -77,7 +77,7 @@ class ReferenceVariantsHelper(
     ): Collection<DeclarationDescriptor> {
         var variants: Collection<DeclarationDescriptor>
                 = getReferenceVariantsNoVisibilityFilter(contextElement, kindFilter, nameFilter, callTypeAndReceiver, useReceiverType)
-                .filter { !it.isHiddenInResolution(resolutionFacade.frontendService<LanguageVersionSettings>()) && visibilityFilter(it) }
+                .filter { !resolutionFacade.frontendService<DeprecationResolver>().isHiddenInResolution(it) && visibilityFilter(it) }
 
         if (filterOutShadowed) {
             ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, contextElement, callTypeAndReceiver)?.let {
@@ -119,8 +119,7 @@ class ReferenceVariantsHelper(
         for (element in contextElement.parentsWithSelf) {
             val parent = element.parent
             if (parent is KtVariableDeclaration && element == parent.initializer) {
-                val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent]
-                return variants.filter { it != descriptor }
+                return variants.filter { it.findPsi() != parent }
             }
             if (element is KtDeclaration) break // we can use variable inside lambda or anonymous object located in its initializer
         }
@@ -270,7 +269,11 @@ class ReferenceVariantsHelper(
         }
         else {
             // process non-instance members and class constructors
-            descriptors.addNonExtensionCallablesAndConstructors(resolutionScope, kindFilter, nameFilter, constructorFilter = { !it.isInner })
+            descriptors.addNonExtensionCallablesAndConstructors(
+                    resolutionScope,
+                    kindFilter, nameFilter, constructorFilter = { !it.isInner },
+                    classesOnly = false
+            )
         }
         return descriptors
     }
@@ -329,7 +332,18 @@ class ReferenceVariantsHelper(
             constructorFilter: (ClassDescriptor) -> Boolean
     ) {
         for (receiverType in receiverTypes) {
-            addNonExtensionCallablesAndConstructors(receiverType.memberScope.memberScopeAsImportingScope(), kindFilter, nameFilter, constructorFilter)
+            addNonExtensionCallablesAndConstructors(
+                    receiverType.memberScope.memberScopeAsImportingScope(),
+                    kindFilter, nameFilter, constructorFilter,
+                    false
+            )
+            receiverType.constructor.supertypes.forEach {
+                addNonExtensionCallablesAndConstructors(
+                        it.memberScope.memberScopeAsImportingScope(),
+                        kindFilter, nameFilter, constructorFilter,
+                        true
+                )
+            }
         }
     }
 
@@ -337,7 +351,8 @@ class ReferenceVariantsHelper(
             scope: HierarchicalScope,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
-            constructorFilter: (ClassDescriptor) -> Boolean
+            constructorFilter: (ClassDescriptor) -> Boolean,
+            classesOnly: Boolean
     ) {
         var filterToUse = DescriptorKindFilter(kindFilter.kindMask and DescriptorKindFilter.CALLABLES.kindMask).exclude(DescriptorKindExclude.Extensions)
 
@@ -352,7 +367,7 @@ class ReferenceVariantsHelper(
                 if (!constructorFilter(descriptor)) continue
                 descriptor.constructors.filterTo(this) { kindFilter.accepts(it) }
             }
-            else if (kindFilter.accepts(descriptor)) {
+            else if (!classesOnly && kindFilter.accepts(descriptor)) {
                 this.add(descriptor)
             }
         }

@@ -356,6 +356,12 @@ public class AndroidIntentionTestGenerated extends AbstractAndroidIntentionTest 
             doTest(fileName);
         }
 
+        @TestMetadata("parcelize.kt")
+        public void testParcelize() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/redoParcelable/parcelize.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/redoParcelable/simple.kt");
@@ -392,6 +398,12 @@ public class AndroidIntentionTestGenerated extends AbstractAndroidIntentionTest 
         @TestMetadata("noParcelable.kt")
         public void testNoParcelable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/removeParcelable/noParcelable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parcelize.kt")
+        public void testParcelize() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/removeParcelable/parcelize.kt");
             doTest(fileName);
         }
 

@@ -87,6 +87,7 @@ public class DescriptorResolver {
     private final WrappedTypeFactory wrappedTypeFactory;
     private final SyntheticResolveExtension syntheticResolveExtension;
     private final TypeApproximator typeApproximator;
+    private final DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -103,7 +104,8 @@ public class DescriptorResolver {
             @NotNull ModifiersChecker modifiersChecker,
             @NotNull WrappedTypeFactory wrappedTypeFactory,
             @NotNull Project project,
-            TypeApproximator approximator
+            @NotNull TypeApproximator approximator,
+            @NotNull DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -120,6 +122,7 @@ public class DescriptorResolver {
         this.wrappedTypeFactory = wrappedTypeFactory;
         this.syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
         typeApproximator = approximator;
+        this.declarationReturnTypeSanitizer = declarationReturnTypeSanitizer;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -337,7 +340,7 @@ public class DescriptorResolver {
                                 scope,
                                 destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
                                 ExpressionTypingContext.newContext(
-                                        trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE
+                                        trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings
                                 )
                         );
 
@@ -669,14 +672,12 @@ public class DescriptorResolver {
             BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
-        UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(type, true);
+        UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(type, true, languageVersionSettings);
         VariableDescriptor variableDescriptor = new LocalVariableDescriptor(
                 scope.getOwnerDescriptor(),
                 annotationResolver.resolveAnnotationsWithArguments(scope, parameter.getModifierList(), trace),
                 KtPsiUtil.safeName(parameter.getName()),
                 approximatedType,
-                false,
-                false,
                 KotlinSourceElementKt.toSourceElement(parameter)
         );
         trace.record(BindingContext.VALUE_PARAMETER, parameter, variableDescriptor);
@@ -784,7 +785,7 @@ public class DescriptorResolver {
         KtExpression initializer = destructuringDeclaration.getInitializer();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scopeForDeclarationResolution, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE
+                trace, scopeForDeclarationResolution, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings
         );
 
         ExpressionReceiver receiver = createReceiverForDestructuringDeclaration(destructuringDeclaration, context);
@@ -836,7 +837,7 @@ public class DescriptorResolver {
 
     @NotNull
     private PropertyDescriptor resolveAsPropertyDescriptor(
-            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull DeclarationDescriptor container,
             @NotNull LexicalScope scopeForDeclarationResolution,
             @NotNull LexicalScope scopeForInitializerResolution,
             @NotNull KtVariableDeclaration variableDeclaration,
@@ -847,11 +848,11 @@ public class DescriptorResolver {
         KtModifierList modifierList = variableDeclaration.getModifierList();
         boolean isVar = variableDeclaration.isVar();
 
-        Visibility visibility = resolveVisibilityFromModifiers(variableDeclaration, getDefaultVisibility(variableDeclaration, containingDeclaration));
-        Modality modality = containingDeclaration instanceof ClassDescriptor
+        Visibility visibility = resolveVisibilityFromModifiers(variableDeclaration, getDefaultVisibility(variableDeclaration, container));
+        Modality modality = container instanceof ClassDescriptor
                             ? resolveMemberModalityFromModifiers(variableDeclaration,
-                                                                 getDefaultModality(containingDeclaration, visibility, propertyInfo.getHasBody()),
-                                                                 trace.getBindingContext(), containingDeclaration)
+                                                                 getDefaultModality(container, visibility, propertyInfo.getHasBody()),
+                                                                 trace.getBindingContext(), container)
                             : Modality.FINAL;
 
         AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper(variableDeclaration);
@@ -866,7 +867,7 @@ public class DescriptorResolver {
                 annotationSplitter.getOtherAnnotations()));
 
         PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
-                containingDeclaration,
+                container,
                 propertyAnnotations,
                 modality,
                 visibility,
@@ -876,9 +877,9 @@ public class DescriptorResolver {
                 KotlinSourceElementKt.toSourceElement(variableDeclaration),
                 modifierList != null && modifierList.hasModifier(KtTokens.LATEINIT_KEYWORD),
                 modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD),
-                modifierList != null && modifierList.hasModifier(KtTokens.HEADER_KEYWORD) ||
-                containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isHeader(),
-                modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
+                modifierList != null && PsiUtilsKt.hasExpectModifier(modifierList) && container instanceof PackageFragmentDescriptor ||
+                container instanceof ClassDescriptor && ((ClassDescriptor) container).isExpect(),
+                modifierList != null && PsiUtilsKt.hasActualModifier(modifierList),
                 modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),
                 propertyInfo.getHasDelegate()
         );
@@ -898,10 +899,10 @@ public class DescriptorResolver {
             }
             else {
                 LexicalWritableScope writableScopeForDeclarationResolution = new LexicalWritableScope(
-                        scopeForDeclarationResolution, containingDeclaration, false, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
+                        scopeForDeclarationResolution, container, false, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
                         LexicalScopeKind.PROPERTY_HEADER);
                 LexicalWritableScope writableScopeForInitializerResolution = new LexicalWritableScope(
-                        scopeForInitializerResolution, containingDeclaration, false, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
+                        scopeForInitializerResolution, container, false, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                         LexicalScopeKind.PROPERTY_HEADER);
                 typeParameterDescriptors = resolveTypeParametersForDescriptor(
                         propertyDescriptor,
@@ -951,8 +952,7 @@ public class DescriptorResolver {
                 propertyDescriptor, scopeForInitializer, variableDeclaration, dataFlowInfo, type, trace
         );
 
-        propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(containingDeclaration),
-                                   receiverDescriptor);
+        propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(container), receiverDescriptor);
 
         PropertySetterDescriptor setter = resolvePropertySetterDescriptor(
                 scopeForDeclarationResolutionWithTypeParameters,
@@ -1155,12 +1155,12 @@ public class DescriptorResolver {
     ) {
         return wrappedTypeFactory.createRecursionIntolerantDeferredType(trace, () -> {
             PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace, languageVersionSettings);
-            KotlinType type = expressionTypingServices.getBodyExpressionType(
-                    trace, scope, dataFlowInfo, function, functionDescriptor);
-            KotlinType result = transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
-            UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(result, false);
-            functionsTypingVisitor.checkTypesForReturnStatements(function, trace, approximatedType);
-            return approximatedType;
+            KotlinType type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor);
+            KotlinType publicType = transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
+            UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(publicType, false, languageVersionSettings);
+            KotlinType sanitizedType = declarationReturnTypeSanitizer.sanitizeReturnType(approximatedType, wrappedTypeFactory, trace, languageVersionSettings);
+            functionsTypingVisitor.checkTypesForReturnStatements(function, trace, sanitizedType);
+            return sanitizedType;
         });
     }
 
@@ -1204,8 +1204,8 @@ public class DescriptorResolver {
                 KotlinSourceElementKt.toSourceElement(parameter),
                 false,
                 false,
-                classDescriptor.isHeader(),
-                modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
+                classDescriptor.isExpect(),
+                modifierList != null && PsiUtilsKt.hasActualModifier(modifierList),
                 false,
                 false
         );

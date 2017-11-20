@@ -165,7 +165,7 @@ class PropertyReferenceCodegen(
         writeSyntheticClassMetadata(v, state)
     }
 
-    fun putInstanceOnStack(receiverValue: (() -> Unit)?): StackValue {
+    fun putInstanceOnStack(receiverValue: StackValue?): StackValue {
         return StackValue.operation(wrapperMethod.returnType) { iv ->
             if (JvmCodegenUtil.isConst(closure)) {
                 assert(receiverValue == null) { "No receiver expected for unbound property reference: $classDescriptor" }
@@ -175,7 +175,7 @@ class PropertyReferenceCodegen(
                 assert(receiverValue != null) { "Receiver expected for bound property reference: $classDescriptor" }
                 iv.anew(asmType)
                 iv.dup()
-                receiverValue!!()
+                receiverValue!!.put(receiverValue.type, iv)
                 iv.invokespecial(asmType.internalName, "<init>", constructor.descriptor, false)
             }
         }

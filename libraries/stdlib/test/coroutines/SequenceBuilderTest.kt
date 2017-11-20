@@ -16,7 +16,6 @@
 
 package test.coroutines
 
-import org.junit.Test
 import kotlin.test.*
 import kotlin.coroutines.experimental.buildSequence
 import kotlin.coroutines.experimental.buildIterator

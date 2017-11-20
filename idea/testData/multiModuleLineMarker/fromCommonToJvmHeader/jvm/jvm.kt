@@ -1,11 +1,11 @@
 // !CHECK_HIGHLIGHTING
 
-impl class Header {
-    impl fun foo() = 42
+actual class Header {
+    actual fun foo() = 42
 }
 
-impl fun foo(arg: Int) = arg.toString()
+actual fun foo(arg: Int) = arg.toString()
 
-impl val flag = true
+actual val flag = true
 
 

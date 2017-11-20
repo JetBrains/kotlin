@@ -1,15 +1,14 @@
 package refactor.copy2
 
 import refactor.ParentJava
-import refactor.copy.Company
 import kotlin.properties.Delegates
 
 enum class Possible {
     NO, YES
 }
-
 data class Potable(val p1: String)
 class Insider(val peace: String)
+
 class Init {
     fun referred() = 0
     fun moved() = referred()
@@ -28,6 +27,7 @@ class Simple {
 }
 
 annotation class MemAnn
+
 class Variety<C> {
     // object
     object ExtractedObject {}
@@ -42,8 +42,7 @@ class Variety<C> {
     private fun privateFun() = 0
     fun <T> genFunB(p: T): T = p
     fun <T> genFunC(p: T): C where T : C = p
-    @MemAnn
-    fun annotatedFun() = 0
+    @MemAnn fun annotatedFun() = 0
     final fun finalFun() = 0
     // property
     var publicProp = 0
@@ -56,8 +55,7 @@ class Variety<C> {
     var <T> List<T>.genVarL: T where T : C
         get() = last()
         set(p) {}
-    @MemAnn
-    val annotatedVal = 0
+    @MemAnn val annotatedVal = 0
     var byVar by Delegates.notNull<Int>()
     lateinit var lateVal: String
     final val finalVal = 0
@@ -146,9 +144,9 @@ class CtorParameterChild(val pvc: String, var prc: String) : CtorParameter(pvc, 
 class CtorParameterChild2: CtorParameter {
     constructor() : super("", "", "")
 }
-
 class CtorParameterChild3(override val pv: String, override var pr: String) : CtorParameter(pv, pv, pr)
 data class CtorData(val pv: String, var pr: String) {}
+
 class Company {
     companion object {
         val companyVal = 0

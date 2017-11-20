@@ -43,8 +43,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     private var kotlinCoreEnvironment: KotlinCoreEnvironment? = null
 
     override fun getVirtualFile(testName: String): VirtualFile {
-        val projectDir = TEST_KOTLIN_MODEL_DIR
-        val testFile = File(TEST_KOTLIN_MODEL_DIR, testName.substringBefore('/') + ".kt")
+        val testFile = TEST_KOTLIN_MODEL_DIR.listFiles { pathname -> pathname.nameWithoutExtension == testName }.first()
 
         super.initializeEnvironment(testFile)
 
@@ -60,7 +59,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         val vfs = VirtualFileManager.getInstance().getFileSystem(URLUtil.FILE_PROTOCOL)
 
         val ideaProject = project
-        ideaProject.baseDir = vfs.findFileByPath(projectDir.canonicalPath)
+        ideaProject.baseDir = vfs.findFileByPath(TEST_KOTLIN_MODEL_DIR.canonicalPath)
 
         return vfs.findFileByPath(testFile.canonicalPath)!!
     }

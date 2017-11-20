@@ -1,43 +1,34 @@
 @file:kotlin.jvm.JvmVersion
 package test.numbers
 
-import java.math.BigInteger
-import java.math.BigDecimal
-
 import kotlin.test.*
-import org.junit.Test
+import kotlin.math.*
 
-class MathTest {
-    @Test fun testBigInteger() {
-        val a = BigInteger("2")
-        val b = BigInteger("3")
+class MathJVMTest {
 
-        assertEquals(BigInteger("5"), a + b)
-        assertEquals(BigInteger("-1"), a - b)
-        assertEquals(BigInteger("6"), a * b)
-        assertEquals(BigInteger("0"), a / b)
-        assertEquals(BigInteger("-2"), -a)
-        assertEquals(BigInteger("-2"), -a % b)
-        assertEquals(BigInteger("1"), (-a).mod(b))
-        assertEquals(BigInteger("-2"), (-a).remainder(b))
+    @Test fun IEEEremainder() {
+        val data = arrayOf(  //  a    a IEEErem 2.5
+                doubleArrayOf(-2.0,   0.5),
+                doubleArrayOf(-1.25, -1.25),
+                doubleArrayOf( 0.0,   0.0),
+                doubleArrayOf( 1.0,   1.0),
+                doubleArrayOf( 1.25,  1.25),
+                doubleArrayOf( 1.5,  -1.0),
+                doubleArrayOf( 2.0,  -0.5),
+                doubleArrayOf( 2.5,   0.0),
+                doubleArrayOf( 3.5,   1.0),
+                doubleArrayOf( 3.75, -1.25),
+                doubleArrayOf( 4.0,  -1.0)
+        )
+        for ((a, r) in data) {
+            assertEquals(r, a.IEEErem(2.5), "($a).IEEErem(2.5)")
+        }
+
+        assertTrue(Double.NaN.IEEErem(2.5).isNaN())
+        assertTrue(2.0.IEEErem(Double.NaN).isNaN())
+        assertTrue(Double.POSITIVE_INFINITY.IEEErem(2.0).isNaN())
+        assertTrue(2.0.IEEErem(0.0).isNaN())
+        assertEquals(PI, PI.IEEErem(Double.NEGATIVE_INFINITY))
     }
 
-    @Test fun testBigDecimal() {
-        val a = BigDecimal("2")
-        val b = BigDecimal("3")
-
-        assertEquals(BigDecimal("5"), a + b)
-        assertEquals(BigDecimal("-1"), a - b)
-        assertEquals(BigDecimal("6"), a * b)
-        assertEquals(BigDecimal("2"), BigDecimal("4") / a)
-        assertEquals(BigDecimal("-2"), -a)
-        assertEquals(BigDecimal("-2"), -a % b)
-        assertEquals(BigDecimal("-2"), (-a).mod(b))
-        assertEquals(BigDecimal("-2"), (-a).rem(b))
-    }
-}
-
-fun main(args: Array<String>) {
-    MathTest().testBigInteger()
-    MathTest().testBigDecimal()
 }

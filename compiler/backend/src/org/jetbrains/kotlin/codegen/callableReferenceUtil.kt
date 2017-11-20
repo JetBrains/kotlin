@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Type
@@ -75,4 +78,19 @@ fun InstructionAdapter.generateClosureFieldsInitializationFromParameters(closure
         else ->
             null
     }
+}
+
+fun computeExpectedNumberOfReceivers(referencedFunction: FunctionDescriptor, isBound: Boolean): Int {
+    val receivers = (if (referencedFunction.dispatchReceiverParameter != null) 1 else 0) +
+                    (if (referencedFunction.extensionReceiverParameter != null) 1 else 0) -
+                    (if (isBound) 1 else 0)
+
+    if (receivers < 0 && referencedFunction is ConstructorDescriptor &&
+               DescriptorUtils.isObject(referencedFunction.containingDeclaration.containingDeclaration)) {
+        //reference to object nested class
+        //TODO: seems problem should be fixed on frontend side (note that object instance are captured by generated class)
+        return 0
+    }
+
+    return receivers
 }

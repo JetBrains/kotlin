@@ -22,20 +22,34 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
+import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
-internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>() {
+internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
+
+    private val kotlinOptionsImpl = KotlinMultiplatformCommonOptionsImpl()
+    override val kotlinOptions: KotlinMultiplatformCommonOptions
+        get() = kotlinOptionsImpl
+
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
             K2MetadataCompilerArguments()
 
     override fun getSourceRoots(): SourceRoots =
             SourceRoots.KotlinOnly.create(getSource())
 
-    override fun findKotlinCompilerJar(project: Project): File? =
-            findKotlinMetadataCompilerJar(project)
+    override fun findKotlinCompilerClasspath(project: Project): List<File>  =
+            findKotlinMetadataCompilerClasspath(project)
 
-    override fun callCompiler(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+    override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean) {
+        args.apply { fillDefaultValues() }
+        super.setupCompilerArgs(args, defaultsOnly)
+
+        if (defaultsOnly) return
+
         val classpathList = classpath.files.toMutableList()
         val friendTask = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractCompile
         friendTask?.let { classpathList.add(it.destinationDir) }
@@ -43,13 +57,16 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
         with(args) {
             classpath = classpathList.joinToString(File.pathSeparator)
             destination = destinationDir.canonicalPath
-            freeArgs = sourceRoots.kotlinSourceFiles.mapTo(ArrayList<String>()) { it.canonicalPath }
         }
 
+        kotlinOptionsImpl.updateArguments(args)
+    }
+
+    override fun callCompiler(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = GradleCompilerRunner(project)
-        val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector, args)
+        val environment = GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
         val exitCode = compilerRunner.runMetadataCompiler(sourceRoots.kotlinSourceFiles, args, environment)
         throwGradleExceptionIfError(exitCode)
     }

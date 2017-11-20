@@ -341,6 +341,105 @@ public fun String.toFloatOrNull(): Float? = screenFloatValue(this, java.lang.Flo
 public fun String.toDoubleOrNull(): Double? = screenFloatValue(this, java.lang.Double::parseDouble)
 
 /**
+ * Parses the string as a [java.math.BigInteger] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+@SinceKotlin("1.2")
+@kotlin.jvm.JvmVersion
+@kotlin.internal.InlineOnly
+public inline fun String.toBigInteger(): java.math.BigInteger =
+        java.math.BigInteger(this)
+
+/**
+ * Parses the string as a [java.math.BigInteger] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
+ */
+@SinceKotlin("1.2")
+@kotlin.jvm.JvmVersion
+@kotlin.internal.InlineOnly
+public inline fun String.toBigInteger(radix: Int): java.math.BigInteger =
+        java.math.BigInteger(this, checkRadix(radix))
+
+/**
+ * Parses the string as a [java.math.BigInteger] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+@SinceKotlin("1.2")
+@kotlin.jvm.JvmVersion
+public fun String.toBigIntegerOrNull(): java.math.BigInteger? = toBigIntegerOrNull(10)
+
+/**
+ * Parses the string as a [java.math.BigInteger] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
+ */
+@SinceKotlin("1.2")
+@kotlin.jvm.JvmVersion
+public fun String.toBigIntegerOrNull(radix: Int): java.math.BigInteger? {
+    checkRadix(radix)
+    val length = this.length
+    when (length) {
+        0 -> return null
+        1 -> if (digitOf(this[0], radix) < 0) return null
+        else -> {
+            val start = if (this[0] == '-') 1 else 0
+            for (index in start until length) {
+                if (digitOf(this[index], radix) < 0)
+                    return null
+            }
+        }
+    }
+    return toBigInteger(radix)
+}
+
+
+/**
+ * Parses the string as a [java.math.BigDecimal] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+@SinceKotlin("1.2")
+@kotlin.jvm.JvmVersion
+@kotlin.internal.InlineOnly
+public inline fun String.toBigDecimal(): java.math.BigDecimal =
+        java.math.BigDecimal(this)
+
+/**
+ * Parses the string as a [java.math.BigDecimal] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ *
+ * @param mathContext specifies the precision and the rounding mode.
+ * @throws ArithmeticException if the rounding is needed, but the rounding mode is [java.math.RoundingMode.UNNECESSARY].
+ */
+@SinceKotlin("1.2")
+@kotlin.jvm.JvmVersion
+@kotlin.internal.InlineOnly
+public inline fun String.toBigDecimal(mathContext: java.math.MathContext): java.math.BigDecimal =
+        java.math.BigDecimal(this, mathContext)
+
+/**
+ * Parses the string as a [java.math.BigDecimal] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+@SinceKotlin("1.2")
+@kotlin.jvm.JvmVersion
+public fun String.toBigDecimalOrNull(): java.math.BigDecimal? =
+        screenFloatValue(this) { it.toBigDecimal() }
+
+/**
+ * Parses the string as a [java.math.BigDecimal] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ *
+ * @param mathContext specifies the precision and the rounding mode.
+ * @throws ArithmeticException if the rounding is needed, but the rounding mode is [java.math.RoundingMode.UNNECESSARY].
+ */
+@SinceKotlin("1.2")
+@kotlin.jvm.JvmVersion
+public fun String.toBigDecimalOrNull(mathContext: java.math.MathContext): java.math.BigDecimal? =
+        screenFloatValue(this) { it.toBigDecimal(mathContext) }
+
+/**
  * Recommended floating point number validation RegEx from the javadoc of `java.lang.Double.valueOf(String)`
  */
 @kotlin.jvm.JvmVersion

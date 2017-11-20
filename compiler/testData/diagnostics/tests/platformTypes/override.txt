@@ -1,3 +1,21 @@
 package
 
 public fun test(): kotlin.Unit
+
+package p {
+
+    public interface I {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun s(): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class J : p.I {
+        public constructor J()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ fun s(): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

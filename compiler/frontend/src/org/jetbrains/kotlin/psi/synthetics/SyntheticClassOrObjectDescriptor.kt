@@ -74,8 +74,8 @@ class SyntheticClassOrObjectDescriptor(
     override fun isCompanionObject() = isCompanionObject
     override fun isInner() = false
     override fun isData() = false
-    override fun isHeader() = false
-    override fun isImpl() = false
+    override fun isExpect() = false
+    override fun isActual() = false
 
     override fun getCompanionObjectDescriptor() = null
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
@@ -114,9 +114,8 @@ class SyntheticClassOrObjectDescriptor(
 
     private inner class SyntheticTypeConstructor(storageManager: StorageManager) : AbstractClassTypeConstructor(storageManager) {
         override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
-        override fun isFinal(): Boolean = true
         override fun isDenotable(): Boolean = true
-        override fun getDeclarationDescriptor(): ClassifierDescriptor = thisDescriptor
+        override fun getDeclarationDescriptor(): ClassDescriptor = thisDescriptor
         override fun computeSupertypes(): Collection<KotlinType> = syntheticSupertypes
         override val supertypeLoopChecker: SupertypeLoopChecker = SupertypeLoopChecker.EMPTY
     }
@@ -131,6 +130,7 @@ class SyntheticClassOrObjectDescriptor(
         override fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry> = emptyList()
         override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo> = emptyList()
         override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias> = emptyList()
+        override fun getDeclarationNames() = emptySet<Name>()
     }
 
     internal inner class SyntheticDeclaration(

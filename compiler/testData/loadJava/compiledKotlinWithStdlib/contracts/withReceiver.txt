@@ -1,0 +1,5 @@
+package test
+
+public fun kotlin.Any?.isNotNull(): kotlin.Boolean
+    Returns(TRUE) -> <this> != null
+

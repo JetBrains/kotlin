@@ -101,6 +101,8 @@ class LazyExplicitImportScope(
         return descriptors
     }
 
+    override fun computeImportedNames() = setOf(aliasName)
+
     override fun printStructure(p: Printer) {
         p.println(this::class.java.simpleName, ": ", aliasName)
     }

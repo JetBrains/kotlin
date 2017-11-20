@@ -17,6 +17,7 @@
 package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
+import kotlin.math.floor
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 @kotlin.internal.InlineOnly
@@ -80,6 +81,40 @@ public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
 
 /**
+ * Fills the list with the provided [value].
+ *
+ * Each element in the list gets replaced with the [value].
+ */
+@SinceKotlin("1.2")
+public fun <T> MutableList<T>.fill(value: T): Unit {
+    for (index in 0..lastIndex) {
+        this[index] = value
+    }
+}
+
+/**
+ * Randomly shuffles elements in this list.
+ *
+ * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ */
+@SinceKotlin("1.2")
+public fun <T> MutableList<T>.shuffle(): Unit {
+    for (i in lastIndex downTo 1) {
+        val j = rand(i + 1)
+        val copy = this[i]
+        this[i] = this[j]
+        this[j] = copy
+    }
+}
+private fun rand(upperBound: Int) = floor(kotlin.js.Math.random() * upperBound).toInt()
+
+/**
+ * Returns a new list with the elements of this list randomly shuffled.
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
+
+/**
  * Sorts elements in the list in-place according to their natural sort order.
  */
 public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
@@ -100,7 +135,7 @@ private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in 
 
     array.asDynamic().sort(comparator.asDynamic().compare.bind(comparator))
 
-    for (i in 0..array.size - 1) {
+    for (i in 0 until array.size) {
         list[i] = array[i]
     }
 }

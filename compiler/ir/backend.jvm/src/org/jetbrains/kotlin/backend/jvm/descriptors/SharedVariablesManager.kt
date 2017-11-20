@@ -53,7 +53,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
                 PropertyDescriptorImpl.create(
                         refClass, Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, true,
                         Name.identifier("element"), CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE,
-                        /* lateInit = */ false, /* isConst = */ false, /* isHeader = */ false, /* isImpl = */ false,
+                        /* lateInit = */ false, /* isConst = */ false, /* isExpect = */ false, /* isActual = */ false,
                         /* isExternal = */ false, /* isDelegated = */ false
                 ).initialize(type, dispatchReceiverParameter = refClass.thisAsReceiverParameter)
     }
@@ -78,7 +78,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
                 ClassConstructorDescriptorImpl.create(genericRefClass, Annotations.EMPTY, true, SourceElement.NO_SOURCE).apply {
                     initialize(emptyList(), Visibilities.PUBLIC)
                     val typeParameter = typeParameters[0]
-                    val typeParameterType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeParameter.typeConstructor, listOf(), false, MemberScope.Empty)
+                    val typeParameterType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(Annotations.EMPTY, typeParameter.typeConstructor, listOf(), false, MemberScope.Empty)
                     returnType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, genericRefClass, listOf(TypeProjectionImpl(Variance.INVARIANT, typeParameterType)))
                 }
 
@@ -94,7 +94,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
                 PropertyDescriptorImpl.create(
                         genericRefClass, Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, true,
                         Name.identifier("element"), CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE,
-                        /* lateInit = */ false, /* isConst = */ false, /* isHeader = */ false, /* isImpl = */ false,
+                        /* lateInit = */ false, /* isConst = */ false, /* isExpect = */ false, /* isActual = */ false,
                         /* isExternal = */ false, /* isDelegated = */ false
                 ).initialize(
                         type = builtIns.anyType,
@@ -111,7 +111,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
             LocalVariableDescriptor(
                     variableDescriptor.containingDeclaration, variableDescriptor.annotations, variableDescriptor.name,
                     getSharedVariableType(variableDescriptor.type),
-                    false, false, variableDescriptor.source
+                    false, false, variableDescriptor.isLateInit, variableDescriptor.source
             )
 
     override fun defineSharedValue(sharedVariableDescriptor: VariableDescriptor, originalDeclaration: IrVariable): IrStatement {
@@ -182,7 +182,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
     private fun getSharedVariableType(valueType: KotlinType): KotlinType =
             primitiveRefDescriptorProviders[getPrimitiveType(valueType)]?.refType ?:
             objectRefDescriptorsProvider.getRefType(valueType)
-    
+
     private fun getPrimitiveType(type: KotlinType): PrimitiveType? =
             when {
                 KotlinBuiltIns.isBoolean(type) -> PrimitiveType.BOOLEAN

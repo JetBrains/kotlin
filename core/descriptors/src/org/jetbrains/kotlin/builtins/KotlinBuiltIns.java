@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,7 @@ public abstract class KotlinBuiltIns {
     private final NotNullLazyValue<PackageFragments> packageFragments;
 
     private final MemoizedFunctionToNotNull<Integer, ClassDescriptor> suspendFunctionClasses;
+    private final MemoizedFunctionToNotNull<Name, ClassDescriptor> builtInClassesByName;
 
     private final StorageManager storageManager;
 
@@ -133,6 +134,13 @@ public abstract class KotlinBuiltIns {
                         FunctionClassDescriptor.Kind.SuspendFunction,
                         arity
                 );
+            }
+        });
+
+        this.builtInClassesByName = storageManager.createMemoizedFunction(new Function1<Name, ClassDescriptor>() {
+            @Override
+            public ClassDescriptor invoke(Name name) {
+                return getBuiltInClassByName(name, getBuiltInsPackageFragment());
             }
         });
     }
@@ -415,7 +423,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
-        return getBuiltInClassByName(simpleName, getBuiltInsPackageFragment());
+        return builtInClassesByName.invoke(simpleName);
     }
 
     @NotNull
@@ -864,6 +872,10 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isArrayOrPrimitiveArray(@NotNull ClassDescriptor descriptor) {
         return classFqNameEquals(descriptor, FQ_NAMES.array) || getPrimitiveArrayType(descriptor) != null;
+    }
+
+    public static boolean isArrayOrPrimitiveArray(@NotNull KotlinType type) {
+        return isArray(type) || isPrimitiveArray(type);
     }
 
     public static boolean isPrimitiveArray(@NotNull KotlinType type) {

@@ -1,9 +1,6 @@
 // WITH_RUNTIME
 
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
-import kotlin.test.assertEquals
-import kotlin.test.assertFails
+import kotlin.test.*
 
 fun box(): String {
     assertTrue(eqBoolean(booleanArrayOf(false), BooleanArray(1)))

@@ -534,7 +534,13 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
         strategy("Where clause")
                 .within(KtNodeTypes.CLASS, KtNodeTypes.FUN, KtNodeTypes.PROPERTY)
                 .forType(KtTokens.WHERE_KEYWORD)
-                .set(Indent.getContinuationIndent()))
+                .set(Indent.getContinuationIndent()),
+
+        strategy("Array literals")
+                .within(KtNodeTypes.COLLECTION_LITERAL_EXPRESSION)
+                .notForType(LBRACKET, RBRACKET)
+                .set(Indent.getNormalIndent())
+)
 
 
 private fun getOperationType(node: ASTNode): IElementType? = node.findChildByType(KtNodeTypes.OPERATION_REFERENCE)?.firstChildNode?.elementType

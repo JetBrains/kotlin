@@ -9,27 +9,24 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 
-private class KotlinLocalFunctionUVariable(
+internal class KotlinLocalFunctionUVariable(
         val function: KtFunction,
         override val psi: PsiVariable,
-        override val uastParent: UElement?
-) : UVariable, PsiVariable by psi {
+        givenParent: UElement?
+) : KotlinAbstractUElement(givenParent), UVariable, PsiVariable by psi {
     override val uastInitializer: UExpression? by lz {
         createLocalFunctionLambdaExpression(function, this)
     }
     override val typeReference: UTypeReferenceExpression? = null
     override val uastAnchor: UElement? = null
     override val annotations: List<UAnnotation> = emptyList()
-
-    override fun equals(other: Any?) = other is KotlinLocalFunctionUVariable && psi == other.psi
-    override fun hashCode() = psi.hashCode()
 }
 
 
 private class KotlinLocalFunctionULambdaExpression(
         override val psi: KtFunction,
-        override val uastParent: UElement?
-): KotlinAbstractUExpression(), ULambdaExpression {
+        givenParent: UElement?
+): KotlinAbstractUExpression(givenParent), ULambdaExpression {
     val functionalInterfaceType: PsiType?
         get() = null
 
@@ -53,7 +50,7 @@ private class KotlinLocalFunctionULambdaExpression(
 
 
 fun createLocalFunctionDeclaration(function: KtFunction, parent: UElement?): UDeclarationsExpression {
-    return KotlinUDeclarationsExpression(parent).apply {
+    return KotlinUDeclarationsExpression(null, parent, function).apply {
         val functionVariable = UastKotlinPsiVariable.create(function.name.orAnonymous(), function, this)
         declarations = listOf(KotlinLocalFunctionUVariable(function, functionVariable, this))
     }

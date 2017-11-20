@@ -43,7 +43,7 @@ private fun <T : Throwable> assertFailsWithImpl(exceptionClass: Class<T>, messag
 
 
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T = assertFailsWithImpl(exceptionClass.java, message, block)
+actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T = assertFailsWithImpl(exceptionClass.java, message, block)
 
 
 /**
@@ -51,7 +51,7 @@ impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: Str
  * to implement in your unit test output
  */
 @InlineOnly
-impl inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
+actual inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
     System.out.println("TODO at " + currentStackTrace()[0])
 }
 

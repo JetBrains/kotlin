@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.engine.DebugProcess
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ex.ApplicationManagerEx
+import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.ui.MessageType
 import com.intellij.psi.PsiElement
@@ -27,15 +27,16 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.idea.debugger.DebuggerClassNameProvider.Companion.getRelevantElement
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames
+import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 class InlineCallableUsagesSearcher(
         private val myDebugProcess: DebugProcess,
@@ -66,19 +67,15 @@ class InlineCallableUsagesSearcher(
 
             var isSuccess = true
             val applicationEx = ApplicationManagerEx.getApplicationEx()
-            if (!applicationEx.isUnitTestMode && (!applicationEx.holdsReadLock() || applicationEx.isDispatchThread)) {
-                applicationEx.invokeAndWait(
-                        {
-                            isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                                    task,
-                                    "Compute class names for declaration $declarationName",
-                                    true,
-                                    myDebugProcess.project)
-                        }, ModalityState.NON_MODAL)
+            if (applicationEx.isDispatchThread) {
+                isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                        task,
+                        "Compute class names for declaration $declarationName",
+                        true,
+                        myDebugProcess.project)
             }
             else {
-                // Pooled thread with read lock. Can't invoke task under UI progress, so call it directly.
-                task.run()
+                ProgressManager.getInstance().runProcess(task, EmptyProgressIndicator())
             }
 
             if (!isSuccess) {

@@ -24,7 +24,7 @@ import com.intellij.usageView.UsageViewUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.copied
@@ -145,7 +145,7 @@ internal fun checkRedeclarations(
                         is FunctionDescriptor -> it is KtNamedFunction
                         else -> false
                     }
-                } as? KtDeclaration)?.resolveToDescriptor()
+                } as? KtDeclaration)?.unsafeResolveToDescriptor()
             }
         }
     }
@@ -322,7 +322,7 @@ internal fun checkNewNameUsagesRetargeting(
         newUsages: MutableList<UsageInfo>
 ) {
     val currentName = declaration.name ?: return
-    val descriptor = declaration.resolveToDescriptor()
+    val descriptor = declaration.unsafeResolveToDescriptor()
 
     if (declaration is KtParameter && !declaration.hasValOrVar()) {
         val ownerFunction = declaration.ownerFunction

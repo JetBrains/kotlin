@@ -79,6 +79,12 @@ public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMa
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/configurator/jvm/simpleProjectSnapshot/");
             doTestWithMaven(fileName);
         }
+
+        @TestMetadata("withJava9ModuleInfo")
+        public void testWithJava9ModuleInfo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/configurator/jvm/withJava9ModuleInfo/");
+            doTestWithMaven(fileName);
+        }
     }
 
     @TestMetadata("idea/idea-maven/testData/configurator/js")

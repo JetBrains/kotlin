@@ -1,0 +1,4 @@
+public final class ParametersWithDefaultValuesKt {
+    public static final fun foo(a: int, b: java.lang.String, c: int, flag: boolean) : void {
+    }
+}

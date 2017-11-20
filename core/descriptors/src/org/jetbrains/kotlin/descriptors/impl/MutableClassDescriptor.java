@@ -107,12 +107,12 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isHeader() {
+    public boolean isExpect() {
         return false;
     }
 
     @Override
-    public boolean isImpl() {
+    public boolean isActual() {
         return false;
     }
 
@@ -157,7 +157,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
 
     public void createTypeConstructor() {
         assert typeConstructor == null : typeConstructor;
-        this.typeConstructor = new ClassTypeConstructorImpl(this, ModalityKt.isFinalClass(this), typeParameters, supertypes);
+        this.typeConstructor = new ClassTypeConstructorImpl(this, typeParameters, supertypes);
         for (FunctionDescriptor functionDescriptor : getConstructors()) {
             ((ClassConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }

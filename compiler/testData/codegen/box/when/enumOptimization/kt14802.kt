@@ -1,3 +1,6 @@
+// CHECK_CASES_COUNT: function=crash count=2
+// CHECK_IF_COUNT: function=crash count=1
+
 class EncapsulatedEnum<T : Enum<T>>(val value: T)
 
 enum class MyEnum(val value: String) {

@@ -52,7 +52,7 @@ class Preprocessor(val logger: Logger = SystemOutLogger) {
 
     init {
         val configuration = CompilerConfiguration()
-        val environment = KotlinCoreEnvironment.createForProduction(Disposable {  }, configuration, EnvironmentConfigFiles.EMPTY)
+        val environment = KotlinCoreEnvironment.createForProduction(Disposable {  }, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         val project = environment.project
         jetPsiFactory = KtPsiFactory(project)

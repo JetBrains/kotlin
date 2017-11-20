@@ -84,7 +84,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
                 supertypes.add(substitutor.substitute(supertype, Variance.INVARIANT));
             }
 
-            typeConstructor = new ClassTypeConstructorImpl(this, originalTypeConstructor.isFinal(), typeConstructorParameters, supertypes);
+            typeConstructor = new ClassTypeConstructorImpl(this, typeConstructorParameters, supertypes);
         }
 
         return typeConstructor;
@@ -227,13 +227,13 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public boolean isHeader() {
-        return original.isHeader();
+    public boolean isExpect() {
+        return original.isExpect();
     }
 
     @Override
-    public boolean isImpl() {
-        return original.isImpl();
+    public boolean isActual() {
+        return original.isActual();
     }
 
     @Override

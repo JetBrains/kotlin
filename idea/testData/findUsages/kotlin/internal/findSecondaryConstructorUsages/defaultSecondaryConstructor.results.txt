@@ -1,0 +1,5 @@
+New instance creation 28 B()
+Supertype 23 class C : B() {
+Unclassified usage 14 constructor(a: Int) : super() {
+Unclassified usage 18 constructor() {
+Unclassified usage 8 constructor(a: Int): this() {

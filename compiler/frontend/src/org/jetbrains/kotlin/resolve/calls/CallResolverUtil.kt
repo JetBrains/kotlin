@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.resolve.calls.callResolverUtil
 
 import com.google.common.collect.Lists
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.lexer.KtToken
@@ -28,12 +30,15 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticConstructors
@@ -75,7 +80,7 @@ fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): KotlinTyp
 fun replaceReturnTypeByUnknown(type: KotlinType) = replaceReturnTypeForCallable(type, DONT_CARE)
 
 private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjection>) =
-        KotlinTypeFactory.simpleType(type.annotations, type.constructor, newArguments, type.isMarkedNullable, type.memberScope)
+        KotlinTypeFactory.simpleType(type.annotations, type.constructor, newArguments, type.isMarkedNullable)
 
 private fun getParameterArgumentsOfCallableType(type: KotlinType) =
         type.arguments.dropLast(1)
@@ -120,8 +125,8 @@ fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescript
         receiverType.constructor
     }
 
-    return KotlinTypeFactory.simpleType(receiverType.annotations, receiverTypeConstructor, fakeTypeArguments,
-                                        receiverType.isMarkedNullable, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true))
+    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(receiverType.annotations, receiverTypeConstructor, fakeTypeArguments,
+                                                                 receiverType.isMarkedNullable, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true))
 }
 
 fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boolean {
@@ -177,8 +182,12 @@ fun getSuperCallExpression(call: Call): KtSuperExpression? {
     return (call.explicitReceiver as? ExpressionReceiver)?.expression as? KtSuperExpression
 }
 
-fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): KotlinType {
-    if (argument.getSpreadElement() != null) {
+fun getEffectiveExpectedType(
+        parameterDescriptor: ValueParameterDescriptor,
+        argument: ValueArgument,
+        context: ResolutionContext<*>
+): KotlinType {
+    if (argument.getSpreadElement() != null || shouldCheckAsArray(parameterDescriptor, argument, context)) {
         if (parameterDescriptor.varargElementType == null) {
             // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
             return DONT_CARE
@@ -191,6 +200,26 @@ fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argu
     }
 
     return parameterDescriptor.type
+}
+
+private fun shouldCheckAsArray(
+        parameterDescriptor: ValueParameterDescriptor,
+        argument: ValueArgument,
+        context: ResolutionContext<*>
+): Boolean {
+    if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
+
+    if (!isParameterOfAnnotation(parameterDescriptor)) return false
+
+    return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, context)
+}
+
+fun isArrayOrArrayLiteral(argument: ValueArgument, context: ResolutionContext<*>): Boolean {
+    val argumentExpression = argument.getArgumentExpression() ?: return false
+    if (argumentExpression is KtCollectionLiteralExpression) return true
+
+    val type = context.trace.getType(argumentExpression) ?: return false
+    return KotlinBuiltIns.isArrayOrPrimitiveArray(type)
 }
 
 fun createResolutionCandidatesForConstructors(

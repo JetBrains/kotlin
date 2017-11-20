@@ -18,18 +18,22 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineOrReturn
-import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineOrReturnInJvm
+import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
+import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.context.ClosureContext
+import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
 import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnly
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -51,9 +55,9 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
+import kotlin.collections.HashSet
 
 abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         protected val codegen: T,
@@ -162,7 +166,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
 
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
-            nodeAndSmap = createInlineMethodNode(functionDescriptor, jvmSignature, codegen, callDefault, resolvedCall, state, sourceCompiler)
+            nodeAndSmap = createInlineMethodNode(functionDescriptor, jvmSignature, callDefault, resolvedCall, state, sourceCompiler)
             endCall(inlineCall(nodeAndSmap, callDefault))
         }
         catch (e: CompilationException) {
@@ -179,6 +183,64 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         }
     }
 
+    private fun canSkipStackSpillingOnInline(methodNode: MethodNode): Boolean {
+        // Temporary disable this optimization until
+        // https://issuetracker.google.com/issues/68796377 is fixed
+        // or until d8 substitute dex
+        return false
+
+        // Stack spilling before inline function 'f' call is required if:
+        //  - 'f' is a suspend function
+        //  - 'f' has try-catch blocks
+        //  - 'f' has loops
+        //
+        // Instead of checking for loops precisely, we just check if there are any backward jumps -
+        // that is, a jump from instruction #i to instruction #j where j < i
+
+        if (functionDescriptor.isSuspend) return false
+        if (methodNode.tryCatchBlocks.isNotEmpty()) return false
+
+        fun isBackwardJump(fromIndex: Int, toLabel: LabelNode) =
+                methodNode.instructions.indexOf(toLabel) < fromIndex
+
+        val insns = methodNode.instructions.toArray()
+        for (i in insns.indices) {
+            val insn = insns[i]
+            when (insn) {
+                is JumpInsnNode ->
+                    if (isBackwardJump(i, insn.label)) return false
+
+                is LookupSwitchInsnNode -> {
+                    insn.dflt?.let {
+                        if (isBackwardJump(i, it)) return false
+                    }
+                    if (insn.labels.any { isBackwardJump(i, it) }) return false
+                }
+
+                is TableSwitchInsnNode -> {
+                    insn.dflt?.let {
+                        if (isBackwardJump(i, it)) return false
+                    }
+                    if (insn.labels.any { isBackwardJump(i, it) }) return false
+                }
+            }
+        }
+
+        return true
+    }
+
+    private fun continuationValue(): StackValue {
+        assert(codegen is ExpressionCodegen) { "Expected ExpressionCodegen in coroutineContext inlining" }
+        codegen as ExpressionCodegen
+
+        val parentContext = codegen.context.parentContext
+        return if (parentContext is ClosureContext) {
+            val originalSuspendLambdaDescriptor = parentContext.originalSuspendLambdaDescriptor ?: error("No original lambda descriptor found")
+            codegen.genCoroutineInstanceForSuspendLambda(originalSuspendLambdaDescriptor) ?: error("No stack value for coroutine instance of lambda found")
+        }
+        else
+            codegen.getContinuationParameterFromEnclosingSuspendFunctionDescriptor(codegen.context.functionDescriptor) ?: error("No stack value for continuation parameter of suspend function")
+    }
 
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, callDefault: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
@@ -201,7 +263,14 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         //through generation captured parameters will be added to invocationParamBuilder
         putClosureParametersOnStack()
 
-        addInlineMarker(codegen.v, true)
+        val shouldSpillStack = !canSkipStackSpillingOnInline(node)
+
+        if (shouldSpillStack) {
+            addInlineMarker(codegen.v, true)
+        }
+
+        if (functionDescriptor.isBuiltInCoroutineContext())
+            invocationParamBuilder.addNextValueParameter(CONTINUATION_ASM_TYPE, false, continuationValue(), 0)
 
         val parameters = invocationParamBuilder.buildParameters()
 
@@ -214,7 +283,8 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                 node, parameters, info, FieldRemapper(null, null, parameters), isSameModule,
                 "Method inlining " + sourceCompiler.callElementText,
                 createNestedSourceMapper(nodeAndSmap, defaultSourceMapper), info.callSiteInfo,
-                if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null
+                if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
+                !isInlinedToInlineFunInKotlinRuntime()
         ) //with captured
 
         val remapper = LocalVarRemapper(parameters, initialFrameSize)
@@ -239,11 +309,21 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
 
         adapter.accept(MethodBodyVisitor(codegen.v))
 
-        addInlineMarker(codegen.v, false)
+        if (shouldSpillStack) {
+            addInlineMarker(codegen.v, false)
+        }
 
         defaultSourceMapper.callSiteMarker = null
 
         return result
+    }
+
+    private fun isInlinedToInlineFunInKotlinRuntime(): Boolean {
+        val codegen = this.codegen as? ExpressionCodegen ?: return false
+        val caller = codegen.context.functionDescriptor
+        if (!caller.isInline) return false
+        val callerPackage = DescriptorUtils.getParentOfType(caller, PackageFragmentDescriptor::class.java) ?: return false
+        return callerPackage.fqName.asString().startsWith("kotlin.")
     }
 
     private fun generateClosuresBodies() {
@@ -392,30 +472,32 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         internal fun createInlineMethodNode(
                 functionDescriptor: FunctionDescriptor,
                 jvmSignature: JvmMethodSignature,
-                codegen: BaseExpressionCodegen,
                 callDefault: Boolean,
                 resolvedCall: ResolvedCall<*>?,
                 state: GenerationState,
                 sourceCompilerForInline: SourceCompilerForInline
         ): SMAPAndMethodNode {
-            if (isSpecialEnumMethod(functionDescriptor)) {
-                val arguments = resolvedCall!!.typeArguments
+            when {
+                isSpecialEnumMethod(functionDescriptor) -> {
+                    val arguments = resolvedCall!!.typeArguments
 
-                val node = createSpecialEnumMethodBody(
-                        codegen,
-                        functionDescriptor.name.asString(),
-                        arguments.keys.single().defaultType,
-                        state.typeMapper
-                )
-                return SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1))
-            }
-            else if (functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm()) {
-                return SMAPAndMethodNode(
-                        createMethodNodeForSuspendCoroutineOrReturn(
-                                functionDescriptor, state.typeMapper
-                        ),
+                    val node = createSpecialEnumMethodBody(
+                            functionDescriptor.name.asString(),
+                            arguments.keys.single().defaultType,
+                            state.typeMapper
+                    )
+                    return SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1))
+                }
+                functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() ->
+                    return SMAPAndMethodNode(
+                        createMethodNodeForSuspendCoroutineOrReturn(functionDescriptor, state.typeMapper),
                         SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
-                )
+                    )
+                functionDescriptor.isBuiltInCoroutineContext() ->
+                    return SMAPAndMethodNode(
+                        createMethodNodeForCoroutineContext(functionDescriptor),
+                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                    )
             }
 
             val asmMethod = if (callDefault)

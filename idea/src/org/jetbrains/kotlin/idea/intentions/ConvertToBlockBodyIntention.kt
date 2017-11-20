@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -81,7 +83,15 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
                     generateBody(!returnType.isUnit() && !returnType.isNothing())
                 }
 
-                is KtPropertyAccessor -> generateBody(declaration.isGetter)
+                is KtPropertyAccessor -> {
+                    val parent = declaration.parent
+                    if (parent is KtProperty && parent.typeReference == null) {
+                        val descriptor = parent.resolveToDescriptorIfAny()
+                        (descriptor as? CallableDescriptor)?.returnType?.let { parent.setType(it) }
+                    }
+
+                    generateBody(declaration.isGetter)
+                }
 
                 else -> throw RuntimeException("Unknown declaration type: $declaration")
             }

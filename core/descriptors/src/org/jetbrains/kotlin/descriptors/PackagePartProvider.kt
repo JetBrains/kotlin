@@ -18,10 +18,11 @@ package org.jetbrains.kotlin.descriptors
 
 interface PackagePartProvider {
     /**
-     * @return simple names of package parts existing in the package with the given FQ name.
+     * @return JVM internal names of package parts existing in the package with the given FQ name.
      *
      * For example, if a file named foo.kt in package org.test is compiled to a library, PackagePartProvider for such library
-     * must return the list `["FooKt"]` for the query `"org.test"` (in case the file is not annotated with @JvmName or @JvmMultifile*)
+     * must return the list `["org/test/FooKt"]` for the query `"org.test"`
+     * (in case the file is not annotated with @JvmName, @JvmPackageName or @JvmMultifileClass).
      */
     fun findPackageParts(packageFqName: String): List<String>
 

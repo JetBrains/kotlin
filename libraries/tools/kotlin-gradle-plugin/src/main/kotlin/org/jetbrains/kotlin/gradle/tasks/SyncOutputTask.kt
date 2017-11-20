@@ -23,7 +23,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.api.tasks.incremental.InputFileDetails
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil.isAncestor
+import com.intellij.openapi.util.io.FileUtil.isAncestor
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 import java.io.ObjectInputStream

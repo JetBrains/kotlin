@@ -36,6 +36,33 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true, "withLib1/sharedLib", "withLib2/sharedLib", "withLib3/sharedLib");
     }
 
+    @TestMetadata("idea/testData/parameterInfo/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Annotations extends AbstractParameterInfoTest {
+        public void testAllFilesPresentInAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("ConstructorCall.kt")
+        public void testConstructorCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/annotations/ConstructorCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ConstructorCallWithUseSite.kt")
+        public void testConstructorCallWithUseSite() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/annotations/ConstructorCallWithUseSite.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCall.kt")
+        public void testFunctionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/annotations/FunctionCall.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/parameterInfo/arrayAccess")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

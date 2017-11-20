@@ -144,7 +144,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
         return when (targetClass.platform) {
             is JsPlatform -> "other == null || this::class.js != $paramName::class.js"
-            is TargetPlatform.Default -> "other == null || this::class != $paramName::class"
+            is TargetPlatform.Common -> "other == null || this::class != $paramName::class"
             else -> defaultExpression
         }
     }
@@ -154,7 +154,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
         return when (targetClass.platform) {
             is JsPlatform -> "this::class.js"
-            is TargetPlatform.Default -> "this::class"
+            is TargetPlatform.Common -> "this::class"
             else -> defaultExpression
         }
     }
@@ -164,7 +164,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             if (!needEquals) return null
 
             val superEquals = classDescriptor.getSuperClassOrAny().findDeclaredEquals(true)!!
-            val equalsFun = generateFunctionSkeleton(superEquals, project)
+            val equalsFun = generateFunctionSkeleton(superEquals, targetClass)
 
             val paramName = equalsFun.valueParameters.first().name!!.quoteIfNeeded()
             var typeForCast = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
@@ -249,7 +249,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             if (!needHashCode) return null
 
             val superHashCode = classDescriptor.getSuperClassOrAny().findDeclaredHashCode(true)!!
-            val hashCodeFun = generateFunctionSkeleton(superHashCode, project)
+            val hashCodeFun = generateFunctionSkeleton(superHashCode, targetClass)
             val builtins = superHashCode.builtIns
 
             val propertyIterator = variablesForHashCode.iterator()

@@ -40,6 +40,7 @@ public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
 
     @Override
     public boolean isApplicable(@NotNull KtExpression expression) {
+        if (!super.isApplicable(expression)) return false;
         KotlinType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         return type != null && KotlinBuiltIns.isBoolean(type);
     }

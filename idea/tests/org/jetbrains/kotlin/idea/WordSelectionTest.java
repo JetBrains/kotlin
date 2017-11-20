@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TagsTestDataUtil;
-import org.testng.collections.Lists;
 
 import java.io.File;
 

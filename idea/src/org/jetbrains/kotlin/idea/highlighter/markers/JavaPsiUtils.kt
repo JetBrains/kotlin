@@ -21,12 +21,11 @@ import com.intellij.psi.CommonClassNames
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightMethod
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import java.util.*
 
 fun collectContainingClasses(methods: Collection<PsiMethod>): Set<PsiClass> {
@@ -42,12 +41,12 @@ fun collectContainingClasses(methods: Collection<PsiMethod>): Set<PsiClass> {
     return classes
 }
 
-internal fun getPsiClass(element: PsiElement?): PsiClass? {
+internal tailrec fun getPsiClass(element: PsiElement?): PsiClass? {
     return when {
         element == null -> null
         element is PsiClass -> element
-        element is KtClass -> element.toLightClass()
-        element.parent is KtClass -> (element.parent as KtClass).toLightClass()
+        element is KtClass -> element.toLightClass() ?: KtFakeLightClass(element)
+        element.parent is KtClass -> getPsiClass(element.parent)
         else -> null
     }
 }
@@ -57,7 +56,8 @@ internal fun getPsiMethod(element: PsiElement?): PsiMethod? {
     return when {
         element == null -> null
         element is PsiMethod -> element
-        parent is KtNamedFunction || parent is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(parent as KtFunction)
+        parent is KtNamedFunction || parent is KtSecondaryConstructor ->
+            LightClassUtil.getLightClassMethod(parent as KtFunction) ?: KtFakeLightMethod.get(parent)
         else -> null
     }
 }

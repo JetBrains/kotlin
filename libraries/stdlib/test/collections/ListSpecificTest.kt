@@ -1,7 +1,6 @@
 package test.collections
 
 import kotlin.test.*
-import org.junit.Test
 
 class ListSpecificTest {
     val data = listOf("foo", "bar")

@@ -1,4 +1,4 @@
--injars '<output>/kotlin-compiler-before-shrink.jar'(
+-injars '<kotlin-compiler-jar-before-shrink>'(
 !com/thoughtworks/xstream/converters/extended/ISO8601**,
 !com/thoughtworks/xstream/converters/reflection/CGLIBEnhancedConverter**,
 !com/thoughtworks/xstream/io/xml/JDom**,
@@ -23,7 +23,7 @@
 META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
 messages/**)
 
--outjars '<kotlin-home>/lib/kotlin-compiler.jar'
+-outjars '<kotlin-compiler-jar>'
 
 -dontnote **
 -dontwarn com.intellij.util.ui.IsRetina*
@@ -52,19 +52,22 @@ messages/**)
 -dontwarn org.w3c.dom.ElementTraversal
 -dontwarn javaslang.match.annotation.Unapply
 -dontwarn javaslang.match.annotation.Patterns
+-dontwarn javaslang.*
 -dontwarn com.google.errorprone.**
 -dontwarn com.google.j2objc.**
 -dontwarn javax.crypto.**
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn org.jline.builtins.Nano$Buffer
 -dontwarn net.jpountz.lz4.LZ4Factory
+-dontwarn org.jetbrains.annotations.ReadOnly
+-dontwarn org.jetbrains.annotations.Mutable
 
--libraryjars '<rtjar>'
--libraryjars '<jssejar>'
--libraryjars '<bootstrap.runtime>'
--libraryjars '<bootstrap.reflect>'
--libraryjars '<bootstrap.script.runtime>'
--libraryjars '<tools.jar>'
+#-libraryjars '<rtjar>'
+#-libraryjars '<jssejar>'
+#-libraryjars '<bootstrap.runtime>'
+#-libraryjars '<bootstrap.reflect>'
+#-libraryjars '<bootstrap.script.runtime>'
+#-libraryjars '<tools.jar>'
 
 -dontoptimize
 -dontobfuscate
@@ -162,6 +165,7 @@ messages/**)
 -keep class gnu.trove.TIntHashSet { *; }
 -keep class gnu.trove.TIntIterator { *; }
 -keep class org.iq80.snappy.SlowMemory { *; }
+-keep class javaslang.match.PatternsProcessor { *; }
 
 -keepclassmembers enum * {
     public static **[] values();
@@ -213,3 +217,8 @@ messages/**)
 
 # for coroutines
 -keep class kotlinx.coroutines.** { *; }
+
+# for webdemo
+-keep class com.intellij.openapi.progress.ProgressManager { *; }
+
+        

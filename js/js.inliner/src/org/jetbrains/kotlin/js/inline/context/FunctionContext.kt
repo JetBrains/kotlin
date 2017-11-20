@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 
 abstract class FunctionContext(private val functionReader: FunctionReader, private val config: JsConfig) {
-    protected abstract fun lookUpStaticFunction(functionName: JsName?): JsFunction?
+    protected abstract fun lookUpStaticFunction(functionName: JsName?): FunctionWithWrapper?
 
-    protected abstract fun lookUpStaticFunctionByTag(functionTag: String): JsFunction?
+    protected abstract fun lookUpStaticFunctionByTag(functionTag: String): FunctionWithWrapper?
 
-    fun getFunctionDefinition(call: JsInvocation): JsFunction {
+    fun getFunctionDefinition(call: JsInvocation): FunctionWithWrapper {
         return getFunctionDefinitionImpl(call)!!
     }
 
@@ -67,7 +67,7 @@ abstract class FunctionContext(private val functionReader: FunctionReader, priva
      * 5. Qualifier can be JsNameRef with ref to case [3]
      *    in case of local function with closure.
      */
-    private fun getFunctionDefinitionImpl(call: JsInvocation): JsFunction? {
+    private fun getFunctionDefinitionImpl(call: JsInvocation): FunctionWithWrapper? {
         val descriptor = call.descriptor
         if (descriptor != null) {
             if (descriptor in functionReader) return functionReader[descriptor]
@@ -87,19 +87,19 @@ abstract class FunctionContext(private val functionReader: FunctionReader, priva
         return when (qualifier) {
             is JsInvocation -> {
                 tryExtractCallableReference(qualifier) ?: getSimpleName(qualifier)?.let { simpleName ->
-                    lookUpStaticFunction(simpleName)?.let { if (isFunctionCreator(it)) it else null }
+                    lookUpStaticFunction(simpleName)?.let { if (isFunctionCreator(it.function)) it else null }
                 }
             }
             is JsNameRef -> lookUpStaticFunction(qualifier.name)
-            is JsFunction -> qualifier
+            is JsFunction -> FunctionWithWrapper(qualifier, null)
             else -> null
         }
     }
 
-    private fun tryExtractCallableReference(invocation: JsInvocation): JsFunction? {
+    private fun tryExtractCallableReference(invocation: JsInvocation): FunctionWithWrapper? {
         if (invocation.isCallableReference) {
             val arg = invocation.arguments[1]
-            if (arg is JsFunction) return arg
+            if (arg is JsFunction) return FunctionWithWrapper(arg, null)
         }
         return null
     }

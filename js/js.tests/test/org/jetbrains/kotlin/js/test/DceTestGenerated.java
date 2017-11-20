@@ -42,6 +42,12 @@ public class DceTestGenerated extends AbstractDceTest {
         doTest(fileName);
     }
 
+    @TestMetadata("arrayAccess.js")
+    public void testArrayAccess() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/arrayAccess.js");
+        doTest(fileName);
+    }
+
     @TestMetadata("commonjs.js")
     public void testCommonjs() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/commonjs.js");
@@ -51,6 +57,18 @@ public class DceTestGenerated extends AbstractDceTest {
     @TestMetadata("cycle.js")
     public void testCycle() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/cycle.js");
+        doTest(fileName);
+    }
+
+    @TestMetadata("localVarAndFunction.js")
+    public void testLocalVarAndFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/localVarAndFunction.js");
+        doTest(fileName);
+    }
+
+    @TestMetadata("typeOf.js")
+    public void testTypeOf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/typeOf.js");
         doTest(fileName);
     }
 }

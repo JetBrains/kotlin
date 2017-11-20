@@ -65,7 +65,7 @@ class TypeAliasExpander(
     }
 
     private fun TypeAliasExpansion.createAbbreviation(annotations: Annotations, isNullable: Boolean) =
-            KotlinTypeFactory.simpleType(
+            KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                     annotations,
                     descriptor.typeConstructor,
                     arguments,

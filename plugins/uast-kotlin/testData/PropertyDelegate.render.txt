@@ -2,6 +2,6 @@ public final class PropertyDelegateKt {
     private static final var sdCardPath$delegate: kotlin.Lazy
     public static final fun getSdCardPath() : java.lang.String = UastEmptyExpression
     public static final fun localPropertyTest() : void {
-        var sdCardPathLocal: <ErrorType>
+        var sdCardPathLocal: java.lang.String
     }
 }

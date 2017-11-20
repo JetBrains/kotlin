@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 
-internal class CliJavaModuleFinder(jrtFileSystemRoot: VirtualFile?) : JavaModuleFinder {
+class CliJavaModuleFinder(jrtFileSystemRoot: VirtualFile?) : JavaModuleFinder {
     private val modulesRoot = jrtFileSystemRoot?.findChild("modules")
     private val userModules = linkedMapOf<String, JavaModule>()
 
@@ -42,6 +42,6 @@ internal class CliJavaModuleFinder(jrtFileSystemRoot: VirtualFile?) : JavaModule
     private fun findSystemModule(moduleRoot: VirtualFile): JavaModule.Explicit? {
         val file = moduleRoot.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE) ?: return null
         val moduleInfo = JavaModuleInfo.read(file) ?: return null
-        return JavaModule.Explicit(moduleInfo, moduleRoot, file, isBinary = true)
+        return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(moduleRoot, isBinary = true)), file)
     }
 }

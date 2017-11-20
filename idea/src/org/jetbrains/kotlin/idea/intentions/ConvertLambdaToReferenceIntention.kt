@@ -178,16 +178,16 @@ open class ConvertLambdaToReferenceIntention(text: String) :
             // Parameters with default value
             val valueParameters = outerCalleeDescriptor.valueParameters
             val arguments = outerCallExpression.valueArguments.filter { it !is KtLambdaArgument }
-            val useNamedArguments = valueParameters.any { it.hasDefaultValue() } || arguments.any { it.getArgumentName() != null }
+            val hadDefaultValues = valueParameters.size - 1 > arguments.size
+            val useNamedArguments = valueParameters.any { it.hasDefaultValue() } && hadDefaultValues
+                                    || arguments.any { it.getArgumentName() != null }
 
-            if (useNamedArguments && arguments.size > valueParameters.size) return
             val newArgumentList = factory.buildValueArgumentList {
                 appendFixedText("(")
-                arguments.forEachIndexed { i, argument ->
-                    if (useNamedArguments) {
-                        val argumentName = argument.getArgumentName()?.asName
-                        val name = argumentName ?: valueParameters[i].name
-                        appendName(name)
+                arguments.forEach { argument ->
+                    val argumentName = argument.getArgumentName()
+                    if (useNamedArguments && argumentName != null) {
+                        appendName(argumentName.asName)
                         appendFixedText(" = ")
                     }
                     appendExpression(argument.getArgumentExpression())

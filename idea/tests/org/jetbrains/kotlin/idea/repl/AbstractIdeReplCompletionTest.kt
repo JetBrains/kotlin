@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.repl
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCase() {
@@ -36,9 +38,11 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
     override fun setUp() {
         super.setUp()
         consoleRunner = KotlinConsoleKeeper.getInstance(project).run(myModule)!!
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 
     override fun tearDown() {
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
         consoleRunner?.dispose()
         consoleRunner = null
         super.tearDown()

@@ -1,0 +1,3 @@
+Receiver 8 println("length: ${server.foo.length()}")
+Usage in import 3 import server.foo
+Value read 7 println("foo = ${server.foo}")

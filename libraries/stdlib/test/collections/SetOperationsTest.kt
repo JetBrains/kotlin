@@ -1,7 +1,6 @@
 package test.collections
 
 import kotlin.test.*
-import org.junit.Test
 
 class SetOperationsTest {
     @Test fun distinct() {

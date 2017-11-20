@@ -1,7 +1,7 @@
 package test
 
-header class Simple
-header fun createSimple(): Simple
+expect class Simple
+expect fun createSimple(): Simple
 
-header class Generic<A, B>
-header fun <A, B> createGeneric(a: A, b: B): Generic<A, B>
+expect class Generic<A, B>
+expect fun <A, B> createGeneric(a: A, b: B): Generic<A, B>

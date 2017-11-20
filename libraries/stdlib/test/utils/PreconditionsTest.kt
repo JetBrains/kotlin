@@ -1,6 +1,5 @@
 package test.utils
 
-import org.junit.Test
 import kotlin.test.*
 
 class PreconditionsTest() {

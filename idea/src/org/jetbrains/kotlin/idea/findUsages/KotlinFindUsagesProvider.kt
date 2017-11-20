@@ -24,7 +24,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -71,7 +71,7 @@ class KotlinFindUsagesProvider : FindUsagesProvider {
             is KtProperty -> (element.name ?: "") + (element.containerDescription?.let { " of $it" } ?: "")
             is KtFunction -> {
                 val name = element.name ?: ""
-                val descriptor = element.resolveToDescriptor() as FunctionDescriptor
+                val descriptor = element.unsafeResolveToDescriptor() as FunctionDescriptor
                 val renderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES
                 val paramsDescription = descriptor.valueParameters.joinToString(prefix = "(", postfix = ")") { renderer.renderType(it.type) }
                 val returnType = descriptor.returnType

@@ -1,5 +1,5 @@
 // "Convert member to extension" "true"
 
-header class Foo {
+expect class Foo {
     val <caret>foo: Int
 }

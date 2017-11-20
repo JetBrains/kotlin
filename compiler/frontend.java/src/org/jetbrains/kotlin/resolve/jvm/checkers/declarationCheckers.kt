@@ -45,7 +45,7 @@ class LocalFunInlineChecker : SimpleDeclarationChecker {
             declaration is KtNamedFunction &&
             descriptor is FunctionDescriptor &&
             descriptor.visibility == Visibilities.LOCAL) {
-            diagnosticHolder.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, declaration, descriptor))
+            diagnosticHolder.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, "Local inline functions"))
         }
     }
 }

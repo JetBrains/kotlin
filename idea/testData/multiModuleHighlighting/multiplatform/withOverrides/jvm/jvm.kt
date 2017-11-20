@@ -1,1 +1,1 @@
-impl fun foo(arg: Int) = arg
+actual fun foo(arg: Int) = arg

@@ -124,4 +124,7 @@ abstract class LexicalScopeStorage(
         } while (rest != null)
         return result
     }
+
+    override fun definitelyDoesNotContainName(name: Name) =
+            functionsByName?.get(name) == null && variablesAndClassifiersByName?.get(name) == null
 }

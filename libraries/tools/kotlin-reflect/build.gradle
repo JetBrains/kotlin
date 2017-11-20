@@ -8,18 +8,18 @@ buildscript {
     }
     dependencies {
         classpath 'net.sf.proguard:proguard-gradle:5.2.1'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+        classpath "com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}"
     }
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
 configurePublishing(project)
 
 
-def core = "${rootDir}/../core"
+def core = "${rootDir}/core"
 def annotationsSrc = "${buildDir}/annotations"
 def relocatedCoreSrc = "${buildDir}/core-relocated"
 
@@ -27,12 +27,6 @@ sourceSets {
     main {
         java {
             srcDir annotationsSrc
-            srcDir "${core}/descriptor.loader.java/src"
-            srcDir "${core}/descriptors/src"
-            srcDir "${core}/descriptors.runtime/src"
-            srcDir "${core}/deserialization/src"
-            srcDir "${core}/util.runtime/src"
-
             srcDir "${core}/reflection.jvm/src"
         }
     }
@@ -40,16 +34,23 @@ sourceSets {
 
 configurations {
     proguardDeps
-    shadows
+    shadows { transitive = false }
     compileOnly.extendsFrom(shadows)
+    mainJar
 }
 
 dependencies {
     proguardDeps project(':kotlin-stdlib')
+    shadows project(':core:descriptors')
+    shadows project(':core:descriptors.jvm')
+    shadows project(':core:deserialization')
+    shadows project(':core:descriptors.runtime')
+    shadows project(':core:util.runtime')
     shadows 'javax.inject:javax.inject:1'
-    shadows project(path: ':tools:protobuf-lite')
+    shadows project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
 
     compile project(':kotlin-stdlib')
+    compileOnly project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
 }
 
 task copyAnnotations(type: Sync) {
@@ -70,11 +71,13 @@ compileJava {
 
 compileKotlin {
     dependsOn copyAnnotations
+    dependsOn ':custom-dependencies:protobuf-lite:prepare'
     kotlinOptions {
         freeCompilerArgs = ["-version",
                             "-Xallow-kotlin-package",
+                            "-Xnormalize-constructor-calls=enable",
                             "-module-name", "kotlin-reflection",
-                            "-Xdump-declarations-to", "${buildDir}/reflect-declarations.json"]
+                            "-Xdump-declarations-to=${buildDir}/reflect-declarations.json"]
     }
 }
 
@@ -86,11 +89,11 @@ task reflectShadowJar(type: ShadowJar) {
     version = null
     manifestAttributes(manifest, project, 'Main')
 
-    from (sourceSets.main.output)
-    from ("${core}/descriptor.loader.java/src") {
+    from(sourceSets.main.output)
+    from(project(":core:descriptors.jvm").sourceSets.main.resources) {
         include 'META-INF/services/**'
     }
-    from ("${core}/deserialization/src") {
+    from(project(":core:deserialization").sourceSets.main.resources) {
         include 'META-INF/services/**'
     }
 
@@ -100,21 +103,16 @@ task reflectShadowJar(type: ShadowJar) {
     mergeServiceFiles()
 }
 
-createScriptTask(project, "stripMetadata") {
+task stripMetadata {
     dependsOn reflectShadowJar
     def inputJar = reflectShadowJar.archivePath
-    def outputJar = "${libsDir}/kotlin-reflect-stripped.jar"
+    def outputJar = new File("${libsDir}/kotlin-reflect-stripped.jar")
     inputs.file(inputJar)
     outputs.file(outputJar)
-    args += [
-            "${rootDir}/../generators/infrastructure/strip-kotlin-annotations.kts",
-            "kotlin/Metadata",
-            "kotlin/reflect/jvm/internal/impl/.*",
-            inputJar,
-            outputJar
-    ]
+    doLast {
+        StripMetadataKt.stripMetadata(logger, "kotlin/reflect/jvm/internal/impl/.*", inputJar, outputJar)
+    }
 }
-
 
 def mainArchiveName = "${archivesBaseName}-${project.version}.jar"
 def outputJarPath = "${libsDir}/${mainArchiveName}"
@@ -128,7 +126,7 @@ task proguard(type: proguard.gradle.ProGuardTask) {
     injars stripMetadata.outputs.files
     outjars outputJarPath
 
-    libraryjars configurations.proguardDeps.files
+    libraryjars configurations.proguardDeps
     libraryjars rtJar
 
     configuration "${core}/reflection.jvm/reflection.pro"
@@ -142,8 +140,8 @@ task relocateCoreSources(type: Copy) {
         delete(relocatedCoreSrc)
     }
 
-    from "${core}/descriptor.loader.java/src/${commonPackage}"
     from "${core}/descriptors/src/${commonPackage}"
+    from "${core}/descriptors.jvm/src/${commonPackage}"
     from "${core}/descriptors.runtime/src/${commonPackage}"
     from "${core}/deserialization/src/${commonPackage}"
     from "${core}/util.runtime/src/${commonPackage}"
@@ -172,7 +170,15 @@ task relocatedSourcesJar(type: Jar) {
 
 def artifactJar = [file: file(outputJarPath), builtBy: proguard, name: archivesBaseName]
 
+task dexMethodCount(type: DexMethodCount) {
+    dependsOn(artifactJar.builtBy)
+    jarFile = artifactJar.file
+    ownPackages = ['kotlin.reflect']
+}
+check.dependsOn(dexMethodCount)
+
 artifacts {
+    mainJar artifactJar
     runtime artifactJar
     archives artifactJar
     archives relocatedSourcesJar

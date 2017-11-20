@@ -1565,6 +1565,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static synthetic fun binarySearch$default (Ljava/util/List;Ljava/lang/Object;Ljava/util/Comparator;IIILjava/lang/Object;)I
 	public static final fun binarySearchBy (Ljava/util/List;Ljava/lang/Comparable;IILkotlin/jvm/functions/Function1;)I
 	public static synthetic fun binarySearchBy$default (Ljava/util/List;Ljava/lang/Comparable;IILkotlin/jvm/functions/Function1;ILjava/lang/Object;)I
+	public static final fun chunked (Ljava/lang/Iterable;I)Ljava/util/List;
+	public static final fun chunked (Ljava/lang/Iterable;ILkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static final fun collectionSizeOrDefault (Ljava/lang/Iterable;I)I
 	public static final fun collectionSizeOrNull (Ljava/lang/Iterable;)Ljava/lang/Integer;
 	public static final fun contains (Ljava/lang/Iterable;Ljava/lang/Object;)Z
@@ -1693,6 +1695,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun retainAll (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun reverse (Ljava/util/List;)V
 	public static final fun reversed (Ljava/lang/Iterable;)Ljava/util/List;
+	public static final fun shuffled (Ljava/lang/Iterable;)Ljava/util/List;
+	public static final fun shuffled (Ljava/lang/Iterable;Ljava/util/Random;)Ljava/util/List;
 	public static final fun single (Ljava/lang/Iterable;)Ljava/lang/Object;
 	public static final fun single (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun single (Ljava/util/List;)Ljava/lang/Object;
@@ -1743,12 +1747,18 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun toSortedSet (Ljava/lang/Iterable;Ljava/util/Comparator;)Ljava/util/SortedSet;
 	public static final fun union (Ljava/lang/Iterable;Ljava/lang/Iterable;)Ljava/util/Set;
 	public static final fun unzip (Ljava/lang/Iterable;)Lkotlin/Pair;
+	public static final fun windowed (Ljava/lang/Iterable;IIZ)Ljava/util/List;
+	public static final fun windowed (Ljava/lang/Iterable;IIZLkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static synthetic fun windowed$default (Ljava/lang/Iterable;IIZILjava/lang/Object;)Ljava/util/List;
+	public static synthetic fun windowed$default (Ljava/lang/Iterable;IIZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/util/List;
 	public static final fun withIndex (Ljava/lang/Iterable;)Ljava/lang/Iterable;
 	public static final fun withIndex (Ljava/util/Iterator;)Ljava/util/Iterator;
 	public static final fun zip (Ljava/lang/Iterable;Ljava/lang/Iterable;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/Iterable;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/Iterable;[Ljava/lang/Object;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/Iterable;[Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun zipWithNext (Ljava/lang/Iterable;)Ljava/util/List;
+	public static final fun zipWithNext (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 }
 
 public abstract class kotlin/collections/DoubleIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
@@ -2045,6 +2055,7 @@ public final class kotlin/coroutines/experimental/intrinsics/IntrinsicsKt {
 	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	public static final fun getCOROUTINE_SUSPENDED ()Ljava/lang/Object;
+	public static final fun getCoroutineContext ()Lkotlin/coroutines/experimental/CoroutineContext;
 }
 
 public abstract class kotlin/coroutines/experimental/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/experimental/Continuation {
@@ -2062,6 +2073,10 @@ public abstract class kotlin/coroutines/experimental/jvm/internal/CoroutineImpl 
 
 public final class kotlin/coroutines/experimental/jvm/internal/CoroutineIntrinsics {
 	public static final fun normalizeContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
+}
+
+public final class kotlin/internal/PlatformImplementationsKt {
+	public static final fun apiVersionIsAtLeast (III)Z
 }
 
 public final class kotlin/io/AccessDeniedException : kotlin/io/FileSystemException {
@@ -2638,6 +2653,24 @@ public final class kotlin/jvm/internal/LongSpreadBuilder : kotlin/jvm/internal/P
 	public final fun toArray ()[J
 }
 
+public class kotlin/jvm/internal/MagicApiIntrinsics {
+	public fun <init> ()V
+	public static fun anyMagicApiCall (I)Ljava/lang/Object;
+	public static fun anyMagicApiCall (IJJLjava/lang/Object;)Ljava/lang/Object;
+	public static fun anyMagicApiCall (IJLjava/lang/Object;)Ljava/lang/Object;
+	public static fun anyMagicApiCall (ILjava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public static fun anyMagicApiCall (ILjava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public static fun anyMagicApiCall (Ljava/lang/Object;)Ljava/lang/Object;
+	public static fun intMagicApiCall (I)I
+	public static fun intMagicApiCall (IJJLjava/lang/Object;)I
+	public static fun intMagicApiCall (IJLjava/lang/Object;)I
+	public static fun intMagicApiCall (ILjava/lang/Object;Ljava/lang/Object;)I
+	public static fun intMagicApiCall (ILjava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)I
+	public static fun intMagicApiCall (Ljava/lang/Object;)I
+	public static fun voidMagicApiCall (I)V
+	public static fun voidMagicApiCall (Ljava/lang/Object;)V
+}
+
 public class kotlin/jvm/internal/MutableLocalVariableReference : kotlin/jvm/internal/MutablePropertyReference0 {
 	public fun <init> ()V
 	public fun get ()Ljava/lang/Object;
@@ -2981,6 +3014,26 @@ public abstract interface class kotlin/jvm/internal/markers/KMutableMap$Entry : 
 }
 
 public abstract interface class kotlin/jvm/internal/markers/KMutableSet : kotlin/jvm/internal/markers/KMutableCollection {
+}
+
+public final class kotlin/math/MathKt {
+	public static final field E D
+	public static final field PI D
+	public static final fun acosh (D)D
+	public static final fun asinh (D)D
+	public static final fun atanh (D)D
+	public static final fun getSign (I)I
+	public static final fun getSign (J)I
+	public static final fun log (DD)D
+	public static final fun log (FF)F
+	public static final fun log2 (D)D
+	public static final fun log2 (F)F
+	public static final fun roundToInt (D)I
+	public static final fun roundToInt (F)I
+	public static final fun roundToLong (D)J
+	public static final fun roundToLong (F)J
+	public static final fun truncate (D)D
+	public static final fun truncate (F)F
 }
 
 public final class kotlin/properties/Delegates {
@@ -3454,6 +3507,8 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun averageOfInt (Lkotlin/sequences/Sequence;)D
 	public static final fun averageOfLong (Lkotlin/sequences/Sequence;)D
 	public static final fun averageOfShort (Lkotlin/sequences/Sequence;)D
+	public static final fun chunked (Lkotlin/sequences/Sequence;I)Lkotlin/sequences/Sequence;
+	public static final fun chunked (Lkotlin/sequences/Sequence;ILkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
 	public static final fun constrainOnce (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun contains (Lkotlin/sequences/Sequence;Ljava/lang/Object;)Z
 	public static final fun count (Lkotlin/sequences/Sequence;)I
@@ -3570,9 +3625,15 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun toSortedSet (Lkotlin/sequences/Sequence;)Ljava/util/SortedSet;
 	public static final fun toSortedSet (Lkotlin/sequences/Sequence;Ljava/util/Comparator;)Ljava/util/SortedSet;
 	public static final fun unzip (Lkotlin/sequences/Sequence;)Lkotlin/Pair;
+	public static final fun windowed (Lkotlin/sequences/Sequence;IIZ)Lkotlin/sequences/Sequence;
+	public static final fun windowed (Lkotlin/sequences/Sequence;IIZLkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
+	public static synthetic fun windowed$default (Lkotlin/sequences/Sequence;IIZILjava/lang/Object;)Lkotlin/sequences/Sequence;
+	public static synthetic fun windowed$default (Lkotlin/sequences/Sequence;IIZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun withIndex (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun zip (Lkotlin/sequences/Sequence;Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun zip (Lkotlin/sequences/Sequence;Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
+	public static final fun zipWithNext (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
+	public static final fun zipWithNext (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 }
 
 public final class kotlin/system/TimingKt {
@@ -3716,7 +3777,7 @@ public final class kotlin/text/MatchResult$Destructured {
 	public final fun toList ()Ljava/util/List;
 }
 
-public final class kotlin/text/Regex {
+public final class kotlin/text/Regex : java/io/Serializable {
 	public static final field Companion Lkotlin/text/Regex$Companion;
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/util/Set;)V
@@ -3778,6 +3839,10 @@ public final class kotlin/text/StringsKt {
 	public static final fun associateByTo (Ljava/lang/CharSequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateTo (Ljava/lang/CharSequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun capitalize (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun chunked (Ljava/lang/CharSequence;I)Ljava/util/List;
+	public static final fun chunked (Ljava/lang/CharSequence;ILkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static final fun chunkedSequence (Ljava/lang/CharSequence;I)Lkotlin/sequences/Sequence;
+	public static final fun chunkedSequence (Ljava/lang/CharSequence;ILkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
 	public static final fun commonPrefixWith (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Ljava/lang/String;
 	public static synthetic fun commonPrefixWith$default (Ljava/lang/CharSequence;Ljava/lang/CharSequence;ZILjava/lang/Object;)Ljava/lang/String;
 	public static final fun commonSuffixWith (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Ljava/lang/String;
@@ -4002,6 +4067,10 @@ public final class kotlin/text/StringsKt {
 	public static final fun takeLastWhile (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
 	public static final fun takeWhile (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/CharSequence;
 	public static final fun takeWhile (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
+	public static final fun toBigDecimalOrNull (Ljava/lang/String;)Ljava/math/BigDecimal;
+	public static final fun toBigDecimalOrNull (Ljava/lang/String;Ljava/math/MathContext;)Ljava/math/BigDecimal;
+	public static final fun toBigIntegerOrNull (Ljava/lang/String;)Ljava/math/BigInteger;
+	public static final fun toBigIntegerOrNull (Ljava/lang/String;I)Ljava/math/BigInteger;
 	public static final fun toByteOrNull (Ljava/lang/String;)Ljava/lang/Byte;
 	public static final fun toByteOrNull (Ljava/lang/String;I)Ljava/lang/Byte;
 	public static final fun toCollection (Ljava/lang/CharSequence;Ljava/util/Collection;)Ljava/util/Collection;
@@ -4036,9 +4105,19 @@ public final class kotlin/text/StringsKt {
 	public static final fun trimStart (Ljava/lang/CharSequence;[C)Ljava/lang/CharSequence;
 	public static final fun trimStart (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
 	public static final fun trimStart (Ljava/lang/String;[C)Ljava/lang/String;
+	public static final fun windowed (Ljava/lang/CharSequence;IIZ)Ljava/util/List;
+	public static final fun windowed (Ljava/lang/CharSequence;IIZLkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static synthetic fun windowed$default (Ljava/lang/CharSequence;IIZILjava/lang/Object;)Ljava/util/List;
+	public static synthetic fun windowed$default (Ljava/lang/CharSequence;IIZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/util/List;
+	public static final fun windowedSequence (Ljava/lang/CharSequence;IIZ)Lkotlin/sequences/Sequence;
+	public static final fun windowedSequence (Ljava/lang/CharSequence;IIZLkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
+	public static synthetic fun windowedSequence$default (Ljava/lang/CharSequence;IIZILjava/lang/Object;)Lkotlin/sequences/Sequence;
+	public static synthetic fun windowedSequence$default (Ljava/lang/CharSequence;IIZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun withIndex (Ljava/lang/CharSequence;)Ljava/lang/Iterable;
 	public static final fun zip (Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun zipWithNext (Ljava/lang/CharSequence;)Ljava/util/List;
+	public static final fun zipWithNext (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 }
 
 public final class kotlin/text/Typography {

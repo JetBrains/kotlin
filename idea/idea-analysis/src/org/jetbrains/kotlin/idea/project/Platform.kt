@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
@@ -85,13 +85,13 @@ fun Project.getLanguageVersionSettings(contextModule: Module? = null,
     val apiVersion = ApiVersion.createByLanguageVersion(LanguageVersion.fromVersionString(arguments.apiVersion) ?: languageVersion)
     val compilerSettings = KotlinCompilerSettings.getInstance(this).settings
     val extraLanguageFeatures = getExtraLanguageFeatures(
-            TargetPlatformKind.Common,
+            null,
             CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this).settings),
             compilerSettings,
             null
     )
     return LanguageVersionSettingsImpl(languageVersion, apiVersion,
-                                       arguments.configureAnalysisFlags() + extraAnalysisFlags,
+                                       arguments.configureAnalysisFlags(MessageCollector.NONE) + extraAnalysisFlags,
                                        extraLanguageFeatures)
 }
 
@@ -111,17 +111,10 @@ val Module.languageVersionSettings: LanguageVersionSettings
                 this
         )
 
-        val arguments = facetSettings.compilerArguments
-        if (arguments != null) {
-            facetSettings.compilerSettings?.let { compilerSettings ->
-                parseCommandLineArguments(compilerSettings.additionalArgumentsAsList, arguments)
-            }
-        }
-
         return LanguageVersionSettingsImpl(
                 languageVersion,
                 ApiVersion.createByLanguageVersion(apiVersion),
-                arguments?.configureAnalysisFlags().orEmpty(),
+                facetSettings.mergedCompilerArguments?.configureAnalysisFlags(MessageCollector.NONE).orEmpty(),
                 extraLanguageFeatures
         )
     }
@@ -141,7 +134,7 @@ private val Module.implementsCommonModule: Boolean
             && ModuleRootManager.getInstance(this).dependencies.any { it.targetPlatform == TargetPlatformKind.Common }
 
 private fun getExtraLanguageFeatures(
-        targetPlatformKind: TargetPlatformKind<*>,
+        targetPlatformKind: TargetPlatformKind<*>?,
         coroutineSupport: LanguageFeature.State,
         compilerSettings: CompilerSettings?,
         module: Module?
@@ -159,7 +152,7 @@ private fun getExtraLanguageFeatures(
 
 val KtElement.languageVersionSettings: LanguageVersionSettings
     get() {
-        if (ServiceManager.getService(containingKtFile.project, ProjectFileIndex::class.java) == null) {
+        if (ServiceManager.getService(project, ProjectFileIndex::class.java) == null) {
             return LanguageVersionSettingsImpl.DEFAULT
         }
         return ModuleUtilCore.findModuleForPsiElement(this)?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
@@ -167,7 +160,7 @@ val KtElement.languageVersionSettings: LanguageVersionSettings
 
 val KtElement.jvmTarget: JvmTarget
     get() {
-        if (ServiceManager.getService(containingKtFile.project, ProjectFileIndex::class.java) == null) {
+        if (ServiceManager.getService(project, ProjectFileIndex::class.java) == null) {
             return JvmTarget.DEFAULT
         }
         return ModuleUtilCore.findModuleForPsiElement(this)?.targetPlatform?.version as? JvmTarget ?: JvmTarget.DEFAULT

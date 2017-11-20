@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DiagnosticReporterByTrackingStrategy(
         val constantExpressionEvaluator: ConstantExpressionEvaluator,
@@ -88,6 +89,13 @@ class DiagnosticReporterByTrackingStrategy(
                 val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isVariableReceiverForInvoke ?: false
                 tracingStrategy.unsafeCall(trace, callReceiver.receiver.receiverValue.type, implicitInvokeCheck)
             }
+
+            SuperAsExtensionReceiver::class.java -> {
+                val psiExpression = callReceiver.psiExpression
+                if (psiExpression is KtSuperExpression) {
+                    trace.report(SUPER_CANT_BE_EXTENSION_RECEIVER.on(psiExpression, psiExpression.text))
+                }
+            }
         }
     }
 
@@ -96,16 +104,22 @@ class DiagnosticReporterByTrackingStrategy(
             SmartCastDiagnostic::class.java -> reportSmartCast(diagnostic as SmartCastDiagnostic)
             UnstableSmartCast::class.java -> reportUnstableSmartCast(diagnostic as UnstableSmartCast)
             TooManyArguments::class.java -> {
-                val psiExpression = callArgument.psiExpression
-                if (psiExpression != null) {
-                    trace.report(TOO_MANY_ARGUMENTS.on(psiExpression, (diagnostic as TooManyArguments).descriptor))
+                reportIfNonNull(callArgument.psiExpression) {
+                    trace.report(TOO_MANY_ARGUMENTS.on(it, (diagnostic as TooManyArguments).descriptor))
                 }
 
                 trace.markAsReported()
             }
             VarargArgumentOutsideParentheses::class.java ->
-                trace.report(VARARG_OUTSIDE_PARENTHESES.on(callArgument.psiExpression!!))
+                reportIfNonNull(callArgument.psiExpression) { trace.report(VARARG_OUTSIDE_PARENTHESES.on(it)) }
+
+            MixingNamedAndPositionArguments::class.java ->
+                trace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(callArgument.psiCallArgument.valueArgument.asElement()))
         }
+    }
+
+    private fun <T> reportIfNonNull(element: T?, report: (T) -> Unit) {
+        if (element != null) report(element)
     }
 
     override fun onCallArgumentName(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
@@ -128,7 +142,12 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     override fun onCallArgumentSpread(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
-
+        when (diagnostic.javaClass) {
+            NonVarargSpread::class.java -> {
+                val spreadElement = callArgument.safeAs<ExpressionKotlinCallArgumentImpl>()?.valueArgument?.getSpreadElement()
+                reportIfNonNull(spreadElement) { trace.report(NON_VARARG_SPREAD.on(it)) }
+            }
+        }
     }
 
     private fun reportSmartCast(smartCastDiagnostic: SmartCastDiagnostic) {
@@ -182,6 +201,14 @@ class DiagnosticReporterByTrackingStrategy(
                     if (reportConstantTypeMismatch(constraintError, deparenthesized)) return
                     trace.report(Errors.TYPE_MISMATCH.on(deparenthesized, constraintError.upperType, constraintError.lowerType))
                 }
+
+                (position as? ExpectedTypeConstraintPosition)?.let {
+                    val call = it.topLevelCall.psiKotlinCall.psiCall.callElement.safeAs<KtExpression>()
+                    reportIfNonNull(call) {
+                        trace.report(Errors.TYPE_MISMATCH.on(it, constraintError.upperType, constraintError.lowerType))
+                    }
+                }
+
                 (position as? ExplicitTypeParameterConstraintPosition)?.let {
                     val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
                     trace.report(UPPER_BOUND_VIOLATED.on(typeArgumentReference, constraintError.upperType, constraintError.lowerType))

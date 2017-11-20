@@ -1,5 +1,18 @@
 package
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class A : kotlin.Annotation {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface RS {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public interface SAM {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -25,6 +38,12 @@ public typealias Test1 = suspend () -> kotlin.Unit
 public typealias Test10 = suspend (suspend () -> kotlin.Unit) -> kotlin.Unit
 public typealias Test11 = suspend () -> suspend () -> kotlin.Unit
 public typealias Test12 = suspend (suspend () -> kotlin.Unit) -> kotlin.Unit
+public typealias Test13 = @A() suspend () -> kotlin.Unit
+public typealias Test14 = @A() suspend () -> kotlin.Unit
+public typealias Test15 = (@A() suspend () -> kotlin.Unit)?
+public typealias Test16 = (@A() suspend () -> kotlin.Unit)?
+public typealias Test17 = (@A() suspend RS.() -> kotlin.Unit)
+public typealias Test18 = (suspend () -> kotlin.Unit)?
 public typealias Test2 = suspend kotlin.Int.() -> kotlin.Unit
 public typealias Test3 = () -> kotlin.Unit
 public typealias Test4 = Action

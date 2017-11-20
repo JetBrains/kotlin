@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1002
+// EXPECTED_REACHABLE_NODES: 1120
 package foo
 
 open class Foo<out T>(open val value: T)

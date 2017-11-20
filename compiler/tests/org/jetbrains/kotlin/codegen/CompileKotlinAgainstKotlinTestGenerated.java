@@ -138,6 +138,24 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("jvmPackageName.kt")
+    public void testJvmPackageName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmPackageName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("jvmPackageNameInRootPackage.kt")
+    public void testJvmPackageNameInRootPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameInRootPackage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("jvmPackageNameWithJvmName.kt")
+    public void testJvmPackageNameWithJvmName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameWithJvmName.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jvmStaticInObject.kt")
     public void testJvmStaticInObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmStaticInObject.kt");
@@ -165,6 +183,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("multifileClassInlineFunctionAccessingProperty.kt")
     public void testMultifileClassInlineFunctionAccessingProperty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/multifileClassInlineFunctionAccessingProperty.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("multifileClassWithTypealias.kt")
+    public void testMultifileClassWithTypealias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/multifileClassWithTypealias.kt");
         doTest(fileName);
     }
 
@@ -231,6 +255,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("starImportEnum.kt")
     public void testStarImportEnum() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/starImportEnum.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("targetedJvmName.kt")
+    public void testTargetedJvmName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/targetedJvmName.kt");
         doTest(fileName);
     }
 

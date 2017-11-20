@@ -1,40 +1,40 @@
-// !LANGUAGE: +MultiPlatformProjects
+// !LANGUAGE: +MultiPlatformProjects +LateinitTopLevelProperties
 // MODULE: m1-common
 // FILE: common.kt
 
-header val justVal: String
-header var justVar: String
+expect val justVal: String
+expect var justVar: String
 
-header val String.extensionVal: Unit
-header var <T> T.genericExtensionVar: T
+expect val String.extensionVal: Unit
+expect var <T> T.genericExtensionVar: T
 
-header val valWithGet: String
+expect val valWithGet: String
     get
-header var varWithGetSet: String
+expect var varWithGetSet: String
     get set
 
-header var varWithPlatformGetSet: String
-    <!WRONG_MODIFIER_TARGET!>header<!> get
-    <!WRONG_MODIFIER_TARGET!>header<!> set
+expect var varWithPlatformGetSet: String
+    <!WRONG_MODIFIER_TARGET!>expect<!> get
+    <!WRONG_MODIFIER_TARGET!>expect<!> set
 
-header val backingFieldVal: String = <!HEADER_PROPERTY_INITIALIZER!>"no"<!>
-header var backingFieldVar: String = <!HEADER_PROPERTY_INITIALIZER!>"no"<!>
+expect val backingFieldVal: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
+expect var backingFieldVar: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
-header val customAccessorVal: String
-    <!HEADER_DECLARATION_WITH_BODY!>get()<!> = "no"
-header var customAccessorVar: String
-    <!HEADER_DECLARATION_WITH_BODY!>get()<!> = "no"
-    <!HEADER_DECLARATION_WITH_BODY!>set(value)<!> {}
+expect val customAccessorVal: String
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+expect var customAccessorVar: String
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+    <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
-header <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
+expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
 
-header <!WRONG_MODIFIER_TARGET!>lateinit<!> var lateinitVar: String
+expect <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
 
-<!WRONG_MODIFIER_TARGET!>header<!> val delegated: String by Delegate
+expect val delegated: String <!EXPECTED_DELEGATED_PROPERTY!>by Delegate<!>
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }
 
 fun test(): String {
-    <!WRONG_MODIFIER_TARGET!>header<!> val localVariable: String
+    <!WRONG_MODIFIER_TARGET!>expect<!> val localVariable: String
     localVariable = "no"
     return localVariable
 }

@@ -197,7 +197,7 @@ public class TypeUtils {
         }
         TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
-        return KotlinTypeFactory.simpleType(
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 Annotations.Companion.getEMPTY(),
                 typeConstructor,
                 arguments,
@@ -346,7 +346,7 @@ public class TypeUtils {
     }
 
     public static boolean equalTypes(@NotNull KotlinType a, @NotNull KotlinType b) {
-        return KotlinTypeChecker.DEFAULT.isSubtypeOf(a, b) && KotlinTypeChecker.DEFAULT.isSubtypeOf(b, a);
+        return KotlinTypeChecker.DEFAULT.equalTypes(a, b);
     }
 
     public static boolean dependsOnTypeParameters(@NotNull KotlinType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {

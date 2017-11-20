@@ -22,12 +22,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -63,7 +65,8 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
         val referencedFile = findVirtualFile(targetClassOrPackage, originalDescriptor) ?: return null
 
         val referencedPackageFqName =
-                DescriptorUtils.getParentOfType(targetClassOrPackage, PackageFragmentDescriptor::class.java, false)?.fqName
+                (originalDescriptor as? DeserializedMemberDescriptor)?.getImplClassNameForDeserialized()?.packageFqName
+                ?: DescriptorUtils.getParentOfType(targetClassOrPackage, PackageFragmentDescriptor::class.java, false)?.fqName
         val diagnostic = moduleResolver.checkAccessibility(fileFromOurModule, referencedFile, referencedPackageFqName)
 
         return when (diagnostic) {
@@ -102,7 +105,8 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
                 targetDescriptor: ClassifierDescriptor,
                 trace: BindingTrace,
                 element: PsiElement,
-                languageVersionSettings: LanguageVersionSettings
+                languageVersionSettings: LanguageVersionSettings,
+                deprecationResolver: DeprecationResolver
         ) {
             val virtualFile = element.containingFile.virtualFile
             when (targetDescriptor) {

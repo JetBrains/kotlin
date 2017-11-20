@@ -49,6 +49,10 @@ import static org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFal
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
 public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLITool<A> {
+
+    public static String KOTLIN_HOME_PROPERTY = "kotlin.home";
+    public static String KOTLIN_HOME_ENV_VAR = "KOTLIN_HOME";
+
     // Used in CompilerRunnerUtil#invokeExecMethod, in Eclipse plugin (KotlinCLICompiler) and in kotlin-gradle-plugin (GradleCompilerRunner)
     @NotNull
     public ExitCode execAndOutputXml(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {
@@ -65,7 +69,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     @NotNull
     @Override
     public ExitCode execImpl(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
-        GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
+        GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector, arguments.getAllWarningsAsErrors());
 
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, groupingCollector);
@@ -171,8 +175,9 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             configuration.put(CLIConfigurationKeys.IS_API_VERSION_EXPLICIT, true);
         }
 
+        MessageCollector collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
         if (apiVersion.compareTo(languageVersion) > 0) {
-            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+            collector.report(
                     ERROR,
                     "-api-version (" + apiVersion.getVersionString() + ") cannot be greater than " +
                     "-language-version (" + languageVersion.getVersionString() + ")",
@@ -181,7 +186,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         }
 
         if (!languageVersion.isStable()) {
-            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+            collector.report(
                     STRONG_WARNING,
                     "Language version " + languageVersion.getVersionString() + " is experimental, there are " +
                     "no backwards compatibility guarantees for new language and library features",
@@ -199,19 +204,38 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             extraLanguageFeatures.put(LanguageFeature.Coroutines, coroutinesState);
         }
 
+        if (arguments.getNewInference() || configuration.getBoolean(CommonConfigurationKeys.USE_NEW_INFERENCE)) {
+            extraLanguageFeatures.put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED);
+        }
+
+        setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, arguments);
+
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
                 languageVersion,
                 ApiVersion.createByLanguageVersion(apiVersion),
-                arguments.configureAnalysisFlags(),
+                arguments.configureAnalysisFlags(collector),
                 extraLanguageFeatures
         ));
+    }
+
+    protected void setupPlatformSpecificLanguageFeatureSettings(
+            @NotNull Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures,
+            @NotNull A commandLineArguments
+    ) {
+        // do nothing
     }
 
     @Nullable
     private static KotlinPaths computeKotlinPaths(@NotNull MessageCollector messageCollector, @NotNull CommonCompilerArguments arguments) {
         KotlinPaths paths;
-        if (arguments.getKotlinHome() != null) {
-            File kotlinHome = new File(arguments.getKotlinHome());
+        String kotlinHomeProperty = System.getProperty(KOTLIN_HOME_PROPERTY);
+        String kotlinHomeEnvVar = System.getenv(KOTLIN_HOME_ENV_VAR);
+        File kotlinHome =
+                arguments.getKotlinHome() != null ? new File(arguments.getKotlinHome()) :
+                kotlinHomeProperty != null        ? new File(kotlinHomeProperty) :
+                kotlinHomeEnvVar != null          ? new File(kotlinHomeEnvVar)
+                                                  : null;
+        if (kotlinHome != null) {
             if (kotlinHome.isDirectory()) {
                 paths = new KotlinPathsFromHomeDir(kotlinHome);
             }

@@ -11,8 +11,8 @@ UFile (package = ) [public final class LocalDeclarationsKt {...]
                             UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:<ErrorType>
                                 UIdentifier (Identifier (Local)) [UIdentifier (Identifier (Local))]
                                 USimpleNameReferenceExpression (identifier = <init>) [<init>] : PsiType:<ErrorType>
-                UDeclarationsExpression [var baz: <ErrorType> = fun () {...}]
-                    ULocalVariable (name = baz) [var baz: <ErrorType> = fun () {...}]
+                UDeclarationsExpression [var baz: kotlin.jvm.functions.Function0<? extends kotlin.Unit> = fun () {...}]
+                    ULocalVariable (name = baz) [var baz: kotlin.jvm.functions.Function0<? extends kotlin.Unit> = fun () {...}]
                         ULambdaExpression [fun () {...}]
                             UBlockExpression [{...}] : PsiType:<ErrorType>
                                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:<ErrorType>

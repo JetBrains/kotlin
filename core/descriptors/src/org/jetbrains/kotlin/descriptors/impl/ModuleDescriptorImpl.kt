@@ -48,9 +48,6 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
 
     override var isValid: Boolean = true
-        set(value) {
-            field = value
-        }
 
     override fun assertValid() {
         if (!isValid) {
@@ -67,9 +64,6 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 
     override val allDependencyModules: List<ModuleDescriptor>
         get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
-
-    override val allImplementingModules: Set<ModuleDescriptor>
-        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allImplementingModules
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         assertValid()
@@ -144,12 +138,9 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 interface ModuleDependencies {
     val allDependencies: List<ModuleDescriptorImpl>
     val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
-    val allImplementingModules: Set<ModuleDescriptorImpl>
 }
 
 class ModuleDependenciesImpl(
         override val allDependencies: List<ModuleDescriptorImpl>,
         override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
-) : ModuleDependencies {
-    override val allImplementingModules: Set<ModuleDescriptorImpl> = emptySet()
-}
+) : ModuleDependencies

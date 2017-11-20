@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1008
+// EXPECTED_REACHABLE_NODES: 1126
 package foo
 
 class MyException(m: String? = null): Exception(m)

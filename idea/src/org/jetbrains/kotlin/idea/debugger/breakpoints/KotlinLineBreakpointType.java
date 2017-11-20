@@ -141,7 +141,7 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
     }
 
     public class KotlinLambdaBreakpointVariant extends ExactJavaBreakpointVariant {
-        public KotlinLambdaBreakpointVariant(XSourcePosition position, KtFunction function, Integer lambdaOrdinal) {
+        public KotlinLambdaBreakpointVariant(@NotNull XSourcePosition position, @Nullable KtFunction function, Integer lambdaOrdinal) {
             super(position, function, lambdaOrdinal);
         }
 

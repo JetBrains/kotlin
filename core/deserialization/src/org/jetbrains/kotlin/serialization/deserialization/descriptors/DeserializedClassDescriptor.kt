@@ -73,8 +73,8 @@ class DeserializedClassDescriptor(
             (containingDeclaration as? DeserializedClassDescriptor)?.thisAsProtoContainer
     )
 
-    val sinceKotlinInfo: SinceKotlinInfo?
-        get() = SinceKotlinInfo.create(classProto, c.nameResolver, c.sinceKotlinInfoTable)
+    val versionRequirement: VersionRequirement?
+        get() = VersionRequirement.create(classProto, c.nameResolver, c.versionRequirementTable)
 
     override val annotations =
             if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
@@ -98,9 +98,9 @@ class DeserializedClassDescriptor(
 
     override fun isData() = Flags.IS_DATA.get(classProto.flags)
 
-    override fun isHeader() = Flags.IS_HEADER_CLASS.get(classProto.flags)
+    override fun isExpect() = Flags.IS_EXPECT_CLASS.get(classProto.flags)
 
-    override fun isImpl() = false
+    override fun isActual() = false
 
     override fun isExternal() = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
 
@@ -194,8 +194,6 @@ class DeserializedClassDescriptor(
         }
 
         override fun getParameters() = parameters()
-
-        override fun isFinal(): Boolean = isFinalClass
 
         override fun isDenotable() = true
 
@@ -294,8 +292,8 @@ class DeserializedClassDescriptor(
             result.addAll(classDescriptor.enumEntries?.all().orEmpty())
         }
 
-        private fun recordLookup(name: Name, from: LookupLocation) {
-            c.components.lookupTracker.record(from, classDescriptor, name)
+        override fun recordLookup(name: Name, location: LookupLocation) {
+            c.components.lookupTracker.record(location, classDescriptor, name)
         }
     }
 

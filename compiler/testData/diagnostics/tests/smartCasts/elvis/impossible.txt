@@ -1,0 +1,39 @@
+package
+
+public fun bar(/*0*/ list: BooleanList, /*1*/ arg: UnstableBoolean): kotlin.Unit
+public fun foo(/*0*/ list: StringList, /*1*/ arg: Unstable): kotlin.Unit
+public fun kotlin.String.isEmpty(): kotlin.Boolean
+public fun BooleanList.remove(/*0*/ b: kotlin.Boolean?): kotlin.Boolean
+public fun StringList.remove(/*0*/ s: kotlin.String?): kotlin.String
+
+public final class BooleanList {
+    public constructor BooleanList()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun remove(/*0*/ b: kotlin.Boolean): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class StringList {
+    public constructor StringList()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun remove(/*0*/ s: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Unstable {
+    public constructor Unstable()
+    public final val first: kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class UnstableBoolean {
+    public constructor UnstableBoolean()
+    public final val first: kotlin.Boolean?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

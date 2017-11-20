@@ -1,0 +1,7 @@
+// "Remove redundant initializer" "true"
+// WITH_RUNTIME
+fun foo() {
+    var bar: Int
+    bar = 42
+    println(bar)
+}

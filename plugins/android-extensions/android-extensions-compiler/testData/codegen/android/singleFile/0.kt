@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.widget.*
 import kotlinx.android.synthetic.main.layout.*
+import kotlinx.android.synthetic.clearFindViewByIdCache
 
 class R {
     class id {
@@ -32,11 +33,15 @@ class MyActivity(): Activity() {
         }
     }
 
-    public fun box(): String{
-        return if (textView1.toString() == "TextView" &&
-                    password.toString() == "EditText" &&
-                    login.toString() == "Button")
-            "OK" else ""
+    public fun box(): String {
+        val result = when {
+            textView1.toString() == "TextView" && password.toString() == "EditText" && login.toString() == "Button" -> "OK"
+            else -> ""
+        }
+
+        clearFindViewByIdCache()
+
+        return result
     }
 }
 

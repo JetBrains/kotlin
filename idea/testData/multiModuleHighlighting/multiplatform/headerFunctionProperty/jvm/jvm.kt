@@ -1,3 +1,3 @@
-impl fun foo() = 42
+actual fun foo() = 42
 
-impl val bar = "Hello"
+actual val bar = "Hello"

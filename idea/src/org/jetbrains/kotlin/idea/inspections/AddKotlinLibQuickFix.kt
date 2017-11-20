@@ -16,36 +16,27 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
-import com.intellij.openapi.roots.JavaProjectModelModificationService
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainerFactory
-import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
-import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
-import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
+import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
+import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
-import org.jetbrains.kotlin.idea.versions.findAllUsedLibraries
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
-import java.io.File
 
 class AddReflectionQuickFix(element: KtElement)
         : AddKotlinLibQuickFix(element, listOf(LibraryJarDescriptor.REFLECT_JAR,
@@ -54,7 +45,7 @@ class AddReflectionQuickFix(element: KtElement)
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect",
-                                                                                       AddKotlinLibQuickFix.getKotlinStdlibVersion(module))
+                                                                                       getRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType(::AddReflectionQuickFix)
@@ -68,7 +59,7 @@ class AddTestLibQuickFix(element: KtElement)
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-test",
-                                                                                       AddKotlinLibQuickFix.getKotlinStdlibVersion(module))
+                                                                                       getRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
 
     companion object : KotlinSingleIntentionActionFactory() {
         val KOTLIN_TEST_UNRESOLVED = setOf(
@@ -124,86 +115,9 @@ abstract class AddKotlinLibQuickFix(element: KtElement,
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val module = ProjectRootManager.getInstance(project).fileIndex.getModuleForFile(element.containingFile.virtualFile)
-        if (module != null) {
-            if (KotlinPluginUtil.isMavenModule(module)) {
-                val scope = OrderEntryFix.suggestScopeByLocation(module, element)
-                JavaProjectModelModificationService.getInstance(project).addDependency(module, getLibraryDescriptor(module), scope)
+        val module = ProjectRootManager.getInstance(project).fileIndex.getModuleForFile(element.containingFile.virtualFile) ?: return
 
-                return
-            }
-
-            if (KotlinPluginUtil.isGradleModule(module) || KotlinPluginUtil.isAndroidGradleModule(module)) {
-                val scope = OrderEntryFix.suggestScopeByLocation(module, element)
-                KotlinWithGradleConfigurator.addKotlinLibraryToModule(module, scope, getLibraryDescriptor(module))
-
-                return
-            }
-        }
-
-        val configurator = KotlinJavaModuleConfigurator.instance
-
-        val collector = createConfigureKotlinNotificationCollector(project)
-
-        for (library in findAllUsedLibraries(project).keySet()) {
-            val runtimeJar = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(library) ?: continue
-
-            val model = library.modifiableModel
-            val libFilesDir = VfsUtilCore.virtualToIoFile(runtimeJar).parent
-
-            for (libraryJarDescriptor in libraryJarDescriptors) {
-                if (libraryJarDescriptor.findExistingJar(library) != null) continue
-
-                val libFile = libraryJarDescriptor.getPathInPlugin()
-                if (!libFile.exists()) continue
-
-                val libIoFile = File(libFilesDir, libraryJarDescriptor.jarName)
-                if (libIoFile.exists()) {
-                    model.addRoot(VfsUtil.getUrlForLibraryRoot(libIoFile), libraryJarDescriptor.orderRootType)
-                }
-                else {
-                    val copied = configurator.copyFileToDir(libFile, libFilesDir, collector)!!
-                    model.addRoot(VfsUtil.getUrlForLibraryRoot(copied), libraryJarDescriptor.orderRootType)
-                }
-            }
-
-            model.commit()
-        }
-
-        collector.showNotification()
-    }
-
-    companion object {
-        fun getKotlinStdlibVersion(module: Module): String {
-            if (KotlinPluginUtil.isMavenModule(module)) {
-                val mavenVersion = getMavenKotlinStdlibVersion(module)
-                if (mavenVersion != null) {
-                    return mavenVersion
-                }
-            }
-            else if (KotlinPluginUtil.isGradleModule(module) || KotlinPluginUtil.isAndroidGradleModule(module)) {
-                val gradleVersion = KotlinWithGradleConfigurator.getKotlinStdlibVersion(module)
-                if (gradleVersion != null) {
-                    return gradleVersion
-                }
-            }
-
-            val pluginVersion = bundledRuntimeVersion()
-            if ("@snapshot@" == pluginVersion) {
-                return "1.1-SNAPSHOT"
-            }
-            return pluginVersion
-        }
-
-        fun getMavenKotlinStdlibVersion(module: Module): String? {
-            LibrariesContainerFactory.createContainer(module).allLibraries.forEach { library ->
-                val libName = library.name
-                if (libName != null && libName.contains("org.jetbrains.kotlin:kotlin-stdlib")) {
-                    return libName.substringAfterLast(":")
-                }
-            }
-
-            return null
-        }
+        val configurator = findApplicableConfigurator(module)
+        configurator.addLibraryDependency(module, element, getLibraryDescriptor(module), libraryJarDescriptors)
     }
 }

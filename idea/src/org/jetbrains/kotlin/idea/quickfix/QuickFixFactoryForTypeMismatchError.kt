@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,6 +114,10 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
                 DescriptorToSourceUtils.descriptorToDeclaration(it)
             } as? KtClassOrObject
             expressionTypeDeclaration?.let { actions.add(LetImplementInterfaceFix(it, expectedType, expressionType)) }
+        }
+
+        ConvertCollectionFix.getConversionTypeOrNull(expressionType, expectedType)?.let {
+            actions.add(ConvertCollectionFix(diagnosticElement, it))
         }
 
         fun KtExpression.getTopMostQualifiedForSelectorIfAny(): KtExpression {
@@ -245,3 +249,4 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         }
     }
 }
+

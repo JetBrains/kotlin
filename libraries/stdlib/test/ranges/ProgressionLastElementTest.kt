@@ -1,8 +1,7 @@
 package test.ranges
 
-import org.junit.Test
 import kotlin.comparisons.*
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 
 class ProgressionLastElementTest  {

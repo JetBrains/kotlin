@@ -1,6 +1,6 @@
 package
 
-public external open class Base {
+public open external class Base {
     public constructor Base(/*0*/ x: kotlin.Int)
     public constructor Base(/*0*/ x: kotlin.String)
     public constructor Base(/*0*/ x: kotlin.String, /*1*/ y: kotlin.String)
@@ -9,7 +9,7 @@ public external open class Base {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external open class Derived1 : Base {
+public open external class Derived1 : Base {
     public constructor Derived1()
     public constructor Derived1(/*0*/ x: kotlin.Byte)
     public constructor Derived1(/*0*/ x: kotlin.String)
@@ -19,7 +19,7 @@ public external open class Derived1 : Base {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external open class Derived2 : Base {
+public open external class Derived2 : Base {
     public constructor Derived2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

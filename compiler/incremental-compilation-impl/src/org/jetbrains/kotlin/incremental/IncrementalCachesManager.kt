@@ -16,59 +16,72 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import java.io.File
 
-class IncrementalCachesManager (
-        private val targetId: TargetId,
-        private val cacheDirectory: File,
-        private val outputDir: File,
-        private val reporter: ICReporter
+abstract class IncrementalCachesManager<PlatformCache : IncrementalCacheCommon>(
+    protected val cachesRootDir: File,
+    protected val reporter: ICReporter
 ) {
-    private val incrementalCacheDir = File(cacheDirectory, "increCache.${targetId.name}")
-    private val lookupCacheDir = File(cacheDirectory, "lookups")
-    private var incrementalCacheField: GradleIncrementalCacheImpl? = null
-    private var lookupCacheField: LookupStorage? = null
+    private val caches = arrayListOf<BasicMapsOwner>()
+    protected fun <T : BasicMapsOwner> T.registerCache() {
+        caches.add(this)
+    }
 
-    val incrementalCache: GradleIncrementalCacheImpl
-        get() {
-            if (incrementalCacheField == null) {
-                val targetDataRoot = incrementalCacheDir.apply { mkdirs() }
-                incrementalCacheField = GradleIncrementalCacheImpl(targetDataRoot, outputDir, targetId, reporter)
-            }
+    private val inputSnapshotsCacheDir = File(cachesRootDir, "inputs").apply { mkdirs() }
+    private val lookupCacheDir = File(cachesRootDir, "lookups").apply { mkdirs() }
 
-            return incrementalCacheField!!
-        }
-
-    val lookupCache: LookupStorage
-        get() {
-            if (lookupCacheField == null) {
-                lookupCacheField = LookupStorage(lookupCacheDir.apply { mkdirs() })
-            }
-
-            return lookupCacheField!!
-        }
+    val inputsCache: InputsCache = InputsCache(inputSnapshotsCacheDir, reporter).apply { registerCache() }
+    val lookupCache: LookupStorage = LookupStorage(lookupCacheDir).apply { registerCache() }
+    abstract val platformCache: PlatformCache
 
     fun clean() {
-        close(flush = false)
-        cacheDirectory.deleteRecursively()
+        caches.forEach { it.clean() }
+        cachesRootDir.deleteRecursively()
     }
 
-    fun close(flush: Boolean = false) {
-        incrementalCacheField?.let {
+    fun close(flush: Boolean = false): Boolean {
+        var successful = true
+
+        for (cache in caches) {
             if (flush) {
-                it.flush(false)
+                try {
+                    cache.flush(false)
+                }
+                catch (e: Throwable) {
+                    successful = false
+                    reporter.report { "Exception when flushing cache ${cache.javaClass}: $e" }
+                }
             }
-            it.close()
-            incrementalCacheField = null
+
+            try {
+                cache.close()
+            }
+            catch (e: Throwable) {
+                successful = false
+                reporter.report { "Exception when closing cache ${cache.javaClass}: $e" }
+            }
         }
 
-        lookupCacheField?.let {
-            if (flush) {
-                it.flush(false)
-            }
-            it.close()
-            lookupCacheField = null
-        }
+        return successful
     }
+}
+
+class IncrementalJvmCachesManager(
+    cacheDirectory: File,
+    outputDir: File,
+    reporter: ICReporter
+) : IncrementalCachesManager<IncrementalJvmCache>(cacheDirectory, reporter) {
+
+    private val jvmCacheDir = File(cacheDirectory, "jvm").apply { mkdirs() }
+    override val platformCache = IncrementalJvmCache(jvmCacheDir, outputDir).apply { registerCache() }
+}
+
+class IncrementalJsCachesManager(
+        cachesRootDir: File,
+        reporter: ICReporter
+) : IncrementalCachesManager<IncrementalJsCache>(cachesRootDir, reporter) {
+
+    private val jsCacheFile = File(cachesRootDir, "js").apply { mkdirs() }
+    override val platformCache = IncrementalJsCache(jsCacheFile).apply { registerCache() }
 }

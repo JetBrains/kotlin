@@ -41,6 +41,8 @@ interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>
 
 interface KotlinJvmCompile : KotlinCompile<KotlinJvmOptions>
 
+interface KotlinCommonCompile : KotlinCompile<KotlinMultiplatformCommonOptions>
+
 interface KotlinJsDce : Task {
     val dceOptions: KotlinJsDceOptions
 

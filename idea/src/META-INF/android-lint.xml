@@ -1,9 +1,6 @@
 <idea-plugin>
     <extensions defaultExtensionNs="com.intellij">
         <externalAnnotator language="kotlin" implementationClass="org.jetbrains.android.inspections.klint.AndroidLintExternalAnnotator"/>
-        
-        <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService"
-                        serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>
 
         <globalInspection language="kotlin" hasStaticDescription="true" shortName="AndroidKLintAddJavascriptInterface" displayName="addJavascriptInterface Called" groupKey="android.klint.inspections.group.name" bundle="org.jetbrains.kotlin.idea.KotlinBundle" enabledByDefault="true" level="WARNING" implementationClass="org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintAddJavascriptInterfaceInspection"/>
         <globalInspection language="kotlin" hasStaticDescription="true" shortName="AndroidKLintAllowAllHostnameVerifier" displayName="Insecure HostnameVerifier" groupKey="android.klint.inspections.group.name" bundle="org.jetbrains.kotlin.idea.KotlinBundle" enabledByDefault="true" level="WARNING" implementationClass="org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintAllowAllHostnameVerifierInspection"/>

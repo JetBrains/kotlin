@@ -62,7 +62,7 @@ public class QuickFixUtil {
     public static KotlinType getDeclarationReturnType(KtNamedDeclaration declaration) {
         PsiFile file = declaration.getContainingFile();
         if (!(file instanceof KtFile)) return null;
-        DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(declaration, BodyResolveMode.FULL);
+        DeclarationDescriptor descriptor = ResolutionUtils.unsafeResolveToDescriptor(declaration, BodyResolveMode.FULL);
         if (!(descriptor instanceof CallableDescriptor)) return null;
         KotlinType type = ((CallableDescriptor) descriptor).getReturnType();
         if (type instanceof DeferredType) {

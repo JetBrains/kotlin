@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -390,24 +387,74 @@ class CompileServiceImpl(
                 }
             }
             CompilerMode.INCREMENTAL_COMPILER -> {
-                if (targetPlatform != CompileService.TargetPlatform.JVM) {
-                    throw IllegalStateException("Incremental compilation is not supported for target platform: $targetPlatform")
-                }
-
-                val k2jvmArgs = k2PlatformArgs as K2JVMCompilerArguments
                 val gradleIncrementalArgs = compilationOptions as IncrementalCompilationOptions
                 val gradleIncrementalServicesFacade = servicesFacade as IncrementalCompilerServicesFacade
 
-                withIC {
-                    doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                        execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResults!!,
-                                                messageCollector, daemonReporter)
-                    }
-                }
+                when (targetPlatform) {
+                    CompileService.TargetPlatform.JVM -> {
+                        val k2jvmArgs = k2PlatformArgs as K2JVMCompilerArguments
 
+                        withIC {
+                            doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
+                                execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResults!!,
+                                                        messageCollector, daemonReporter)
+                            }
+                        }
+                    }
+                    CompileService.TargetPlatform.JS -> {
+                        val k2jsArgs = k2PlatformArgs as K2JSCompilerArguments
+
+                        withJsIC {
+                            doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
+                                execJsIncrementalCompiler(k2jsArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResults!!, messageCollector)
+                            }
+                        }
+                    }
+                    else -> throw IllegalStateException("Incremental compilation is not supported for target platform: $targetPlatform")
+
+                }
             }
             else -> throw IllegalStateException("Unknown compilation mode ${compilationOptions.compilerMode}")
         }
+    }
+
+    private fun execJsIncrementalCompiler(
+        args: K2JSCompilerArguments,
+        incrementalCompilationOptions: IncrementalCompilationOptions,
+        servicesFacade: IncrementalCompilerServicesFacade,
+        compilationResults: CompilationResults,
+        compilerMessageCollector: MessageCollector
+    ): ExitCode {
+        val allKotlinFiles = arrayListOf<File>()
+        val freeArgsWithoutKotlinFiles = arrayListOf<String>()
+        args.freeArgs.forEach {
+            if (it.endsWith(".kt") && File(it).exists())  {
+                allKotlinFiles.add(File(it))
+            }
+            else {
+                freeArgsWithoutKotlinFiles.add(it)
+            }
+        }
+        args.freeArgs = freeArgsWithoutKotlinFiles
+
+        val reporter = RemoteICReporter(servicesFacade, compilationResults, incrementalCompilationOptions)
+
+        val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
+            ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
+        }
+        else {
+            ChangedFiles.Unknown()
+        }
+
+        val workingDir = incrementalCompilationOptions.workingDir
+        val versions = commonCacheVersions(workingDir) +
+                       customCacheVersion(incrementalCompilationOptions.customCacheVersion,
+                                          incrementalCompilationOptions.customCacheVersionFileName,
+                                          workingDir,
+                                          enabled = true)
+
+        return IncrementalJsCompilerRunner(workingDir, versions, reporter)
+                .compile(allKotlinFiles, args, compilerMessageCollector, { changedFiles })
     }
 
     private fun execIncrementalCompiler(
@@ -455,11 +502,17 @@ class CompileServiceImpl(
 
         val workingDir = incrementalCompilationOptions.workingDir
         val versions = commonCacheVersions(workingDir) +
-                       customCacheVersion(incrementalCompilationOptions.customCacheVersion, incrementalCompilationOptions.customCacheVersionFileName, workingDir, forceEnable = true)
+                       customCacheVersion(incrementalCompilationOptions.customCacheVersion,
+                                          incrementalCompilationOptions.customCacheVersionFileName,
+                                          workingDir,
+                                          enabled = true)
 
-        return IncrementalJvmCompilerRunner(workingDir, javaSourceRoots, versions, reporter, annotationFileUpdater,
-                                            artifactChanges, changesRegistry)
-                .compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, { changedFiles })
+        val compiler = IncrementalJvmCompilerRunner(workingDir, javaSourceRoots, versions,
+                                                    reporter, annotationFileUpdater,
+                                                    artifactChanges, changesRegistry,
+                                                    buildHistoryFile = incrementalCompilationOptions.resultDifferenceFile,
+                                                    friendBuildHistoryFile = incrementalCompilationOptions.friendDifferenceFile)
+        return compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, { changedFiles })
     }
 
     override fun leaseReplSession(

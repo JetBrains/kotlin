@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
@@ -88,7 +88,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
 
     private fun getNameSuggestionsForOuterInstance(element: KtNamedDeclaration): List<String> {
         val containingClass = element.containingClassOrObject as KtClass
-        val containingClassDescriptor = containingClass.resolveToDescriptor() as ClassDescriptorWithResolutionScopes
+        val containingClassDescriptor = containingClass.unsafeResolveToDescriptor() as ClassDescriptorWithResolutionScopes
         val companionDescriptor = containingClassDescriptor.companionObjectDescriptor
         val companionMemberScope = (companionDescriptor ?: containingClassDescriptor).scopeForMemberDeclarationResolution
         val validator = CollectingNameValidator(element.getValueParameters().mapNotNull { it.name }) {
@@ -166,7 +166,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             val parameterList = element.valueParameterList!!
             val parameters = parameterList.parameters
 
-            val newParamType = (containingClass.resolveToDescriptor() as ClassDescriptor).defaultType
+            val newParamType = (containingClass.unsafeResolveToDescriptor() as ClassDescriptor).defaultType
 
             nameSuggestions = getNameSuggestionsForOuterInstance(element)
 
@@ -238,7 +238,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
     }
 
     private fun hasTypeParameterReferences(containingClass: KtClassOrObject, element: KtNamedDeclaration): Boolean {
-        val containingClassDescriptor = containingClass.resolveToDescriptor()
+        val containingClassDescriptor = containingClass.unsafeResolveToDescriptor()
         return element.collectDescendantsOfType<KtTypeReference> {
             val referencedDescriptor = it.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, it]?.constructor?.declarationDescriptor
             referencedDescriptor is TypeParameterDescriptor && referencedDescriptor.containingDeclaration == containingClassDescriptor
@@ -285,8 +285,8 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         val conflicts = MultiMap<PsiElement, String>()
 
         containingClass.companionObjects.firstOrNull()?.let { companion ->
-            val companionDescriptor = companion.resolveToDescriptor() as ClassDescriptor
-            val callableDescriptor = element.resolveToDescriptor() as CallableMemberDescriptor
+            val companionDescriptor = companion.unsafeResolveToDescriptor() as ClassDescriptor
+            val callableDescriptor = element.unsafeResolveToDescriptor() as CallableMemberDescriptor
             companionDescriptor.findCallableMemberBySignature(callableDescriptor)?.let {
                 DescriptorToSourceUtilsIde.getAnyDeclaration(project, it)
             }?.let {

@@ -1,0 +1,97 @@
+== myRun ==
+fun <T> myRun(@CalledInPlace block: () -> T): T = block()
+---------------------
+L0:
+  1 <START>                                                           INIT: in: {} out: {}
+    v(@CalledInPlace block: () -> T)                                  INIT: in: {} out: {block=D}
+    magic[FAKE_INITIALIZER](@CalledInPlace block: () -> T) -> <v0>    INIT: in: {block=D} out: {block=D}
+    w(block|<v0>)                                                     INIT: in: {block=D} out: {block=ID}     USE: in: {block=READ} out: {block=READ}
+    r(block) -> <v1>                                                  INIT: in: {block=ID} out: {block=ID}    USE: in: {} out: {block=READ}
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                           INIT: in: {} out: {}
+sink:
+    <SINK>                                                            INIT: in: {block=I?} out: {block=I?}    USE: in: {} out: {}
+=====================
+== functionWithExpressionBody ==
+fun functionWithExpressionBody(x: Int) = myRun {
+    if (x == 0) return true
+    if (x == 1) return false
+    return functionWithExpressionBody(x - 2)
+}
+---------------------
+L0:
+  1 <START>                                                                                                                          INIT: in: {} out: {}
+    v(x: Int)                                                                                                                        INIT: in: {} out: {x=D}
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>                                                                                          INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                                                                                                                        INIT: in: {x=D} out: {x=ID}
+    mark({ if (x == 0) return true if (x == 1) return false return functionWithExpressionBody(x - 2) })                              INIT: in: {x=ID} out: {x=ID}
+    jmp?(L2)
+    d({ if (x == 0) return true if (x == 1) return false return functionWithExpressionBody(x - 2) })                                 INIT: in: {} out: {}            USE: in: {x=READ} out: {x=READ}
+L2 [after local declaration]:
+    r({ if (x == 0) return true if (x == 1) return false return functionWithExpressionBody(x - 2) }) -> <v1>                         INIT: in: {x=ID} out: {x=ID}
+    mark(myRun { if (x == 0) return true if (x == 1) return false return functionWithExpressionBody(x - 2) })
+    call(myRun { if (x == 0) return true if (x == 1) return false return functionWithExpressionBody(x - 2) }, myRun|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>
+error:
+    <ERROR>                                                                                                                          INIT: in: {} out: {}
+sink:
+    <SINK>                                                                                                                           INIT: in: {x=I?} out: {x=I?}    USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{
+    if (x == 0) return true
+    if (x == 1) return false
+    return functionWithExpressionBody(x - 2)
+}
+---------------------
+L3:
+  2 <START>                                                                                            INIT: in: {x=ID} out: {x=ID}
+  3 mark(if (x == 0) return true if (x == 1) return false return functionWithExpressionBody(x - 2))
+    mark(if (x == 0) return true)
+    r(x) -> <v0>
+    r(0) -> <v1>
+    mark(x == 0)
+    call(x == 0, equals|<v0>, <v1>) -> <v2>
+    jf(L5|<v2>)                                                                                                                        USE: in: {x=READ} out: {x=READ}
+    r(true) -> <v3>
+    ret(*|<v3>) L1                                                                                                                     USE: in: {} out: {}
+-   jmp(L6)
+L5 [else branch]:
+    read (Unit)                                                                                        INIT: in: {x=ID} out: {x=ID}
+L6 ['if' expression result]:
+    merge(if (x == 0) return true|!<v4>) -> <v5>
+    mark(if (x == 1) return false)
+    r(x) -> <v6>
+    r(1) -> <v7>
+    mark(x == 1)
+    call(x == 1, equals|<v6>, <v7>) -> <v8>
+    jf(L7|<v8>)                                                                                                                        USE: in: {x=READ} out: {x=READ}
+    r(false) -> <v9>
+    ret(*|<v9>) L1                                                                                                                     USE: in: {} out: {}
+-   jmp(L8)
+L7 [else branch]:
+    read (Unit)                                                                                        INIT: in: {x=ID} out: {x=ID}
+L8 ['if' expression result]:
+    merge(if (x == 1) return false|!<v10>) -> <v11>                                                                                    USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v12>                                                                                                                      USE: in: {} out: {x=READ}
+    r(2) -> <v13>
+    mark(x - 2)
+    call(x - 2, minus|<v12>, <v13>) -> <v14>
+    mark(functionWithExpressionBody(x - 2))
+    call(functionWithExpressionBody(x - 2), functionWithExpressionBody|<v14>) -> <v15>
+    ret(*|<v15>) L1                                                                                                                    USE: in: {} out: {}
+- 2 ret(*|!<v16>) L4
+L4:
+    <END>                                                                                              INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                             USE: in: {} out: {}
+=====================

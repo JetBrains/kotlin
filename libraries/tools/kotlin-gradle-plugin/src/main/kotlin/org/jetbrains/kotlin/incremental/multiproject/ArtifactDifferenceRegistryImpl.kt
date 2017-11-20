@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.incremental.multiproject
 
-import org.jetbrains.kotlin.com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.DataExternalizer
 import org.jetbrains.kotlin.incremental.DirtyData
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.storage.BasicStringMap

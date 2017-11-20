@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.extractRadix
 import java.math.BigInteger
 import java.util.*
 
@@ -101,6 +102,8 @@ class ConstantExpressionEvaluator(
         val constants = compileTimeConstants.map { it.toConstantValue(constantType) }
 
         if (argumentsAsVararg) {
+            if (isArrayPassedInNamedForm(constants, resolvedArgument)) return constants.single()
+
             if (parameterDescriptor.declaresDefaultValue() && compileTimeConstants.isEmpty()) return null
 
             return constantValueFactory.createArrayValue(constants, parameterDescriptor.type)
@@ -109,6 +112,12 @@ class ConstantExpressionEvaluator(
             // we should actually get only one element, but just in case of getting many, we take the last one
             return constants.lastOrNull()
         }
+    }
+
+    private fun isArrayPassedInNamedForm(constants: List<ConstantValue<Any?>>, resolvedArgument: ResolvedValueArgument): Boolean {
+        val constant = constants.singleOrNull() ?: return false
+        val argument = resolvedArgument.arguments.singleOrNull() ?: return false
+        return KotlinBuiltIns.isArrayOrPrimitiveArray(constant.type) && argument.isNamed()
     }
 
     private fun checkCompileTimeConstant(
@@ -732,7 +741,7 @@ private class ConstantExpressionEvaluatorVisitor(
     override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val type = trace.getType(expression)!!
         if (type.isError) return null
-        return KClassValue(type).wrap()
+        return factory.createKClassValue(type).wrap()
     }
 
     private fun resolveArguments(valueArguments: List<ValueArgument>, expectedType: KotlinType): List<CompileTimeConstant<*>?> {
@@ -866,11 +875,8 @@ private fun parseLong(text: String): Long? {
         fun substringLongSuffix(s: String) = if (hasLongSuffix(text)) s.substring(0, s.length - 1) else s
         fun parseLong(text: String, radix: Int) = java.lang.Long.parseLong(substringLongSuffix(text), radix)
 
-        return when {
-            text.startsWith("0x") || text.startsWith("0X") -> parseLong(text.substring(2), 16)
-            text.startsWith("0b") || text.startsWith("0B") -> parseLong(text.substring(2), 2)
-            else -> parseLong(text, 10)
-        }
+        val (number, radix) = extractRadix(text)
+        return parseLong(number, radix)
     }
     catch (e: NumberFormatException) {
         return null

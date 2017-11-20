@@ -4,5 +4,5 @@ import org.checkerframework.checker.nullness.qual.*;
 import java.util.*;
 
 class A {
-    List<@NonNull String> foo() {}
+    List<@NonNull String> foo() { return null; }
 }

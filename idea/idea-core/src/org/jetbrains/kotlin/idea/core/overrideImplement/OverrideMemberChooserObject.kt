@@ -32,8 +32,11 @@ import org.jetbrains.kotlin.idea.j2k.IdeaDocCommentConverter
 import org.jetbrains.kotlin.idea.kdoc.KDocElementFactory
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 
@@ -95,7 +98,11 @@ interface OverrideMemberChooserObject : ClassMember {
     }
 }
 
-fun OverrideMemberChooserObject.generateMember(project: Project, copyDoc: Boolean): KtCallableDeclaration {
+fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, copyDoc: Boolean): KtCallableDeclaration {
+    val project = targetClass.project
+
+    val bodyType = if (targetClass.hasExpectModifier()) OverrideMemberChooserObject.BodyType.NO_BODY else bodyType
+
     val descriptor = immediateSuper
     if (preferConstructorParameter && descriptor is PropertyDescriptor) return generateConstructorParameter(project, descriptor)
 
@@ -103,6 +110,11 @@ fun OverrideMemberChooserObject.generateMember(project: Project, copyDoc: Boolea
         is SimpleFunctionDescriptor -> generateFunction(project, descriptor, bodyType)
         is PropertyDescriptor -> generateProperty(project, descriptor, bodyType)
         else -> error("Unknown member to override: $descriptor")
+    }
+
+    if (!targetClass.hasActualModifier()) {
+        newMember.removeModifier(KtTokens.IMPL_KEYWORD)
+        newMember.removeModifier(KtTokens.ACTUAL_KEYWORD)
     }
 
     if (copyDoc) {
@@ -138,7 +150,7 @@ private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
 private fun PropertyDescriptor.wrap(): PropertyDescriptor {
     val delegate = copy(containingDeclaration, Modality.OPEN, visibility, kind, true) as PropertyDescriptor
     val newDescriptor = object : PropertyDescriptor by delegate {
-        override fun isHeader() = false
+        override fun isExpect() = false
     }
     newDescriptor.setSingleOverridden(this)
     return newDescriptor
@@ -146,7 +158,7 @@ private fun PropertyDescriptor.wrap(): PropertyDescriptor {
 
 private fun FunctionDescriptor.wrap(): FunctionDescriptor {
     return object : FunctionDescriptor by this {
-        override fun isHeader() = false
+        override fun isExpect() = false
         override fun getModality() = Modality.OPEN
         override fun getReturnType() = this@wrap.returnType?.approximateFlexibleTypes(preferNotNull = true, preferStarForRaw = true)
         override fun getOverriddenDescriptors() = listOf(this@wrap)

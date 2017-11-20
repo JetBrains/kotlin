@@ -1789,6 +1789,39 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 }
 
 /**
+ * Splits this collection into a list of lists each not exceeding the given [size].
+ * 
+ * The last list in the resulting list may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.chunked(size: Int): List<List<T>> {
+    return windowed(size, size, partialWindows = true)
+}
+
+/**
+ * Splits this collection into several lists each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return list of results of the [transform] applied to an each list.
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * The last list may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
+ * 
+ * @sample samples.text.Strings.chunkedTransform
+ */
+@SinceKotlin("1.2")
+public fun <T, R> Iterable<T>.chunked(size: Int, transform: (List<T>) -> R): List<R> {
+    return windowed(size, size, partialWindows = true, transform = transform)
+}
+
+/**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
 public operator fun <T> Iterable<T>.minus(element: T): List<T> {
@@ -1958,6 +1991,83 @@ public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
 }
 
 /**
+ * Returns a list of snapshots of the window of the given [size]
+ * sliding along this collection with the given [step], where each
+ * snapshot is a list.
+ * 
+ * Several last lists may have less elements than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): List<List<T>> {
+    checkWindowSizeStep(size, step)
+    if (this is RandomAccess && this is List) {
+        val thisSize = this.size
+        val result = ArrayList<List<T>>((thisSize + step - 1) / step)
+        var index = 0
+        while (index < thisSize) {
+            val windowSize = size.coerceAtMost(thisSize - index)
+            if (windowSize < size && !partialWindows) break
+            result.add(List(windowSize) { this[it + index] })
+            index += step
+        }
+        return result
+    }
+    val result = ArrayList<List<T>>()
+    windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = false).forEach {
+        result.add(it)
+    }
+    return result
+}
+
+/**
+ * Returns a list of results of applying the given [transform] function to
+ * an each list representing a view over the window of the given [size]
+ * sliding along this collection with the given [step].
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last lists may have less elements than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step, by default 1
+ * @param partialWindows controls whether or not to keep partial windows in the end if any,
+ * by default `false` which means partial windows won't be preserved
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
+@SinceKotlin("1.2")
+public fun <T, R> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R): List<R> {
+    checkWindowSizeStep(size, step)
+    if (this is RandomAccess && this is List) {
+        val thisSize = this.size
+        val result = ArrayList<R>((thisSize + step - 1) / step)
+        val window = MovingSubList(this)
+        var index = 0
+        while (index < thisSize) {
+            window.move(index, (index + size).coerceAtMost(thisSize))
+            if (!partialWindows && window.size < size) break
+            result.add(transform(window))
+            index += step
+        }
+        return result
+    }
+    val result = ArrayList<R>()
+    windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = true).forEach {
+        result.add(transform(it))
+    }
+    return result
+}
+
+/**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
@@ -1996,6 +2106,40 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T
         list.add(transform(first.next(), second.next()))
     }
     return list
+}
+
+/**
+ * Returns a list of pairs of each two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.zipWithNext(): List<Pair<T, T>> {
+    return zipWithNext { a, b -> a to b }
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
+ */
+@SinceKotlin("1.2")
+public inline fun <T, R> Iterable<T>.zipWithNext(transform: (a: T, b: T) -> R): List<R> {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return emptyList()
+    val result = mutableListOf<R>()
+    var current = iterator.next()
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        result.add(transform(current, next))
+        current = next
+    }
+    return result
 }
 
 /**

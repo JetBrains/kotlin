@@ -39,7 +39,7 @@ L4 [start finally]:
   5 mark({})
     read (Unit)
 L5 [finish finally]:
-  4 ret(*|<v1>) L1                                                                                                                                                                                                                                                                                                                   USE: in: {} out: {}
+  4 ret(*|<v1>) L1                                                                                                                                                                                                                                                                                                       USE: in: {} out: {}
 - 3 jmp(L6)
 L3 [else branch]:
   4 mark({ if (false) { if (false) { var foo: String? = null try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized } } return "fail" } })                                                                         INIT: in: {} out: {}
@@ -49,52 +49,52 @@ L3 [else branch]:
   5 mark({ if (false) { var foo: String? = null try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized } } return "fail" })
     mark(if (false) { var foo: String? = null try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized } })
     r(false) -> <v4>
-    jf(L8|<v4>)                                                                                                                                                                                                                                                                                                                      USE: in: {} out: {}
+    jf(L8|<v4>)                                                                                                                                                                                                                                                                                                          USE: in: {} out: {}
   6 mark({ var foo: String? = null try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized } })
     v(var foo: String? = null)                                                                                                                                                                                                                                                       INIT: in: {} out: {foo=D}
     r(null) -> <v5>                                                                                                                                                                                                                                                                  INIT: in: {foo=D} out: {foo=D}
     w(foo|<v5>)                                                                                                                                                                                                                                                                      INIT: in: {foo=D} out: {foo=ID}
     mark(try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized })                                                                                                                                                 INIT: in: {foo=ID} out: {foo=ID}
     jmp?(L9)
-    jmp?(L10)                                                                                                                                                                                                                                                                                                                        USE: in: {foo=READ} out: {foo=READ}
+    jmp?(L10)                                                                                                                                                                                                                                                                                                            USE: in: {foo=READ} out: {foo=READ}
   7 mark({ foo = "test" })
     mark("test")
-    r("test") -> <v6>                                                                                                                                                                                                                                                                                                                USE: in: {foo=WRITTEN_AFTER_READ} out: {foo=WRITTEN_AFTER_READ}
-    w(foo|<v6>)                                                                                                                                                                                                                                                                                                                      USE: in: {foo=READ} out: {foo=WRITTEN_AFTER_READ}
+    r("test") -> <v6>                                                                                                                                                                                                                                                                                                    USE: in: {foo=WRITTEN_AFTER_READ} out: {foo=WRITTEN_AFTER_READ}
+    w(foo|<v6>)                                                                                                                                                                                                                                                                                                          USE: in: {foo=READ} out: {foo=WRITTEN_AFTER_READ}
   6 jmp?(L9)
     jmp?(L10)
     jmp(L11)
 L9 [onException]:
-  7 v(e: Exception)                                                                                                                                                                                                                                                                  INIT: in: {foo=ID} out: {e=D, foo=ID}
-    magic[FAKE_INITIALIZER](e: Exception) -> <v8>                                                                                                                                                                                                                                    INIT: in: {e=D, foo=ID} out: {e=D, foo=ID}
-    w(e|<v8>)                                                                                                                                                                                                                                                                        INIT: in: {e=D, foo=ID} out: {e=ID, foo=ID}
-  8 mark({ return "fail" })                                                                                                                                                                                                                                                          INIT: in: {e=ID, foo=ID} out: {e=ID, foo=ID}
+  7 v(e: Exception)                                                                                                                                                                                                                                                                  INIT: in: {foo=ID} out: {foo=ID}
+    magic[FAKE_INITIALIZER](e: Exception) -> <v8>                                                                                                                                                                                                                                    INIT: in: {foo=ID} out: {foo=ID}
+    w(e|<v8>)                                                                                                                                                                                                                                                                        INIT: in: {foo=ID} out: {foo=ID}
+  8 mark({ return "fail" })                                                                                                                                                                                                                                                          INIT: in: {foo=ID} out: {foo=ID}
     jmp?(L2)
     mark("fail")
     r("fail") -> <v9>
 L12 [start finally]:
-  9 mark({ println(foo) // Variable 'foo' must be initialized })                                                                                                                                                                                                                                                                     USE: in: {foo=READ} out: {foo=READ}
-    r(foo) -> <v10>                                                                                                                                                                                                                                                                                                                  USE: in: {} out: {foo=READ}
+  9 mark({ println(foo) // Variable 'foo' must be initialized })                                                                                                                                                                                                                                                         USE: in: {foo=READ} out: {foo=READ}
+    r(foo) -> <v10>                                                                                                                                                                                                                                                                                                      USE: in: {} out: {foo=READ}
     mark(println(foo))
     magic[UNRESOLVED_CALL](println(foo)|<v10>, !<v11>) -> <v12>
 L13 [finish finally]:
   5 mark({})                                                                                                                                                                                                                                                                         INIT: in: {} out: {}
     read (Unit)
-  8 ret(*|<v9>) L1                                                                                                                                                                                                                                                                                                                   USE: in: {} out: {}
+  8 ret(*|<v9>) L1                                                                                                                                                                                                                                                                                                       USE: in: {} out: {}
 - 7 jmp(L11)
 L11 [afterCatches]:
   6 jmp(L14)                                                                                                                                                                                                                                                                         INIT: in: {foo=ID} out: {foo=ID}
 L10 [onExceptionToFinallyBlock]:
-  9 mark({ println(foo) // Variable 'foo' must be initialized })                                                                                                                                                                                                                                                                     USE: in: {foo=READ} out: {foo=READ}
-    r(foo) -> <v10>                                                                                                                                                                                                                                                                                                                  USE: in: {} out: {foo=READ}
+  9 mark({ println(foo) // Variable 'foo' must be initialized })                                                                                                                                                                                                                                                         USE: in: {foo=READ} out: {foo=READ}
+    r(foo) -> <v10>                                                                                                                                                                                                                                                                                                      USE: in: {} out: {foo=READ}
     mark(println(foo))
     magic[UNRESOLVED_CALL](println(foo)|<v10>, !<v11>) -> <v12>
   5 mark({})                                                                                                                                                                                                                                                                         INIT: in: {} out: {}
     read (Unit)
-  6 jmp(error)                                                                                                                                                                                                                                                                                                                       USE: in: {} out: {}
+  6 jmp(error)                                                                                                                                                                                                                                                                                                           USE: in: {} out: {}
 L14 [skipFinallyToErrorBlock]:
-  9 mark({ println(foo) // Variable 'foo' must be initialized })                                                                                                                                                                                                                     INIT: in: {foo=ID} out: {foo=ID}                USE: in: {foo=READ} out: {foo=READ}
-    r(foo) -> <v10>                                                                                                                                                                                                                                                                                                                  USE: in: {} out: {foo=READ}
+  9 mark({ println(foo) // Variable 'foo' must be initialized })                                                                                                                                                                                                                     INIT: in: {foo=ID} out: {foo=ID}    USE: in: {foo=READ} out: {foo=READ}
+    r(foo) -> <v10>                                                                                                                                                                                                                                                                                                      USE: in: {} out: {foo=READ}
     mark(println(foo))
     magic[UNRESOLVED_CALL](println(foo)|<v10>, !<v11>) -> <v12>
   6 merge(try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized }|!<v7>, !<v13>) -> <v14>
@@ -108,7 +108,7 @@ L15 ['if' expression result]:
     r("fail") -> <v16>
     mark({})
     read (Unit)
-    ret(*|<v16>) L1                                                                                                                                                                                                                                                                                                                  USE: in: {} out: {}
+    ret(*|<v16>) L1                                                                                                                                                                                                                                                                                                      USE: in: {} out: {}
 - 4 jmp(L16)
 L7 [else branch]:
     read (Unit)                                                                                                                                                                                                                                                                      INIT: in: {} out: {}
@@ -133,5 +133,5 @@ L1:
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                                                                                                                                                                                                                                           USE: in: {} out: {}
+    <SINK>                                                                                                                                                                                                                                                                                                               USE: in: {} out: {}
 =====================

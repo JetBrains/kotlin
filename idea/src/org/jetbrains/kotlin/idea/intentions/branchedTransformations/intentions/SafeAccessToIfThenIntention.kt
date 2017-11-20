@@ -20,11 +20,14 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
 class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedExpression>(KtSafeQualifiedExpression::class.java, "Replace safe access expression with 'if' expression"), LowPriorityAction {
@@ -43,12 +46,25 @@ class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedE
         val dotQualified = psiFactory.createExpressionByPattern("$0.$1", receiver, selector)
 
         val elseClause = if (element.isUsedAsStatement(element.analyze())) null else psiFactory.createExpression("null")
-        val ifExpression = element.convertToIfNotNullExpression(receiver, dotQualified, elseClause)
+        var ifExpression = element.convertToIfNotNullExpression(receiver, dotQualified, elseClause)
+
+        var isAssignment = false
+        val binaryExpression = (ifExpression.parent as? KtParenthesizedExpression)?.parent as? KtBinaryExpression
+        val right = binaryExpression?.right
+        if (right != null && binaryExpression.operationToken == KtTokens.EQ) {
+            val replaced = binaryExpression.replaced(psiFactory.createExpressionByPattern("$0 = $1", ifExpression.text, right))
+            ifExpression = replaced.findDescendantOfType()!!
+            isAssignment = true
+        }
 
         if (!receiverIsStable) {
-            val valueToExtract = (ifExpression.then as KtDotQualifiedExpression).receiverExpression
-            ifExpression.introduceValueForCondition(valueToExtract, editor)
+            val valueToExtract = if (isAssignment)
+                ((ifExpression.then as? KtBinaryExpression)?.left as? KtDotQualifiedExpression)?.receiverExpression
+            else
+                (ifExpression.then as? KtDotQualifiedExpression)?.receiverExpression
+
+            if (valueToExtract != null) ifExpression.introduceValueForCondition(valueToExtract, editor)
         }
+
     }
 }
-

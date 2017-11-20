@@ -87,7 +87,8 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     var inspection: IntentionBasedInspection<TElement>? = null
         internal set
 
-    final override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {
+    final override fun invoke(project: Project, editor: Editor?, file: PsiFile) {
+        editor ?: return
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         val target = getTarget(editor, file) ?: return
         if (!FileModificationService.getInstance().preparePsiElementForWrite(target)) return

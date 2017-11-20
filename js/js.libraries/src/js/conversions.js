@@ -31,7 +31,7 @@ Kotlin.numberToLong = function (a) {
 };
 
 Kotlin.numberToInt = function (a) {
-    return a instanceof Kotlin.Long ? a.toInt() : (a | 0);
+    return a instanceof Kotlin.Long ? a.toInt() : Kotlin.doubleToInt(a);
 };
 
 Kotlin.numberToShort = function (a) {
@@ -48,6 +48,12 @@ Kotlin.numberToDouble = function (a) {
 
 Kotlin.numberToChar = function (a) {
     return Kotlin.toChar(Kotlin.numberToInt(a));
+};
+
+Kotlin.doubleToInt = function(a) {
+    if (a > 2147483647) return 2147483647;
+    if (a < -2147483648) return -2147483648;
+    return a | 0;
 };
 
 Kotlin.toBoxedChar = function (a) {

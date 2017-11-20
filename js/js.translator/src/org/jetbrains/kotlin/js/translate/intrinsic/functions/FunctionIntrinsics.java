@@ -50,6 +50,8 @@ public final class FunctionIntrinsics {
         register(NumberAndCharConversionFIF.INSTANCE);
         register(ThrowableConstructorIntrinsicFactory.INSTANCE);
         register(ExceptionPropertyIntrinsicFactory.INSTANCE);
+        register(AsDynamicFIF.INSTANCE);
+        register(CoroutineContextFIF.INSTANCE);
     }
 
     private void register(@NotNull FunctionIntrinsicFactory instance) {

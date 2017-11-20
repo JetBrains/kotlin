@@ -1,6 +1,5 @@
 package test.ranges
 
-import org.junit.Test
 import test.collections.behaviors.iteratorBehavior
 import test.collections.compare
 import kotlin.test.*

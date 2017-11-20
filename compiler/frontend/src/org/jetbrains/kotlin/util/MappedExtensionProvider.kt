@@ -46,11 +46,6 @@ protected constructor(
         cached = WeakReference(newVal)
         return newVal.second
     }
-
-    companion object {
-        @JvmStatic fun <T, R> create(epName: ExtensionPointName<T>, map: (List<T>) -> R): MappedExtensionProvider<T, R>
-                = MappedExtensionProvider(epName, map)
-    }
 }
 
 class ExtensionProvider<T>(epName: ExtensionPointName<T>) : MappedExtensionProvider<T, List<T>>(epName, { it }) {

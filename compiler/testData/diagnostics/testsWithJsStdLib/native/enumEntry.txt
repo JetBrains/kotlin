@@ -1,6 +1,6 @@
 package
 
-public external final enum class E : kotlin.Enum<E> {
+public final external enum class E : kotlin.Enum<E> {
     enum entry X
 
     enum entry Y
