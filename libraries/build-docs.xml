@@ -68,6 +68,10 @@
             <sourceRoot path="${js.stdlib.common.src.path}" platforms="JS"/>
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
+
+            <!-- TODO Docs? -->
+            <packageOptions prefix="org.w3c.dom" reportUndocumented="false"/>
+            <packageOptions prefix="org.khronos" reportUndocumented="false"/>
         </dokka>
         <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
                noStdlibLink="true">
