@@ -3,6 +3,7 @@
     <property name="github.revision" value="master"/>
     <property name="dokka.path" value="../dependencies/dokka" />
     <property name="docs.output" value="${basedir}/doc" />
+    <makeurl file="${docs.output}/jre8/kotlin-stdlib/package-list" property="stdlib.package.list"/>
     <property name="dokka.format" value="kotlin-website-html"/>
 
     <property name="js.stdlib.common.src.path" value="stdlib/js/build/common-sources"/>
@@ -76,7 +77,7 @@
             <sourceRoot path="kotlin.test/js/src/main/kotlin" platforms="JS"/>
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
-            <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="file://${docs.output}/jre8/kotlin-stdlib/package-list" />
+            <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
         </dokka>
     </target>
 
