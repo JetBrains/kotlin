@@ -1,0 +1,14 @@
+// "Create member property 'Foo.foo'" "true"
+// ERROR: Unresolved reference: foo
+
+expect class Foo {
+    val foo: Int
+}
+
+fun test(f: Foo) {
+    takeInt(f.foo)
+}
+
+fun takeInt(n: Int) {
+
+}

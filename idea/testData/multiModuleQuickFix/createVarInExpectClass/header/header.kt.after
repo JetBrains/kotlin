@@ -1,0 +1,10 @@
+// "Create member property 'Foo.foo'" "true"
+// ERROR: Unresolved reference: foo
+
+expect class Foo {
+    var foo: Int
+}
+
+fun test(f: Foo) {
+    f.foo = 1
+}

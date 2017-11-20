@@ -463,6 +463,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         else if (isExtension) "private "
                         else ""
 
+                val isExpectClassMember by lazy {
+                    containingElement is KtClassOrObject && (containingElement.resolveToDescriptorIfAny() as? ClassDescriptor)?.isExpect ?: false
+                }
+
                 val declaration: KtNamedDeclaration = when (callableInfo.kind) {
                     CallableKind.FUNCTION, CallableKind.SECONDARY_CONSTRUCTOR -> {
                         val body = when {
@@ -473,6 +477,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             containingElement is KtObjectDeclaration && containingElement.isCompanion()
                                 && containingElement.parent.parent is KtClass
                                 && (containingElement.parent.parent as KtClass).hasModifier(KtTokens.EXTERNAL_KEYWORD) -> ""
+                            isExpectClassMember -> ""
                             else -> "{}"
 
                         }
@@ -517,7 +522,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     CallableKind.PROPERTY -> {
                         val isVar = (callableInfo as PropertyInfo).writable
                         val valVar = if (isVar) "var" else "val"
-                        val accessors = if (isExtension) {
+                        val accessors = if (isExtension && !isExpectClassMember) {
                             buildString {
                                 append("\nget() {}")
                                 if (isVar) {
