@@ -105,7 +105,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
         DiagnosticData unused = diagnostics.get(2);
         String unusedDiagnostic = asTextDiagnostic(unused, "i");
         DiagnosedRange range = asDiagnosticRange(unused, unusedDiagnostic);
-        doTest(new TheTest(wrongParameters(unusedDiagnostic, "UNUSED_VARIABLE(a)", unused.startOffset, unused.endOffset)) {
+        doTest(new TheTest(wrongParameters(unusedDiagnostic, "OI;UNUSED_VARIABLE(a)", unused.startOffset, unused.endOffset)) {
             @Override
             protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnosedRanges.set(unused.rangeIndex, range);
@@ -118,7 +118,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
         String unusedDiagnostic = asTextDiagnostic(unresolvedReference, "i");
         String toManyArguments = asTextDiagnostic(diagnostics.get(7));
         DiagnosedRange range = asDiagnosticRange(unresolvedReference, unusedDiagnostic, toManyArguments);
-        doTest(new TheTest(wrongParameters(unusedDiagnostic, "UNRESOLVED_REFERENCE(xx)", unresolvedReference.startOffset, unresolvedReference.endOffset)) {
+        doTest(new TheTest(wrongParameters(unusedDiagnostic, "OI;UNRESOLVED_REFERENCE(xx)", unresolvedReference.startOffset, unresolvedReference.endOffset)) {
             @Override
             protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnosedRanges.set(unresolvedReference.rangeIndex, range);
@@ -180,20 +180,6 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
                 @Override
                 public void unexpectedDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int actualStart, int actualEnd) {
                     actualMessages.add(unexpected(diagnostic.getDescription(), actualStart, actualEnd));
-                }
-
-                @Override
-                public void uncheckedDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int expectedStart, int expectedEnd) {
-                }
-
-                @Override
-                public boolean shouldUseDiagnosticsForNI() {
-                    return false;
-                }
-
-                @Override
-                public boolean isWithNewInferenceDirective() {
-                    return false;
                 }
             });
 
