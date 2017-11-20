@@ -53,7 +53,10 @@ object PathUtil {
     const val KOTLIN_JAVA_STDLIB_JAR = "$KOTLIN_JAVA_STDLIB_NAME.jar"
     const val KOTLIN_JAVA_STDLIB_SRC_JAR = "$KOTLIN_JAVA_STDLIB_NAME-sources.jar"
 
-    const val KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar"
+    const val KOTLIN_JAVA_REFLECT_NAME = "kotlin-reflect"
+    const val KOTLIN_JAVA_REFLECT_JAR = "$KOTLIN_JAVA_REFLECT_NAME.jar"
+    const val KOTLIN_REFLECT_SRC_JAR = "$KOTLIN_JAVA_REFLECT_NAME-sources.jar"
+
     const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar"
 
     const val KOTLIN_TEST_NAME = "kotlin-test"
@@ -64,7 +67,6 @@ object PathUtil {
     const val KOTLIN_TEST_JS_JAR = "$KOTLIN_TEST_JS_NAME.jar"
 
     const val KOTLIN_JAVA_STDLIB_SRC_JAR_OLD = "kotlin-runtime-sources.jar"
-    const val KOTLIN_REFLECT_SRC_JAR = "kotlin-reflect-sources.jar"
 
     const val KOTLIN_COMPILER_NAME = "kotlin-compiler"
     const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER_NAME.jar"
