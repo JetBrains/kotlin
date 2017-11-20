@@ -351,6 +351,12 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("expressionReceivers.kt")
+                public void testExpressionReceivers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/callableReferences/expressionReceivers.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("functionRefRuntime.kt")
                 public void testFunctionRefRuntime() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/callableReferences/functionRefRuntime.kt");
