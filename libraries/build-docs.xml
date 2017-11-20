@@ -69,7 +69,7 @@
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
 
             <!-- TODO Docs? -->
-            <packageOptions prefix="org.w3c.dom" reportUndocumented="false"/>
+            <packageOptions prefix="org.w3c" reportUndocumented="false"/>
             <packageOptions prefix="org.khronos" reportUndocumented="false"/>
         </dokka>
         <makeurl file="${docs.output}/jre8/kotlin-stdlib/package-list" property="stdlib.package.list"/>
