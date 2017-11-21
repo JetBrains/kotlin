@@ -19,10 +19,16 @@ internal abstract class KotlinJsDceOptionsBase : org.jetbrains.kotlin.gradle.dsl
         get() = verboseField ?: false
         set(value) { verboseField = value }
 
+    private var devModeField: kotlin.Boolean? = null
+    override var devMode: kotlin.Boolean
+        get() = devModeField ?: false
+        set(value) { devModeField = value }
+
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments) {
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
+        devModeField?.let { args.devMode = it }
     }
 }
 
@@ -30,4 +36,5 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments.fillDefa
     allWarningsAsErrors = false
     suppressWarnings = false
     verbose = false
+    devMode = false
 }

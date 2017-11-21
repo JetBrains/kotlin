@@ -40,4 +40,11 @@ class K2JSDceArguments : CommonToolArguments() {
             description = "Print declarations marked as reachable"
     )
     var printReachabilityInfo: Boolean by FreezableVar(false)
+
+    @Argument(
+            value = "-dev-mode",
+            description = "Development mode: don't strip out any code, just copy dependencies"
+    )
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    var devMode: Boolean by FreezableVar(false)
 }

@@ -120,8 +120,12 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
                 val sourceMapFile = File(file.outputPath + ".map")
                 val textOutput = TextOutputImpl()
                 val sourceMapBuilder = SourceMap3Builder(File(file.outputPath), textOutput, "")
-                val sourcePathResolver = SourceFilePathResolver(mutableListOf(), File(file.outputPath).parentFile)
-                val consumer = SourceMapBuilderConsumer(sourceMapBuilder, sourcePathResolver, true, true)
+
+                val inputFile = File(file.resource.name)
+                val sourceBaseDir = if (inputFile.exists()) inputFile.parentFile else File(".")
+
+                val sourcePathResolver = SourceFilePathResolver(emptyList(), File(file.outputPath).parentFile)
+                val consumer = SourceMapBuilderConsumer(sourceBaseDir, sourceMapBuilder, sourcePathResolver, true, true)
                 block.accept(JsToStringGenerationVisitor(textOutput, consumer))
                 val sourceMapContent = sourceMapBuilder.build()
                 sourceMapBuilder.addLink()

@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.js.dce.*
-import java.io.File
+import org.jetbrains.kotlin.js.inline.util.RelativePathCalculator
+import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import java.io.*
 import java.util.zip.ZipFile
 
 class K2JSDce : CLITool<K2JSDceArguments>() {
@@ -65,6 +67,16 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
             }
         }
 
+        return if (!arguments.devMode) {
+            performDce(files, arguments, messageCollector)
+        }
+        else {
+            copyFiles(files)
+            ExitCode.OK
+        }
+    }
+
+    private fun performDce(files: List<InputFile>, arguments: K2JSDceArguments, messageCollector: MessageCollector): ExitCode {
         val includedDeclarations = arguments.declarationsToKeep.orEmpty().toSet()
 
         val logConsumer = { level: DCELogLevel, message: String ->
@@ -75,6 +87,7 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
             }
             messageCollector.report(severity, message)
         }
+
         val dceResult = DeadCodeElimination.run(files, includedDeclarations, logConsumer)
         if (dceResult.status == DeadCodeEliminationStatus.FAILED) return ExitCode.COMPILATION_ERROR
         val nodes = dceResult.reachableNodes.filterTo(mutableSetOf()) { it.reachable }
@@ -87,6 +100,69 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
         }
 
         return ExitCode.OK
+    }
+
+    private fun copyFiles(files: List<InputFile>) {
+        for (file in files) {
+            copyResource(file.resource, File(file.outputPath))
+            file.sourceMapResource?.let { sourceMap ->
+                val sourceMapTarget = File(file.outputPath + ".map")
+                val inputFile = File(sourceMap.name)
+                if (!inputFile.exists() || !mapSourcePaths(inputFile, sourceMapTarget)) {
+                    copyResource(sourceMap, sourceMapTarget)
+                }
+            }
+        }
+    }
+
+    private fun copyResource(resource: InputResource, targetFile: File) {
+        if (targetFile.exists() && resource.lastModified() < targetFile.lastModified()) return
+
+        targetFile.parentFile.mkdirs()
+        resource.reader().use { input ->
+            FileOutputStream(targetFile).use { output ->
+                input.copyTo(output)
+            }
+         }
+    }
+
+    private fun mapSourcePaths(inputFile: File, targetFile: File): Boolean {
+        val json = try {
+            InputStreamReader(FileInputStream(inputFile), "UTF-8").use { parseJson(it) }
+        }
+        catch (e: JsonSyntaxException) {
+            return false
+        }
+
+        val sourcesArray = (json as? JsonObject)?.properties?.get("sources") as? JsonArray ?: return false
+        val sources = sourcesArray.elements.map {
+            (it as? JsonString)?.value ?: return false
+        }
+
+        val pathCalculator = RelativePathCalculator(targetFile.parentFile)
+        val mappedSources = sources.map {
+            val result = pathCalculator.calculateRelativePathTo(File(inputFile.parentFile, it))
+            if (result != null) {
+                if (File(targetFile.parentFile, result).exists()) {
+                    result
+                }
+                else {
+                    it
+                }
+            }
+            else {
+                it
+            }
+        }
+
+        if (mappedSources == sources) return false
+
+        json.properties["sources"] = JsonArray(*mappedSources.map { JsonString(it) }.toTypedArray())
+
+        targetFile.parentFile.mkdirs()
+        OutputStreamWriter(FileOutputStream(targetFile), "UTF-8").use { it.write(json.toString()) }
+
+        return true
     }
 
     private fun collectInputFiles(baseDir: File, fileName: String, messageCollector: MessageCollector): List<InputFile>? {

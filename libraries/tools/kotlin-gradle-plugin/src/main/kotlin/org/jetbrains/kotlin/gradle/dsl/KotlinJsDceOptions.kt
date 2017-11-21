@@ -3,4 +3,10 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 interface KotlinJsDceOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions {
+
+    /**
+     * Development mode: don't strip out any code, just copy dependencies and remap source maps
+     * Default value: false
+     */
+     var devMode: kotlin.Boolean
 }

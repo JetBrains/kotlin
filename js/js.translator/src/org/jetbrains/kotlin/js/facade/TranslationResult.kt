@@ -69,6 +69,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                         val sourceMapContentEmbedding = config.sourceMapContentEmbedding
                         val pathResolver = SourceFilePathResolver.create(config)
                         SourceMapBuilderConsumer(
+                                File("."),
                                 sourceMapBuilder,
                                 pathResolver,
                                 sourceMapContentEmbedding == SourceMapSourceEmbedding.ALWAYS,
