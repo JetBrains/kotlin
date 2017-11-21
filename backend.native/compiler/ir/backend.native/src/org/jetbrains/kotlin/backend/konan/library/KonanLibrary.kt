@@ -45,6 +45,8 @@ interface KonanLibraryLayout {
         get() = File(linkdataDir, "module")
     val escapeAnalysisFile
         get() = File(linkdataDir, "module_escape_analysis")
+    val dataFlowGraphFile
+        get() = File(linkdataDir, "module_data_flow_graph")
     fun packageFile(packageName: String)
         = File(linkdataDir, if (packageName == "") "root_package.knm" else "package_$packageName.knm")
 }

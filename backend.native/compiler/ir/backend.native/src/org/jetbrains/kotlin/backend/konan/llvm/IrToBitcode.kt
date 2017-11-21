@@ -81,6 +81,15 @@ internal fun emitLLVM(context: Context) {
             moduleDFG = ModuleDFGBuilder(context, irModule).build()
         }
 
+        phaser.phase(KonanPhase.SERIALIZE_DFG) {
+            DFGSerializer.serialize(context, moduleDFG!!)
+        }
+
+        var externalModulesDFG: ExternalModulesDFG? = null
+        phaser.phase(KonanPhase.DESERIALIZE_DFG) {
+            externalModulesDFG = DFGSerializer.deserialize(context, moduleDFG!!.symbolTable.privateTypeIndex, moduleDFG!!.symbolTable.privateFunIndex)
+        }
+
         val lifetimes = mutableMapOf<IrElement, Lifetime>()
         val codegenVisitor = CodeGeneratorVisitor(context, lifetimes)
         phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {

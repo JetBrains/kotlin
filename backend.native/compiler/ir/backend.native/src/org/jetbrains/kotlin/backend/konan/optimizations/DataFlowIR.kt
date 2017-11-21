@@ -31,20 +31,20 @@ internal object DataFlowIR {
         // Special marker type forbidding devirtualization on its instances.
         object Virtual : Declared(false, true)
 
-        class External(val name: String) : Type() {
+        class External(val hash: Long, val name: String? = null) : Type() {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is External) return false
 
-                return name == other.name
+                return hash == other.hash
             }
 
             override fun hashCode(): Int {
-                return name.hashCode()
+                return hash.hashCode()
             }
 
             override fun toString(): String {
-                return "ExternalType(name='$name')"
+                return "ExternalType(hash='$hash', name='$name')"
             }
         }
 
@@ -54,24 +54,24 @@ internal object DataFlowIR {
             val itable = mutableMapOf<Long, FunctionSymbol>()
         }
 
-        class Public(val name: String, isFinal: Boolean, isAbstract: Boolean) : Declared(isFinal, isAbstract) {
+        class Public(val hash: Long, isFinal: Boolean, isAbstract: Boolean, val name: String? = null) : Declared(isFinal, isAbstract) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
 
-                return name == other.name
+                return hash == other.hash
             }
 
             override fun hashCode(): Int {
-                return name.hashCode()
+                return hash.hashCode()
             }
 
             override fun toString(): String {
-                return "PublicType(name='$name')"
+                return "PublicType(hash='$hash', name='$name')"
             }
         }
 
-        class Private(val name: String, val index: Int, isFinal: Boolean, isAbstract: Boolean) : Declared(isFinal, isAbstract) {
+        class Private(val index: Int, isFinal: Boolean, isAbstract: Boolean, val name: String? = null) : Declared(isFinal, isAbstract) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -94,43 +94,43 @@ internal object DataFlowIR {
     }
 
     abstract class FunctionSymbol {
-        class External(val name: String) : FunctionSymbol() {
+        class External(val hash: Long, val name: String? = null) : FunctionSymbol() {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is External) return false
 
-                return name == other.name
+                return hash == other.hash
             }
 
             override fun hashCode(): Int {
-                return name.hashCode()
+                return hash.hashCode()
             }
 
             override fun toString(): String {
-                return "ExternalFunction(name='$name')"
+                return "ExternalFunction(hash='$hash', name='$name')"
             }
         }
 
         abstract class Declared(val module: Module, val symbolTableIndex: Int) : FunctionSymbol()
 
-        class Public(val name: String, module: Module, symbolTableIndex: Int) : Declared(module, symbolTableIndex) {
+        class Public(val hash: Long, module: Module, symbolTableIndex: Int, val name: String? = null) : Declared(module, symbolTableIndex) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
 
-                return name == other.name
+                return hash == other.hash
             }
 
             override fun hashCode(): Int {
-                return name.hashCode()
+                return hash.hashCode()
             }
 
             override fun toString(): String {
-                return "PublicFunction(name='$name')"
+                return "PublicFunction(hash='$hash', name='$name')"
             }
         }
 
-        class Private(val name: String, val index: Int, module: Module, symbolTableIndex: Int) : Declared(module, symbolTableIndex) {
+        class Private(val index: Int, module: Module, symbolTableIndex: Int, val name: String? = null) : Declared(module, symbolTableIndex) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -148,7 +148,7 @@ internal object DataFlowIR {
         }
     }
 
-    data class Field(val type: Type?, val name: String)
+    data class Field(val type: Type?, val hash: Long, val name: String? = null)
 
     class Edge(val castToType: Type?) {
 
@@ -316,6 +316,11 @@ internal object DataFlowIR {
     }
 
     class SymbolTable(val context: Context, val irModule: IrModuleFragment, val module: Module) {
+
+        private val TAKE_NAMES = false // Take fqNames for all functions and types (for debug purposes).
+
+        private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
+
         val classMap = mutableMapOf<ClassDescriptor, Type>()
         val functionMap = mutableMapOf<CallableDescriptor, FunctionSymbol>()
 
@@ -354,16 +359,16 @@ internal object DataFlowIR {
 
             val name = descriptor.fqNameSafe.asString()
             if (descriptor.module != irModule.descriptor)
-                return classMap.getOrPut(descriptor) { Type.External(name) }
+                return classMap.getOrPut(descriptor) { Type.External(name.localHash.value, takeName { name }) }
 
             classMap[descriptor]?.let { return it }
 
             val isFinal = descriptor.isFinal()
             val isAbstract = descriptor.isAbstract()
             val type = if (descriptor.isExported())
-                Type.Public(name, isFinal, isAbstract)
+                Type.Public(name.localHash.value, isFinal, isAbstract, takeName { name })
             else
-                Type.Private(name, privateTypeIndex++, isFinal, isAbstract)
+                Type.Private(privateTypeIndex++, isFinal, isAbstract, takeName { name })
             if (!descriptor.isInterface) {
                 val vtableBuilder = context.getVtableBuilder(descriptor)
                 type.vtable += vtableBuilder.vtableEntries.map { mapFunction(it.getImplementation(context)) }
@@ -405,11 +410,11 @@ internal object DataFlowIR {
             functionMap.getOrPut(it) {
                 when (it) {
                     is PropertyDescriptor ->
-                        FunctionSymbol.Private("${it.symbolName}_init", privateFunIndex++, module, -1)
+                        FunctionSymbol.Private(privateFunIndex++, module, -1, takeName { "${it.symbolName}_init" })
 
                     is FunctionDescriptor -> {
                         if (it.module != irModule.descriptor || it.externalOrIntrinsic())
-                            FunctionSymbol.External(it.symbolName)
+                            FunctionSymbol.External(it.symbolName.localHash.value, takeName { it.symbolName })
                         else {
                             val isAbstract = it.modality == Modality.ABSTRACT
                             val classDescriptor = it.containingDeclaration as? ClassDescriptor
@@ -420,9 +425,9 @@ internal object DataFlowIR {
                                 ++module.numberOfFunctions
                             val symbolTableIndex = if (!placeToFunctionsTable) -1 else couldBeCalledVirtuallyIndex++
                             if (it.isExported())
-                                FunctionSymbol.Public(it.symbolName, module, symbolTableIndex)
+                                FunctionSymbol.Public(it.symbolName.localHash.value, module, symbolTableIndex, takeName { it.symbolName })
                             else
-                                FunctionSymbol.Private(getFqName(it).asString() + "#internal", privateFunIndex++, module, symbolTableIndex)
+                                FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, takeName { getFqName(it).asString() + "#internal" })
                         }
                     }
 

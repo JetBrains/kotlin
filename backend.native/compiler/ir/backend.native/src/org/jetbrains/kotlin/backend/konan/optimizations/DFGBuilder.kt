@@ -197,6 +197,10 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         if (DEBUG > severity) block()
     }
 
+    private val TAKE_NAMES = false // Take fqNames for all functions and types (for debug purposes).
+
+    private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
+
     private val module = DataFlowIR.Module(irModule.descriptor)
     private val symbolTable = DataFlowIR.SymbolTable(context, irModule, module)
 
@@ -542,11 +546,13 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                             is IrGetField -> {
                                 val receiver = value.receiver?.let { expressionToEdge(it) }
                                 val receiverType = value.receiver?.let { symbolTable.mapType(it.type) }
+                                val name = value.descriptor.name.asString()
                                 DataFlowIR.Node.FieldRead(
                                         receiver,
                                         DataFlowIR.Field(
                                                 receiverType,
-                                                value.descriptor.name.asString()
+                                                name.localHash.value,
+                                                takeName { name }
                                         )
                                 )
                             }
@@ -554,11 +560,13 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                             is IrSetField -> {
                                 val receiver = value.receiver?.let { expressionToEdge(it) }
                                 val receiverType = value.receiver?.let { symbolTable.mapType(it.type) }
+                                val name = value.descriptor.name.asString()
                                 DataFlowIR.Node.FieldWrite(
                                         receiver,
                                         DataFlowIR.Field(
                                                 receiverType,
-                                                value.descriptor.name.asString()
+                                                name.localHash.value,
+                                                takeName { name }
                                         ),
                                         expressionToEdge(value.value)
                                 )

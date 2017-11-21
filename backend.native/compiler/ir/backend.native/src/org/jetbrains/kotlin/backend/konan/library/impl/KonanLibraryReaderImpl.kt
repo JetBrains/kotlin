@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.backend.konan.library.impl
 
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
-import org.jetbrains.kotlin.backend.konan.createInteropLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.emptyPackages
 import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
 import org.jetbrains.kotlin.konan.file.File
@@ -52,7 +51,8 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
         }
 
     val targetList = inPlace.targetsDir.listFiles.map{it.name}
-    override val escapeAnalysis: ByteArray? by lazy { inPlace.escapeAnalysisFile.let { if (it.exists) it.readBytes() else null } }
+    override val escapeAnalysis by lazy { inPlace.escapeAnalysisFile.let { if (it.exists) it.readBytes() else null } }
+    override val dataFlowGraph by lazy { inPlace.dataFlowGraphFile.let { if (it.exists) it.readBytes() else null } }
 
     override val libraryName 
         get() = inPlace.libraryName

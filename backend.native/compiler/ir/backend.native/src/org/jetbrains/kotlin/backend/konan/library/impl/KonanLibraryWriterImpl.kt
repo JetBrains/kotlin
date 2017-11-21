@@ -105,6 +105,10 @@ class LibraryWriterImpl(override val libDir: File, moduleName: String, currentAb
         escapeAnalysisFile.writeBytes(escapeAnalysis)
     }
 
+    override fun addDataFlowGraph(dataFlowGraph: ByteArray) {
+        dataFlowGraphFile.writeBytes(dataFlowGraph)
+    }
+
     override fun commit() {
         manifestProperties.saveToFile(manifestFile)
         if (!nopack) {
@@ -126,7 +130,8 @@ internal fun buildLibrary(
     llvmModule: LLVMModuleRef, 
     nopack: Boolean, 
     manifest: String?,
-    escapeAnalysis: ByteArray?): KonanLibraryWriter {
+    escapeAnalysis: ByteArray?,
+    dataFlowGraph: ByteArray?): KonanLibraryWriter {
 
     val library = LibraryWriterImpl(output, moduleName, abiVersion, target, nopack)
 
@@ -141,6 +146,7 @@ internal fun buildLibrary(
     manifest ?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
     escapeAnalysis?.let { library.addEscapeAnalysis(it) }
+    dataFlowGraph?.let { library.addDataFlowGraph(it) }
 
     library.commit()
     return library

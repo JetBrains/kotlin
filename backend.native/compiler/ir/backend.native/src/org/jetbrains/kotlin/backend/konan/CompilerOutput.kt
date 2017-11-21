@@ -19,6 +19,7 @@ import llvm.LLVMLinkModules2
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
+import org.jetbrains.kotlin.backend.konan.util.getValueOrNull
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal fun produceOutput(context: Context) {
@@ -71,7 +72,8 @@ internal fun produceOutput(context: Context) {
                 llvmModule,
                 nopack,
                 manifest,
-                context.moduleEscapeAnalysisResult.build().toByteArray())
+                context.escapeAnalysisResult.getValueOrNull()?.build()?.toByteArray(),
+                context.dataFlowGraph)
 
             context.library = library
             context.bitcodeFileName = library.mainBitcodeFileName
