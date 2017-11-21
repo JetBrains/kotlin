@@ -4,6 +4,7 @@
 @file:Suppress("ENUM_ENTRY_AS_TYPE", "UNRESOLVED_REFERENCE")
 import java.util.Date as MyDate
 import java.util.concurrent.TimeUnit as MyTimeUnit
+import java.util.concurrent.TimeUnit.*
 import java.util.concurrent.TimeUnit.MICROSECONDS as MyMicroseconds
 import a.b.ABC as MyABC
 import bcd as MyBCD
