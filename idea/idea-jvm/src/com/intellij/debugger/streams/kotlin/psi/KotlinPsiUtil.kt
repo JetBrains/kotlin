@@ -2,14 +2,15 @@
 package com.intellij.debugger.streams.kotlin.psi
 
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 
 /**
@@ -17,9 +18,15 @@ import org.jetbrains.kotlin.types.KotlinType
  */
 
 object KotlinPsiUtil {
-  private val WITH_TYPES_RENDERER = DescriptorRenderer.withOptions { modifiers = DescriptorRendererModifier.ALL }
+  private val WITH_TYPES_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES
 
-  fun getTypeName(type: KotlinType): String = WITH_TYPES_RENDERER.renderType(type)
+  fun getTypeName(type: KotlinType): String {
+    if (type is FlexibleType) {
+      return WITH_TYPES_RENDERER.renderType(type.approximateFlexibleTypes())
+    }
+
+    return WITH_TYPES_RENDERER.renderType(type)
+  }
 
   fun getTypeWithoutTypeParameters(type: KotlinType): String {
     val descriptor = type.constructor.declarationDescriptor ?: return getTypeName(type)
