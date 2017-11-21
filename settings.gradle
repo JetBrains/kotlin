@@ -45,8 +45,10 @@ include ":kotlin-build-common",
         ":js:js.parser",
         ":js:js.frontend",
         ":js:js.translator",
+        ":js:js.translator:nodejs-tests",
         ":js:js.dce",
         ":js:js.tests",
+        ":js:npm",
         ":jps-plugin",
         ":kotlin-jps-plugin",
         ":core:descriptors",
@@ -217,6 +219,8 @@ project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/librarie
 project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
 project(':kotlin-annotations-android').projectDir = "$rootDir/libraries/tools/kotlin-annotations-android" as File
+project(':js:npm').projectDir = "$rootDir/js/npm" as File
+project(':js:js.translator:nodejs-tests').projectDir = "$rootDir/js/js.translator/testData" as File 
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")
