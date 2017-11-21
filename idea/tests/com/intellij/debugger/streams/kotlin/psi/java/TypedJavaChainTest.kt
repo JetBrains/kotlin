@@ -19,9 +19,9 @@ class TypedJavaChainTest : TypedChainTestCase("streams/positive/types") {
   fun testPrimitiveOneCall() = doTest(INT)
   fun testPrimitiveMapToSame() = doTest(LONG, LONG)
 
-  fun testMapToPrimitive() = doTest(NULLABLE_ANY, INT)
+  fun testMapToPrimitive() = doTest(NULLABLE_ANY, DOUBLE)
   fun testMapToObj() = doTest(DOUBLE, NULLABLE_ANY)
-  fun testMapPrimitiveToPrimitive() = doTest(LONG, DOUBLE)
+  fun testMapPrimitiveToPrimitive() = doTest(LONG, INT)
 
   fun testFewTransitions() = doTest(NULLABLE_ANY, INT, NULLABLE_ANY, LONG, DOUBLE)
 }
