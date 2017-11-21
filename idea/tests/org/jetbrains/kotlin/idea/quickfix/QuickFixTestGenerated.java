@@ -3224,9 +3224,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                         doTest(fileName);
                     }
 
+                    @TestMetadata("inAbstractSuperclass.kt")
+                    public void testInAbstractSuperclass() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/inAbstractSuperclass.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("inBaseInterface.kt")
+                    public void testInBaseInterface() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/inBaseInterface.kt");
+                        doTest(fileName);
+                    }
+
                     @TestMetadata("interfaceNoExplicitReceiver.kt")
                     public void testInterfaceNoExplicitReceiver() throws Exception {
                         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/interfaceNoExplicitReceiver.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("noAbstractSuperclass.kt")
+                    public void testNoAbstractSuperclass() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/noAbstractSuperclass.kt");
                         doTest(fileName);
                     }
 
