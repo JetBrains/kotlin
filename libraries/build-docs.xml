@@ -9,12 +9,14 @@
 
     <typedef resource="dokka-antlib.xml">
         <classpath>
-            <fileset dir="${dokka.path}/lib">
+            <fileset dir="${dokka.path}/lib" erroronmissingdir="false">
                 <include name="*.jar"/>
             </fileset>
 
             <!-- used for running locally -->
-            <pathelement path="${dokka.path}/out/artifacts/dokka.jar"/>
+            <fileset dir="${dokka.path}/runners/fatjar/build/libs/" erroronmissingdir="false">
+                <include name="dokka-fatjar*.jar"/>
+            </fileset>
         </classpath>
     </typedef>
 
