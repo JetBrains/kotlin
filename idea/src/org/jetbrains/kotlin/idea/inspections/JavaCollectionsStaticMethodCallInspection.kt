@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -43,7 +44,7 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
                 val resolvedCall = callExpression.getResolvedCall(context) ?: return
                 val descriptor = resolvedCall.resultingDescriptor as? JavaMethodDescriptor ?: return
                 val fqName = descriptor.importableFqName?.asString() ?: return
-                if (!canReplaceWithStdLib(fqName, callExpression)) return
+                if (!canReplaceWithStdLib(fqName, callExpression, context)) return
 
                 holder.registerProblem(expression,
                                        "Java Collections static method call can be replaced with Kotlin stdlib",
@@ -53,24 +54,22 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
         }
     }
 
-    private fun canReplaceWithStdLib(fqName: String, callExpression: KtCallExpression): Boolean {
+    private fun canReplaceWithStdLib(fqName: String, callExpression: KtCallExpression, context: BindingContext): Boolean {
         if (!fqName.startsWith("java.util.Collections.")) return false
         val valueArgs = callExpression.valueArguments
         val valueArgsSize = valueArgs.size
         return when (fqName) {
             "java.util.Collections.reverse" ->
-                valueArgsSize == 1 && isMutableList(valueArgs[0])
+                valueArgsSize == 1 && isMutableList(valueArgs[0], context)
             "java.util.Collections.sort" ->
-                (valueArgsSize == 1 || valueArgsSize == 2) && isMutableList(valueArgs[0])
+                (valueArgsSize == 1 || valueArgsSize == 2) && isMutableList(valueArgs[0], context)
             else ->
                 false
         }
     }
 
-    private fun isMutableList(arg: KtValueArgument?): Boolean {
-        if (arg == null) return false
-        val expression = arg.getArgumentExpression() ?: return false
-        val context = expression.analyze(BodyResolveMode.PARTIAL)
+    private fun isMutableList(arg: KtValueArgument?, context: BindingContext): Boolean {
+        val expression = arg?.getArgumentExpression() ?: return false
         return expression.getType(context)?.nameIfStandardType?.asString() == "MutableList"
     }
 }
