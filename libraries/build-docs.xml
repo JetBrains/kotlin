@@ -3,7 +3,6 @@
     <property name="github.revision" value="master"/>
     <property name="dokka.path" value="../dependencies/dokka" />
     <property name="docs.output" value="${basedir}/doc" />
-    <makeurl file="${docs.output}/jre8/kotlin-stdlib/package-list" property="stdlib.package.list"/>
     <property name="dokka.format" value="kotlin-website-html"/>
 
     <property name="js.stdlib.common.src.path" value="stdlib/js/build/common-sources"/>
@@ -73,6 +72,7 @@
             <packageOptions prefix="org.w3c" reportUndocumented="false"/>
             <packageOptions prefix="org.khronos" reportUndocumented="false"/>
         </dokka>
+        <makeurl file="${docs.output}/jre8/kotlin-stdlib/package-list" property="stdlib.package.list"/>
         <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
                noStdlibLink="true">
 
