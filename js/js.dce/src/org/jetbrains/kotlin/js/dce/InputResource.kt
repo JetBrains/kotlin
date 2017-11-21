@@ -21,13 +21,19 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.util.zip.ZipFile
 
-class InputResource(val name: String, val reader: () -> InputStream) {
+class InputResource(val name: String, val lastModified: () -> Long, val reader: () -> InputStream) {
     companion object {
-        fun file(path: String): InputResource = InputResource(path) { FileInputStream(File(path)) }
+        fun file(path: String): InputResource = InputResource(path, { File(path).lastModified() }) { FileInputStream(File(path)) }
 
-        fun zipFile(path: String, entryPath: String): InputResource = InputResource("$path!$entryPath") {
-            val zipFile = ZipFile(path)
-            zipFile.getInputStream(zipFile.getEntry(entryPath))
+        fun zipFile(path: String, entryPath: String): InputResource =
+                InputResource("$path!$entryPath", { getZipModificationTime(path, entryPath) }) {
+                    val zipFile = ZipFile(path)
+                    zipFile.getInputStream(zipFile.getEntry(entryPath))
+                }
+
+        private fun getZipModificationTime(path: String, entryPath: String): Long {
+            val result = ZipFile(path).getEntry(entryPath).time
+            return if (result != -1L) result else File(path).lastModified()
         }
     }
 }

@@ -460,7 +460,8 @@ abstract class BasicBoxTest(
         val output = TextOutputImpl()
         val pathResolver = SourceFilePathResolver(mutableListOf(File(".")), null)
         val sourceMapBuilder = SourceMap3Builder(outputFile, output, "")
-        generatedProgram.accept(JsToStringGenerationVisitor(output, SourceMapBuilderConsumer(sourceMapBuilder, pathResolver, false, false)))
+        generatedProgram.accept(JsToStringGenerationVisitor(
+                output, SourceMapBuilderConsumer(File("."), sourceMapBuilder, pathResolver, false, false)))
         val code = output.toString()
         val generatedSourceMap = sourceMapBuilder.build()
 
