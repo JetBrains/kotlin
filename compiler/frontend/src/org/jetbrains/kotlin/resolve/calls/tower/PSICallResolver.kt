@@ -18,20 +18,15 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.contracts.EffectSystem
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.ModifierCheckerCore
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isBinaryRemOperator
@@ -73,7 +68,8 @@ class PSICallResolver(
         private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
         private val kotlinCallResolver: KotlinCallResolver,
         private val typeApproximator: TypeApproximator,
-        private val argumentTypeResolver: ArgumentTypeResolver
+        private val argumentTypeResolver: ArgumentTypeResolver,
+        private val effectSystem: EffectSystem
 ) {
     private val GIVEN_CANDIDATES_NAME = Name.special("<given candidates>")
 
@@ -221,7 +217,28 @@ class PSICallResolver(
         else {
             kotlinToResolvedCallTransformer.transformAndReport<D>(result, context)
         }
+
+        // NB. Be careful with moving this invocation, as effect system expects resolution results to be written in trace
+        // (see EffectSystem for details)
+        resolvedCall.recordEffects(trace)
+
         return SingleOverloadResolutionResult(resolvedCall)
+    }
+
+    private fun ResolvedCall<*>.recordEffects(trace: BindingTrace) {
+        val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor?.containingDeclaration ?: return)
+        recordLambdasInvocations(trace, moduleDescriptor)
+        recordResultInfo(trace, moduleDescriptor)
+    }
+
+    private fun ResolvedCall<*>.recordResultInfo(trace: BindingTrace, moduleDescriptor: ModuleDescriptor) {
+        if (this !is NewResolvedCallImpl) return
+        val resultDFIfromES = effectSystem.getDataFlowInfoForFinishedCall(this, trace, moduleDescriptor)
+        this.updateResultingDataFlowInfo(resultDFIfromES)
+    }
+
+    private fun ResolvedCall<*>.recordLambdasInvocations(trace: BindingTrace, moduleDescriptor: ModuleDescriptor) {
+        effectSystem.recordDefiniteInvocations(this, trace, moduleDescriptor)
     }
 
     private fun CallResolutionResult.isEmpty(): Boolean =

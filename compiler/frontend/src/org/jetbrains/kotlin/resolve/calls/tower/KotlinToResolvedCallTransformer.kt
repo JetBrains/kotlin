@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -68,7 +69,8 @@ class KotlinToResolvedCallTransformer(
         private val deprecationResolver: DeprecationResolver,
         private val expressionTypingServices: ExpressionTypingServices,
         private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-        private val additionalDiagnosticReporter: AdditionalDiagnosticReporter
+        private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
+        private val effectSystem: EffectSystem
 ) {
 
     companion object {
@@ -387,6 +389,8 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>(): ResolvedCall<D> 
     protected var argumentToParameterMap: Map<ValueArgument, ArgumentMatchImpl>? = null
     protected var _valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>? = null
 
+    private var nonTrivialUpdatedResultInfo: DataFlowInfo? = null
+
     override fun getCall(): Call = kotlinCall.psiKotlinCall.psiCall
 
     override fun getValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> {
@@ -423,7 +427,8 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>(): ResolvedCall<D> 
     }
 
     override fun getDataFlowInfoForArguments() = object : DataFlowInfoForArguments {
-        override fun getResultInfo() = kotlinCall.psiKotlinCall.resultDataFlowInfo
+        override fun getResultInfo(): DataFlowInfo = nonTrivialUpdatedResultInfo ?: kotlinCall.psiKotlinCall.resultDataFlowInfo
+
         override fun getInfo(valueArgument: ValueArgument): DataFlowInfo {
             val externalPsiCallArgument = kotlinCall.externalArgument?.psiCallArgument
             if (externalPsiCallArgument?.valueArgument == valueArgument) {
@@ -431,6 +436,15 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>(): ResolvedCall<D> 
             }
             return kotlinCall.psiKotlinCall.dataFlowInfoForArguments.getInfo(valueArgument)
         }
+    }
+
+    // Currently, updated only with info from effect system
+    internal fun updateResultingDataFlowInfo(dataFlowInfo: DataFlowInfo) {
+        if (dataFlowInfo == DataFlowInfo.EMPTY) return
+        assert(nonTrivialUpdatedResultInfo == null) {
+            "Attempt to rewrite resulting dataFlowInfo enhancement for call: $kotlinCall"
+        }
+        nonTrivialUpdatedResultInfo = dataFlowInfo.and(kotlinCall.psiKotlinCall.resultDataFlowInfo)
     }
 
     private fun argumentToParameterMap(
