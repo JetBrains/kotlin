@@ -84,6 +84,15 @@ abstract class TypeInfo(val variance: Variance) {
         override val staticContextRequired: Boolean = true
     }
 
+    class OfThis(delegate: TypeInfo) : DelegatingTypeInfo(delegate)
+
+    val isOfThis: Boolean
+        get() = when (this) {
+            is OfThis -> true
+            is DelegatingTypeInfo -> delegate.isOfThis
+            else -> false
+        }
+
     open val substitutionsAllowed: Boolean = true
     open val staticContextRequired: Boolean = false
     open fun getPossibleNamesFromExpression(bindingContext: BindingContext): Array<String> = ArrayUtil.EMPTY_STRING_ARRAY
@@ -138,6 +147,8 @@ fun TypeInfo.forceNotNull(): TypeInfo {
 
     return (this as? ForcedNotNull) ?: ForcedNotNull(this)
 }
+
+fun TypeInfo.ofThis() = TypeInfo.OfThis(this)
 
 /**
  * Encapsulates information about a function parameter that is going to be created.
