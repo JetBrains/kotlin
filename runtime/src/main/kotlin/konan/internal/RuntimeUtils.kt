@@ -62,6 +62,11 @@ fun ThrowUninitializedPropertyAccessException(): Nothing {
 }
 
 @ExportForCppRuntime
+internal fun ThrowNotImplementedError(): Nothing {
+    throw NotImplementedError("An operation is not implemented.")
+}
+
+@ExportForCppRuntime
 fun PrintThrowable(throwable: Throwable) {
     println(throwable)
 }

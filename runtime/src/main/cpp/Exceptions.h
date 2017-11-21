@@ -46,6 +46,8 @@ void ThrowArithmeticException();
 void ThrowNumberFormatException();
 // Throws out of memory error.
 void ThrowOutOfMemoryError();
+// Throws not implemented error.
+void ThrowNotImplementedError();
 // Prints out mesage of Throwable.
 void PrintThrowable(KRef);
 

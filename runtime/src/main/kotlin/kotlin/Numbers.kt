@@ -68,7 +68,8 @@ public inline fun Double.toBits(): Long = if (isNaN()) Double.NaN.toRawBits() el
  * preserving `NaN` values exact layout.
  */
 @SinceKotlin("1.2")
-public fun Double.toRawBits(): Long = bits()
+@kotlin.internal.InlineOnly
+public inline fun Double.toRawBits(): Long = bits()
 
 /**
  * Returns the [Double] value corresponding to a given bit representation.
@@ -95,7 +96,8 @@ public inline fun Float.toBits(): Int = if (isNaN()) Float.NaN.toRawBits() else 
  * preserving `NaN` values exact layout.
  */
 @SinceKotlin("1.2")
-public fun Float.toRawBits(): Int = bits()
+@kotlin.internal.InlineOnly
+public inline fun Float.toRawBits(): Int = bits()
 
 /**
  * Returns the [Float] value corresponding to a given bit representation.
