@@ -3869,6 +3869,7 @@
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "node": "com.moowork.gradle.node.NodeExtension",
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
@@ -3908,6 +3909,20 @@
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
+    ":js:npm": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention"
+        },
+        "configurations": [
+            "archives",
+            "default"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "node": "com.moowork.gradle.node.NodeExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet"
         }
     },
     ":kotlin-allopen:plugin-marker": {
