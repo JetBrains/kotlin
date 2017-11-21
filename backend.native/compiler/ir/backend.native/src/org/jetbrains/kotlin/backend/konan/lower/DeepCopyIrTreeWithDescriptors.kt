@@ -356,7 +356,10 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
                 oldDescriptor.name                                                   // We need to preserve it for LocalDeclarationsLowering.
             else
                 generateCopyName(oldDescriptor.name)
-            return ClassDescriptorImpl(
+
+            val visibility = oldDescriptor.visibility
+
+            return object : ClassDescriptorImpl(
                 /* containingDeclaration = */ newContainingDeclaration,
                 /* name                  = */ newName,
                 /* modality              = */ oldDescriptor.modality,
@@ -364,7 +367,9 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
                 /* supertypes            = */ listOf(newSuperClass.defaultType) + newInterfaces.map { it.defaultType },
                 /* source                = */ oldDescriptor.source,
                 /* isExternal            = */ oldDescriptor.isExternal
-            )
+            ) {
+                override fun getVisibility() = visibility
+            }
         }
     }
 
