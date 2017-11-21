@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
+import org.jetbrains.kotlin.backend.konan.optimizations.*
+import org.jetbrains.kotlin.backend.konan.util.getValueOrNull
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -72,6 +75,11 @@ internal fun emitLLVM(context: Context) {
         }
 
         generateDebugInfoHeader(context)
+
+        var moduleDFG: ModuleDFG? = null
+        phaser.phase(KonanPhase.BUILD_DFG) {
+            moduleDFG = ModuleDFGBuilder(context, irModule).build()
+        }
 
         val lifetimes = mutableMapOf<IrElement, Lifetime>()
         val codegenVisitor = CodeGeneratorVisitor(context, lifetimes)

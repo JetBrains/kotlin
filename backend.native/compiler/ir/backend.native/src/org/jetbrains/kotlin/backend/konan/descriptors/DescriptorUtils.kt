@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -79,6 +80,8 @@ private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
 // TODO: check it is external?
 internal val FunctionDescriptor.isIntrinsic: Boolean
     get() = this.annotations.findAnnotation(intrinsicAnnotation) != null
+
+internal fun FunctionDescriptor.externalOrIntrinsic() = isExternal || isIntrinsic || (this is IrBuiltinOperatorDescriptorBase)
 
 private val intrinsicTypes = setOf(
         "kotlin.Boolean", "kotlin.Char",

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
@@ -64,6 +65,8 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
         return true
     }
 
+    if (DescriptorUtils.isAnonymousObject(this))
+        return false
 
     if (this is ConstructorDescriptor && constructedClass.kind.isSingleton) {
         // Currently code generator can access the constructor of the singleton,

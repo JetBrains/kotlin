@@ -99,7 +99,9 @@ internal class StaticFieldLlvmDeclarations(val storage: LLVMValueRef)
  * All fields of the class instance.
  * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
  */
-internal fun ContextUtils.getFields(classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
+internal fun ContextUtils.getFields(classDescriptor: ClassDescriptor) = context.getFields(classDescriptor)
+
+internal fun Context.getFields(classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
     val superClass = classDescriptor.getSuperClassNotAny() // TODO: what if Any has fields?
     val superFields = if (superClass != null) getFields(superClass) else emptyList()
 
@@ -109,7 +111,7 @@ internal fun ContextUtils.getFields(classDescriptor: ClassDescriptor): List<Prop
 /**
  * Fields declared in the class.
  */
-private fun ContextUtils.getDeclaredFields(classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
+private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
     // TODO: Here's what is going on here:
     // The existence of a backing field for a property is only described in the IR,
     // but not in the PropertyDescriptor.
@@ -117,10 +119,10 @@ private fun ContextUtils.getDeclaredFields(classDescriptor: ClassDescriptor): Li
     // We mark serialized properties with a Konan protobuf extension bit,
     // so it is present in DeserializedPropertyDescriptor.
     //
-    // In this function we check the presence of the backing filed
+    // In this function we check the presence of the backing field
     // two ways: first we check IR, then we check the protobuf extension.
 
-    val irClass = context.ir.moduleIndexForCodegen.classes[classDescriptor]
+    val irClass = ir.moduleIndexForCodegen.classes[classDescriptor]
     val fields = if (irClass != null) {
         val declarations = irClass.declarations
 

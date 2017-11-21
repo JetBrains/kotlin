@@ -208,17 +208,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         exportTypeInfoIfRequired(classDesc, classDesc.llvmTypeInfoPtr)
     }
 
-    internal val OverriddenFunctionDescriptor.implementation: FunctionDescriptor
-        get() {
-            val target = descriptor.target
-            if (!needBridge) return target
-            val bridgeOwner = if (inheritsBridge) {
-                target // Bridge is inherited from superclass.
-            } else {
-                descriptor
-            }
-            return context.specialDeclarationsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(bridgeOwner, overriddenDescriptor))
-        }
+    private val OverriddenFunctionDescriptor.implementation get() = getImplementation(context)
 
     data class ReflectionInfo(val packageName: String?, val relativeName: String?)
 

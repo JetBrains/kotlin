@@ -41,3 +41,5 @@ fun String.suffixIfNot(suffix: String) =
 
 fun String.removeSuffixIfPresent(suffix: String) =
     if (this.endsWith(suffix)) this.dropLast(suffix.length) else this
+
+fun <T> Lazy<T>.getValueOrNull(): T? = if (isInitialized()) value else null
