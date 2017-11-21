@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
@@ -347,6 +348,8 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
 
             val oldSuperClass = oldDescriptor.getSuperClassOrAny()
             val newSuperClass = descriptorSubstituteMap.getOrDefault(oldSuperClass, oldSuperClass) as ClassDescriptor
+            val oldInterfaces = oldDescriptor.getSuperInterfaces()
+            val newInterfaces = oldInterfaces.map { descriptorSubstituteMap.getOrDefault(it, it) as ClassDescriptor }
             val oldContainingDeclaration = oldDescriptor.containingDeclaration
             val newContainingDeclaration = descriptorSubstituteMap.getOrDefault(oldContainingDeclaration, oldContainingDeclaration)
             val newName = if (DescriptorUtils.isAnonymousObject(oldDescriptor))      // Anonymous objects are identified by their name.
@@ -358,7 +361,7 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
                 /* name                  = */ newName,
                 /* modality              = */ oldDescriptor.modality,
                 /* kind                  = */ oldDescriptor.kind,
-                /* supertypes            = */ listOf(newSuperClass.defaultType),
+                /* supertypes            = */ listOf(newSuperClass.defaultType) + newInterfaces.map { it.defaultType },
                 /* source                = */ oldDescriptor.source,
                 /* isExternal            = */ oldDescriptor.isExternal
             )
