@@ -2673,6 +2673,14 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaCollectionsStaticMethodInspection"
+                     displayName="Java Collections static method call can be replaced with Kotlin stdlib"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RecursiveEqualsCallInspection"
                      displayName="Recursive equals call"

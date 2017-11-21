@@ -816,6 +816,63 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JavaCollectionsStaticMethod extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInJavaCollectionsStaticMethod() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/javaCollectionsStaticMethod"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("fill.kt")
+        public void testFill() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/fill.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("reverse.kt")
+        public void testReverse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/reverse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("reverseImmutableList.kt")
+        public void testReverseImmutableList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/reverseImmutableList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shuffle.kt")
+        public void testShuffle() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/shuffle.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shuffleRandom.kt")
+        public void testShuffleRandom() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/shuffleRandom.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sort.kt")
+        public void testSort() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/sort.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sortImmutableList.kt")
+        public void testSortImmutableList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/sortImmutableList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sortWith.kt")
+        public void testSortWith() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/sortWith.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/kdocMissingDocumentation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
