@@ -109,20 +109,20 @@ internal fun createStaticFunctionWithReceivers(owner: ClassOrPackageFragmentDesc
             name,
             CallableMemberDescriptor.Kind.DECLARATION, descriptor.source
     )
-
+    var offset = 0
     val dispatchReceiver =
             ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                    newFunction, null, 0, AnnotationsImpl(emptyList()), Name.identifier("this"),
+                    newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("this"),
                     dispatchReceiverType, false, false, false, null, descriptor.source, null)
     val extensionReceiver =
             descriptor.extensionReceiverParameter?.let { extensionReceiver ->
                 ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                        newFunction, null, 1, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
+                        newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
                         extensionReceiver.value.type, false, false, false, null, extensionReceiver.source, null)
             }
 
-    val valueParameters = listOf(dispatchReceiver, extensionReceiver).filterNotNull() +
-                          descriptor.valueParameters.map { it.copy(newFunction, it.name, it.index + 1) }
+    val valueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
+                          descriptor.valueParameters.map { it.copy(newFunction, it.name, it.index + offset) }
 
     newFunction.initialize(
             null, null, emptyList()/*TODO: type parameters*/,
@@ -135,7 +135,7 @@ internal fun FunctionDescriptor.createFunctionAndMapVariables(oldFunction: IrFun
         IrFunctionImpl(oldFunction.startOffset, oldFunction.endOffset, oldFunction.origin, this, oldFunction.body).also {
             val mapping: Map<ValueDescriptor, ValueDescriptor> =
                     (
-                            listOf(oldFunction.descriptor.dispatchReceiverParameter!!, oldFunction.descriptor.extensionReceiverParameter).filterNotNull() +
+                            listOfNotNull(oldFunction.descriptor.dispatchReceiverParameter!!, oldFunction.descriptor.extensionReceiverParameter) +
                             oldFunction.descriptor.valueParameters
                     ).zip(this.valueParameters).toMap()
 
