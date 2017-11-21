@@ -213,7 +213,8 @@ class ClassFileToSourceStubConverter(
             val importedReference = getReferenceExpression(importDirective.importedReference)
                     ?.let { kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, it] }
 
-            if (importedReference is CallableDescriptor) continue
+            if (importedReference is CallableDescriptor
+                || (importDirective.isAllUnder && importedReference is ClassifierDescriptor)) continue
 
             val importedExpr = treeMaker.FqName(importedFqName.asString())
 
