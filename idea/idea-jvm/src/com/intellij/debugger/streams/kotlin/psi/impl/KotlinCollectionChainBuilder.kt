@@ -1,9 +1,9 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.debugger.streams.kotlin.psi.impl
 
+import com.intellij.debugger.streams.kotlin.psi.KotlinPsiUtil
 import com.intellij.debugger.streams.kotlin.psi.previousCall
 import com.intellij.debugger.streams.kotlin.psi.receiverType
-import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.psi.KtCallExpression
 
 /**
@@ -18,8 +18,7 @@ class KotlinCollectionChainBuilder
 
   private fun isCollectionTransformationCall(expression: KtCallExpression): Boolean {
     val receiverType = expression.receiverType() ?: return false
-    val receiverTypeName = receiverType.getJetTypeFqName(false)
-    return SUPPORTED_RECEIVERS.contains(receiverTypeName)
+    return SUPPORTED_RECEIVERS.contains(KotlinPsiUtil.getTypeWithoutTypeParameters(receiverType))
   }
 
   override val existenceChecker: ExistenceChecker = object : ExistenceChecker() {
