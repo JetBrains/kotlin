@@ -4248,6 +4248,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("dataClassPropertyByNamedArgument.kt")
+                public void testDataClassPropertyByNamedArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/dataClassPropertyByNamedArgument.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inAccessorInClass.kt")
                 public void testInAccessorInClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inAccessorInClass.kt");
