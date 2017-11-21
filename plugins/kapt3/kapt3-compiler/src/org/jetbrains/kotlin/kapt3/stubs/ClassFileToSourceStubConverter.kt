@@ -204,15 +204,11 @@ class ClassFileToSourceStubConverter(
 
         for (importDirective in file.importDirectives) {
             // Qualified name should be valid Java fq-name
-            val importedFqName = importDirective.importedFqName ?: continue
+            val importedFqName = importDirective.importedFqName?.takeIf { it.pathSegments().size > 1 } ?: continue
             if (!isValidQualifiedName(importedFqName)) continue
 
             val shortName = importedFqName.shortName()
             if (shortName.asString() == classDeclaration.simpleName.toString()) continue
-
-            // If alias is specified, it also should be valid Java name
-            val aliasName = importDirective.aliasName
-            if (aliasName != null /*TODO support aliases */ /*&& getValidIdentifierName(aliasName) == null*/) continue
 
             val importedReference = getReferenceExpression(importDirective.importedReference)
                     ?.let { kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, it] }
@@ -229,12 +225,6 @@ class ClassFileToSourceStubConverter(
         }
 
         return JavacList.from(imports)
-    }
-
-    private tailrec fun getReferenceExpression(expression: KtExpression?): KtReferenceExpression? = when (expression) {
-        is KtReferenceExpression -> expression
-        is KtQualifiedExpression -> getReferenceExpression(expression.selectorExpression)
-        else -> null
     }
 
     /**
@@ -637,9 +627,10 @@ class ClassFileToSourceStubConverter(
 
         if (type?.containsErrorTypes() == true) {
             val typeFromSource = ktTypeProvider()?.typeElement
-            if (typeFromSource != null) {
+            val ktFile = typeFromSource?.containingKtFile
+            if (ktFile != null) {
                 @Suppress("UNCHECKED_CAST")
-                return ErrorTypeCorrector(this, kind).convert(typeFromSource, emptyMap()) as T
+                return ErrorTypeCorrector(this, kind, ktFile).convert(typeFromSource, emptyMap()) as T
             }
         }
 
@@ -916,6 +907,12 @@ private fun Any?.isOfPrimiviteType(): Boolean = when(this) {
 
 private val ClassDescriptor.isNested: Boolean
     get() = containingDeclaration is ClassDescriptor
+
+internal tailrec fun getReferenceExpression(expression: KtExpression?): KtReferenceExpression? = when (expression) {
+    is KtReferenceExpression -> expression
+    is KtQualifiedExpression -> getReferenceExpression(expression.selectorExpression)
+    else -> null
+}
 
 internal fun getAnnotationValue(fqName: FqName, mods: JCTree.JCModifiers?): String? {
     val annotations = mods?.annotations ?: return null
