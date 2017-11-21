@@ -25,7 +25,7 @@
         <mkdir dir="${docs.output}"/>
     </target>
 
-    <target name="preprocess-js-common">
+    <target name="preprocess-js-common-and-compile-builtins">
         <java classname="org.gradle.wrapper.GradleWrapperMain"
               fork="true"
               dir="${basedir}/.."
@@ -37,12 +37,16 @@
             </classpath>
             <arg line="--no-daemon"/>
             <arg line=":kotlin-stdlib-js:preprocessSourcesMain"/>
+            <arg line=":kotlin-stdlib:jar"/>
         </java>
     </target>
 
-    <target name="document" depends="clean,preprocess-js-common">
+    <path id="dokka.compile.classpath">
+        <fileset dir="${basedir}/stdlib/build/libs/" includes="builtins-*.jar"/>
+    </path>
+    <target name="document" depends="clean,preprocess-js-common-and-compile-builtins">
         <dokka samples="stdlib/samples/test" outputDir="${docs.output}/jre8" moduleName="kotlin-stdlib" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
-               include="stdlib/src/Module.md" noStdlibLink="true">
+               include="stdlib/src/Module.md" noStdlibLink="true" classpathref="dokka.compile.classpath">
 
             <sourceRoot path="stdlib/src" platforms="JVM"/>
             <sourceRoot path="stdlib/jdk7/src" platforms="JVM,JRE7"/>
