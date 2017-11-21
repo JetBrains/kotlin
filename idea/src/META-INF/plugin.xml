@@ -2428,7 +2428,7 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="INFORMATION"
+                     level="INFO"
                      language="kotlin"
     />
 
