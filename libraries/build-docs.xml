@@ -37,7 +37,7 @@
             </classpath>
             <arg line="--no-daemon"/>
             <arg line=":kotlin-stdlib-js:preprocessSourcesMain"/>
-            <arg line=":kotlin-stdlib:jar"/>
+            <arg line=":kotlin-stdlib:builtinsJar"/>
         </java>
     </target>
 
