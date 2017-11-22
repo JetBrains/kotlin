@@ -691,7 +691,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
             }
             sb.append(name).append(": ").append(type)
             if (defaultValue != null) {
-                sb.append("= ").append(defaultValue)
+                sb.append(" = ").append(defaultValue)
             }
             if (state == State.FIRST_PARAM) {
                 state = State.REST_PARAMS
