@@ -280,12 +280,34 @@ class SerializerCodegenImpl(
                         aconst(codegen.typeMapper.mapType(property.type))
                         AsmUtil.wrapJavaClassIntoKClass(this)
                     }
-                    invokevirtual(kInputType.internalName,
-                                  "read" + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
-                                  "(" + descType.descriptor + "I" +
-                                  (if (useSerializer) kSerialLoaderType.descriptor else "")
-                                  + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
-                                  + ")" + (if (sti.unit) "V" else sti.type.descriptor), false)
+
+                    fun produceCall(update: Boolean) {
+                        invokevirtual(kInputType.internalName,
+                                      (if (update) "update" else "read") + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
+                                      "(" + descType.descriptor + "I" +
+                                      (if (useSerializer) kSerialLoaderType.descriptor else "")
+                                      + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
+                                      + (if (update) sti.type.descriptor else "")
+                                      + ")" + (if (sti.unit) "V" else sti.type.descriptor), false)
+                    }
+
+                    if (useSerializer) {
+                        // we can choose either it is read or update
+                        val readLabel = Label()
+                        val endL = Label()
+                        genValidateProperty(index, ::bitMaskOff)
+                        ificmpeq(readLabel)
+                        load(propVar, propertyType)
+                        produceCall(true)
+                        goTo(endL)
+                        visitLabel(readLabel)
+                        produceCall(false)
+                        visitLabel(endL)
+                    } else {
+                        // update not supported for primitive types
+                        produceCall(false)
+                    }
+
                     if (sti.unit) {
                         StackValue.putUnitInstance(this)
                     }

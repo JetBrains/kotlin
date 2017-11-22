@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 internal class JsBlockBuilder {
     val block: JsBlock = JsBlock()
@@ -82,3 +83,12 @@ internal fun TranslationContext.buildFunction(descriptor: FunctionDescriptor, bo
     functionObject.body.statements += b.body
     return functionObject
 }
+
+internal fun propNotSeenTest(seenVar: JsNameRef, index: Int): JsBinaryOperation = JsAstUtils.equality(
+        JsBinaryOperation(
+                JsBinaryOperator.BIT_AND,
+                seenVar,
+                JsIntLiteral(1 shl (index % 32))
+        ),
+        JsIntLiteral(0)
+)

@@ -25,16 +25,14 @@ import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
-import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
-import org.jetbrains.kotlinx.serialization.compiler.resolve.serialInfoFqName
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import java.util.*
 
 class SerializationResolveExtension : SyntheticResolveExtension {
     override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = when {
         thisDescriptor.annotations.hasAnnotation(serialInfoFqName) -> listOf(KSerializerDescriptorResolver.IMPL_NAME)
-        thisDescriptor.isInternalSerializable -> listOf(KSerializerDescriptorResolver.SERIALIZER_CLASS_NAME)
+        thisDescriptor.isInternalSerializable && !thisDescriptor.hasCompanionObjectAsSerializer ->
+            listOf(KSerializerDescriptorResolver.SERIALIZER_CLASS_NAME)
         else -> listOf()
     }
 
@@ -47,7 +45,8 @@ class SerializationResolveExtension : SyntheticResolveExtension {
     override fun generateSyntheticClasses(thisDescriptor: ClassDescriptor, name: Name, ctx: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider, result: MutableSet<ClassDescriptor>) {
         if (thisDescriptor.annotations.hasAnnotation(serialInfoFqName) && name == KSerializerDescriptorResolver.IMPL_NAME)
             result.add(KSerializerDescriptorResolver.addSerialInfoImplClass(thisDescriptor, declarationProvider, ctx))
-        else if (thisDescriptor.isInternalSerializable && name == KSerializerDescriptorResolver.SERIALIZER_CLASS_NAME)
+        else if (thisDescriptor.isInternalSerializable && name == KSerializerDescriptorResolver.SERIALIZER_CLASS_NAME &&
+                 result.none { it.name == KSerializerDescriptorResolver.SERIALIZER_CLASS_NAME })
             result.add(KSerializerDescriptorResolver.addSerializerImplClass(thisDescriptor, declarationProvider, ctx))
         return
     }

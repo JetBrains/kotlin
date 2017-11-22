@@ -282,5 +282,6 @@ internal val org.jetbrains.org.objectweb.asm.Type.standardSerializer: String? ge
     "Ljava/util/HashMap;" -> "HashMapSerializer"
     "Ljava/util/Map\$Entry;" -> "MapEntrySerializer"
     "Lkotlin/Pair;" -> "PairSerializer"
+    "Lkotlin/Triple;" -> "TripleSerializer"
     else -> null
 }

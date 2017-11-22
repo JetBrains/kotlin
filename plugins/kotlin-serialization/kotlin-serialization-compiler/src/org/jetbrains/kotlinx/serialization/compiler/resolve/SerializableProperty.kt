@@ -24,7 +24,7 @@ class SerializableProperty(val descriptor: PropertyDescriptor, val isConstructor
     val type = descriptor.type
     val genericIndex = type.genericIndex
     val module = descriptor.module
-    val serializableWith = descriptor.annotations.serializableWith
+    val serializableWith = descriptor.annotations.serializableWith?.let { checkSerializerNullability(type, it) }
     val optional = descriptor.annotations.serialOptional
     val transient = descriptor.annotations.serialTransient
     val annotations = descriptor.annotations
