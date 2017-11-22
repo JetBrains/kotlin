@@ -1,177 +1,174 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import proguard.gradle.ProGuardTask
 
-description = 'Kotlin Full Reflection Library'
+description = "Kotlin Full Reflection Library"
 
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'net.sf.proguard:proguard-gradle:5.2.1'
-        classpath "com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}"
+        classpath("net.sf.proguard:proguard-gradle:5.2.1")
+        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     }
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'java'
+plugins { java }
 
-configureJavaOnlyJvm6Project(project)
-configurePublishing(project)
+callGroovy("configureJavaOnlyJvm6Project", this)
+publish()
 
-def core = "${rootDir}/core"
-def annotationsSrc = "${buildDir}/annotations"
-def relocatedCoreSrc = "${buildDir}/core-relocated"
+val core = "$rootDir/core"
+val annotationsSrc = "$buildDir/annotations"
+val relocatedCoreSrc = "$buildDir/core-relocated"
+val libsDir = property("libsDir")
 
 sourceSets {
-    main {
-        java {
-            srcDir annotationsSrc
-        }
+    "main" {
+        java.srcDir(annotationsSrc)
     }
 }
 
-configurations {
-    proguardDeps
-    shadows { transitive = false }
-    compileOnly.extendsFrom(shadows)
-    mainJar
+val proguardDeps by configurations.creating
+val shadows by configurations.creating {
+    isTransitive = false
 }
+configurations.getByName("compileOnly").extendsFrom(shadows)
+val mainJar by configurations.creating
 
 dependencies {
-    compile project(':kotlin-stdlib')
+    compile(project(":kotlin-stdlib"))
 
-    proguardDeps project(':kotlin-stdlib')
+    proguardDeps(project(":kotlin-stdlib"))
 
-    shadows project(':kotlin-reflect-api')
-    shadows project(':core:descriptors')
-    shadows project(':core:descriptors.jvm')
-    shadows project(':core:deserialization')
-    shadows project(':core:descriptors.runtime')
-    shadows project(':core:util.runtime')
-    shadows 'javax.inject:javax.inject:1'
-    shadows project(path: ':custom-dependencies:protobuf-lite', configuration: 'default')
+    shadows(project(":kotlin-reflect-api"))
+    shadows(project(":core:descriptors"))
+    shadows(project(":core:descriptors.jvm"))
+    shadows(project(":core:deserialization"))
+    shadows(project(":core:descriptors.runtime"))
+    shadows(project(":core:util.runtime"))
+    shadows("javax.inject:javax.inject:1")
+    shadows(project(":custom-dependencies:protobuf-lite", configuration = "default"))
 }
 
-task copyAnnotations(type: Sync) {
+val copyAnnotations by task<Sync> {
     // copy just two missing annotations
-    from("${core}/runtime.jvm/src") {
-        include "**/Mutable.java"
-        include "**/ReadOnly.java"
+    from("$core/runtime.jvm/src") {
+        include("**/Mutable.java")
+        include("**/ReadOnly.java")
     }
     into(annotationsSrc)
-    includeEmptyDirs false
+    includeEmptyDirs = false
 }
 
+tasks.getByName("compileJava").dependsOn(copyAnnotations)
 
-compileJava {
-    dependsOn copyAnnotations
-    // options.compilerArgs.addAll(["-Xlint:unchecked"])
-}
-
-task reflectShadowJar(type: ShadowJar) {
-    classifier = 'shadow'
+val reflectShadowJar by task<ShadowJar> {
+    classifier = "shadow"
     version = null
-    manifestAttributes(manifest, project, 'Main')
+    callGroovy("manifestAttributes", manifest, project, "Main")
 
-    from(sourceSets.main.output)
-    from(project(":core:descriptors.jvm").sourceSets.main.resources) {
-        include 'META-INF/services/**'
+    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
+    from(project(":core:descriptors.jvm").the<JavaPluginConvention>().sourceSets.getByName("main").resources) {
+        include("META-INF/services/**")
     }
-    from(project(":core:deserialization").sourceSets.main.resources) {
-        include 'META-INF/services/**'
+    from(project(":core:deserialization").the<JavaPluginConvention>().sourceSets.getByName("main").resources) {
+        include("META-INF/services/**")
     }
 
-    transform(new KotlinModuleShadowTransformer(logger))
+    transform(KotlinModuleShadowTransformer(logger))
 
-    configurations = [project.configurations.shadows]
-    relocate 'org.jetbrains.kotlin', 'kotlin.reflect.jvm.internal.impl'
-    relocate 'javax.inject', 'kotlin.reflect.jvm.internal.impl.javax.inject'
+    configurations = listOf(shadows)
+    relocate("org.jetbrains.kotlin", "kotlin.reflect.jvm.internal.impl")
+    relocate("javax.inject", "kotlin.reflect.jvm.internal.impl.javax.inject")
     mergeServiceFiles()
 }
 
-task stripMetadata {
-    dependsOn reflectShadowJar
-    def inputJar = reflectShadowJar.archivePath
-    def outputJar = new File("${libsDir}/kotlin-reflect-stripped.jar")
+val stripMetadata by tasks.creating {
+    dependsOn("reflectShadowJar")
+    val inputJar = reflectShadowJar.archivePath
+    val outputJar = File("$libsDir/kotlin-reflect-stripped.jar")
     inputs.file(inputJar)
     outputs.file(outputJar)
     doLast {
-        StripMetadataKt.stripMetadata(logger, "kotlin/reflect/jvm/internal/impl/.*", inputJar, outputJar)
+        stripMetadata(logger, "kotlin/reflect/jvm/internal/impl/.*", inputJar, outputJar)
     }
 }
 
-def mainArchiveName = "${archivesBaseName}-${project.version}.jar"
-def outputJarPath = "${libsDir}/${mainArchiveName}"
-def rtJar = ['jre/lib/rt.jar', '../Classes/classes.jar'].collect { new File(JDK_16, it) }.find { it.isFile() }
+val mainArchiveName = "${property("archivesBaseName")}-$version.jar"
+val outputJarPath = "$libsDir/$mainArchiveName"
+val rtJar = listOf("jre/lib/rt.jar", "../Classes/classes.jar").map { File("${property("JDK_16")}/$it") }.first(File::isFile)
 
-task proguard(type: proguard.gradle.ProGuardTask) {
-    dependsOn stripMetadata
+val proguard by task<ProGuardTask> {
+    dependsOn(stripMetadata)
     inputs.files(stripMetadata.outputs.files)
     outputs.file(outputJarPath)
 
-    injars stripMetadata.outputs.files
-    outjars outputJarPath
+    injars(stripMetadata.outputs.files)
+    outjars(outputJarPath)
 
-    libraryjars configurations.proguardDeps
-    libraryjars rtJar
+    libraryjars(proguardDeps)
+    libraryjars(rtJar)
 
-    configuration "${core}/reflection.jvm/reflection.pro"
+    configuration("$core/reflection.jvm/reflection.pro")
 }
 
-
-task relocateCoreSources(type: Copy) {
-    def commonPackage = "org/jetbrains/kotlin"
-
+val relocateCoreSources by task<Copy> {
     doFirst {
         delete(relocatedCoreSrc)
     }
 
-    from "${core}/descriptors/src/${commonPackage}"
-    from "${core}/descriptors.jvm/src/${commonPackage}"
-    from "${core}/descriptors.runtime/src/${commonPackage}"
-    from "${core}/deserialization/src/${commonPackage}"
-    from "${core}/util.runtime/src/${commonPackage}"
+    from("$core/descriptors/src")
+    from("$core/descriptors.jvm/src")
+    from("$core/descriptors.runtime/src")
+    from("$core/deserialization/src")
+    from("$core/util.runtime/src")
 
-    into "${relocatedCoreSrc}/kotlin/reflect/jvm/internal/impl"
+    into(relocatedCoreSrc)
+    includeEmptyDirs = false
 
-    doLast {
-        ant.replaceregexp(
-                match: 'org\\.jetbrains\\.kotlin',
-                replace: 'kotlin.reflect.jvm.internal.impl',
-                flags: 'g'
-        ) {
-            fileset(dir: relocatedCoreSrc)
-        }
+    eachFile {
+        path = path.replace("org/jetbrains/kotlin", "kotlin/reflect/jvm/internal/impl")
+    }
+
+    filter { line ->
+        line.replace("org.jetbrains.kotlin", "kotlin.reflect.jvm.internal.impl")
     }
 }
 
-jar.enabled false
+tasks.getByName("jar").enabled = false
 
-task relocatedSourcesJar(type: Jar) {
-    dependsOn relocateCoreSources
-    classifier 'sources'
-    from relocatedCoreSrc
-    from "${core}/reflection.jvm/src"
+val relocatedSourcesJar by task<Jar> {
+    dependsOn(relocateCoreSources)
+    classifier = "sources"
+    from(relocatedCoreSrc)
+    from("$core/reflection.jvm/src")
 }
 
-def artifactJar = [file: file(outputJarPath), builtBy: proguard, name: archivesBaseName]
+val result = proguard
 
-task dexMethodCount(type: DexMethodCount) {
-    dependsOn(artifactJar.builtBy)
-    jarFile = artifactJar.file
-    ownPackages = ['kotlin.reflect']
+val dexMethodCount by task<DexMethodCount> {
+    dependsOn(result)
+    jarFile = File(outputJarPath)
+    ownPackages = listOf("kotlin.reflect")
 }
-check.dependsOn(dexMethodCount)
+tasks.getByName("check").dependsOn(dexMethodCount)
 
 artifacts {
-    mainJar artifactJar
-    runtime artifactJar
-    archives artifactJar
-    archives relocatedSourcesJar
-    archives javadocJar
+    val artifactJar = mapOf(
+            "file" to File(outputJarPath),
+            "builtBy" to result,
+            "name" to property("archivesBaseName")
+    )
+
+    add(mainJar.name, artifactJar)
+    add("runtime", artifactJar)
+    add("archives", artifactJar)
+    add("archives", relocatedSourcesJar)
 }
 
-dist {
-    from(proguard)
+javadocJar()
+
+dist(fromTask = result) {
     from(relocatedSourcesJar)
 }

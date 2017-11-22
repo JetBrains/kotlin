@@ -521,7 +521,8 @@
     ":kotlin-annotation-processing": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
-            "java": "org.gradle.api.plugins.JavaPluginConvention"
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
             "apiElements",
@@ -539,6 +540,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "signatures",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -553,7 +555,27 @@
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "signing": "org.gradle.plugins.signing.SigningExtension"
+        }
+    },
+    ":kotlin-annotation-processing-embeddable": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "maven": "org.gradle.api.plugins.MavenPluginConvention"
+        },
+        "configurations": [
+            "archives",
+            "compilerDummyJar",
+            "default",
+            "packedJars",
+            "runtimeJar",
+            "signatures"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
     ":kotlin-annotation-processing-gradle": {
@@ -1263,8 +1285,6 @@
             "default",
             "distJar",
             "implementation",
-            "kapt",
-            "kaptTest",
             "mainJar",
             "proguardDeps",
             "runtime",
@@ -1285,11 +1305,44 @@
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
             "shadow": "com.github.jengelman.gradle.plugins.shadow.ShadowExtension",
-            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
-            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension",
             "signing": "org.gradle.plugins.signing.SigningExtension"
+        }
+    },
+    ":kotlin-reflect-api": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "implementation",
+            "kapt",
+            "kaptTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeOnly",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
     ":kotlin-runner": {
@@ -3904,6 +3957,7 @@
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "idea": "org.gradle.plugins.ide.idea.model.IdeaModel",
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
