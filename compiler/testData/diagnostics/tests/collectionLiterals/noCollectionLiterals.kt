@@ -6,7 +6,7 @@ fun test(): Array<Int> {
 
     foo(<!UNSUPPORTED!>[""]<!>)
 
-    val <!UNUSED_VARIABLE!>p<!> = <!UNSUPPORTED!>[1, 2]<!> <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!> <!UNSUPPORTED!>[3, 4]<!>
+    val <!UNUSED_VARIABLE!>p<!> = <!UNSUPPORTED!>[1, 2]<!> <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!> <!OI;UNSUPPORTED!>[3, 4]<!>
 
     return <!UNSUPPORTED!>[1, 2]<!>
 }

@@ -12,9 +12,9 @@ expect class Foo(zzz: Int) {
 expect fun f2(xxx: Int)
 
 fun testCommon() {
-    Foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>zzz<!> = 0)
-    val f = Foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>aaa<!> = true)
-    f.f1(<!NAMED_ARGUMENTS_NOT_ALLOWED!>xxx<!> = "")
+    Foo(<!OI;NAMED_ARGUMENTS_NOT_ALLOWED!>zzz<!> = 0)
+    val f = Foo(<!OI;NAMED_ARGUMENTS_NOT_ALLOWED!>aaa<!> = true)
+    f.f1(<!OI;NAMED_ARGUMENTS_NOT_ALLOWED!>xxx<!> = "")
     f2(xxx = 42)
 }
 

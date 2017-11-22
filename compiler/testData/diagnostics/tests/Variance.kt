@@ -8,14 +8,14 @@ abstract class Producer<out T> {}
 abstract class Usual<T> {}
 
 fun foo(c: Consumer<Int>, p: Producer<Int>, u: Usual<Int>) {
-    val c1: Consumer<Any> = <!TYPE_MISMATCH!>c<!>
+    val c1: Consumer<Any> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>c<!>
     val <!UNUSED_VARIABLE!>c2<!>: Consumer<Int> = c1
 
     val p1: Producer<Any> = p
-    val <!UNUSED_VARIABLE!>p2<!>: Producer<Int> = <!TYPE_MISMATCH!>p1<!>
+    val <!UNUSED_VARIABLE!>p2<!>: Producer<Int> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>p1<!>
 
-    val u1: Usual<Any> = <!TYPE_MISMATCH!>u<!>
-    val <!UNUSED_VARIABLE!>u2<!>: Usual<Int> = <!TYPE_MISMATCH!>u1<!>
+    val u1: Usual<Any> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>u<!>
+    val <!UNUSED_VARIABLE!>u2<!>: Usual<Int> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>u1<!>
 }
 
 //Arrays copy example

@@ -18,5 +18,5 @@ import p.*
 class A
 
 fun test() {
-    val a: A = <!TYPE_MISMATCH!>B().a<!>
+    val a: A = <!TYPE_MISMATCH!>B().<!NI;TYPE_MISMATCH!>a<!><!>
 }

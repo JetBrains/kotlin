@@ -13,8 +13,8 @@ fun <T: A> emptyNullableListOfA(): List<T>? = null
 //-------------------------------
 
 fun testExclExcl() {
-    doList(<!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>emptyNullableListOfA<!>()!!) //should be an error here
-    val <!UNUSED_VARIABLE!>l<!>: List<Int> = id(<!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>emptyNullableListOfA<!>()!!)
+    doList(<!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>emptyNullableListOfA<!>()!!) //should be an error here
+    val <!UNUSED_VARIABLE!>l<!>: List<Int> = id(<!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>emptyNullableListOfA<!>()!!)
 
     doList(strangeNullableList { doInt(it) }!!) //lambda should be analyzed (at completion phase)
 }

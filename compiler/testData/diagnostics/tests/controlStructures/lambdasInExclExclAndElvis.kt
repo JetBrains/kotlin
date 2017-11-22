@@ -9,8 +9,8 @@ fun test() {
 
     // KT-KT-9070
     <!TYPE_MISMATCH!>{ }<!> <!USELESS_ELVIS!>?: 1<!>
-    use({ 2 } <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> 1);
+    use(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>{ 2 }<!> <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> 1);
 
     1 <!USELESS_ELVIS!>?: <!TYPE_MISMATCH, UNUSED_LAMBDA_EXPRESSION!>{ }<!><!>
-    use(1 <!USELESS_ELVIS!>?: { }<!>)
+    use(1 <!USELESS_ELVIS!>?: <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>{ }<!><!>)
 }

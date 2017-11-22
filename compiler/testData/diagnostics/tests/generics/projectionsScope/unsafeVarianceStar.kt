@@ -5,6 +5,6 @@ interface A<out K> {
 }
 
 fun test(a: A<*>) {
-    a.foo(null)
-    a.foo(Any())
+    a.foo(<!NI;NULL_FOR_NONNULL_TYPE!>null<!>)
+    a.foo(<!NI;TYPE_MISMATCH!>Any()<!>)
 }

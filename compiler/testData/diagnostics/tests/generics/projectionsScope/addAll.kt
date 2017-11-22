@@ -15,18 +15,18 @@ fun <T> mc(): MC<T> = null!!
 fun <T> c(): C<T> = null!!
 
 fun foo(x: MC<out Open>) {
-    x.addAll(<!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS(C<Nothing>; MC<out Open>; MC<out Open>; public abstract fun addAll\(x: C<T>\): Boolean defined in MC)!>x<!>)
-    x.addAllMC(<!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS(MC<Nothing>; MC<out Open>; MC<out Open>; public abstract fun addAllMC\(x: MC<out T>\): Boolean defined in MC)!>x<!>)
+    x.addAll(<!NI;TYPE_MISMATCH, OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS!>x<!>)
+    x.addAllMC(<!NI;TYPE_MISMATCH, OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS!>x<!>)
 
-    x.addAll(<!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS(C<Nothing>; MC<Open>; MC<out Open>; public abstract fun addAll\(x: C<T>\): Boolean defined in MC)!>mc<Open>()<!>)
-    x.addAllMC(<!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS(MC<Nothing>; MC<Open>; MC<out Open>; public abstract fun addAllMC\(x: MC<out T>\): Boolean defined in MC)!>mc<Open>()<!>)
+    x.addAll(<!NI;TYPE_MISMATCH, OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS!>mc<Open>()<!>)
+    x.addAllMC(<!NI;TYPE_MISMATCH, OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS!>mc<Open>()<!>)
 
-    x.addAll(<!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS(C<Nothing>; MC<Derived>; MC<out Open>; public abstract fun addAll\(x: C<T>\): Boolean defined in MC)!>mc<Derived>()<!>)
-    x.addAllMC(<!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS(MC<Nothing>; MC<Derived>; MC<out Open>; public abstract fun addAllMC\(x: MC<out T>\): Boolean defined in MC)!>mc<Derived>()<!>)
+    x.addAll(<!NI;TYPE_MISMATCH, OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS!>mc<Derived>()<!>)
+    x.addAllMC(<!NI;TYPE_MISMATCH, OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS!>mc<Derived>()<!>)
 
     x.addAll(c())
     x.addAll(c<Nothing>())
 
-    x.<!MEMBER_PROJECTED_OUT!>addAllInv<!>(mc<Open>())
+    x.<!OI;MEMBER_PROJECTED_OUT!>addAllInv<!>(<!NI;TYPE_MISMATCH!>mc<Open>()<!>)
     x.addAll(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 }

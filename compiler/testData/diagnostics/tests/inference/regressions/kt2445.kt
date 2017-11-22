@@ -4,7 +4,7 @@
 package a
 
 fun main(args: Array<String>) {
-    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!> {
+    <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!> {
 
     }
 }

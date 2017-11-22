@@ -19,6 +19,6 @@ public class J {
 
 fun test() {
     J.staticNN()
-    J.<!UNSAFE_IMPLICIT_INVOKE_CALL!>staticN<!>()
+    J<!NI;UNSAFE_CALL!>.<!><!OI;UNSAFE_IMPLICIT_INVOKE_CALL!>staticN<!>()
     J.staticJ()
 }

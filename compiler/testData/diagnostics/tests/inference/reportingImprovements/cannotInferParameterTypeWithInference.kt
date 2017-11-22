@@ -4,8 +4,8 @@ package aa
 fun <T, R> foo(block: (T)-> R) = block
 
 fun test1() {
-    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> {
-        <!CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>x<!> ->  // here we have 'cannot infer parameter type' error
+    <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> {
+        <!OI;CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>x<!> ->  // here we have 'cannot infer parameter type' error
         43
     }
 }

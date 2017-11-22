@@ -20,7 +20,7 @@ fun a() {
     val b = Example()
 
     a + b
-    a - b
+    a <!NI;OPERATOR_MODIFIER_REQUIRED!>-<!> b
     a * b
     a <!OPERATOR_MODIFIER_REQUIRED!>/<!> b
 
@@ -31,7 +31,7 @@ fun a() {
 
     with (Example()) {
         consumeInt(this + a)
-        consumeString(this - b)
+        consumeString(<!NI;TYPE_MISMATCH!>this <!NI;OPERATOR_MODIFIER_REQUIRED!>-<!> b<!>)
         consumeInt(this * a)
         consumeInt(this <!OPERATOR_MODIFIER_REQUIRED!>/<!> b)
 

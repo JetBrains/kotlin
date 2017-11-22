@@ -12,4 +12,4 @@ typealias TMap<T> = Map<T, T>
 fun <T> foo2(m: TMap<T>) = m
 
 fun bar2(m: TMap<*>) =
-        <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo2<!>(m)
+        <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo2<!>(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>m<!>)

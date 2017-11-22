@@ -9,7 +9,7 @@ interface D: A, B
 interface E: A, B
 
 fun foo(c: C?, d: D?, e: E?) {
-    val test1: A? = <!TYPE_MISMATCH!>c ?: d<!> ?: e
+    val test1: A? = <!OI;TYPE_MISMATCH!>c ?: d<!> ?: e
 
     val test2: B? = if (false) if (true) c else d else e
 

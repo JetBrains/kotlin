@@ -13,6 +13,6 @@ public class J {
 
 fun test(j: J, nullStr: String?, nullByte: Byte?, nullDouble: Double?) {
     j.foo(nullStr)
-    j.foo(<!TYPE_MISMATCH!>nullDouble<!>)
+    j.<!NI;NONE_APPLICABLE!>foo<!>(<!OI;TYPE_MISMATCH!>nullDouble<!>)
     j.foo(nullByte)
 }

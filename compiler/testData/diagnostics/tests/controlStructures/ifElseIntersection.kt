@@ -9,7 +9,7 @@ class None<T> : Option<T>
 fun <T> bind(r: Option<T>): Option<T> {
     return if (r is Some) {
         // Ideally we should infer Option<T> here (see KT-10896)
-        (<!TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT!>if<!> (true) <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>None()<!> else <!DEBUG_INFO_SMARTCAST!>r<!>) checkType { <!TYPE_MISMATCH!>_<!><Option<T>>() }
+        (<!OI;TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT!>if<!> (true) <!OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>None()<!> else <!DEBUG_INFO_SMARTCAST!>r<!>) checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><Option<T>>() }
         // Works correctly
         if (true) None() else r
     }
@@ -25,10 +25,10 @@ fun <T> bind2(r: Option<T>): Option<T> {
 }
 
 fun <T, R> bind3(r: Option<T>): Option<T> {
-    return if (r is Some) {
+    return if (r is Some) <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>{
         // Diagnoses an error correctly
-        if (true) <!TYPE_MISMATCH!>None<R>()<!> else r
-    }
+        if (true) <!OI;TYPE_MISMATCH!>None<R>()<!> else r
+    }<!>
     else r
 }
 

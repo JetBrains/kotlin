@@ -1,14 +1,14 @@
 // !WITH_NEW_INFERENCE
 fun <E : String?, T : ((CharSequence) -> Unit)?> foo(x: E, y: T) {
     if (x != null) {
-        <!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        <!NI;UNSAFE_CALL, OI;UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>(<!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>x<!>)
     }
 
     if (y != null) {
-        <!DEBUG_INFO_SMARTCAST!>y<!>(<!TYPE_MISMATCH!>x<!>)
+        <!NI;UNSAFE_CALL, OI;DEBUG_INFO_SMARTCAST!>y<!>(<!TYPE_MISMATCH!>x<!>)
     }
 
     if (x != null && y != null) {
-        <!DEBUG_INFO_SMARTCAST!>y<!>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        <!NI;UNSAFE_CALL, OI;DEBUG_INFO_SMARTCAST!>y<!>(<!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>x<!>)
     }
 }

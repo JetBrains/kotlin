@@ -21,10 +21,10 @@ fun test3() {}
 @Foo([<!CLASS_LITERAL_LHS_NOT_A_CLASS!>Gen<Int>::class<!>])
 fun test4() {}
 
-@Foo(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>[""]<!>)
+@Foo(<!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>[""]<!>)
 fun test5() {}
 
-@Foo(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>[Int::class, 1]<!>)
+@Foo(<!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>[Int::class, 1]<!>)
 fun test6() {}
 
 @Bar

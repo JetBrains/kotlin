@@ -55,5 +55,5 @@ fun test() {
 
     withGenericDefaults("")
 
-    <!UNREACHABLE_CODE!><!OVERLOAD_RESOLUTION_AMBIGUITY!>wrong<!>(<!>null!!<!UNREACHABLE_CODE!>)<!>
+    <!OI;UNREACHABLE_CODE!><!OVERLOAD_RESOLUTION_AMBIGUITY!>wrong<!>(<!>null!!<!OI;UNREACHABLE_CODE!>)<!>
 }

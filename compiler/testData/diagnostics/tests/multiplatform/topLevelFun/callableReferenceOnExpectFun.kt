@@ -10,7 +10,7 @@ expect fun foo(): String
 fun g(f: () -> String): String = f()
 
 fun test() {
-    g(::<!JVM:DEPRECATION!>foo<!>)
+    g(::<!OI;JVM:DEPRECATION!>foo<!>)
 }
 
 // MODULE: m2-jvm(m1-common)

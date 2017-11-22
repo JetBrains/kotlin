@@ -130,7 +130,7 @@ class Invokable(val x: String) {
 class InvokableProperty(val i: Invokable)
 
 fun checkInvokable(ip: InvokableProperty?) {
-    if (ip?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>i<!>() == "Hello") {
+    if (ip?.<!OI;UNSAFE_IMPLICIT_INVOKE_CALL!>i<!>() == "Hello") {
         <!DEBUG_INFO_SMARTCAST!>ip<!>.hashCode()
     }
 }

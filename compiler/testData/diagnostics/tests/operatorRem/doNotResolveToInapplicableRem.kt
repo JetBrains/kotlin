@@ -9,5 +9,5 @@ object RemExtension
 operator fun RemExtension.rem(x: Int) {}
 
 fun foo() {
-    OldMod <!DEPRECATED_BINARY_MOD_AS_REM!>%<!> 123
+    OldMod <!OI;DEPRECATED_BINARY_MOD_AS_REM!>%<!> 123
 }

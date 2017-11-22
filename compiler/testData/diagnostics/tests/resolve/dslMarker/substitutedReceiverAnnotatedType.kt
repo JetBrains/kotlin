@@ -19,7 +19,7 @@ fun test() {
     foo<A> {
         a()
         bar<B> {
-            <!DSL_SCOPE_VIOLATION!>a<!>()
+            <!OI;DSL_SCOPE_VIOLATION!>a<!>()
             this@foo.a()
             b()
         }

@@ -29,14 +29,14 @@ fun test() {
     var a = Example()
     val b = Example()
 
-    consumeString(a())
-    consumeString(a[1])
+    consumeString(<!NI;TYPE_MISMATCH!><!NI;OPERATOR_MODIFIER_REQUIRED!>a<!>()<!>)
+    consumeString(<!NI;OPERATOR_MODIFIER_REQUIRED, NI;TYPE_MISMATCH!>a[1]<!>)
 
-    val (x, y) = Example()
-    consumeString(x)
-    consumeString(y)
+    val (<!NI;OPERATOR_MODIFIER_REQUIRED!>x<!>, <!NI;OPERATOR_MODIFIER_REQUIRED!>y<!>) = Example()
+    consumeString(<!NI;TYPE_MISMATCH!>x<!>)
+    consumeString(<!NI;TYPE_MISMATCH!>y<!>)
 
-    consumeExample2(++a)
+    consumeExample2(<!NI;TYPE_MISMATCH!><!NI;OPERATOR_MODIFIER_REQUIRED!>++<!>a<!>)
 
     consumeString(a plus b)
 }

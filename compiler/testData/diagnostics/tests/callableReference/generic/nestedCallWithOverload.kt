@@ -11,7 +11,7 @@ fun test() {
     val x2: (Int) -> Unit = baz(id(::foo), ::foo)
     val x3: (Int) -> Unit = baz(id(::foo), id(id(::foo)))
     val x4: (String) -> Unit = baz(id(::foo), id(id(::foo)))
-    val x5: (Double) -> Unit = baz(id(::<!NONE_APPLICABLE!>foo<!>), id(id(::<!NONE_APPLICABLE!>foo<!>)))
+    val x5: (Double) -> Unit = baz(id(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;NONE_APPLICABLE!>foo<!>), id(id(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;NONE_APPLICABLE!>foo<!>)))
 
 
     id<(Int) -> Unit>(id(id(::foo)))

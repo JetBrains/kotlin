@@ -2,13 +2,13 @@
 // !DIAGNOSTICS: -USELESS_ELVIS
 
 fun test() {
-    bar(if (true) {
-        <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
+    bar(<!NI;TYPE_MISMATCH!>if (true) {
+        <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
     } else {
-        <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2<!>
-    })
+        <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>2<!>
+    }<!>)
 
-    bar(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> ?: <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2<!>)
+    bar(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!><!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> ?: <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>2<!><!>)
 }
 
 fun bar(s: String) = s

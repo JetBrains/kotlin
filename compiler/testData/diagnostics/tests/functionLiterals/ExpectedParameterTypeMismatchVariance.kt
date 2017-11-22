@@ -16,6 +16,6 @@ fun test(s: Sub) {
         t: Trait -> s
     }
 
-    foo(<!TYPE_MISMATCH!>fun(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>t: Sub<!>) = s<!>)
+    foo(<!TYPE_MISMATCH!>fun(<!OI;EXPECTED_PARAMETER_TYPE_MISMATCH!>t: Sub<!>) = s<!>)
     foo(<!TYPE_MISMATCH!>fun(t): Super = s<!>)
 }

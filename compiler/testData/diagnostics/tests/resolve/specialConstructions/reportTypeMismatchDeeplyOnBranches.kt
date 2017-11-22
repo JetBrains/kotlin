@@ -4,25 +4,25 @@ package b
 fun bar(i: Int) = i
 
 fun test(a: Int?, b: Int?) {
-    bar(if (a == null) return else <!TYPE_MISMATCH!>b<!>)
+    bar(<!NI;TYPE_MISMATCH!>if (a == null) return else <!OI;TYPE_MISMATCH!>b<!><!>)
 }
 
 fun test(a: Int?, b: Int?, c: Int?) {
-    bar(if (a == null) return else if (b == null) return else <!TYPE_MISMATCH!>c<!>)
+    bar(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (a == null) return else if (b == null) return else <!OI;TYPE_MISMATCH!>c<!><!>)
 }
 
 fun test(a: Any?, b: Any?, c: Int?) {
-    bar(if (a == null) if (b == null) <!TYPE_MISMATCH!>c<!> else return else return)
+    bar(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (a == null) if (b == null) <!OI;TYPE_MISMATCH!>c<!> else return else return<!>)
 }
 
 fun test(a: Int?, b: Any?, c: Int?) {
-    bar(if (a == null) {
+    bar(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (a == null) {
         return
     } else {
         if (b == null) {
             return
         } else {
-            <!TYPE_MISMATCH!>c<!>
+            <!OI;TYPE_MISMATCH!>c<!>
         }
-    })
+    }<!>)
 }

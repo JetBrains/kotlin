@@ -20,10 +20,10 @@ val xx6 = null ?: <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
 val xx7 = "" + <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
 
 val wxx1 = <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
-val wxx2: Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }
+val wxx2: Unit = <!NI;TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> { true -> <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }<!>
 val wxx3 = idAny(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
 val wxx4 = id(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
-val wxx5 = idUnit(<!NO_ELSE_IN_WHEN!>when<!> { true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> })
+val wxx5 = idUnit(<!NI;TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> { true -> <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }<!>)
 val wxx6 = null ?: <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 val wxx7 = "" + <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 
@@ -51,8 +51,8 @@ fun g1() = <!NO_ELSE_IN_WHEN!>when<!> { true -> work() }
 fun g2() = <!NO_ELSE_IN_WHEN!>when<!> { true -> mlist.add() }
 fun g3() = <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 fun g4(): Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> work() }
-fun g5(): Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> <!TYPE_MISMATCH!>mlist.add()<!> }
-fun g6(): Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }
+fun g5(): Unit = <!NI;TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> { true -> <!OI;TYPE_MISMATCH!>mlist.add()<!> }<!>
+fun g6(): Unit = <!NI;TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> { true -> <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }<!>
 
 fun foo1(x: String?) {
     "" + <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42

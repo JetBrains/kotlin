@@ -19,5 +19,5 @@ fun test() {
     val d = either(11, 2.3)
     checkSubtype<Any>(d)
 
-    val <!UNUSED_VARIABLE!>e<!>: Float = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>id(1)<!>
+    val <!UNUSED_VARIABLE!>e<!>: Float = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>id(1)<!>
 }

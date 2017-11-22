@@ -9,7 +9,7 @@ enum class Color {
 
 class MyColor(val x: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>, y: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>) : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> {
 
-    var z: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = <!TYPE_MISMATCH!>Color.RED<!>
+    var z: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = <!TYPE_MISMATCH!>Color.<!NI;TYPE_MISMATCH!>RED<!><!>
     set(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>) { z = arg }
 
     fun foo(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = arg
@@ -17,7 +17,7 @@ class MyColor(val x: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>, y: Color.<!ENUM_ENTRY_A
     fun bar(): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> {
         class Local : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
         fun local(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = arg
-        val temp: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = <!TYPE_MISMATCH!>Color.RED<!>
+        val temp: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = <!TYPE_MISMATCH!>Color.<!NI;TYPE_MISMATCH!>RED<!><!>
         temp <!USELESS_CAST!>as? Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>
         if (<!USELESS_IS_CHECK!>temp is <!IS_ENUM_ENTRY!>Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!><!>) {
         return temp <!USELESS_CAST!>as Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>
@@ -26,7 +26,7 @@ class MyColor(val x: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>, y: Color.<!ENUM_ENTRY_A
         if (<!USELESS_IS_CHECK!>obj is <!IS_ENUM_ENTRY!>Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!><!>) {
         return obj
     }
-        return <!TYPE_MISMATCH!>Color.RED<!>
+        return <!TYPE_MISMATCH!>Color.<!NI;TYPE_MISMATCH!>RED<!><!>
     }
 }
 

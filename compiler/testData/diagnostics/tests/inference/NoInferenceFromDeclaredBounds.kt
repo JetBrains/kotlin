@@ -4,7 +4,7 @@ fun <T: Any> fooT22() : T? {
 }
 
 fun foo1() {
-    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT22<!>()
+    <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT22<!>()
 }
 
 val n : Nothing = null.sure()

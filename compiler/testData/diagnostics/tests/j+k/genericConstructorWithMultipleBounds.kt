@@ -11,8 +11,8 @@ public class J {
 
 import java.io.Serializable
 
-fun cloneable(c: Cloneable) = <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>J<!>(c)
+fun cloneable(c: Cloneable) = <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>J<!>(<!NI;TYPE_MISMATCH!>c<!>)
 
-fun serializable(s: Serializable) = <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>J<!>(s)
+fun serializable(s: Serializable) = <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>J<!>(<!NI;TYPE_MISMATCH!>s<!>)
 
 fun <T> both(t: T) where T : Cloneable, T : Serializable = J(t)

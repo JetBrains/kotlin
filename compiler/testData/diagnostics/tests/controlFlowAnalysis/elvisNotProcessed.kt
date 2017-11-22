@@ -11,16 +11,16 @@ else {
 }
 
 val ww = if (true) {
-    <!TYPE_MISMATCH!>{ true }<!> <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> null!!
+    <!OI;TYPE_MISMATCH!>{ true }<!> <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> null!!
 }
 else if (true) {
-    <!TYPE_MISMATCH!>{ true }<!> <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> null!!
+    <!OI;TYPE_MISMATCH!>{ true }<!> <!USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> null!!
 }
 else {
     null!!
 }
 
-val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>n<!> = null ?: (null ?: <!TYPE_MISMATCH!>{ true }<!>)
+val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>n<!> = null ?: (null ?: <!OI;TYPE_MISMATCH!>{ true }<!>)
 
 fun l(): (() -> Boolean)? = null
 
@@ -33,6 +33,6 @@ val bbb = null ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 val bbbb = ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>) ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 
 fun f(x : Long?): Long {
-    var a = x ?: (<!TYPE_MISMATCH!>fun() {}<!> <!USELESS_ELVIS!>?: <!TYPE_MISMATCH!>fun() {}<!><!>)
-    return <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>
+    var a = x ?: (<!NI;TYPE_MISMATCH, TYPE_MISMATCH!>fun() {}<!> <!OI;USELESS_ELVIS!><!NI;USELESS_ELVIS_ON_LAMBDA_EXPRESSION!>?:<!> <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>fun() {}<!><!>)
+    return <!OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>
 }

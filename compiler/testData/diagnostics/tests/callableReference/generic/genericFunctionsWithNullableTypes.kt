@@ -29,9 +29,9 @@ fun <T> test(x: T) {
     <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>baz<!>(1, null, ::foo)
     <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>baz<!>(null, null, ::foo)
 
-    val s3: Pair<Int, String?> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>bar(null, null, ::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>)<!>
-    val s4: Pair<Int?, String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>bar(null, null, ::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>)<!>
+    val s3: Pair<Int, String?> = <!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>bar(null, null, ::<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>)<!>
+    val s4: Pair<Int?, String> = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>bar(null, null, ::<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>)<!>
 
-    val s5: Pair<Int, String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>bar(1, "", ::foo)<!>
-    val (a1: Int, b1: String) = <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>bar(1, "", ::foo)<!>
+    val s5: Pair<Int, String> = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>bar(1, "", ::foo)<!>
+    val (a1: Int, <!NI;TYPE_MISMATCH!>b1: String<!>) = <!OI;COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>bar(1, "", ::foo)<!>
 }

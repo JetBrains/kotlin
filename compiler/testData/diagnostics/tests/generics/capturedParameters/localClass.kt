@@ -15,7 +15,7 @@ class Q {
     private var y = <!DEBUG_INFO_LEAKING_THIS!>foo<!><String>()()
 
     fun bar() {
-        x = <!TYPE_MISMATCH!>y<!>
+        x = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>y<!>
         x = foo<CharSequence>()()
         y = foo<String>()()
 
