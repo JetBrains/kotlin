@@ -139,8 +139,14 @@ class KtLightAnnotationForSourceEntry(
 
             is VarargValueArgument ->
                 memberValue.unwrapArray(resolvedArgument.arguments)
-                ?: resolvedArgument.arguments.first().asElement().parent.parent.let {
-                    it.asKtCall() ?: it
+                ?: resolvedArgument.arguments.first().asElement().let {
+                    (it as? KtValueArgument)
+                            ?.takeIf {
+                                it.getSpreadElement() != null ||
+                                it.getArgumentName() != null ||
+                                it.getArgumentExpression() is KtCollectionLiteralExpression
+                            }
+                            ?.getArgumentExpression() ?: it.parent
                 }
 
             else -> error("resolvedArgument: ${resolvedArgument.javaClass} cant be processed")
@@ -189,6 +195,7 @@ class KtLightAnnotationForSourceEntry(
                 wrapAnnotationValue(memberValue, this, {
                     originalExpression.let { ktOrigin ->
                         when (ktOrigin) {
+                            is KtValueArgumentList -> ktOrigin.arguments.getOrNull(i)?.getArgumentExpression()
                             is KtCallElement -> ktOrigin.valueArguments.getOrNull(i)?.getArgumentExpression()
                             is KtCollectionLiteralExpression -> ktOrigin.getInnerExpressions().getOrNull(i)
                             else -> null
