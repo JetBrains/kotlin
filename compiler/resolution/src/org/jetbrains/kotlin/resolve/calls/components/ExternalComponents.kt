@@ -37,7 +37,7 @@ interface KotlinResolutionStatelessCallbacks {
 
 // This components hold state (trace). Work with this carefully.
 interface KotlinResolutionCallbacks {
-    fun analyzeAndGetLambdaResultArguments(
+    fun analyzeAndGetLambdaReturnArguments(
             lambdaArgument: LambdaKotlinCallArgument,
             isSuspend: Boolean,
             receiverType: UnwrappedType?,
