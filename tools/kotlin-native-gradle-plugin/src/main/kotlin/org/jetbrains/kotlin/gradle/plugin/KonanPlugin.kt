@@ -240,6 +240,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
     companion object {
         internal const val ARTIFACTS_CONTAINER_NAME = "konanArtifacts"
         internal const val KONAN_DOWNLOAD_TASK_NAME = "checkKonanCompiler"
+        internal const val KONAN_GENERATE_CMAKE_TASK_NAME = "generateCMake"
         internal const val COMPILE_ALL_TASK_NAME = "compileKonan"
 
         internal const val KONAN_EXTENSION_NAME = "konan"
@@ -260,6 +261,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.plugins.apply("base")
         // Create necessary tasks and extensions.
         project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
+        project.tasks.create(KONAN_GENERATE_CMAKE_TASK_NAME, KonanGenerateCMakeTask::class.java)
         project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)
         project.extensions.create(ARTIFACTS_CONTAINER_NAME, KonanArtifactContainer::class.java, project)
 
