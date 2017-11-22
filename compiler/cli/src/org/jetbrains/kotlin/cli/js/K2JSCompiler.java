@@ -204,7 +204,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         File outputFile = new File(arguments.getOutputFile());
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(outputFile));
-        configuration.put(CommonConfigurationKeys.USE_NEW_INFERENCE, arguments.getNewInference());
 
         JsConfig config = new JsConfig(project, configuration);
         JsConfig.Reporter reporter = new JsConfig.Reporter() {
