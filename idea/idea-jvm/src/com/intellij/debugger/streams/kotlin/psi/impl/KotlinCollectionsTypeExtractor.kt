@@ -10,7 +10,6 @@ import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.ANY
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.NULLABLE_ANY
 import com.intellij.debugger.streams.trace.impl.handler.type.ArrayType
-import com.intellij.debugger.streams.trace.impl.handler.type.ClassTypeImpl
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -63,10 +62,15 @@ class KotlinCollectionsTypeExtractor : CallTypeExtractor {
 
   private fun defaultType(type: KotlinType): GenericType {
     LOG.warn("Could not find type of items for type ${KotlinPsiUtil.getTypeName(type)}")
-    return NULLABLE_ANY
+    return getAny(type)
   }
 
-  private fun getResultType(type: KotlinType): GenericType = ClassTypeImpl(KotlinPsiUtil.getTypeName(type))
+  private fun getResultType(type: KotlinType): GenericType {
+    val typeName = KotlinPsiUtil.getTypeWithoutTypeParameters(type)
+    return tryToGetPrimitiveByName(typeName) ?: tryToGetPrimitiveArrayByName(typeName) ?: getAny(type)
+  }
+  
+  private fun getAny(type: KotlinType): GenericType = if (type.isMarkedNullable) NULLABLE_ANY else ANY
 
   private fun tryToGetPrimitiveByName(name: String): GenericType? =
       primitives.firstOrNull { x -> x.variableTypeName == name }
