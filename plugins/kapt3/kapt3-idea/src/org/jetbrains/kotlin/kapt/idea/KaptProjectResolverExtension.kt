@@ -94,7 +94,7 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
                 sourceSet.generatedKotlinSourcesDirFile?.let { addSourceSet(it.absolutePath, sourceType) }
 
                 sourceSet.generatedClassesDirFile?.let { generatedClassesDir ->
-                    val libraryData = LibraryData(GRADLE_SYSTEM_ID, "")
+                    val libraryData = LibraryData(GRADLE_SYSTEM_ID, "kaptGeneratedClasses")
                     libraryData.addPath(LibraryPathType.BINARY, generatedClassesDir.absolutePath)
                     val libraryDependencyData = LibraryDependencyData(sourceSetDataNode.data, libraryData, LibraryLevel.MODULE)
                     sourceSetDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData)
