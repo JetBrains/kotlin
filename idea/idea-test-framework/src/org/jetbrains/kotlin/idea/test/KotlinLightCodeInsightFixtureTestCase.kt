@@ -125,6 +125,9 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_FULL_JDK")) {
                     return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
                 }
+                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_REFLECT")) {
+                    return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_WITH_REFLECT
+                }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME") ||
                          InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_RUNTIME")) {
                     return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE

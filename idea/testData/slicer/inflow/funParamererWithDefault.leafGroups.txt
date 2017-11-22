@@ -1,8 +1,12 @@
-9 foo(1, <bold>"2"</bold>)
-3 	fun foo(n: Int, <bold>s: String = "???"</bold>) {
-9 		foo(1, <bold>"2"</bold>)
+4 FunParamererWithDefaultKt.foo(1, <bold>"2"</bold>):
+4 	fun foo(n: Int, <bold>s: String = "???"</bold>) {
+4 		FunParamererWithDefaultKt.foo(1, <bold>"2"</bold>):
 
-3 fun foo(n: Int, s: String = <bold>"???"</bold>) {
-3 	fun foo(n: Int, <bold>s: String = "???"</bold>) {
-3 		fun foo(n: Int, s: String = <bold>"???"</bold>) {
+10 foo(1, <bold>"2"</bold>)
+4 	fun foo(n: Int, <bold>s: String = "???"</bold>) {
+10 		foo(1, <bold>"2"</bold>)
+
+4 fun foo(n: Int, s: String = <bold>"???"</bold>) {
+4 	fun foo(n: Int, <bold>s: String = "???"</bold>) {
+4 		fun foo(n: Int, s: String = <bold>"???"</bold>) {
 

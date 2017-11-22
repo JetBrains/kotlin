@@ -105,8 +105,12 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
 
     protected fun doTest(path: String) {
         val mainFile = File(path)
+        val rootDir = mainFile.parentFile
 
-        myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
+        val namePrefix = FileUtil.getNameWithoutExtension(mainFile)
+        val extraFiles = rootDir.listFiles { _, name -> name.startsWith("$namePrefix.") }
+
+        myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${rootDir.path}"
 
         val fileText = FileUtil.loadFile(mainFile, true)
         val flowKind = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FLOW: ")
@@ -121,6 +125,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
             scope = AnalysisScope(project)
         }
 
+        extraFiles.forEach { myFixture.configureByFile(it.name) }
         val file = myFixture.configureByFile(mainFile.name) as KtFile
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
         val sliceProvider = KotlinSliceProvider()

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 
-class KotlinSliceProvider : SliceLanguageSupportProvider {
+class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer {
     companion object {
         val LEAF_ELEMENT_EQUALITY = object : SliceLeafEquality() {
             override fun substituteElement(element: PsiElement) = (element as? KtReference)?.resolve() ?: element
@@ -71,6 +71,11 @@ class KotlinSliceProvider : SliceLanguageSupportProvider {
 
     override fun createRootUsage(element: PsiElement, params: SliceAnalysisParams) = KotlinSliceUsage(element, params)
 
+    override fun transform(usage: SliceUsage): Collection<SliceUsage>? {
+        if (usage is KotlinSliceUsage) return null
+        return listOf(KotlinSliceUsage(usage.element, usage.parent, 0, false))
+    }
+
     override fun getExpressionAtCaret(atCaret: PsiElement?, dataFlowToThis: Boolean): KtExpression? {
         val element =
                 atCaret?.parentsWithSelf
@@ -78,6 +83,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider {
                             it is KtProperty ||
                             it is KtParameter ||
                             it is KtDeclarationWithBody ||
+                            (it is KtClass && !it.hasExplicitPrimaryConstructor()) ||
                             (it is KtExpression && it !is KtDeclaration)
                         }
                         ?.let { KtPsiUtil.safeDeparenthesize(it as KtExpression) } ?: return null

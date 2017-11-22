@@ -61,6 +61,30 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
         doTest(fileName);
     }
 
+    @TestMetadata("delegateToJavaGetter.kt")
+    public void testDelegateToJavaGetter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/delegateToJavaGetter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("diamondHierarchyJKMiddleClassFun.kt")
+    public void testDiamondHierarchyJKMiddleClassFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyJKMiddleClassFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("diamondHierarchyJKMiddleInterfaceFun.kt")
+    public void testDiamondHierarchyJKMiddleInterfaceFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyJKMiddleInterfaceFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("diamondHierarchyJKRootInterfaceFun.kt")
+    public void testDiamondHierarchyJKRootInterfaceFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyJKRootInterfaceFun.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("diamondHierarchyMiddleClassFun.kt")
     public void testDiamondHierarchyMiddleClassFun() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyMiddleClassFun.kt");
@@ -310,6 +334,12 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("settersViaDelegateForSimpleRef.kt")
     public void testSettersViaDelegateForSimpleRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaDelegateForSimpleRef.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("settersViaJavaDelegate.kt")
+    public void testSettersViaJavaDelegate() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaJavaDelegate.kt");
         doTest(fileName);
     }
 

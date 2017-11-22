@@ -59,7 +59,7 @@ fun KtElement.toLightElements(): List<PsiNamedElement> =
         when (this) {
             is KtClassOrObject -> listOfNotNull(toLightClass())
             is KtNamedFunction,
-            is KtSecondaryConstructor -> LightClassUtil.getLightClassMethods(this as KtFunction)
+            is KtConstructor<*> -> LightClassUtil.getLightClassMethods(this as KtFunction)
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).allDeclarations
             is KtPropertyAccessor -> listOfNotNull(LightClassUtil.getLightClassAccessorMethod(this))
             is KtParameter -> mutableListOf<PsiNamedElement>().also { elements ->

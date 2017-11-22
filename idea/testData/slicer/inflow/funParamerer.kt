@@ -1,5 +1,6 @@
 // FLOW: IN
 
+@JvmOverloads
 fun foo(<caret>n: Int, s: String = "???") {
 
 }

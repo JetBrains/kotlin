@@ -2,5 +2,7 @@
 7 	class B : <bold>A(1)</bold>
 14 	val x = <bold>A(1)</bold>
 14 		val <bold>x = A(1)</bold>
+3 	<bold>super</bold>(1);
 4 	constructor() : <bold>this(1)</bold>
 10 	constructor() : <bold>super(1)</bold>
+7 	A a = new <bold>A</bold>(1);
