@@ -41,9 +41,11 @@ import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmConstantsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -316,5 +318,20 @@ public class JvmCodegenUtil {
 
     public static boolean isDelegatedLocalVariable(@NotNull DeclarationDescriptor descriptor) {
         return descriptor instanceof LocalVariableDescriptor && ((LocalVariableDescriptor) descriptor).isDelegated();
+    }
+
+    @Nullable
+    public static ReceiverValue getBoundCallableReferenceReceiver(@NotNull ResolvedCall<?> resolvedCall) {
+        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+        if (descriptor.getExtensionReceiverParameter() == null && descriptor.getDispatchReceiverParameter() == null) return null;
+
+        ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
+        ReceiverValue extensionReceiver = resolvedCall.getExtensionReceiver();
+        assert dispatchReceiver == null || extensionReceiver == null : "Cannot generate reference with both receivers: " + descriptor;
+        ReceiverValue receiver = dispatchReceiver != null ? dispatchReceiver : extensionReceiver;
+
+        if (receiver instanceof TransientReceiver) return null;
+
+        return receiver;
     }
 }

@@ -38,7 +38,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.HashMap
+import java.util.*
 import kotlin.properties.Delegates
 
 interface SourceCompilerForInline {
@@ -174,28 +174,19 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
         val strategy = when (expression) {
             is KtCallableReferenceExpression -> {
-                val receiverExpression = expression.receiverExpression
-                val receiverType = if (receiverExpression != null && state.bindingContext.getType(receiverExpression) != null)
-                    state.typeMapper.mapType(state.bindingContext.getType(receiverExpression)!!)
-                else
-                    null
+                val resolvedCall = expression.callableReference.getResolvedCallWithAssert(state.bindingContext)
+                val receiverType = JvmCodegenUtil.getBoundCallableReferenceReceiver(resolvedCall)?.type?.let(state.typeMapper::mapType)
 
                 if (isLambda && lambdaInfo!!.isPropertyReference) {
                     val asmType = state.typeMapper.mapClass(lambdaInfo.classDescriptor)
                     val info = lambdaInfo.propertyReferenceInfo
                     PropertyReferenceCodegen.PropertyReferenceGenerationStrategy(
                             true, info!!.getFunction, info.target, asmType, receiverType,
-                            lambdaInfo.functionWithBodyOrCallableReference, state, true)
+                            lambdaInfo.functionWithBodyOrCallableReference, state, true
+                    )
                 }
                 else {
-                    FunctionReferenceGenerationStrategy(
-                            state,
-                            descriptor,
-                            expression.callableReference
-                                    .getResolvedCallWithAssert(state.bindingContext),
-                            receiverType, null,
-                            true
-                    )
+                    FunctionReferenceGenerationStrategy(state, descriptor, resolvedCall, receiverType, null, true)
                 }
             }
             is KtFunctionLiteral -> ClosureGenerationStrategy(state, expression as KtDeclarationWithBody)
