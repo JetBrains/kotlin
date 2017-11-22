@@ -39,6 +39,15 @@
             hasStaticDescription="true"
             level="WARNING"/>
 
+        <localInspection
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.GradleDependencyInspection"
+            displayName="Deprecated library is used in Gradle"
+            groupName="Kotlin"
+            enabledByDefault="true"
+            language="Groovy"
+            hasStaticDescription="true"
+            level="WARNING"/>
+
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestClassGradleConfigurationProducer"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestMethodGradleConfigurationProducer"/>
 
