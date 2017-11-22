@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.run
 
 import com.intellij.execution.configurations.JavaRunConfigurationModule
 import com.intellij.execution.configurations.ModuleBasedConfiguration
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
@@ -127,6 +128,9 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
         }
 
         val implModule = rootModel.module.findJvmImplementationModule()
+        if (implModule != null) {
+            LOG.info("JVM implementation module for ${rootModel.module.name} is ${implModule.name}")
+        }
         implModule
             ?.rootManager
             ?.orderEntries()
@@ -140,6 +144,10 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
 
     private fun addOutputModuleRoots(directorySet: ExternalSourceDirectorySet?, result: MutableCollection<String>) {
         directorySet?.gradleOutputDirs?.mapTo(result) { VfsUtilCore.pathToUrl(it.absolutePath) }
+    }
+
+    companion object {
+        val LOG = Logger.getInstance(MultiplatformGradleOrderEnumeratorHandler::class.java)
     }
 
     class FactoryImpl : Factory() {
