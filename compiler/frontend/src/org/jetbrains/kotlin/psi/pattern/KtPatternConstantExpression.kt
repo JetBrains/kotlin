@@ -38,6 +38,7 @@ class KtPatternConstantExpression(node: ASTNode) : KtPatternEntry(node) {
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
+        constant?.let { resolver.resolveType(it, state) }
         return resolver.resolveType(this, state)
     }
 }

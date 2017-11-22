@@ -18,13 +18,18 @@ package org.jetbrains.kotlin.psi.pattern
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtVisitor
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.types.expressions.NotNullKotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 import org.jetbrains.kotlin.types.expressions.and
 
 class KtPattern(node: ASTNode) : KtPatternElement(node) {
+
+    val innerNotPatternExpressions: List<KtExpression>
+        get() = collectDescendantsOfType({ it is KtPatternElement }, { it !is KtPatternElement })
 
     val expression: KtPatternExpression?
         get() = findChildByType(KtNodeTypes.PATTERN_EXPRESSION)

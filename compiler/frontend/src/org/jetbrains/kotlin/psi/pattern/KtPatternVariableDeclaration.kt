@@ -107,7 +107,7 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternEntry(node), KtVari
     }
 
     override fun getTypeReference(): KtTypeReference? {
-        return typeReference?.typeReference
+        return patternTypeReference?.typeReference
     }
 
     override fun setTypeReference(typeRef: KtTypeReference?): KtTypeReference? {
@@ -182,7 +182,7 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternEntry(node), KtVari
         return if (enclosingBlock != null) LocalSearchScope(enclosingBlock) else super.getUseScope()
     }
 
-    val typeReference: KtPatternTypeReference?
+    val patternTypeReference: KtPatternTypeReference?
         get() = findChildByType(KtNodeTypes.PATTERN_TYPE_REFERENCE)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
@@ -190,7 +190,7 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternEntry(node), KtVari
     }
 
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
-        typeReference?.getTypeInfo(resolver, state)
+        patternTypeReference?.getTypeInfo(resolver, state)
     }
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {

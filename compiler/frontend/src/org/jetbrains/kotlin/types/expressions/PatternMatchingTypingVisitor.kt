@@ -56,8 +56,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val typeReference = expression.typeReference
         if (typeReference != null && knownType != null) {
             val dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType, context)
-            val conditionInfo = checkTypeForIs(context, expression, expression.isNegated, knownType, typeReference, dataFlowValue).thenInfo
-            val newDataFlowInfo = conditionInfo.and(typeInfo.dataFlowInfo)
+            val (_, conditionInfo) = checkTypeForIs(context, expression, expression.isNegated, knownType, typeReference, dataFlowValue)
+            val newDataFlowInfo = conditionInfo.thenInfo.and(typeInfo.dataFlowInfo)
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo)
         }
 
@@ -376,7 +376,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 }
                 val typeReference = condition.typeReference
                 if (typeReference != null) {
-                    val result = checkTypeForIs(context, condition, condition.isNegated, subjectType, typeReference, subjectDataFlowValue)
+                    val (_, result) = checkTypeForIs(context, condition, condition.isNegated, subjectType, typeReference, subjectDataFlowValue)
                     newDataFlowInfo = if (condition.isNegated) {
                         ConditionalDataFlowInfo(result.elseInfo, result.thenInfo)
                     } else {
@@ -402,13 +402,9 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                     context.trace.report(EXPECTED_CONDITION.on(condition))
                 }
                 condition.pattern?.let {
-                    val builtIns = components.builtIns
-                    val typeResolver = components.typeResolver
-                    val localVariableResolver = components.localVariableResolver
-                    val fakeCallResolver = components.fakeCallResolver
-                    val overloadChecker = components.overloadChecker
-                    val resolver = PatternResolver(builtIns, fakeCallResolver, typeResolver, localVariableResolver, overloadChecker, facade)
-                    val (typeInfo, scope) = resolver.resolve(context, it, subjectType, true)
+                    val visitor = this@PatternMatchingTypingVisitor
+                    val resolver = PatternResolver(visitor, components, facade)
+                    val (typeInfo, scope) = resolver.resolve(context, it, subjectType, true, subjectDataFlowValue)
                     newDataFlowInfo = ConditionalDataFlowInfo(typeInfo.dataFlowInfo)
                     newScope = scope
                 }
@@ -472,14 +468,14 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         )
     }
 
-    private fun checkTypeForIs(
+    fun checkTypeForIs(
         context: ExpressionTypingContext,
         isCheck: KtElement,
         negated: Boolean,
         subjectType: KotlinType,
         typeReferenceAfterIs: KtTypeReference,
         subjectDataFlowValue: DataFlowValue
-    ): ConditionalDataFlowInfo {
+    ): Pair<KotlinType, ConditionalDataFlowInfo> {
         val typeResolutionContext =
             TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true, context.isDebuggerContext)
         val possiblyBareTarget = components.typeResolver.resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs)
@@ -510,7 +506,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         if (CastDiagnosticsUtil.isCastErased(subjectType, targetType, KotlinTypeChecker.DEFAULT)) {
             context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, targetType))
         }
-        return context.dataFlowInfo.let {
+        return targetType to context.dataFlowInfo.let {
             ConditionalDataFlowInfo(it.establishSubtyping(subjectDataFlowValue, targetType, components.languageVersionSettings), it)
         }
     }

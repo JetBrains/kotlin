@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.pattern.KtPatternTypedTuple;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -938,7 +939,11 @@ public interface Errors {
 
     // When expressions
 
-    DiagnosticFactory1<KtElement, KtElement> UNSPECIFIED_TYPE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtPatternTypedTuple, KtPatternTypedTuple> PATTERN_EMPTY_TUPLE = DiagnosticFactory1.create(ERROR);
+
+    DiagnosticFactory1<KtPatternTypedTuple, KtPatternTypedTuple> EXPECTED_PATTERN_TUPLE_INSTANCE = DiagnosticFactory1.create(ERROR);
+
+    DiagnosticFactory1<KtElement, KtElement> NON_DERIVABLE_TYPE = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<KtElement, KtElement> NOT_ALLOW_MULTIMATCHING_IN_WHEN_CONDITION = DiagnosticFactory1.create(ERROR);
 

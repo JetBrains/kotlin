@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -25,108 +24,117 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
-import org.jetbrains.kotlin.psi.pattern.KtPattern
-import org.jetbrains.kotlin.psi.pattern.KtPatternElement
-import org.jetbrains.kotlin.psi.pattern.KtPatternTypedTuple
-import org.jetbrains.kotlin.psi.pattern.KtPatternVariableDeclaration
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.psi.pattern.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.types.CastDiagnosticsUtil
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
 class PatternResolver(
-        val builtIns: KotlinBuiltIns,
-        private val fakeCallResolver: FakeCallResolver,
-        private val typeResolver: TypeResolver,
-        private val localVariableResolver: LocalVariableResolver,
-        private val overloadChecker: OverloadChecker,
+        private val patternMatchingTypingVisitor: PatternMatchingTypingVisitor,
+        private val components: ExpressionTypingComponents,
         private val facade: ExpressionTypingInternals
 ) {
+    val builtIns = components.builtIns!!
+
     companion object {
         fun getDeconstructName() = Name.identifier("deconstruct")
         fun getComponentName(index: Int) = DataClassDescriptorResolver.createComponentName(index + 1)
     }
 
-    fun resolve(context: ExpressionTypingContext, pattern: KtPattern, expectedType: KotlinType, allowDefinition: Boolean): Pair<NotNullKotlinTypeInfo, LexicalScope> {
-        val redeclarationChecker = TraceBasedLocalRedeclarationChecker(context.trace, overloadChecker)
+    fun resolve(context: ExpressionTypingContext, pattern: KtPattern, expectedType: KotlinType, allowDefinition: Boolean, subjectDataFlowValue: DataFlowValue): Pair<NotNullKotlinTypeInfo, LexicalScope> {
+        val redeclarationChecker = TraceBasedLocalRedeclarationChecker(context.trace, components.overloadChecker)
         val scope = PatternScope(context.scope, redeclarationChecker)
         val newContext = context.replaceExpectedType(expectedType)
-        val state = PatternResolveState(scope, newContext, allowDefinition, redeclarationChecker)
+        val state = PatternResolveState(scope, newContext, allowDefinition, subjectDataFlowValue, redeclarationChecker)
         val typeInfo = pattern.resolve(this, state)
-        state.scope.printStructure(Printer(System.out))
         return typeInfo to scope.flatten()
     }
 
-    fun getComponentsTypeInfoReceiver(tuple: KtPatternTypedTuple, state: PatternResolveState): KotlinType? {
+    fun getComponentsTypeInfoReceiver(typedTuple: KtPatternTypedTuple, state: PatternResolveState): KotlinType? {
         val receiver = TransientReceiver(state.expectedType)
-        val results = fakeCallResolver.resolveFakeCall(
+        val results = components.fakeCallResolver.resolveFakeCall(
                 context = state.context,
                 receiver = receiver,
                 name = getDeconstructName(),
-                callElement = tuple,
-                reportErrorsOn = tuple,
+                callElement = typedTuple,
+                reportErrorsOn = typedTuple,
                 callKind = FakeCallKind.OTHER,
                 valueArguments = emptyList()
         )
-        return if (results.isSuccess) results.resultingDescriptor.returnType else null
+        if (!results.isSuccess) return null
+        state.context.trace.record(BindingContext.PATTERN_DECONSTRUCT_RESOLVED_CALL, typedTuple, results.resultingCall)
+        return results.resultingDescriptor.returnType
     }
 
-    fun getComponentsTypeInfo(tuple: KtPatternTypedTuple, state: PatternResolveState, length: Int): List<NotNullKotlinTypeInfo> {
-        val receiver = TransientReceiver(state.expectedType)
-        return (0 until length).map {
-            getComponentName(it)
-        }.map { componentName ->
-            val results = fakeCallResolver.resolveFakeCall(
-                    context = state.context,
-                    receiver = receiver,
-                    name = componentName,
-                    callElement = tuple,
-                    reportErrorsOn = tuple,
-                    callKind = FakeCallKind.COMPONENT,
-                    valueArguments = emptyList()
-            )
-            if (results.isSuccess) {
-                results.resultingDescriptor.returnType!!
+    fun getComponentsTypeInfo(callElement: KtPatternTypedTuple, expressions: List<KtPatternExpression>, state: PatternResolveState) =
+            TransientReceiver(state.expectedType).let { receiver ->
+                expressions.mapIndexed { i, expression ->
+                    getComponentTypeInfo(callElement, expression, receiver, getComponentName(i), state)
+                }.map {
+                    NotNullKotlinTypeInfo(it, DataFlowInfo.EMPTY)
+                }
             }
-            else {
-                ErrorUtils.createErrorType("$componentName() return type")
-            }
-        }.map {
-            NotNullKotlinTypeInfo(it, DataFlowInfo.EMPTY)
-        }
+
+    private fun getComponentTypeInfo(
+            callElement: KtExpression,
+            expression: KtPatternExpression,
+            receiver: ReceiverValue,
+            componentName: Name,
+            state: PatternResolveState
+    ): KotlinType {
+        val results = components.fakeCallResolver.resolveFakeCall(
+                context = state.context.replaceExpectedType(null),
+                receiver = receiver,
+                name = componentName,
+                callElement = callElement,
+                reportErrorsOn = callElement,
+                callKind = FakeCallKind.COMPONENT,
+                valueArguments = emptyList()
+        )
+        val errorType = lazy { ErrorUtils.createErrorType("$componentName() return type") }
+        if (!results.isSuccess) return errorType.value
+        val resultType = results.resultingDescriptor.returnType ?: return errorType.value
+        state.context.trace.record(BindingContext.PATTERN_COMPONENT_RESOLVED_CALL, expression, results.resultingCall)
+        return resultType
     }
 
     fun getTypeInfo(typeReference: KtTypeReference, state: PatternResolveState): NotNullKotlinTypeInfo {
-        val trace = state.context.trace
-        val scope = state.context.scope
+        val context = state.context
         val subjectType = state.expectedType
-        val isDebuggerContext = state.context.isDebuggerContext
-        val typeResolutionContext = TypeResolutionContext(scope, trace, true, true, isDebuggerContext)
-        val possiblyBareTarget = typeResolver.resolvePossiblyBareType(typeResolutionContext, typeReference)
-        val type = TypeReconstructionUtil.reconstructBareType(typeReference, possiblyBareTarget, subjectType, trace, builtIns)
-        return NotNullKotlinTypeInfo(type, DataFlowInfo.EMPTY)
+        val dataFlowValue = state.subjectDataFlowValue
+        val (type, conditionInfo) = patternMatchingTypingVisitor.checkTypeForIs(context, typeReference, false, subjectType, typeReference, dataFlowValue)
+        return NotNullKotlinTypeInfo(type, conditionInfo.thenInfo)
     }
 
     fun getTypeInfo(expression: KtExpression, state: PatternResolveState): NotNullKotlinTypeInfo {
         val info = facade.getTypeInfo(expression, state.context)
         val patch = ErrorUtils.createErrorType("${expression.text} return type")
-        val type = info.type.errorAndReplaceIfNull(expression, state, Errors.UNSPECIFIED_TYPE, patch)
+        val type = info.type.errorAndReplaceIfNull(expression, state, Errors.NON_DERIVABLE_TYPE, patch)
         return info.kotlinTypeInfo(type)
     }
 
     fun restoreOrCreate(element: KtPatternElement, state: PatternResolveState, creator: () -> NotNullKotlinTypeInfo?): NotNullKotlinTypeInfo {
         state.context.trace.bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element)?.let { return it }
         val info = creator() ?: NotNullKotlinTypeInfo(state.expectedType, DataFlowInfo.EMPTY)
-        val reconstructed = CastDiagnosticsUtil.findStaticallyKnownSubtype(state.expectedType, info.type.constructor)
-        val newInfo = info.replaceType(reconstructed.resultingType ?: state.expectedType)
-        state.context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, newInfo)
-        return newInfo
+        state.context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, info)
+        return info
+    }
+
+    fun resolveType(expression: KtExpression, state: PatternResolveState): NotNullKotlinTypeInfo {
+        val subjectType = state.context.trace.bindingContext.get(BindingContext.PATTERN_SUBJECT_TYPE, expression)
+        if (subjectType == null) {
+            state.context.trace.record(BindingContext.PATTERN_SUBJECT_TYPE, expression, state.expectedType)
+        }
+        return getTypeInfo(expression, state)
     }
 
     fun resolveType(element: KtPatternElement, state: PatternResolveState): NotNullKotlinTypeInfo {
@@ -149,7 +157,7 @@ class PatternResolver(
         }
         val scope = state.scope
         val componentType = declaration.getTypeInfo(this, state).type
-        val variableDescriptor = localVariableResolver.resolveLocalVariableDescriptorWithType(scope, declaration, componentType, trace)
+        val variableDescriptor = components.localVariableResolver.resolveLocalVariableDescriptorWithType(scope, declaration, componentType, trace)
         ExpressionTypingUtils.checkVariableShadowing(scope.flatten(), trace, variableDescriptor)
         scope.add(variableDescriptor)
     }
@@ -242,6 +250,7 @@ class PatternResolveState(
         val scope: PatternScope,
         val context: ExpressionTypingContext,
         val allowDefinition: Boolean,
+        val subjectDataFlowValue: DataFlowValue,
         private val redeclarationChecker: TraceBasedLocalRedeclarationChecker
 ) {
     val expectedType
@@ -249,16 +258,16 @@ class PatternResolveState(
 
     fun replaceScope(scope: PatternScope): PatternResolveState {
         val context = context.replaceScope(scope)
-        return PatternResolveState(scope, context, allowDefinition, redeclarationChecker)
+        return PatternResolveState(scope, context, allowDefinition, subjectDataFlowValue, redeclarationChecker)
     }
 
     fun replaceType(expectedType: KotlinType): PatternResolveState {
         val context = context.replaceExpectedType(expectedType)
-        return PatternResolveState(scope, context, allowDefinition, redeclarationChecker)
+        return PatternResolveState(scope, context, allowDefinition, subjectDataFlowValue, redeclarationChecker)
     }
 
     fun next(expectedType: KotlinType): PatternResolveState {
         val context = context.replaceExpectedType(expectedType)
-        return PatternResolveState(scope.child(redeclarationChecker), context, allowDefinition, redeclarationChecker)
+        return PatternResolveState(scope.child(redeclarationChecker), context, allowDefinition, subjectDataFlowValue, redeclarationChecker)
     }
 }

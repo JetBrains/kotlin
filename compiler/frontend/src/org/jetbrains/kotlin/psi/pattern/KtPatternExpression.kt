@@ -37,7 +37,7 @@ class KtPatternExpression(node: ASTNode) : KtPatternEntry(node) {
         val flowsInfo = constraints.map { it.getTypeInfo(resolver, state) }
         val type = flowsInfo.map { it.type }
                 .let { TypeIntersector.intersectTypes(it) }
-                .errorAndReplaceIfNull(this, state, Errors.UNSPECIFIED_TYPE, ErrorUtils.createErrorType("$this type"))
+                .errorAndReplaceIfNull(this, state, Errors.NON_DERIVABLE_TYPE, ErrorUtils.createErrorType("$this type"))
         val dataFlowInfo = flowsInfo.asSequence()
                 .map { it.dataFlowInfo }
                 .reduce { acc, info -> acc.and(info) }

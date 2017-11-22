@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.load.kotlin.MethodSignatureMappingKt;
 import org.jetbrains.kotlin.load.kotlin.TypeSignatureMappingKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.pattern.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
@@ -90,6 +91,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
+import org.jetbrains.kotlin.types.expressions.NotNullKotlinTypeInfo;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -201,7 +203,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             this.expression = expression;
         }
 
-        private void addGapLabel(Label label){
+        private void addGapLabel(Label label) {
             gaps.add(label);
         }
     }
@@ -387,7 +389,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         assert descriptor != null;
 
         Type asmType = asmTypeForAnonymousClass(bindingContext, declaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(JvmDeclarationOriginKt.OtherOrigin(declaration, descriptor), asmType, declaration.getContainingFile());
+        ClassBuilder classBuilder = state.getFactory()
+                .newVisitor(JvmDeclarationOriginKt.OtherOrigin(declaration, descriptor), asmType, declaration.getContainingFile());
 
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this, OwnerKind.IMPLEMENTATION);
         new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen(), /* isLocal = */ true).generate();
@@ -415,7 +418,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull CodegenContext<?> context,
             @NotNull KtSuperExpression expression
     ) {
-        KotlinType thisTypeForSuperCall = context.getState().getBindingContext().get(BindingContext.THIS_TYPE_FOR_SUPER_EXPRESSION, expression);
+        KotlinType thisTypeForSuperCall =
+                context.getState().getBindingContext().get(BindingContext.THIS_TYPE_FOR_SUPER_EXPRESSION, expression);
         assert thisTypeForSuperCall != null : "This type for superCall ''" + expression.getText() + "'' should be not null!";
         ClassifierDescriptor descriptor = thisTypeForSuperCall.getConstructor().getDeclarationDescriptor();
         assert descriptor instanceof ClassDescriptor :
@@ -761,7 +765,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public static ConstantValue<?> getPrimitiveOrStringCompileTimeConstant(
             @NotNull KtExpression expression,
             @NotNull BindingContext bindingContext,
-            boolean shouldInlineConstVals) {
+            boolean shouldInlineConstVals
+    ) {
         ConstantValue<?> constant = getCompileTimeConstant(expression, bindingContext, false, shouldInlineConstVals);
         if (constant == null || ConstantExpressionEvaluatorKt.isStandaloneOnlyConstant(constant)) {
             return null;
@@ -773,7 +778,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public static ConstantValue<?> getCompileTimeConstant(
             @NotNull KtExpression expression,
             @NotNull BindingContext bindingContext,
-            boolean shouldInlineConstVals) {
+            boolean shouldInlineConstVals
+    ) {
         return getCompileTimeConstant(expression, bindingContext, false, shouldInlineConstVals);
     }
 
@@ -853,7 +859,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    private @NotNull List<StringTemplateEntry> preprocessStringTemplate(@NotNull KtStringTemplateExpression expression) {
+    private @NotNull
+    List<StringTemplateEntry> preprocessStringTemplate(@NotNull KtStringTemplateExpression expression) {
         KtStringTemplateEntry[] entries = expression.getEntries();
 
         List<StringTemplateEntry> result = new ArrayList<>(entries.length);
@@ -1251,10 +1258,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                              : variableDescriptor.getType();
 
         if (variableDescriptor instanceof ValueParameterDescriptor &&
-                MethodSignatureMappingKt.forceSingleValueParameterBoxing(
-                        (CallableDescriptor) variableDescriptor.getContainingDeclaration()
-                )
-        ) {
+            MethodSignatureMappingKt.forceSingleValueParameterBoxing(
+                    (CallableDescriptor) variableDescriptor.getContainingDeclaration()
+            )
+                ) {
             //noinspection ConstantConditions
             return asmType(TypeUtils.makeNullable(varType));
         }
@@ -1278,7 +1285,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (statement instanceof KtNamedFunction) {
             DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, statement);
-            assert descriptor instanceof FunctionDescriptor : "Couldn't find function declaration in binding context " + statement.getText();
+            assert descriptor instanceof FunctionDescriptor : "Couldn't find function declaration in binding context " +
+                                                              statement.getText();
             Type type = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
             myFrameMap.enter(descriptor, type);
         }
@@ -1371,7 +1379,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         leaveTasks.add(answer -> {
             int index = myFrameMap.leave(functionDescriptor);
 
-            assert !functionDescriptor.getName().isSpecial() : "Local variable should be generated only for function with name: " + statement.getText();
+            assert !functionDescriptor.getName().isSpecial() : "Local variable should be generated only for function with name: " +
+                                                               statement.getText();
             v.visitLocalVariable(functionDescriptor.getName().asString() + "$", type.getDescriptor(), null, scopeStart, blockEnd, index);
             return null;
         });
@@ -1413,7 +1422,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 v.visitLabel(label);
                 v.visitLineNumber(myLastLineNumber, label);
             }
-        } else {
+        }
+        else {
             //if it used as argument of infix call (in this case lineNumber for simple inlineCall also would be reset)
             myLastLineNumber = -1;
         }
@@ -1425,7 +1435,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private void doFinallyOnReturn(@NotNull Label afterReturnLabel) {
-        if(!blockStackElements.isEmpty()) {
+        if (!blockStackElements.isEmpty()) {
             BlockStackElement stackElement = blockStackElements.peek();
             if (stackElement instanceof FinallyBlockStackElement) {
                 FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
@@ -1433,7 +1443,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
             else if (stackElement instanceof LoopBlockStackElement) {
 
-            } else {
+            }
+            else {
                 throw new UnsupportedOperationException("Wrong BlockStackElement in processing stack");
             }
 
@@ -1557,7 +1568,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                             BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, true).getFirst();
                     //FIRST_FUN_LABEL to prevent clashing with existing labels
                     return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), FIRST_FUN_LABEL);
-                } else {
+                }
+                else {
                     //local
                     return null;
                 }
@@ -1667,7 +1679,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Companion.getInstances(state.getProject());
+            Collection<ExpressionCodegenExtension> codegenExtensions =
+                    ExpressionCodegenExtension.Companion.getInstances(state.getProject());
             if (!codegenExtensions.isEmpty() && resolvedCall != null) {
                 ExpressionCodegenExtension.Context context = new ExpressionCodegenExtension.Context(this, typeMapper, v);
                 KotlinType returnType = propertyDescriptor.getReturnType();
@@ -1693,8 +1706,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (descriptor instanceof TypeAliasDescriptor) {
             ClassDescriptor classDescriptor = ((TypeAliasDescriptor) descriptor).getClassDescriptor();
             if (classDescriptor == null) {
-                throw new IllegalStateException("Type alias " + descriptor + " static member reference should be rejected by type checker, " +
-                                                "since there is no class corresponding to this type alias.");
+                throw new IllegalStateException(
+                        "Type alias " + descriptor + " static member reference should be rejected by type checker, " +
+                        "since there is no class corresponding to this type alias.");
             }
             descriptor = classDescriptor;
         }
@@ -1947,7 +1961,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             fieldAccessorKind = FieldAccessorKind.LATEINIT_INTRINSIC;
         }
         else if (isBackingFieldInClassCompanion &&
-            (forceField || propertyDescriptor.isConst() && Visibilities.isPrivate(propertyDescriptor.getVisibility()))) {
+                 (forceField || propertyDescriptor.isConst() && Visibilities.isPrivate(propertyDescriptor.getVisibility()))) {
             fieldAccessorKind = FieldAccessorKind.IN_CLASS_COMPANION;
         }
         else if ((syntheticBackingField &&
@@ -2023,7 +2037,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (propertyDescriptor.isVar()) {
                 PropertySetterDescriptor setter = propertyDescriptor.getSetter();
                 if (setter != null &&
-                    !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context, state.getShouldInlineConstVals()) &&
+                    !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context,
+                                                    state.getShouldInlineConstVals()) &&
                     !isConstOrHasJvmFieldAnnotation(propertyDescriptor)) {
                     callableSetter = typeMapper.mapToCallableMethod(setter, isSuper);
                 }
@@ -2310,7 +2325,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // Extra constructor marker argument
         if (callableMethod instanceof CallableMethod) {
             List<JvmMethodParameterSignature> callableParameters = ((CallableMethod) callableMethod).getValueParameters();
-            for (JvmMethodParameterSignature parameter: callableParameters) {
+            for (JvmMethodParameterSignature parameter : callableParameters) {
                 if (parameter.getKind() == JvmMethodParameterKind.CONSTRUCTOR_MARKER) {
                     callGenerator.putValueIfNeeded(parameter.getAsmType(), StackValue.constant(null, parameter.getAsmType()));
                 }
@@ -2442,7 +2457,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    protected CallGenerator getOrCreateCallGeneratorForDefaultImplBody(@NotNull FunctionDescriptor descriptor, @Nullable KtNamedFunction function) {
+    protected CallGenerator getOrCreateCallGeneratorForDefaultImplBody(
+            @NotNull FunctionDescriptor descriptor,
+            @Nullable KtNamedFunction function
+    ) {
         return getOrCreateCallGenerator(descriptor, function, null, true);
     }
 
@@ -2502,7 +2520,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 "should correspond to type arguments for the resulting type " + resultingType;
 
         Map<TypeParameterDescriptor, KotlinType> typeArgumentsMap = Maps.newHashMapWithExpectedSize(typeParameters.size());
-        for (TypeParameterDescriptor typeParameter: typeParameters) {
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
             KotlinType typeArgument = typeArgumentsForReturnType.get(typeParameter.getIndex()).getType();
             typeArgumentsMap.put(typeParameter, typeArgument);
         }
@@ -2743,7 +2761,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     toArrayDescriptor = "([Ljava/lang/Object;)[Ljava/lang/Object;";
                 }
                 else {
-                    String spreadBuilderClassName = AsmUtil.asmPrimitiveTypeToLangPrimitiveType(elementType).getTypeName().getIdentifier() + "SpreadBuilder";
+                    String spreadBuilderClassName =
+                            AsmUtil.asmPrimitiveTypeToLangPrimitiveType(elementType).getTypeName().getIdentifier() + "SpreadBuilder";
                     owner = "kotlin/jvm/internal/" + spreadBuilderClassName;
                     addDescriptor = "(" + elementType.getDescriptor() + ")V";
                     toArrayDescriptor = "()" + type.getDescriptor();
@@ -2787,7 +2806,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 for (int i = 0; i != size; ++i) {
                     v.dup();
                     StackValue rightSide = gen(arguments.get(i).getArgumentExpression());
-                    StackValue.arrayElement(elementType, StackValue.onStack(type), StackValue.constant(i, Type.INT_TYPE)).store(rightSide, v);
+                    StackValue.arrayElement(elementType, StackValue.onStack(type), StackValue.constant(i, Type.INT_TYPE))
+                            .store(rightSide, v);
                 }
                 return Unit.INSTANCE;
             });
@@ -2944,7 +2964,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (!isPrimitive(expressionType(expression.getReceiverExpression()))) {
             result = new StackValue.SafeFallback(type, ifnull, newReceiver);
-        } else {
+        }
+        else {
             result = newReceiver;
         }
 
@@ -3483,7 +3504,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type exprType = expressionType(expr);
         if (compileTimeConstant != null) {
             StackValue.constant(compileTimeConstant.getValue(), exprType).put(exprType, v);
-        } else {
+        }
+        else {
             gen(expr, exprType);
         }
         genInvokeAppendMethod(v, exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType);
@@ -3549,7 +3571,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
         DeclarationDescriptor op = resolvedCall.getResultingDescriptor();
         if (!(op instanceof FunctionDescriptor) || originalOperation == null) {
-            throw new UnsupportedOperationException("Don't know how to generate this postfix expression: " + originalOperationName + " " + op);
+            throw new UnsupportedOperationException(
+                    "Don't know how to generate this postfix expression: " + originalOperationName + " " + op);
         }
 
 
@@ -3799,7 +3822,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     public VariableDescriptor getVariableDescriptorNotNull(@NotNull KtElement declaration) {
         VariableDescriptor descriptor = bindingContext.get(VARIABLE, declaration);
-        assert descriptor != null :  "Couldn't find variable declaration in binding context " + declaration.getText();
+        assert descriptor != null : "Couldn't find variable declaration in binding context " + declaration.getText();
         return descriptor;
     }
 
@@ -4013,7 +4036,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (descriptor instanceof CallableDescriptor) {
             return generateExtensionReceiver((CallableDescriptor) descriptor);
         }
-        throw new UnsupportedOperationException("Neither this nor receiver: " + descriptor + expression.getParent().getContainingFile().getText());
+        throw new UnsupportedOperationException(
+                "Neither this nor receiver: " + descriptor + expression.getParent().getContainingFile().getText());
     }
 
     @Override
@@ -4146,7 +4170,7 @@ The "returned" value of try expression with no finally is either the last expres
     private void generateExceptionTable(@NotNull Label catchStart, @NotNull List<Label> catchedRegions, @Nullable String exception) {
         for (int i = 0; i < catchedRegions.size(); i += 2) {
             Label startRegion = catchedRegions.get(i);
-            Label endRegion = catchedRegions.get(i+1);
+            Label endRegion = catchedRegions.get(i + 1);
             v.visitTryCatchBlock(startRegion, endRegion, catchStart, exception);
         }
     }
@@ -4206,13 +4230,292 @@ The "returned" value of try expression with no finally is either the last expres
         return generateIsCheck(match, expression.getTypeReference(), expression.isNegated());
     }
 
-    private StackValue generateExpressionMatch(StackValue expressionToMatch, KtExpression subjectExpression, KtExpression patternExpression) {
+    private StackValue generateExpressionMatch(
+            StackValue expressionToMatch,
+            KtExpression subjectExpression,
+            KtExpression patternExpression
+    ) {
         if (expressionToMatch != null) {
             return generateEquals(subjectExpression, patternExpression, KtTokens.EQEQ, expressionToMatch);
         }
         else {
             return gen(patternExpression);
         }
+    }
+
+    public static void forceAssert(boolean cond, String errorMessage) {
+        if (!cond) {
+            throw new AssertionError(errorMessage);
+        }
+    }
+
+    private StackValue generateMatchPattern(StackValue expressionToMatch, KtWhenConditionMatchPattern condition) {
+        KtPattern pattern = condition.getPattern();
+        forceAssert(pattern != null, "Pattern in match condition must be defined " + condition.getText());
+        KtPatternExpression expression = pattern.getExpression();
+        forceAssert(expression != null, "Expression in pattern must be defined " + pattern.getText());
+        return generateMatchExpression(expressionToMatch, expression);
+    }
+
+    private StackValue generateMatchExpression(StackValue expressionToMatch, KtPatternExpression expression) {
+        return expression.getConstraints().stream()
+                .map(constraint -> generateMatchConstraint(expressionToMatch, constraint))
+                .reduce(StackValue::and)
+                .orElseThrow(() -> new IllegalArgumentException("Unexpected pattern expression arguments"));
+    }
+
+    private StackValue generateMatchConstraint(StackValue expressionToMatch, KtPatternConstraint constraint) {
+        KtPatternEntry entry = constraint.getEntry();
+        KtPatternGuard guard = constraint.getGuard();
+        StackValue result;
+        forceAssert(entry != null, "constraint entry must be defined");
+        if (entry instanceof KtPatternTypeReference) {
+            result = generateMatchTypeReference(expressionToMatch, (KtPatternTypeReference) entry);
+        }
+        else if (entry instanceof KtPatternStringExpression) {
+            result = generateMatchStringExpression(expressionToMatch, (KtPatternStringExpression) entry);
+        }
+        else if (entry instanceof KtPatternConstantExpression) {
+            result = generateMatchConstantExpression(expressionToMatch, (KtPatternConstantExpression) entry);
+        }
+        else if (entry instanceof KtPatternTypedTuple) {
+            result = generateMatchTypedTuple(expressionToMatch, (KtPatternTypedTuple) entry);
+        }
+        else if (entry instanceof KtPatternVariableDeclaration) {
+            result = generateMatchVariableDeclaration(expressionToMatch, (KtPatternVariableDeclaration) entry);
+        }
+        else if (entry instanceof KtPatternHashExpression) {
+            result = generateMatchHashExpression(expressionToMatch, (KtPatternHashExpression) entry);
+        }
+        else {
+            throw new IllegalArgumentException("Unexpected constraint entry " + entry.getClass().getName());
+        }
+        if (guard != null) {
+            result = StackValue.and(result, generateMatchGuard(guard));
+        }
+        return result;
+    }
+
+    private StackValue generateMatchGuard(KtPatternGuard guard) {
+        KtExpression expression = guard.getCondition();
+        forceAssert(expression != null, "Guard condition must exist " + guard.getText());
+        return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+            StackValue value = generateExpressionMatch(null, null, expression);
+            value.put(Type.BOOLEAN_TYPE, v);
+            return null;
+        });
+    }
+
+    private StackValue generateMatchTypeReference(StackValue expressionToMatch, KtPatternTypeReference entry) {
+        KtTypeReference typeReference = entry.getTypeReference();
+        forceAssert(typeReference != null, "Type reference must exist " + entry.getText());
+        return generateMatchTypeReference(expressionToMatch, typeReference);
+    }
+
+
+    private StackValue generateMatchTypeReference(StackValue expressionToMatch, KtTypeReference typeReference) {
+        return generateIsCheck(expressionToMatch, typeReference, false);
+    }
+
+    private StackValue generateMatchStringExpression(StackValue expressionToMatch, KtPatternStringExpression entry) {
+        KtExpression expression = entry.getString();
+        forceAssert(expression != null, "String expression must exist " + entry.getText());
+        return generateEqualsForStackValueWithNoExpression(expressionToMatch, expression);
+    }
+
+    private StackValue generateMatchConstantExpression(StackValue expressionToMatch, KtPatternConstantExpression entry) {
+        KtExpression expression = entry.getConstant();
+        forceAssert(expression != null, "Constant expression must exist " + entry.getText());
+        return generateEqualsForStackValueWithNoExpression(expressionToMatch, expression);
+    }
+
+    private StackValue generateMatchTypedTuple(StackValue expressionToMatch, KtPatternTypedTuple entry) {
+        KtPatternTuple tuple = entry.getTuple();
+        forceAssert(tuple != null, "Pattern tuple is null for " + entry.getText());
+        List<KtPatternExpression> expressions = tuple.getExpressions();
+        assert expressions.size() > 0 : "Pattern tuple must be not empty";
+        StackValue result = null;
+        KtTypeReference typeReference = entry.getTypeReference();
+        if (typeReference != null) {
+            result = generateMatchTypeReference(expressionToMatch, typeReference);
+        }
+        Pair<ReceiverValue, StackValue> receiverAndValue = generatePatternDeconstructReceiver(expressionToMatch, entry);
+        ReceiverValue receiver = receiverAndValue.getFirst();
+        StackValue receiverStackValue = receiverAndValue.getSecond();
+        for (KtPatternExpression expression : expressions) {
+            ResolvedCall<FunctionDescriptor> componentCall = bindingContext.get(PATTERN_COMPONENT_RESOLVED_CALL, expression);
+            forceAssert(componentCall != null, "Resolved call is null for " + expression.getText());
+            Call call = makeFakeCall(receiver);
+            // Todo(sergei) skip invoke if expression.text == "_"
+            StackValue expressionValue = invokeFunction(call, componentCall, receiverStackValue);
+            StackValue value = generateMatchExpression(expressionValue, expression);
+            result = result == null ? value : StackValue.and(result, value);
+        }
+        return result;
+    }
+
+    private Pair<ReceiverValue, StackValue> generatePatternDeconstructReceiver(StackValue expressionToMatch, KtPatternTypedTuple entry) {
+        NotNullKotlinTypeInfo receiverTypeInfo = bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, entry);
+        forceAssert(receiverTypeInfo != null, "Element type info is null for " + entry.getText());
+        StackValue receiverValue = expressionToMatch;
+        ResolvedCall<FunctionDescriptor> deconstructCall = bindingContext.get(PATTERN_DECONSTRUCT_RESOLVED_CALL, entry);
+        if (deconstructCall != null) {
+            ReceiverValue receiver = new TransientReceiver(receiverTypeInfo.getType());
+            Call call = makeFakeCall(receiver);
+            receiverValue = invokeFunction(call, deconstructCall, receiverValue);
+        }
+        KotlinType receiverType = bindingContext.get(PATTERN_COMPONENTS_RECEIVER_TYPE, entry);
+        forceAssert(receiverType != null, "Receiver type is null for " + entry.getText());
+        ReceiverValue receiver = new TransientReceiver(receiverType);
+        return new Pair<>(receiver, receiverValue);
+    }
+
+    private StackValue generateMatchVariableDeclaration(StackValue expressionToMatch, KtPatternVariableDeclaration entry) {
+        KtPatternTypeReference typeReference = entry.getPatternTypeReference();
+        StackValue value;
+        if (typeReference != null) {
+            value = generateMatchTypeReference(expressionToMatch, typeReference);
+        }
+        else {
+            value = StackValue.constant(true, Type.BOOLEAN_TYPE);
+        }
+        StackValue initialize = StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+            if (!UnderscoreUtilKt.isSingleUnderscore(entry)) {
+                putLocalVariableIntoFrameMap(entry);
+                initializeLocalVariable(entry, expressionToMatch);
+            }
+            v.iconst(1);
+            return null;
+        });
+        return StackValue.and(value, initialize);
+    }
+
+    private StackValue generateMatchHashExpression(StackValue expressionToMatch, KtPatternHashExpression entry) {
+        KtExpression expression = entry.getExpression();
+        forceAssert(expression != null, "Hash expression must exist " + entry.getText());
+        return generateEqualsForStackValueWithNoExpression(expressionToMatch, expression);
+    }
+
+    private StackValue generateEqualsForStackValueWithNoExpression(@NotNull StackValue pregeneratedLeft, @NotNull KtExpression right) {
+        KotlinType pregeneratedType = bindingContext.get(PATTERN_SUBJECT_TYPE, right);
+        forceAssert(pregeneratedType != null, "Pattern simple-expression must be analysed " + right.getText());
+        return generateEqualsForStackValueWithNoExpression(pregeneratedLeft, pregeneratedType, right, KtTokens.EQEQ);
+    }
+
+    private StackValue generateEqualsForStackValueWithNoExpression(
+            @NotNull StackValue pregeneratedLeft,
+            @NotNull KotlinType pregeneratedType,
+            @NotNull KtExpression right,
+            @NotNull IElementType opToken
+    ) {
+        Type leftType = pregeneratedLeft.type;
+        Type rightType = expressionType(right);
+
+        final KtExpression fakeLeft = null; // is used as we don't actually need left
+
+        if (KtPsiUtil.isNullConstant(right)) {
+            return genCmpWithNull(fakeLeft, opToken, pregeneratedLeft);
+        }
+
+        if (isIntZero(right, rightType) && isIntPrimitive(leftType)) {
+            return genCmpWithZero(fakeLeft, opToken, pregeneratedLeft);
+        }
+
+        if (isPrimitive(leftType) && right instanceof KtSafeQualifiedExpression &&
+            isSelectorPureNonNullType(((KtSafeQualifiedExpression) right))) {
+            return genCmpPrimitiveToSafeCall(fakeLeft, leftType, (KtSafeQualifiedExpression) right, opToken, pregeneratedLeft);
+        }
+
+        if (BoxedToPrimitiveEquality.isApplicable(opToken, leftType, rightType)) {
+            return BoxedToPrimitiveEquality.create(
+                    opToken,
+                    genLazyUnlessProvided(pregeneratedLeft, fakeLeft, leftType), leftType,
+                    genLazy(right, rightType), rightType,
+                    myFrameMap
+            );
+        }
+
+        if (PrimitiveToBoxedEquality.isApplicable(opToken, leftType, rightType)) {
+            return PrimitiveToBoxedEquality.create(
+                    opToken,
+                    genLazyUnlessProvided(pregeneratedLeft, fakeLeft, leftType), leftType,
+                    genLazy(right, rightType), rightType
+            );
+        }
+
+        if (PrimitiveToObjectEquality.isApplicable(opToken, leftType, rightType)) {
+            return PrimitiveToObjectEquality.create(
+                    opToken,
+                    genLazyUnlessProvided(pregeneratedLeft, fakeLeft, leftType), leftType,
+                    genLazy(right, rightType), rightType
+            );
+        }
+
+
+        if (isPrimitive(leftType) != isPrimitive(rightType)) {
+            leftType = boxType(leftType);
+            rightType = boxType(rightType);
+        }
+
+        if (opToken == KtTokens.EQEQEQ || opToken == KtTokens.EXCLEQEQEQ) {
+            // TODO: always casting to the type of the left operand in case of primitives looks wrong
+            Type operandType = isPrimitive(leftType) ? leftType : OBJECT_TYPE;
+            return StackValue.cmp(
+                    opToken,
+                    operandType,
+                    genLazyUnlessProvided(pregeneratedLeft, fakeLeft, leftType),
+                    genLazy(right, rightType)
+            );
+        }
+
+        return genEqualsForStackValueWithNoExpressionPreferIEEE754Arithmetic(
+                right, opToken, leftType, rightType, pregeneratedLeft, pregeneratedType);
+    }
+
+    private StackValue genEqualsForStackValueWithNoExpressionPreferIEEE754Arithmetic(
+            @Nullable KtExpression right,
+            @NotNull IElementType opToken,
+            @NotNull Type leftType,
+            @NotNull Type rightType,
+            @NotNull StackValue pregeneratedLeft,
+            @NotNull KotlinType pregeneratedType
+    ) {
+        assert (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) : "Optoken should be '==' or '!=', but: " + opToken;
+
+        final KtExpression fakeLeft = null; // is used as we don't actually need left
+
+        TypeAndNullability left754Type = new TypeAndNullability(leftType, pregeneratedType.isMarkedNullable());
+        TypeAndNullability right754Type = calcTypeForIEEE754ArithmeticIfNeeded(right);
+
+        if (right754Type != null && left754Type.type.equals(right754Type.type)) {
+            // check nullability cause there is some optimizations in codegen for non-nullable case
+            if (left754Type.isNullable || right754Type.isNullable) {
+                if (state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_1) >= 0) {
+                    return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+                        generate754EqualsForNullableTypesViaIntrinsic(
+                                v, opToken, pregeneratedLeft, fakeLeft, left754Type, right, right754Type);
+                        return Unit.INSTANCE;
+                    });
+                }
+                else {
+                    return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+                        generate754EqualsForNullableTypes(
+                                v, opToken, pregeneratedLeft, fakeLeft, left754Type, right, right754Type);
+                        return Unit.INSTANCE;
+                    });
+                }
+            }
+            else {
+                leftType = left754Type.type;
+                rightType = right754Type.type;
+            }
+        }
+
+        return genEqualsForExpressionsOnStack(
+                opToken,
+                genLazyUnlessProvided(pregeneratedLeft, fakeLeft, leftType),
+                genLazy(right, rightType)
+        );
     }
 
     private StackValue generateIsCheck(StackValue expressionToMatch, KtTypeReference typeReference, boolean negated) {
@@ -4370,7 +4673,12 @@ The "returned" value of try expression with no finally is either the last expres
         }
     }
 
-    private StackValue generateWhenCondition(KtExpression subjectExpression, Type subjectType, int subjectLocal, KtWhenCondition condition) {
+    private StackValue generateWhenCondition(
+            KtExpression subjectExpression,
+            Type subjectType,
+            int subjectLocal,
+            KtWhenCondition condition
+    ) {
         if (condition instanceof KtWhenConditionInRange) {
             KtWhenConditionInRange conditionInRange = (KtWhenConditionInRange) condition;
             return generateIn(StackValue.local(subjectLocal, subjectType),
@@ -4385,6 +4693,10 @@ The "returned" value of try expression with no finally is either the last expres
         else if (condition instanceof KtWhenConditionWithExpression) {
             KtExpression patternExpression = ((KtWhenConditionWithExpression) condition).getExpression();
             return generateExpressionMatch(match, subjectExpression, patternExpression);
+        }
+        else if (condition instanceof KtWhenConditionMatchPattern) {
+            KtWhenConditionMatchPattern patternCondition = (KtWhenConditionMatchPattern) condition;
+            return generateMatchPattern(match, patternCondition);
         }
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");
@@ -4453,7 +4765,8 @@ The "returned" value of try expression with no finally is either the last expres
             @NotNull VariableDescriptorWithAccessors variableDescriptor,
             @NotNull KotlinTypeMapper typeMapper
     ) {
-        return StackValue.delegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, variableDescriptor, this);
+        return StackValue
+                .delegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, variableDescriptor, this);
     }
 
     @NotNull

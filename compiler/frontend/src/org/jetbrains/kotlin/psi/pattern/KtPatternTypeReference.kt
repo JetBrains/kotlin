@@ -38,7 +38,7 @@ class KtPatternTypeReference(node: ASTNode) : KtPatternEntry(node) {
     override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
         typeReference?.let { typeReference ->
             resolver.getTypeInfo(typeReference, state).also {
-                it.type.errorIfNull(typeReference, state, Errors.UNSPECIFIED_TYPE)
+                it.type.errorIfNull(typeReference, state, Errors.NON_DERIVABLE_TYPE)
             }
         }
     }

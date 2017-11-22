@@ -247,19 +247,6 @@ object KotlinToJVMBytecodeCompiler {
 
         if (!checkKotlinPackageUsage(environment, environment.getSourceFiles())) return false
 
-        for (file in environment.getSourceFiles()) {
-            var shift = -1;
-            val visitor = object : PsiRecursiveElementVisitor() {
-                override fun visitElement(element: PsiElement) {
-                    ++shift
-                    println("| ".repeat(shift) + element)
-                    super.visitElement(element)
-                    --shift
-                }
-            }
-            file.accept(visitor)
-        }
-
         val generationState = analyzeAndGenerate(environment) ?: return false
 
         val mainClass = findMainClass(generationState, environment.getSourceFiles())

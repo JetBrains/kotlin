@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValueFactory
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -128,6 +128,7 @@ enum class MagicKind(val sideEffectFree: Boolean = false) {
     NOT_NULL_ASSERTION(),
     EQUALS_IN_WHEN_CONDITION(),
     IS(),
+    MATCH(),
     CAST(),
     UNBOUND_CALLABLE_REFERENCE(true),
     BOUND_CALLABLE_REFERENCE(true),

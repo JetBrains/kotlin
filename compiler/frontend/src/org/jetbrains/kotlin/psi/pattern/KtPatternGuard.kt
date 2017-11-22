@@ -19,13 +19,12 @@ package org.jetbrains.kotlin.psi.pattern
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtExpressionImpl
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.types.expressions.NotNullKotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
-class KtPatternGuard(node: ASTNode) : KtExpressionImpl(node) {
+class KtPatternGuard(node: ASTNode) : KtPatternElement(node) {
 
     val condition: KtExpression?
         get() = findExpressionUnder(KtNodeTypes.CONDITION)
@@ -34,7 +33,12 @@ class KtPatternGuard(node: ASTNode) : KtExpressionImpl(node) {
         return visitor.visitPatternGuard(this, data)
     }
 
-    fun resolve(resolver: PatternResolver, state: PatternResolveState): DataFlowInfo {
-        return resolver.checkExpression(this.condition, state)
+    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
+        val dataFlow = resolver.checkExpression(this.condition, state)
+        return NotNullKotlinTypeInfo(resolver.builtIns.nothingType, dataFlow)
+    }
+
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState) = resolver.restoreOrCreate(this, state) {
+        getTypeInfo(resolver, state)
     }
 }

@@ -42,9 +42,8 @@ class KtPatternConstraint(node: ASTNode) : KtPatternElement(node) {
 
     override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
         val entryInfo = entry?.resolve(resolver, state)
-        val dataFlowInfo = guard?.resolve(resolver, state)
+        val guardInfo = guard?.resolve(resolver, state)
         val thisInfo = resolver.resolveType(this, state)
-        val info = thisInfo.and(entryInfo)
-        return info.replaceDataFlowInfo(info.dataFlowInfo.and(dataFlowInfo))
+        return thisInfo.and(entryInfo, guardInfo)
     }
 }

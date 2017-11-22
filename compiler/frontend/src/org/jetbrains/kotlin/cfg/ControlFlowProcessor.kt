@@ -146,7 +146,11 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
 
             override fun visitWhenConditionMatchPattern(condition: KtWhenConditionMatchPattern) {
-                println(condition.text)
+                createNonSyntheticValue(condition, MagicKind.MATCH, getSubjectExpression(condition))
+                for (expression in condition.pattern.innerNotPatternExpressions) {
+                    generateInstructions(expression)
+                    createNonSyntheticValue(condition, MagicKind.MATCH, expression)
+                }
             }
 
             override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
@@ -228,7 +232,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
         private fun getResolvedCallAccessTarget(element: KtElement?): AccessTarget =
             element.getResolvedCall(trace.bindingContext)?.let { AccessTarget.Call(it) }
-                    ?: AccessTarget.BlackBox
+                ?: AccessTarget.BlackBox
 
         private fun getDeclarationAccessTarget(element: KtElement): AccessTarget {
             val descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
