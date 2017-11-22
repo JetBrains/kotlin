@@ -275,8 +275,12 @@ class ExpressionCodegen(
         if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
             mv.aconst(null)
             mv.athrow()
+        } else if (expression.descriptor !is ConstructorDescriptor) {
+            val expectedTypeOnStack = returnType?.let { typeMapper.mapType(it) } ?: callable.returnType
+            StackValue.coerce(callable.returnType, expectedTypeOnStack, mv)
         }
-        return StackValue.onStack(callable.returnType)
+
+        return expression.onStack
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BlockInfo): StackValue {
@@ -882,7 +886,8 @@ class ExpressionCodegen(
             data: BlockInfo
     ) {
         if (receiverExpression !is IrClassReference /* && DescriptorUtils.isObjectQualifier(receiverExpression.descriptor)*/) {
-            JavaClassProperty.generateImpl(mv, gen(receiverExpression, data))
+            assert(receiverExpression is IrGetClass)
+            JavaClassProperty.generateImpl(mv, gen((receiverExpression as IrGetClass).argument, data))
         }
         else {
 //                if (TypeUtils.isTypeParameter(type)) {
