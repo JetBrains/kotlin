@@ -32,7 +32,6 @@
 
 package org.jetbrains.kotlin.android.configure
 
-import com.android.builder.model.Library
 import com.android.tools.idea.gradle.project.sync.idea.data.service.AndroidProjectKeys
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ModuleData
@@ -42,6 +41,7 @@ import org.gradle.tooling.model.UnsupportedMethodException
 import org.gradle.tooling.model.idea.IdeaProject
 import org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade
 import org.jetbrains.kotlin.idea.inspections.gradle.findModulesByNames
+import com.android.builder.model.Library
 
 class AndroidGradleModelFacade : KotlinGradleModelFacade {
     override fun getResolvedKotlinStdlibVersionByModuleData(moduleData: DataNode<*>, libraryIds: List<String>): String? {
