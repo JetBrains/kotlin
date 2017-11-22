@@ -84,7 +84,7 @@
         </dokka>
         <makeurl file="${docs.output}/jre8/kotlin-stdlib/package-list" property="stdlib.package.list"/>
         <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
-               noStdlibLink="true" classpathref="kotlin-test.compile.classpath">
+               include="kotlin.test/Module.md" noStdlibLink="true" classpathref="kotlin-test.compile.classpath">
 
             <sourceRoot path="kotlin.test/common/src/main/kotlin" platforms="JVM,JS"/>
             <sourceRoot path="kotlin.test/jvm/src/main/kotlin" platforms="JVM"/>
