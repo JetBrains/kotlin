@@ -204,6 +204,10 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             extraLanguageFeatures.put(LanguageFeature.Coroutines, coroutinesState);
         }
 
+        if (arguments.getLegacySmartCastAfterTry()) {
+            extraLanguageFeatures.put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED);
+        }
+
         setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, arguments);
 
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(

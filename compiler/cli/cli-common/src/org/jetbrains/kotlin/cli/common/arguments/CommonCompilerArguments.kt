@@ -106,6 +106,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var coroutinesState: String? by FreezableVar(WARN)
 
+    @Argument(
+            value = "-Xlegacy-smart-cast-after-try",
+            description = "Allow var smart casts despite assignment in try block"
+    )
+    var legacySmartCastAfterTry by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
