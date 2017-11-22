@@ -90,6 +90,7 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "C", "kotlin.Char" -> "CharSerializer"
         "kotlin.String" -> "StringSerializer"
         "kotlin.Pair" -> "PairSerializer"
+        "kotlin.Triple" -> "TripleSerializer"
         "kotlin.collections.Collection", "kotlin.collections.List", "kotlin.collections.ArrayList" -> "ArrayListSerializer"
         "kotlin.collections.Set", "kotlin.collections.LinkedHashSet" -> "LinkedHashSetSerializer"
         "kotlin.collections.HashSet" -> "HashSetSerializer"
