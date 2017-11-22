@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 
@@ -102,6 +103,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         return when (right) {
             is KtNameReferenceExpression -> right.text != parameterName
             is KtDotQualifiedExpression -> !right.hasLambdaExpression() && !right.nameUsed(parameterName)
+            is KtBinaryExpression -> right.operationToken == KtTokens.RANGE
             is KtConstantExpression -> true
             else -> false
         }

@@ -14120,6 +14120,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("in.kt")
+        public void testIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/in.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaWithBinaryExpression.kt")
         public void testLambdaWithBinaryExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/lambdaWithBinaryExpression.kt");
