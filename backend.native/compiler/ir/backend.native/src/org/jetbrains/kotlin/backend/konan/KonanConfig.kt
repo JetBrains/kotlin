@@ -65,7 +65,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         prepareDependencies(configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES))
     }
 
-    private val produce = configuration.get(KonanConfigKeys.PRODUCE)!!
+    internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
     private val suffix = produce.suffix(targetManager.target)
     val outputName = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(suffix) ?: produce.name.toLowerCase()
     val outputFile = outputName.suffixIfNot(produce.suffix(targetManager.target))

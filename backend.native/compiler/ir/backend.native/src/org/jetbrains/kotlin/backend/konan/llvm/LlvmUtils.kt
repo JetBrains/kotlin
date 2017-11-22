@@ -59,13 +59,29 @@ internal class ConstArray(val elemType: LLVMTypeRef?, val elements: List<ConstVa
     override val llvm = LLVMConstArray(elemType, elements.map { it.llvm }.toCValues(), elements.size)!!
 }
 
-internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue>) : ConstValue {
+internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue?>) : ConstValue {
 
-    constructor(type: LLVMTypeRef?, vararg elements: ConstValue) : this(type, elements.toList())
+    constructor(type: LLVMTypeRef?, vararg elements: ConstValue?) : this(type, elements.toList())
 
     constructor(vararg elements: ConstValue) : this(structType(elements.map { it.llvmType }), *elements)
 
-    override val llvm = LLVMConstNamedStruct(type, elements.map { it.llvm }.toCValues(), elements.size)!!
+    override val llvm = LLVMConstNamedStruct(type, elements.mapIndexed { index, element ->
+        val expectedType = LLVMStructGetTypeAtIndex(type, index)
+        if (element == null) {
+            LLVMConstNull(expectedType)!!
+        } else {
+            element.llvm.also {
+                assert(it.type == expectedType) {
+                    "Unexpected type at $index: expected ${LLVMPrintTypeToString(expectedType)!!.toKString()} " +
+                            "got ${LLVMPrintTypeToString(it.type)!!.toKString()}"
+                }
+            }
+        }
+    }.toCValues(), elements.size)!!
+
+    init {
+        assert(elements.size == LLVMCountStructElementTypes(type))
+    }
 }
 
 internal class Int1(val value: Byte) : ConstValue {
@@ -106,6 +122,7 @@ internal fun constValue(value: LLVMValueRef) = object : ConstValue {
 
 internal val int1Type = LLVMInt1Type()!!
 internal val int8Type = LLVMInt8Type()!!
+internal val int16Type = LLVMInt16Type()!!
 internal val int32Type = LLVMInt32Type()!!
 internal val int8TypePtr = pointerType(int8Type)
 
@@ -218,6 +235,9 @@ internal fun functionType(returnType: LLVMTypeRef, isVarArg: Boolean = false, va
                 cValuesOf(*paramTypes), paramTypes.size,
                 if (isVarArg) 1 else 0
         )!!
+
+internal fun functionType(returnType: LLVMTypeRef, isVarArg: Boolean = false, paramTypes: List<LLVMTypeRef>) =
+        functionType(returnType, isVarArg, *paramTypes.toTypedArray())
 
 
 fun llvm2string(value: LLVMValueRef?): String {

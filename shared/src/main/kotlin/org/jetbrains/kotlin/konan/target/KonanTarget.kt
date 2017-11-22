@@ -40,7 +40,7 @@ enum class Architecture(val bitness: Int) {
 enum class KonanTarget(val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) {
     ANDROID_ARM32(  Family.ANDROID,     Architecture.ARM32,     "android_arm32"),
     ANDROID_ARM64(  Family.ANDROID,     Architecture.ARM64,     "android_arm64"),
-    IPHONE(         Family.IOS,         Architecture.ARM32,     "ios"),
+    IPHONE(         Family.IOS,         Architecture.ARM64,     "ios"),
     IPHONE_SIM(     Family.IOS,         Architecture.X64,       "ios_sim"),
     LINUX(          Family.LINUX,       Architecture.X64,       "linux"),
     MINGW(          Family.WINDOWS,     Architecture.X64,       "mingw"),
@@ -62,6 +62,9 @@ enum class CompilerOutputKind {
     },
     DYNAMIC {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.dynamicSuffix}"
+    },
+    FRAMEWORK {
+        override fun suffix(target: KonanTarget?): String = ".framework"
     },
     LIBRARY {
         override fun suffix(target: KonanTarget?) = ".klib"

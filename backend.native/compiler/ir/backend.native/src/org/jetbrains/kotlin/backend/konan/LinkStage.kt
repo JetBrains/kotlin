@@ -239,7 +239,8 @@ internal class LinkStage(val context: Context) {
 
     private val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
     private val debug = config.get(KonanConfigKeys.DEBUG) ?: false
-    private val dynamic = config.get(KonanConfigKeys.PRODUCE) == CompilerOutputKind.DYNAMIC
+    private val dynamic = context.config.produce == CompilerOutputKind.DYNAMIC ||
+            context.config.produce == CompilerOutputKind.FRAMEWORK
     private val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
     private val emitted = context.bitcodeFileName
     private val libraries = context.llvm.librariesToLink
@@ -325,10 +326,16 @@ internal class LinkStage(val context: Context) {
     // So we stick to "-alias _main _konan_main" on Mac.
     // And just do the same on Linux.
     private val entryPointSelector: List<String>
-        get() = if (nomain) emptyList() else platform.entrySelector
+        get() = if (nomain || dynamic) emptyList() else platform.entrySelector
 
     private fun link(objectFiles: List<ObjectFile>, includedBinaries: List<String>, libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
-        val executable = context.config.outputFile
+        val executable = if (context.config.produce != CompilerOutputKind.FRAMEWORK) {
+            context.config.outputFile
+        } else {
+            val framework = File(context.config.outputFile)
+            framework.mkdirs()
+            framework.child(framework.name.removeSuffix(".framework")).absolutePath
+        }
 
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize, debug, dynamic) +
                 platform.targetLibffi +

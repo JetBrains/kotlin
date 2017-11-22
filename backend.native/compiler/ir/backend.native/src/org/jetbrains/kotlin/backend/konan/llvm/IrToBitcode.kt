@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.backend.konan.util.getValueOrNull
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -291,7 +292,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         context.log{"visitModule                    : ${ir2string(declaration)}"}
 
         declaration.acceptChildrenVoid(this)
-        appendLlvmUsed(context.llvm.usedFunctions)
+
+        // Note: it is here because it also generates some bitcode.
+        ObjCExport(context).produceObjCFramework()
+
+        appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
+        appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
         appendStaticInitializers(context.llvm.staticInitializers)
         appendEntryPointSelector(findMainEntryPoint(context))
     }
@@ -2311,37 +2317,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     fun callVirtual(descriptor: FunctionDescriptor, args: List<LLVMValueRef>,
                     resultLifetime: Lifetime): LLVMValueRef {
-        assert(LLVMTypeOf(args[0]) == codegen.kObjHeaderPtr)
 
-        val owner = descriptor.containingDeclaration as ClassDescriptor
+        val function = functionGenerationContext.lookupVirtualImpl(args.first(), descriptor)
 
-        val typeInfoPtr: LLVMValueRef = if (owner.isObjCClass()) {
-            call(context.llvm.getObjCKotlinTypeInfo, listOf(args.first()))
-        } else {
-            val typeInfoPtrPtr = LLVMBuildStructGEP(functionGenerationContext.builder, args[0], 0 /* type_info */, "")!!
-            functionGenerationContext.load(typeInfoPtrPtr)
-        }
-        assert (typeInfoPtr.type == codegen.kTypeInfoPtr)
-        val llvmMethod = if (!owner.isInterface) {
-            // If this is a virtual method of the class - we can call via vtable.
-            val index = context.getVtableBuilder(owner).vtableIndex(descriptor)
-
-            val vtablePlace = functionGenerationContext.gep(typeInfoPtr, Int32(1).llvm) // typeInfoPtr + 1
-            val vtable = functionGenerationContext.bitcast(kInt8PtrPtr, vtablePlace)
-
-            val slot = functionGenerationContext.gep(vtable, Int32(index).llvm)
-            functionGenerationContext.load(slot)
-        } else {
-            // Otherwise, call by hash.
-            // TODO: optimize by storing interface number in lower bits of 'this' pointer
-            //       when passing object as an interface. This way we can use those bits as index
-            //       for an additional per-interface vtable.
-            val methodHash = codegen.functionHash(descriptor)                       // Calculate hash of the method to be invoked
-            val lookupArgs = listOf(typeInfoPtr, methodHash)                        // Prepare args for lookup
-            call(context.llvm.lookupOpenMethodFunction, lookupArgs)
-        }
-        val functionPtrType = pointerType(codegen.getLlvmFunctionType(descriptor))   // Construct type of the method to be invoked
-        val function        = functionGenerationContext.bitcast(functionPtrType, llvmMethod)           // Cast method address to the type
         return call(descriptor, function, args, resultLifetime)                      // Invoke the method
     }
 
@@ -2396,13 +2374,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun appendLlvmUsed(args: List<LLVMValueRef>) {
+    private fun appendLlvmUsed(name: String, args: List<LLVMValueRef>) {
         if (args.isEmpty()) return
 
         memScoped {
             val argsCasted = args.map { it -> constPointer(it).bitcast(int8TypePtr) }
             val llvmUsedGlobal =
-                context.llvm.staticData.placeGlobalArray("llvm.used", int8TypePtr, argsCasted)
+                context.llvm.staticData.placeGlobalArray(name, int8TypePtr, argsCasted)
 
             LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage);
             LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata");

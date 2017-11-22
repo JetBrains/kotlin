@@ -87,10 +87,8 @@ object KonanPhases {
 
             // Don't serialize anything to a final executable.
             KonanPhase.SERIALIZER.enabled = 
-                (get(PRODUCE) == CompilerOutputKind.LIBRARY)
-            KonanPhase.LINK_STAGE.enabled = 
-                (get(PRODUCE) == CompilerOutputKind.PROGRAM || 
-                 get(PRODUCE) == CompilerOutputKind.DYNAMIC)
+                (config.produce == CompilerOutputKind.LIBRARY)
+            KonanPhase.LINK_STAGE.enabled = config.produce.isNativeBinary
 
             KonanPhase.TEST_PROCESSOR.enabled = getBoolean(GENERATE_TEST_RUNNER)
 

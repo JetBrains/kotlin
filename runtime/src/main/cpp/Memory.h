@@ -115,6 +115,10 @@ struct ContainerHeader {
   }
 };
 
+inline bool isPermanent(const ContainerHeader* header) {
+  return (header->refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_PERMANENT;
+}
+
 struct ArrayHeader;
 
 // Header of every object.
@@ -152,6 +156,10 @@ struct ObjHeader {
   ArrayHeader* array() { return reinterpret_cast<ArrayHeader*>(this); }
   const ArrayHeader* array() const { return reinterpret_cast<const ArrayHeader*>(this); }
 };
+
+inline bool isPermanent(const ObjHeader* obj) {
+  return isPermanent(obj->container());
+}
 
 // Header of value type array objects. Keep layout in sync with that of object header.
 struct ArrayHeader {
@@ -330,6 +338,11 @@ OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, uint32_t elements) RUN
 void DeinitInstanceBody(const TypeInfo* typeInfo, void* body);
 OBJ_GETTER(InitInstance, ObjHeader** location, const TypeInfo* type_info,
            void (*ctor)(ObjHeader*));
+
+// Returns true iff the object has space reserved in its tail for special purposes.
+bool HasReservedObjectTail(ObjHeader* obj) RUNTIME_NOTHROW;
+// Returns the pointer to the reserved space, `HasReservedObjectTail(obj)` must be true.
+void* GetReservedObjectTail(ObjHeader* obj) RUNTIME_NOTHROW;
 
 //
 // Object reference management.

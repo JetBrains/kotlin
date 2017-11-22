@@ -29,9 +29,11 @@ interface RuntimeAware {
 class Runtime(bitcodeFile: String) {
     val llvmModule: LLVMModuleRef = parseBitcodeFile(bitcodeFile)
 
-    private fun getStructType(name: String) = LLVMGetTypeByName(llvmModule, "struct.$name")!!
+    internal fun getStructTypeOrNull(name: String) = LLVMGetTypeByName(llvmModule, "struct.$name")
+    internal fun getStructType(name: String) = getStructTypeOrNull(name)!!
 
     val typeInfoType = getStructType("TypeInfo")
+    val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")
     val fieldTableRecordType = getStructType("FieldTableRecord")
     val methodTableRecordType = getStructType("MethodTableRecord")
     val globalHashType = getStructType("GlobalHash")
@@ -58,6 +60,10 @@ class Runtime(bitcodeFile: String) {
 
     val kotlinObjCClassInfo by lazy { getStructType("KotlinObjCClassInfo") }
     val objCMethodDescription by lazy { getStructType("ObjCMethodDescription") }
+    val objCTypeAdapter by lazy { getStructType("ObjCTypeAdapter") }
+    val objCToKotlinMethodAdapter by lazy { getStructType("ObjCToKotlinMethodAdapter") }
+    val kotlinToObjCMethodAdapter by lazy { getStructType("KotlinToObjCMethodAdapter") }
+    val typeInfoObjCExportAddition by lazy { getStructType("TypeInfoObjCExportAddition") }
 
 
     val pointerSize: Int by lazy {

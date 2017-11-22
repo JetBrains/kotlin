@@ -35,7 +35,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private inner class FieldTableRecord(val nameSignature: LocalHash, val fieldOffset: Int) :
             Struct(runtime.fieldTableRecordType, nameSignature, Int32(fieldOffset))
 
-    private inner class MethodTableRecord(val nameSignature: LocalHash, val methodEntryPoint: ConstValue) :
+    inner class MethodTableRecord(val nameSignature: LocalHash, val methodEntryPoint: ConstPointer?) :
             Struct(runtime.methodTableRecordType, nameSignature, methodEntryPoint)
 
     private inner class TypeInfo(val name: ConstValue, val size: Int,
@@ -49,7 +49,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                                  val fields: ConstValue,
                                  val fieldsCount: Int,
                                  val packageName: String?,
-                                 val relativeName: String?) :
+                                 val relativeName: String?,
+                                 val writableTypeInfo: ConstPointer?) :
             Struct(
                     runtime.typeInfoType,
 
@@ -71,7 +72,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     Int32(fieldsCount),
 
                     kotlinStringLiteral(packageName),
-                    kotlinStringLiteral(relativeName)
+                    kotlinStringLiteral(relativeName),
+
+                    *listOfNotNull(writableTypeInfo).toTypedArray()
             )
 
     private fun kotlinStringLiteral(string: String?): ConstPointer = if (string == null) {
@@ -155,18 +158,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val methods = if (classDesc.isAbstract()) {
             emptyList()
         } else {
-            val functionNames = mutableMapOf<Long, OverriddenFunctionDescriptor>()
-            context.getVtableBuilder(classDesc).methodTableEntries.map {
-                val functionName = it.overriddenDescriptor.functionName
-                val nameSignature = functionName.localHash
-                val previous = functionNames.putIfAbsent(nameSignature.value, it)
-                if (previous != null)
-                    throw AssertionError("Duplicate method table entry: functionName = '$functionName', hash = '${nameSignature.value}', entry1 = $previous, entry2 = $it")
-
-                // TODO: compile-time resolution limits binary compatibility
-                val methodEntryPoint =  it.implementation.entryPointAddress
-                MethodTableRecord(nameSignature, methodEntryPoint)
-            }.sortedBy { it.nameSignature.value }
+            methodTableRecords(classDesc)
         }
 
         val methodsPtr = staticData.placeGlobalConstArray("kmethods:$className",
@@ -181,7 +173,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 methodsPtr, methods.size,
                 fieldsPtr, if (classDesc.isInterface) -1 else fields.size,
                 reflectionInfo.packageName,
-                reflectionInfo.relativeName
+                reflectionInfo.relativeName,
+                llvmDeclarations.writableTypeInfoGlobal?.pointer
         )
 
         val typeInfoGlobal = llvmDeclarations.typeInfoGlobal
@@ -189,16 +182,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val typeInfoGlobalValue = if (!classDesc.typeInfoHasVtableAttached) {
             typeInfo
         } else {
-            // TODO: compile-time resolution limits binary compatibility
-            val vtableEntries = context.getVtableBuilder(classDesc).vtableEntries.map {
-                val implementation = it.implementation
-                if (implementation.isExternalObjCClassMethod()) {
-                    NullPointer(int8Type)
-                } else {
-                    implementation.entryPointAddress
-                }
-            }
-            val vtable = ConstArray(int8TypePtr, vtableEntries)
+            val vtable = vtable(classDesc)
             Struct(typeInfo, vtable)
         }
 
@@ -206,6 +190,102 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         typeInfoGlobal.setConstant(true)
 
         exportTypeInfoIfRequired(classDesc, classDesc.llvmTypeInfoPtr)
+    }
+
+    fun vtable(classDesc: ClassDescriptor): ConstArray {
+        // TODO: compile-time resolution limits binary compatibility
+        val vtableEntries = context.getVtableBuilder(classDesc).vtableEntries.map {
+            val implementation = it.implementation
+            if (implementation.isExternalObjCClassMethod() || implementation.modality == Modality.ABSTRACT) {
+                NullPointer(int8Type)
+            } else {
+                implementation.entryPointAddress
+            }
+        }
+        return ConstArray(int8TypePtr, vtableEntries)
+    }
+
+    fun methodTableRecords(classDesc: ClassDescriptor): List<MethodTableRecord> {
+        val functionNames = mutableMapOf<Long, OverriddenFunctionDescriptor>()
+        return context.getVtableBuilder(classDesc).methodTableEntries.map {
+            val functionName = it.overriddenDescriptor.functionName
+            val nameSignature = functionName.localHash
+            val previous = functionNames.putIfAbsent(nameSignature.value, it)
+            if (previous != null)
+                throw AssertionError("Duplicate method table entry: functionName = '$functionName', hash = '${nameSignature.value}', entry1 = $previous, entry2 = $it")
+
+            // TODO: compile-time resolution limits binary compatibility
+            val implementation = it.implementation
+            val methodEntryPoint = if (implementation.modality == Modality.ABSTRACT) {
+                null
+            } else {
+                implementation.entryPointAddress
+            }
+            MethodTableRecord(nameSignature, methodEntryPoint)
+        }.sortedBy { it.nameSignature.value }
+    }
+
+    // TODO: extract more code common with generate()
+    fun generateSyntheticInterfaceImpl(
+            descriptor: ClassDescriptor,
+            methodImpls: Map<FunctionDescriptor, ConstPointer>
+    ): ConstPointer {
+        assert(descriptor.isInterface)
+
+        val name = "".globalHash
+
+        val size = 0
+
+        val superClass = context.builtIns.any
+
+        assert(superClass.implementedInterfaces.isEmpty())
+        val interfaces = listOf(descriptor.typeInfoPtr)
+        val interfacesPtr = staticData.placeGlobalConstArray("",
+                pointerType(runtime.typeInfoType), interfaces)
+
+        assert(superClass.getMemberScope().getVariableNames().isEmpty())
+        val objOffsetsPtr = NullPointer(int32Type)
+        val objOffsetsCount = 0
+        val fieldsPtr = NullPointer(runtime.fieldTableRecordType)
+        val fieldsCount = 0
+
+        val methods = (methodTableRecords(superClass) + methodImpls.map { (method, impl) ->
+            assert(method.containingDeclaration == descriptor)
+            MethodTableRecord(method.functionName.localHash, impl.bitcast(int8TypePtr))
+        }).sortedBy { it.nameSignature.value }.also {
+            assert(it.distinctBy { it.nameSignature.value } == it)
+        }
+
+        val methodsPtr = staticData.placeGlobalConstArray("", runtime.methodTableRecordType, methods)
+
+        val reflectionInfo = ReflectionInfo(null, null)
+
+        val writableTypeInfoType = runtime.writableTypeInfoType
+        val writableTypeInfo = if (writableTypeInfoType == null) {
+            null
+        } else {
+            staticData.createGlobal(writableTypeInfoType, "")
+                    .also { it.setZeroInitializer() }
+                    .pointer
+        }
+
+        val typeInfo = TypeInfo(
+                name = name,
+                size = size,
+                superType = superClass.typeInfoPtr,
+                objOffsets = objOffsetsPtr, objOffsetsCount = objOffsetsCount,
+                interfaces = interfacesPtr, interfacesCount = interfaces.size,
+                methods = methodsPtr, methodsCount = methods.size,
+                fields = fieldsPtr, fieldsCount = fieldsCount,
+                packageName = reflectionInfo.packageName,
+                relativeName = reflectionInfo.relativeName,
+                writableTypeInfo = writableTypeInfo
+        )
+
+        val vtable = vtable(superClass)
+
+        return staticData.placeGlobal("", Struct(typeInfo, vtable))
+                .pointer.getElementPtr(0)
     }
 
     private val OverriddenFunctionDescriptor.implementation get() = getImplementation(context)

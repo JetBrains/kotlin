@@ -65,12 +65,30 @@ internal class StaticData(override val context: Context): ContextUtils {
             }
         }
 
+        val type get() = getGlobalType(this.llvmGlobal)
+
         fun setInitializer(value: ConstValue) {
             LLVMSetInitializer(llvmGlobal, value.llvm)
         }
 
+        fun setZeroInitializer() {
+            LLVMSetInitializer(llvmGlobal, LLVMConstNull(this.type)!!)
+        }
+
         fun setConstant(value: Boolean) {
             LLVMSetGlobalConstant(llvmGlobal, if (value) 1 else 0)
+        }
+
+        fun setLinkage(value: LLVMLinkage) {
+            LLVMSetLinkage(llvmGlobal, value)
+        }
+
+        fun setAlignment(value: Int) {
+            LLVMSetAlignment(llvmGlobal, value)
+        }
+
+        fun setSection(name: String) {
+            LLVMSetSection(llvmGlobal, name)
         }
 
         val pointer = Pointer.to(this)

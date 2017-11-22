@@ -43,6 +43,8 @@ static inline void SetKotlinTypeInfo(Class clazz, const TypeInfo* typeInfo) {
   GetKotlinClassData(clazz)->typeInfo = typeInfo;
 }
 
+const TypeInfo* GetObjCKotlinTypeInfo(const ObjHeader* obj) RUNTIME_NOTHROW;
+
 const TypeInfo* GetObjCKotlinTypeInfo(const ObjHeader* obj) {
   void* objcPtr =  *reinterpret_cast<void * const *>(obj + 1); // TODO: use more reliable layout description
   Class clazz = object_getClass(reinterpret_cast<id>(objcPtr));
@@ -85,9 +87,9 @@ static void AddDeallocMethod(Class clazz) {
 }
 
 struct ObjCMethodDescription {
+  void* (*imp)(void*, void*, ...);
   const char* selector;
   const char* encoding;
-  const void* imp;
 };
 
 struct KotlinObjCClassInfo {

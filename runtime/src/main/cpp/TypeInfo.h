@@ -22,6 +22,10 @@
 #include "Common.h"
 #include "Names.h"
 
+#if KONAN_TYPE_INFO_HAS_WRITABLE_PART
+struct WritableTypeInfo;
+#endif
+
 struct ObjHeader;
 
 // An element of sorted by hash in-place array representing methods.
@@ -67,8 +71,21 @@ struct TypeInfo {
     // or `null` if the class is anonymous.
     ObjHeader* relativeName_;
 
+#if KONAN_TYPE_INFO_HAS_WRITABLE_PART
+    WritableTypeInfo* writableInfo_;
+#endif
+
     // vtable starts just after declared contents of the TypeInfo:
     // void* const vtable_[];
+#ifdef __cplusplus
+    inline const void* const * vtable() const {
+      return reinterpret_cast<void * const *>(this + 1);
+    }
+
+    inline const void** vtable() {
+      return reinterpret_cast<const void**>(this + 1);
+    }
+#endif
 };
 
 #ifdef __cplusplus

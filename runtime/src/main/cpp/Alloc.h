@@ -33,6 +33,11 @@ inline void konanFreeMemory(void* memory) {
   konan::free(memory);
 }
 
+template<typename T>
+inline T* konanAllocArray(size_t length) {
+  return reinterpret_cast<T*>(konanAllocMemory(length * sizeof(T)));
+}
+
 template <typename T, typename ...A>
 inline T* konanConstructInstance(A&& ...args) {
   return new (konanAllocMemory(sizeof(T))) T(::std::forward<A>(args)...);

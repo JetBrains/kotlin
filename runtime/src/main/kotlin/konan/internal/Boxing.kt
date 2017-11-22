@@ -34,6 +34,7 @@ class BooleanBox(val value: Boolean) : Comparable<Boolean> {
     override fun compareTo(other: Boolean): Int = value.compareTo(other)
 }
 
+@ExportForCppRuntime("Kotlin_boxBoolean")
 fun boxBoolean(value: Boolean) = BooleanBox(value)
 
 class CharBox(val value: Char) : Comparable<Char> {
@@ -52,6 +53,7 @@ class CharBox(val value: Char) : Comparable<Char> {
     override fun compareTo(other: Char): Int = value.compareTo(other)
 }
 
+@ExportForCppRuntime("Kotlin_boxChar")
 fun boxChar(value: Char) = CharBox(value)
 
 class ByteBox(val value: Byte) : Number(), Comparable<Byte> {
@@ -78,6 +80,7 @@ class ByteBox(val value: Byte) : Number(), Comparable<Byte> {
     override fun toDouble() = value.toDouble()
 }
 
+@ExportForCppRuntime("Kotlin_boxByte")
 fun boxByte(value: Byte) = ByteBox(value)
 
 class ShortBox(val value: Short) : Number(), Comparable<Short> {
@@ -104,6 +107,7 @@ class ShortBox(val value: Short) : Number(), Comparable<Short> {
     override fun toDouble() = value.toDouble()
 }
 
+@ExportForCppRuntime("Kotlin_boxShort")
 fun boxShort(value: Short) = ShortBox(value)
 
 class IntBox(val value: Int) : Number(), Comparable<Int> {
@@ -130,6 +134,7 @@ class IntBox(val value: Int) : Number(), Comparable<Int> {
     override fun toDouble() = value.toDouble()
 }
 
+@ExportForCppRuntime("Kotlin_boxInt")
 fun boxInt(value: Int) = IntBox(value)
 
 class LongBox(val value: Long) : Number(), Comparable<Long> {
@@ -156,6 +161,7 @@ class LongBox(val value: Long) : Number(), Comparable<Long> {
     override fun toDouble() = value.toDouble()
 }
 
+@ExportForCppRuntime("Kotlin_boxLong")
 fun boxLong(value: Long) = LongBox(value)
 
 class FloatBox(val value: Float) : Number(), Comparable<Float> {
@@ -182,6 +188,7 @@ class FloatBox(val value: Float) : Number(), Comparable<Float> {
     override fun toDouble() = value.toDouble()
 }
 
+@ExportForCppRuntime("Kotlin_boxFloat")
 fun boxFloat(value: Float) = FloatBox(value)
 
 class DoubleBox(val value: Double) : Number(), Comparable<Double> {
@@ -208,4 +215,5 @@ class DoubleBox(val value: Double) : Number(), Comparable<Double> {
     override fun toDouble() = value.toDouble()
 }
 
+@ExportForCppRuntime("Kotlin_boxDouble")
 fun boxDouble(value: Double) = DoubleBox(value)

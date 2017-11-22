@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.DeserializedKonanModule
 import org.jetbrains.kotlin.backend.konan.descriptors.LlvmSymbolOrigin
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
+import org.jetbrains.kotlin.backend.konan.isNativeBinary
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
 import org.jetbrains.kotlin.backend.konan.library.withResolvedDependencies
@@ -37,6 +38,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 internal sealed class SlotType {
     // Frame local arena slot can be used.
@@ -371,10 +374,27 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val checkInstanceFunction = importRtFunction("CheckInstance")
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
+    val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded")
 
     val createKotlinObjCClass by lazy { importRtFunction("CreateKotlinObjCClass") }
     val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo") }
     val missingInitImp by lazy { importRtFunction("MissingInitImp") }
+
+    val Kotlin_ObjCExport_refToObjC by lazyRtFunction
+    val Kotlin_ObjCExport_refFromObjC by lazyRtFunction
+    val Kotlin_Interop_CreateNSStringFromKString by lazyRtFunction
+    val Kotlin_Interop_CreateNSArrayFromKList by lazyRtFunction
+    val Kotlin_ObjCExport_GetAssociatedObject by lazyRtFunction
+    val Kotlin_ObjCExport_AbstractMethodCalled by lazyRtFunction
+
+    val kObjectReservedTailSize = if (context.config.produce.isNativeBinary) {
+        // Note: this defines the global declared in runtime (if any).
+        staticData.placeGlobal("kObjectReservedTailSize", Int32(0), isExported = true).also {
+            it.setConstant(true)
+        }
+    } else {
+        null
+    }
 
     private val personalityFunctionName = when (context.config.targetManager.target) {
         KonanTarget.MINGW -> "__gxx_personality_seh0"
@@ -400,6 +420,19 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val memsetFunction = importMemset()
 
     val usedFunctions = mutableListOf<LLVMValueRef>()
+    val usedGlobals = mutableListOf<LLVMValueRef>()
+    val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
     val staticInitializers = mutableListOf<LLVMValueRef>()
     val fileInitializers = mutableListOf<IrField>()
+
+    private object lazyRtFunction {
+        operator fun provideDelegate(
+                thisRef: Llvm, property: KProperty<*>
+        ) = object : ReadOnlyProperty<Llvm, LLVMValueRef> {
+
+            val value by lazy { thisRef.importRtFunction(property.name) }
+
+            override fun getValue(thisRef: Llvm, property: KProperty<*>): LLVMValueRef = value
+        }
+    }
 }

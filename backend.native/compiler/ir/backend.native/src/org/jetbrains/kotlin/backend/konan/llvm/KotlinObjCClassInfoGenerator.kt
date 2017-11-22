@@ -117,13 +117,15 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         }
     }
 
+    private val impType = pointerType(functionType(int8TypePtr, true, int8TypePtr, int8TypePtr))
+
     private inner class ObjCMethodDesc(
             val selector: String, val encoding: String, val impFunction: LLVMValueRef
     ) : Struct(
             runtime.objCMethodDescription,
+            constPointer(impFunction).bitcast(impType),
             staticData.cStringLiteral(selector),
-            staticData.cStringLiteral(encoding),
-            constPointer(impFunction).bitcast(int8TypePtr)
+            staticData.cStringLiteral(encoding)
     )
 
     private fun generateMethodDesc(info: ObjCMethodInfo) = ObjCMethodDesc(

@@ -242,6 +242,12 @@ internal val ClassDescriptor.typeInfoSymbolName: String
         return "ktype:" + this.fqNameSafe.toString()
     }
 
+internal val ClassDescriptor.writableTypeInfoSymbolName: String
+    get() {
+        assert (this.isExported())
+        return "ktypew:" + this.fqNameSafe.toString()
+    }
+
 internal val theUnitInstanceName = "kobj:kotlin.Unit"
 
 internal val ClassDescriptor.objectInstanceFieldSymbolName: String

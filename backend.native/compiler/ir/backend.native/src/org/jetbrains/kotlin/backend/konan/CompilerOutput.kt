@@ -22,6 +22,11 @@ import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.backend.konan.util.getValueOrNull
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
+val CompilerOutputKind.isNativeBinary: Boolean get() = when (this) {
+    CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC, CompilerOutputKind.FRAMEWORK -> true
+    CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
+}
+
 internal fun produceOutput(context: Context) {
 
     val llvmModule = context.llvmModule!!
@@ -29,6 +34,7 @@ internal fun produceOutput(context: Context) {
 
     when (config.get(KonanConfigKeys.PRODUCE)) {
         CompilerOutputKind.DYNAMIC,
+        CompilerOutputKind.FRAMEWORK,
         CompilerOutputKind.PROGRAM -> {
             val program = context.config.outputName
             val output = "$program.kt.bc"

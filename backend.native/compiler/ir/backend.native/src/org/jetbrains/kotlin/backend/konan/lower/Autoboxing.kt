@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.target
@@ -28,10 +29,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.isNullConst
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.type
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -194,23 +192,16 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     private fun IrExpression.adaptIfNecessary(actualType: KotlinType, expectedType: KotlinType): IrExpression {
-        val actualValueType = actualType.correspondingValueType
-        val expectedValueType = expectedType.correspondingValueType
+        val conversion = symbols.getTypeConversion(actualType, expectedType)
+        return if (conversion == null) {
+            this
+        } else {
+            val parameter = conversion.descriptor.explicitParameters.single()
+            val argument = this.uncheckedCast(parameter.type)
 
-        return when {
-            actualValueType == expectedValueType -> this
-
-            actualValueType == null && expectedValueType != null -> {
-                // This may happen in the following cases:
-                // 1.  `actualType` is `Nothing`;
-                // 2.  `actualType` is incompatible.
-
-                this.unbox(expectedValueType)
-            }
-
-            actualValueType != null && expectedValueType == null -> this.box(actualValueType)
-
-            else -> throw IllegalArgumentException("actual type is $actualType, expected $expectedType")
+            IrCallImpl(startOffset, endOffset, conversion).apply {
+                addArguments(listOf(parameter to argument))
+            }.uncheckedCast(this.type) // Try not to bring new type incompatibilities.
         }
     }
 
@@ -228,27 +219,5 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
     private fun getBoxType(valueType: ValueType) =
             context.getInternalClass("${valueType.shortName}Box").defaultType
-
-    private fun IrExpression.box(valueType: ValueType): IrExpression {
-        val boxFunction = symbols.boxFunctions[valueType]!!
-
-        return IrCallImpl(startOffset, endOffset, boxFunction).apply {
-            putValueArgument(0, this@box)
-        }.uncheckedCast(this.type) // Try not to bring new type incompatibilities.
-    }
-
-    private fun IrExpression.unbox(valueType: ValueType): IrExpression {
-        symbols.unboxFunctions[valueType]?.let {
-            return IrCallImpl(startOffset, endOffset, it).apply {
-                putValueArgument(0, this@unbox.uncheckedCast(it.owner.valueParameters[0].type))
-            }.uncheckedCast(this.type)
-        }
-
-        val boxGetter = symbols.boxClasses[valueType]!!.getPropertyGetter("value")!!
-
-        return IrCallImpl(startOffset, endOffset, boxGetter).apply {
-            dispatchReceiver = this@unbox.uncheckedCast(boxGetter.descriptor.dispatchReceiverParameter!!.type)
-        }.uncheckedCast(this.type) // Try not to bring new type incompatibilities.
-    }
 
 }

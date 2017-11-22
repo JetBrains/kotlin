@@ -84,6 +84,15 @@ void Kotlin_initRuntimeIfNeeded() {
     runtimeState = InitRuntime();
     // Register runtime deinit function at thread cleanup.
     konan::onThreadExit(Kotlin_deinitRuntimeIfNeeded);
+#ifndef KONAN_WASM
+    // `onThreadExit` doesn't work on main thread, use `atexit`:
+
+    static bool deinitScheduledAtexit = false;
+    if (!deinitScheduledAtexit) {
+      deinitScheduledAtexit = true; // Having data race is OK here.
+      ::atexit(Kotlin_deinitRuntimeIfNeeded);
+    }
+#endif
   }
 }
 

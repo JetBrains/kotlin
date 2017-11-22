@@ -27,6 +27,7 @@
 #include "Assert.h"
 #include "Exceptions.h"
 #include "Memory.h"
+#include "MemoryPrivate.hpp"
 #include "Natives.h"
 
 // If garbage collection algorithm for cyclic garbage to be used.
@@ -349,10 +350,6 @@ inline bool isFreeable(const ContainerHeader* header) {
   return (header->refCount_ & CONTAINER_TAG_MASK) < CONTAINER_TAG_PERMANENT;
 }
 
-inline bool isPermanent(const ContainerHeader* header) {
-  return (header->refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_PERMANENT;
-}
-
 inline bool isArena(const ContainerHeader* header) {
   return (header->refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_STACK;
 }
@@ -361,14 +358,21 @@ inline container_size_t alignUp(container_size_t size, int alignment) {
   return (size + alignment - 1) & ~(alignment - 1);
 }
 
+#if KONAN_OBJECTS_CAN_HAVE_RESERVED_TAIL
+// Note: defined by a compiler-generated bitcode.
+extern "C" const container_size_t kObjectReservedTailSize;
+#else
+constexpr container_size_t kObjectReservedTailSize = 0;
+#endif
+
 // TODO: shall we do padding for alignment?
 inline container_size_t objectSize(const ObjHeader* obj) {
   const TypeInfo* type_info = obj->type_info();
-  container_size_t size = type_info->instanceSize_ < 0 ?
+  container_size_t size = kObjectReservedTailSize + (type_info->instanceSize_ < 0 ?
       // An array.
       ArrayDataSizeBytes(obj->array()) + sizeof(ArrayHeader)
       :
-      type_info->instanceSize_ + sizeof(ObjHeader);
+      type_info->instanceSize_ + sizeof(ObjHeader));
   return alignUp(size, kObjectAlignment);
 }
 
@@ -393,6 +397,7 @@ inline bool isRefCounted(KConstRef object) {
 
 extern "C" {
 void objc_release(void* ptr);
+void Kotlin_ObjCExport_releaseReservedObjectTail(ObjHeader* obj);
 }
 
 inline void runDeallocationHooks(ObjHeader* obj) {
@@ -400,6 +405,10 @@ inline void runDeallocationHooks(ObjHeader* obj) {
   if (obj->type_info() == theObjCPointerHolderTypeInfo) {
     void* objcPtr =  *reinterpret_cast<void**>(obj + 1); // TODO: use more reliable layout description
     objc_release(objcPtr);
+  } else {
+    if (HasReservedObjectTail(obj)) {
+      Kotlin_ObjCExport_releaseReservedObjectTail(obj);
+    }
   }
 #endif
 }
@@ -756,7 +765,7 @@ ContainerHeader* AllocContainer(size_t size) {
   // TODO: try to reuse elements of finalizer queue for new allocations, question
   // is how to get actual size of container.
 #endif
-  ContainerHeader* result = konanConstructSizedInstance<ContainerHeader>(size);
+  ContainerHeader* result = konanConstructSizedInstance<ContainerHeader>(alignUp(size, kObjectAlignment));
   CONTAINER_ALLOC_EVENT(state, size, result);
 #if TRACE_MEMORY
   state->containers->insert(result);
@@ -794,7 +803,7 @@ void FreeContainer(ContainerHeader* header) {
 void ObjectContainer::Init(const TypeInfo* type_info) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "Must be an object");
   uint32_t alloc_size =
-      sizeof(ContainerHeader) + sizeof(ObjHeader) + type_info->instanceSize_;
+      sizeof(ContainerHeader) + sizeof(ObjHeader) + type_info->instanceSize_ + kObjectReservedTailSize;
   header_ = AllocContainer(alloc_size);
   if (header_) {
     // One object in this container.
@@ -810,7 +819,7 @@ void ArrayContainer::Init(const TypeInfo* type_info, uint32_t elements) {
   RuntimeAssert(type_info->instanceSize_ < 0, "Must be an array");
   uint32_t alloc_size =
       sizeof(ContainerHeader) + sizeof(ArrayHeader) -
-      type_info->instanceSize_ * elements;
+      type_info->instanceSize_ * elements + kObjectReservedTailSize;
   header_ = AllocContainer(alloc_size);
   RuntimeAssert(header_ != nullptr, "Cannot alloc memory");
   if (header_) {
@@ -893,7 +902,7 @@ ObjHeader** ArenaContainer::getSlot() {
 
 ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
-  uint32_t size = type_info->instanceSize_ + sizeof(ObjHeader);
+  uint32_t size = type_info->instanceSize_ + sizeof(ObjHeader) + kObjectReservedTailSize;
   ObjHeader* result = reinterpret_cast<ObjHeader*>(place(size));
   if (!result) {
     return nullptr;
@@ -906,7 +915,7 @@ ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
 
 ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, uint32_t count) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
-  container_size_t size = sizeof(ArrayHeader) - type_info->instanceSize_ * count;
+  container_size_t size = sizeof(ArrayHeader) - type_info->instanceSize_ * count + kObjectReservedTailSize;
   ArrayHeader* result = reinterpret_cast<ArrayHeader*>(place(size));
   if (!result) {
     return nullptr;
@@ -926,6 +935,14 @@ inline void AddRef(const ObjHeader* object) {
 inline void ReleaseRef(const ObjHeader* object) {
   MEMORY_LOG("ReleaseRef on %p in %p\n", object, object->container())
   Release(object->container());
+}
+
+void AddRefFromAssociatedObject(const ObjHeader* object) {
+  AddRef(object);
+}
+
+void ReleaseRefFromAssociatedObject(const ObjHeader* object) {
+  ReleaseRef(object);
 }
 
 extern "C" {
@@ -1034,6 +1051,16 @@ OBJ_GETTER(InitInstance,
     throw;
   }
 #endif
+}
+
+bool HasReservedObjectTail(ObjHeader* obj) {
+  return kObjectReservedTailSize != 0 && !isPermanent(obj);
+}
+
+void* GetReservedObjectTail(ObjHeader* obj) {
+  return reinterpret_cast<void*>(
+    reinterpret_cast<uintptr_t>(obj) + objectSize(obj) - kObjectReservedTailSize
+  );
 }
 
 void SetRef(ObjHeader** location, const ObjHeader* object) {

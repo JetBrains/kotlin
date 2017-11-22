@@ -20,6 +20,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -74,6 +76,17 @@ internal inline fun<R> generateFunction(codegen: CodeGenerator,
 
 internal inline fun<R> generateFunction(codegen: CodeGenerator, function: LLVMValueRef, code:FunctionGenerationContext.(FunctionGenerationContext) -> R) {
     generateFunctionBody(FunctionGenerationContext(function, codegen), code)
+}
+
+internal inline fun generateFunction(
+        codegen: CodeGenerator,
+        functionType: LLVMTypeRef,
+        name: String,
+        block: FunctionGenerationContext.(FunctionGenerationContext) -> Unit
+): LLVMValueRef {
+    val function = LLVMAddFunction(codegen.context.llvmModule, name, functionType)!!
+    generateFunction(codegen, function, block)
+    return function
 }
 
 inline private fun <R> generateFunctionBody(functionGenerationContext: FunctionGenerationContext, code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
@@ -183,6 +196,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         currentPositionHolder.setAfterTerminator()
         return res
     }
+
+    fun param(index: Int): LLVMValueRef = LLVMGetParam(this.function, index)!!
 
     fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef {
         val result = LLVMBuildLoad(builder, value, name)!!
@@ -352,6 +367,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     fun and(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildAnd(builder, arg0, arg1, name)!!
     fun or(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildOr(builder, arg0, arg1, name)!!
+    fun xor(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildXor(builder, arg0, arg1, name)!!
 
     fun zext(arg: LLVMValueRef, type: LLVMTypeRef): LLVMValueRef =
             LLVMBuildZExt(builder, arg, type, "")!!
@@ -401,6 +417,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     fun gep(base: LLVMValueRef, index: LLVMValueRef, name: String = ""): LLVMValueRef {
         return LLVMBuildGEP(builder, base, cValuesOf(index), 1, name)!!
     }
+    fun structGep(base: LLVMValueRef, index: Int, name: String = ""): LLVMValueRef =
+            LLVMBuildStructGEP(builder, base, index, name)!!
 
     fun gxxLandingpad(numClauses: Int, name: String = ""): LLVMValueRef {
         val personalityFunction = LLVMConstBitCast(context.llvm.gxxPersonalityFunction, int8TypePtr)
@@ -460,6 +478,41 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         cases.forEach { LLVMAddCase(switch, it.first, it.second) }
         currentPositionHolder.setAfterTerminator()
         return switch
+    }
+
+    fun lookupVirtualImpl(receiver: LLVMValueRef, descriptor: FunctionDescriptor): LLVMValueRef {
+        assert(LLVMTypeOf(receiver) == codegen.kObjHeaderPtr)
+
+        val owner = descriptor.containingDeclaration as ClassDescriptor
+
+        val typeInfoPtr: LLVMValueRef = if (owner.isObjCClass()) {
+            call(context.llvm.getObjCKotlinTypeInfo, listOf(receiver))
+        } else {
+            val typeInfoPtrPtr = LLVMBuildStructGEP(builder, receiver, 0 /* type_info */, "")!!
+            load(typeInfoPtrPtr)
+        }
+
+        assert (typeInfoPtr.type == codegen.kTypeInfoPtr) { LLVMPrintTypeToString(typeInfoPtr.type)!!.toKString() }
+        val llvmMethod = if (!owner.isInterface) {
+            // If this is a virtual method of the class - we can call via vtable.
+            val index = context.getVtableBuilder(owner).vtableIndex(descriptor)
+
+            val vtablePlace = gep(typeInfoPtr, Int32(1).llvm) // typeInfoPtr + 1
+            val vtable = bitcast(kInt8PtrPtr, vtablePlace)
+
+            val slot = gep(vtable, Int32(index).llvm)
+            load(slot)
+        } else {
+            // Otherwise, call by hash.
+            // TODO: optimize by storing interface number in lower bits of 'this' pointer
+            //       when passing object as an interface. This way we can use those bits as index
+            //       for an additional per-interface vtable.
+            val methodHash = codegen.functionHash(descriptor)                       // Calculate hash of the method to be invoked
+            val lookupArgs = listOf(typeInfoPtr, methodHash)                        // Prepare args for lookup
+            call(context.llvm.lookupOpenMethodFunction, lookupArgs)
+        }
+        val functionPtrType = pointerType(codegen.getLlvmFunctionType(descriptor))   // Construct type of the method to be invoked
+        return bitcast(functionPtrType, llvmMethod)           // Cast method address to the type
     }
 
     fun resetDebugLocation() {

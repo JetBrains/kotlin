@@ -130,8 +130,6 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
     }
 
     val methodTableEntries: List<OverriddenFunctionDescriptor> by lazy {
-        assert(!classDescriptor.isAbstract())
-
         classDescriptor.sortedContributedMethods
                 .flatMap { method -> method.allOverriddenDescriptors.map { OverriddenFunctionDescriptor(method, it) } }
                 .filter { it.canBeCalledVirtually }

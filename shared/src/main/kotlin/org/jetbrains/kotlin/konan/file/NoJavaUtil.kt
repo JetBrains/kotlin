@@ -111,6 +111,10 @@ data class File constructor(internal val javaPath: Path) {
     fun appendBytes(bytes: ByteArray)
         = Files.write(javaPath, bytes, StandardOpenOption.APPEND)
 
+    fun writeLines(lines: Iterable<String>) {
+        Files.write(javaPath, lines)
+    }
+
     fun forEachLine(action: (String) -> Unit) {
         Files.lines(javaPath).use { lines ->
             lines.forEach { action(it) }

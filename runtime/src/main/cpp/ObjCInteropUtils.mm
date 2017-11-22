@@ -44,15 +44,15 @@ namespace {
 
 extern "C" {
 
-NSString* Kotlin_Interop_CreateNSStringFromKString(const ArrayHeader* str) {
+id Kotlin_Interop_CreateNSStringFromKString(const ObjHeader* str) {
   if (str == nullptr) {
     return nullptr;
   }
 
-  const KChar* utf16Chars = CharArrayAddressOfElementAt(str, 0);
+  const KChar* utf16Chars = CharArrayAddressOfElementAt(str->array(), 0);
 
   NSString* result = [[[getNSStringClass() alloc] initWithBytes:utf16Chars
-    length:str->count_*sizeof(KChar)
+    length:str->array()->count_*sizeof(KChar)
     encoding:NSUTF16LittleEndianStringEncoding] autorelease];
 
   return result;

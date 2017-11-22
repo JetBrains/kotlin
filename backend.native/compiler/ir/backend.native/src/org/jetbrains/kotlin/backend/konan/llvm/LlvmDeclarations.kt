@@ -75,6 +75,7 @@ internal class ClassLlvmDeclarations(
         val bodyType: LLVMTypeRef,
         val fields: List<PropertyDescriptor>, // TODO: it is not an LLVM declaration.
         val typeInfoGlobal: StaticData.Global,
+        val writableTypeInfoGlobal: StaticData.Global?,
         val typeInfo: ConstPointer,
         val singletonDeclarations: SingletonLlvmDeclarations?,
         val objCDeclarations: KotlinObjCClassLlvmDeclarations?)
@@ -289,7 +290,21 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             null
         }
 
-        return ClassLlvmDeclarations(bodyType, fields, typeInfoGlobal, typeInfoPtr,
+        val writableTypeInfoType = runtime.writableTypeInfoType
+        val writableTypeInfoGlobal = if (writableTypeInfoType == null) {
+            null
+        } else if (descriptor.isExported()) {
+            val name = descriptor.writableTypeInfoSymbolName
+            staticData.createGlobal(writableTypeInfoType, name, isExported = true).also {
+                it.setLinkage(LLVMLinkage.LLVMCommonLinkage) // Allows to be replaced by other bitcode module.
+            }
+        } else {
+            staticData.createGlobal(writableTypeInfoType, "")
+        }.also {
+            it.setZeroInitializer()
+        }
+
+        return ClassLlvmDeclarations(bodyType, fields, typeInfoGlobal, writableTypeInfoGlobal, typeInfoPtr,
                 singletonDeclarations, objCDeclarations)
     }
 
