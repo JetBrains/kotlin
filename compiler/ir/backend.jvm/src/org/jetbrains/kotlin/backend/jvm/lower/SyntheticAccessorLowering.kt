@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
-import kotlin.properties.Delegates
 
 interface StubContext {
     val irClassContext: IrClassContext
@@ -117,11 +116,11 @@ class SyntheticAccessorLowering(val state: GenerationState) : FileLoweringPass, 
     override fun visitClass(declaration: IrClass, data: IrClassContext?): IrStatement {
         val classContext = (declaration.descriptor.codegenContext as StubContext).irClassContext
         return super.visitClass(declaration, classContext).apply {
-            lower(this as IrClass, classContext)
+            lower(classContext)
         }
     }
 
-    fun lower(irCLass: IrClass, data: IrClassContext) {
+    fun lower(data: IrClassContext) {
         val codegenContext = data.codegenContext
         val accessors = codegenContext.accessors
         val allAccessors =
@@ -131,70 +130,83 @@ class SyntheticAccessorLowering(val state: GenerationState) : FileLoweringPass, 
                             listOf(if (it.isWithSyntheticGetterAccessor) it.getter else null, if (it.isWithSyntheticSetterAccessor) it.setter else null).filterNotNull()
                         }
                 ).filterIsInstance<AccessorForCallableDescriptor<*>>()
+        val irClassToAddAccessor = data.irClass
+
         allAccessors.forEach { accessor ->
-            val accessorOwner = (accessor as FunctionDescriptor).containingDeclaration as ClassOrPackageFragmentDescriptor
-            val body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-            val accessorDescriptor = accessor.toStatic(accessorOwner, Name.identifier(state.typeMapper.mapAsmMethod(accessor).name))
-            val syntheticFunction = IrFunctionImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                    accessorDescriptor, body
-            )
-            val calleeDescriptor = accessor.calleeDescriptor as FunctionDescriptor
-            val returnExpr = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor)
-            copyAllArgsToValueParams(returnExpr, accessorDescriptor)
-            body.statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor, returnExpr))
-            data.irClass.declarations.add(syntheticFunction)
+            addAccessorToClass(accessor, irClassToAddAccessor, state.typeMapper)
         }
     }
 
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: IrClassContext?): IrElement {
         val superResult = super.visitMemberAccess(expression, data)
-        val descriptor = expression.descriptor
-        if (descriptor is FunctionDescriptor) {
-            val directAccessor = data!!.codegenContext.accessibleDescriptor(JvmCodegenUtil.getDirectMember(descriptor), (expression as? IrCall)?.superQualifier)
-            val accessor = actualAccessor(descriptor, directAccessor)
+        return createSyntheticAccessorCallForFunction(superResult, expression, data?.codegenContext, state.typeMapper)
+    }
 
-            if (accessor is AccessorForCallableDescriptor<*> && descriptor !is AccessorForCallableDescriptor<*>) {
-                val accessorOwner = accessor.containingDeclaration as ClassOrPackageFragmentDescriptor
-                val staticAccessor = descriptor.toStatic(accessorOwner, Name.identifier(state.typeMapper.mapAsmMethod(accessor as FunctionDescriptor).name)) //TODO change call
-                val call = IrCallImpl(expression.startOffset, expression.endOffset, staticAccessor, emptyMap(), expression.origin/*TODO super*/)
-                //copyAllArgsToValueParams(call, expression)
-                expression.receiverAndArgs().forEachIndexed { i, irExpression ->
-                    call.putValueArgument(i, irExpression)
+    companion object {
+        fun createSyntheticAccessorCallForFunction(superResult: IrElement, expression: IrMemberAccessExpression, codegenContext: CodegenContext<*>?, typeMapper: KotlinTypeMapper): IrElement {
+
+            val descriptor = expression.descriptor
+            if (descriptor is FunctionDescriptor) {
+                val directAccessor = codegenContext!!.accessibleDescriptor(JvmCodegenUtil.getDirectMember(descriptor), (expression as? IrCall)?.superQualifier)
+                val accessor = Companion.actualAccessor(descriptor, directAccessor)
+
+                if (accessor is AccessorForCallableDescriptor<*> && descriptor !is AccessorForCallableDescriptor<*>) {
+                    val accessorOwner = accessor.containingDeclaration as ClassOrPackageFragmentDescriptor
+                    val staticAccessor = descriptor.toStatic(accessorOwner, Name.identifier(typeMapper.mapAsmMethod(accessor as FunctionDescriptor).name)) //TODO change call
+                    val call = IrCallImpl(expression.startOffset, expression.endOffset, staticAccessor, emptyMap(), expression.origin/*TODO super*/)
+                    //copyAllArgsToValueParams(call, expression)
+                    expression.receiverAndArgs().forEachIndexed { i, irExpression ->
+                        call.putValueArgument(i, irExpression)
+                    }
+                    return call
                 }
-                return call
             }
+            return superResult
         }
-        return superResult
-    }
 
-    private fun actualAccessor(descriptor: FunctionDescriptor, calculatedAccessor: CallableMemberDescriptor): CallableMemberDescriptor {
-        if (calculatedAccessor is AccessorForPropertyDescriptor) {
-            val isGetter = descriptor is PropertyGetterDescriptor
-            val propertyAccessor = if (isGetter) calculatedAccessor.getter!! else calculatedAccessor.setter!!
-            if (isGetter && calculatedAccessor.isWithSyntheticGetterAccessor || !isGetter && calculatedAccessor.isWithSyntheticSetterAccessor) {
-                return propertyAccessor
+        fun addAccessorToClass(accessor: AccessorForCallableDescriptor<*>, irClassToAddAccessor: IrClass, typeMapper: KotlinTypeMapper) {
+            val accessorOwner = (accessor as FunctionDescriptor).containingDeclaration as ClassOrPackageFragmentDescriptor
+            val body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+            val accessorDescriptor = accessor.toStatic(accessorOwner, Name.identifier(typeMapper.mapAsmMethod(accessor).name))
+            val syntheticFunction = IrFunctionImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                    accessorDescriptor, body
+            )
+            val calleeDescriptor = accessor.calleeDescriptor as FunctionDescriptor
+            val returnExpr = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor)
+            Companion.copyAllArgsToValueParams(returnExpr, accessorDescriptor)
+            body.statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor, returnExpr))
+            irClassToAddAccessor.declarations.add(syntheticFunction)
+        }
+
+        private fun actualAccessor(descriptor: FunctionDescriptor, calculatedAccessor: CallableMemberDescriptor): CallableMemberDescriptor {
+            if (calculatedAccessor is AccessorForPropertyDescriptor) {
+                val isGetter = descriptor is PropertyGetterDescriptor
+                val propertyAccessor = if (isGetter) calculatedAccessor.getter!! else calculatedAccessor.setter!!
+                if (isGetter && calculatedAccessor.isWithSyntheticGetterAccessor || !isGetter && calculatedAccessor.isWithSyntheticSetterAccessor) {
+                    return propertyAccessor
+                }
+                return descriptor
+
             }
-            return descriptor
-
-        }
-        return calculatedAccessor
-    }
-
-    private fun copyAllArgsToValueParams(call: IrCallImpl, fromDescriptor: CallableMemberDescriptor) {
-        var offset = 0
-        val newDescriptor = call.descriptor
-        newDescriptor.dispatchReceiverParameter?.let {
-            call.dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[offset++])
+            return calculatedAccessor
         }
 
-        newDescriptor.extensionReceiverParameter?.let {
-            call.extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[offset++])
-        }
+        private fun copyAllArgsToValueParams(call: IrCallImpl, fromDescriptor: CallableMemberDescriptor) {
+            var offset = 0
+            val newDescriptor = call.descriptor
+            newDescriptor.dispatchReceiverParameter?.let {
+                call.dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[offset++])
+            }
 
-        call.descriptor.valueParameters.forEachIndexed { i, _ ->
-            call.putValueArgument(i, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[i + offset]))
+            newDescriptor.extensionReceiverParameter?.let {
+                call.extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[offset++])
+            }
+
+            call.descriptor.valueParameters.forEachIndexed { i, _ ->
+                call.putValueArgument(i, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[i + offset]))
+            }
         }
     }
 }
