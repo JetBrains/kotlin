@@ -26,6 +26,7 @@ import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
+import junit.framework.TestCase
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.BuildResult
@@ -51,15 +52,19 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.Usage
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.withIC
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
@@ -76,6 +81,8 @@ import java.net.URLClassLoader
 import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KProperty1
 
 class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     var isICEnabledBackup: Boolean = false
@@ -135,6 +142,40 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
                   arrayOf(klass("kotlinProject", "foo.Bar"),
                           packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
                           module("kotlinProject")))
+    }
+
+    @WorkingDir("LanguageOrApiVersionChanged")
+    fun testLanguageVersionChanged() {
+        languageOrApiVersionChanged(CommonCompilerArguments::languageVersion)
+    }
+
+    @WorkingDir("LanguageOrApiVersionChanged")
+    fun testApiVersionChanged() {
+        languageOrApiVersionChanged(CommonCompilerArguments::apiVersion)
+    }
+
+    private fun languageOrApiVersionChanged(versionProperty: KMutableProperty1<CommonCompilerArguments, String?>) {
+        initProject(JVM_MOCK_RUNTIME)
+
+        assertEquals(1, myProject.modules.size)
+        val module = myProject.modules.first()
+        val args = JpsKotlinCompilerSettings.getCommonCompilerArguments(module)
+
+        fun setVersion(newVersion: String) {
+            versionProperty.set(args, newVersion)
+            JpsKotlinCompilerSettings.setCommonCompilerArguments(myProject, args)
+        }
+
+        assertNull(args.apiVersion)
+        buildAllModules().assertSuccessful()
+
+        setVersion(LanguageVersion.LATEST_STABLE.versionString)
+        buildAllModules().assertSuccessful()
+        assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME)
+
+        setVersion(LanguageVersion.KOTLIN_1_0.versionString)
+        buildAllModules().assertSuccessful()
+        assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
     }
 }
 
@@ -293,7 +334,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     override fun doGetProjectDir(): File = workDir
 
-    private fun initProject(libraryDependency: LibraryDependency = NONE) {
+    protected fun initProject(libraryDependency: LibraryDependency = NONE) {
         addJdk(JDK_NAME)
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
 
