@@ -40,7 +40,7 @@
             level="WARNING"/>
 
         <localInspection
-            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.GradleDependencyInspection"
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DeprecatedGradleDependencyInspection"
             displayName="Deprecated library is used in Gradle"
             groupName="Kotlin"
             enabledByDefault="true"

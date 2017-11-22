@@ -37,7 +37,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrC
 
 private val LibInfo.gradleMarker get() = "$groupId:$name:"
 
-class GradleDependencyInspection : GradleBaseInspection() {
+class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
     override fun buildVisitor(): BaseInspectionVisitor = DependencyFinder()
 
     private open class DependencyFinder : KotlinGradleInspectionVisitor() {
