@@ -62,20 +62,18 @@ projectTest("quickTest") {
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
 
-val testDataDir by extra { File("${projectDir}/../js.translator/testData") }
+val testDataDir = File("${projectDir}/../js.translator/testData")
 
-tasks {
-    "runMochaOnTeamCity"(NpmTask::class) {
-        setWorkingDir(testDataDir)
-        setArgs(listOf("run", "test"))
-    }
-    "runMocha"(NpmTask::class) {
-        setWorkingDir(testDataDir)
-        setArgs(listOf("run", "mocha"))
-        dependsOn("npm_install")
-
-        val check by tasks
-        check.dependsOn(this)
-    }
+val runMochaOnTeamCity by task<NpmTask> {
+    setWorkingDir(testDataDir)
+    setArgs(listOf("run", "test"))
 }
 
+val runMocha by task<NpmTask> {
+    setWorkingDir(testDataDir)
+    setArgs(listOf("run", "mocha"))
+    dependsOn("npm_install")
+
+    val check by tasks
+    check.dependsOn(this)
+}
