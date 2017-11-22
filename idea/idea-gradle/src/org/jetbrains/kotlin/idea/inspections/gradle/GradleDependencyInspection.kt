@@ -25,6 +25,7 @@ import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.configuration.allModules
 import org.jetbrains.kotlin.idea.configuration.getWholeModuleGroup
+import org.jetbrains.kotlin.idea.inspections.ReplaceStringInDocumentFix
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
@@ -110,7 +111,7 @@ class GradleDependencyInspection : GradleBaseInspection() {
 
                         registerError(
                                 reportOnElement, outdatedInfo.message,
-                                arrayOf(),
+                                arrayOf(ReplaceStringInDocumentFix(reportOnElement, outdatedInfo.old.name, outdatedInfo.new.name)),
                                 ProblemHighlightType.LIKE_DEPRECATED)
 
                         break
