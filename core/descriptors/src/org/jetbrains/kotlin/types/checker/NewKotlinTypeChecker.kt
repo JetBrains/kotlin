@@ -121,7 +121,10 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         val newSubType = transformToNewType(subType)
         val newSuperType = transformToNewType(superType)
 
-        checkSubtypeForSpecialCases(newSubType.lowerIfFlexible(), newSuperType.upperIfFlexible())?.let { return it }
+        checkSubtypeForSpecialCases(newSubType.lowerIfFlexible(), newSuperType.upperIfFlexible())?.let {
+            addSubtypeConstraint(newSubType, newSuperType)
+            return it
+        }
 
         // we should add constraints with flexible types, otherwise we never get flexible type as answer in constraint system
         addSubtypeConstraint(newSubType, newSuperType)?.let { return it }
