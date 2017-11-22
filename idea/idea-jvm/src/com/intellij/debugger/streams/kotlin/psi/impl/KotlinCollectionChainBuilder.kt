@@ -5,6 +5,8 @@ import com.intellij.debugger.streams.kotlin.psi.KotlinPsiUtil
 import com.intellij.debugger.streams.kotlin.psi.previousCall
 import com.intellij.debugger.streams.kotlin.psi.receiverType
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 /**
  * @author Vitaliy.Bibaev
@@ -13,12 +15,15 @@ class KotlinCollectionChainBuilder
   : KotlinChainBuilderBase(KotlinChainTransformerImpl(KotlinCollectionsTypeExtractor())) {
   private companion object {
     // TODO: Avoid enumeration of all available types
-    val SUPPORTED_RECEIVERS = setOf("kotlin.collections.List", "kotlin.collections.Set")
+    val SUPPORTED_RECEIVERS = setOf("kotlin.collections.Iterable", "kotlin.CharSequence", "kotlin.Array",
+        "kotlin.BooleanArray", "kotlin.ByteArray", "kotlin.ShortArray", "kotlin.CharArray", "kotlin.IntArray",
+        "kotlin.LongArray", "kotlin.DoubleArray", "kotlin.FloatArray")
   }
 
   private fun isCollectionTransformationCall(expression: KtCallExpression): Boolean {
     val receiverType = expression.receiverType() ?: return false
-    return SUPPORTED_RECEIVERS.contains(KotlinPsiUtil.getTypeWithoutTypeParameters(receiverType))
+    if (isTypeSuitable(receiverType)) return true
+    return receiverType.supertypes().any { isTypeSuitable(it) }
   }
 
   override val existenceChecker: ExistenceChecker = object : ExistenceChecker() {
@@ -64,4 +69,7 @@ class KotlinCollectionChainBuilder
       return result
     }
   }
+
+  private fun isTypeSuitable(type: KotlinType): Boolean =
+      SUPPORTED_RECEIVERS.contains(KotlinPsiUtil.getTypeWithoutTypeParameters(type))
 }
