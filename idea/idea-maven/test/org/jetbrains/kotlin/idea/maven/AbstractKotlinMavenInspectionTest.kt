@@ -25,7 +25,6 @@ import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenPluginPhaseInspection
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
@@ -64,12 +64,15 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
 
         val matcher = "<!--\\s*problem:\\s*on\\s*([^,]+),\\s*title\\s*(.+)\\s*-->".toRegex()
         val expected = pomText.lines().mapNotNull { matcher.find(it) }.map { SimplifiedProblemDescription(it.groups[2]!!.value.trim(), it.groups[1]!!.value.trim()) }
-        val actual = runInspection(inspectionClass, myProject)
+        val actualProblems =
+                runInspection(inspectionClass, myProject)
                 .problemElements
                 .filter { it.key.name == "pom.xml" }
                 .values
                 .flatMap { it.toList() }
                 .mapNotNull { it as? ProblemDescriptorBase }
+
+        val actual = actualProblems
                 .map { SimplifiedProblemDescription(it.descriptionTemplate, it.psiElement.text.replace("\\s+".toRegex(), "")) to it }
                 .sortedBy { it.first.text }
 
@@ -96,7 +99,7 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
 
             quickfix.applyFix(problem)
 
-            assertEquals(FileUtil.loadFile(file, true).trim(), document.text.trim())
+            KotlinTestUtils.assertEqualsToFile(file, document.text.trim())
 
             ApplicationManager.getApplication().runWriteAction {
                 document.setText(originalText)
