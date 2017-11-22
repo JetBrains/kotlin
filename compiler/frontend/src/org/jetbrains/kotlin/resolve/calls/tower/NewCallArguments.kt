@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.prepareReceiverRegardingCaptureTypes
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 
@@ -71,7 +72,11 @@ class ParseErrorKotlinCallArgument(
         override val dataFlowInfoAfterThisArgument: DataFlowInfo,
         builtIns: KotlinBuiltIns
 ): ExpressionKotlinCallArgument, SimplePSIKotlinCallArgument() {
-    override val receiver = ReceiverValueWithSmartCastInfo(TransientReceiver(builtIns.nothingType), emptySet(), isStable = true)
+    override val receiver = ReceiverValueWithSmartCastInfo(
+            TransientReceiver(ErrorUtils.createErrorType("Error type for ParseError-argument $valueArgument")),
+            possibleTypes = emptySet(),
+            isStable = true
+    )
 
     override val isSafeCall: Boolean get() = false
 
