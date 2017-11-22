@@ -41,7 +41,7 @@ class TypedCollectionChainTest : TypedChainTestCase("collection/positive/types")
   fun testNullableAnyToPrimitive() = doTest(KotlinTypes.NULLABLE_ANY, KotlinTypes.BOOLEAN)
   fun testPrimitiveToNullableAny() = doTest(KotlinTypes.INT, KotlinTypes.NULLABLE_ANY)
 
-  fun testAnyToPrimitive() = doTest(KotlinTypes.ANY, KotlinTypes.BOOLEAN)
+  fun testAnyToPrimitive() = doTest(KotlinTypes.ANY, KotlinTypes.INT)
   fun testPrimitiveToAny() = doTest(KotlinTypes.INT, KotlinTypes.ANY)
 
   fun testNullableToNotNull() = doTest(KotlinTypes.NULLABLE_ANY, KotlinTypes.INT)
