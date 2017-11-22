@@ -22,60 +22,20 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.text.VersionComparatorUtil
-import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.configuration.allModules
 import org.jetbrains.kotlin.idea.configuration.getWholeModuleGroup
 import org.jetbrains.kotlin.idea.inspections.ReplaceStringInDocumentFix
+import org.jetbrains.kotlin.idea.versions.LibInfo
+import org.jetbrains.kotlin.idea.versions.DEPRECATED_LIBRARIES_INFORMATION
+import org.jetbrains.kotlin.idea.versions.DeprecatedLibInfo
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrCallExpression
 
-data class LibInfo(
-        val groupId: String,
-        val name: String
-)
-
-data class OutdatedLibInfo(
-        val old: LibInfo,
-        val new: LibInfo,
-        val outdatedAfterVersion: String,
-        val message: String
-)
-
-private val outdatedLibrariesInformation = listOf(
-        outdatedLib(
-                oldGroupId = KotlinWithGradleConfigurator.GROUP_ID,
-                oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME,
-                outdatedAfterVersion = "1.2.0-rc-39",
-                message = "${PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME} is deprecated since 1.2.0 and should be replaced with ${PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME}"),
-
-        outdatedLib(
-                oldGroupId = KotlinWithGradleConfigurator.GROUP_ID,
-                oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME,
-                outdatedAfterVersion = "1.2.0-rc-39",
-                message = "${PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME} is deprecated since 1.2.0 and should be replaced with ${PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME}")
-)
-
 private val LibInfo.gradleMarker get() = "$groupId:$name:"
-
-private fun outdatedLib(
-        oldGroupId: String,
-        oldName: String,
-        newGroupId: String = oldGroupId,
-        newName: String = oldName,
-        outdatedAfterVersion: String,
-        message: String): OutdatedLibInfo {
-    return OutdatedLibInfo(
-            old = LibInfo(groupId = oldGroupId, name = oldName),
-            new = LibInfo(groupId = newGroupId, name = newName),
-            outdatedAfterVersion = outdatedAfterVersion,
-            message = message
-    )
-}
 
 class GradleDependencyInspection : GradleBaseInspection() {
     override fun buildVisitor(): BaseInspectionVisitor = DependencyFinder()
@@ -94,7 +54,7 @@ class GradleDependencyInspection : GradleBaseInspection() {
         }
 
         open fun visitDependencyEntry(dependencyStatement: GrCallExpression) {
-            for (outdatedInfo in outdatedLibrariesInformation) {
+            for (outdatedInfo in DEPRECATED_LIBRARIES_INFORMATION) {
                 val dependencyText = dependencyStatement.text
                 val libMarker = outdatedInfo.old.gradleMarker
 
@@ -120,8 +80,8 @@ class GradleDependencyInspection : GradleBaseInspection() {
             }
         }
 
-        private fun reportOnElement(classpathEntry: GrCallExpression, outdatedInfo: OutdatedLibInfo): PsiElement {
-            val indexOf = classpathEntry.text.indexOf(outdatedInfo.old.name)
+        private fun reportOnElement(classpathEntry: GrCallExpression, deprecatedInfo: DeprecatedLibInfo): PsiElement {
+            val indexOf = classpathEntry.text.indexOf(deprecatedInfo.old.name)
             if (indexOf < 0) return classpathEntry
 
             return classpathEntry.findElementAt(indexOf) ?: classpathEntry
