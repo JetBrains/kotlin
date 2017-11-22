@@ -371,3 +371,44 @@ val MAVEN_COMMON_TEST_ID = "kotlin-test-common"
 val MAVEN_COMMON_TEST_ANNOTATIONS_ID = "kotlin-test-annotations-common"
 
 val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt")
+
+data class LibInfo(
+        val groupId: String,
+        val name: String
+)
+
+data class DeprecatedLibInfo(
+        val old: LibInfo,
+        val new: LibInfo,
+        val outdatedAfterVersion: String,
+        val message: String
+)
+
+private fun deprecatedLib(
+        oldGroupId: String,
+        oldName: String,
+        newGroupId: String = oldGroupId,
+        newName: String = oldName,
+        outdatedAfterVersion: String,
+        message: String): DeprecatedLibInfo {
+    return DeprecatedLibInfo(
+            old = LibInfo(groupId = oldGroupId, name = oldName),
+            new = LibInfo(groupId = newGroupId, name = newName),
+            outdatedAfterVersion = outdatedAfterVersion,
+            message = message
+    )
+}
+
+val DEPRECATED_LIBRARIES_INFORMATION = listOf(
+        deprecatedLib(
+                oldGroupId = "org.jetbrains.kotlin",
+                oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME,
+                outdatedAfterVersion = "1.2.0-rc-39",
+                message = "${PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME} is deprecated since 1.2.0 and should be replaced with ${PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME}"),
+
+        deprecatedLib(
+                oldGroupId = "org.jetbrains.kotlin",
+                oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME,
+                outdatedAfterVersion = "1.2.0-rc-39",
+                message = "${PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME} is deprecated since 1.2.0 and should be replaced with ${PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME}")
+)
