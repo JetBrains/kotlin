@@ -16,2936 +16,5291 @@ import kotlin.comparisons.*
  * Returns 1st *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun <T> Array<out T>.component1(): T
+public inline operator fun <T> Array<out T>.component1(): T {
+    return get(0)
+}
 
 /**
  * Returns 1st *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun ByteArray.component1(): Byte
+public inline operator fun ByteArray.component1(): Byte {
+    return get(0)
+}
 
 /**
  * Returns 1st *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun ShortArray.component1(): Short
+public inline operator fun ShortArray.component1(): Short {
+    return get(0)
+}
 
 /**
  * Returns 1st *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun IntArray.component1(): Int
+public inline operator fun IntArray.component1(): Int {
+    return get(0)
+}
 
 /**
  * Returns 1st *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun LongArray.component1(): Long
+public inline operator fun LongArray.component1(): Long {
+    return get(0)
+}
 
 /**
  * Returns 1st *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun FloatArray.component1(): Float
+public inline operator fun FloatArray.component1(): Float {
+    return get(0)
+}
 
 /**
  * Returns 1st *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun DoubleArray.component1(): Double
+public inline operator fun DoubleArray.component1(): Double {
+    return get(0)
+}
 
 /**
  * Returns 1st *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun BooleanArray.component1(): Boolean
+public inline operator fun BooleanArray.component1(): Boolean {
+    return get(0)
+}
 
 /**
  * Returns 1st *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun CharArray.component1(): Char
+public inline operator fun CharArray.component1(): Char {
+    return get(0)
+}
 
 /**
  * Returns 2nd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun <T> Array<out T>.component2(): T
+public inline operator fun <T> Array<out T>.component2(): T {
+    return get(1)
+}
 
 /**
  * Returns 2nd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun ByteArray.component2(): Byte
+public inline operator fun ByteArray.component2(): Byte {
+    return get(1)
+}
 
 /**
  * Returns 2nd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun ShortArray.component2(): Short
+public inline operator fun ShortArray.component2(): Short {
+    return get(1)
+}
 
 /**
  * Returns 2nd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun IntArray.component2(): Int
+public inline operator fun IntArray.component2(): Int {
+    return get(1)
+}
 
 /**
  * Returns 2nd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun LongArray.component2(): Long
+public inline operator fun LongArray.component2(): Long {
+    return get(1)
+}
 
 /**
  * Returns 2nd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun FloatArray.component2(): Float
+public inline operator fun FloatArray.component2(): Float {
+    return get(1)
+}
 
 /**
  * Returns 2nd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun DoubleArray.component2(): Double
+public inline operator fun DoubleArray.component2(): Double {
+    return get(1)
+}
 
 /**
  * Returns 2nd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun BooleanArray.component2(): Boolean
+public inline operator fun BooleanArray.component2(): Boolean {
+    return get(1)
+}
 
 /**
  * Returns 2nd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun CharArray.component2(): Char
+public inline operator fun CharArray.component2(): Char {
+    return get(1)
+}
 
 /**
  * Returns 3rd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun <T> Array<out T>.component3(): T
+public inline operator fun <T> Array<out T>.component3(): T {
+    return get(2)
+}
 
 /**
  * Returns 3rd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun ByteArray.component3(): Byte
+public inline operator fun ByteArray.component3(): Byte {
+    return get(2)
+}
 
 /**
  * Returns 3rd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun ShortArray.component3(): Short
+public inline operator fun ShortArray.component3(): Short {
+    return get(2)
+}
 
 /**
  * Returns 3rd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun IntArray.component3(): Int
+public inline operator fun IntArray.component3(): Int {
+    return get(2)
+}
 
 /**
  * Returns 3rd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun LongArray.component3(): Long
+public inline operator fun LongArray.component3(): Long {
+    return get(2)
+}
 
 /**
  * Returns 3rd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun FloatArray.component3(): Float
+public inline operator fun FloatArray.component3(): Float {
+    return get(2)
+}
 
 /**
  * Returns 3rd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun DoubleArray.component3(): Double
+public inline operator fun DoubleArray.component3(): Double {
+    return get(2)
+}
 
 /**
  * Returns 3rd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun BooleanArray.component3(): Boolean
+public inline operator fun BooleanArray.component3(): Boolean {
+    return get(2)
+}
 
 /**
  * Returns 3rd *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun CharArray.component3(): Char
+public inline operator fun CharArray.component3(): Char {
+    return get(2)
+}
 
 /**
  * Returns 4th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun <T> Array<out T>.component4(): T
+public inline operator fun <T> Array<out T>.component4(): T {
+    return get(3)
+}
 
 /**
  * Returns 4th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun ByteArray.component4(): Byte
+public inline operator fun ByteArray.component4(): Byte {
+    return get(3)
+}
 
 /**
  * Returns 4th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun ShortArray.component4(): Short
+public inline operator fun ShortArray.component4(): Short {
+    return get(3)
+}
 
 /**
  * Returns 4th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun IntArray.component4(): Int
+public inline operator fun IntArray.component4(): Int {
+    return get(3)
+}
 
 /**
  * Returns 4th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun LongArray.component4(): Long
+public inline operator fun LongArray.component4(): Long {
+    return get(3)
+}
 
 /**
  * Returns 4th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun FloatArray.component4(): Float
+public inline operator fun FloatArray.component4(): Float {
+    return get(3)
+}
 
 /**
  * Returns 4th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun DoubleArray.component4(): Double
+public inline operator fun DoubleArray.component4(): Double {
+    return get(3)
+}
 
 /**
  * Returns 4th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun BooleanArray.component4(): Boolean
+public inline operator fun BooleanArray.component4(): Boolean {
+    return get(3)
+}
 
 /**
  * Returns 4th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun CharArray.component4(): Char
+public inline operator fun CharArray.component4(): Char {
+    return get(3)
+}
 
 /**
  * Returns 5th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun <T> Array<out T>.component5(): T
+public inline operator fun <T> Array<out T>.component5(): T {
+    return get(4)
+}
 
 /**
  * Returns 5th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun ByteArray.component5(): Byte
+public inline operator fun ByteArray.component5(): Byte {
+    return get(4)
+}
 
 /**
  * Returns 5th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun ShortArray.component5(): Short
+public inline operator fun ShortArray.component5(): Short {
+    return get(4)
+}
 
 /**
  * Returns 5th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun IntArray.component5(): Int
+public inline operator fun IntArray.component5(): Int {
+    return get(4)
+}
 
 /**
  * Returns 5th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun LongArray.component5(): Long
+public inline operator fun LongArray.component5(): Long {
+    return get(4)
+}
 
 /**
  * Returns 5th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun FloatArray.component5(): Float
+public inline operator fun FloatArray.component5(): Float {
+    return get(4)
+}
 
 /**
  * Returns 5th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun DoubleArray.component5(): Double
+public inline operator fun DoubleArray.component5(): Double {
+    return get(4)
+}
 
 /**
  * Returns 5th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun BooleanArray.component5(): Boolean
+public inline operator fun BooleanArray.component5(): Boolean {
+    return get(4)
+}
 
 /**
  * Returns 5th *element* from the collection.
  */
 @kotlin.internal.InlineOnly
-public expect inline operator fun CharArray.component5(): Char
+public inline operator fun CharArray.component5(): Char {
+    return get(4)
+}
 
 /**
  * Returns `true` if [element] is found in the array.
  */
-public expect operator fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.contains(element: T): Boolean
+public operator fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.contains(element: T): Boolean {
+    return indexOf(element) >= 0
+}
 
 /**
  * Returns `true` if [element] is found in the array.
  */
-public expect operator fun ByteArray.contains(element: Byte): Boolean
+public operator fun ByteArray.contains(element: Byte): Boolean {
+    return indexOf(element) >= 0
+}
 
 /**
  * Returns `true` if [element] is found in the array.
  */
-public expect operator fun ShortArray.contains(element: Short): Boolean
+public operator fun ShortArray.contains(element: Short): Boolean {
+    return indexOf(element) >= 0
+}
 
 /**
  * Returns `true` if [element] is found in the array.
  */
-public expect operator fun IntArray.contains(element: Int): Boolean
+public operator fun IntArray.contains(element: Int): Boolean {
+    return indexOf(element) >= 0
+}
 
 /**
  * Returns `true` if [element] is found in the array.
  */
-public expect operator fun LongArray.contains(element: Long): Boolean
+public operator fun LongArray.contains(element: Long): Boolean {
+    return indexOf(element) >= 0
+}
 
 /**
  * Returns `true` if [element] is found in the array.
  */
-public expect operator fun FloatArray.contains(element: Float): Boolean
+public operator fun FloatArray.contains(element: Float): Boolean {
+    return indexOf(element) >= 0
+}
 
 /**
  * Returns `true` if [element] is found in the array.
  */
-public expect operator fun DoubleArray.contains(element: Double): Boolean
+public operator fun DoubleArray.contains(element: Double): Boolean {
+    return indexOf(element) >= 0
+}
 
 /**
  * Returns `true` if [element] is found in the array.
  */
-public expect operator fun BooleanArray.contains(element: Boolean): Boolean
+public operator fun BooleanArray.contains(element: Boolean): Boolean {
+    return indexOf(element) >= 0
+}
 
 /**
  * Returns `true` if [element] is found in the array.
  */
-public expect operator fun CharArray.contains(element: Char): Boolean
+public operator fun CharArray.contains(element: Char): Boolean {
+    return indexOf(element) >= 0
+}
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun <T> Array<out T>.elementAt(index: Int): T
+public inline fun <T> Array<out T>.elementAt(index: Int): T {
+    return get(index)
+}
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ByteArray.elementAt(index: Int): Byte
+public inline fun ByteArray.elementAt(index: Int): Byte {
+    return get(index)
+}
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ShortArray.elementAt(index: Int): Short
+public inline fun ShortArray.elementAt(index: Int): Short {
+    return get(index)
+}
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun IntArray.elementAt(index: Int): Int
+public inline fun IntArray.elementAt(index: Int): Int {
+    return get(index)
+}
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun LongArray.elementAt(index: Int): Long
+public inline fun LongArray.elementAt(index: Int): Long {
+    return get(index)
+}
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun FloatArray.elementAt(index: Int): Float
+public inline fun FloatArray.elementAt(index: Int): Float {
+    return get(index)
+}
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun DoubleArray.elementAt(index: Int): Double
+public inline fun DoubleArray.elementAt(index: Int): Double {
+    return get(index)
+}
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun BooleanArray.elementAt(index: Int): Boolean
+public inline fun BooleanArray.elementAt(index: Int): Boolean {
+    return get(index)
+}
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharArray.elementAt(index: Int): Char
+public inline fun CharArray.elementAt(index: Int): Char {
+    return get(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T
+public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Byte): Byte
+public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Short): Short
+public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Short): Short {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Int): Int
+public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Int): Int {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Long): Long
+public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Long): Long {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Float): Float
+public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Float): Float {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Double): Double
+public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Double): Double {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean
+public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char
+public inline fun CharArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun <T> Array<out T>.elementAtOrNull(index: Int): T?
+public inline fun <T> Array<out T>.elementAtOrNull(index: Int): T? {
+    return this.getOrNull(index)
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ByteArray.elementAtOrNull(index: Int): Byte?
+public inline fun ByteArray.elementAtOrNull(index: Int): Byte? {
+    return this.getOrNull(index)
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ShortArray.elementAtOrNull(index: Int): Short?
+public inline fun ShortArray.elementAtOrNull(index: Int): Short? {
+    return this.getOrNull(index)
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun IntArray.elementAtOrNull(index: Int): Int?
+public inline fun IntArray.elementAtOrNull(index: Int): Int? {
+    return this.getOrNull(index)
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun LongArray.elementAtOrNull(index: Int): Long?
+public inline fun LongArray.elementAtOrNull(index: Int): Long? {
+    return this.getOrNull(index)
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun FloatArray.elementAtOrNull(index: Int): Float?
+public inline fun FloatArray.elementAtOrNull(index: Int): Float? {
+    return this.getOrNull(index)
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun DoubleArray.elementAtOrNull(index: Int): Double?
+public inline fun DoubleArray.elementAtOrNull(index: Int): Double? {
+    return this.getOrNull(index)
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun BooleanArray.elementAtOrNull(index: Int): Boolean?
+public inline fun BooleanArray.elementAtOrNull(index: Int): Boolean? {
+    return this.getOrNull(index)
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharArray.elementAtOrNull(index: Int): Char?
+public inline fun CharArray.elementAtOrNull(index: Int): Char? {
+    return this.getOrNull(index)
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T?
+public inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T? {
+    return firstOrNull(predicate)
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ByteArray.find(predicate: (Byte) -> Boolean): Byte?
+public inline fun ByteArray.find(predicate: (Byte) -> Boolean): Byte? {
+    return firstOrNull(predicate)
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ShortArray.find(predicate: (Short) -> Boolean): Short?
+public inline fun ShortArray.find(predicate: (Short) -> Boolean): Short? {
+    return firstOrNull(predicate)
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun IntArray.find(predicate: (Int) -> Boolean): Int?
+public inline fun IntArray.find(predicate: (Int) -> Boolean): Int? {
+    return firstOrNull(predicate)
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun LongArray.find(predicate: (Long) -> Boolean): Long?
+public inline fun LongArray.find(predicate: (Long) -> Boolean): Long? {
+    return firstOrNull(predicate)
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun FloatArray.find(predicate: (Float) -> Boolean): Float?
+public inline fun FloatArray.find(predicate: (Float) -> Boolean): Float? {
+    return firstOrNull(predicate)
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun DoubleArray.find(predicate: (Double) -> Boolean): Double?
+public inline fun DoubleArray.find(predicate: (Double) -> Boolean): Double? {
+    return firstOrNull(predicate)
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun BooleanArray.find(predicate: (Boolean) -> Boolean): Boolean?
+public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean): Boolean? {
+    return firstOrNull(predicate)
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharArray.find(predicate: (Char) -> Boolean): Char?
+public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
+    return firstOrNull(predicate)
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun <T> Array<out T>.findLast(predicate: (T) -> Boolean): T?
+public inline fun <T> Array<out T>.findLast(predicate: (T) -> Boolean): T? {
+    return lastOrNull(predicate)
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ByteArray.findLast(predicate: (Byte) -> Boolean): Byte?
+public inline fun ByteArray.findLast(predicate: (Byte) -> Boolean): Byte? {
+    return lastOrNull(predicate)
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ShortArray.findLast(predicate: (Short) -> Boolean): Short?
+public inline fun ShortArray.findLast(predicate: (Short) -> Boolean): Short? {
+    return lastOrNull(predicate)
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun IntArray.findLast(predicate: (Int) -> Boolean): Int?
+public inline fun IntArray.findLast(predicate: (Int) -> Boolean): Int? {
+    return lastOrNull(predicate)
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun LongArray.findLast(predicate: (Long) -> Boolean): Long?
+public inline fun LongArray.findLast(predicate: (Long) -> Boolean): Long? {
+    return lastOrNull(predicate)
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun FloatArray.findLast(predicate: (Float) -> Boolean): Float?
+public inline fun FloatArray.findLast(predicate: (Float) -> Boolean): Float? {
+    return lastOrNull(predicate)
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun DoubleArray.findLast(predicate: (Double) -> Boolean): Double?
+public inline fun DoubleArray.findLast(predicate: (Double) -> Boolean): Double? {
+    return lastOrNull(predicate)
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun BooleanArray.findLast(predicate: (Boolean) -> Boolean): Boolean?
+public inline fun BooleanArray.findLast(predicate: (Boolean) -> Boolean): Boolean? {
+    return lastOrNull(predicate)
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharArray.findLast(predicate: (Char) -> Boolean): Char?
+public inline fun CharArray.findLast(predicate: (Char) -> Boolean): Char? {
+    return lastOrNull(predicate)
+}
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun <T> Array<out T>.first(): T
+public fun <T> Array<out T>.first(): T {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[0]
+}
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun ByteArray.first(): Byte
+public fun ByteArray.first(): Byte {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[0]
+}
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun ShortArray.first(): Short
+public fun ShortArray.first(): Short {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[0]
+}
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun IntArray.first(): Int
+public fun IntArray.first(): Int {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[0]
+}
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun LongArray.first(): Long
+public fun LongArray.first(): Long {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[0]
+}
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun FloatArray.first(): Float
+public fun FloatArray.first(): Float {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[0]
+}
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun DoubleArray.first(): Double
+public fun DoubleArray.first(): Double {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[0]
+}
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun BooleanArray.first(): Boolean
+public fun BooleanArray.first(): Boolean {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[0]
+}
 
 /**
  * Returns first element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun CharArray.first(): Char
+public fun CharArray.first(): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[0]
+}
 
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun <T> Array<out T>.first(predicate: (T) -> Boolean): T
+public inline fun <T> Array<out T>.first(predicate: (T) -> Boolean): T {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte
+public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun ShortArray.first(predicate: (Short) -> Boolean): Short
+public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun IntArray.first(predicate: (Int) -> Boolean): Int
+public inline fun IntArray.first(predicate: (Int) -> Boolean): Int {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun LongArray.first(predicate: (Long) -> Boolean): Long
+public inline fun LongArray.first(predicate: (Long) -> Boolean): Long {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun FloatArray.first(predicate: (Float) -> Boolean): Float
+public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double
+public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean
+public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun CharArray.first(predicate: (Char) -> Boolean): Char
+public inline fun CharArray.first(predicate: (Char) -> Boolean): Char {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the first element, or `null` if the array is empty.
  */
-public expect fun <T> Array<out T>.firstOrNull(): T?
+public fun <T> Array<out T>.firstOrNull(): T? {
+    return if (isEmpty()) null else this[0]
+}
 
 /**
  * Returns the first element, or `null` if the array is empty.
  */
-public expect fun ByteArray.firstOrNull(): Byte?
+public fun ByteArray.firstOrNull(): Byte? {
+    return if (isEmpty()) null else this[0]
+}
 
 /**
  * Returns the first element, or `null` if the array is empty.
  */
-public expect fun ShortArray.firstOrNull(): Short?
+public fun ShortArray.firstOrNull(): Short? {
+    return if (isEmpty()) null else this[0]
+}
 
 /**
  * Returns the first element, or `null` if the array is empty.
  */
-public expect fun IntArray.firstOrNull(): Int?
+public fun IntArray.firstOrNull(): Int? {
+    return if (isEmpty()) null else this[0]
+}
 
 /**
  * Returns the first element, or `null` if the array is empty.
  */
-public expect fun LongArray.firstOrNull(): Long?
+public fun LongArray.firstOrNull(): Long? {
+    return if (isEmpty()) null else this[0]
+}
 
 /**
  * Returns the first element, or `null` if the array is empty.
  */
-public expect fun FloatArray.firstOrNull(): Float?
+public fun FloatArray.firstOrNull(): Float? {
+    return if (isEmpty()) null else this[0]
+}
 
 /**
  * Returns the first element, or `null` if the array is empty.
  */
-public expect fun DoubleArray.firstOrNull(): Double?
+public fun DoubleArray.firstOrNull(): Double? {
+    return if (isEmpty()) null else this[0]
+}
 
 /**
  * Returns the first element, or `null` if the array is empty.
  */
-public expect fun BooleanArray.firstOrNull(): Boolean?
+public fun BooleanArray.firstOrNull(): Boolean? {
+    return if (isEmpty()) null else this[0]
+}
 
 /**
  * Returns the first element, or `null` if the array is empty.
  */
-public expect fun CharArray.firstOrNull(): Char?
+public fun CharArray.firstOrNull(): Char? {
+    return if (isEmpty()) null else this[0]
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
-public expect inline fun <T> Array<out T>.firstOrNull(predicate: (T) -> Boolean): T?
+public inline fun <T> Array<out T>.firstOrNull(predicate: (T) -> Boolean): T? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
-public expect inline fun ByteArray.firstOrNull(predicate: (Byte) -> Boolean): Byte?
+public inline fun ByteArray.firstOrNull(predicate: (Byte) -> Boolean): Byte? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
-public expect inline fun ShortArray.firstOrNull(predicate: (Short) -> Boolean): Short?
+public inline fun ShortArray.firstOrNull(predicate: (Short) -> Boolean): Short? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
-public expect inline fun IntArray.firstOrNull(predicate: (Int) -> Boolean): Int?
+public inline fun IntArray.firstOrNull(predicate: (Int) -> Boolean): Int? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
-public expect inline fun LongArray.firstOrNull(predicate: (Long) -> Boolean): Long?
+public inline fun LongArray.firstOrNull(predicate: (Long) -> Boolean): Long? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
-public expect inline fun FloatArray.firstOrNull(predicate: (Float) -> Boolean): Float?
+public inline fun FloatArray.firstOrNull(predicate: (Float) -> Boolean): Float? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
-public expect inline fun DoubleArray.firstOrNull(predicate: (Double) -> Boolean): Double?
+public inline fun DoubleArray.firstOrNull(predicate: (Double) -> Boolean): Double? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
-public expect inline fun BooleanArray.firstOrNull(predicate: (Boolean) -> Boolean): Boolean?
+public inline fun BooleanArray.firstOrNull(predicate: (Boolean) -> Boolean): Boolean? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
 
 /**
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
-public expect inline fun CharArray.firstOrNull(predicate: (Char) -> Boolean): Char?
+public inline fun CharArray.firstOrNull(predicate: (Char) -> Boolean): Char? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun <T> Array<out T>.getOrElse(index: Int, defaultValue: (Int) -> T): T
+public inline fun <T> Array<out T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ByteArray.getOrElse(index: Int, defaultValue: (Int) -> Byte): Byte
+public inline fun ByteArray.getOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ShortArray.getOrElse(index: Int, defaultValue: (Int) -> Short): Short
+public inline fun ShortArray.getOrElse(index: Int, defaultValue: (Int) -> Short): Short {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun IntArray.getOrElse(index: Int, defaultValue: (Int) -> Int): Int
+public inline fun IntArray.getOrElse(index: Int, defaultValue: (Int) -> Int): Int {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun LongArray.getOrElse(index: Int, defaultValue: (Int) -> Long): Long
+public inline fun LongArray.getOrElse(index: Int, defaultValue: (Int) -> Long): Long {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun FloatArray.getOrElse(index: Int, defaultValue: (Int) -> Float): Float
+public inline fun FloatArray.getOrElse(index: Int, defaultValue: (Int) -> Float): Float {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun DoubleArray.getOrElse(index: Int, defaultValue: (Int) -> Double): Double
+public inline fun DoubleArray.getOrElse(index: Int, defaultValue: (Int) -> Double): Double {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun BooleanArray.getOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean
+public inline fun BooleanArray.getOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): Char
+public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public expect fun <T> Array<out T>.getOrNull(index: Int): T?
+public fun <T> Array<out T>.getOrNull(index: Int): T? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public expect fun ByteArray.getOrNull(index: Int): Byte?
+public fun ByteArray.getOrNull(index: Int): Byte? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public expect fun ShortArray.getOrNull(index: Int): Short?
+public fun ShortArray.getOrNull(index: Int): Short? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public expect fun IntArray.getOrNull(index: Int): Int?
+public fun IntArray.getOrNull(index: Int): Int? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public expect fun LongArray.getOrNull(index: Int): Long?
+public fun LongArray.getOrNull(index: Int): Long? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public expect fun FloatArray.getOrNull(index: Int): Float?
+public fun FloatArray.getOrNull(index: Int): Float? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public expect fun DoubleArray.getOrNull(index: Int): Double?
+public fun DoubleArray.getOrNull(index: Int): Double? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public expect fun BooleanArray.getOrNull(index: Int): Boolean?
+public fun BooleanArray.getOrNull(index: Int): Boolean? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public expect fun CharArray.getOrNull(index: Int): Char?
+public fun CharArray.getOrNull(index: Int): Char? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
 
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public expect fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.indexOf(element: T): Int
+public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.indexOf(element: T): Int {
+    if (element == null) {
+        for (index in indices) {
+            if (this[index] == null) {
+                return index
+            }
+        }
+    } else {
+        for (index in indices) {
+            if (element == this[index]) {
+                return index
+            }
+        }
+    }
+    return -1
+}
 
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public expect fun ByteArray.indexOf(element: Byte): Int
+public fun ByteArray.indexOf(element: Byte): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public expect fun ShortArray.indexOf(element: Short): Int
+public fun ShortArray.indexOf(element: Short): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public expect fun IntArray.indexOf(element: Int): Int
+public fun IntArray.indexOf(element: Int): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public expect fun LongArray.indexOf(element: Long): Int
+public fun LongArray.indexOf(element: Long): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public expect fun FloatArray.indexOf(element: Float): Int
+public fun FloatArray.indexOf(element: Float): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public expect fun DoubleArray.indexOf(element: Double): Int
+public fun DoubleArray.indexOf(element: Double): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public expect fun BooleanArray.indexOf(element: Boolean): Int
+public fun BooleanArray.indexOf(element: Boolean): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
-public expect fun CharArray.indexOf(element: Char): Int
+public fun CharArray.indexOf(element: Char): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun <T> Array<out T>.indexOfFirst(predicate: (T) -> Boolean): Int
+public inline fun <T> Array<out T>.indexOfFirst(predicate: (T) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun ByteArray.indexOfFirst(predicate: (Byte) -> Boolean): Int
+public inline fun ByteArray.indexOfFirst(predicate: (Byte) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun ShortArray.indexOfFirst(predicate: (Short) -> Boolean): Int
+public inline fun ShortArray.indexOfFirst(predicate: (Short) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun IntArray.indexOfFirst(predicate: (Int) -> Boolean): Int
+public inline fun IntArray.indexOfFirst(predicate: (Int) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun LongArray.indexOfFirst(predicate: (Long) -> Boolean): Int
+public inline fun LongArray.indexOfFirst(predicate: (Long) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun FloatArray.indexOfFirst(predicate: (Float) -> Boolean): Int
+public inline fun FloatArray.indexOfFirst(predicate: (Float) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun DoubleArray.indexOfFirst(predicate: (Double) -> Boolean): Int
+public inline fun DoubleArray.indexOfFirst(predicate: (Double) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun BooleanArray.indexOfFirst(predicate: (Boolean) -> Boolean): Int
+public inline fun BooleanArray.indexOfFirst(predicate: (Boolean) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun CharArray.indexOfFirst(predicate: (Char) -> Boolean): Int
+public inline fun CharArray.indexOfFirst(predicate: (Char) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun <T> Array<out T>.indexOfLast(predicate: (T) -> Boolean): Int
+public inline fun <T> Array<out T>.indexOfLast(predicate: (T) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun ByteArray.indexOfLast(predicate: (Byte) -> Boolean): Int
+public inline fun ByteArray.indexOfLast(predicate: (Byte) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun ShortArray.indexOfLast(predicate: (Short) -> Boolean): Int
+public inline fun ShortArray.indexOfLast(predicate: (Short) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun IntArray.indexOfLast(predicate: (Int) -> Boolean): Int
+public inline fun IntArray.indexOfLast(predicate: (Int) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun LongArray.indexOfLast(predicate: (Long) -> Boolean): Int
+public inline fun LongArray.indexOfLast(predicate: (Long) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun FloatArray.indexOfLast(predicate: (Float) -> Boolean): Int
+public inline fun FloatArray.indexOfLast(predicate: (Float) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun DoubleArray.indexOfLast(predicate: (Double) -> Boolean): Int
+public inline fun DoubleArray.indexOfLast(predicate: (Double) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun BooleanArray.indexOfLast(predicate: (Boolean) -> Boolean): Int
+public inline fun BooleanArray.indexOfLast(predicate: (Boolean) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
  */
-public expect inline fun CharArray.indexOfLast(predicate: (Char) -> Boolean): Int
+public inline fun CharArray.indexOfLast(predicate: (Char) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun <T> Array<out T>.last(): T
+public fun <T> Array<out T>.last(): T {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[lastIndex]
+}
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun ByteArray.last(): Byte
+public fun ByteArray.last(): Byte {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[lastIndex]
+}
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun ShortArray.last(): Short
+public fun ShortArray.last(): Short {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[lastIndex]
+}
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun IntArray.last(): Int
+public fun IntArray.last(): Int {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[lastIndex]
+}
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun LongArray.last(): Long
+public fun LongArray.last(): Long {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[lastIndex]
+}
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun FloatArray.last(): Float
+public fun FloatArray.last(): Float {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[lastIndex]
+}
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun DoubleArray.last(): Double
+public fun DoubleArray.last(): Double {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[lastIndex]
+}
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun BooleanArray.last(): Boolean
+public fun BooleanArray.last(): Boolean {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[lastIndex]
+}
 
 /**
  * Returns the last element.
  * @throws [NoSuchElementException] if the array is empty.
  */
-public expect fun CharArray.last(): Char
+public fun CharArray.last(): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return this[lastIndex]
+}
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun <T> Array<out T>.last(predicate: (T) -> Boolean): T
+public inline fun <T> Array<out T>.last(predicate: (T) -> Boolean): T {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun ByteArray.last(predicate: (Byte) -> Boolean): Byte
+public inline fun ByteArray.last(predicate: (Byte) -> Boolean): Byte {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun ShortArray.last(predicate: (Short) -> Boolean): Short
+public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun IntArray.last(predicate: (Int) -> Boolean): Int
+public inline fun IntArray.last(predicate: (Int) -> Boolean): Int {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun LongArray.last(predicate: (Long) -> Boolean): Long
+public inline fun LongArray.last(predicate: (Long) -> Boolean): Long {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun FloatArray.last(predicate: (Float) -> Boolean): Float
+public inline fun FloatArray.last(predicate: (Float) -> Boolean): Float {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun DoubleArray.last(predicate: (Double) -> Boolean): Double
+public inline fun DoubleArray.last(predicate: (Double) -> Boolean): Double {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun BooleanArray.last(predicate: (Boolean) -> Boolean): Boolean
+public inline fun BooleanArray.last(predicate: (Boolean) -> Boolean): Boolean {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns the last element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
  */
-public expect inline fun CharArray.last(predicate: (Char) -> Boolean): Char
+public inline fun CharArray.last(predicate: (Char) -> Boolean): Char {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Array contains no element matching the predicate.")
+}
 
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public expect fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.lastIndexOf(element: T): Int
+public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.lastIndexOf(element: T): Int {
+    if (element == null) {
+        for (index in indices.reversed()) {
+            if (this[index] == null) {
+                return index
+            }
+        }
+    } else {
+        for (index in indices.reversed()) {
+            if (element == this[index]) {
+                return index
+            }
+        }
+    }
+    return -1
+}
 
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public expect fun ByteArray.lastIndexOf(element: Byte): Int
+public fun ByteArray.lastIndexOf(element: Byte): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public expect fun ShortArray.lastIndexOf(element: Short): Int
+public fun ShortArray.lastIndexOf(element: Short): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public expect fun IntArray.lastIndexOf(element: Int): Int
+public fun IntArray.lastIndexOf(element: Int): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public expect fun LongArray.lastIndexOf(element: Long): Int
+public fun LongArray.lastIndexOf(element: Long): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public expect fun FloatArray.lastIndexOf(element: Float): Int
+public fun FloatArray.lastIndexOf(element: Float): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public expect fun DoubleArray.lastIndexOf(element: Double): Int
+public fun DoubleArray.lastIndexOf(element: Double): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public expect fun BooleanArray.lastIndexOf(element: Boolean): Int
+public fun BooleanArray.lastIndexOf(element: Boolean): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
-public expect fun CharArray.lastIndexOf(element: Char): Int
+public fun CharArray.lastIndexOf(element: Char): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
-public expect fun <T> Array<out T>.lastOrNull(): T?
+public fun <T> Array<out T>.lastOrNull(): T? {
+    return if (isEmpty()) null else this[size - 1]
+}
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
-public expect fun ByteArray.lastOrNull(): Byte?
+public fun ByteArray.lastOrNull(): Byte? {
+    return if (isEmpty()) null else this[size - 1]
+}
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
-public expect fun ShortArray.lastOrNull(): Short?
+public fun ShortArray.lastOrNull(): Short? {
+    return if (isEmpty()) null else this[size - 1]
+}
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
-public expect fun IntArray.lastOrNull(): Int?
+public fun IntArray.lastOrNull(): Int? {
+    return if (isEmpty()) null else this[size - 1]
+}
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
-public expect fun LongArray.lastOrNull(): Long?
+public fun LongArray.lastOrNull(): Long? {
+    return if (isEmpty()) null else this[size - 1]
+}
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
-public expect fun FloatArray.lastOrNull(): Float?
+public fun FloatArray.lastOrNull(): Float? {
+    return if (isEmpty()) null else this[size - 1]
+}
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
-public expect fun DoubleArray.lastOrNull(): Double?
+public fun DoubleArray.lastOrNull(): Double? {
+    return if (isEmpty()) null else this[size - 1]
+}
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
-public expect fun BooleanArray.lastOrNull(): Boolean?
+public fun BooleanArray.lastOrNull(): Boolean? {
+    return if (isEmpty()) null else this[size - 1]
+}
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
-public expect fun CharArray.lastOrNull(): Char?
+public fun CharArray.lastOrNull(): Char? {
+    return if (isEmpty()) null else this[size - 1]
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public expect inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean): T?
+public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean): T? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public expect inline fun ByteArray.lastOrNull(predicate: (Byte) -> Boolean): Byte?
+public inline fun ByteArray.lastOrNull(predicate: (Byte) -> Boolean): Byte? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public expect inline fun ShortArray.lastOrNull(predicate: (Short) -> Boolean): Short?
+public inline fun ShortArray.lastOrNull(predicate: (Short) -> Boolean): Short? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public expect inline fun IntArray.lastOrNull(predicate: (Int) -> Boolean): Int?
+public inline fun IntArray.lastOrNull(predicate: (Int) -> Boolean): Int? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public expect inline fun LongArray.lastOrNull(predicate: (Long) -> Boolean): Long?
+public inline fun LongArray.lastOrNull(predicate: (Long) -> Boolean): Long? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public expect inline fun FloatArray.lastOrNull(predicate: (Float) -> Boolean): Float?
+public inline fun FloatArray.lastOrNull(predicate: (Float) -> Boolean): Float? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public expect inline fun DoubleArray.lastOrNull(predicate: (Double) -> Boolean): Double?
+public inline fun DoubleArray.lastOrNull(predicate: (Double) -> Boolean): Double? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public expect inline fun BooleanArray.lastOrNull(predicate: (Boolean) -> Boolean): Boolean?
+public inline fun BooleanArray.lastOrNull(predicate: (Boolean) -> Boolean): Boolean? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
-public expect inline fun CharArray.lastOrNull(predicate: (Char) -> Boolean): Char?
+public inline fun CharArray.lastOrNull(predicate: (Char) -> Boolean): Char? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
-public expect fun <T> Array<out T>.single(): T
+public fun <T> Array<out T>.single(): T {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
-public expect fun ByteArray.single(): Byte
+public fun ByteArray.single(): Byte {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
-public expect fun ShortArray.single(): Short
+public fun ShortArray.single(): Short {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
-public expect fun IntArray.single(): Int
+public fun IntArray.single(): Int {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
-public expect fun LongArray.single(): Long
+public fun LongArray.single(): Long {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
-public expect fun FloatArray.single(): Float
+public fun FloatArray.single(): Float {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
-public expect fun DoubleArray.single(): Double
+public fun DoubleArray.single(): Double {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
-public expect fun BooleanArray.single(): Boolean
+public fun BooleanArray.single(): Boolean {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
-public expect fun CharArray.single(): Char
+public fun CharArray.single(): Char {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
-public expect inline fun <T> Array<out T>.single(predicate: (T) -> Boolean): T
+public inline fun <T> Array<out T>.single(predicate: (T) -> Boolean): T {
+    var single: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as T
+}
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
-public expect inline fun ByteArray.single(predicate: (Byte) -> Boolean): Byte
+public inline fun ByteArray.single(predicate: (Byte) -> Boolean): Byte {
+    var single: Byte? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as Byte
+}
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
-public expect inline fun ShortArray.single(predicate: (Short) -> Boolean): Short
+public inline fun ShortArray.single(predicate: (Short) -> Boolean): Short {
+    var single: Short? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as Short
+}
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
-public expect inline fun IntArray.single(predicate: (Int) -> Boolean): Int
+public inline fun IntArray.single(predicate: (Int) -> Boolean): Int {
+    var single: Int? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as Int
+}
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
-public expect inline fun LongArray.single(predicate: (Long) -> Boolean): Long
+public inline fun LongArray.single(predicate: (Long) -> Boolean): Long {
+    var single: Long? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as Long
+}
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
-public expect inline fun FloatArray.single(predicate: (Float) -> Boolean): Float
+public inline fun FloatArray.single(predicate: (Float) -> Boolean): Float {
+    var single: Float? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as Float
+}
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
-public expect inline fun DoubleArray.single(predicate: (Double) -> Boolean): Double
+public inline fun DoubleArray.single(predicate: (Double) -> Boolean): Double {
+    var single: Double? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as Double
+}
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
-public expect inline fun BooleanArray.single(predicate: (Boolean) -> Boolean): Boolean
+public inline fun BooleanArray.single(predicate: (Boolean) -> Boolean): Boolean {
+    var single: Boolean? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as Boolean
+}
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
-public expect inline fun CharArray.single(predicate: (Char) -> Boolean): Char
+public inline fun CharArray.single(predicate: (Char) -> Boolean): Char {
+    var single: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as Char
+}
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
-public expect fun <T> Array<out T>.singleOrNull(): T?
+public fun <T> Array<out T>.singleOrNull(): T? {
+    return if (size == 1) this[0] else null
+}
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
-public expect fun ByteArray.singleOrNull(): Byte?
+public fun ByteArray.singleOrNull(): Byte? {
+    return if (size == 1) this[0] else null
+}
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
-public expect fun ShortArray.singleOrNull(): Short?
+public fun ShortArray.singleOrNull(): Short? {
+    return if (size == 1) this[0] else null
+}
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
-public expect fun IntArray.singleOrNull(): Int?
+public fun IntArray.singleOrNull(): Int? {
+    return if (size == 1) this[0] else null
+}
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
-public expect fun LongArray.singleOrNull(): Long?
+public fun LongArray.singleOrNull(): Long? {
+    return if (size == 1) this[0] else null
+}
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
-public expect fun FloatArray.singleOrNull(): Float?
+public fun FloatArray.singleOrNull(): Float? {
+    return if (size == 1) this[0] else null
+}
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
-public expect fun DoubleArray.singleOrNull(): Double?
+public fun DoubleArray.singleOrNull(): Double? {
+    return if (size == 1) this[0] else null
+}
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
-public expect fun BooleanArray.singleOrNull(): Boolean?
+public fun BooleanArray.singleOrNull(): Boolean? {
+    return if (size == 1) this[0] else null
+}
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
-public expect fun CharArray.singleOrNull(): Char?
+public fun CharArray.singleOrNull(): Char? {
+    return if (size == 1) this[0] else null
+}
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
-public expect inline fun <T> Array<out T>.singleOrNull(predicate: (T) -> Boolean): T?
+public inline fun <T> Array<out T>.singleOrNull(predicate: (T) -> Boolean): T? {
+    var single: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
-public expect inline fun ByteArray.singleOrNull(predicate: (Byte) -> Boolean): Byte?
+public inline fun ByteArray.singleOrNull(predicate: (Byte) -> Boolean): Byte? {
+    var single: Byte? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
-public expect inline fun ShortArray.singleOrNull(predicate: (Short) -> Boolean): Short?
+public inline fun ShortArray.singleOrNull(predicate: (Short) -> Boolean): Short? {
+    var single: Short? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
-public expect inline fun IntArray.singleOrNull(predicate: (Int) -> Boolean): Int?
+public inline fun IntArray.singleOrNull(predicate: (Int) -> Boolean): Int? {
+    var single: Int? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
-public expect inline fun LongArray.singleOrNull(predicate: (Long) -> Boolean): Long?
+public inline fun LongArray.singleOrNull(predicate: (Long) -> Boolean): Long? {
+    var single: Long? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
-public expect inline fun FloatArray.singleOrNull(predicate: (Float) -> Boolean): Float?
+public inline fun FloatArray.singleOrNull(predicate: (Float) -> Boolean): Float? {
+    var single: Float? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
-public expect inline fun DoubleArray.singleOrNull(predicate: (Double) -> Boolean): Double?
+public inline fun DoubleArray.singleOrNull(predicate: (Double) -> Boolean): Double? {
+    var single: Double? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
-public expect inline fun BooleanArray.singleOrNull(predicate: (Boolean) -> Boolean): Boolean?
+public inline fun BooleanArray.singleOrNull(predicate: (Boolean) -> Boolean): Boolean? {
+    var single: Boolean? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
-public expect inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): Char?
+public inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): Char? {
+    var single: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
 
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun <T> Array<out T>.drop(n: Int): List<T>
+public fun <T> Array<out T>.drop(n: Int): List<T> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun ByteArray.drop(n: Int): List<Byte>
+public fun ByteArray.drop(n: Int): List<Byte> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun ShortArray.drop(n: Int): List<Short>
+public fun ShortArray.drop(n: Int): List<Short> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun IntArray.drop(n: Int): List<Int>
+public fun IntArray.drop(n: Int): List<Int> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun LongArray.drop(n: Int): List<Long>
+public fun LongArray.drop(n: Int): List<Long> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun FloatArray.drop(n: Int): List<Float>
+public fun FloatArray.drop(n: Int): List<Float> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun DoubleArray.drop(n: Int): List<Double>
+public fun DoubleArray.drop(n: Int): List<Double> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun BooleanArray.drop(n: Int): List<Boolean>
+public fun BooleanArray.drop(n: Int): List<Boolean> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun CharArray.drop(n: Int): List<Char>
+public fun CharArray.drop(n: Int): List<Char> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return takeLast((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun <T> Array<out T>.dropLast(n: Int): List<T>
+public fun <T> Array<out T>.dropLast(n: Int): List<T> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun ByteArray.dropLast(n: Int): List<Byte>
+public fun ByteArray.dropLast(n: Int): List<Byte> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun ShortArray.dropLast(n: Int): List<Short>
+public fun ShortArray.dropLast(n: Int): List<Short> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun IntArray.dropLast(n: Int): List<Int>
+public fun IntArray.dropLast(n: Int): List<Int> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun LongArray.dropLast(n: Int): List<Long>
+public fun LongArray.dropLast(n: Int): List<Long> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun FloatArray.dropLast(n: Int): List<Float>
+public fun FloatArray.dropLast(n: Int): List<Float> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun DoubleArray.dropLast(n: Int): List<Double>
+public fun DoubleArray.dropLast(n: Int): List<Double> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun BooleanArray.dropLast(n: Int): List<Boolean>
+public fun BooleanArray.dropLast(n: Int): List<Boolean> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect fun CharArray.dropLast(n: Int): List<Char>
+public fun CharArray.dropLast(n: Int): List<Char> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    return take((size - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun <T> Array<out T>.dropLastWhile(predicate: (T) -> Boolean): List<T>
+public inline fun <T> Array<out T>.dropLastWhile(predicate: (T) -> Boolean): List<T> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun ByteArray.dropLastWhile(predicate: (Byte) -> Boolean): List<Byte>
+public inline fun ByteArray.dropLastWhile(predicate: (Byte) -> Boolean): List<Byte> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun ShortArray.dropLastWhile(predicate: (Short) -> Boolean): List<Short>
+public inline fun ShortArray.dropLastWhile(predicate: (Short) -> Boolean): List<Short> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun IntArray.dropLastWhile(predicate: (Int) -> Boolean): List<Int>
+public inline fun IntArray.dropLastWhile(predicate: (Int) -> Boolean): List<Int> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun LongArray.dropLastWhile(predicate: (Long) -> Boolean): List<Long>
+public inline fun LongArray.dropLastWhile(predicate: (Long) -> Boolean): List<Long> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun FloatArray.dropLastWhile(predicate: (Float) -> Boolean): List<Float>
+public inline fun FloatArray.dropLastWhile(predicate: (Float) -> Boolean): List<Float> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun DoubleArray.dropLastWhile(predicate: (Double) -> Boolean): List<Double>
+public inline fun DoubleArray.dropLastWhile(predicate: (Double) -> Boolean): List<Double> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun BooleanArray.dropLastWhile(predicate: (Boolean) -> Boolean): List<Boolean>
+public inline fun BooleanArray.dropLastWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun CharArray.dropLastWhile(predicate: (Char) -> Boolean): List<Char>
+public inline fun CharArray.dropLastWhile(predicate: (Char) -> Boolean): List<Char> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean): List<T>
+public inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean): List<T> {
+    var yielding = false
+    val list = ArrayList<T>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean): List<Byte>
+public inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean): List<Byte> {
+    var yielding = false
+    val list = ArrayList<Byte>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Short>
+public inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Short> {
+    var yielding = false
+    val list = ArrayList<Short>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun IntArray.dropWhile(predicate: (Int) -> Boolean): List<Int>
+public inline fun IntArray.dropWhile(predicate: (Int) -> Boolean): List<Int> {
+    var yielding = false
+    val list = ArrayList<Int>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun LongArray.dropWhile(predicate: (Long) -> Boolean): List<Long>
+public inline fun LongArray.dropWhile(predicate: (Long) -> Boolean): List<Long> {
+    var yielding = false
+    val list = ArrayList<Long>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun FloatArray.dropWhile(predicate: (Float) -> Boolean): List<Float>
+public inline fun FloatArray.dropWhile(predicate: (Float) -> Boolean): List<Float> {
+    var yielding = false
+    val list = ArrayList<Float>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean): List<Double>
+public inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean): List<Double> {
+    var yielding = false
+    val list = ArrayList<Double>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean): List<Boolean>
+public inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
+    var yielding = false
+    val list = ArrayList<Boolean>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
-public expect inline fun CharArray.dropWhile(predicate: (Char) -> Boolean): List<Char>
+public inline fun CharArray.dropWhile(predicate: (Char) -> Boolean): List<Char> {
+    var yielding = false
+    val list = ArrayList<Char>()
+    for (item in this)
+        if (yielding)
+            list.add(item)
+        else if (!predicate(item)) {
+            list.add(item)
+            yielding = true
+        }
+    return list
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
-public expect inline fun <T> Array<out T>.filter(predicate: (T) -> Boolean): List<T>
+public inline fun <T> Array<out T>.filter(predicate: (T) -> Boolean): List<T> {
+    return filterTo(ArrayList<T>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
-public expect inline fun ByteArray.filter(predicate: (Byte) -> Boolean): List<Byte>
+public inline fun ByteArray.filter(predicate: (Byte) -> Boolean): List<Byte> {
+    return filterTo(ArrayList<Byte>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
-public expect inline fun ShortArray.filter(predicate: (Short) -> Boolean): List<Short>
+public inline fun ShortArray.filter(predicate: (Short) -> Boolean): List<Short> {
+    return filterTo(ArrayList<Short>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
-public expect inline fun IntArray.filter(predicate: (Int) -> Boolean): List<Int>
+public inline fun IntArray.filter(predicate: (Int) -> Boolean): List<Int> {
+    return filterTo(ArrayList<Int>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
-public expect inline fun LongArray.filter(predicate: (Long) -> Boolean): List<Long>
+public inline fun LongArray.filter(predicate: (Long) -> Boolean): List<Long> {
+    return filterTo(ArrayList<Long>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
-public expect inline fun FloatArray.filter(predicate: (Float) -> Boolean): List<Float>
+public inline fun FloatArray.filter(predicate: (Float) -> Boolean): List<Float> {
+    return filterTo(ArrayList<Float>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
-public expect inline fun DoubleArray.filter(predicate: (Double) -> Boolean): List<Double>
+public inline fun DoubleArray.filter(predicate: (Double) -> Boolean): List<Double> {
+    return filterTo(ArrayList<Double>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
-public expect inline fun BooleanArray.filter(predicate: (Boolean) -> Boolean): List<Boolean>
+public inline fun BooleanArray.filter(predicate: (Boolean) -> Boolean): List<Boolean> {
+    return filterTo(ArrayList<Boolean>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
-public expect inline fun CharArray.filter(predicate: (Char) -> Boolean): List<Char>
-
-/**
- * Returns a list containing only elements matching the given [predicate].
- * @param [predicate] function that takes the index of an element and the element itself
- * and returns the result of predicate evaluation on the element.
- */
-public expect inline fun <T> Array<out T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T>
-
-/**
- * Returns a list containing only elements matching the given [predicate].
- * @param [predicate] function that takes the index of an element and the element itself
- * and returns the result of predicate evaluation on the element.
- */
-public expect inline fun ByteArray.filterIndexed(predicate: (index: Int, Byte) -> Boolean): List<Byte>
-
-/**
- * Returns a list containing only elements matching the given [predicate].
- * @param [predicate] function that takes the index of an element and the element itself
- * and returns the result of predicate evaluation on the element.
- */
-public expect inline fun ShortArray.filterIndexed(predicate: (index: Int, Short) -> Boolean): List<Short>
-
-/**
- * Returns a list containing only elements matching the given [predicate].
- * @param [predicate] function that takes the index of an element and the element itself
- * and returns the result of predicate evaluation on the element.
- */
-public expect inline fun IntArray.filterIndexed(predicate: (index: Int, Int) -> Boolean): List<Int>
-
-/**
- * Returns a list containing only elements matching the given [predicate].
- * @param [predicate] function that takes the index of an element and the element itself
- * and returns the result of predicate evaluation on the element.
- */
-public expect inline fun LongArray.filterIndexed(predicate: (index: Int, Long) -> Boolean): List<Long>
+public inline fun CharArray.filter(predicate: (Char) -> Boolean): List<Char> {
+    return filterTo(ArrayList<Char>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun FloatArray.filterIndexed(predicate: (index: Int, Float) -> Boolean): List<Float>
+public inline fun <T> Array<out T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T> {
+    return filterIndexedTo(ArrayList<T>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun DoubleArray.filterIndexed(predicate: (index: Int, Double) -> Boolean): List<Double>
+public inline fun ByteArray.filterIndexed(predicate: (index: Int, Byte) -> Boolean): List<Byte> {
+    return filterIndexedTo(ArrayList<Byte>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun BooleanArray.filterIndexed(predicate: (index: Int, Boolean) -> Boolean): List<Boolean>
+public inline fun ShortArray.filterIndexed(predicate: (index: Int, Short) -> Boolean): List<Short> {
+    return filterIndexedTo(ArrayList<Short>(), predicate)
+}
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun CharArray.filterIndexed(predicate: (index: Int, Char) -> Boolean): List<Char>
+public inline fun IntArray.filterIndexed(predicate: (index: Int, Int) -> Boolean): List<Int> {
+    return filterIndexedTo(ArrayList<Int>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+public inline fun LongArray.filterIndexed(predicate: (index: Int, Long) -> Boolean): List<Long> {
+    return filterIndexedTo(ArrayList<Long>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+public inline fun FloatArray.filterIndexed(predicate: (index: Int, Float) -> Boolean): List<Float> {
+    return filterIndexedTo(ArrayList<Float>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+public inline fun DoubleArray.filterIndexed(predicate: (index: Int, Double) -> Boolean): List<Double> {
+    return filterIndexedTo(ArrayList<Double>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+public inline fun BooleanArray.filterIndexed(predicate: (index: Int, Boolean) -> Boolean): List<Boolean> {
+    return filterIndexedTo(ArrayList<Boolean>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ */
+public inline fun CharArray.filterIndexed(predicate: (index: Int, Char) -> Boolean): List<Char> {
+    return filterIndexedTo(ArrayList<Char>(), predicate)
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C
+public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(destination: C, predicate: (index: Int, Byte) -> Boolean): C
+public inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(destination: C, predicate: (index: Int, Byte) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(destination: C, predicate: (index: Int, Short) -> Boolean): C
+public inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(destination: C, predicate: (index: Int, Short) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(destination: C, predicate: (index: Int, Int) -> Boolean): C
+public inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(destination: C, predicate: (index: Int, Int) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(destination: C, predicate: (index: Int, Long) -> Boolean): C
+public inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(destination: C, predicate: (index: Int, Long) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(destination: C, predicate: (index: Int, Float) -> Boolean): C
+public inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(destination: C, predicate: (index: Int, Float) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo(destination: C, predicate: (index: Int, Double) -> Boolean): C
+public inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo(destination: C, predicate: (index: Int, Double) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexedTo(destination: C, predicate: (index: Int, Boolean) -> Boolean): C
+public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexedTo(destination: C, predicate: (index: Int, Boolean) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public expect inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C
+public inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
 
 /**
  * Returns a list containing all elements that are instances of specified type parameter R.
  */
-public expect inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R>
+public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
+    return filterIsInstanceTo(ArrayList<R>())
+}
 
 /**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  */
-public expect inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C
+public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
+    for (element in this) if (element is R) destination.add(element)
+    return destination
+}
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
-public expect inline fun <T> Array<out T>.filterNot(predicate: (T) -> Boolean): List<T>
+public inline fun <T> Array<out T>.filterNot(predicate: (T) -> Boolean): List<T> {
+    return filterNotTo(ArrayList<T>(), predicate)
+}
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
-public expect inline fun ByteArray.filterNot(predicate: (Byte) -> Boolean): List<Byte>
+public inline fun ByteArray.filterNot(predicate: (Byte) -> Boolean): List<Byte> {
+    return filterNotTo(ArrayList<Byte>(), predicate)
+}
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
-public expect inline fun ShortArray.filterNot(predicate: (Short) -> Boolean): List<Short>
+public inline fun ShortArray.filterNot(predicate: (Short) -> Boolean): List<Short> {
+    return filterNotTo(ArrayList<Short>(), predicate)
+}
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
-public expect inline fun IntArray.filterNot(predicate: (Int) -> Boolean): List<Int>
+public inline fun IntArray.filterNot(predicate: (Int) -> Boolean): List<Int> {
+    return filterNotTo(ArrayList<Int>(), predicate)
+}
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
-public expect inline fun LongArray.filterNot(predicate: (Long) -> Boolean): List<Long>
+public inline fun LongArray.filterNot(predicate: (Long) -> Boolean): List<Long> {
+    return filterNotTo(ArrayList<Long>(), predicate)
+}
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
-public expect inline fun FloatArray.filterNot(predicate: (Float) -> Boolean): List<Float>
+public inline fun FloatArray.filterNot(predicate: (Float) -> Boolean): List<Float> {
+    return filterNotTo(ArrayList<Float>(), predicate)
+}
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
-public expect inline fun DoubleArray.filterNot(predicate: (Double) -> Boolean): List<Double>
+public inline fun DoubleArray.filterNot(predicate: (Double) -> Boolean): List<Double> {
+    return filterNotTo(ArrayList<Double>(), predicate)
+}
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
-public expect inline fun BooleanArray.filterNot(predicate: (Boolean) -> Boolean): List<Boolean>
+public inline fun BooleanArray.filterNot(predicate: (Boolean) -> Boolean): List<Boolean> {
+    return filterNotTo(ArrayList<Boolean>(), predicate)
+}
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
-public expect inline fun CharArray.filterNot(predicate: (Char) -> Boolean): List<Char>
+public inline fun CharArray.filterNot(predicate: (Char) -> Boolean): List<Char> {
+    return filterNotTo(ArrayList<Char>(), predicate)
+}
 
 /**
  * Returns a list containing all elements that are not `null`.
  */
-public expect fun <T : Any> Array<out T?>.filterNotNull(): List<T>
+public fun <T : Any> Array<out T?>.filterNotNull(): List<T> {
+    return filterNotNullTo(ArrayList<T>())
+}
 
 /**
  * Appends all elements that are not `null` to the given [destination].
  */
-public expect fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C
+public fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C {
+    for (element in this) if (element != null) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  */
-public expect inline fun <T, C : MutableCollection<in T>> Array<out T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C
+public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Byte>> ByteArray.filterNotTo(destination: C, predicate: (Byte) -> Boolean): C
+public inline fun <C : MutableCollection<in Byte>> ByteArray.filterNotTo(destination: C, predicate: (Byte) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(destination: C, predicate: (Short) -> Boolean): C
+public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(destination: C, predicate: (Short) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Int>> IntArray.filterNotTo(destination: C, predicate: (Int) -> Boolean): C
+public inline fun <C : MutableCollection<in Int>> IntArray.filterNotTo(destination: C, predicate: (Int) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Long>> LongArray.filterNotTo(destination: C, predicate: (Long) -> Boolean): C
+public inline fun <C : MutableCollection<in Long>> LongArray.filterNotTo(destination: C, predicate: (Long) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Float>> FloatArray.filterNotTo(destination: C, predicate: (Float) -> Boolean): C
+public inline fun <C : MutableCollection<in Float>> FloatArray.filterNotTo(destination: C, predicate: (Float) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Double>> DoubleArray.filterNotTo(destination: C, predicate: (Double) -> Boolean): C
+public inline fun <C : MutableCollection<in Double>> DoubleArray.filterNotTo(destination: C, predicate: (Double) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterNotTo(destination: C, predicate: (Boolean) -> Boolean): C
+public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterNotTo(destination: C, predicate: (Boolean) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Char>> CharArray.filterNotTo(destination: C, predicate: (Char) -> Boolean): C
+public inline fun <C : MutableCollection<in Char>> CharArray.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  */
-public expect inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destination: C, predicate: (T) -> Boolean): C
+public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destination: C, predicate: (Byte) -> Boolean): C
+public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destination: C, predicate: (Byte) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destination: C, predicate: (Short) -> Boolean): C
+public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destination: C, predicate: (Short) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination: C, predicate: (Int) -> Boolean): C
+public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination: C, predicate: (Int) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destination: C, predicate: (Long) -> Boolean): C
+public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destination: C, predicate: (Long) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destination: C, predicate: (Float) -> Boolean): C
+public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destination: C, predicate: (Float) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destination: C, predicate: (Double) -> Boolean): C
+public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destination: C, predicate: (Double) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(destination: C, predicate: (Boolean) -> Boolean): C
+public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(destination: C, predicate: (Boolean) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destination: C, predicate: (Char) -> Boolean): C
+public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destination: C, predicate: (Char) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun <T> Array<out T>.slice(indices: IntRange): List<T>
+public fun <T> Array<out T>.slice(indices: IntRange): List<T> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun ByteArray.slice(indices: IntRange): List<Byte>
+public fun ByteArray.slice(indices: IntRange): List<Byte> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun ShortArray.slice(indices: IntRange): List<Short>
+public fun ShortArray.slice(indices: IntRange): List<Short> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun IntArray.slice(indices: IntRange): List<Int>
+public fun IntArray.slice(indices: IntRange): List<Int> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun LongArray.slice(indices: IntRange): List<Long>
+public fun LongArray.slice(indices: IntRange): List<Long> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun FloatArray.slice(indices: IntRange): List<Float>
+public fun FloatArray.slice(indices: IntRange): List<Float> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun DoubleArray.slice(indices: IntRange): List<Double>
+public fun DoubleArray.slice(indices: IntRange): List<Double> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun BooleanArray.slice(indices: IntRange): List<Boolean>
+public fun BooleanArray.slice(indices: IntRange): List<Boolean> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun CharArray.slice(indices: IntRange): List<Char>
+public fun CharArray.slice(indices: IntRange): List<Char> {
+    if (indices.isEmpty()) return listOf()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
+}
 
 /**
  * Returns a list containing elements at specified [indices].
  */
-public expect fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T>
+public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<T>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
 
 /**
  * Returns a list containing elements at specified [indices].
  */
-public expect fun ByteArray.slice(indices: Iterable<Int>): List<Byte>
+public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<Byte>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
 
 /**
  * Returns a list containing elements at specified [indices].
  */
-public expect fun ShortArray.slice(indices: Iterable<Int>): List<Short>
+public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<Short>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
 
 /**
  * Returns a list containing elements at specified [indices].
  */
-public expect fun IntArray.slice(indices: Iterable<Int>): List<Int>
+public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<Int>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
 
 /**
  * Returns a list containing elements at specified [indices].
  */
-public expect fun LongArray.slice(indices: Iterable<Int>): List<Long>
+public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<Long>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
 
 /**
  * Returns a list containing elements at specified [indices].
  */
-public expect fun FloatArray.slice(indices: Iterable<Int>): List<Float>
+public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<Float>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
 
 /**
  * Returns a list containing elements at specified [indices].
  */
-public expect fun DoubleArray.slice(indices: Iterable<Int>): List<Double>
+public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<Double>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
 
 /**
  * Returns a list containing elements at specified [indices].
  */
-public expect fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean>
+public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<Boolean>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
 
 /**
  * Returns a list containing elements at specified [indices].
  */
-public expect fun CharArray.slice(indices: Iterable<Int>): List<Char>
+public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    val list = ArrayList<Char>(size)
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+}
 
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public expect fun <T> Array<T>.sliceArray(indices: Collection<Int>): Array<T>
+public fun <T> Array<T>.sliceArray(indices: Collection<Int>): Array<T> {
+    val result = arrayOfNulls(this, indices.size)
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
 
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public expect fun ByteArray.sliceArray(indices: Collection<Int>): ByteArray
+public fun ByteArray.sliceArray(indices: Collection<Int>): ByteArray {
+    val result = ByteArray(indices.size)
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
 
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public expect fun ShortArray.sliceArray(indices: Collection<Int>): ShortArray
+public fun ShortArray.sliceArray(indices: Collection<Int>): ShortArray {
+    val result = ShortArray(indices.size)
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
 
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public expect fun IntArray.sliceArray(indices: Collection<Int>): IntArray
+public fun IntArray.sliceArray(indices: Collection<Int>): IntArray {
+    val result = IntArray(indices.size)
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
 
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public expect fun LongArray.sliceArray(indices: Collection<Int>): LongArray
+public fun LongArray.sliceArray(indices: Collection<Int>): LongArray {
+    val result = LongArray(indices.size)
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
 
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public expect fun FloatArray.sliceArray(indices: Collection<Int>): FloatArray
+public fun FloatArray.sliceArray(indices: Collection<Int>): FloatArray {
+    val result = FloatArray(indices.size)
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
 
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public expect fun DoubleArray.sliceArray(indices: Collection<Int>): DoubleArray
+public fun DoubleArray.sliceArray(indices: Collection<Int>): DoubleArray {
+    val result = DoubleArray(indices.size)
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
 
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public expect fun BooleanArray.sliceArray(indices: Collection<Int>): BooleanArray
+public fun BooleanArray.sliceArray(indices: Collection<Int>): BooleanArray {
+    val result = BooleanArray(indices.size)
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
 
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public expect fun CharArray.sliceArray(indices: Collection<Int>): CharArray
+public fun CharArray.sliceArray(indices: Collection<Int>): CharArray {
+    val result = CharArray(indices.size)
+    var targetIndex = 0
+    for (sourceIndex in indices) {
+        result[targetIndex++] = this[sourceIndex]
+    }
+    return result
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun <T> Array<T>.sliceArray(indices: IntRange): Array<T>
+public fun <T> Array<T>.sliceArray(indices: IntRange): Array<T> {
+    if (indices.isEmpty()) return copyOfRange(0, 0)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun ByteArray.sliceArray(indices: IntRange): ByteArray
+public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
+    if (indices.isEmpty()) return ByteArray(0)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun ShortArray.sliceArray(indices: IntRange): ShortArray
+public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
+    if (indices.isEmpty()) return ShortArray(0)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun IntArray.sliceArray(indices: IntRange): IntArray
+public fun IntArray.sliceArray(indices: IntRange): IntArray {
+    if (indices.isEmpty()) return IntArray(0)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun LongArray.sliceArray(indices: IntRange): LongArray
+public fun LongArray.sliceArray(indices: IntRange): LongArray {
+    if (indices.isEmpty()) return LongArray(0)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun FloatArray.sliceArray(indices: IntRange): FloatArray
+public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
+    if (indices.isEmpty()) return FloatArray(0)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun DoubleArray.sliceArray(indices: IntRange): DoubleArray
+public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
+    if (indices.isEmpty()) return DoubleArray(0)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun BooleanArray.sliceArray(indices: IntRange): BooleanArray
+public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
+    if (indices.isEmpty()) return BooleanArray(0)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
+}
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public expect fun CharArray.sliceArray(indices: IntRange): CharArray
+public fun CharArray.sliceArray(indices: IntRange): CharArray {
+    if (indices.isEmpty()) return CharArray(0)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
+}
 
 /**
  * Returns a list containing first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun <T> Array<out T>.take(n: Int): List<T>
+public fun <T> Array<out T>.take(n: Int): List<T> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<T>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun ByteArray.take(n: Int): List<Byte>
+public fun ByteArray.take(n: Int): List<Byte> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<Byte>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun ShortArray.take(n: Int): List<Short>
+public fun ShortArray.take(n: Int): List<Short> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<Short>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun IntArray.take(n: Int): List<Int>
+public fun IntArray.take(n: Int): List<Int> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<Int>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun LongArray.take(n: Int): List<Long>
+public fun LongArray.take(n: Int): List<Long> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<Long>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun FloatArray.take(n: Int): List<Float>
+public fun FloatArray.take(n: Int): List<Float> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<Float>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun DoubleArray.take(n: Int): List<Double>
+public fun DoubleArray.take(n: Int): List<Double> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<Double>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun BooleanArray.take(n: Int): List<Boolean>
+public fun BooleanArray.take(n: Int): List<Boolean> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<Boolean>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun CharArray.take(n: Int): List<Char>
+public fun CharArray.take(n: Int): List<Char> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[0])
+    var count = 0
+    val list = ArrayList<Char>(n)
+    for (item in this) {
+        if (count++ == n)
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun <T> Array<out T>.takeLast(n: Int): List<T>
+public fun <T> Array<out T>.takeLast(n: Int): List<T> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<T>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
 
 /**
  * Returns a list containing last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun ByteArray.takeLast(n: Int): List<Byte>
+public fun ByteArray.takeLast(n: Int): List<Byte> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<Byte>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
 
 /**
  * Returns a list containing last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun ShortArray.takeLast(n: Int): List<Short>
+public fun ShortArray.takeLast(n: Int): List<Short> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<Short>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
 
 /**
  * Returns a list containing last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun IntArray.takeLast(n: Int): List<Int>
+public fun IntArray.takeLast(n: Int): List<Int> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<Int>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
 
 /**
  * Returns a list containing last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun LongArray.takeLast(n: Int): List<Long>
+public fun LongArray.takeLast(n: Int): List<Long> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<Long>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
 
 /**
  * Returns a list containing last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun FloatArray.takeLast(n: Int): List<Float>
+public fun FloatArray.takeLast(n: Int): List<Float> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<Float>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
 
 /**
  * Returns a list containing last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun DoubleArray.takeLast(n: Int): List<Double>
+public fun DoubleArray.takeLast(n: Int): List<Double> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<Double>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
 
 /**
  * Returns a list containing last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun BooleanArray.takeLast(n: Int): List<Boolean>
+public fun BooleanArray.takeLast(n: Int): List<Boolean> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<Boolean>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
 
 /**
  * Returns a list containing last [n] elements.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect fun CharArray.takeLast(n: Int): List<Char>
+public fun CharArray.takeLast(n: Int): List<Char> {
+    require(n >= 0) { "Requested element count $n is less than zero." }
+    if (n == 0) return emptyList()
+    val size = size
+    if (n >= size) return toList()
+    if (n == 1) return listOf(this[size - 1])
+    val list = ArrayList<Char>(n)
+    for (index in size - n until size)
+        list.add(this[index])
+    return list
+}
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun <T> Array<out T>.takeLastWhile(predicate: (T) -> Boolean): List<T>
+public inline fun <T> Array<out T>.takeLastWhile(predicate: (T) -> Boolean): List<T> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun ByteArray.takeLastWhile(predicate: (Byte) -> Boolean): List<Byte>
+public inline fun ByteArray.takeLastWhile(predicate: (Byte) -> Boolean): List<Byte> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun ShortArray.takeLastWhile(predicate: (Short) -> Boolean): List<Short>
+public inline fun ShortArray.takeLastWhile(predicate: (Short) -> Boolean): List<Short> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun IntArray.takeLastWhile(predicate: (Int) -> Boolean): List<Int>
+public inline fun IntArray.takeLastWhile(predicate: (Int) -> Boolean): List<Int> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun LongArray.takeLastWhile(predicate: (Long) -> Boolean): List<Long>
+public inline fun LongArray.takeLastWhile(predicate: (Long) -> Boolean): List<Long> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun FloatArray.takeLastWhile(predicate: (Float) -> Boolean): List<Float>
+public inline fun FloatArray.takeLastWhile(predicate: (Float) -> Boolean): List<Float> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun DoubleArray.takeLastWhile(predicate: (Double) -> Boolean): List<Double>
+public inline fun DoubleArray.takeLastWhile(predicate: (Double) -> Boolean): List<Double> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun BooleanArray.takeLastWhile(predicate: (Boolean) -> Boolean): List<Boolean>
+public inline fun BooleanArray.takeLastWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Char>
+public inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Char> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return drop(index + 1)
+        }
+    }
+    return toList()
+}
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T>
+public inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T> {
+    val list = ArrayList<T>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun ByteArray.takeWhile(predicate: (Byte) -> Boolean): List<Byte>
+public inline fun ByteArray.takeWhile(predicate: (Byte) -> Boolean): List<Byte> {
+    val list = ArrayList<Byte>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Short>
+public inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Short> {
+    val list = ArrayList<Short>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun IntArray.takeWhile(predicate: (Int) -> Boolean): List<Int>
+public inline fun IntArray.takeWhile(predicate: (Int) -> Boolean): List<Int> {
+    val list = ArrayList<Int>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun LongArray.takeWhile(predicate: (Long) -> Boolean): List<Long>
+public inline fun LongArray.takeWhile(predicate: (Long) -> Boolean): List<Long> {
+    val list = ArrayList<Long>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun FloatArray.takeWhile(predicate: (Float) -> Boolean): List<Float>
+public inline fun FloatArray.takeWhile(predicate: (Float) -> Boolean): List<Float> {
+    val list = ArrayList<Float>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun DoubleArray.takeWhile(predicate: (Double) -> Boolean): List<Double>
+public inline fun DoubleArray.takeWhile(predicate: (Double) -> Boolean): List<Double> {
+    val list = ArrayList<Double>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun BooleanArray.takeWhile(predicate: (Boolean) -> Boolean): List<Boolean>
+public inline fun BooleanArray.takeWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
+    val list = ArrayList<Boolean>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
-public expect inline fun CharArray.takeWhile(predicate: (Char) -> Boolean): List<Char>
+public inline fun CharArray.takeWhile(predicate: (Char) -> Boolean): List<Char> {
+    val list = ArrayList<Char>()
+    for (item in this) {
+        if (!predicate(item))
+            break
+        list.add(item)
+    }
+    return list
+}
 
 /**
  * Reverses elements in the array in-place.
  */
-public expect fun <T> Array<T>.reverse(): Unit
+public fun <T> Array<T>.reverse(): Unit {
+    val midPoint = (size / 2) - 1
+    if (midPoint < 0) return
+    var reverseIndex = lastIndex
+    for (index in 0..midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
 
 /**
  * Reverses elements in the array in-place.
  */
-public expect fun ByteArray.reverse(): Unit
+public fun ByteArray.reverse(): Unit {
+    val midPoint = (size / 2) - 1
+    if (midPoint < 0) return
+    var reverseIndex = lastIndex
+    for (index in 0..midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
 
 /**
  * Reverses elements in the array in-place.
  */
-public expect fun ShortArray.reverse(): Unit
+public fun ShortArray.reverse(): Unit {
+    val midPoint = (size / 2) - 1
+    if (midPoint < 0) return
+    var reverseIndex = lastIndex
+    for (index in 0..midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
 
 /**
  * Reverses elements in the array in-place.
  */
-public expect fun IntArray.reverse(): Unit
+public fun IntArray.reverse(): Unit {
+    val midPoint = (size / 2) - 1
+    if (midPoint < 0) return
+    var reverseIndex = lastIndex
+    for (index in 0..midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
 
 /**
  * Reverses elements in the array in-place.
  */
-public expect fun LongArray.reverse(): Unit
+public fun LongArray.reverse(): Unit {
+    val midPoint = (size / 2) - 1
+    if (midPoint < 0) return
+    var reverseIndex = lastIndex
+    for (index in 0..midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
 
 /**
  * Reverses elements in the array in-place.
  */
-public expect fun FloatArray.reverse(): Unit
+public fun FloatArray.reverse(): Unit {
+    val midPoint = (size / 2) - 1
+    if (midPoint < 0) return
+    var reverseIndex = lastIndex
+    for (index in 0..midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
 
 /**
  * Reverses elements in the array in-place.
  */
-public expect fun DoubleArray.reverse(): Unit
+public fun DoubleArray.reverse(): Unit {
+    val midPoint = (size / 2) - 1
+    if (midPoint < 0) return
+    var reverseIndex = lastIndex
+    for (index in 0..midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
 
 /**
  * Reverses elements in the array in-place.
  */
-public expect fun BooleanArray.reverse(): Unit
+public fun BooleanArray.reverse(): Unit {
+    val midPoint = (size / 2) - 1
+    if (midPoint < 0) return
+    var reverseIndex = lastIndex
+    for (index in 0..midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
 
 /**
  * Reverses elements in the array in-place.
  */
-public expect fun CharArray.reverse(): Unit
+public fun CharArray.reverse(): Unit {
+    val midPoint = (size / 2) - 1
+    if (midPoint < 0) return
+    var reverseIndex = lastIndex
+    for (index in 0..midPoint) {
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
+        reverseIndex--
+    }
+}
 
 /**
  * Returns a list with elements in reversed order.
  */
-public expect fun <T> Array<out T>.reversed(): List<T>
+public fun <T> Array<out T>.reversed(): List<T> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
 
 /**
  * Returns a list with elements in reversed order.
  */
-public expect fun ByteArray.reversed(): List<Byte>
+public fun ByteArray.reversed(): List<Byte> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
 
 /**
  * Returns a list with elements in reversed order.
  */
-public expect fun ShortArray.reversed(): List<Short>
+public fun ShortArray.reversed(): List<Short> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
 
 /**
  * Returns a list with elements in reversed order.
  */
-public expect fun IntArray.reversed(): List<Int>
+public fun IntArray.reversed(): List<Int> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
 
 /**
  * Returns a list with elements in reversed order.
  */
-public expect fun LongArray.reversed(): List<Long>
+public fun LongArray.reversed(): List<Long> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
 
 /**
  * Returns a list with elements in reversed order.
  */
-public expect fun FloatArray.reversed(): List<Float>
+public fun FloatArray.reversed(): List<Float> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
 
 /**
  * Returns a list with elements in reversed order.
  */
-public expect fun DoubleArray.reversed(): List<Double>
+public fun DoubleArray.reversed(): List<Double> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
 
 /**
  * Returns a list with elements in reversed order.
  */
-public expect fun BooleanArray.reversed(): List<Boolean>
+public fun BooleanArray.reversed(): List<Boolean> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
 
 /**
  * Returns a list with elements in reversed order.
  */
-public expect fun CharArray.reversed(): List<Char>
+public fun CharArray.reversed(): List<Char> {
+    if (isEmpty()) return emptyList()
+    val list = toMutableList()
+    list.reverse()
+    return list
+}
 
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public expect fun <T> Array<T>.reversedArray(): Array<T>
+public fun <T> Array<T>.reversedArray(): Array<T> {
+    if (isEmpty()) return this
+    val result = arrayOfNulls(this, size)
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
 
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public expect fun ByteArray.reversedArray(): ByteArray
+public fun ByteArray.reversedArray(): ByteArray {
+    if (isEmpty()) return this
+    val result = ByteArray(size)
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
 
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public expect fun ShortArray.reversedArray(): ShortArray
+public fun ShortArray.reversedArray(): ShortArray {
+    if (isEmpty()) return this
+    val result = ShortArray(size)
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
 
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public expect fun IntArray.reversedArray(): IntArray
+public fun IntArray.reversedArray(): IntArray {
+    if (isEmpty()) return this
+    val result = IntArray(size)
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
 
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public expect fun LongArray.reversedArray(): LongArray
+public fun LongArray.reversedArray(): LongArray {
+    if (isEmpty()) return this
+    val result = LongArray(size)
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
 
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public expect fun FloatArray.reversedArray(): FloatArray
+public fun FloatArray.reversedArray(): FloatArray {
+    if (isEmpty()) return this
+    val result = FloatArray(size)
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
 
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public expect fun DoubleArray.reversedArray(): DoubleArray
+public fun DoubleArray.reversedArray(): DoubleArray {
+    if (isEmpty()) return this
+    val result = DoubleArray(size)
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
 
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public expect fun BooleanArray.reversedArray(): BooleanArray
+public fun BooleanArray.reversedArray(): BooleanArray {
+    if (isEmpty()) return this
+    val result = BooleanArray(size)
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
 
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public expect fun CharArray.reversedArray(): CharArray
+public fun CharArray.reversedArray(): CharArray {
+    if (isEmpty()) return this
+    val result = CharArray(size)
+    val lastIndex = lastIndex
+    for (i in 0..lastIndex)
+        result[lastIndex - i] = this[i]
+    return result
+}
 
 /**
  * Sorts elements in the array in-place according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selector: (T) -> R?): Unit
+public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selector: (T) -> R?): Unit {
+    if (size > 1) sortWith(compareBy(selector))
+}
 
 /**
  * Sorts elements in the array in-place descending according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <T, R : Comparable<R>> Array<out T>.sortByDescending(crossinline selector: (T) -> R?): Unit
+public inline fun <T, R : Comparable<R>> Array<out T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
+    if (size > 1) sortWith(compareByDescending(selector))
+}
 
 /**
  * Sorts elements in the array in-place descending according to their natural sort order.
  */
-public expect fun <T : Comparable<T>> Array<out T>.sortDescending(): Unit
+public fun <T : Comparable<T>> Array<out T>.sortDescending(): Unit {
+    sortWith(reverseOrder())
+}
 
 /**
  * Sorts elements in the array in-place descending according to their natural sort order.
  */
-public expect fun ByteArray.sortDescending(): Unit
+public fun ByteArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
 
 /**
  * Sorts elements in the array in-place descending according to their natural sort order.
  */
-public expect fun ShortArray.sortDescending(): Unit
+public fun ShortArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
 
 /**
  * Sorts elements in the array in-place descending according to their natural sort order.
  */
-public expect fun IntArray.sortDescending(): Unit
+public fun IntArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
 
 /**
  * Sorts elements in the array in-place descending according to their natural sort order.
  */
-public expect fun LongArray.sortDescending(): Unit
+public fun LongArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
 
 /**
  * Sorts elements in the array in-place descending according to their natural sort order.
  */
-public expect fun FloatArray.sortDescending(): Unit
+public fun FloatArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
 
 /**
  * Sorts elements in the array in-place descending according to their natural sort order.
  */
-public expect fun DoubleArray.sortDescending(): Unit
+public fun DoubleArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
 
 /**
  * Sorts elements in the array in-place descending according to their natural sort order.
  */
-public expect fun CharArray.sortDescending(): Unit
+public fun CharArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
-public expect fun <T : Comparable<T>> Array<out T>.sorted(): List<T>
+public fun <T : Comparable<T>> Array<out T>.sorted(): List<T> {
+    return sortedArray().asList()
+}
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
-public expect fun ByteArray.sorted(): List<Byte>
+public fun ByteArray.sorted(): List<Byte> {
+    return toTypedArray().apply { sort() }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
-public expect fun ShortArray.sorted(): List<Short>
+public fun ShortArray.sorted(): List<Short> {
+    return toTypedArray().apply { sort() }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
-public expect fun IntArray.sorted(): List<Int>
+public fun IntArray.sorted(): List<Int> {
+    return toTypedArray().apply { sort() }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
-public expect fun LongArray.sorted(): List<Long>
+public fun LongArray.sorted(): List<Long> {
+    return toTypedArray().apply { sort() }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
-public expect fun FloatArray.sorted(): List<Float>
+public fun FloatArray.sorted(): List<Float> {
+    return toTypedArray().apply { sort() }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
-public expect fun DoubleArray.sorted(): List<Double>
+public fun DoubleArray.sorted(): List<Double> {
+    return toTypedArray().apply { sort() }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
-public expect fun CharArray.sorted(): List<Char>
+public fun CharArray.sorted(): List<Char> {
+    return toTypedArray().apply { sort() }.asList()
+}
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
  */
-public expect fun <T : Comparable<T>> Array<T>.sortedArray(): Array<T>
+public fun <T : Comparable<T>> Array<T>.sortedArray(): Array<T> {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
  */
-public expect fun ByteArray.sortedArray(): ByteArray
+public fun ByteArray.sortedArray(): ByteArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
  */
-public expect fun ShortArray.sortedArray(): ShortArray
+public fun ShortArray.sortedArray(): ShortArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
  */
-public expect fun IntArray.sortedArray(): IntArray
+public fun IntArray.sortedArray(): IntArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
  */
-public expect fun LongArray.sortedArray(): LongArray
+public fun LongArray.sortedArray(): LongArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
  */
-public expect fun FloatArray.sortedArray(): FloatArray
+public fun FloatArray.sortedArray(): FloatArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
  */
-public expect fun DoubleArray.sortedArray(): DoubleArray
+public fun DoubleArray.sortedArray(): DoubleArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
  */
-public expect fun CharArray.sortedArray(): CharArray
+public fun CharArray.sortedArray(): CharArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
  */
-public expect fun <T : Comparable<T>> Array<T>.sortedArrayDescending(): Array<T>
+public fun <T : Comparable<T>> Array<T>.sortedArrayDescending(): Array<T> {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortWith(reverseOrder()) }
+}
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
  */
-public expect fun ByteArray.sortedArrayDescending(): ByteArray
+public fun ByteArray.sortedArrayDescending(): ByteArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
  */
-public expect fun ShortArray.sortedArrayDescending(): ShortArray
+public fun ShortArray.sortedArrayDescending(): ShortArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
  */
-public expect fun IntArray.sortedArrayDescending(): IntArray
+public fun IntArray.sortedArrayDescending(): IntArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
  */
-public expect fun LongArray.sortedArrayDescending(): LongArray
+public fun LongArray.sortedArrayDescending(): LongArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
  */
-public expect fun FloatArray.sortedArrayDescending(): FloatArray
+public fun FloatArray.sortedArrayDescending(): FloatArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
  */
-public expect fun DoubleArray.sortedArrayDescending(): DoubleArray
+public fun DoubleArray.sortedArrayDescending(): DoubleArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
  */
-public expect fun CharArray.sortedArrayDescending(): CharArray
+public fun CharArray.sortedArrayDescending(): CharArray {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortDescending() }
+}
 
 /**
  * Returns an array with all elements of this array sorted according the specified [comparator].
  */
-public expect fun <T> Array<out T>.sortedArrayWith(comparator: Comparator<in T>): Array<out T>
+public fun <T> Array<out T>.sortedArrayWith(comparator: Comparator<in T>): Array<out T> {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortWith(comparator) }
+}
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(crossinline selector: (T) -> R?): List<T>
+public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(crossinline selector: (T) -> R?): List<T> {
+    return sortedWith(compareBy(selector))
+}
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> ByteArray.sortedBy(crossinline selector: (Byte) -> R?): List<Byte>
+public inline fun <R : Comparable<R>> ByteArray.sortedBy(crossinline selector: (Byte) -> R?): List<Byte> {
+    return sortedWith(compareBy(selector))
+}
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> ShortArray.sortedBy(crossinline selector: (Short) -> R?): List<Short>
+public inline fun <R : Comparable<R>> ShortArray.sortedBy(crossinline selector: (Short) -> R?): List<Short> {
+    return sortedWith(compareBy(selector))
+}
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> IntArray.sortedBy(crossinline selector: (Int) -> R?): List<Int>
+public inline fun <R : Comparable<R>> IntArray.sortedBy(crossinline selector: (Int) -> R?): List<Int> {
+    return sortedWith(compareBy(selector))
+}
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> LongArray.sortedBy(crossinline selector: (Long) -> R?): List<Long>
+public inline fun <R : Comparable<R>> LongArray.sortedBy(crossinline selector: (Long) -> R?): List<Long> {
+    return sortedWith(compareBy(selector))
+}
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> FloatArray.sortedBy(crossinline selector: (Float) -> R?): List<Float>
+public inline fun <R : Comparable<R>> FloatArray.sortedBy(crossinline selector: (Float) -> R?): List<Float> {
+    return sortedWith(compareBy(selector))
+}
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> DoubleArray.sortedBy(crossinline selector: (Double) -> R?): List<Double>
+public inline fun <R : Comparable<R>> DoubleArray.sortedBy(crossinline selector: (Double) -> R?): List<Double> {
+    return sortedWith(compareBy(selector))
+}
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> BooleanArray.sortedBy(crossinline selector: (Boolean) -> R?): List<Boolean>
+public inline fun <R : Comparable<R>> BooleanArray.sortedBy(crossinline selector: (Boolean) -> R?): List<Boolean> {
+    return sortedWith(compareBy(selector))
+}
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> CharArray.sortedBy(crossinline selector: (Char) -> R?): List<Char>
+public inline fun <R : Comparable<R>> CharArray.sortedBy(crossinline selector: (Char) -> R?): List<Char> {
+    return sortedWith(compareBy(selector))
+}
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(crossinline selector: (T) -> R?): List<T>
+public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(crossinline selector: (T) -> R?): List<T> {
+    return sortedWith(compareByDescending(selector))
+}
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> ByteArray.sortedByDescending(crossinline selector: (Byte) -> R?): List<Byte>
+public inline fun <R : Comparable<R>> ByteArray.sortedByDescending(crossinline selector: (Byte) -> R?): List<Byte> {
+    return sortedWith(compareByDescending(selector))
+}
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> ShortArray.sortedByDescending(crossinline selector: (Short) -> R?): List<Short>
+public inline fun <R : Comparable<R>> ShortArray.sortedByDescending(crossinline selector: (Short) -> R?): List<Short> {
+    return sortedWith(compareByDescending(selector))
+}
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> IntArray.sortedByDescending(crossinline selector: (Int) -> R?): List<Int>
+public inline fun <R : Comparable<R>> IntArray.sortedByDescending(crossinline selector: (Int) -> R?): List<Int> {
+    return sortedWith(compareByDescending(selector))
+}
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> LongArray.sortedByDescending(crossinline selector: (Long) -> R?): List<Long>
+public inline fun <R : Comparable<R>> LongArray.sortedByDescending(crossinline selector: (Long) -> R?): List<Long> {
+    return sortedWith(compareByDescending(selector))
+}
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> FloatArray.sortedByDescending(crossinline selector: (Float) -> R?): List<Float>
+public inline fun <R : Comparable<R>> FloatArray.sortedByDescending(crossinline selector: (Float) -> R?): List<Float> {
+    return sortedWith(compareByDescending(selector))
+}
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> DoubleArray.sortedByDescending(crossinline selector: (Double) -> R?): List<Double>
+public inline fun <R : Comparable<R>> DoubleArray.sortedByDescending(crossinline selector: (Double) -> R?): List<Double> {
+    return sortedWith(compareByDescending(selector))
+}
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> BooleanArray.sortedByDescending(crossinline selector: (Boolean) -> R?): List<Boolean>
+public inline fun <R : Comparable<R>> BooleanArray.sortedByDescending(crossinline selector: (Boolean) -> R?): List<Boolean> {
+    return sortedWith(compareByDescending(selector))
+}
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public expect inline fun <R : Comparable<R>> CharArray.sortedByDescending(crossinline selector: (Char) -> R?): List<Char>
+public inline fun <R : Comparable<R>> CharArray.sortedByDescending(crossinline selector: (Char) -> R?): List<Char> {
+    return sortedWith(compareByDescending(selector))
+}
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
-public expect fun <T : Comparable<T>> Array<out T>.sortedDescending(): List<T>
+public fun <T : Comparable<T>> Array<out T>.sortedDescending(): List<T> {
+    return sortedWith(reverseOrder())
+}
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
-public expect fun ByteArray.sortedDescending(): List<Byte>
+public fun ByteArray.sortedDescending(): List<Byte> {
+    return copyOf().apply { sort() }.reversed()
+}
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
-public expect fun ShortArray.sortedDescending(): List<Short>
+public fun ShortArray.sortedDescending(): List<Short> {
+    return copyOf().apply { sort() }.reversed()
+}
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
-public expect fun IntArray.sortedDescending(): List<Int>
+public fun IntArray.sortedDescending(): List<Int> {
+    return copyOf().apply { sort() }.reversed()
+}
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
-public expect fun LongArray.sortedDescending(): List<Long>
+public fun LongArray.sortedDescending(): List<Long> {
+    return copyOf().apply { sort() }.reversed()
+}
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
-public expect fun FloatArray.sortedDescending(): List<Float>
+public fun FloatArray.sortedDescending(): List<Float> {
+    return copyOf().apply { sort() }.reversed()
+}
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
-public expect fun DoubleArray.sortedDescending(): List<Double>
+public fun DoubleArray.sortedDescending(): List<Double> {
+    return copyOf().apply { sort() }.reversed()
+}
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
-public expect fun CharArray.sortedDescending(): List<Char>
+public fun CharArray.sortedDescending(): List<Char> {
+    return copyOf().apply { sort() }.reversed()
+}
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-public expect fun <T> Array<out T>.sortedWith(comparator: Comparator<in T>): List<T>
+public fun <T> Array<out T>.sortedWith(comparator: Comparator<in T>): List<T> {
+    return sortedArrayWith(comparator).asList()
+}
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-public expect fun ByteArray.sortedWith(comparator: Comparator<in Byte>): List<Byte>
+public fun ByteArray.sortedWith(comparator: Comparator<in Byte>): List<Byte> {
+    return toTypedArray().apply { sortWith(comparator) }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-public expect fun ShortArray.sortedWith(comparator: Comparator<in Short>): List<Short>
+public fun ShortArray.sortedWith(comparator: Comparator<in Short>): List<Short> {
+    return toTypedArray().apply { sortWith(comparator) }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-public expect fun IntArray.sortedWith(comparator: Comparator<in Int>): List<Int>
+public fun IntArray.sortedWith(comparator: Comparator<in Int>): List<Int> {
+    return toTypedArray().apply { sortWith(comparator) }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-public expect fun LongArray.sortedWith(comparator: Comparator<in Long>): List<Long>
+public fun LongArray.sortedWith(comparator: Comparator<in Long>): List<Long> {
+    return toTypedArray().apply { sortWith(comparator) }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-public expect fun FloatArray.sortedWith(comparator: Comparator<in Float>): List<Float>
+public fun FloatArray.sortedWith(comparator: Comparator<in Float>): List<Float> {
+    return toTypedArray().apply { sortWith(comparator) }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-public expect fun DoubleArray.sortedWith(comparator: Comparator<in Double>): List<Double>
+public fun DoubleArray.sortedWith(comparator: Comparator<in Double>): List<Double> {
+    return toTypedArray().apply { sortWith(comparator) }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-public expect fun BooleanArray.sortedWith(comparator: Comparator<in Boolean>): List<Boolean>
+public fun BooleanArray.sortedWith(comparator: Comparator<in Boolean>): List<Boolean> {
+    return toTypedArray().apply { sortWith(comparator) }.asList()
+}
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-public expect fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char>
+public fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char> {
+    return toTypedArray().apply { sortWith(comparator) }.asList()
+}
 
 /**
  * Returns a [List] that wraps the original array.
@@ -3350,200 +5705,254 @@ public expect fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
 /**
  * Returns the range of valid indices for the array.
  */
-public expect val <T> Array<out T>.indices: IntRange
+public val <T> Array<out T>.indices: IntRange
+    get() = IntRange(0, lastIndex)
 
 /**
  * Returns the range of valid indices for the array.
  */
-public expect val ByteArray.indices: IntRange
+public val ByteArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
 
 /**
  * Returns the range of valid indices for the array.
  */
-public expect val ShortArray.indices: IntRange
+public val ShortArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
 
 /**
  * Returns the range of valid indices for the array.
  */
-public expect val IntArray.indices: IntRange
+public val IntArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
 
 /**
  * Returns the range of valid indices for the array.
  */
-public expect val LongArray.indices: IntRange
+public val LongArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
 
 /**
  * Returns the range of valid indices for the array.
  */
-public expect val FloatArray.indices: IntRange
+public val FloatArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
 
 /**
  * Returns the range of valid indices for the array.
  */
-public expect val DoubleArray.indices: IntRange
+public val DoubleArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
 
 /**
  * Returns the range of valid indices for the array.
  */
-public expect val BooleanArray.indices: IntRange
+public val BooleanArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
 
 /**
  * Returns the range of valid indices for the array.
  */
-public expect val CharArray.indices: IntRange
+public val CharArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
 
 /**
  * Returns `true` if the array is empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun <T> Array<out T>.isEmpty(): Boolean
+public inline fun <T> Array<out T>.isEmpty(): Boolean {
+    return size == 0
+}
 
 /**
  * Returns `true` if the array is empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ByteArray.isEmpty(): Boolean
+public inline fun ByteArray.isEmpty(): Boolean {
+    return size == 0
+}
 
 /**
  * Returns `true` if the array is empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ShortArray.isEmpty(): Boolean
+public inline fun ShortArray.isEmpty(): Boolean {
+    return size == 0
+}
 
 /**
  * Returns `true` if the array is empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun IntArray.isEmpty(): Boolean
+public inline fun IntArray.isEmpty(): Boolean {
+    return size == 0
+}
 
 /**
  * Returns `true` if the array is empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun LongArray.isEmpty(): Boolean
+public inline fun LongArray.isEmpty(): Boolean {
+    return size == 0
+}
 
 /**
  * Returns `true` if the array is empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun FloatArray.isEmpty(): Boolean
+public inline fun FloatArray.isEmpty(): Boolean {
+    return size == 0
+}
 
 /**
  * Returns `true` if the array is empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun DoubleArray.isEmpty(): Boolean
+public inline fun DoubleArray.isEmpty(): Boolean {
+    return size == 0
+}
 
 /**
  * Returns `true` if the array is empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun BooleanArray.isEmpty(): Boolean
+public inline fun BooleanArray.isEmpty(): Boolean {
+    return size == 0
+}
 
 /**
  * Returns `true` if the array is empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharArray.isEmpty(): Boolean
+public inline fun CharArray.isEmpty(): Boolean {
+    return size == 0
+}
 
 /**
  * Returns `true` if the array is not empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun <T> Array<out T>.isNotEmpty(): Boolean
+public inline fun <T> Array<out T>.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if the array is not empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ByteArray.isNotEmpty(): Boolean
+public inline fun ByteArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if the array is not empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ShortArray.isNotEmpty(): Boolean
+public inline fun ShortArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if the array is not empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun IntArray.isNotEmpty(): Boolean
+public inline fun IntArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if the array is not empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun LongArray.isNotEmpty(): Boolean
+public inline fun LongArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if the array is not empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun FloatArray.isNotEmpty(): Boolean
+public inline fun FloatArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if the array is not empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun DoubleArray.isNotEmpty(): Boolean
+public inline fun DoubleArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if the array is not empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun BooleanArray.isNotEmpty(): Boolean
+public inline fun BooleanArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if the array is not empty.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharArray.isNotEmpty(): Boolean
+public inline fun CharArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns the last valid index for the array.
  */
-public expect val <T> Array<out T>.lastIndex: Int
+public val <T> Array<out T>.lastIndex: Int
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
-public expect val ByteArray.lastIndex: Int
+public val ByteArray.lastIndex: Int
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
-public expect val ShortArray.lastIndex: Int
+public val ShortArray.lastIndex: Int
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
-public expect val IntArray.lastIndex: Int
+public val IntArray.lastIndex: Int
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
-public expect val LongArray.lastIndex: Int
+public val LongArray.lastIndex: Int
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
-public expect val FloatArray.lastIndex: Int
+public val FloatArray.lastIndex: Int
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
-public expect val DoubleArray.lastIndex: Int
+public val DoubleArray.lastIndex: Int
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
-public expect val BooleanArray.lastIndex: Int
+public val BooleanArray.lastIndex: Int
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
-public expect val CharArray.lastIndex: Int
+public val CharArray.lastIndex: Int
+    get() = size - 1
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
@@ -3733,42 +6142,82 @@ public expect fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit
 /**
  * Returns an array of Boolean containing all of the elements of this generic array.
  */
-public expect fun Array<out Boolean>.toBooleanArray(): BooleanArray
+public fun Array<out Boolean>.toBooleanArray(): BooleanArray {
+    val result = BooleanArray(size)
+    for (index in indices)
+        result[index] = this[index]
+    return result
+}
 
 /**
  * Returns an array of Byte containing all of the elements of this generic array.
  */
-public expect fun Array<out Byte>.toByteArray(): ByteArray
+public fun Array<out Byte>.toByteArray(): ByteArray {
+    val result = ByteArray(size)
+    for (index in indices)
+        result[index] = this[index]
+    return result
+}
 
 /**
  * Returns an array of Char containing all of the elements of this generic array.
  */
-public expect fun Array<out Char>.toCharArray(): CharArray
+public fun Array<out Char>.toCharArray(): CharArray {
+    val result = CharArray(size)
+    for (index in indices)
+        result[index] = this[index]
+    return result
+}
 
 /**
  * Returns an array of Double containing all of the elements of this generic array.
  */
-public expect fun Array<out Double>.toDoubleArray(): DoubleArray
+public fun Array<out Double>.toDoubleArray(): DoubleArray {
+    val result = DoubleArray(size)
+    for (index in indices)
+        result[index] = this[index]
+    return result
+}
 
 /**
  * Returns an array of Float containing all of the elements of this generic array.
  */
-public expect fun Array<out Float>.toFloatArray(): FloatArray
+public fun Array<out Float>.toFloatArray(): FloatArray {
+    val result = FloatArray(size)
+    for (index in indices)
+        result[index] = this[index]
+    return result
+}
 
 /**
  * Returns an array of Int containing all of the elements of this generic array.
  */
-public expect fun Array<out Int>.toIntArray(): IntArray
+public fun Array<out Int>.toIntArray(): IntArray {
+    val result = IntArray(size)
+    for (index in indices)
+        result[index] = this[index]
+    return result
+}
 
 /**
  * Returns an array of Long containing all of the elements of this generic array.
  */
-public expect fun Array<out Long>.toLongArray(): LongArray
+public fun Array<out Long>.toLongArray(): LongArray {
+    val result = LongArray(size)
+    for (index in indices)
+        result[index] = this[index]
+    return result
+}
 
 /**
  * Returns an array of Short containing all of the elements of this generic array.
  */
-public expect fun Array<out Short>.toShortArray(): ShortArray
+public fun Array<out Short>.toShortArray(): ShortArray {
+    val result = ShortArray(size)
+    for (index in indices)
+        result[index] = this[index]
+    return result
+}
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
@@ -3818,7 +6267,10 @@ public expect fun CharArray.toTypedArray(): Array<Char>
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>): Map<K, V>
+public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -3828,7 +6280,10 @@ public expect inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): Map<K, V>
+public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -3838,7 +6293,10 @@ public expect inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K,
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>): Map<K, V>
+public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -3848,7 +6306,10 @@ public expect inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map<K, V>
+public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -3858,7 +6319,10 @@ public expect inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): Map<K, V>
+public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -3868,7 +6332,10 @@ public expect inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K,
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>): Map<K, V>
+public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -3878,7 +6345,10 @@ public expect inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>): Map<K, V>
+public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -3888,7 +6358,10 @@ public expect inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pai
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, V>): Map<K, V>
+public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -3898,7 +6371,10 @@ public expect inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> P
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): Map<K, V>
+public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
 
 /**
  * Returns a [Map] containing the elements from the given array indexed by the key
@@ -3908,7 +6384,10 @@ public expect inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K,
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K, T>
+public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K, T> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
+}
 
 /**
  * Returns a [Map] containing the elements from the given array indexed by the key
@@ -3918,7 +6397,10 @@ public expect inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K):
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, Byte>
+public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, Byte> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Byte>(capacity), keySelector)
+}
 
 /**
  * Returns a [Map] containing the elements from the given array indexed by the key
@@ -3928,7 +6410,10 @@ public expect inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Ma
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, Short>
+public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, Short> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Short>(capacity), keySelector)
+}
 
 /**
  * Returns a [Map] containing the elements from the given array indexed by the key
@@ -3938,7 +6423,10 @@ public expect inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): 
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int>
+public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Int>(capacity), keySelector)
+}
 
 /**
  * Returns a [Map] containing the elements from the given array indexed by the key
@@ -3948,7 +6436,10 @@ public expect inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Long>
+public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Long> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Long>(capacity), keySelector)
+}
 
 /**
  * Returns a [Map] containing the elements from the given array indexed by the key
@@ -3958,7 +6449,10 @@ public expect inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Ma
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, Float>
+public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, Float> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Float>(capacity), keySelector)
+}
 
 /**
  * Returns a [Map] containing the elements from the given array indexed by the key
@@ -3968,7 +6462,10 @@ public expect inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): 
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K, Double>
+public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K, Double> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Double>(capacity), keySelector)
+}
 
 /**
  * Returns a [Map] containing the elements from the given array indexed by the key
@@ -3978,7 +6475,10 @@ public expect inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K)
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map<K, Boolean>
+public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map<K, Boolean> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Boolean>(capacity), keySelector)
+}
 
 /**
  * Returns a [Map] containing the elements from the given array indexed by the key
@@ -3988,7 +6488,10 @@ public expect inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> 
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Char>
+public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Char> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
+}
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
@@ -3997,7 +6500,10 @@ public expect inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Ma
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V>
+public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
@@ -4006,7 +6512,10 @@ public expect inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> 
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, V>
+public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
@@ -4015,7 +6524,10 @@ public expect inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, 
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, V>
+public inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
@@ -4024,7 +6536,10 @@ public expect inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, V>
+public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
@@ -4033,7 +6548,10 @@ public expect inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, va
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, V>
+public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
@@ -4042,7 +6560,10 @@ public expect inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, 
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, V>
+public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
@@ -4051,7 +6572,10 @@ public expect inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, V>
+public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
@@ -4060,7 +6584,10 @@ public expect inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) ->
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, V>
+public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
@@ -4069,7 +6596,10 @@ public expect inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) 
  * 
  * The returned map preserves the entry iteration order of the original array.
  */
-public expect inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V>
+public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4078,7 +6608,12 @@ public expect inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, 
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K): M
+public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4087,7 +6622,12 @@ public expect inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associa
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K): M
+public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4096,7 +6636,12 @@ public expect inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateB
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K): M
+public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4105,7 +6650,12 @@ public expect inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associat
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K): M
+public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4114,7 +6664,12 @@ public expect inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByT
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K): M
+public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4123,7 +6678,12 @@ public expect inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateB
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K): M
+public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4132,7 +6692,12 @@ public expect inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associat
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K): M
+public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4141,7 +6706,12 @@ public expect inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associ
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K): M
+public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4150,7 +6720,12 @@ public expect inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.asso
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K): M
+public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4159,7 +6734,12 @@ public expect inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateB
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M
+public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4168,7 +6748,12 @@ public expect inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.asso
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M
+public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4177,7 +6762,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateB
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M
+public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4186,7 +6776,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associate
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M
+public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4195,7 +6790,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateBy
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M
+public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4204,7 +6804,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateB
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M
+public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4213,7 +6818,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associate
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M
+public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4222,7 +6832,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associat
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M
+public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -4231,7 +6846,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associa
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M
+public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -4239,7 +6859,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateB
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public expect inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M
+public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -4247,7 +6872,12 @@ public expect inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.asso
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(destination: M, transform: (Byte) -> Pair<K, V>): M
+public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(destination: M, transform: (Byte) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -4255,7 +6885,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateT
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(destination: M, transform: (Short) -> Pair<K, V>): M
+public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(destination: M, transform: (Short) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -4263,7 +6898,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associate
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destination: M, transform: (Int) -> Pair<K, V>): M
+public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destination: M, transform: (Int) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -4271,7 +6911,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(destination: M, transform: (Long) -> Pair<K, V>): M
+public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(destination: M, transform: (Long) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -4279,7 +6924,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateT
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(destination: M, transform: (Float) -> Pair<K, V>): M
+public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(destination: M, transform: (Float) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -4287,7 +6937,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associate
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(destination: M, transform: (Double) -> Pair<K, V>): M
+public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(destination: M, transform: (Double) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -4295,7 +6950,12 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associat
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(destination: M, transform: (Boolean) -> Pair<K, V>): M
+public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(destination: M, transform: (Boolean) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -4303,340 +6963,622 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associa
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M
+public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
 
 /**
  * Appends all elements to the given [destination] collection.
  */
-public expect fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destination: C): C
+public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
 
 /**
  * Appends all elements to the given [destination] collection.
  */
-public expect fun <C : MutableCollection<in Byte>> ByteArray.toCollection(destination: C): C
+public fun <C : MutableCollection<in Byte>> ByteArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
 
 /**
  * Appends all elements to the given [destination] collection.
  */
-public expect fun <C : MutableCollection<in Short>> ShortArray.toCollection(destination: C): C
+public fun <C : MutableCollection<in Short>> ShortArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
 
 /**
  * Appends all elements to the given [destination] collection.
  */
-public expect fun <C : MutableCollection<in Int>> IntArray.toCollection(destination: C): C
+public fun <C : MutableCollection<in Int>> IntArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
 
 /**
  * Appends all elements to the given [destination] collection.
  */
-public expect fun <C : MutableCollection<in Long>> LongArray.toCollection(destination: C): C
+public fun <C : MutableCollection<in Long>> LongArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
 
 /**
  * Appends all elements to the given [destination] collection.
  */
-public expect fun <C : MutableCollection<in Float>> FloatArray.toCollection(destination: C): C
+public fun <C : MutableCollection<in Float>> FloatArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
 
 /**
  * Appends all elements to the given [destination] collection.
  */
-public expect fun <C : MutableCollection<in Double>> DoubleArray.toCollection(destination: C): C
+public fun <C : MutableCollection<in Double>> DoubleArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
 
 /**
  * Appends all elements to the given [destination] collection.
  */
-public expect fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(destination: C): C
+public fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
 
 /**
  * Appends all elements to the given [destination] collection.
  */
-public expect fun <C : MutableCollection<in Char>> CharArray.toCollection(destination: C): C
+public fun <C : MutableCollection<in Char>> CharArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
 
 /**
  * Returns a [HashSet] of all elements.
  */
-public expect fun <T> Array<out T>.toHashSet(): HashSet<T>
+public fun <T> Array<out T>.toHashSet(): HashSet<T> {
+    return toCollection(HashSet<T>(mapCapacity(size)))
+}
 
 /**
  * Returns a [HashSet] of all elements.
  */
-public expect fun ByteArray.toHashSet(): HashSet<Byte>
+public fun ByteArray.toHashSet(): HashSet<Byte> {
+    return toCollection(HashSet<Byte>(mapCapacity(size)))
+}
 
 /**
  * Returns a [HashSet] of all elements.
  */
-public expect fun ShortArray.toHashSet(): HashSet<Short>
+public fun ShortArray.toHashSet(): HashSet<Short> {
+    return toCollection(HashSet<Short>(mapCapacity(size)))
+}
 
 /**
  * Returns a [HashSet] of all elements.
  */
-public expect fun IntArray.toHashSet(): HashSet<Int>
+public fun IntArray.toHashSet(): HashSet<Int> {
+    return toCollection(HashSet<Int>(mapCapacity(size)))
+}
 
 /**
  * Returns a [HashSet] of all elements.
  */
-public expect fun LongArray.toHashSet(): HashSet<Long>
+public fun LongArray.toHashSet(): HashSet<Long> {
+    return toCollection(HashSet<Long>(mapCapacity(size)))
+}
 
 /**
  * Returns a [HashSet] of all elements.
  */
-public expect fun FloatArray.toHashSet(): HashSet<Float>
+public fun FloatArray.toHashSet(): HashSet<Float> {
+    return toCollection(HashSet<Float>(mapCapacity(size)))
+}
 
 /**
  * Returns a [HashSet] of all elements.
  */
-public expect fun DoubleArray.toHashSet(): HashSet<Double>
+public fun DoubleArray.toHashSet(): HashSet<Double> {
+    return toCollection(HashSet<Double>(mapCapacity(size)))
+}
 
 /**
  * Returns a [HashSet] of all elements.
  */
-public expect fun BooleanArray.toHashSet(): HashSet<Boolean>
+public fun BooleanArray.toHashSet(): HashSet<Boolean> {
+    return toCollection(HashSet<Boolean>(mapCapacity(size)))
+}
 
 /**
  * Returns a [HashSet] of all elements.
  */
-public expect fun CharArray.toHashSet(): HashSet<Char>
+public fun CharArray.toHashSet(): HashSet<Char> {
+    return toCollection(HashSet<Char>(mapCapacity(size)))
+}
 
 /**
  * Returns a [List] containing all elements.
  */
-public expect fun <T> Array<out T>.toList(): List<T>
+public fun <T> Array<out T>.toList(): List<T> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
 
 /**
  * Returns a [List] containing all elements.
  */
-public expect fun ByteArray.toList(): List<Byte>
+public fun ByteArray.toList(): List<Byte> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
 
 /**
  * Returns a [List] containing all elements.
  */
-public expect fun ShortArray.toList(): List<Short>
+public fun ShortArray.toList(): List<Short> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
 
 /**
  * Returns a [List] containing all elements.
  */
-public expect fun IntArray.toList(): List<Int>
+public fun IntArray.toList(): List<Int> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
 
 /**
  * Returns a [List] containing all elements.
  */
-public expect fun LongArray.toList(): List<Long>
+public fun LongArray.toList(): List<Long> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
 
 /**
  * Returns a [List] containing all elements.
  */
-public expect fun FloatArray.toList(): List<Float>
+public fun FloatArray.toList(): List<Float> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
 
 /**
  * Returns a [List] containing all elements.
  */
-public expect fun DoubleArray.toList(): List<Double>
+public fun DoubleArray.toList(): List<Double> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
 
 /**
  * Returns a [List] containing all elements.
  */
-public expect fun BooleanArray.toList(): List<Boolean>
+public fun BooleanArray.toList(): List<Boolean> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
 
 /**
  * Returns a [List] containing all elements.
  */
-public expect fun CharArray.toList(): List<Char>
+public fun CharArray.toList(): List<Char> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
 
 /**
  * Returns a [MutableList] filled with all elements of this array.
  */
-public expect fun <T> Array<out T>.toMutableList(): MutableList<T>
+public fun <T> Array<out T>.toMutableList(): MutableList<T> {
+    return ArrayList(this.asCollection())
+}
 
 /**
  * Returns a [MutableList] filled with all elements of this array.
  */
-public expect fun ByteArray.toMutableList(): MutableList<Byte>
+public fun ByteArray.toMutableList(): MutableList<Byte> {
+    val list = ArrayList<Byte>(size)
+    for (item in this) list.add(item)
+    return list
+}
 
 /**
  * Returns a [MutableList] filled with all elements of this array.
  */
-public expect fun ShortArray.toMutableList(): MutableList<Short>
+public fun ShortArray.toMutableList(): MutableList<Short> {
+    val list = ArrayList<Short>(size)
+    for (item in this) list.add(item)
+    return list
+}
 
 /**
  * Returns a [MutableList] filled with all elements of this array.
  */
-public expect fun IntArray.toMutableList(): MutableList<Int>
+public fun IntArray.toMutableList(): MutableList<Int> {
+    val list = ArrayList<Int>(size)
+    for (item in this) list.add(item)
+    return list
+}
 
 /**
  * Returns a [MutableList] filled with all elements of this array.
  */
-public expect fun LongArray.toMutableList(): MutableList<Long>
+public fun LongArray.toMutableList(): MutableList<Long> {
+    val list = ArrayList<Long>(size)
+    for (item in this) list.add(item)
+    return list
+}
 
 /**
  * Returns a [MutableList] filled with all elements of this array.
  */
-public expect fun FloatArray.toMutableList(): MutableList<Float>
+public fun FloatArray.toMutableList(): MutableList<Float> {
+    val list = ArrayList<Float>(size)
+    for (item in this) list.add(item)
+    return list
+}
 
 /**
  * Returns a [MutableList] filled with all elements of this array.
  */
-public expect fun DoubleArray.toMutableList(): MutableList<Double>
+public fun DoubleArray.toMutableList(): MutableList<Double> {
+    val list = ArrayList<Double>(size)
+    for (item in this) list.add(item)
+    return list
+}
 
 /**
  * Returns a [MutableList] filled with all elements of this array.
  */
-public expect fun BooleanArray.toMutableList(): MutableList<Boolean>
+public fun BooleanArray.toMutableList(): MutableList<Boolean> {
+    val list = ArrayList<Boolean>(size)
+    for (item in this) list.add(item)
+    return list
+}
 
 /**
  * Returns a [MutableList] filled with all elements of this array.
  */
-public expect fun CharArray.toMutableList(): MutableList<Char>
+public fun CharArray.toMutableList(): MutableList<Char> {
+    val list = ArrayList<Char>(size)
+    for (item in this) list.add(item)
+    return list
+}
 
 /**
  * Returns a [Set] of all elements.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun <T> Array<out T>.toSet(): Set<T>
+public fun <T> Array<out T>.toSet(): Set<T> {
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<T>(mapCapacity(size)))
+    }
+}
 
 /**
  * Returns a [Set] of all elements.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun ByteArray.toSet(): Set<Byte>
+public fun ByteArray.toSet(): Set<Byte> {
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Byte>(mapCapacity(size)))
+    }
+}
 
 /**
  * Returns a [Set] of all elements.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun ShortArray.toSet(): Set<Short>
+public fun ShortArray.toSet(): Set<Short> {
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Short>(mapCapacity(size)))
+    }
+}
 
 /**
  * Returns a [Set] of all elements.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun IntArray.toSet(): Set<Int>
+public fun IntArray.toSet(): Set<Int> {
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Int>(mapCapacity(size)))
+    }
+}
 
 /**
  * Returns a [Set] of all elements.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun LongArray.toSet(): Set<Long>
+public fun LongArray.toSet(): Set<Long> {
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Long>(mapCapacity(size)))
+    }
+}
 
 /**
  * Returns a [Set] of all elements.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun FloatArray.toSet(): Set<Float>
+public fun FloatArray.toSet(): Set<Float> {
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Float>(mapCapacity(size)))
+    }
+}
 
 /**
  * Returns a [Set] of all elements.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun DoubleArray.toSet(): Set<Double>
+public fun DoubleArray.toSet(): Set<Double> {
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Double>(mapCapacity(size)))
+    }
+}
 
 /**
  * Returns a [Set] of all elements.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun BooleanArray.toSet(): Set<Boolean>
+public fun BooleanArray.toSet(): Set<Boolean> {
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Boolean>(mapCapacity(size)))
+    }
+}
 
 /**
  * Returns a [Set] of all elements.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun CharArray.toSet(): Set<Char>
+public fun CharArray.toSet(): Set<Char> {
+    return when (size) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Char>(mapCapacity(size)))
+    }
+}
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
-public expect inline fun <T, R> Array<out T>.flatMap(transform: (T) -> Iterable<R>): List<R>
+public inline fun <T, R> Array<out T>.flatMap(transform: (T) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
-public expect inline fun <R> ByteArray.flatMap(transform: (Byte) -> Iterable<R>): List<R>
+public inline fun <R> ByteArray.flatMap(transform: (Byte) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
-public expect inline fun <R> ShortArray.flatMap(transform: (Short) -> Iterable<R>): List<R>
+public inline fun <R> ShortArray.flatMap(transform: (Short) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
-public expect inline fun <R> IntArray.flatMap(transform: (Int) -> Iterable<R>): List<R>
+public inline fun <R> IntArray.flatMap(transform: (Int) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
-public expect inline fun <R> LongArray.flatMap(transform: (Long) -> Iterable<R>): List<R>
+public inline fun <R> LongArray.flatMap(transform: (Long) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
-public expect inline fun <R> FloatArray.flatMap(transform: (Float) -> Iterable<R>): List<R>
+public inline fun <R> FloatArray.flatMap(transform: (Float) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
-public expect inline fun <R> DoubleArray.flatMap(transform: (Double) -> Iterable<R>): List<R>
+public inline fun <R> DoubleArray.flatMap(transform: (Double) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
-public expect inline fun <R> BooleanArray.flatMap(transform: (Boolean) -> Iterable<R>): List<R>
+public inline fun <R> BooleanArray.flatMap(transform: (Boolean) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
-public expect inline fun <R> CharArray.flatMap(transform: (Char) -> Iterable<R>): List<R>
+public inline fun <R> CharArray.flatMap(transform: (Char) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
-public expect inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C
+public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapTo(destination: C, transform: (Byte) -> Iterable<R>): C
+public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapTo(destination: C, transform: (Byte) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destination: C, transform: (Short) -> Iterable<R>): C
+public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destination: C, transform: (Short) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> IntArray.flatMapTo(destination: C, transform: (Int) -> Iterable<R>): C
+public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapTo(destination: C, transform: (Int) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> LongArray.flatMapTo(destination: C, transform: (Long) -> Iterable<R>): C
+public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapTo(destination: C, transform: (Long) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapTo(destination: C, transform: (Float) -> Iterable<R>): C
+public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapTo(destination: C, transform: (Float) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapTo(destination: C, transform: (Double) -> Iterable<R>): C
+public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapTo(destination: C, transform: (Double) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(destination: C, transform: (Boolean) -> Iterable<R>): C
+public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(destination: C, transform: (Boolean) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C
+public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4646,7 +7588,9 @@ public expect inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(de
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <T, K> Array<out T>.groupBy(keySelector: (T) -> K): Map<K, List<T>>
+public inline fun <T, K> Array<out T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4656,7 +7600,9 @@ public expect inline fun <T, K> Array<out T>.groupBy(keySelector: (T) -> K): Map
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K> ByteArray.groupBy(keySelector: (Byte) -> K): Map<K, List<Byte>>
+public inline fun <K> ByteArray.groupBy(keySelector: (Byte) -> K): Map<K, List<Byte>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Byte>>(), keySelector)
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4666,7 +7612,9 @@ public expect inline fun <K> ByteArray.groupBy(keySelector: (Byte) -> K): Map<K,
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K> ShortArray.groupBy(keySelector: (Short) -> K): Map<K, List<Short>>
+public inline fun <K> ShortArray.groupBy(keySelector: (Short) -> K): Map<K, List<Short>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Short>>(), keySelector)
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4676,7 +7624,9 @@ public expect inline fun <K> ShortArray.groupBy(keySelector: (Short) -> K): Map<
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K> IntArray.groupBy(keySelector: (Int) -> K): Map<K, List<Int>>
+public inline fun <K> IntArray.groupBy(keySelector: (Int) -> K): Map<K, List<Int>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Int>>(), keySelector)
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4686,7 +7636,9 @@ public expect inline fun <K> IntArray.groupBy(keySelector: (Int) -> K): Map<K, L
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K> LongArray.groupBy(keySelector: (Long) -> K): Map<K, List<Long>>
+public inline fun <K> LongArray.groupBy(keySelector: (Long) -> K): Map<K, List<Long>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Long>>(), keySelector)
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4696,7 +7648,9 @@ public expect inline fun <K> LongArray.groupBy(keySelector: (Long) -> K): Map<K,
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K> FloatArray.groupBy(keySelector: (Float) -> K): Map<K, List<Float>>
+public inline fun <K> FloatArray.groupBy(keySelector: (Float) -> K): Map<K, List<Float>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Float>>(), keySelector)
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4706,7 +7660,9 @@ public expect inline fun <K> FloatArray.groupBy(keySelector: (Float) -> K): Map<
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K> DoubleArray.groupBy(keySelector: (Double) -> K): Map<K, List<Double>>
+public inline fun <K> DoubleArray.groupBy(keySelector: (Double) -> K): Map<K, List<Double>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Double>>(), keySelector)
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4716,7 +7672,9 @@ public expect inline fun <K> DoubleArray.groupBy(keySelector: (Double) -> K): Ma
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K> BooleanArray.groupBy(keySelector: (Boolean) -> K): Map<K, List<Boolean>>
+public inline fun <K> BooleanArray.groupBy(keySelector: (Boolean) -> K): Map<K, List<Boolean>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Boolean>>(), keySelector)
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4726,7 +7684,9 @@ public expect inline fun <K> BooleanArray.groupBy(keySelector: (Boolean) -> K): 
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K> CharArray.groupBy(keySelector: (Char) -> K): Map<K, List<Char>>
+public inline fun <K> CharArray.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4737,7 +7697,9 @@ public expect inline fun <K> CharArray.groupBy(keySelector: (Char) -> K): Map<K,
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <T, K, V> Array<out T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>>
+public inline fun <T, K, V> Array<out T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4748,7 +7710,9 @@ public expect inline fun <T, K, V> Array<out T>.groupBy(keySelector: (T) -> K, v
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V> ByteArray.groupBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, List<V>>
+public inline fun <K, V> ByteArray.groupBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4759,7 +7723,9 @@ public expect inline fun <K, V> ByteArray.groupBy(keySelector: (Byte) -> K, valu
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V> ShortArray.groupBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, List<V>>
+public inline fun <K, V> ShortArray.groupBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4770,7 +7736,9 @@ public expect inline fun <K, V> ShortArray.groupBy(keySelector: (Short) -> K, va
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V> IntArray.groupBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, List<V>>
+public inline fun <K, V> IntArray.groupBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4781,7 +7749,9 @@ public expect inline fun <K, V> IntArray.groupBy(keySelector: (Int) -> K, valueT
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V> LongArray.groupBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, List<V>>
+public inline fun <K, V> LongArray.groupBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4792,7 +7762,9 @@ public expect inline fun <K, V> LongArray.groupBy(keySelector: (Long) -> K, valu
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V> FloatArray.groupBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, List<V>>
+public inline fun <K, V> FloatArray.groupBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4803,7 +7775,9 @@ public expect inline fun <K, V> FloatArray.groupBy(keySelector: (Float) -> K, va
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V> DoubleArray.groupBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, List<V>>
+public inline fun <K, V> DoubleArray.groupBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4814,7 +7788,9 @@ public expect inline fun <K, V> DoubleArray.groupBy(keySelector: (Double) -> K, 
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V> BooleanArray.groupBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, List<V>>
+public inline fun <K, V> BooleanArray.groupBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4825,7 +7801,9 @@ public expect inline fun <K, V> BooleanArray.groupBy(keySelector: (Boolean) -> K
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V> CharArray.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>>
+public inline fun <K, V> CharArray.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4835,7 +7813,14 @@ public expect inline fun <K, V> CharArray.groupBy(keySelector: (Char) -> K, valu
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K): M
+public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<T>() }
+        list.add(element)
+    }
+    return destination
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4845,7 +7830,14 @@ public expect inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Array<out 
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K, M : MutableMap<in K, MutableList<Byte>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K): M
+public inline fun <K, M : MutableMap<in K, MutableList<Byte>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Byte>() }
+        list.add(element)
+    }
+    return destination
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4855,7 +7847,14 @@ public expect inline fun <K, M : MutableMap<in K, MutableList<Byte>>> ByteArray.
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K, M : MutableMap<in K, MutableList<Short>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K): M
+public inline fun <K, M : MutableMap<in K, MutableList<Short>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Short>() }
+        list.add(element)
+    }
+    return destination
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4865,7 +7864,14 @@ public expect inline fun <K, M : MutableMap<in K, MutableList<Short>>> ShortArra
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K, M : MutableMap<in K, MutableList<Int>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K): M
+public inline fun <K, M : MutableMap<in K, MutableList<Int>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Int>() }
+        list.add(element)
+    }
+    return destination
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4875,7 +7881,14 @@ public expect inline fun <K, M : MutableMap<in K, MutableList<Int>>> IntArray.gr
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K, M : MutableMap<in K, MutableList<Long>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K): M
+public inline fun <K, M : MutableMap<in K, MutableList<Long>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Long>() }
+        list.add(element)
+    }
+    return destination
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4885,7 +7898,14 @@ public expect inline fun <K, M : MutableMap<in K, MutableList<Long>>> LongArray.
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K, M : MutableMap<in K, MutableList<Float>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K): M
+public inline fun <K, M : MutableMap<in K, MutableList<Float>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Float>() }
+        list.add(element)
+    }
+    return destination
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4895,7 +7915,14 @@ public expect inline fun <K, M : MutableMap<in K, MutableList<Float>>> FloatArra
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K, M : MutableMap<in K, MutableList<Double>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K): M
+public inline fun <K, M : MutableMap<in K, MutableList<Double>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Double>() }
+        list.add(element)
+    }
+    return destination
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4905,7 +7932,14 @@ public expect inline fun <K, M : MutableMap<in K, MutableList<Double>>> DoubleAr
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K, M : MutableMap<in K, MutableList<Boolean>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K): M
+public inline fun <K, M : MutableMap<in K, MutableList<Boolean>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Boolean>() }
+        list.add(element)
+    }
+    return destination
+}
 
 /**
  * Groups elements of the original array by the key returned by the given [keySelector] function
@@ -4915,7 +7949,14 @@ public expect inline fun <K, M : MutableMap<in K, MutableList<Boolean>>> Boolean
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K): M
+public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Char>() }
+        list.add(element)
+    }
+    return destination
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4926,7 +7967,14 @@ public expect inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharArray.
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M
+public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4937,7 +7985,14 @@ public expect inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Array<o
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4948,7 +8003,14 @@ public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ByteArray.
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4959,7 +8021,14 @@ public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ShortArray
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4970,7 +8039,14 @@ public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> IntArray.g
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4981,7 +8057,14 @@ public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> LongArray.
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -4992,7 +8075,14 @@ public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> FloatArray
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -5003,7 +8093,14 @@ public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> DoubleArra
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each element of the original array
@@ -5014,7 +8111,14 @@ public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> BooleanArr
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Creates a [Grouping] source from an array to be used later with one of group-and-fold operations
@@ -5023,61 +8127,84 @@ public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharArray.
  * @sample samples.collections.Collections.Transformations.groupingByEachCount
  */
 @SinceKotlin("1.1")
-public expect inline fun <T, K> Array<out T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K>
+public inline fun <T, K> Array<out T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K> {
+    return object : Grouping<T, K> {
+        override fun sourceIterator(): Iterator<T> = this@groupingBy.iterator()
+        override fun keyOf(element: T): K = keySelector(element)
+    }
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
  */
-public expect inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R>
+public inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
  */
-public expect inline fun <R> ByteArray.map(transform: (Byte) -> R): List<R>
+public inline fun <R> ByteArray.map(transform: (Byte) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
  */
-public expect inline fun <R> ShortArray.map(transform: (Short) -> R): List<R>
+public inline fun <R> ShortArray.map(transform: (Short) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
  */
-public expect inline fun <R> IntArray.map(transform: (Int) -> R): List<R>
+public inline fun <R> IntArray.map(transform: (Int) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
  */
-public expect inline fun <R> LongArray.map(transform: (Long) -> R): List<R>
+public inline fun <R> LongArray.map(transform: (Long) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
  */
-public expect inline fun <R> FloatArray.map(transform: (Float) -> R): List<R>
+public inline fun <R> FloatArray.map(transform: (Float) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
  */
-public expect inline fun <R> DoubleArray.map(transform: (Double) -> R): List<R>
+public inline fun <R> DoubleArray.map(transform: (Double) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
  */
-public expect inline fun <R> BooleanArray.map(transform: (Boolean) -> R): List<R>
+public inline fun <R> BooleanArray.map(transform: (Boolean) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
  */
-public expect inline fun <R> CharArray.map(transform: (Char) -> R): List<R>
+public inline fun <R> CharArray.map(transform: (Char) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -5085,7 +8212,9 @@ public expect inline fun <R> CharArray.map(transform: (Char) -> R): List<R>
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <T, R> Array<out T>.mapIndexed(transform: (index: Int, T) -> R): List<R>
+public inline fun <T, R> Array<out T>.mapIndexed(transform: (index: Int, T) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -5093,7 +8222,9 @@ public expect inline fun <T, R> Array<out T>.mapIndexed(transform: (index: Int, 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R> ByteArray.mapIndexed(transform: (index: Int, Byte) -> R): List<R>
+public inline fun <R> ByteArray.mapIndexed(transform: (index: Int, Byte) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -5101,7 +8232,9 @@ public expect inline fun <R> ByteArray.mapIndexed(transform: (index: Int, Byte) 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R> ShortArray.mapIndexed(transform: (index: Int, Short) -> R): List<R>
+public inline fun <R> ShortArray.mapIndexed(transform: (index: Int, Short) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -5109,7 +8242,9 @@ public expect inline fun <R> ShortArray.mapIndexed(transform: (index: Int, Short
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R> IntArray.mapIndexed(transform: (index: Int, Int) -> R): List<R>
+public inline fun <R> IntArray.mapIndexed(transform: (index: Int, Int) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -5117,7 +8252,9 @@ public expect inline fun <R> IntArray.mapIndexed(transform: (index: Int, Int) ->
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R> LongArray.mapIndexed(transform: (index: Int, Long) -> R): List<R>
+public inline fun <R> LongArray.mapIndexed(transform: (index: Int, Long) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -5125,7 +8262,9 @@ public expect inline fun <R> LongArray.mapIndexed(transform: (index: Int, Long) 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R> FloatArray.mapIndexed(transform: (index: Int, Float) -> R): List<R>
+public inline fun <R> FloatArray.mapIndexed(transform: (index: Int, Float) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -5133,7 +8272,9 @@ public expect inline fun <R> FloatArray.mapIndexed(transform: (index: Int, Float
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R> DoubleArray.mapIndexed(transform: (index: Int, Double) -> R): List<R>
+public inline fun <R> DoubleArray.mapIndexed(transform: (index: Int, Double) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -5141,7 +8282,9 @@ public expect inline fun <R> DoubleArray.mapIndexed(transform: (index: Int, Doub
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R> BooleanArray.mapIndexed(transform: (index: Int, Boolean) -> R): List<R>
+public inline fun <R> BooleanArray.mapIndexed(transform: (index: Int, Boolean) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -5149,7 +8292,9 @@ public expect inline fun <R> BooleanArray.mapIndexed(transform: (index: Int, Boo
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R> CharArray.mapIndexed(transform: (index: Int, Char) -> R): List<R>
+public inline fun <R> CharArray.mapIndexed(transform: (index: Int, Char) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
+}
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
@@ -5157,7 +8302,9 @@ public expect inline fun <R> CharArray.mapIndexed(transform: (index: Int, Char) 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R>
+public inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R> {
+    return mapIndexedNotNullTo(ArrayList<R>(), transform)
+}
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -5165,7 +8312,10 @@ public expect inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C
+public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C {
+    forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -5173,7 +8323,12 @@ public expect inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C
+public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -5181,7 +8336,12 @@ public expect inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapInd
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destination: C, transform: (index: Int, Byte) -> R): C
+public inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destination: C, transform: (index: Int, Byte) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -5189,7 +8349,12 @@ public expect inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(destination: C, transform: (index: Int, Short) -> R): C
+public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(destination: C, transform: (index: Int, Short) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -5197,7 +8362,12 @@ public expect inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedT
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destination: C, transform: (index: Int, Int) -> R): C
+public inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destination: C, transform: (index: Int, Int) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -5205,7 +8375,12 @@ public expect inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destination: C, transform: (index: Int, Long) -> R): C
+public inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destination: C, transform: (index: Int, Long) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -5213,7 +8388,12 @@ public expect inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(destination: C, transform: (index: Int, Float) -> R): C
+public inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(destination: C, transform: (index: Int, Float) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -5221,7 +8401,12 @@ public expect inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedT
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(destination: C, transform: (index: Int, Double) -> R): C
+public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(destination: C, transform: (index: Int, Double) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -5229,7 +8414,12 @@ public expect inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexed
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(destination: C, transform: (index: Int, Boolean) -> R): C
+public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(destination: C, transform: (index: Int, Boolean) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -5237,181 +8427,263 @@ public expect inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexe
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public expect inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destination: C, transform: (index: Int, Char) -> R): C
+public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destination: C, transform: (index: Int, Char) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each element in the original array.
  */
-public expect inline fun <T, R : Any> Array<out T>.mapNotNull(transform: (T) -> R?): List<R>
+public inline fun <T, R : Any> Array<out T>.mapNotNull(transform: (T) -> R?): List<R> {
+    return mapNotNullTo(ArrayList<R>(), transform)
+}
 
 /**
  * Applies the given [transform] function to each element in the original array
  * and appends only the non-null results to the given [destination].
  */
-public expect inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapNotNullTo(destination: C, transform: (T) -> R?): C
+public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapNotNullTo(destination: C, transform: (T) -> R?): C {
+    forEach { element -> transform(element)?.let { destination.add(it) } }
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
-public expect inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destination: C, transform: (T) -> R): C
+public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destination: C, transform: (T) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: C, transform: (Byte) -> R): C
+public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: C, transform: (Byte) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination: C, transform: (Short) -> R): C
+public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination: C, transform: (Short) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C, transform: (Int) -> R): C
+public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C, transform: (Int) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: C, transform: (Long) -> R): C
+public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: C, transform: (Long) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination: C, transform: (Float) -> R): C
+public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination: C, transform: (Float) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination: C, transform: (Double) -> R): C
+public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination: C, transform: (Double) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destination: C, transform: (Boolean) -> R): C
+public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destination: C, transform: (Boolean) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: C, transform: (Char) -> R): C
+public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: C, transform: (Char) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
  */
-public expect fun <T> Array<out T>.withIndex(): Iterable<IndexedValue<T>>
+public fun <T> Array<out T>.withIndex(): Iterable<IndexedValue<T>> {
+    return IndexingIterable { iterator() }
+}
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
  */
-public expect fun ByteArray.withIndex(): Iterable<IndexedValue<Byte>>
+public fun ByteArray.withIndex(): Iterable<IndexedValue<Byte>> {
+    return IndexingIterable { iterator() }
+}
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
  */
-public expect fun ShortArray.withIndex(): Iterable<IndexedValue<Short>>
+public fun ShortArray.withIndex(): Iterable<IndexedValue<Short>> {
+    return IndexingIterable { iterator() }
+}
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
  */
-public expect fun IntArray.withIndex(): Iterable<IndexedValue<Int>>
+public fun IntArray.withIndex(): Iterable<IndexedValue<Int>> {
+    return IndexingIterable { iterator() }
+}
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
  */
-public expect fun LongArray.withIndex(): Iterable<IndexedValue<Long>>
+public fun LongArray.withIndex(): Iterable<IndexedValue<Long>> {
+    return IndexingIterable { iterator() }
+}
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
  */
-public expect fun FloatArray.withIndex(): Iterable<IndexedValue<Float>>
+public fun FloatArray.withIndex(): Iterable<IndexedValue<Float>> {
+    return IndexingIterable { iterator() }
+}
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
  */
-public expect fun DoubleArray.withIndex(): Iterable<IndexedValue<Double>>
+public fun DoubleArray.withIndex(): Iterable<IndexedValue<Double>> {
+    return IndexingIterable { iterator() }
+}
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
  */
-public expect fun BooleanArray.withIndex(): Iterable<IndexedValue<Boolean>>
+public fun BooleanArray.withIndex(): Iterable<IndexedValue<Boolean>> {
+    return IndexingIterable { iterator() }
+}
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
  */
-public expect fun CharArray.withIndex(): Iterable<IndexedValue<Char>>
+public fun CharArray.withIndex(): Iterable<IndexedValue<Char>> {
+    return IndexingIterable { iterator() }
+}
 
 /**
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect fun <T> Array<out T>.distinct(): List<T>
+public fun <T> Array<out T>.distinct(): List<T> {
+    return this.toMutableSet().toList()
+}
 
 /**
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect fun ByteArray.distinct(): List<Byte>
+public fun ByteArray.distinct(): List<Byte> {
+    return this.toMutableSet().toList()
+}
 
 /**
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect fun ShortArray.distinct(): List<Short>
+public fun ShortArray.distinct(): List<Short> {
+    return this.toMutableSet().toList()
+}
 
 /**
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect fun IntArray.distinct(): List<Int>
+public fun IntArray.distinct(): List<Int> {
+    return this.toMutableSet().toList()
+}
 
 /**
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect fun LongArray.distinct(): List<Long>
+public fun LongArray.distinct(): List<Long> {
+    return this.toMutableSet().toList()
+}
 
 /**
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect fun FloatArray.distinct(): List<Float>
+public fun FloatArray.distinct(): List<Float> {
+    return this.toMutableSet().toList()
+}
 
 /**
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect fun DoubleArray.distinct(): List<Double>
+public fun DoubleArray.distinct(): List<Double> {
+    return this.toMutableSet().toList()
+}
 
 /**
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect fun BooleanArray.distinct(): List<Boolean>
+public fun BooleanArray.distinct(): List<Boolean> {
+    return this.toMutableSet().toList()
+}
 
 /**
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect fun CharArray.distinct(): List<Char>
+public fun CharArray.distinct(): List<Char> {
+    return this.toMutableSet().toList()
+}
 
 /**
  * Returns a list containing only elements from the given array
@@ -5419,7 +8691,16 @@ public expect fun CharArray.distinct(): List<Char>
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect inline fun <T, K> Array<out T>.distinctBy(selector: (T) -> K): List<T>
+public inline fun <T, K> Array<out T>.distinctBy(selector: (T) -> K): List<T> {
+    val set = HashSet<K>()
+    val list = ArrayList<T>()
+    for (e in this) {
+        val key = selector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
 
 /**
  * Returns a list containing only elements from the given array
@@ -5427,7 +8708,16 @@ public expect inline fun <T, K> Array<out T>.distinctBy(selector: (T) -> K): Lis
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect inline fun <K> ByteArray.distinctBy(selector: (Byte) -> K): List<Byte>
+public inline fun <K> ByteArray.distinctBy(selector: (Byte) -> K): List<Byte> {
+    val set = HashSet<K>()
+    val list = ArrayList<Byte>()
+    for (e in this) {
+        val key = selector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
 
 /**
  * Returns a list containing only elements from the given array
@@ -5435,7 +8725,16 @@ public expect inline fun <K> ByteArray.distinctBy(selector: (Byte) -> K): List<B
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect inline fun <K> ShortArray.distinctBy(selector: (Short) -> K): List<Short>
+public inline fun <K> ShortArray.distinctBy(selector: (Short) -> K): List<Short> {
+    val set = HashSet<K>()
+    val list = ArrayList<Short>()
+    for (e in this) {
+        val key = selector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
 
 /**
  * Returns a list containing only elements from the given array
@@ -5443,7 +8742,16 @@ public expect inline fun <K> ShortArray.distinctBy(selector: (Short) -> K): List
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect inline fun <K> IntArray.distinctBy(selector: (Int) -> K): List<Int>
+public inline fun <K> IntArray.distinctBy(selector: (Int) -> K): List<Int> {
+    val set = HashSet<K>()
+    val list = ArrayList<Int>()
+    for (e in this) {
+        val key = selector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
 
 /**
  * Returns a list containing only elements from the given array
@@ -5451,7 +8759,16 @@ public expect inline fun <K> IntArray.distinctBy(selector: (Int) -> K): List<Int
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect inline fun <K> LongArray.distinctBy(selector: (Long) -> K): List<Long>
+public inline fun <K> LongArray.distinctBy(selector: (Long) -> K): List<Long> {
+    val set = HashSet<K>()
+    val list = ArrayList<Long>()
+    for (e in this) {
+        val key = selector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
 
 /**
  * Returns a list containing only elements from the given array
@@ -5459,7 +8776,16 @@ public expect inline fun <K> LongArray.distinctBy(selector: (Long) -> K): List<L
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect inline fun <K> FloatArray.distinctBy(selector: (Float) -> K): List<Float>
+public inline fun <K> FloatArray.distinctBy(selector: (Float) -> K): List<Float> {
+    val set = HashSet<K>()
+    val list = ArrayList<Float>()
+    for (e in this) {
+        val key = selector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
 
 /**
  * Returns a list containing only elements from the given array
@@ -5467,7 +8793,16 @@ public expect inline fun <K> FloatArray.distinctBy(selector: (Float) -> K): List
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect inline fun <K> DoubleArray.distinctBy(selector: (Double) -> K): List<Double>
+public inline fun <K> DoubleArray.distinctBy(selector: (Double) -> K): List<Double> {
+    val set = HashSet<K>()
+    val list = ArrayList<Double>()
+    for (e in this) {
+        val key = selector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
 
 /**
  * Returns a list containing only elements from the given array
@@ -5475,7 +8810,16 @@ public expect inline fun <K> DoubleArray.distinctBy(selector: (Double) -> K): Li
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect inline fun <K> BooleanArray.distinctBy(selector: (Boolean) -> K): List<Boolean>
+public inline fun <K> BooleanArray.distinctBy(selector: (Boolean) -> K): List<Boolean> {
+    val set = HashSet<K>()
+    val list = ArrayList<Boolean>()
+    for (e in this) {
+        val key = selector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
 
 /**
  * Returns a list containing only elements from the given array
@@ -5483,196 +8827,313 @@ public expect inline fun <K> BooleanArray.distinctBy(selector: (Boolean) -> K): 
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public expect inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char>
+public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
+    val set = HashSet<K>()
+    val list = ArrayList<Char>()
+    for (e in this) {
+        val key = selector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T>
+public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
+    val set = this.toMutableSet()
+    set.retainAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte>
+public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
+    val set = this.toMutableSet()
+    set.retainAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short>
+public infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
+    val set = this.toMutableSet()
+    set.retainAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun IntArray.intersect(other: Iterable<Int>): Set<Int>
+public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
+    val set = this.toMutableSet()
+    set.retainAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun LongArray.intersect(other: Iterable<Long>): Set<Long>
+public infix fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
+    val set = this.toMutableSet()
+    set.retainAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float>
+public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
+    val set = this.toMutableSet()
+    set.retainAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double>
+public infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
+    val set = this.toMutableSet()
+    set.retainAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean>
+public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> {
+    val set = this.toMutableSet()
+    set.retainAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun CharArray.intersect(other: Iterable<Char>): Set<Char>
+public infix fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
+    val set = this.toMutableSet()
+    set.retainAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T>
+public infix fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
+    val set = this.toMutableSet()
+    set.removeAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte>
+public infix fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
+    val set = this.toMutableSet()
+    set.removeAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun ShortArray.subtract(other: Iterable<Short>): Set<Short>
+public infix fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
+    val set = this.toMutableSet()
+    set.removeAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun IntArray.subtract(other: Iterable<Int>): Set<Int>
+public infix fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
+    val set = this.toMutableSet()
+    set.removeAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun LongArray.subtract(other: Iterable<Long>): Set<Long>
+public infix fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
+    val set = this.toMutableSet()
+    set.removeAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun FloatArray.subtract(other: Iterable<Float>): Set<Float>
+public infix fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
+    val set = this.toMutableSet()
+    set.removeAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun DoubleArray.subtract(other: Iterable<Double>): Set<Double>
+public infix fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
+    val set = this.toMutableSet()
+    set.removeAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean>
+public infix fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
+    val set = this.toMutableSet()
+    set.removeAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect infix fun CharArray.subtract(other: Iterable<Char>): Set<Char>
+public infix fun CharArray.subtract(other: Iterable<Char>): Set<Char> {
+    val set = this.toMutableSet()
+    set.removeAll(other)
+    return set
+}
 
 /**
  * Returns a mutable set containing all distinct elements from the given array.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun <T> Array<out T>.toMutableSet(): MutableSet<T>
+public fun <T> Array<out T>.toMutableSet(): MutableSet<T> {
+    val set = LinkedHashSet<T>(mapCapacity(size))
+    for (item in this) set.add(item)
+    return set
+}
 
 /**
  * Returns a mutable set containing all distinct elements from the given array.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun ByteArray.toMutableSet(): MutableSet<Byte>
+public fun ByteArray.toMutableSet(): MutableSet<Byte> {
+    val set = LinkedHashSet<Byte>(mapCapacity(size))
+    for (item in this) set.add(item)
+    return set
+}
 
 /**
  * Returns a mutable set containing all distinct elements from the given array.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun ShortArray.toMutableSet(): MutableSet<Short>
+public fun ShortArray.toMutableSet(): MutableSet<Short> {
+    val set = LinkedHashSet<Short>(mapCapacity(size))
+    for (item in this) set.add(item)
+    return set
+}
 
 /**
  * Returns a mutable set containing all distinct elements from the given array.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun IntArray.toMutableSet(): MutableSet<Int>
+public fun IntArray.toMutableSet(): MutableSet<Int> {
+    val set = LinkedHashSet<Int>(mapCapacity(size))
+    for (item in this) set.add(item)
+    return set
+}
 
 /**
  * Returns a mutable set containing all distinct elements from the given array.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun LongArray.toMutableSet(): MutableSet<Long>
+public fun LongArray.toMutableSet(): MutableSet<Long> {
+    val set = LinkedHashSet<Long>(mapCapacity(size))
+    for (item in this) set.add(item)
+    return set
+}
 
 /**
  * Returns a mutable set containing all distinct elements from the given array.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun FloatArray.toMutableSet(): MutableSet<Float>
+public fun FloatArray.toMutableSet(): MutableSet<Float> {
+    val set = LinkedHashSet<Float>(mapCapacity(size))
+    for (item in this) set.add(item)
+    return set
+}
 
 /**
  * Returns a mutable set containing all distinct elements from the given array.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun DoubleArray.toMutableSet(): MutableSet<Double>
+public fun DoubleArray.toMutableSet(): MutableSet<Double> {
+    val set = LinkedHashSet<Double>(mapCapacity(size))
+    for (item in this) set.add(item)
+    return set
+}
 
 /**
  * Returns a mutable set containing all distinct elements from the given array.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun BooleanArray.toMutableSet(): MutableSet<Boolean>
+public fun BooleanArray.toMutableSet(): MutableSet<Boolean> {
+    val set = LinkedHashSet<Boolean>(mapCapacity(size))
+    for (item in this) set.add(item)
+    return set
+}
 
 /**
  * Returns a mutable set containing all distinct elements from the given array.
  * 
  * The returned set preserves the element iteration order of the original array.
  */
-public expect fun CharArray.toMutableSet(): MutableSet<Char>
+public fun CharArray.toMutableSet(): MutableSet<Char> {
+    val set = LinkedHashSet<Char>(mapCapacity(size))
+    for (item in this) set.add(item)
+    return set
+}
 
 /**
  * Returns a set containing all distinct elements from both collections.
@@ -5681,7 +9142,11 @@ public expect fun CharArray.toMutableSet(): MutableSet<Char>
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  */
-public expect infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T>
+public infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
+    val set = this.toMutableSet()
+    set.addAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all distinct elements from both collections.
@@ -5690,7 +9155,11 @@ public expect infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T>
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  */
-public expect infix fun ByteArray.union(other: Iterable<Byte>): Set<Byte>
+public infix fun ByteArray.union(other: Iterable<Byte>): Set<Byte> {
+    val set = this.toMutableSet()
+    set.addAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all distinct elements from both collections.
@@ -5699,7 +9168,11 @@ public expect infix fun ByteArray.union(other: Iterable<Byte>): Set<Byte>
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  */
-public expect infix fun ShortArray.union(other: Iterable<Short>): Set<Short>
+public infix fun ShortArray.union(other: Iterable<Short>): Set<Short> {
+    val set = this.toMutableSet()
+    set.addAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all distinct elements from both collections.
@@ -5708,7 +9181,11 @@ public expect infix fun ShortArray.union(other: Iterable<Short>): Set<Short>
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  */
-public expect infix fun IntArray.union(other: Iterable<Int>): Set<Int>
+public infix fun IntArray.union(other: Iterable<Int>): Set<Int> {
+    val set = this.toMutableSet()
+    set.addAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all distinct elements from both collections.
@@ -5717,7 +9194,11 @@ public expect infix fun IntArray.union(other: Iterable<Int>): Set<Int>
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  */
-public expect infix fun LongArray.union(other: Iterable<Long>): Set<Long>
+public infix fun LongArray.union(other: Iterable<Long>): Set<Long> {
+    val set = this.toMutableSet()
+    set.addAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all distinct elements from both collections.
@@ -5726,7 +9207,11 @@ public expect infix fun LongArray.union(other: Iterable<Long>): Set<Long>
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  */
-public expect infix fun FloatArray.union(other: Iterable<Float>): Set<Float>
+public infix fun FloatArray.union(other: Iterable<Float>): Set<Float> {
+    val set = this.toMutableSet()
+    set.addAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all distinct elements from both collections.
@@ -5735,7 +9220,11 @@ public expect infix fun FloatArray.union(other: Iterable<Float>): Set<Float>
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  */
-public expect infix fun DoubleArray.union(other: Iterable<Double>): Set<Double>
+public infix fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
+    val set = this.toMutableSet()
+    set.addAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all distinct elements from both collections.
@@ -5744,7 +9233,11 @@ public expect infix fun DoubleArray.union(other: Iterable<Double>): Set<Double>
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  */
-public expect infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean>
+public infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
+    val set = this.toMutableSet()
+    set.addAll(other)
+    return set
+}
 
 /**
  * Returns a set containing all distinct elements from both collections.
@@ -5753,340 +9246,506 @@ public expect infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolea
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  */
-public expect infix fun CharArray.union(other: Iterable<Char>): Set<Char>
+public infix fun CharArray.union(other: Iterable<Char>): Set<Char> {
+    val set = this.toMutableSet()
+    set.addAll(other)
+    return set
+}
 
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
-public expect inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean
+public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
-public expect inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean
+public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
-public expect inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean
+public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
-public expect inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean
+public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
-public expect inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean
+public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
-public expect inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean
+public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
-public expect inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean
+public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
-public expect inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean
+public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
-public expect inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean
+public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any
  */
-public expect fun <T> Array<out T>.any(): Boolean
+public fun <T> Array<out T>.any(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any
  */
-public expect fun ByteArray.any(): Boolean
+public fun ByteArray.any(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any
  */
-public expect fun ShortArray.any(): Boolean
+public fun ShortArray.any(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any
  */
-public expect fun IntArray.any(): Boolean
+public fun IntArray.any(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any
  */
-public expect fun LongArray.any(): Boolean
+public fun LongArray.any(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any
  */
-public expect fun FloatArray.any(): Boolean
+public fun FloatArray.any(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any
  */
-public expect fun DoubleArray.any(): Boolean
+public fun DoubleArray.any(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any
  */
-public expect fun BooleanArray.any(): Boolean
+public fun BooleanArray.any(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any
  */
-public expect fun CharArray.any(): Boolean
+public fun CharArray.any(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
-public expect inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean
+public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
-public expect inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean
+public inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
-public expect inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean
+public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
-public expect inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean
+public inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
-public expect inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean
+public inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
-public expect inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean
+public inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
-public expect inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean
+public inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
-public expect inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean
+public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
-public expect inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean
+public inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
 
 /**
  * Returns the number of elements in this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun <T> Array<out T>.count(): Int
+public inline fun <T> Array<out T>.count(): Int {
+    return size
+}
 
 /**
  * Returns the number of elements in this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ByteArray.count(): Int
+public inline fun ByteArray.count(): Int {
+    return size
+}
 
 /**
  * Returns the number of elements in this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun ShortArray.count(): Int
+public inline fun ShortArray.count(): Int {
+    return size
+}
 
 /**
  * Returns the number of elements in this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun IntArray.count(): Int
+public inline fun IntArray.count(): Int {
+    return size
+}
 
 /**
  * Returns the number of elements in this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun LongArray.count(): Int
+public inline fun LongArray.count(): Int {
+    return size
+}
 
 /**
  * Returns the number of elements in this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun FloatArray.count(): Int
+public inline fun FloatArray.count(): Int {
+    return size
+}
 
 /**
  * Returns the number of elements in this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun DoubleArray.count(): Int
+public inline fun DoubleArray.count(): Int {
+    return size
+}
 
 /**
  * Returns the number of elements in this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun BooleanArray.count(): Int
+public inline fun BooleanArray.count(): Int {
+    return size
+}
 
 /**
  * Returns the number of elements in this array.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharArray.count(): Int
+public inline fun CharArray.count(): Int {
+    return size
+}
 
 /**
  * Returns the number of elements matching the given [predicate].
  */
-public expect inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int
+public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
 
 /**
  * Returns the number of elements matching the given [predicate].
  */
-public expect inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int
+public inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
 
 /**
  * Returns the number of elements matching the given [predicate].
  */
-public expect inline fun ShortArray.count(predicate: (Short) -> Boolean): Int
+public inline fun ShortArray.count(predicate: (Short) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
 
 /**
  * Returns the number of elements matching the given [predicate].
  */
-public expect inline fun IntArray.count(predicate: (Int) -> Boolean): Int
+public inline fun IntArray.count(predicate: (Int) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
 
 /**
  * Returns the number of elements matching the given [predicate].
  */
-public expect inline fun LongArray.count(predicate: (Long) -> Boolean): Int
+public inline fun LongArray.count(predicate: (Long) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
 
 /**
  * Returns the number of elements matching the given [predicate].
  */
-public expect inline fun FloatArray.count(predicate: (Float) -> Boolean): Int
+public inline fun FloatArray.count(predicate: (Float) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
 
 /**
  * Returns the number of elements matching the given [predicate].
  */
-public expect inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int
+public inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
 
 /**
  * Returns the number of elements matching the given [predicate].
  */
-public expect inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int
+public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
 
 /**
  * Returns the number of elements matching the given [predicate].
  */
-public expect inline fun CharArray.count(predicate: (Char) -> Boolean): Int
+public inline fun CharArray.count(predicate: (Char) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun <T, R> Array<out T>.fold(initial: R, operation: (acc: R, T) -> R): R
+public inline fun <T, R> Array<out T>.fold(initial: R, operation: (acc: R, T) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun <R> ByteArray.fold(initial: R, operation: (acc: R, Byte) -> R): R
+public inline fun <R> ByteArray.fold(initial: R, operation: (acc: R, Byte) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun <R> ShortArray.fold(initial: R, operation: (acc: R, Short) -> R): R
+public inline fun <R> ShortArray.fold(initial: R, operation: (acc: R, Short) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun <R> IntArray.fold(initial: R, operation: (acc: R, Int) -> R): R
+public inline fun <R> IntArray.fold(initial: R, operation: (acc: R, Int) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun <R> LongArray.fold(initial: R, operation: (acc: R, Long) -> R): R
+public inline fun <R> LongArray.fold(initial: R, operation: (acc: R, Long) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun <R> FloatArray.fold(initial: R, operation: (acc: R, Float) -> R): R
+public inline fun <R> FloatArray.fold(initial: R, operation: (acc: R, Float) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun <R> DoubleArray.fold(initial: R, operation: (acc: R, Double) -> R): R
+public inline fun <R> DoubleArray.fold(initial: R, operation: (acc: R, Double) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun <R> BooleanArray.fold(initial: R, operation: (acc: R, Boolean) -> R): R
+public inline fun <R> BooleanArray.fold(initial: R, operation: (acc: R, Boolean) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun <R> CharArray.fold(initial: R, operation: (acc: R, Char) -> R): R
+public inline fun <R> CharArray.fold(initial: R, operation: (acc: R, Char) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -6094,7 +9753,12 @@ public expect inline fun <R> CharArray.fold(initial: R, operation: (acc: R, Char
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public expect inline fun <T, R> Array<out T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R
+public inline fun <T, R> Array<out T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -6102,7 +9766,12 @@ public expect inline fun <T, R> Array<out T>.foldIndexed(initial: R, operation: 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public expect inline fun <R> ByteArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Byte) -> R): R
+public inline fun <R> ByteArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Byte) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -6110,7 +9779,12 @@ public expect inline fun <R> ByteArray.foldIndexed(initial: R, operation: (index
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public expect inline fun <R> ShortArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Short) -> R): R
+public inline fun <R> ShortArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Short) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -6118,7 +9792,12 @@ public expect inline fun <R> ShortArray.foldIndexed(initial: R, operation: (inde
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public expect inline fun <R> IntArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Int) -> R): R
+public inline fun <R> IntArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Int) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -6126,7 +9805,12 @@ public expect inline fun <R> IntArray.foldIndexed(initial: R, operation: (index:
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public expect inline fun <R> LongArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Long) -> R): R
+public inline fun <R> LongArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Long) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -6134,7 +9818,12 @@ public expect inline fun <R> LongArray.foldIndexed(initial: R, operation: (index
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public expect inline fun <R> FloatArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Float) -> R): R
+public inline fun <R> FloatArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Float) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -6142,7 +9831,12 @@ public expect inline fun <R> FloatArray.foldIndexed(initial: R, operation: (inde
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public expect inline fun <R> DoubleArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Double) -> R): R
+public inline fun <R> DoubleArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Double) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -6150,7 +9844,12 @@ public expect inline fun <R> DoubleArray.foldIndexed(initial: R, operation: (ind
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public expect inline fun <R> BooleanArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Boolean) -> R): R
+public inline fun <R> BooleanArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Boolean) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -6158,52 +9857,120 @@ public expect inline fun <R> BooleanArray.foldIndexed(initial: R, operation: (in
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public expect inline fun <R> CharArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): R
+public inline fun <R> CharArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, acc: R) -> R): R
+public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, acc: R) -> R): R
+public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, acc: R) -> R): R
+public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun <R> IntArray.foldRight(initial: R, operation: (Int, acc: R) -> R): R
+public inline fun <R> IntArray.foldRight(initial: R, operation: (Int, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun <R> LongArray.foldRight(initial: R, operation: (Long, acc: R) -> R): R
+public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, acc: R) -> R): R
+public inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, acc: R) -> R): R
+public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, acc: R) -> R): R
+public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun <R> CharArray.foldRight(initial: R, operation: (Char, acc: R) -> R): R
+public inline fun <R> CharArray.foldRight(initial: R, operation: (Char, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -6211,7 +9978,15 @@ public expect inline fun <R> CharArray.foldRight(initial: R, operation: (Char, a
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <T, R> Array<out T>.foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R): R
+public inline fun <T, R> Array<out T>.foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -6219,7 +9994,15 @@ public expect inline fun <T, R> Array<out T>.foldRightIndexed(initial: R, operat
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <R> ByteArray.foldRightIndexed(initial: R, operation: (index: Int, Byte, acc: R) -> R): R
+public inline fun <R> ByteArray.foldRightIndexed(initial: R, operation: (index: Int, Byte, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -6227,7 +10010,15 @@ public expect inline fun <R> ByteArray.foldRightIndexed(initial: R, operation: (
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <R> ShortArray.foldRightIndexed(initial: R, operation: (index: Int, Short, acc: R) -> R): R
+public inline fun <R> ShortArray.foldRightIndexed(initial: R, operation: (index: Int, Short, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -6235,7 +10026,15 @@ public expect inline fun <R> ShortArray.foldRightIndexed(initial: R, operation: 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <R> IntArray.foldRightIndexed(initial: R, operation: (index: Int, Int, acc: R) -> R): R
+public inline fun <R> IntArray.foldRightIndexed(initial: R, operation: (index: Int, Int, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -6243,7 +10042,15 @@ public expect inline fun <R> IntArray.foldRightIndexed(initial: R, operation: (i
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <R> LongArray.foldRightIndexed(initial: R, operation: (index: Int, Long, acc: R) -> R): R
+public inline fun <R> LongArray.foldRightIndexed(initial: R, operation: (index: Int, Long, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -6251,7 +10058,15 @@ public expect inline fun <R> LongArray.foldRightIndexed(initial: R, operation: (
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <R> FloatArray.foldRightIndexed(initial: R, operation: (index: Int, Float, acc: R) -> R): R
+public inline fun <R> FloatArray.foldRightIndexed(initial: R, operation: (index: Int, Float, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -6259,7 +10074,15 @@ public expect inline fun <R> FloatArray.foldRightIndexed(initial: R, operation: 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <R> DoubleArray.foldRightIndexed(initial: R, operation: (index: Int, Double, acc: R) -> R): R
+public inline fun <R> DoubleArray.foldRightIndexed(initial: R, operation: (index: Int, Double, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -6267,7 +10090,15 @@ public expect inline fun <R> DoubleArray.foldRightIndexed(initial: R, operation:
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <R> BooleanArray.foldRightIndexed(initial: R, operation: (index: Int, Boolean, acc: R) -> R): R
+public inline fun <R> BooleanArray.foldRightIndexed(initial: R, operation: (index: Int, Boolean, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -6275,115 +10106,168 @@ public expect inline fun <R> BooleanArray.foldRightIndexed(initial: R, operation
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <R> CharArray.foldRightIndexed(initial: R, operation: (index: Int, Char, acc: R) -> R): R
+public inline fun <R> CharArray.foldRightIndexed(initial: R, operation: (index: Int, Char, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Performs the given [action] on each element.
  */
-public expect inline fun <T> Array<out T>.forEach(action: (T) -> Unit): Unit
+public inline fun <T> Array<out T>.forEach(action: (T) -> Unit): Unit {
+    for (element in this) action(element)
+}
 
 /**
  * Performs the given [action] on each element.
  */
-public expect inline fun ByteArray.forEach(action: (Byte) -> Unit): Unit
+public inline fun ByteArray.forEach(action: (Byte) -> Unit): Unit {
+    for (element in this) action(element)
+}
 
 /**
  * Performs the given [action] on each element.
  */
-public expect inline fun ShortArray.forEach(action: (Short) -> Unit): Unit
+public inline fun ShortArray.forEach(action: (Short) -> Unit): Unit {
+    for (element in this) action(element)
+}
 
 /**
  * Performs the given [action] on each element.
  */
-public expect inline fun IntArray.forEach(action: (Int) -> Unit): Unit
+public inline fun IntArray.forEach(action: (Int) -> Unit): Unit {
+    for (element in this) action(element)
+}
 
 /**
  * Performs the given [action] on each element.
  */
-public expect inline fun LongArray.forEach(action: (Long) -> Unit): Unit
+public inline fun LongArray.forEach(action: (Long) -> Unit): Unit {
+    for (element in this) action(element)
+}
 
 /**
  * Performs the given [action] on each element.
  */
-public expect inline fun FloatArray.forEach(action: (Float) -> Unit): Unit
+public inline fun FloatArray.forEach(action: (Float) -> Unit): Unit {
+    for (element in this) action(element)
+}
 
 /**
  * Performs the given [action] on each element.
  */
-public expect inline fun DoubleArray.forEach(action: (Double) -> Unit): Unit
+public inline fun DoubleArray.forEach(action: (Double) -> Unit): Unit {
+    for (element in this) action(element)
+}
 
 /**
  * Performs the given [action] on each element.
  */
-public expect inline fun BooleanArray.forEach(action: (Boolean) -> Unit): Unit
+public inline fun BooleanArray.forEach(action: (Boolean) -> Unit): Unit {
+    for (element in this) action(element)
+}
 
 /**
  * Performs the given [action] on each element.
  */
-public expect inline fun CharArray.forEach(action: (Char) -> Unit): Unit
+public inline fun CharArray.forEach(action: (Char) -> Unit): Unit {
+    for (element in this) action(element)
+}
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public expect inline fun <T> Array<out T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit
+public inline fun <T> Array<out T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public expect inline fun ByteArray.forEachIndexed(action: (index: Int, Byte) -> Unit): Unit
+public inline fun ByteArray.forEachIndexed(action: (index: Int, Byte) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public expect inline fun ShortArray.forEachIndexed(action: (index: Int, Short) -> Unit): Unit
+public inline fun ShortArray.forEachIndexed(action: (index: Int, Short) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public expect inline fun IntArray.forEachIndexed(action: (index: Int, Int) -> Unit): Unit
+public inline fun IntArray.forEachIndexed(action: (index: Int, Int) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public expect inline fun LongArray.forEachIndexed(action: (index: Int, Long) -> Unit): Unit
+public inline fun LongArray.forEachIndexed(action: (index: Int, Long) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public expect inline fun FloatArray.forEachIndexed(action: (index: Int, Float) -> Unit): Unit
+public inline fun FloatArray.forEachIndexed(action: (index: Int, Float) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public expect inline fun DoubleArray.forEachIndexed(action: (index: Int, Double) -> Unit): Unit
+public inline fun DoubleArray.forEachIndexed(action: (index: Int, Double) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public expect inline fun BooleanArray.forEachIndexed(action: (index: Int, Boolean) -> Unit): Unit
+public inline fun BooleanArray.forEachIndexed(action: (index: Int, Boolean) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public expect inline fun CharArray.forEachIndexed(action: (index: Int, Char) -> Unit): Unit
+public inline fun CharArray.forEachIndexed(action: (index: Int, Char) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
 
 /**
  * Returns the largest element or `null` if there are no elements.
@@ -6391,7 +10275,17 @@ public expect inline fun CharArray.forEachIndexed(action: (index: Int, Char) -> 
  * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
-public expect fun Array<out Double>.max(): Double?
+public fun Array<out Double>.max(): Double? {
+    if (isEmpty()) return null
+    var max = this[0]
+    if (max.isNaN()) return max
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (e.isNaN()) return e
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the largest element or `null` if there are no elements.
@@ -6399,141 +10293,408 @@ public expect fun Array<out Double>.max(): Double?
  * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
-public expect fun Array<out Float>.max(): Float?
+public fun Array<out Float>.max(): Float? {
+    if (isEmpty()) return null
+    var max = this[0]
+    if (max.isNaN()) return max
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (e.isNaN()) return e
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the largest element or `null` if there are no elements.
  */
-public expect fun <T : Comparable<T>> Array<out T>.max(): T?
+public fun <T : Comparable<T>> Array<out T>.max(): T? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the largest element or `null` if there are no elements.
  */
-public expect fun ByteArray.max(): Byte?
+public fun ByteArray.max(): Byte? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the largest element or `null` if there are no elements.
  */
-public expect fun ShortArray.max(): Short?
+public fun ShortArray.max(): Short? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the largest element or `null` if there are no elements.
  */
-public expect fun IntArray.max(): Int?
+public fun IntArray.max(): Int? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the largest element or `null` if there are no elements.
  */
-public expect fun LongArray.max(): Long?
+public fun LongArray.max(): Long? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the largest element or `null` if there are no elements.
  * 
  * If any of elements is `NaN` returns `NaN`.
  */
-public expect fun FloatArray.max(): Float?
+public fun FloatArray.max(): Float? {
+    if (isEmpty()) return null
+    var max = this[0]
+    if (max.isNaN()) return max
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (e.isNaN()) return e
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the largest element or `null` if there are no elements.
  * 
  * If any of elements is `NaN` returns `NaN`.
  */
-public expect fun DoubleArray.max(): Double?
+public fun DoubleArray.max(): Double? {
+    if (isEmpty()) return null
+    var max = this[0]
+    if (max.isNaN()) return max
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (e.isNaN()) return e
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the largest element or `null` if there are no elements.
  */
-public expect fun CharArray.max(): Char?
+public fun CharArray.max(): Char? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <T, R : Comparable<R>> Array<out T>.maxBy(selector: (T) -> R): T?
+public inline fun <T, R : Comparable<R>> Array<out T>.maxBy(selector: (T) -> R): T? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> ByteArray.maxBy(selector: (Byte) -> R): Byte?
+public inline fun <R : Comparable<R>> ByteArray.maxBy(selector: (Byte) -> R): Byte? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> ShortArray.maxBy(selector: (Short) -> R): Short?
+public inline fun <R : Comparable<R>> ShortArray.maxBy(selector: (Short) -> R): Short? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> IntArray.maxBy(selector: (Int) -> R): Int?
+public inline fun <R : Comparable<R>> IntArray.maxBy(selector: (Int) -> R): Int? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> LongArray.maxBy(selector: (Long) -> R): Long?
+public inline fun <R : Comparable<R>> LongArray.maxBy(selector: (Long) -> R): Long? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> FloatArray.maxBy(selector: (Float) -> R): Float?
+public inline fun <R : Comparable<R>> FloatArray.maxBy(selector: (Float) -> R): Float? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> DoubleArray.maxBy(selector: (Double) -> R): Double?
+public inline fun <R : Comparable<R>> DoubleArray.maxBy(selector: (Double) -> R): Double? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> BooleanArray.maxBy(selector: (Boolean) -> R): Boolean?
+public inline fun <R : Comparable<R>> BooleanArray.maxBy(selector: (Boolean) -> R): Boolean? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> CharArray.maxBy(selector: (Char) -> R): Char?
+public inline fun <R : Comparable<R>> CharArray.maxBy(selector: (Char) -> R): Char? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun <T> Array<out T>.maxWith(comparator: Comparator<in T>): T?
+public fun <T> Array<out T>.maxWith(comparator: Comparator<in T>): T? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun ByteArray.maxWith(comparator: Comparator<in Byte>): Byte?
+public fun ByteArray.maxWith(comparator: Comparator<in Byte>): Byte? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun ShortArray.maxWith(comparator: Comparator<in Short>): Short?
+public fun ShortArray.maxWith(comparator: Comparator<in Short>): Short? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun IntArray.maxWith(comparator: Comparator<in Int>): Int?
+public fun IntArray.maxWith(comparator: Comparator<in Int>): Int? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun LongArray.maxWith(comparator: Comparator<in Long>): Long?
+public fun LongArray.maxWith(comparator: Comparator<in Long>): Long? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun FloatArray.maxWith(comparator: Comparator<in Float>): Float?
+public fun FloatArray.maxWith(comparator: Comparator<in Float>): Float? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun DoubleArray.maxWith(comparator: Comparator<in Double>): Double?
+public fun DoubleArray.maxWith(comparator: Comparator<in Double>): Double? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun BooleanArray.maxWith(comparator: Comparator<in Boolean>): Boolean?
+public fun BooleanArray.maxWith(comparator: Comparator<in Boolean>): Boolean? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun CharArray.maxWith(comparator: Comparator<in Char>): Char?
+public fun CharArray.maxWith(comparator: Comparator<in Char>): Char? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
 
 /**
  * Returns the smallest element or `null` if there are no elements.
@@ -6541,7 +10702,17 @@ public expect fun CharArray.maxWith(comparator: Comparator<in Char>): Char?
  * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
-public expect fun Array<out Double>.min(): Double?
+public fun Array<out Double>.min(): Double? {
+    if (isEmpty()) return null
+    var min = this[0]
+    if (min.isNaN()) return min
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (e.isNaN()) return e
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the smallest element or `null` if there are no elements.
@@ -6549,312 +10720,696 @@ public expect fun Array<out Double>.min(): Double?
  * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
-public expect fun Array<out Float>.min(): Float?
+public fun Array<out Float>.min(): Float? {
+    if (isEmpty()) return null
+    var min = this[0]
+    if (min.isNaN()) return min
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (e.isNaN()) return e
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the smallest element or `null` if there are no elements.
  */
-public expect fun <T : Comparable<T>> Array<out T>.min(): T?
+public fun <T : Comparable<T>> Array<out T>.min(): T? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the smallest element or `null` if there are no elements.
  */
-public expect fun ByteArray.min(): Byte?
+public fun ByteArray.min(): Byte? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the smallest element or `null` if there are no elements.
  */
-public expect fun ShortArray.min(): Short?
+public fun ShortArray.min(): Short? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the smallest element or `null` if there are no elements.
  */
-public expect fun IntArray.min(): Int?
+public fun IntArray.min(): Int? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the smallest element or `null` if there are no elements.
  */
-public expect fun LongArray.min(): Long?
+public fun LongArray.min(): Long? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the smallest element or `null` if there are no elements.
  * 
  * If any of elements is `NaN` returns `NaN`.
  */
-public expect fun FloatArray.min(): Float?
+public fun FloatArray.min(): Float? {
+    if (isEmpty()) return null
+    var min = this[0]
+    if (min.isNaN()) return min
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (e.isNaN()) return e
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the smallest element or `null` if there are no elements.
  * 
  * If any of elements is `NaN` returns `NaN`.
  */
-public expect fun DoubleArray.min(): Double?
+public fun DoubleArray.min(): Double? {
+    if (isEmpty()) return null
+    var min = this[0]
+    if (min.isNaN()) return min
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (e.isNaN()) return e
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the smallest element or `null` if there are no elements.
  */
-public expect fun CharArray.min(): Char?
+public fun CharArray.min(): Char? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <T, R : Comparable<R>> Array<out T>.minBy(selector: (T) -> R): T?
+public inline fun <T, R : Comparable<R>> Array<out T>.minBy(selector: (T) -> R): T? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> ByteArray.minBy(selector: (Byte) -> R): Byte?
+public inline fun <R : Comparable<R>> ByteArray.minBy(selector: (Byte) -> R): Byte? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> ShortArray.minBy(selector: (Short) -> R): Short?
+public inline fun <R : Comparable<R>> ShortArray.minBy(selector: (Short) -> R): Short? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> IntArray.minBy(selector: (Int) -> R): Int?
+public inline fun <R : Comparable<R>> IntArray.minBy(selector: (Int) -> R): Int? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> LongArray.minBy(selector: (Long) -> R): Long?
+public inline fun <R : Comparable<R>> LongArray.minBy(selector: (Long) -> R): Long? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> FloatArray.minBy(selector: (Float) -> R): Float?
+public inline fun <R : Comparable<R>> FloatArray.minBy(selector: (Float) -> R): Float? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> DoubleArray.minBy(selector: (Double) -> R): Double?
+public inline fun <R : Comparable<R>> DoubleArray.minBy(selector: (Double) -> R): Double? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> BooleanArray.minBy(selector: (Boolean) -> R): Boolean?
+public inline fun <R : Comparable<R>> BooleanArray.minBy(selector: (Boolean) -> R): Boolean? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public expect inline fun <R : Comparable<R>> CharArray.minBy(selector: (Char) -> R): Char?
+public inline fun <R : Comparable<R>> CharArray.minBy(selector: (Char) -> R): Char? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun <T> Array<out T>.minWith(comparator: Comparator<in T>): T?
+public fun <T> Array<out T>.minWith(comparator: Comparator<in T>): T? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun ByteArray.minWith(comparator: Comparator<in Byte>): Byte?
+public fun ByteArray.minWith(comparator: Comparator<in Byte>): Byte? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun ShortArray.minWith(comparator: Comparator<in Short>): Short?
+public fun ShortArray.minWith(comparator: Comparator<in Short>): Short? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun IntArray.minWith(comparator: Comparator<in Int>): Int?
+public fun IntArray.minWith(comparator: Comparator<in Int>): Int? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun LongArray.minWith(comparator: Comparator<in Long>): Long?
+public fun LongArray.minWith(comparator: Comparator<in Long>): Long? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun FloatArray.minWith(comparator: Comparator<in Float>): Float?
+public fun FloatArray.minWith(comparator: Comparator<in Float>): Float? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun DoubleArray.minWith(comparator: Comparator<in Double>): Double?
+public fun DoubleArray.minWith(comparator: Comparator<in Double>): Double? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun BooleanArray.minWith(comparator: Comparator<in Boolean>): Boolean?
+public fun BooleanArray.minWith(comparator: Comparator<in Boolean>): Boolean? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public expect fun CharArray.minWith(comparator: Comparator<in Char>): Char?
+public fun CharArray.minWith(comparator: Comparator<in Char>): Char? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
 
 /**
  * Returns `true` if the array has no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.none
  */
-public expect fun <T> Array<out T>.none(): Boolean
+public fun <T> Array<out T>.none(): Boolean {
+    return isEmpty()
+}
 
 /**
  * Returns `true` if the array has no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.none
  */
-public expect fun ByteArray.none(): Boolean
+public fun ByteArray.none(): Boolean {
+    return isEmpty()
+}
 
 /**
  * Returns `true` if the array has no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.none
  */
-public expect fun ShortArray.none(): Boolean
+public fun ShortArray.none(): Boolean {
+    return isEmpty()
+}
 
 /**
  * Returns `true` if the array has no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.none
  */
-public expect fun IntArray.none(): Boolean
+public fun IntArray.none(): Boolean {
+    return isEmpty()
+}
 
 /**
  * Returns `true` if the array has no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.none
  */
-public expect fun LongArray.none(): Boolean
+public fun LongArray.none(): Boolean {
+    return isEmpty()
+}
 
 /**
  * Returns `true` if the array has no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.none
  */
-public expect fun FloatArray.none(): Boolean
+public fun FloatArray.none(): Boolean {
+    return isEmpty()
+}
 
 /**
  * Returns `true` if the array has no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.none
  */
-public expect fun DoubleArray.none(): Boolean
+public fun DoubleArray.none(): Boolean {
+    return isEmpty()
+}
 
 /**
  * Returns `true` if the array has no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.none
  */
-public expect fun BooleanArray.none(): Boolean
+public fun BooleanArray.none(): Boolean {
+    return isEmpty()
+}
 
 /**
  * Returns `true` if the array has no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.none
  */
-public expect fun CharArray.none(): Boolean
+public fun CharArray.none(): Boolean {
+    return isEmpty()
+}
 
 /**
  * Returns `true` if no elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
-public expect inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean
+public inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if no elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
-public expect inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean
+public inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if no elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
-public expect inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean
+public inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if no elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
-public expect inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean
+public inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if no elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
-public expect inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean
+public inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if no elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
-public expect inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean
+public inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if no elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
-public expect inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean
+public inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if no elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
-public expect inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean
+public inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if no elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
-public expect inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean
+public inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun <S, T: S> Array<out T>.reduce(operation: (acc: S, T) -> S): S
+public inline fun <S, T: S> Array<out T>.reduce(operation: (acc: S, T) -> S): S {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator: S = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun ByteArray.reduce(operation: (acc: Byte, Byte) -> Byte): Byte
+public inline fun ByteArray.reduce(operation: (acc: Byte, Byte) -> Byte): Byte {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun ShortArray.reduce(operation: (acc: Short, Short) -> Short): Short
+public inline fun ShortArray.reduce(operation: (acc: Short, Short) -> Short): Short {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun IntArray.reduce(operation: (acc: Int, Int) -> Int): Int
+public inline fun IntArray.reduce(operation: (acc: Int, Int) -> Int): Int {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun LongArray.reduce(operation: (acc: Long, Long) -> Long): Long
+public inline fun LongArray.reduce(operation: (acc: Long, Long) -> Long): Long {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun FloatArray.reduce(operation: (acc: Float, Float) -> Float): Float
+public inline fun FloatArray.reduce(operation: (acc: Float, Float) -> Float): Float {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun DoubleArray.reduce(operation: (acc: Double, Double) -> Double): Double
+public inline fun DoubleArray.reduce(operation: (acc: Double, Double) -> Double): Double {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun BooleanArray.reduce(operation: (acc: Boolean, Boolean) -> Boolean): Boolean
+public inline fun BooleanArray.reduce(operation: (acc: Boolean, Boolean) -> Boolean): Boolean {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public expect inline fun CharArray.reduce(operation: (acc: Char, Char) -> Char): Char
+public inline fun CharArray.reduce(operation: (acc: Char, Char) -> Char): Char {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6862,7 +11417,15 @@ public expect inline fun CharArray.reduce(operation: (acc: Char, Char) -> Char):
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public expect inline fun <S, T: S> Array<out T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S
+public inline fun <S, T: S> Array<out T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator: S = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6870,7 +11433,15 @@ public expect inline fun <S, T: S> Array<out T>.reduceIndexed(operation: (index:
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public expect inline fun ByteArray.reduceIndexed(operation: (index: Int, acc: Byte, Byte) -> Byte): Byte
+public inline fun ByteArray.reduceIndexed(operation: (index: Int, acc: Byte, Byte) -> Byte): Byte {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6878,7 +11449,15 @@ public expect inline fun ByteArray.reduceIndexed(operation: (index: Int, acc: By
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public expect inline fun ShortArray.reduceIndexed(operation: (index: Int, acc: Short, Short) -> Short): Short
+public inline fun ShortArray.reduceIndexed(operation: (index: Int, acc: Short, Short) -> Short): Short {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6886,7 +11465,15 @@ public expect inline fun ShortArray.reduceIndexed(operation: (index: Int, acc: S
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public expect inline fun IntArray.reduceIndexed(operation: (index: Int, acc: Int, Int) -> Int): Int
+public inline fun IntArray.reduceIndexed(operation: (index: Int, acc: Int, Int) -> Int): Int {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6894,7 +11481,15 @@ public expect inline fun IntArray.reduceIndexed(operation: (index: Int, acc: Int
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public expect inline fun LongArray.reduceIndexed(operation: (index: Int, acc: Long, Long) -> Long): Long
+public inline fun LongArray.reduceIndexed(operation: (index: Int, acc: Long, Long) -> Long): Long {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6902,7 +11497,15 @@ public expect inline fun LongArray.reduceIndexed(operation: (index: Int, acc: Lo
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public expect inline fun FloatArray.reduceIndexed(operation: (index: Int, acc: Float, Float) -> Float): Float
+public inline fun FloatArray.reduceIndexed(operation: (index: Int, acc: Float, Float) -> Float): Float {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6910,7 +11513,15 @@ public expect inline fun FloatArray.reduceIndexed(operation: (index: Int, acc: F
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public expect inline fun DoubleArray.reduceIndexed(operation: (index: Int, acc: Double, Double) -> Double): Double
+public inline fun DoubleArray.reduceIndexed(operation: (index: Int, acc: Double, Double) -> Double): Double {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6918,7 +11529,15 @@ public expect inline fun DoubleArray.reduceIndexed(operation: (index: Int, acc: 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public expect inline fun BooleanArray.reduceIndexed(operation: (index: Int, acc: Boolean, Boolean) -> Boolean): Boolean
+public inline fun BooleanArray.reduceIndexed(operation: (index: Int, acc: Boolean, Boolean) -> Boolean): Boolean {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6926,52 +11545,132 @@ public expect inline fun BooleanArray.reduceIndexed(operation: (index: Int, acc:
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public expect inline fun CharArray.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char
+public inline fun CharArray.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun <S, T: S> Array<out T>.reduceRight(operation: (T, acc: S) -> S): S
+public inline fun <S, T: S> Array<out T>.reduceRight(operation: (T, acc: S) -> S): S {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator: S = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun ByteArray.reduceRight(operation: (Byte, acc: Byte) -> Byte): Byte
+public inline fun ByteArray.reduceRight(operation: (Byte, acc: Byte) -> Byte): Byte {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun ShortArray.reduceRight(operation: (Short, acc: Short) -> Short): Short
+public inline fun ShortArray.reduceRight(operation: (Short, acc: Short) -> Short): Short {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun IntArray.reduceRight(operation: (Int, acc: Int) -> Int): Int
+public inline fun IntArray.reduceRight(operation: (Int, acc: Int) -> Int): Int {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun LongArray.reduceRight(operation: (Long, acc: Long) -> Long): Long
+public inline fun LongArray.reduceRight(operation: (Long, acc: Long) -> Long): Long {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun FloatArray.reduceRight(operation: (Float, acc: Float) -> Float): Float
+public inline fun FloatArray.reduceRight(operation: (Float, acc: Float) -> Float): Float {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun DoubleArray.reduceRight(operation: (Double, acc: Double) -> Double): Double
+public inline fun DoubleArray.reduceRight(operation: (Double, acc: Double) -> Double): Double {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun BooleanArray.reduceRight(operation: (Boolean, acc: Boolean) -> Boolean): Boolean
+public inline fun BooleanArray.reduceRight(operation: (Boolean, acc: Boolean) -> Boolean): Boolean {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public expect inline fun CharArray.reduceRight(operation: (Char, acc: Char) -> Char): Char
+public inline fun CharArray.reduceRight(operation: (Char, acc: Char) -> Char): Char {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6979,7 +11678,16 @@ public expect inline fun CharArray.reduceRight(operation: (Char, acc: Char) -> C
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <S, T: S> Array<out T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S
+public inline fun <S, T: S> Array<out T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator: S = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6987,7 +11695,16 @@ public expect inline fun <S, T: S> Array<out T>.reduceRightIndexed(operation: (i
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun ByteArray.reduceRightIndexed(operation: (index: Int, Byte, acc: Byte) -> Byte): Byte
+public inline fun ByteArray.reduceRightIndexed(operation: (index: Int, Byte, acc: Byte) -> Byte): Byte {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6995,7 +11712,16 @@ public expect inline fun ByteArray.reduceRightIndexed(operation: (index: Int, By
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun ShortArray.reduceRightIndexed(operation: (index: Int, Short, acc: Short) -> Short): Short
+public inline fun ShortArray.reduceRightIndexed(operation: (index: Int, Short, acc: Short) -> Short): Short {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -7003,7 +11729,16 @@ public expect inline fun ShortArray.reduceRightIndexed(operation: (index: Int, S
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun IntArray.reduceRightIndexed(operation: (index: Int, Int, acc: Int) -> Int): Int
+public inline fun IntArray.reduceRightIndexed(operation: (index: Int, Int, acc: Int) -> Int): Int {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -7011,7 +11746,16 @@ public expect inline fun IntArray.reduceRightIndexed(operation: (index: Int, Int
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun LongArray.reduceRightIndexed(operation: (index: Int, Long, acc: Long) -> Long): Long
+public inline fun LongArray.reduceRightIndexed(operation: (index: Int, Long, acc: Long) -> Long): Long {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -7019,7 +11763,16 @@ public expect inline fun LongArray.reduceRightIndexed(operation: (index: Int, Lo
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun FloatArray.reduceRightIndexed(operation: (index: Int, Float, acc: Float) -> Float): Float
+public inline fun FloatArray.reduceRightIndexed(operation: (index: Int, Float, acc: Float) -> Float): Float {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -7027,7 +11780,16 @@ public expect inline fun FloatArray.reduceRightIndexed(operation: (index: Int, F
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun DoubleArray.reduceRightIndexed(operation: (index: Int, Double, acc: Double) -> Double): Double
+public inline fun DoubleArray.reduceRightIndexed(operation: (index: Int, Double, acc: Double) -> Double): Double {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -7035,7 +11797,16 @@ public expect inline fun DoubleArray.reduceRightIndexed(operation: (index: Int, 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun BooleanArray.reduceRightIndexed(operation: (index: Int, Boolean, acc: Boolean) -> Boolean): Boolean
+public inline fun BooleanArray.reduceRightIndexed(operation: (index: Int, Boolean, acc: Boolean) -> Boolean): Boolean {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -7043,425 +11814,901 @@ public expect inline fun BooleanArray.reduceRightIndexed(operation: (index: Int,
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun CharArray.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char
+public inline fun CharArray.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun <T> Array<out T>.sumBy(selector: (T) -> Int): Int
+public inline fun <T> Array<out T>.sumBy(selector: (T) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun ByteArray.sumBy(selector: (Byte) -> Int): Int
+public inline fun ByteArray.sumBy(selector: (Byte) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun ShortArray.sumBy(selector: (Short) -> Int): Int
+public inline fun ShortArray.sumBy(selector: (Short) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun IntArray.sumBy(selector: (Int) -> Int): Int
+public inline fun IntArray.sumBy(selector: (Int) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun LongArray.sumBy(selector: (Long) -> Int): Int
+public inline fun LongArray.sumBy(selector: (Long) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun FloatArray.sumBy(selector: (Float) -> Int): Int
+public inline fun FloatArray.sumBy(selector: (Float) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun DoubleArray.sumBy(selector: (Double) -> Int): Int
+public inline fun DoubleArray.sumBy(selector: (Double) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun BooleanArray.sumBy(selector: (Boolean) -> Int): Int
+public inline fun BooleanArray.sumBy(selector: (Boolean) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun CharArray.sumBy(selector: (Char) -> Int): Int
+public inline fun CharArray.sumBy(selector: (Char) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun <T> Array<out T>.sumByDouble(selector: (T) -> Double): Double
+public inline fun <T> Array<out T>.sumByDouble(selector: (T) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun ByteArray.sumByDouble(selector: (Byte) -> Double): Double
+public inline fun ByteArray.sumByDouble(selector: (Byte) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun ShortArray.sumByDouble(selector: (Short) -> Double): Double
+public inline fun ShortArray.sumByDouble(selector: (Short) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun IntArray.sumByDouble(selector: (Int) -> Double): Double
+public inline fun IntArray.sumByDouble(selector: (Int) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun LongArray.sumByDouble(selector: (Long) -> Double): Double
+public inline fun LongArray.sumByDouble(selector: (Long) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun FloatArray.sumByDouble(selector: (Float) -> Double): Double
+public inline fun FloatArray.sumByDouble(selector: (Float) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun DoubleArray.sumByDouble(selector: (Double) -> Double): Double
+public inline fun DoubleArray.sumByDouble(selector: (Double) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun BooleanArray.sumByDouble(selector: (Boolean) -> Double): Double
+public inline fun BooleanArray.sumByDouble(selector: (Boolean) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public expect inline fun CharArray.sumByDouble(selector: (Char) -> Double): Double
+public inline fun CharArray.sumByDouble(selector: (Char) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
  */
-public expect fun <T : Any> Array<T?>.requireNoNulls(): Array<T>
+public fun <T : Any> Array<T?>.requireNoNulls(): Array<T> {
+    for (element in this) {
+        if (element == null) {
+            throw IllegalArgumentException("null element found in $this.")
+        }
+    }
+    @Suppress("UNCHECKED_CAST")
+    return this as Array<T>
+}
 
 /**
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  */
-public expect inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>>
+public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
+    val first = ArrayList<T>()
+    val second = ArrayList<T>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
 
 /**
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  */
-public expect inline fun ByteArray.partition(predicate: (Byte) -> Boolean): Pair<List<Byte>, List<Byte>>
+public inline fun ByteArray.partition(predicate: (Byte) -> Boolean): Pair<List<Byte>, List<Byte>> {
+    val first = ArrayList<Byte>()
+    val second = ArrayList<Byte>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
 
 /**
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  */
-public expect inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List<Short>, List<Short>>
+public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List<Short>, List<Short>> {
+    val first = ArrayList<Short>()
+    val second = ArrayList<Short>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
 
 /**
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  */
-public expect inline fun IntArray.partition(predicate: (Int) -> Boolean): Pair<List<Int>, List<Int>>
+public inline fun IntArray.partition(predicate: (Int) -> Boolean): Pair<List<Int>, List<Int>> {
+    val first = ArrayList<Int>()
+    val second = ArrayList<Int>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
 
 /**
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  */
-public expect inline fun LongArray.partition(predicate: (Long) -> Boolean): Pair<List<Long>, List<Long>>
+public inline fun LongArray.partition(predicate: (Long) -> Boolean): Pair<List<Long>, List<Long>> {
+    val first = ArrayList<Long>()
+    val second = ArrayList<Long>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
 
 /**
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  */
-public expect inline fun FloatArray.partition(predicate: (Float) -> Boolean): Pair<List<Float>, List<Float>>
+public inline fun FloatArray.partition(predicate: (Float) -> Boolean): Pair<List<Float>, List<Float>> {
+    val first = ArrayList<Float>()
+    val second = ArrayList<Float>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
 
 /**
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  */
-public expect inline fun DoubleArray.partition(predicate: (Double) -> Boolean): Pair<List<Double>, List<Double>>
+public inline fun DoubleArray.partition(predicate: (Double) -> Boolean): Pair<List<Double>, List<Double>> {
+    val first = ArrayList<Double>()
+    val second = ArrayList<Double>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
 
 /**
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  */
-public expect inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean): Pair<List<Boolean>, List<Boolean>>
+public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean): Pair<List<Boolean>, List<Boolean>> {
+    val first = ArrayList<Boolean>()
+    val second = ArrayList<Boolean>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
 
 /**
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  */
-public expect inline fun CharArray.partition(predicate: (Char) -> Boolean): Pair<List<Char>, List<Char>>
+public inline fun CharArray.partition(predicate: (Char) -> Boolean): Pair<List<Char>, List<Char>> {
+    val first = ArrayList<Char>()
+    val second = ArrayList<Char>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <T, R> Array<out T>.zip(other: Array<out R>): List<Pair<T, R>>
+public infix fun <T, R> Array<out T>.zip(other: Array<out R>): List<Pair<T, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> ByteArray.zip(other: Array<out R>): List<Pair<Byte, R>>
+public infix fun <R> ByteArray.zip(other: Array<out R>): List<Pair<Byte, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> ShortArray.zip(other: Array<out R>): List<Pair<Short, R>>
+public infix fun <R> ShortArray.zip(other: Array<out R>): List<Pair<Short, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> IntArray.zip(other: Array<out R>): List<Pair<Int, R>>
+public infix fun <R> IntArray.zip(other: Array<out R>): List<Pair<Int, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> LongArray.zip(other: Array<out R>): List<Pair<Long, R>>
+public infix fun <R> LongArray.zip(other: Array<out R>): List<Pair<Long, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> FloatArray.zip(other: Array<out R>): List<Pair<Float, R>>
+public infix fun <R> FloatArray.zip(other: Array<out R>): List<Pair<Float, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> DoubleArray.zip(other: Array<out R>): List<Pair<Double, R>>
+public infix fun <R> DoubleArray.zip(other: Array<out R>): List<Pair<Double, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> BooleanArray.zip(other: Array<out R>): List<Pair<Boolean, R>>
+public infix fun <R> BooleanArray.zip(other: Array<out R>): List<Pair<Boolean, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> CharArray.zip(other: Array<out R>): List<Pair<Char, R>>
+public infix fun <R> CharArray.zip(other: Array<out R>): List<Pair<Char, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V>
+public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (a: Byte, b: R) -> V): List<V>
+public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (a: Byte, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (a: Short, b: R) -> V): List<V>
+public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (a: Short, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (a: Int, b: R) -> V): List<V>
+public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (a: Int, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (a: Long, b: R) -> V): List<V>
+public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (a: Long, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (a: Float, b: R) -> V): List<V>
+public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (a: Float, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (a: Double, b: R) -> V): List<V>
+public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (a: Double, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (a: Boolean, b: R) -> V): List<V>
+public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (a: Boolean, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (a: Char, b: R) -> V): List<V>
+public inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (a: Char, b: R) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <T, R> Array<out T>.zip(other: Iterable<R>): List<Pair<T, R>>
+public infix fun <T, R> Array<out T>.zip(other: Iterable<R>): List<Pair<T, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> ByteArray.zip(other: Iterable<R>): List<Pair<Byte, R>>
+public infix fun <R> ByteArray.zip(other: Iterable<R>): List<Pair<Byte, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>>
+public infix fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> IntArray.zip(other: Iterable<R>): List<Pair<Int, R>>
+public infix fun <R> IntArray.zip(other: Iterable<R>): List<Pair<Int, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> LongArray.zip(other: Iterable<R>): List<Pair<Long, R>>
+public infix fun <R> LongArray.zip(other: Iterable<R>): List<Pair<Long, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> FloatArray.zip(other: Iterable<R>): List<Pair<Float, R>>
+public infix fun <R> FloatArray.zip(other: Iterable<R>): List<Pair<Float, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> DoubleArray.zip(other: Iterable<R>): List<Pair<Double, R>>
+public infix fun <R> DoubleArray.zip(other: Iterable<R>): List<Pair<Double, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> BooleanArray.zip(other: Iterable<R>): List<Pair<Boolean, R>>
+public infix fun <R> BooleanArray.zip(other: Iterable<R>): List<Pair<Boolean, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>>
+public infix fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V>
+public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (a: Byte, b: R) -> V): List<V>
+public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (a: Byte, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (a: Short, b: R) -> V): List<V>
+public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (a: Short, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (a: Int, b: R) -> V): List<V>
+public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (a: Int, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (a: Long, b: R) -> V): List<V>
+public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (a: Long, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (a: Float, b: R) -> V): List<V>
+public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (a: Float, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (a: Double, b: R) -> V): List<V>
+public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (a: Double, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (a: Boolean, b: R) -> V): List<V>
+public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (a: Boolean, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (a: Char, b: R) -> V): List<V>
+public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (a: Char, b: R) -> V): List<V> {
+    val arraySize = size
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun ByteArray.zip(other: ByteArray): List<Pair<Byte, Byte>>
+public infix fun ByteArray.zip(other: ByteArray): List<Pair<Byte, Byte>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun ShortArray.zip(other: ShortArray): List<Pair<Short, Short>>
+public infix fun ShortArray.zip(other: ShortArray): List<Pair<Short, Short>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun IntArray.zip(other: IntArray): List<Pair<Int, Int>>
+public infix fun IntArray.zip(other: IntArray): List<Pair<Int, Int>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun LongArray.zip(other: LongArray): List<Pair<Long, Long>>
+public infix fun LongArray.zip(other: LongArray): List<Pair<Long, Long>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun FloatArray.zip(other: FloatArray): List<Pair<Float, Float>>
+public infix fun FloatArray.zip(other: FloatArray): List<Pair<Float, Float>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun DoubleArray.zip(other: DoubleArray): List<Pair<Double, Double>>
+public infix fun DoubleArray.zip(other: DoubleArray): List<Pair<Double, Double>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun BooleanArray.zip(other: BooleanArray): List<Pair<Boolean, Boolean>>
+public infix fun BooleanArray.zip(other: BooleanArray): List<Pair<Boolean, Boolean>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public expect infix fun CharArray.zip(other: CharArray): List<Pair<Char, Char>>
+public infix fun CharArray.zip(other: CharArray): List<Pair<Char, Char>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <V> ByteArray.zip(other: ByteArray, transform: (a: Byte, b: Byte) -> V): List<V>
+public inline fun <V> ByteArray.zip(other: ByteArray, transform: (a: Byte, b: Byte) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <V> ShortArray.zip(other: ShortArray, transform: (a: Short, b: Short) -> V): List<V>
+public inline fun <V> ShortArray.zip(other: ShortArray, transform: (a: Short, b: Short) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <V> IntArray.zip(other: IntArray, transform: (a: Int, b: Int) -> V): List<V>
+public inline fun <V> IntArray.zip(other: IntArray, transform: (a: Int, b: Int) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <V> LongArray.zip(other: LongArray, transform: (a: Long, b: Long) -> V): List<V>
+public inline fun <V> LongArray.zip(other: LongArray, transform: (a: Long, b: Long) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <V> FloatArray.zip(other: FloatArray, transform: (a: Float, b: Float) -> V): List<V>
+public inline fun <V> FloatArray.zip(other: FloatArray, transform: (a: Float, b: Float) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (a: Double, b: Double) -> V): List<V>
+public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (a: Double, b: Double) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (a: Boolean, b: Boolean) -> V): List<V>
+public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (a: Boolean, b: Boolean) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public expect inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Char) -> V): List<V>
+public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Char) -> V): List<V> {
+    val size = minOf(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0 until size) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
@@ -7796,240 +13043,462 @@ public fun CharArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
 /**
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
-public expect fun <T> Array<out T>.asIterable(): Iterable<T>
+public fun <T> Array<out T>.asIterable(): Iterable<T> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
 
 /**
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
-public expect fun ByteArray.asIterable(): Iterable<Byte>
+public fun ByteArray.asIterable(): Iterable<Byte> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
 
 /**
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
-public expect fun ShortArray.asIterable(): Iterable<Short>
+public fun ShortArray.asIterable(): Iterable<Short> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
 
 /**
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
-public expect fun IntArray.asIterable(): Iterable<Int>
+public fun IntArray.asIterable(): Iterable<Int> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
 
 /**
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
-public expect fun LongArray.asIterable(): Iterable<Long>
+public fun LongArray.asIterable(): Iterable<Long> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
 
 /**
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
-public expect fun FloatArray.asIterable(): Iterable<Float>
+public fun FloatArray.asIterable(): Iterable<Float> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
 
 /**
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
-public expect fun DoubleArray.asIterable(): Iterable<Double>
+public fun DoubleArray.asIterable(): Iterable<Double> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
 
 /**
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
-public expect fun BooleanArray.asIterable(): Iterable<Boolean>
+public fun BooleanArray.asIterable(): Iterable<Boolean> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
 
 /**
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
-public expect fun CharArray.asIterable(): Iterable<Char>
+public fun CharArray.asIterable(): Iterable<Char> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
 
 /**
  * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  * 
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
-public expect fun <T> Array<out T>.asSequence(): Sequence<T>
+public fun <T> Array<out T>.asSequence(): Sequence<T> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
 
 /**
  * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  * 
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
-public expect fun ByteArray.asSequence(): Sequence<Byte>
+public fun ByteArray.asSequence(): Sequence<Byte> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
 
 /**
  * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  * 
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
-public expect fun ShortArray.asSequence(): Sequence<Short>
+public fun ShortArray.asSequence(): Sequence<Short> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
 
 /**
  * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  * 
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
-public expect fun IntArray.asSequence(): Sequence<Int>
+public fun IntArray.asSequence(): Sequence<Int> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
 
 /**
  * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  * 
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
-public expect fun LongArray.asSequence(): Sequence<Long>
+public fun LongArray.asSequence(): Sequence<Long> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
 
 /**
  * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  * 
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
-public expect fun FloatArray.asSequence(): Sequence<Float>
+public fun FloatArray.asSequence(): Sequence<Float> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
 
 /**
  * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  * 
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
-public expect fun DoubleArray.asSequence(): Sequence<Double>
+public fun DoubleArray.asSequence(): Sequence<Double> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
 
 /**
  * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  * 
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
-public expect fun BooleanArray.asSequence(): Sequence<Boolean>
+public fun BooleanArray.asSequence(): Sequence<Boolean> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
 
 /**
  * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  * 
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
-public expect fun CharArray.asSequence(): Sequence<Char>
+public fun CharArray.asSequence(): Sequence<Char> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
 
 /**
  * Returns an average value of elements in the array.
  */
 @kotlin.jvm.JvmName("averageOfByte")
-public expect fun Array<out Byte>.average(): Double
+public fun Array<out Byte>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
 @kotlin.jvm.JvmName("averageOfShort")
-public expect fun Array<out Short>.average(): Double
+public fun Array<out Short>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
 @kotlin.jvm.JvmName("averageOfInt")
-public expect fun Array<out Int>.average(): Double
+public fun Array<out Int>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
 @kotlin.jvm.JvmName("averageOfLong")
-public expect fun Array<out Long>.average(): Double
+public fun Array<out Long>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
 @kotlin.jvm.JvmName("averageOfFloat")
-public expect fun Array<out Float>.average(): Double
+public fun Array<out Float>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
 @kotlin.jvm.JvmName("averageOfDouble")
-public expect fun Array<out Double>.average(): Double
+public fun Array<out Double>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
-public expect fun ByteArray.average(): Double
+public fun ByteArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
-public expect fun ShortArray.average(): Double
+public fun ShortArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
-public expect fun IntArray.average(): Double
+public fun IntArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
-public expect fun LongArray.average(): Double
+public fun LongArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
-public expect fun FloatArray.average(): Double
+public fun FloatArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns an average value of elements in the array.
  */
-public expect fun DoubleArray.average(): Double
+public fun DoubleArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfByte")
-public expect fun Array<out Byte>.sum(): Int
+public fun Array<out Byte>.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfShort")
-public expect fun Array<out Short>.sum(): Int
+public fun Array<out Short>.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfInt")
-public expect fun Array<out Int>.sum(): Int
+public fun Array<out Int>.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfLong")
-public expect fun Array<out Long>.sum(): Long
+public fun Array<out Long>.sum(): Long {
+    var sum: Long = 0L
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfFloat")
-public expect fun Array<out Float>.sum(): Float
+public fun Array<out Float>.sum(): Float {
+    var sum: Float = 0.0f
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfDouble")
-public expect fun Array<out Double>.sum(): Double
+public fun Array<out Double>.sum(): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
-public expect fun ByteArray.sum(): Int
+public fun ByteArray.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
-public expect fun ShortArray.sum(): Int
+public fun ShortArray.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
-public expect fun IntArray.sum(): Int
+public fun IntArray.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
-public expect fun LongArray.sum(): Long
+public fun LongArray.sum(): Long {
+    var sum: Long = 0L
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
-public expect fun FloatArray.sum(): Float
+public fun FloatArray.sum(): Float {
+    var sum: Float = 0.0f
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all elements in the array.
  */
-public expect fun DoubleArray.sum(): Double
+public fun DoubleArray.sum(): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
 

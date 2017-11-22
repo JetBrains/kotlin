@@ -16,279 +16,488 @@ import kotlin.comparisons.*
  * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharSequence.elementAt(index: Int): Char
+public inline fun CharSequence.elementAt(index: Int): Char {
+    return get(index)
+}
 
 /**
  * Returns a character at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this char sequence.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharSequence.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char
+public inline fun CharSequence.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns a character at the given [index] or `null` if the [index] is out of bounds of this char sequence.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharSequence.elementAtOrNull(index: Int): Char?
+public inline fun CharSequence.elementAtOrNull(index: Int): Char? {
+    return this.getOrNull(index)
+}
 
 /**
  * Returns the first character matching the given [predicate], or `null` if no such character was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharSequence.find(predicate: (Char) -> Boolean): Char?
+public inline fun CharSequence.find(predicate: (Char) -> Boolean): Char? {
+    return firstOrNull(predicate)
+}
 
 /**
  * Returns the last character matching the given [predicate], or `null` if no such character was found.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharSequence.findLast(predicate: (Char) -> Boolean): Char?
+public inline fun CharSequence.findLast(predicate: (Char) -> Boolean): Char? {
+    return lastOrNull(predicate)
+}
 
 /**
  * Returns first character.
  * @throws [NoSuchElementException] if the char sequence is empty.
  */
-public expect fun CharSequence.first(): Char
+public fun CharSequence.first(): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Char sequence is empty.")
+    return this[0]
+}
 
 /**
  * Returns the first character matching the given [predicate].
  * @throws [NoSuchElementException] if no such character is found.
  */
-public expect inline fun CharSequence.first(predicate: (Char) -> Boolean): Char
+public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Char sequence contains no character matching the predicate.")
+}
 
 /**
  * Returns the first character, or `null` if the char sequence is empty.
  */
-public expect fun CharSequence.firstOrNull(): Char?
+public fun CharSequence.firstOrNull(): Char? {
+    return if (isEmpty()) null else this[0]
+}
 
 /**
  * Returns the first character matching the given [predicate], or `null` if character was not found.
  */
-public expect inline fun CharSequence.firstOrNull(predicate: (Char) -> Boolean): Char?
+public inline fun CharSequence.firstOrNull(predicate: (Char) -> Boolean): Char? {
+    for (element in this) if (predicate(element)) return element
+    return null
+}
 
 /**
  * Returns a character at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this char sequence.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char): Char
+public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
 
 /**
  * Returns a character at the given [index] or `null` if the [index] is out of bounds of this char sequence.
  */
-public expect fun CharSequence.getOrNull(index: Int): Char?
+public fun CharSequence.getOrNull(index: Int): Char? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
 
 /**
  * Returns index of the first character matching the given [predicate], or -1 if the char sequence does not contain such character.
  */
-public expect inline fun CharSequence.indexOfFirst(predicate: (Char) -> Boolean): Int
+public inline fun CharSequence.indexOfFirst(predicate: (Char) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns index of the last character matching the given [predicate], or -1 if the char sequence does not contain such character.
  */
-public expect inline fun CharSequence.indexOfLast(predicate: (Char) -> Boolean): Int
+public inline fun CharSequence.indexOfLast(predicate: (Char) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
 
 /**
  * Returns the last character.
  * @throws [NoSuchElementException] if the char sequence is empty.
  */
-public expect fun CharSequence.last(): Char
+public fun CharSequence.last(): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Char sequence is empty.")
+    return this[lastIndex]
+}
 
 /**
  * Returns the last character matching the given [predicate].
  * @throws [NoSuchElementException] if no such character is found.
  */
-public expect inline fun CharSequence.last(predicate: (Char) -> Boolean): Char
+public inline fun CharSequence.last(predicate: (Char) -> Boolean): Char {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    throw NoSuchElementException("Char sequence contains no character matching the predicate.")
+}
 
 /**
  * Returns the last character, or `null` if the char sequence is empty.
  */
-public expect fun CharSequence.lastOrNull(): Char?
+public fun CharSequence.lastOrNull(): Char? {
+    return if (isEmpty()) null else this[length - 1]
+}
 
 /**
  * Returns the last character matching the given [predicate], or `null` if no such character was found.
  */
-public expect inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char?
+public inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char? {
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
+    }
+    return null
+}
 
 /**
  * Returns the single character, or throws an exception if the char sequence is empty or has more than one character.
  */
-public expect fun CharSequence.single(): Char
+public fun CharSequence.single(): Char {
+    return when (length) {
+        0 -> throw NoSuchElementException("Char sequence is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Char sequence has more than one element.")
+    }
+}
 
 /**
  * Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character.
  */
-public expect inline fun CharSequence.single(predicate: (Char) -> Boolean): Char
+public inline fun CharSequence.single(predicate: (Char) -> Boolean): Char {
+    var single: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Char sequence contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Char sequence contains no character matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
+    return single as Char
+}
 
 /**
  * Returns single character, or `null` if the char sequence is empty or has more than one character.
  */
-public expect fun CharSequence.singleOrNull(): Char?
+public fun CharSequence.singleOrNull(): Char? {
+    return if (length == 1) this[0] else null
+}
 
 /**
  * Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found.
  */
-public expect inline fun CharSequence.singleOrNull(predicate: (Char) -> Boolean): Char?
+public inline fun CharSequence.singleOrNull(predicate: (Char) -> Boolean): Char? {
+    var single: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) return null
+            single = element
+            found = true
+        }
+    }
+    if (!found) return null
+    return single
+}
 
 /**
  * Returns a subsequence of this char sequence with the first [n] characters removed.
  */
-public expect fun CharSequence.drop(n: Int): CharSequence
+public fun CharSequence.drop(n: Int): CharSequence {
+    require(n >= 0) { "Requested character count $n is less than zero." }
+    return subSequence(n.coerceAtMost(length), length)
+}
 
 /**
  * Returns a string with the first [n] characters removed.
  */
-public expect fun String.drop(n: Int): String
+public fun String.drop(n: Int): String {
+    require(n >= 0) { "Requested character count $n is less than zero." }
+    return substring(n.coerceAtMost(length))
+}
 
 /**
  * Returns a subsequence of this char sequence with the last [n] characters removed.
  */
-public expect fun CharSequence.dropLast(n: Int): CharSequence
+public fun CharSequence.dropLast(n: Int): CharSequence {
+    require(n >= 0) { "Requested character count $n is less than zero." }
+    return take((length - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a string with the last [n] characters removed.
  */
-public expect fun String.dropLast(n: Int): String
+public fun String.dropLast(n: Int): String {
+    require(n >= 0) { "Requested character count $n is less than zero." }
+    return take((length - n).coerceAtLeast(0))
+}
 
 /**
  * Returns a subsequence of this char sequence containing all characters except last characters that satisfy the given [predicate].
  */
-public expect inline fun CharSequence.dropLastWhile(predicate: (Char) -> Boolean): CharSequence
+public inline fun CharSequence.dropLastWhile(predicate: (Char) -> Boolean): CharSequence {
+    for (index in lastIndex downTo 0)
+        if (!predicate(this[index]))
+            return subSequence(0, index + 1)
+    return ""
+}
 
 /**
  * Returns a string containing all characters except last characters that satisfy the given [predicate].
  */
-public expect inline fun String.dropLastWhile(predicate: (Char) -> Boolean): String
+public inline fun String.dropLastWhile(predicate: (Char) -> Boolean): String {
+    for (index in lastIndex downTo 0)
+        if (!predicate(this[index]))
+            return substring(0, index + 1)
+    return ""
+}
 
 /**
  * Returns a subsequence of this char sequence containing all characters except first characters that satisfy the given [predicate].
  */
-public expect inline fun CharSequence.dropWhile(predicate: (Char) -> Boolean): CharSequence
+public inline fun CharSequence.dropWhile(predicate: (Char) -> Boolean): CharSequence {
+    for (index in this.indices)
+        if (!predicate(this[index]))
+            return subSequence(index, length)
+    return ""
+}
 
 /**
  * Returns a string containing all characters except first characters that satisfy the given [predicate].
  */
-public expect inline fun String.dropWhile(predicate: (Char) -> Boolean): String
+public inline fun String.dropWhile(predicate: (Char) -> Boolean): String {
+    for (index in this.indices)
+        if (!predicate(this[index]))
+            return substring(index)
+    return ""
+}
 
 /**
  * Returns a char sequence containing only those characters from the original char sequence that match the given [predicate].
  */
-public expect inline fun CharSequence.filter(predicate: (Char) -> Boolean): CharSequence
+public inline fun CharSequence.filter(predicate: (Char) -> Boolean): CharSequence {
+    return filterTo(StringBuilder(), predicate)
+}
 
 /**
  * Returns a string containing only those characters from the original string that match the given [predicate].
  */
-public expect inline fun String.filter(predicate: (Char) -> Boolean): String
+public inline fun String.filter(predicate: (Char) -> Boolean): String {
+    return filterTo(StringBuilder(), predicate).toString()
+}
 
 /**
  * Returns a char sequence containing only those characters from the original char sequence that match the given [predicate].
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  */
-public expect inline fun CharSequence.filterIndexed(predicate: (index: Int, Char) -> Boolean): CharSequence
+public inline fun CharSequence.filterIndexed(predicate: (index: Int, Char) -> Boolean): CharSequence {
+    return filterIndexedTo(StringBuilder(), predicate)
+}
 
 /**
  * Returns a string containing only those characters from the original string that match the given [predicate].
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  */
-public expect inline fun String.filterIndexed(predicate: (index: Int, Char) -> Boolean): String
+public inline fun String.filterIndexed(predicate: (index: Int, Char) -> Boolean): String {
+    return filterIndexedTo(StringBuilder(), predicate).toString()
+}
 
 /**
  * Appends all characters matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  */
-public expect inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C
+public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.append(element)
+    }
+    return destination
+}
 
 /**
  * Returns a char sequence containing only those characters from the original char sequence that do not match the given [predicate].
  */
-public expect inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): CharSequence
+public inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): CharSequence {
+    return filterNotTo(StringBuilder(), predicate)
+}
 
 /**
  * Returns a string containing only those characters from the original string that do not match the given [predicate].
  */
-public expect inline fun String.filterNot(predicate: (Char) -> Boolean): String
+public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
+    return filterNotTo(StringBuilder(), predicate).toString()
+}
 
 /**
  * Appends all characters not matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, predicate: (Char) -> Boolean): C
+public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.append(element)
+    return destination
+}
 
 /**
  * Appends all characters matching the given [predicate] to the given [destination].
  */
-public expect inline fun <C : Appendable> CharSequence.filterTo(destination: C, predicate: (Char) -> Boolean): C
+public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predicate: (Char) -> Boolean): C {
+    for (index in 0 until length) {
+        val element = get(index)
+        if (predicate(element)) destination.append(element)
+    }
+    return destination
+}
 
 /**
  * Returns a char sequence containing characters of the original char sequence at the specified range of [indices].
  */
-public expect fun CharSequence.slice(indices: IntRange): CharSequence
+public fun CharSequence.slice(indices: IntRange): CharSequence {
+    if (indices.isEmpty()) return ""
+    return subSequence(indices)
+}
 
 /**
  * Returns a string containing characters of the original string at the specified range of [indices].
  */
-public expect fun String.slice(indices: IntRange): String
+public fun String.slice(indices: IntRange): String {
+    if (indices.isEmpty()) return ""
+    return substring(indices)
+}
 
 /**
  * Returns a char sequence containing characters of the original char sequence at specified [indices].
  */
-public expect fun CharSequence.slice(indices: Iterable<Int>): CharSequence
+public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return ""
+    val result = StringBuilder(size)
+    for (i in indices) {
+        result.append(get(i))
+    }
+    return result
+}
 
 /**
  * Returns a string containing characters of the original string at specified [indices].
  */
 @kotlin.internal.InlineOnly
-public expect inline fun String.slice(indices: Iterable<Int>): String
+public inline fun String.slice(indices: Iterable<Int>): String {
+    return (this as CharSequence).slice(indices).toString()
+}
 
 /**
  * Returns a subsequence of this char sequence containing the first [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter.
  */
-public expect fun CharSequence.take(n: Int): CharSequence
+public fun CharSequence.take(n: Int): CharSequence {
+    require(n >= 0) { "Requested character count $n is less than zero." }
+    return subSequence(0, n.coerceAtMost(length))
+}
 
 /**
  * Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter.
  */
-public expect fun String.take(n: Int): String
+public fun String.take(n: Int): String {
+    require(n >= 0) { "Requested character count $n is less than zero." }
+    return substring(0, n.coerceAtMost(length))
+}
 
 /**
  * Returns a subsequence of this char sequence containing the last [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter.
  */
-public expect fun CharSequence.takeLast(n: Int): CharSequence
+public fun CharSequence.takeLast(n: Int): CharSequence {
+    require(n >= 0) { "Requested character count $n is less than zero." }
+    val length = length
+    return subSequence(length - n.coerceAtMost(length), length)
+}
 
 /**
  * Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter.
  */
-public expect fun String.takeLast(n: Int): String
+public fun String.takeLast(n: Int): String {
+    require(n >= 0) { "Requested character count $n is less than zero." }
+    val length = length
+    return substring(length - n.coerceAtMost(length))
+}
 
 /**
  * Returns a subsequence of this char sequence containing last characters that satisfy the given [predicate].
  */
-public expect inline fun CharSequence.takeLastWhile(predicate: (Char) -> Boolean): CharSequence
+public inline fun CharSequence.takeLastWhile(predicate: (Char) -> Boolean): CharSequence {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return subSequence(index + 1, length)
+        }
+    }
+    return subSequence(0, length)
+}
 
 /**
  * Returns a string containing last characters that satisfy the given [predicate].
  */
-public expect inline fun String.takeLastWhile(predicate: (Char) -> Boolean): String
+public inline fun String.takeLastWhile(predicate: (Char) -> Boolean): String {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return substring(index + 1)
+        }
+    }
+    return this
+}
 
 /**
  * Returns a subsequence of this char sequence containing the first characters that satisfy the given [predicate].
  */
-public expect inline fun CharSequence.takeWhile(predicate: (Char) -> Boolean): CharSequence
+public inline fun CharSequence.takeWhile(predicate: (Char) -> Boolean): CharSequence {
+    for (index in 0 until length)
+        if (!predicate(get(index))) {
+            return subSequence(0, index)
+        }
+    return subSequence(0, length)
+}
 
 /**
  * Returns a string containing the first characters that satisfy the given [predicate].
  */
-public expect inline fun String.takeWhile(predicate: (Char) -> Boolean): String
+public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
+    for (index in 0 until length)
+        if (!predicate(get(index))) {
+            return substring(0, index)
+        }
+    return this
+}
 
 /**
  * Returns a char sequence with characters in reversed order.
  */
-public expect fun CharSequence.reversed(): CharSequence
+public fun CharSequence.reversed(): CharSequence {
+    return StringBuilder(this).reverse()
+}
 
 /**
  * Returns a string with characters in reversed order.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun String.reversed(): String
+public inline fun String.reversed(): String {
+    return (this as CharSequence).reversed().toString()
+}
 
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
@@ -298,7 +507,10 @@ public expect inline fun String.reversed(): String
  * 
  * The returned map preserves the entry iteration order of the original char sequence.
  */
-public expect inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>): Map<K, V>
+public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(length).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
 
 /**
  * Returns a [Map] containing the characters from the given char sequence indexed by the key
@@ -308,7 +520,10 @@ public expect inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair
  * 
  * The returned map preserves the entry iteration order of the original char sequence.
  */
-public expect inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K, Char>
+public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K, Char> {
+    val capacity = mapCapacity(length).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
+}
 
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to characters of the given char sequence.
@@ -317,7 +532,10 @@ public expect inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K):
  * 
  * The returned map preserves the entry iteration order of the original char sequence.
  */
-public expect inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V>
+public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
+    val capacity = mapCapacity(length).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -326,7 +544,12 @@ public expect inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> 
  * 
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, M : MutableMap<in K, in Char>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K): M
+public inline fun <K, M : MutableMap<in K, in Char>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs,
@@ -335,7 +558,12 @@ public expect inline fun <K, M : MutableMap<in K, in Char>> CharSequence.associa
  * 
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M
+public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs
@@ -343,44 +571,78 @@ public expect inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associa
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
-public expect inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M
+public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
 
 /**
  * Appends all characters to the given [destination] collection.
  */
-public expect fun <C : MutableCollection<in Char>> CharSequence.toCollection(destination: C): C
+public fun <C : MutableCollection<in Char>> CharSequence.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
 
 /**
  * Returns a [HashSet] of all characters.
  */
-public expect fun CharSequence.toHashSet(): HashSet<Char>
+public fun CharSequence.toHashSet(): HashSet<Char> {
+    return toCollection(HashSet<Char>(mapCapacity(length)))
+}
 
 /**
  * Returns a [List] containing all characters.
  */
-public expect fun CharSequence.toList(): List<Char>
+public fun CharSequence.toList(): List<Char> {
+    return when (length) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
 
 /**
  * Returns a [MutableList] filled with all characters of this char sequence.
  */
-public expect fun CharSequence.toMutableList(): MutableList<Char>
+public fun CharSequence.toMutableList(): MutableList<Char> {
+    return toCollection(ArrayList<Char>(length))
+}
 
 /**
  * Returns a [Set] of all characters.
  * 
  * The returned set preserves the element iteration order of the original char sequence.
  */
-public expect fun CharSequence.toSet(): Set<Char>
+public fun CharSequence.toSet(): Set<Char> {
+    return when (length) {
+        0 -> emptySet()
+        1 -> setOf(this[0])
+        else -> toCollection(LinkedHashSet<Char>(mapCapacity(length)))
+    }
+}
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each character of original char sequence.
  */
-public expect inline fun <R> CharSequence.flatMap(transform: (Char) -> Iterable<R>): List<R>
+public inline fun <R> CharSequence.flatMap(transform: (Char) -> Iterable<R>): List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each character of original char sequence, to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C
+public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
+}
 
 /**
  * Groups characters of the original char sequence by the key returned by the given [keySelector] function
@@ -390,7 +652,9 @@ public expect inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>>
+public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each character of the original char sequence
@@ -401,7 +665,9 @@ public expect inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>>
+public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
 
 /**
  * Groups characters of the original char sequence by the key returned by the given [keySelector] function
@@ -411,7 +677,14 @@ public expect inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, v
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
-public expect inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K): M
+public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Char>() }
+        list.add(element)
+    }
+    return destination
+}
 
 /**
  * Groups values returned by the [valueTransform] function applied to each character of the original char sequence
@@ -422,7 +695,14 @@ public expect inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequen
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
-public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
 
 /**
  * Creates a [Grouping] source from a char sequence to be used later with one of group-and-fold operations
@@ -431,13 +711,20 @@ public expect inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequen
  * @sample samples.collections.Collections.Transformations.groupingByEachCount
  */
 @SinceKotlin("1.1")
-public expect inline fun <K> CharSequence.groupingBy(crossinline keySelector: (Char) -> K): Grouping<Char, K>
+public inline fun <K> CharSequence.groupingBy(crossinline keySelector: (Char) -> K): Grouping<Char, K> {
+    return object : Grouping<Char, K> {
+        override fun sourceIterator(): Iterator<Char> = this@groupingBy.iterator()
+        override fun keyOf(element: Char): K = keySelector(element)
+    }
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each character in the original char sequence.
  */
-public expect inline fun <R> CharSequence.map(transform: (Char) -> R): List<R>
+public inline fun <R> CharSequence.map(transform: (Char) -> R): List<R> {
+    return mapTo(ArrayList<R>(length), transform)
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -445,7 +732,9 @@ public expect inline fun <R> CharSequence.map(transform: (Char) -> R): List<R>
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public expect inline fun <R> CharSequence.mapIndexed(transform: (index: Int, Char) -> R): List<R>
+public inline fun <R> CharSequence.mapIndexed(transform: (index: Int, Char) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(length), transform)
+}
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
@@ -453,7 +742,9 @@ public expect inline fun <R> CharSequence.mapIndexed(transform: (index: Int, Cha
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public expect inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (index: Int, Char) -> R?): List<R>
+public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (index: Int, Char) -> R?): List<R> {
+    return mapIndexedNotNullTo(ArrayList<R>(), transform)
+}
 
 /**
  * Applies the given [transform] function to each character and its index in the original char sequence
@@ -461,7 +752,10 @@ public expect inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (in
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public expect inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexedNotNullTo(destination: C, transform: (index: Int, Char) -> R?): C
+public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexedNotNullTo(destination: C, transform: (index: Int, Char) -> R?): C {
+    forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each character and its index in the original char sequence
@@ -469,67 +763,101 @@ public expect inline fun <R : Any, C : MutableCollection<in R>> CharSequence.map
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public expect inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(destination: C, transform: (index: Int, Char) -> R): C
+public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(destination: C, transform: (index: Int, Char) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each character in the original char sequence.
  */
-public expect inline fun <R : Any> CharSequence.mapNotNull(transform: (Char) -> R?): List<R>
+public inline fun <R : Any> CharSequence.mapNotNull(transform: (Char) -> R?): List<R> {
+    return mapNotNullTo(ArrayList<R>(), transform)
+}
 
 /**
  * Applies the given [transform] function to each character in the original char sequence
  * and appends only the non-null results to the given [destination].
  */
-public expect inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapNotNullTo(destination: C, transform: (Char) -> R?): C
+public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapNotNullTo(destination: C, transform: (Char) -> R?): C {
+    forEach { element -> transform(element)?.let { destination.add(it) } }
+    return destination
+}
 
 /**
  * Applies the given [transform] function to each character of the original char sequence
  * and appends the results to the given [destination].
  */
-public expect inline fun <R, C : MutableCollection<in R>> CharSequence.mapTo(destination: C, transform: (Char) -> R): C
+public inline fun <R, C : MutableCollection<in R>> CharSequence.mapTo(destination: C, transform: (Char) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
 
 /**
  * Returns a lazy [Iterable] of [IndexedValue] for each character of the original char sequence.
  */
-public expect fun CharSequence.withIndex(): Iterable<IndexedValue<Char>>
+public fun CharSequence.withIndex(): Iterable<IndexedValue<Char>> {
+    return IndexingIterable { iterator() }
+}
 
 /**
  * Returns `true` if all characters match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
-public expect inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean
+public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
 
 /**
  * Returns `true` if char sequence has at least one character.
  * 
  * @sample samples.collections.Collections.Aggregates.any
  */
-public expect fun CharSequence.any(): Boolean
+public fun CharSequence.any(): Boolean {
+    return !isEmpty()
+}
 
 /**
  * Returns `true` if at least one character matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
-public expect inline fun CharSequence.any(predicate: (Char) -> Boolean): Boolean
+public inline fun CharSequence.any(predicate: (Char) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+}
 
 /**
  * Returns the length of this char sequence.
  */
 @kotlin.internal.InlineOnly
-public expect inline fun CharSequence.count(): Int
+public inline fun CharSequence.count(): Int {
+    return length
+}
 
 /**
  * Returns the number of characters matching the given [predicate].
  */
-public expect inline fun CharSequence.count(predicate: (Char) -> Boolean): Int
+public inline fun CharSequence.count(predicate: (Char) -> Boolean): Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each character.
  */
-public expect inline fun <R> CharSequence.fold(initial: R, operation: (acc: R, Char) -> R): R
+public inline fun <R> CharSequence.fold(initial: R, operation: (acc: R, Char) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -537,12 +865,24 @@ public expect inline fun <R> CharSequence.fold(initial: R, operation: (acc: R, C
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself, and calculates the next accumulator value.
  */
-public expect inline fun <R> CharSequence.foldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): R
+public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each character and current accumulator value.
  */
-public expect inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, acc: R) -> R): R
+public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -550,74 +890,160 @@ public expect inline fun <R> CharSequence.foldRight(initial: R, operation: (Char
  * @param [operation] function that takes the index of a character, the character itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun <R> CharSequence.foldRightIndexed(initial: R, operation: (index: Int, Char, acc: R) -> R): R
+public inline fun <R> CharSequence.foldRightIndexed(initial: R, operation: (index: Int, Char, acc: R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Performs the given [action] on each character.
  */
-public expect inline fun CharSequence.forEach(action: (Char) -> Unit): Unit
+public inline fun CharSequence.forEach(action: (Char) -> Unit): Unit {
+    for (element in this) action(element)
+}
 
 /**
  * Performs the given [action] on each character, providing sequential index with the character.
  * @param [action] function that takes the index of a character and the character itself
  * and performs the desired action on the character.
  */
-public expect inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit): Unit
+public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
 
 /**
  * Returns the largest character or `null` if there are no characters.
  */
-public expect fun CharSequence.max(): Char?
+public fun CharSequence.max(): Char? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
 
 /**
  * Returns the first character yielding the largest value of the given function or `null` if there are no characters.
  */
-public expect inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char?
+public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
 
 /**
  * Returns the first character having the largest value according to the provided [comparator] or `null` if there are no characters.
  */
-public expect fun CharSequence.maxWith(comparator: Comparator<in Char>): Char?
+public fun CharSequence.maxWith(comparator: Comparator<in Char>): Char? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
 
 /**
  * Returns the smallest character or `null` if there are no characters.
  */
-public expect fun CharSequence.min(): Char?
+public fun CharSequence.min(): Char? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
+}
 
 /**
  * Returns the first character yielding the smallest value of the given function or `null` if there are no characters.
  */
-public expect inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char?
+public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
 
 /**
  * Returns the first character having the smallest value according to the provided [comparator] or `null` if there are no characters.
  */
-public expect fun CharSequence.minWith(comparator: Comparator<in Char>): Char?
+public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
 
 /**
  * Returns `true` if the char sequence has no characters.
  * 
  * @sample samples.collections.Collections.Aggregates.none
  */
-public expect fun CharSequence.none(): Boolean
+public fun CharSequence.none(): Boolean {
+    return isEmpty()
+}
 
 /**
  * Returns `true` if no characters match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
-public expect inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean
+public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
 
 /**
  * Performs the given [action] on each character and returns the char sequence itself afterwards.
  */
 @SinceKotlin("1.1")
-public expect inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S
+public inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S {
+    return apply { for (element in this) action(element) }
+}
 
 /**
  * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character.
  */
-public expect inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Char
+public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Char {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty char sequence can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with the first character and applying [operation] from left to right
@@ -625,12 +1051,28 @@ public expect inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Cha
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself and calculates the next accumulator value.
  */
-public expect inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char
+public inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char {
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty char sequence can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value.
  */
-public expect inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char): Char
+public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char): Char {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty char sequence can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
 
 /**
  * Accumulates value starting with last character and applying [operation] from right to left
@@ -638,17 +1080,38 @@ public expect inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -
  * @param [operation] function that takes the index of a character, the character itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public expect inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char
+public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty char sequence can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
-public expect inline fun CharSequence.sumBy(selector: (Char) -> Int): Int
+public inline fun CharSequence.sumBy(selector: (Char) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
-public expect inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double
+public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
 
 /**
  * Splits this char sequence into a list of strings each not exceeding the given [size].
@@ -660,7 +1123,9 @@ public expect inline fun CharSequence.sumByDouble(selector: (Char) -> Double): D
  * @sample samples.collections.Collections.Transformations.chunked
  */
 @SinceKotlin("1.2")
-public expect fun CharSequence.chunked(size: Int): List<String>
+public fun CharSequence.chunked(size: Int): List<String> {
+    return windowed(size, size, partialWindows = true)
+}
 
 /**
  * Splits this char sequence into several char sequences each not exceeding the given [size]
@@ -677,7 +1142,9 @@ public expect fun CharSequence.chunked(size: Int): List<String>
  * @sample samples.text.Strings.chunkedTransform
  */
 @SinceKotlin("1.2")
-public expect fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): List<R>
+public fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): List<R> {
+    return windowed(size, size, partialWindows = true, transform = transform)
+}
 
 /**
  * Splits this char sequence into a sequence of strings each not exceeding the given [size].
@@ -689,7 +1156,9 @@ public expect fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) 
  * @sample samples.collections.Collections.Transformations.chunked
  */
 @SinceKotlin("1.2")
-public expect fun CharSequence.chunkedSequence(size: Int): Sequence<String>
+public fun CharSequence.chunkedSequence(size: Int): Sequence<String> {
+    return chunkedSequence(size) { it.toString() }
+}
 
 /**
  * Splits this char sequence into several char sequences each not exceeding the given [size]
@@ -706,21 +1175,45 @@ public expect fun CharSequence.chunkedSequence(size: Int): Sequence<String>
  * @sample samples.text.Strings.chunkedTransformToSequence
  */
 @SinceKotlin("1.2")
-public expect fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R>
+public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R> {
+    return windowedSequence(size, size, partialWindows = true, transform = transform)
+}
 
 /**
  * Splits the original char sequence into pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,
  * while *second* char sequence contains characters for which [predicate] yielded `false`.
  */
-public expect inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<CharSequence, CharSequence>
+public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<CharSequence, CharSequence> {
+    val first = StringBuilder()
+    val second = StringBuilder()
+    for (element in this) {
+        if (predicate(element)) {
+            first.append(element)
+        } else {
+            second.append(element)
+        }
+    }
+    return Pair(first, second)
+}
 
 /**
  * Splits the original string into pair of strings,
  * where *first* string contains characters for which [predicate] yielded `true`,
  * while *second* string contains characters for which [predicate] yielded `false`.
  */
-public expect inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String>
+public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String> {
+    val first = StringBuilder()
+    val second = StringBuilder()
+    for (element in this) {
+        if (predicate(element)) {
+            first.append(element)
+        } else {
+            second.append(element)
+        }
+    }
+    return Pair(first.toString(), second.toString())
+}
 
 /**
  * Returns a list of snapshots of the window of the given [size]
@@ -821,12 +1314,21 @@ public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWi
 /**
  * Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
  */
-public expect infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>>
+public infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>> {
+    return zip(other) { c1, c2 -> c1 to c2 }
+}
 
 /**
  * Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
  */
-public expect inline fun <V> CharSequence.zip(other: CharSequence, transform: (a: Char, b: Char) -> V): List<V>
+public inline fun <V> CharSequence.zip(other: CharSequence, transform: (a: Char, b: Char) -> V): List<V> {
+    val length = minOf(this.length, other.length)
+    val list = ArrayList<V>(length)
+    for (i in 0 until length) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
 
 /**
  * Returns a list of pairs of each two adjacent characters in this char sequence.
@@ -836,7 +1338,9 @@ public expect inline fun <V> CharSequence.zip(other: CharSequence, transform: (a
  * @sample samples.collections.Collections.Transformations.zipWithNext
  */
 @SinceKotlin("1.2")
-public expect fun CharSequence.zipWithNext(): List<Pair<Char, Char>>
+public fun CharSequence.zipWithNext(): List<Pair<Char, Char>> {
+    return zipWithNext { a, b -> a to b }
+}
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -847,15 +1351,29 @@ public expect fun CharSequence.zipWithNext(): List<Pair<Char, Char>>
  * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
  */
 @SinceKotlin("1.2")
-public expect inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> R): List<R>
+public inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> R): List<R> {
+    val size = length - 1
+    if (size < 1) return emptyList()
+    val result = ArrayList<R>(size)
+    for (index in 0 until size) {
+        result.add(transform(this[index], this[index + 1]))
+    }
+    return result
+}
 
 /**
  * Creates an [Iterable] instance that wraps the original char sequence returning its characters when being iterated.
  */
-public expect fun CharSequence.asIterable(): Iterable<Char>
+public fun CharSequence.asIterable(): Iterable<Char> {
+    if (this is String && isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
 
 /**
  * Creates a [Sequence] instance that wraps the original char sequence returning its characters when being iterated.
  */
-public expect fun CharSequence.asSequence(): Sequence<Char>
+public fun CharSequence.asSequence(): Sequence<Char> {
+    if (this is String && isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
 

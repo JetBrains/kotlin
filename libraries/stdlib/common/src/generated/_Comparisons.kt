@@ -17,7 +17,9 @@ import kotlin.comparisons.*
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
-public expect fun <T: Comparable<T>> maxOf(a: T, b: T): T
+public fun <T: Comparable<T>> maxOf(a: T, b: T): T {
+    return if (a >= b) a else b
+}
 
 /**
  * Returns the greater of two values.
@@ -65,7 +67,9 @@ public expect inline fun maxOf(a: Double, b: Double): Double
  * Returns the greater of three values.
  */
 @SinceKotlin("1.1")
-public expect fun <T: Comparable<T>> maxOf(a: T, b: T, c: T): T
+public fun <T: Comparable<T>> maxOf(a: T, b: T, c: T): T {
+    return maxOf(a, maxOf(b, c))
+}
 
 /**
  * Returns the greater of three values.
@@ -93,7 +97,9 @@ public expect inline fun maxOf(a: Int, b: Int, c: Int): Int
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public expect inline fun maxOf(a: Long, b: Long, c: Long): Long
+public inline fun maxOf(a: Long, b: Long, c: Long): Long {
+    return maxOf(a, maxOf(b, c))
+}
 
 /**
  * Returns the greater of three values.
@@ -113,21 +119,27 @@ public expect inline fun maxOf(a: Double, b: Double, c: Double): Double
  * Returns the greater of three values according to the order specified by the given [comparator].
  */
 @SinceKotlin("1.1")
-public expect fun <T> maxOf(a: T, b: T, c: T, comparator: Comparator<in T>): T
+public fun <T> maxOf(a: T, b: T, c: T, comparator: Comparator<in T>): T {
+    return maxOf(a, maxOf(b, c, comparator), comparator)
+}
 
 /**
  * Returns the greater of two values according to the order specified by the given [comparator].
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
-public expect fun <T> maxOf(a: T, b: T, comparator: Comparator<in T>): T
+public fun <T> maxOf(a: T, b: T, comparator: Comparator<in T>): T {
+    return if (comparator.compare(a, b) >= 0) a else b
+}
 
 /**
  * Returns the smaller of two values.
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
-public expect fun <T: Comparable<T>> minOf(a: T, b: T): T
+public fun <T: Comparable<T>> minOf(a: T, b: T): T {
+    return if (a <= b) a else b
+}
 
 /**
  * Returns the smaller of two values.
@@ -175,7 +187,9 @@ public expect inline fun minOf(a: Double, b: Double): Double
  * Returns the smaller of three values.
  */
 @SinceKotlin("1.1")
-public expect fun <T: Comparable<T>> minOf(a: T, b: T, c: T): T
+public fun <T: Comparable<T>> minOf(a: T, b: T, c: T): T {
+    return minOf(a, minOf(b, c))
+}
 
 /**
  * Returns the smaller of three values.
@@ -203,7 +217,9 @@ public expect inline fun minOf(a: Int, b: Int, c: Int): Int
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public expect inline fun minOf(a: Long, b: Long, c: Long): Long
+public inline fun minOf(a: Long, b: Long, c: Long): Long {
+    return minOf(a, minOf(b, c))
+}
 
 /**
  * Returns the smaller of three values.
@@ -223,12 +239,16 @@ public expect inline fun minOf(a: Double, b: Double, c: Double): Double
  * Returns the smaller of three values according to the order specified by the given [comparator].
  */
 @SinceKotlin("1.1")
-public expect fun <T> minOf(a: T, b: T, c: T, comparator: Comparator<in T>): T
+public fun <T> minOf(a: T, b: T, c: T, comparator: Comparator<in T>): T {
+    return minOf(a, minOf(b, c, comparator), comparator)
+}
 
 /**
  * Returns the smaller of two values according to the order specified by the given [comparator].
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
-public expect fun <T> minOf(a: T, b: T, comparator: Comparator<in T>): T
+public fun <T> minOf(a: T, b: T, comparator: Comparator<in T>): T {
+    return if (comparator.compare(a, b) <= 0) a else b
+}
 
