@@ -122,11 +122,19 @@ internal val ClassDescriptor?.classSerializer: KotlinType?
         // serializer annotation on class?
         annotations.serializableWith?.let { return it }
         // default serializable?
-        if (isInternalSerializable) return this.unsubstitutedMemberScope
-                .getDescriptorsFiltered(nameFilter = {it == SERIALIZER_CLASS_NAME})
-                .filterIsInstance<ClassDescriptor>().singleOrNull()?.defaultType
+        if (isInternalSerializable) {
+            // companion object serializer?
+            if (hasCompanionObjectAsSerializer) return companionObjectDescriptor?.defaultType
+            // $serializer nested class
+            return this.unsubstitutedMemberScope
+                    .getDescriptorsFiltered(nameFilter = {it == SERIALIZER_CLASS_NAME})
+                    .filterIsInstance<ClassDescriptor>().singleOrNull()?.defaultType
+        }
         return null
     }
+
+internal val ClassDescriptor.hasCompanionObjectAsSerializer: Boolean
+    get() = companionObjectDescriptor?.annotations?.serializerForClass == this.defaultType
 
 // serializer that was declared for this specific type or annotation from a class declaration
 val KotlinType.typeSerializer: KotlinType?
