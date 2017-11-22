@@ -67,7 +67,7 @@ class KotlinResolutionCallbacksImpl(
         }
     }
 
-    override fun analyzeAndGetLambdaResultArguments(
+    override fun analyzeAndGetLambdaReturnArguments(
             lambdaArgument: LambdaKotlinCallArgument,
             isSuspend: Boolean,
             receiverType: UnwrappedType?,
