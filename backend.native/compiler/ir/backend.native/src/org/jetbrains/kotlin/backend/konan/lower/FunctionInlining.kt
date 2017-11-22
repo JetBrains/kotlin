@@ -161,6 +161,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             val argument = substituteMap[descriptor]                                        // Find expression to replace this parameter.
             if (argument == null) return newExpression                                      // If there is no such expression - do nothing.
 
+            argument.transformChildrenVoid(this)                                            // Default argument can contain subjects for substitution.
             return copyIrElement.copy(                                                      // Make copy of argument expression.
                 irElement       = argument,
                 typeSubstitutor = null
