@@ -3,7 +3,6 @@ buildscript {
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
     val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
     extra["versions.shadow"] = "2.0.1"
-    extra["versions.protobuf-java"] = "2.6.1"
 
     repositories {
         buildSrcKotlinRepo?.let {
@@ -47,7 +46,6 @@ dependencies {
 //    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["bootstrap_kotlin_version"]}")
     compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     compile("org.ow2.asm:asm-all:6.0_BETA")
-    compile("com.google.protobuf:protobuf-java:${property("versions.protobuf-java")}")
 }
 
 samWithReceiver {

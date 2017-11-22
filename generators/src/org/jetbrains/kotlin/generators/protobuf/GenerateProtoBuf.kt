@@ -73,8 +73,6 @@ fun main(args: Array<String>) {
             modifyAndExecProtoc(protoPath)
         }
 
-        generateJvmPackageTableToBuildSrc()
-
         println()
         println("Do not forget to run GenerateProtoBufCompare")
     }
@@ -160,8 +158,4 @@ private fun modifyForDebug(protoPath: ProtoPath): String {
         text = text.replace(file, newFile)
     }
     return text
-}
-
-private fun generateJvmPackageTableToBuildSrc() {
-    execProtoc("core/descriptors.jvm/src/jvm_package_table.proto", "buildSrc/src/main/java")
 }
