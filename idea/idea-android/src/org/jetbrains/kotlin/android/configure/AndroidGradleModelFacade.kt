@@ -32,11 +32,13 @@
 
 package org.jetbrains.kotlin.android.configure
 
+import com.android.builder.model.Library
 import com.android.tools.idea.gradle.project.sync.idea.data.service.AndroidProjectKeys
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import org.gradle.tooling.model.UnsupportedMethodException
 import org.gradle.tooling.model.idea.IdeaProject
 import org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade
 import org.jetbrains.kotlin.idea.inspections.gradle.findModulesByNames
@@ -65,7 +67,7 @@ class AndroidGradleModelFacade : KotlinGradleModelFacade {
         ExternalSystemApiUtil.find(ideModule, AndroidProjectKeys.ANDROID_MODEL)?.let { androidModel ->
             val libraries = androidModel.data.mainArtifact.dependencies.javaLibraries
             val projects = androidModel.data.mainArtifact.dependencies.projects
-            val projectIds = libraries.mapNotNull { it.project } + projects
+            val projectIds = libraries.mapNotNull { it.projectSafe } + projects
             return projectIds.mapNotNullTo(LinkedHashSet()) { projectId ->
                 ExternalSystemApiUtil.findFirstRecursively(ideProject) {
                     (it.data as? ModuleData)?.id == projectId
@@ -76,3 +78,11 @@ class AndroidGradleModelFacade : KotlinGradleModelFacade {
         return emptyList()
     }
 }
+
+// com.android.builder.model.Library.getProject() is not present in 2.1.0
+private val Library.projectSafe: String?
+        get() = try {
+           project
+        } catch(e: UnsupportedMethodException) {
+          null
+        }
