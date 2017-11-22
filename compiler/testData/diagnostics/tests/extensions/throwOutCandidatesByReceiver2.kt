@@ -6,7 +6,7 @@ class A {}
 fun test(a1: A, a2: A) {
     val <!UNUSED_VARIABLE!>range<!> = "island".."isle"
 
-    a1<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>..<!>a2
+    a1<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>..<!>a2
 }
 
 

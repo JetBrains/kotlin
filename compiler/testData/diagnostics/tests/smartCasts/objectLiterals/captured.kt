@@ -17,7 +17,7 @@ fun foo(): Int {
         k.run()
         val d: Int = <!DEBUG_INFO_SMARTCAST!>c<!>
         // a is captured so smart cast is not possible
-        return d + <!SMARTCAST_IMPOSSIBLE!>a<!>
+        return d <!NI;NONE_APPLICABLE!>+<!> <!OI;SMARTCAST_IMPOSSIBLE!>a<!>
     }
     else return -1
 }

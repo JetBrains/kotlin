@@ -22,5 +22,5 @@ fun <T> out(t: T): Out<MutableList<T>> = null!!
 fun test(a: Out<Nothing>, b: Out<MutableList<J>>) {
     val v = f(a, b, out(J.j()))
     v checkType { _<MutableList<J>>() }
-    v checkType { _<MutableList<J?>>() }
+    v checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><MutableList<J?>>() }
 }

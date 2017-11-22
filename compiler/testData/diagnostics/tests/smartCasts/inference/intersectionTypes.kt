@@ -15,7 +15,7 @@ interface C: A
 
 fun test(a: A, b: B, c: C) {
     if (a is B && a is C) {
-        val d: C = id(<!DEBUG_INFO_SMARTCAST!>a<!>)
+        val d: C = id(<!OI;DEBUG_INFO_SMARTCAST!>a<!>)
         val e: Any = id(a)
         val f = id(a)
         checkSubtype<A>(f)
@@ -29,7 +29,7 @@ fun test(a: A, b: B, c: C) {
         val k = three(a, b, c)
         checkSubtype<A>(k)
         checkSubtype<B>(<!TYPE_MISMATCH!>k<!>)
-        val l: Int = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>three(a, b, c)<!>
+        val l: Int = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>three(a, b, c)<!>
         
         use(d, e, f, g, h, k, l)
     }
@@ -39,11 +39,11 @@ fun <T> foo(t: T, <!UNUSED_PARAMETER!>l<!>: MutableList<T>): T = t
 
 fun testErrorMessages(a: A, ml: MutableList<String>) {
     if (a is B && a is C) {
-        <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(a, ml)
+        <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(a, <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>ml<!>)
     }
 
     if(a is C) {
-        <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(a, ml)
+        <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(a, <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>ml<!>)
     }
 }
 

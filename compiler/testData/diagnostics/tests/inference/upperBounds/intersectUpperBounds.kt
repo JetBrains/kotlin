@@ -13,7 +13,7 @@ fun <T> foo(in1: In<T>, in2: In<T>): T = throw Exception("$in1 $in2")
 
 fun test(inA: In<A>, inB: In<B>, inC: In<C>) {
 
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(inA, inB)
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(inA, inB)
 
     val r = foo(inA, inC)
     checkSubtype<C>(r)

@@ -27,15 +27,15 @@ fun test() {
     <!SYNTAX!><!>fun named7() = 1
 
     val x3 = when (1) {
-        0 -> <!EXPECTED_TYPE_MISMATCH!>fun named8(): Int {return 1}<!>
-        else -> <!EXPECTED_TYPE_MISMATCH!>fun named9() = 1<!>
+        0 -> <!OI;EXPECTED_TYPE_MISMATCH!>fun <!NI;ANONYMOUS_FUNCTION_WITH_NAME!>named8<!>(): Int {return 1}<!>
+        else -> <!OI;EXPECTED_TYPE_MISMATCH!>fun <!NI;ANONYMOUS_FUNCTION_WITH_NAME!>named9<!>() = 1<!>
     }
 
     val x31 = when (1) {
         0 -> {
-            <!EXPECTED_TYPE_MISMATCH!>fun named10(): Int {return 1}<!>
+            <!OI;EXPECTED_TYPE_MISMATCH!>fun <!NI;ANONYMOUS_FUNCTION_WITH_NAME!>named10<!>(): Int {return 1}<!>
         }
-        else -> <!EXPECTED_TYPE_MISMATCH!>fun named11() = 1<!>
+        else -> <!OI;EXPECTED_TYPE_MISMATCH!>fun <!NI;ANONYMOUS_FUNCTION_WITH_NAME!>named11<!>() = 1<!>
     }
 
     val x4 = {

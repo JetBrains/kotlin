@@ -9,4 +9,4 @@ open class Bar() : <!CYCLIC_INHERITANCE_HIERARCHY!>Foo<!>() {
 
 }
 
-val x : Int = <!TYPE_MISMATCH!>Foo()<!>
+val x : Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>Foo()<!>

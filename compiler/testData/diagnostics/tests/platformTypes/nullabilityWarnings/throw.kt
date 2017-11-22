@@ -18,7 +18,7 @@ fun test() {
 }
 
 fun test1() {
-    throw <!TYPE_MISMATCH!>J.staticN<!>
+    throw <!TYPE_MISMATCH!>J.<!NI;TYPE_MISMATCH!>staticN<!><!>
 }
 
 fun test2() {

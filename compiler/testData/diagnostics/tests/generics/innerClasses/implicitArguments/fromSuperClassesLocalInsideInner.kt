@@ -46,8 +46,8 @@ class Outer<T> {
             x().foo().a() checkType { _<A<T, F, String, Double, Short, Long>>() }
             x().bar() checkType { _<A<T, F, String, Double, Short, Char>>() }
 
-            x = <!TYPE_MISMATCH!>foobar<Int>()<!>
-            x = <!TYPE_MISMATCH!>z.foobar<String>()<!>
+            x = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, TYPE_MISMATCH!>foobar<Int>()<!>
+            x = <!TYPE_MISMATCH!>z.<!NI;TYPE_MISMATCH!>foobar<String>()<!><!>
 
             var y = noParameters()
             y = noParameters()

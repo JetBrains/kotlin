@@ -24,13 +24,13 @@ class A<T : CharSequence?, E1 : T, E2: T?> {
         }
 
         if (1 == 1) {
-            t = <!TYPE_MISMATCH!>tN<!>
+            t = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>tN<!>
         }
 
-        t = <!TYPE_MISMATCH!>y<!>
+        t = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>y<!>
 
         if (y != null) {
-            t = <!DEBUG_INFO_SMARTCAST!>y<!>
+            t = <!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>y<!>
         }
 
         if (tN != null) {

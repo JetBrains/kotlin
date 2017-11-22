@@ -8,6 +8,6 @@ fun bar(i: Int) {}
 fun bar(s: String) {}
 
 fun test() {
-    foo(<!UNRESOLVED_REFERENCE!>rrr<!>, 1)
-    bar(<!UNRESOLVED_REFERENCE!>rrr<!>)
+    <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(<!UNRESOLVED_REFERENCE!>rrr<!>, 1)
+    <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>(<!UNRESOLVED_REFERENCE!>rrr<!>)
 }

@@ -52,12 +52,12 @@ class MyProperty2<T> {
 //--------------------------
 
 class A3 {
-    var a3: String by MyProperty3()
-    var b3: String by getMyProperty3()
+    var a3: String by <!NI;DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>MyProperty3()<!>
+    var b3: String by <!NI;DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>getMyProperty3()<!>
 }
 
-var c3: String by getMyProperty3()
-var d3: String by MyProperty3()
+var c3: String by <!NI;DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>getMyProperty3()<!>
+var d3: String by <!NI;DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>MyProperty3()<!>
 
 fun <A> getMyProperty3() = MyProperty3<A>()
 

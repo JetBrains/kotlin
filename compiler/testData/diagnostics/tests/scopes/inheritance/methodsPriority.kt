@@ -20,7 +20,7 @@ fun test() {
 
     class B: A() {
         init {
-            val a: Int = <!TYPE_MISMATCH!>foo()<!> // todo
+            val a: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>foo()<!> // todo
         }
     }
 }

@@ -15,7 +15,7 @@ class A() {
 
 //more tests
 val g : () -> Unit = { <!UNUSED_EXPRESSION!>42<!> }
-val gFunction : () -> Unit = <!TYPE_MISMATCH!>fun(): Int = 1<!>
+val gFunction : () -> Unit = <!OI;TYPE_MISMATCH!>fun(): Int = 1<!>
 
 val h : () -> Unit = { doSmth() }
 

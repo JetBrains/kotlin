@@ -6,18 +6,18 @@ class C<R> {
 }
 
 fun foo(x: Any?, y: C<*>) {
-    y.<!MEMBER_PROJECTED_OUT!>bindTo<!>("")
+    y.<!OI;MEMBER_PROJECTED_OUT!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
 
     if (x is C<*>) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.<!MEMBER_PROJECTED_OUT!>bindTo<!>("")
+        <!DEBUG_INFO_SMARTCAST!>x<!>.<!OI;MEMBER_PROJECTED_OUT!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
         with(<!DEBUG_INFO_SMARTCAST!>x<!>) {
-            <!MEMBER_PROJECTED_OUT!>bindTo<!>("")
+            <!OI;MEMBER_PROJECTED_OUT!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
         }
     }
 
     with(x) {
         if (this is C<*>) {
-            <!MEMBER_PROJECTED_OUT, DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bindTo<!>("")
+            <!OI;MEMBER_PROJECTED_OUT, DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
         }
     }
 }

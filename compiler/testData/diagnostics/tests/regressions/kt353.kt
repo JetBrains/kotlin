@@ -13,7 +13,7 @@ fun foo(a: A) {
     val <!UNUSED_VARIABLE!>u<!>: Unit = a.gen() // Unit should be inferred
 
     if (true) {
-        a.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>gen<!>() // Shouldn't work: no info for inference
+        a.<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>gen<!>() // Shouldn't work: no info for inference
     }
 
     val <!UNUSED_VARIABLE!>b<!> : () -> Unit = {
@@ -29,5 +29,5 @@ fun foo(a: A) {
         a.gen()  //type mismatch, but Int can be derived
     }
 
-    a.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>gen<!>() // Shouldn't work: no info for inference
+    a.<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>gen<!>() // Shouldn't work: no info for inference
 }

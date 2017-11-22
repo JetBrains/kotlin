@@ -7,5 +7,5 @@ class MyClass1 {
 }
 
 fun main(arg: MyClass1) {
-    arg<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!><!SYNTAX!><!>
+    arg<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!><!SYNTAX!><!>
 }

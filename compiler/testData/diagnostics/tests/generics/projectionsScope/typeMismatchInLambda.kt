@@ -14,14 +14,14 @@ class A<E> {
 fun test(a: A<out CharSequence>, z: Out<CharSequence>) {
     a.foo {
         val x: String = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> // Should be no TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS
-        <!TYPE_MISMATCH!>""<!>
+        <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>""<!>
     }
-    a.bar { <!TYPE_MISMATCH!>Out<CharSequence>()<!> }
+    a.bar { <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, TYPE_MISMATCH!>Out<CharSequence>()<!> }
     a.bar { Out() }
-    a.bar { <!TYPE_MISMATCH!>z.id()<!> }
+    a.bar { <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, TYPE_MISMATCH!>z.<!NI;TYPE_MISMATCH!>id()<!><!> }
 
     a.foo {
         z.foobar(if (1 > 2) return@foo <!TYPE_MISMATCH!>""<!> else "")
-        <!TYPE_MISMATCH!>""<!>
+        <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>""<!>
     }
 }

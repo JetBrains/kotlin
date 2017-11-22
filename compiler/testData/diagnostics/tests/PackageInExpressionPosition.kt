@@ -23,5 +23,5 @@ fun main(args : Array<String>) {
     <!INVISIBLE_MEMBER!>System<!>()
     (<!NO_COMPANION_OBJECT!>System<!>)
     foo@ <!NO_COMPANION_OBJECT!>System<!>
-    null in <!NO_COMPANION_OBJECT!>System<!>
+    null <!NI;RESULT_TYPE_MISMATCH!>in<!> <!NO_COMPANION_OBJECT!>System<!>
 }

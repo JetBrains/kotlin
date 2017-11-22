@@ -15,5 +15,5 @@ public class J {
 // FILE: k.kt
 
 class A : List<String> by J.staticNN
-class B : List<String> by <!TYPE_MISMATCH!>J.staticN<!>
+class B : List<String> by <!TYPE_MISMATCH!>J.<!NI;TYPE_MISMATCH!>staticN<!><!>
 class C : List<String> by J.staticJ

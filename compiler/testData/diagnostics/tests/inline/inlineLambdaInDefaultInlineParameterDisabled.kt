@@ -7,7 +7,7 @@ inline fun inlineFun(lambda: () -> String) = lambda()
 fun noInlineFun(lambda: () -> String) = lambda()
 
 
-inline fun default0_1(lambda: () -> String, <!NOT_YET_SUPPORTED_IN_INLINE!>dlambda: () -> String = { <!USAGE_IS_NOT_INLINABLE, TYPE_MISMATCH!>lambda<!> }<!>) {
+inline fun default0_1(lambda: () -> String, <!NOT_YET_SUPPORTED_IN_INLINE!>dlambda: () -> String = { <!NI;TYPE_MISMATCH, TYPE_MISMATCH, USAGE_IS_NOT_INLINABLE!>lambda<!> }<!>) {
     lambda() + dlambda()
 }
 

@@ -11,13 +11,13 @@ fun <T : String?> T.foo() {
     if (this != null) {
         if (<!SENSELESS_COMPARISON!>this != null<!>) {}
 
-        length
+        <!NI;UNSAFE_CALL!>length<!>
         this<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         bar1()
         bar2()
-        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar3<!>()
-        bar4()
+        <!NI;UNSAFE_CALL, OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar3<!>()
+        <!NI;UNSAFE_CALL!>bar4<!>()
 
 
         this<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()
@@ -31,6 +31,6 @@ fun <T : String?> T.foo() {
 
         bar1()
         bar2()
-        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar3<!>()
+        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar3<!>()
     }
 }

@@ -5,9 +5,9 @@ import java.util.HashSet
 
 fun test123() {
     val g: (Int) -> Unit = if (true) {
-        val set = HashSet<Int>();
+        val set = <!NI;DEBUG_INFO_MISSING_UNRESOLVED!>HashSet<!><<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>>();
         { i ->
-            set.add(i)
+            <!NI;UNRESOLVED_REFERENCE!>set<!>.<!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>add<!>(i)
         }
     }
     else {

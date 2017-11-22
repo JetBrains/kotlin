@@ -8,7 +8,7 @@ fun <T> testCollection(c: Collection<T>, t: T) {
     val <!UNUSED_VARIABLE!>iterator<!>: Iterator<T> = c.iterator()
     c.containsAll(c)
 
-    val <!UNUSED_VARIABLE!>mutableIterator<!>: MutableIterator<T> = <!TYPE_MISMATCH!>c.iterator()<!>
+    val <!UNUSED_VARIABLE!>mutableIterator<!>: MutableIterator<T> = <!TYPE_MISMATCH!>c.<!NI;TYPE_MISMATCH!>iterator()<!><!>
     c.<!UNRESOLVED_REFERENCE!>add<!>(t)
     c.<!UNRESOLVED_REFERENCE!>remove<!>(1)
     c.<!UNRESOLVED_REFERENCE!>addAll<!>(c)
@@ -45,9 +45,9 @@ fun <T> testList(l: List<T>, <!UNUSED_PARAMETER!>t<!>: T) {
     val <!UNUSED_VARIABLE!>value<!>: T = l.<!UNRESOLVED_REFERENCE!>set<!>(1, t)
     l.<!UNRESOLVED_REFERENCE!>add<!>(1, t)
     l.<!UNRESOLVED_REFERENCE!>remove<!>(1)
-    val <!UNUSED_VARIABLE!>mutableListIterator<!>: MutableListIterator<T> = <!TYPE_MISMATCH!>l.listIterator()<!>
-    val <!UNUSED_VARIABLE!>mutableListIterator1<!>: MutableListIterator<T> = <!TYPE_MISMATCH!>l.listIterator(1)<!>
-    val <!UNUSED_VARIABLE!>mutableList<!>: MutableList<T> = <!TYPE_MISMATCH!>l.subList(1, 2)<!>
+    val <!UNUSED_VARIABLE!>mutableListIterator<!>: MutableListIterator<T> = <!TYPE_MISMATCH!>l.<!NI;TYPE_MISMATCH!>listIterator()<!><!>
+    val <!UNUSED_VARIABLE!>mutableListIterator1<!>: MutableListIterator<T> = <!TYPE_MISMATCH!>l.<!NI;TYPE_MISMATCH!>listIterator(1)<!><!>
+    val <!UNUSED_VARIABLE!>mutableList<!>: MutableList<T> = <!TYPE_MISMATCH!>l.<!NI;TYPE_MISMATCH!>subList(1, 2)<!><!>
 }
 
 fun <T> testMutableList(l: MutableList<T>, t: T) {
@@ -66,7 +66,7 @@ fun <T> testSet(s: Set<T>, t: T) {
     val <!UNUSED_VARIABLE!>iterator<!>: Iterator<T> = s.iterator()
     s.containsAll(s)
 
-    val <!UNUSED_VARIABLE!>mutableIterator<!>: MutableIterator<T> = <!TYPE_MISMATCH!>s.iterator()<!>
+    val <!UNUSED_VARIABLE!>mutableIterator<!>: MutableIterator<T> = <!TYPE_MISMATCH!>s.<!NI;TYPE_MISMATCH!>iterator()<!><!>
     s.<!UNRESOLVED_REFERENCE!>add<!>(t)
     s.<!UNRESOLVED_REFERENCE!>remove<!>(1)
     s.<!UNRESOLVED_REFERENCE!>addAll<!>(s)
@@ -97,9 +97,9 @@ fun <K, V> testMap(m: Map<K, V>) {
     val <!UNUSED_VARIABLE!>collection<!>: Collection<V> = m.values
     val <!UNUSED_VARIABLE!>set1<!>: Set<Map.Entry<K, V>> = m.entries
 
-    val <!UNUSED_VARIABLE!>mutableSet<!>: MutableSet<K> = <!TYPE_MISMATCH!>m.keys<!>
-    val <!UNUSED_VARIABLE!>mutableCollection<!>: MutableCollection<V> = <!TYPE_MISMATCH!>m.values<!>
-    val <!UNUSED_VARIABLE!>mutableSet1<!>: MutableSet<MutableMap.MutableEntry<K, V>> = <!TYPE_MISMATCH!>m.entries<!>
+    val <!UNUSED_VARIABLE!>mutableSet<!>: MutableSet<K> = <!TYPE_MISMATCH!>m.<!NI;TYPE_MISMATCH!>keys<!><!>
+    val <!UNUSED_VARIABLE!>mutableCollection<!>: MutableCollection<V> = <!TYPE_MISMATCH!>m.<!NI;TYPE_MISMATCH!>values<!><!>
+    val <!UNUSED_VARIABLE!>mutableSet1<!>: MutableSet<MutableMap.MutableEntry<K, V>> = <!TYPE_MISMATCH!>m.<!NI;TYPE_MISMATCH!>entries<!><!>
 }
 
 fun <K, V> testMutableMap(m: MutableMap<K, V>) {

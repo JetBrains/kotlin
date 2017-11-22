@@ -9,5 +9,5 @@ fun <T: Inv2<T>> foo(klass: Inv<T>): String? = null
 fun <X> bar(): Inv<X> = null!!
 
 fun test() {
-    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>())
+    <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>())
 }

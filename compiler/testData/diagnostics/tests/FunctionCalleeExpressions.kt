@@ -26,13 +26,13 @@ fun <T> fooT2() : (t : T) -> T {
 fun main(args : Array<String>) {
     args.foo()()
     args.foo1()(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo1<!>()()
-    <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo1<!>()(<!UNRESOLVED_REFERENCE!>a<!>)
+    <!NI;FUNCTION_EXPECTED!><!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo1<!>()<!>()
+    <!NI;FUNCTION_EXPECTED!><!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo1<!>()<!>(<!UNRESOLVED_REFERENCE!>a<!>)
 
     args.foo1()(1)
     args.foo1()(<!TYPE_MISMATCH!>"1"<!>)
-    <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo1<!>()("1")
-    <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo1<!>()(<!UNRESOLVED_REFERENCE!>a<!>)
+    <!NI;FUNCTION_EXPECTED!><!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo1<!>()<!>("1")
+    <!NI;FUNCTION_EXPECTED!><!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo1<!>()<!>(<!UNRESOLVED_REFERENCE!>a<!>)
 
     foo2()({})
     foo2()<!TOO_MANY_ARGUMENTS!>{}<!>
@@ -45,7 +45,7 @@ fun main(args : Array<String>) {
 
     val b = fooT2<Int>()(1)
     checkSubtype<Int>(b)
-    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
+    <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
 
     <!FUNCTION_EXPECTED!>1<!>()
     <!FUNCTION_EXPECTED!>1<!>{}

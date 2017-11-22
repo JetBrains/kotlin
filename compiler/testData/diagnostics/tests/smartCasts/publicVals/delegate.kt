@@ -14,7 +14,7 @@ class Example {
 
     public fun foo(): String {
         // Smart cast is not possible if property is delegated
-        return if (p != null) <!SMARTCAST_IMPOSSIBLE!>p<!> else ""
+        return if (p != null) <!NI;SMARTCAST_IMPOSSIBLE, SMARTCAST_IMPOSSIBLE!>p<!> else ""
     }
 
     public fun bar(): String {

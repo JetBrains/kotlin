@@ -14,7 +14,7 @@ fun testElvis(a: Int?, b: Int?) {
     if (a != null) {
         doInt(b ?: <!DEBUG_INFO_SMARTCAST!>a<!>)
     }
-    doList(getList() ?: <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>emptyListOfA<!>()) //should be an error
+    doList(getList() ?: <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>emptyListOfA<!>()) //should be an error
     doList(getList() ?: strangeList { doInt(it) }) //lambda was not analyzed
 }
 
@@ -23,15 +23,15 @@ fun testDataFlowInfo1(a: Int?, b: Int?) {
     val c: Int = a ?: b!!
     doInt(c)
     // b is nullable if a != null
-    b <!UNSAFE_OPERATOR_CALL!>+<!> 1
+    b <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;UNSAFE_OPERATOR_CALL!>+<!> 1
 }
 
 fun testDataFlowInfo2(a: Int?, b: Int?) {
     doInt(a ?: b!!)
     // b is nullable if a != null
-    b <!UNSAFE_OPERATOR_CALL!>+<!> 1
+    b <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;UNSAFE_OPERATOR_CALL!>+<!> 1
 }
 
 fun testTypeMismatch(a: String?, b: Any) {
-    doInt(<!TYPE_MISMATCH!>a<!> ?: <!TYPE_MISMATCH!>b<!>)
+    doInt(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!><!OI;TYPE_MISMATCH!>a<!> ?: <!OI;TYPE_MISMATCH!>b<!><!>)
 }

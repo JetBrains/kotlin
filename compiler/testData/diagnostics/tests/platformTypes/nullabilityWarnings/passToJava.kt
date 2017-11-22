@@ -34,8 +34,8 @@ fun test(n: J?, nn: J) {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    J.staticNN = <!TYPE_MISMATCH!>n<!>
-    J.staticNN = <!TYPE_MISMATCH!>platformN<!>
+    J.staticNN = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>n<!>
+    J.staticNN = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>platformN<!>
     J.staticNN = nn
     J.staticNN = platformNN
     J.staticNN = platformJ
@@ -58,8 +58,8 @@ fun test(n: J?, nn: J) {
     J.staticSet(<!TYPE_MISMATCH!>platformN<!>, platformN, platformN)
     J.staticSet(platformJ, platformJ, platformJ)
 
-    J().nn = <!TYPE_MISMATCH!>n<!>
-    J().nn = <!TYPE_MISMATCH!>platformN<!>
+    J().nn = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>n<!>
+    J().nn = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>platformN<!>
     J().nn = nn
     J().nn = platformNN
     J().nn = platformJ

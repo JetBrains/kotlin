@@ -9,7 +9,7 @@ fun IntArray.forEachIndexed( op: (i: Int, value: Int) -> Unit) {
 fun max(a: IntArray): Int? {
     var maxI: Int? = null
     a.forEachIndexed { i, value ->
-        if (maxI == null || value >= a[<!SMARTCAST_IMPOSSIBLE!>maxI<!>])
+        if (maxI == null || value >= a[<!NI;SMARTCAST_IMPOSSIBLE, SMARTCAST_IMPOSSIBLE!>maxI<!>])
             maxI = i
     }
     return maxI

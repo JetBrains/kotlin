@@ -10,7 +10,7 @@ class Customer(<!UNUSED_PARAMETER!>name1<!>: String)
 fun foo(f: File, c: Customer) {
     f.name1
 
-    c.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>name1<!> // name1 should be unresolved here
+    c.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>name1<!> // name1 should be unresolved here
 }
 
 val File.name1: String

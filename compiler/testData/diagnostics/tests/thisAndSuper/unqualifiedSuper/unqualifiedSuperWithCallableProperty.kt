@@ -14,7 +14,7 @@ interface InterfaceWithFun {
 
 class DerivedUsingFun : BaseWithCallableProp(), InterfaceWithFun {
     fun foo(): String =
-    <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>fn<!>()
+    <!NI;TYPE_MISMATCH!><!AMBIGUOUS_SUPER!>super<!>.<!NI;TYPE_MISMATCH!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>fn<!>()<!><!>
 
     override fun bar(): String =
             super.bar()

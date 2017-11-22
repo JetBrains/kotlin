@@ -8,7 +8,7 @@ class A<T> {
 }
 
 fun test(a: A<out CharSequence>) {
-    a <!MEMBER_PROJECTED_OUT(public final operator fun plus\(x: T\): A<T> defined in A; A<out CharSequence>)!>+<!> ""
-    <!MEMBER_PROJECTED_OUT(public final operator fun set\(x: Int, y: T\): Unit defined in A; A<out CharSequence>)!>a[1]<!> = ""
-    <!MEMBER_PROJECTED_OUT(public final operator fun get\(x: T\): Int defined in A; A<out CharSequence>)!>a[""]<!>
+    a <!OI;MEMBER_PROJECTED_OUT!>+<!> <!NI;TYPE_MISMATCH!>""<!>
+    <!OI;MEMBER_PROJECTED_OUT!>a[1]<!> = <!NI;TYPE_MISMATCH!>""<!>
+    <!OI;MEMBER_PROJECTED_OUT!>a[<!NI;TYPE_MISMATCH!>""<!>]<!>
 }

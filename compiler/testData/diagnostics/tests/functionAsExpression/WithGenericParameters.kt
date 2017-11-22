@@ -12,8 +12,8 @@ fun fun_with_where() = fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> T.(t: T): T whe
 
 fun outer() {
     devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!>() {})
-    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> T.() {})
-    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> (): T = null!!)
-    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> (t: T) {})
+    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> <!NI;UNRESOLVED_REFERENCE!>T<!>.() {})
+    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> (): <!NI;UNRESOLVED_REFERENCE!>T<!> = null!!)
+    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> (t: <!NI;UNRESOLVED_REFERENCE!>T<!>) {})
     devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> () where T:A {})
 }

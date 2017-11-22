@@ -17,7 +17,7 @@ fun test1_0() {}
 @Ann1(*["a", "b"])
 fun test1_1() {}
 
-@Ann1(*<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>["a", 1, <!ANNOTATION_PARAMETER_MUST_BE_CONST!>null<!>]<!>)
+@Ann1(*<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>["a", 1, <!OI;ANNOTATION_PARAMETER_MUST_BE_CONST!>null<!>]<!>)
 fun test1_2() {}
 
 @Ann2(*[])
@@ -34,8 +34,8 @@ fun test6() {}
 
 annotation class AnnArray(val a: Array<String>)
 
-@AnnArray(<!NON_VARARG_SPREAD!>*<!>["/"])
+@AnnArray(<!OI;NON_VARARG_SPREAD!>*<!>["/"])
 fun testArray() {}
 
-@Ann1(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, TYPE_MISMATCH!>[""]<!>)
+@Ann1(<!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, TYPE_MISMATCH!>[""]<!>)
 fun testVararg() {}

@@ -30,8 +30,8 @@ val r3 = LateInitNumRef(1)
 val r3a = LateNR(1)
 
 fun test() {
-    r1.x = <!TYPE_MISMATCH!>r1.x<!>
-    r1a.x = <!TYPE_MISMATCH!>r1a.x<!>
+    r1.x = <!OI;TYPE_MISMATCH!>r1.x<!>
+    r1a.x = <!OI;TYPE_MISMATCH!>r1a.x<!>
     r2.x = r2.x
     r2a.x = r2a.x
     r3.x = r3.x

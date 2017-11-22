@@ -9,7 +9,7 @@ fun testReturnType(foo: String) {
 
     val bas: () -> String = fun () = foo
 
-    val bag: () -> Int = <!TYPE_MISMATCH!>fun () = foo<!>
+    val bag: () -> Int = <!OI;TYPE_MISMATCH!>fun () = foo<!>
 }
 
 fun testParamType() {
@@ -18,7 +18,7 @@ fun testParamType() {
     bar.checkType { _<(String) -> Unit>() }
 
     val bas: (String) -> Unit = fun (param: String) {}
-    val bag: (Int) -> Unit = <!TYPE_MISMATCH!>fun (<!EXPECTED_PARAMETER_TYPE_MISMATCH!>param: String<!>) {}<!>
+    val bag: (Int) -> Unit = <!OI;TYPE_MISMATCH!>fun (<!EXPECTED_PARAMETER_TYPE_MISMATCH!>param: String<!>) {}<!>
 }
 
 fun testReceiverType() {
@@ -28,5 +28,5 @@ fun testReceiverType() {
 
     val bas: String.() -> Unit = fun String.() {}
 
-    val bag: Int.() -> Unit = <!TYPE_MISMATCH!>fun String.() {}<!>
+    val bag: Int.() -> Unit = <!OI;TYPE_MISMATCH!>fun String.() {}<!>
 }

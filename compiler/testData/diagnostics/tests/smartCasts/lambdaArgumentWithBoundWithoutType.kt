@@ -13,14 +13,14 @@ val foo: Foo = run {
     <!DEBUG_INFO_SMARTCAST!>x<!>
 }
 
-val foofoo: Foo = <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>run<!> {
+val foofoo: Foo = <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>run<!> {
     val x = foo()
     if (x == null) throw Exception()
-    <!DEBUG_INFO_SMARTCAST!>x<!>
+    <!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>x<!>
 }
 
-val bar: Bar = <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>run<!> {
+val bar: Bar = <!NI;TYPE_MISMATCH!><!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>run<!> {
     val x = foo()
     if (x == null) throw Exception()
-    <!TYPE_MISMATCH!>x<!>
-}
+    <!NI;DEBUG_INFO_SMARTCAST, TYPE_MISMATCH!>x<!>
+}<!>

@@ -10,5 +10,5 @@ fun <T> T.testThis(): String? {
     if (this != null) {
         return this<!UNNECESSARY_SAFE_CALL!>?.<!>toString()
     }
-    return <!DEBUG_INFO_CONSTANT!>this<!>?.toString()
+    return <!OI;DEBUG_INFO_CONSTANT!>this<!>?.toString()
 }

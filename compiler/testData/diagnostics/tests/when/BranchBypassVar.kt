@@ -8,5 +8,5 @@ fun test(a: Any) {
         is A -> q = "1"
     }
     // When is not exhaustive
-    return <!TYPE_MISMATCH!>q<!>
+    return <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>q<!>
 }

@@ -11,8 +11,8 @@ fun bar(b: B<in A<out Number>>, bOut: B<out A<out Number>>, bOut2: B<out A<Numbe
     foo(b)
     foo<Number>(b)
 
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>baz<!>(bOut)
-    baz<Number>(<!TYPE_MISMATCH!>bOut<!>)
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>baz<!>(bOut)
+    baz<Number>(<!OI;TYPE_MISMATCH!>bOut<!>)
 
     baz(bOut2)
     baz<Number>(bOut2)

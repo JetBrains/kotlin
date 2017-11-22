@@ -33,7 +33,7 @@ fun foo(arg: Int) {
     val f = @FunAnn fun(): Int { return 42 }
     // But here, f and gav should be annotated instead
     bar(<!WRONG_ANNOTATION_TARGET!>@FunAnn<!> f)
-    bar(<!WRONG_ANNOTATION_TARGET!>@FunAnn<!> ::gav)
+    bar(<!OI;WRONG_ANNOTATION_TARGET!>@<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>FunAnn<!><!> ::gav)
     // Function expression, ok
     fast(f)
 }

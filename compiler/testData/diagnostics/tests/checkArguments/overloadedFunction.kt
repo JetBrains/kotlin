@@ -12,6 +12,6 @@ fun test() {
     <!NONE_APPLICABLE!>foo<!>(1, 2)
     foo(<!TYPE_MISMATCH!>""<!>)
 
-    <!NONE_APPLICABLE!>bar<!>(1, 2)
+    <!OI;NONE_APPLICABLE!>bar<!>(1, <!NI;TOO_MANY_ARGUMENTS!>2<!>)
     <!NONE_APPLICABLE!>bar<!>()
 }

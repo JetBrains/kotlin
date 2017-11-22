@@ -8,7 +8,7 @@ operator fun <T> T.invoke(a: A<T>) {}
 fun foo(s: String, ai: A<Int>) {
     1(ai)
 
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>s<!>(ai)
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>s<!>(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>ai<!>)
 
     <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>""<!>(ai)
 }

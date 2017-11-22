@@ -37,13 +37,13 @@ fun testInOut() {
 
     Inv<Int>().f(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).f(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).<!MEMBER_PROJECTED_OUT!>f<!>(1) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).<!MEMBER_PROJECTED_OUT!>f<!>(1) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).<!OI;MEMBER_PROJECTED_OUT!>f<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).<!OI;MEMBER_PROJECTED_OUT!>f<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
 
     Inv<Int>().inf(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).inf(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).<!MEMBER_PROJECTED_OUT!>inf<!>(1) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).<!MEMBER_PROJECTED_OUT!>inf<!>(1) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).<!OI;MEMBER_PROJECTED_OUT!>inf<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).<!OI;MEMBER_PROJECTED_OUT!>inf<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
 
     Inv<Int>().outf()
     checkSubtype<Int>(<!TYPE_MISMATCH!>(null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).outf()<!>) // Type mismatch

@@ -13,7 +13,7 @@ fun <T, G> A<T>.foo(x: (T)-> G): G {
 }
 
 fun main(args: Array<String>) {
-    val a = A(1)
-    val t: String = a.<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>foo({p -> <!TYPE_MISMATCH!>p<!>})<!>
+    val <!NI;UNUSED_VARIABLE!>a<!> = A(1)
+    val t: String = a.<!OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!><!NI;UNRESOLVED_REFERENCE!>foo<!>({p -> <!OI;TYPE_MISMATCH!>p<!>})<!>
     checkSubtype<String>(t)
 }

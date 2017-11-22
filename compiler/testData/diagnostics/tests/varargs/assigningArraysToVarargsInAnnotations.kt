@@ -18,7 +18,7 @@ fun test1() {}
 @Ann(s = <!TYPE_MISMATCH!>intArrayOf()<!>)
 fun test2() {}
 
-@Ann(s = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>arrayOf(1)<!>)
+@Ann(s = <!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>arrayOf(1)<!>)
 fun test3() {}
 
 @Ann("value1", "value2")
