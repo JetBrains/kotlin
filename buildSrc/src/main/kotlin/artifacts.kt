@@ -85,7 +85,6 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): Jar =
             } catch (e: UnknownDomainObjectException) {
                 // skip default sources location
             }
-            tasks.findByName("classes")?.let { dependsOn(it) }
             body()
             project.addArtifact("archives", this, this)
         }
