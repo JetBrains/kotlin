@@ -87,22 +87,104 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
     }
 
     /**
-     * Foo <: T! <=> Foo <: T? <=> Foo & Any <: T
-     * Foo <: T? <=> Foo & Any <: T
      * Foo <: T -- leave as is
+     *
+     * T?
+     *
+     * Foo <: T? -- Foo & Any <: T
+     * Foo? <: T? -- Foo? & Any <: T
+     * (Foo..Bar) <: T? -- (Foo..Bar) & Any <: T
+     *
+     * T!
+     *
+     * Foo <: T! --
+     * assert T! == (T..T?)
+     *  Foo <: T
+     *  Foo <: T?
+     * =>
+     *  Foo <: T
+     *  Foo & Any <: T
+     * =>
+     *  (Foo & Any .. Foo) <: T
+     *
+     * => Foo <: T! -- (Foo & Any .. Foo) <: T
+     *
+     * Foo? <: T! -- (Foo? & Any .. Foo?) <: T
+     *
+     *
+     * (Foo..Bar) <: T! --
+     * assert T! == (T..T?)
+     *  (Foo..Bar) <: (T..T?)
+     * =>
+     *  Foo <: T?
+     *  Bar <: T
+     * =>
+     *  (Foo & Any .. Bar) <: T
+     *
+     * => (Foo..Bar) <: T! -- (Foo & Any .. Bar) <: T
      */
     private fun simplifyLowerConstraint(typeVariable: UnwrappedType, subType: UnwrappedType): Boolean {
-        @Suppress("NAME_SHADOWING")
-        val typeVariable = typeVariable.upperIfFlexible()
+        when (typeVariable) {
+            is SimpleType ->
+                addLowerConstraintForSimpleType(typeVariable, subType)
 
-        if (typeVariable.isMarkedNullable) {
-            addLowerConstraint(typeVariable.constructor, intersectTypes(listOf(subType, subType.builtIns.anyType)))
-        }
-        else {
-            addLowerConstraint(typeVariable.constructor, subType)
+            is FlexibleType ->
+                when (subType) {
+                    is SimpleType -> addLowerConstraintWithSimpleSubtype(typeVariable, subType)
+                    is FlexibleType -> addLowerConstraintWithFlexibleSubtype(typeVariable, subType)
+                }
         }
 
         return true
+    }
+
+    // Foo <: T! -- (Foo & Any .. Foo) <: T
+    // T <: T! -- (T..T?) <: T
+    // we can't use constraint (T & Any .. T) in the latter, because non-platform type with type variables is incorrect
+    private fun addLowerConstraintWithSimpleSubtype(typeVariable: FlexibleType, subType: SimpleType) {
+        assertFlexibleTypeVariable(typeVariable)
+
+        val constraintType = if (isMyTypeVariable(subType))
+            KotlinTypeFactory.flexibleType(subType.makeNullableAsSpecified(false), subType.makeNullableAsSpecified(true))
+        else
+            KotlinTypeFactory.flexibleType(subType.definitelyNotNull(), subType)
+
+        addLowerConstraint(typeVariable.constructor, constraintType)
+    }
+
+    // (Foo..Bar) <: T! -- (Foo & Any .. Bar) <: T
+    private fun addLowerConstraintWithFlexibleSubtype(typeVariable: FlexibleType, subType: FlexibleType) {
+        assertFlexibleTypeVariable(typeVariable)
+
+        val lowerBound = subType.lowerBound
+        val upperBound = subType.upperBound
+
+        if (isMyTypeVariable(lowerBound) || isMyTypeVariable(upperBound)) {
+            assertFlexibleTypeVariable(subType)
+            // This means that we are trying to add constraint like T! <: A!
+            addLowerConstraint(typeVariable.constructor, subType)
+            return
+        }
+
+        addLowerConstraint(typeVariable.constructor, KotlinTypeFactory.flexibleType(lowerBound.definitelyNotNull(), upperBound))
+    }
+
+    // Foo <: T or
+    // Foo <: T? -- Foo & Any <: T
+    private fun addLowerConstraintForSimpleType(typeVariable: SimpleType, subType: UnwrappedType) {
+        if (typeVariable.isMarkedNullable)
+            addLowerConstraint(typeVariable.constructor, subType.definitelyNotNull())
+        else
+            addLowerConstraint(typeVariable.constructor, subType)
+    }
+
+    private fun UnwrappedType.definitelyNotNull(): UnwrappedType = intersectTypes(listOf(this, this.builtIns.anyType))
+    private fun SimpleType.definitelyNotNull(): SimpleType = intersectTypes(listOf(this, this.builtIns.anyType))
+
+    private fun assertFlexibleTypeVariable(typeVariable: FlexibleType) {
+        assert(typeVariable.lowerBound.constructor == typeVariable.upperBound.constructor) {
+            "Flexible type variable ($typeVariable) should have bounds with the same type constructor, i.e. (T..T?)"
+        }
     }
 
     /**
