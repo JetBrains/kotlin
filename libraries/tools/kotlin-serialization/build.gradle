@@ -8,7 +8,7 @@ configureJvmProject(project)
 configurePublishing(project)
 
 group = 'org.jetbrains.kotlinx'
-version = '0.2'
+version = '0.3'
 if (!project.hasProperty("deploy")) {
     version = "$version-SNAPSHOT"
 }

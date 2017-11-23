@@ -1,7 +1,7 @@
 <idea-plugin>
     <name>Kotlin-serialization</name>
     <id>org.jetbrains.kotlinx.serialization</id>
-    <version>0.2</version>
+    <version>0.3</version>
 
     <depends>org.jetbrains.kotlin</depends>
     <idea-version since-build="172"/>
