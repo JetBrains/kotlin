@@ -138,19 +138,43 @@ task run() {
         dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled })
 }
 
+// Collect results in one json.
+task resultsTask() {
+    doLast {
+        Map<String, Map<String, RunExternalTestGroup.TestResult>> results = [:]
+        def statistics = new RunExternalTestGroup.Statistics()
+        tasks.withType(RunExternalTestGroup).matching { it.state.executed }.each {
+            results.put(it.name, it.results)
+            statistics.add(it.statistics)
+        }
+
+        def output = ["statistics": statistics, "tests": results]
+        def json = JsonOutput.toJson(output)
+        def reportFile = new File(sourceSets.testOutputExternal.output.getDirs().getSingleFile(), "results.json")
+        reportFile.write(JsonOutput.prettyPrint(json))
+        println("DONE.\n\n" +
+                "TOTAL: $statistics.total\n" +
+                "PASSED: $statistics.passed\n" +
+                "FAILED: $statistics.failed\n" +
+                "ERROR: $statistics.error\n" +
+                "SKIPPED: $statistics.skipped")
+    }
+}
+
 Set<RunExternalTestGroup> createExternalTests(File testRoot, Closure taskConfiguration) {
     def result = new HashSet<RunExternalTestGroup>()
     testRoot.eachDirRecurse {
         // Skip build directory and directories without *.kt files.
-        if (it.name == "build" || it.listFiles().count {it.name.endsWith(".kt") && it.isFile()} == 0) {
+        if (it.name == "build" || it.listFiles().count { it.name.endsWith(".kt") && it.isFile() } == 0) {
             return
         }
 
         def taskDirectory = project.relativePath(it)
         def taskName = taskDirectory.replaceAll("[-/\\\\]", '_')
 
-        def task = (RunExternalTestGroup)project.task("$taskName", type: RunExternalTestGroup){
+        def task = (RunExternalTestGroup) project.task("$taskName", type: RunExternalTestGroup) {
             groupDirectory = "$taskDirectory"
+            finalizedBy resultsTask
         }
         taskConfiguration(task)
         result.add(task)
@@ -177,27 +201,7 @@ task run_external () {
         testTasks = testTasks.matching { it.name.startsWith(prefix) }
     }
     dependsOn(testTasks)
-
-    // Collect results in one json.
-    doLast {
-        Map<String, Map<String, RunExternalTestGroup.TestResult>> results = [:]
-        def statistics = new RunExternalTestGroup.Statistics()
-        testTasks.matching { it.state.executed }.each {
-            results.put(it.name, it.results)
-            statistics.add(it.statistics)
-        }
-
-        def output = ["statistics" : statistics, "tests" : results]
-        def json = JsonOutput.toJson(output)
-        def reportFile = new File(sourceSets.testOutputExternal.output.getDirs().getSingleFile(), "results.json")
-        reportFile.write(JsonOutput.prettyPrint(json))
-        println("DONE.\n\n" +
-                "TOTAL: $statistics.total\n" +
-                "PASSED: $statistics.passed\n" +
-                "FAILED: $statistics.failed\n" +
-                "ERROR: $statistics.error\n" +
-                "SKIPPED: $statistics.skipped")
-    }
+//    finalizedBy resultsTask
 }
 
 task daily() {
