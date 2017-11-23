@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -83,8 +84,11 @@ import javax.swing.JPanel
 class UnusedSymbolInspection : AbstractKotlinInspection() {
     companion object {
         private val javaInspection = UnusedDeclarationInspection()
+        private val MAIN_NAMES = setOf("main", "premain", "agentmain")
 
         fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
+            if (declaration.annotationEntries.isEmpty() && declaration.name !in MAIN_NAMES) return false
+
             val lightElement: PsiElement? = when (declaration) {
                 is KtClassOrObject -> declaration.toLightClass()
                 is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)
