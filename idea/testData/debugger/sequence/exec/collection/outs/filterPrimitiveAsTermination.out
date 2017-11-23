@@ -1,0 +1,17 @@
+LineBreakpoint created at FilterPrimitiveAsTermination.kt:5
+Run Java
+Connected to the target VM
+FilterPrimitiveAsTermination.kt:5
+Exception caught: junit.framework.AssertionFailedError: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+@SinceKotlin public inline fun <S : CharSequence> ???.onEach(action: (Char) -> Unit): ??? defined in kotlin.text
+@SinceKotlin public inline fun <T, C : Iterable<???>> ByteArray.onEach(action: (???) -> Unit): ByteArray defined in kotlin.collections
+@SinceKotlin public inline fun <K, V, M : Map<out ???, ???>> ByteArray.onEach(action: (Map.Entry<???, ???>) -> Unit): ByteArray defined in kotlin.collections
+@SinceKotlin public fun <T> Sequence<???>.onEach(action: (???) -> Unit): Sequence<???> defined in kotlin.sequences, Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+@SinceKotlin public inline fun <S : CharSequence> ???.onEach(action: (Char) -> Unit): ??? defined in kotlin.text
+@SinceKotlin public inline fun <T, C : Iterable<???>> ByteArray.onEach(action: (???) -> Unit): ByteArray defined in kotlin.collections
+@SinceKotlin public inline fun <K, V, M : Map<out ???, ???>> ByteArray.onEach(action: (Map.Entry<???, ???>) -> Unit): ByteArray defined in kotlin.collections
+@SinceKotlin public fun <T> Sequence<???>.onEach(action: (???) -> Unit): Sequence<???> defined in kotlin.sequences
+Disconnected from the target VM
+
+WRONG!
+Process finished with exit code 0
