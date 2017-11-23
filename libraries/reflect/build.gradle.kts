@@ -48,6 +48,7 @@ dependencies {
     compile(project(":kotlin-stdlib"))
 
     proguardDeps(project(":kotlin-stdlib"))
+    proguardDeps(files(firstFromJavaHomeThatExists("lib/rt.jar", "../Classes/classes.jar")))
 
     shadows(project(":kotlin-reflect-api"))
     shadows(project(":core:descriptors"))
@@ -158,7 +159,6 @@ val stripMetadata by tasks.creating {
 
 val mainArchiveName = "${property("archivesBaseName")}-$version.jar"
 val outputJarPath = "$libsDir/$mainArchiveName"
-val rtJar = listOf("jre/lib/rt.jar", "../Classes/classes.jar").map { File("${property("JDK_16")}/$it") }.first(File::isFile)
 
 val proguard by task<ProGuardTask> {
     dependsOn(stripMetadata)
@@ -169,7 +169,6 @@ val proguard by task<ProGuardTask> {
     outjars(outputJarPath)
 
     libraryjars(proguardDeps)
-    libraryjars(rtJar)
 
     configuration("$core/reflection.jvm/reflection.pro")
 }
