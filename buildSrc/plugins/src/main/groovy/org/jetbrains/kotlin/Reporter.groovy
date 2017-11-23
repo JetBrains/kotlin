@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin
 
 import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory
-import groovy.io.FileVisitResult
 import groovy.json.JsonSlurper
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -38,17 +37,11 @@ class Reporter extends DefaultTask {
     private String testReportUrl(String buildId, String buildTypeId) {
         return tabUrl(buildId, buildTypeId,"testsInfo")
     }
-    def reportHome
-    @TaskAction
-    public void report() {
-        def stats = new RunExternalTestGroup.Statistics()
-        def obj = new JsonSlurper().parse(new File(reportHome, "external/results.json"))
-        stats.total   = obj.statistics.total
-        stats.passed  = obj.statistics.passed
-        stats.failed  = obj.statistics.failed
-        stats.error   = obj.statistics.error
-        stats.skipped = obj.statistics.skipped
 
+    def reportHome
+
+    @TaskAction
+    void report() {
         def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
         if (teamcityConfig == null)
             throw new RuntimeException("Can't load teamcity config")
@@ -61,7 +54,22 @@ class Reporter extends DefaultTask {
         def testReportUrl = testReportUrl(buildId, buildTypeId)
         def epilogue = "\nlog url: $logUrl\ntest report url: $testReportUrl"
 
-        def report = "total: ${stats.total}\npassed: ${stats.passed}\nfailed: ${stats.failed}\nerror:${stats.error}\nskipped:${stats.skipped} ${epilogue}"
+        def stats = new RunExternalTestGroup.Statistics()
+        def resultsFile = new File(reportHome, "external/results.json")
+        def report
+
+        if (resultsFile.exists()) {
+            def obj = new JsonSlurper().parse(resultsFile)
+            stats.total = obj.statistics.total
+            stats.passed = obj.statistics.passed
+            stats.failed = obj.statistics.failed
+            stats.error = obj.statistics.error
+            stats.skipped = obj.statistics.skipped
+            report = "total: ${stats.total}\npassed: ${stats.passed}\nfailed: ${stats.failed}\n" +
+                    "error:${stats.error}\nskipped:${stats.skipped} ${epilogue}"
+        } else {
+            report = "Unable to get results\nBuild has probably failed${epilogue}"
+        }
         println(report)
         def session = new SlackSessionFactory().createWebSocketSlackSession(buildProperties.'konan-reporter-token')
         session.connect()
