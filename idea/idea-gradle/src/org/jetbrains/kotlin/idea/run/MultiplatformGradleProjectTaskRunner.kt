@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.run
 
 import com.intellij.execution.configurations.JavaRunConfigurationModule
 import com.intellij.execution.configurations.ModuleBasedConfiguration
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
@@ -41,6 +40,7 @@ import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCach
 import org.jetbrains.plugins.gradle.settings.GradleSystemRunningSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
+import kotlin.concurrent.getOrSet
 
 /**
  * Ensures that build/run actions are always delegated to Gradle for multiplatform projects.
@@ -104,41 +104,44 @@ class MultiplatformGradleProjectTaskRunner : GradleProjectTaskRunner() {
             }
 }
 
-class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
+class MultiplatformGradleOrderEnumeratorHandler(val factory: MultiplatformGradleOrderEnumeratorHandler.FactoryImpl) : OrderEnumerationHandler() {
     override fun addCustomModuleRoots(type: OrderRootType, rootModel: ModuleRootModel, result: MutableCollection<String>, includeProduction: Boolean, includeTests: Boolean): Boolean {
-        if (type != OrderRootType.CLASSES) return false
-        if (!ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, rootModel.module)) return false
+        if (factory.isEnumerating(rootModel.module)) return false
+        factory.startEnumerating(rootModel.module)
+        try {
+            if (type != OrderRootType.CLASSES) return false
+            if (!ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, rootModel.module)) return false
 
-        if (!GradleSystemRunningSettings.getInstance().isUseGradleAwareMake) {
-            val gradleProjectPath = ExternalSystemModulePropertyManager.getInstance(rootModel.module).getRootProjectPath() ?: return false
-            val externalProjectDataCache = ExternalProjectDataCache.getInstance(rootModel.module.project)!!
-            val externalRootProject = externalProjectDataCache.getRootExternalProject(GradleConstants.SYSTEM_ID,
-                                                                                      File(gradleProjectPath)) ?: return false
+            if (!GradleSystemRunningSettings.getInstance().isUseGradleAwareMake) {
+                val gradleProjectPath = ExternalSystemModulePropertyManager.getInstance(rootModel.module).getRootProjectPath() ?: return false
+                val externalProjectDataCache = ExternalProjectDataCache.getInstance(rootModel.module.project)!!
+                val externalRootProject = externalProjectDataCache.getRootExternalProject(GradleConstants.SYSTEM_ID,
+                                                                                          File(gradleProjectPath)) ?: return false
 
-            val externalSourceSets = externalProjectDataCache.findExternalProject(externalRootProject, rootModel.module)
+                val externalSourceSets = externalProjectDataCache.findExternalProject(externalRootProject, rootModel.module)
 
-            for (sourceSet in externalSourceSets.values) {
-                if (includeTests) {
-                    addOutputModuleRoots(sourceSet.sources[ExternalSystemSourceType.TEST], result)
-                }
-                if (includeProduction) {
-                    addOutputModuleRoots(sourceSet.sources[ExternalSystemSourceType.SOURCE], result)
+                for (sourceSet in externalSourceSets.values) {
+                    if (includeTests) {
+                        addOutputModuleRoots(sourceSet.sources[ExternalSystemSourceType.TEST], result)
+                    }
+                    if (includeProduction) {
+                        addOutputModuleRoots(sourceSet.sources[ExternalSystemSourceType.SOURCE], result)
+                    }
                 }
             }
-        }
 
-        val implModule = rootModel.module.findJvmImplementationModule()
-        if (implModule != null) {
-            LOG.info("JVM implementation module for ${rootModel.module.name} is ${implModule.name}")
-        }
-        implModule
-            ?.rootManager
-            ?.orderEntries()
-            ?.satisfying { orderEntry -> (orderEntry as? ModuleOrderEntry)?.module != rootModel.module }
-            ?.compileOnly()
-            ?.classesRoots
-            ?.mapTo(result) { it.url }
+            val implModule = rootModel.module.findJvmImplementationModule()
+            implModule
+                    ?.rootManager
+                    ?.orderEntries()
+                    ?.satisfying { orderEntry -> (orderEntry as? ModuleOrderEntry)?.module != rootModel.module }
+                    ?.compileOnly()
+                    ?.classesRoots
+                    ?.mapTo(result) { it.url }
 
+        } finally {
+            factory.doneEnumerating(rootModel.module)
+        }
         return false
     }
 
@@ -146,18 +149,27 @@ class MultiplatformGradleOrderEnumeratorHandler : OrderEnumerationHandler() {
         directorySet?.gradleOutputDirs?.mapTo(result) { VfsUtilCore.pathToUrl(it.absolutePath) }
     }
 
-    companion object {
-        val LOG = Logger.getInstance(MultiplatformGradleOrderEnumeratorHandler::class.java)
-    }
-
     class FactoryImpl : Factory() {
+        private val activeSet = ThreadLocal<MutableSet<Module>>()
+
+        fun startEnumerating(module: Module) {
+            activeSet.getOrSet { hashSetOf() } += module
+        }
+
+        fun doneEnumerating(module: Module) {
+            activeSet.get()?.remove(module)
+        }
+
+        fun isEnumerating(module: Module) = activeSet.get()?.contains(module) ?: false
+
         override fun isApplicable(module: Module): Boolean {
             return ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module) &&
-                   module.isMultiplatformModule()
+                   module.isMultiplatformModule() &&
+                   !isEnumerating(module)
         }
 
         override fun createHandler(module: Module): OrderEnumerationHandler =
-            MultiplatformGradleOrderEnumeratorHandler()
+            MultiplatformGradleOrderEnumeratorHandler(this)
     }
 }
 
