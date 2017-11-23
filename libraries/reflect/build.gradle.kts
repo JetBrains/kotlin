@@ -198,9 +198,8 @@ val relocateCoreSources by task<Copy> {
 
 tasks.getByName("jar").enabled = false
 
-val relocatedSourcesJar by task<Jar> {
+val sourcesJar = sourcesJar(sourceSet = null) {
     dependsOn(relocateCoreSources)
-    classifier = "sources"
     from(relocatedCoreSrc)
     from("$core/reflection.jvm/src")
 }
@@ -224,11 +223,10 @@ artifacts {
     add(mainJar.name, artifactJar)
     add("runtime", artifactJar)
     add("archives", artifactJar)
-    add("archives", relocatedSourcesJar)
 }
 
 javadocJar()
 
 dist(fromTask = result) {
-    from(relocatedSourcesJar)
+    from(sourcesJar)
 }
