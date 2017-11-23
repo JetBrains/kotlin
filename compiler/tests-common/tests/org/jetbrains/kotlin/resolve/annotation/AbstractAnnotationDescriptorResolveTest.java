@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.lazy.descriptors.PackageDescriptorUtilKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
@@ -66,7 +67,11 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
 
     private static final FqName PACKAGE = new FqName("test");
 
-    protected BindingContext context;
+    protected AnalysisResult analysisResult;
+
+    protected BindingContext getContext() {
+        return analysisResult.getBindingContext();
+    }
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
@@ -122,7 +127,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
 
     private void checkAnnotationsOnFile(String expectedAnnotation, KtFile file) {
         String actualAnnotation = StringUtil.join(file.getAnnotationEntries(), annotationEntry -> {
-            AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
+            AnnotationDescriptor annotationDescriptor = getContext().get(BindingContext.ANNOTATION, annotationEntry);
             assertNotNull(annotationDescriptor);
 
             KtAnnotationUseSiteTarget target = annotationEntry.getUseSiteTarget();
@@ -144,7 +149,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
         checkDescriptor(expectedAnnotation, getLocalClassDescriptor("LocalClass"));
         checkDescriptor(expectedAnnotation, getLocalObjectDescriptor("LocalObject"));
         checkDescriptor(expectedAnnotation, getLocalFunDescriptor("localFun"));
-        checkDescriptor(expectedAnnotation, getLocalVarDescriptor(context, "localVar"));
+        checkDescriptor(expectedAnnotation, getLocalVarDescriptor(getContext(), "localVar"));
     }
 
     private static void checkAnnotationsOnProperty(String expectedAnnotation, PropertyDescriptor prop) {
@@ -236,7 +241,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
 
     @NotNull
     private ClassDescriptor getLocalClassDescriptor(@NotNull String name) {
-        for (ClassDescriptor descriptor : context.getSliceContents(BindingContext.CLASS).values()) {
+        for (ClassDescriptor descriptor : getContext().getSliceContents(BindingContext.CLASS).values()) {
             if (descriptor.getName().asString().equals(name)) {
                 return descriptor;
             }
@@ -259,7 +264,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
 
     @NotNull
     private SimpleFunctionDescriptor getLocalFunDescriptor(@NotNull String name) {
-        for (SimpleFunctionDescriptor descriptor : context.getSliceContents(BindingContext.FUNCTION).values()) {
+        for (SimpleFunctionDescriptor descriptor : getContext().getSliceContents(BindingContext.FUNCTION).values()) {
             if (descriptor.getName().asString().equals(name)) {
                 return descriptor;
             }
@@ -283,7 +288,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
 
     @NotNull
     private SimpleFunctionDescriptor getAnonymousFunDescriptor() {
-        for (SimpleFunctionDescriptor descriptor : context.getSliceContents(BindingContext.FUNCTION).values()) {
+        for (SimpleFunctionDescriptor descriptor : getContext().getSliceContents(BindingContext.FUNCTION).values()) {
             if (descriptor instanceof AnonymousFunctionDescriptor) {
                 return descriptor;
             }
@@ -333,15 +338,15 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     @NotNull
     protected KtFile getFile(@NotNull String content) {
         KtFile ktFile = KotlinTestUtils.createFile("dummy.kt", content, getProject());
-        AnalysisResult analysisResult = KotlinTestUtils.analyzeFile(ktFile, getEnvironment());
-        context = analysisResult.getBindingContext();
+        analysisResult = KotlinTestUtils.analyzeFile(ktFile, getEnvironment());
 
         return ktFile;
     }
 
     @NotNull
     protected PackageFragmentDescriptor getPackage(@NotNull KtFile ktFile) {
-        PackageFragmentDescriptor packageFragment = context.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile);
+        PackageFragmentDescriptor packageFragment =
+                PackageDescriptorUtilKt.findPackageFragmentForFile(analysisResult.getModuleDescriptor(), ktFile);
         assertNotNull("Failed to find package: " + PACKAGE, packageFragment);
         return packageFragment;
     }
@@ -384,7 +389,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
 
     @Override
     public void tearDown() throws Exception {
-        context = null;
+        analysisResult = null;
         super.tearDown();
     }
 }

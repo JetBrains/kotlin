@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.lazy.declarations
+package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 
-interface PackageMemberDeclarationProvider : DeclarationProvider {
-    fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName>
-
-    fun getPackageFiles(): Collection<KtFile>
-
-    fun containsFile(file: KtFile): Boolean
-}
+fun ModuleDescriptor.findPackageFragmentForFile(ktFile: KtFile): PackageFragmentDescriptor? =
+        getPackage(ktFile.packageFqName).fragments
+                .filterIsInstance<LazyPackageDescriptor>()
+                .firstOrNull { it.declarationProvider.containsFile(ktFile) }

@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.SmartSet
@@ -103,7 +104,11 @@ class MoveConflictChecker(
                     is KtNamedDeclaration -> resolutionFacade.resolveToDescriptor(targetElement)
 
                     is KtFile -> {
-                        val packageFragment = resolutionFacade.analyze(targetElement)[BindingContext.FILE_TO_PACKAGE_FRAGMENT, targetElement]
+                        val packageFragment =
+                                targetElement
+                                        .findModuleDescriptor()
+                                        .findPackageFragmentForFile(targetElement)
+
                         packageFragment?.withSource(targetElement)
                     }
 

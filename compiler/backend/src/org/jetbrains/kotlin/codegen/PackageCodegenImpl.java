@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
+import org.jetbrains.kotlin.resolve.lazy.descriptors.PackageDescriptorUtilKt;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -131,7 +131,8 @@ public class PackageCodegenImpl implements PackageCodegen {
     private PackageFragmentDescriptor getOnlyPackageFragment(@NotNull FqName expectedPackageFqName) {
         SmartList<PackageFragmentDescriptor> fragments = new SmartList<>();
         for (KtFile file : files) {
-            PackageFragmentDescriptor fragment = state.getBindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
+            PackageFragmentDescriptor fragment =
+                    PackageDescriptorUtilKt.findPackageFragmentForFile(state.getModule(), file);
             assert fragment != null : "package fragment is null for " + file + "\n" + file.getText();
 
             assert expectedPackageFqName.equals(fragment.getFqName()) :
