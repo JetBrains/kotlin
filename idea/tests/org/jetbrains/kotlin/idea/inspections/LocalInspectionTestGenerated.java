@@ -2510,9 +2510,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("it.kt")
+        public void testIt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/it.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("paramCopy.kt")
         public void testParamCopy() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/paramCopy.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parameterWithSameNameBelow.kt")
+        public void testParameterWithSameNameBelow() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unnecessaryVariable/parameterWithSameNameBelow.kt");
             doTest(fileName);
         }
 
