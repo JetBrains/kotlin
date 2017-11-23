@@ -4654,13 +4654,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("outerCapturedInLambdaInSecondaryConstructor.kt")
             public void testOuterCapturedInLambdaInSecondaryConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLambdaInSecondaryConstructor.kt");
-                try {
-                    doTest(fileName);
-                }
-                catch (Throwable ignore) {
-                    return;
-                }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                doTest(fileName);
             }
 
             @TestMetadata("outerCapturedInLambdaInSubExpression.kt")
