@@ -5222,6 +5222,36 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyAssignment.kt")
+        public void testPropertyAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAssignmentDefaultSetter.kt")
+        public void testPropertyAssignmentDefaultSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyAssignmentDefaultSetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAssignmentNoReceiver.kt")
+        public void testPropertyAssignmentNoReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyAssignmentNoReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAssignmentNoSetter.kt")
+        public void testPropertyAssignmentNoSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyAssignmentNoSetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyModification.kt")
+        public void testPropertyModification() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyModification.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyToMethod.kt")
         public void testPropertyToMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyToMethod.kt");
