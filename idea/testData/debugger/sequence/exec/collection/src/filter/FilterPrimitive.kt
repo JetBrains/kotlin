@@ -2,5 +2,5 @@ package filter
 
 fun main(args: Array<String>) {
   // Breakpoint!
-  listOf(1, 2).filter { it % 2 == 0 }
+  listOf(1, 2, 3).filter { it == 2 }.count()
 }
