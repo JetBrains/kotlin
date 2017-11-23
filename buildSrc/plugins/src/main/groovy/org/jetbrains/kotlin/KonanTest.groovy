@@ -748,6 +748,9 @@ fun runTest() {
             }
         }
 
+        statistics = new Statistics()
+        def testSuite = createTestSuite(name, statistics)
+        testSuite.start()
         // Build tests in the group
         flags = (flags ?: []) + "-tr"
         def compileList = []
@@ -762,13 +765,19 @@ fun runTest() {
         }
         compileList.add(project.file("testUtils.kt").absolutePath)
         compileList.add(project.file("helpers.kt").absolutePath)
-        runCompiler(compileList, buildExePath(), flags)
+        try {
+            runCompiler(compileList, buildExePath(), flags)
+        } catch (Exception ex) {
+            println("ERROR: Compilation failed for test suite: ${testSuite.name} with exception: ${ex}")
+            ktFiles.each {
+                def testCase = testSuite.createTestCase(it.name)
+                testCase.error(ex)
+            }
+            throw new RuntimeException("Compilation failed", ex)
+        }
 
         // Run the tests.
         def currentResult = null
-        statistics = new Statistics()
-        def testSuite = createTestSuite(name, statistics)
-        testSuite.start()
         outputDirectory = outputRootDirectory
         arguments = (arguments ?: []) + "--ktest_logger=SILENT"
         ktFiles.each {
