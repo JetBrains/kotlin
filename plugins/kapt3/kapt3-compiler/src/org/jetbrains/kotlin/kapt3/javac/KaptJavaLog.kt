@@ -231,11 +231,6 @@ fun KaptContext<*>.kaptError(text: String): JCDiagnostic {
     return JCDiagnostic.Factory.instance(context).errorJava9Aware(null, null, "proc.messager", text)
 }
 
-fun KaptContext<*>.kaptError(text: String, target: PsiElement): JCDiagnostic {
-    //TODO provide source binding
-    return JCDiagnostic.Factory.instance(context).errorJava9Aware(null, null, "proc.messager", text)
-}
-
 private fun JCDiagnostic.Factory.errorJava9Aware(
         source: DiagnosticSource?,
         pos: JCDiagnostic.DiagnosticPosition?,

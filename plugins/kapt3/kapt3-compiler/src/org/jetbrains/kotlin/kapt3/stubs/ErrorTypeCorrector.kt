@@ -201,7 +201,7 @@ class ErrorTypeCorrector(
         if (typeParameters.size != arguments.size) {
             val kaptContext = converter.kaptContext
             kaptContext.compiler.log.report(
-                    kaptContext.kaptError("${typeParameters.size} parameters are expected but ${arguments.size} passed", actualType))
+                    kaptContext.kaptError("${typeParameters.size} parameters are expected but ${arguments.size} passed"))
             return emptyMap()
         }
 
