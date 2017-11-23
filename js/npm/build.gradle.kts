@@ -88,8 +88,6 @@ val publishKotlinTest = sequential(
         createPublishToNpmTask("kotlin-test")
 )
 
-tasks {
-  "publishAll" {
+task("publishAll") {
     dependsOn(publishKotlinJs, publishKotlinTest, publishKotlinCompiler)
-  }
 }
