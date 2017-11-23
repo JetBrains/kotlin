@@ -225,29 +225,22 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
 
     private class ParameterToArgument(val parameterDescriptor: ValueDescriptor,
                                       val argumentExpression : IrExpression) {
-        val needsEvaluation: Boolean
+
+        val isInlinableLambda : Boolean
             get() {
-                if (argumentExpression is IrGetValue) return false                         // Parameter is already GetValue - nothing to evaluate.
-                if (argumentExpression is IrConst<*>) return false                         // Parameter is constant - nothing to evaluate.
-                if (argumentExpression is IrCallableReference) return false                // Parameter is callable reference - nothing to evaluate.
-                if (isLambdaExpression(argumentExpression)
-                        && !(parameterDescriptor is ValueParameterDescriptor
-                        && parameterDescriptor.isNoinline)) return false                   // Parameter is lambda and it is not noInline - will be inlined.
-                return true
+                if (argumentExpression !is IrBlock)                                     return false    // Lambda must be represented with IrBlock.
+                if (argumentExpression.origin != IrStatementOrigin.LAMBDA &&                            // Origin must be LAMBDA or ANONYMOUS.
+                    argumentExpression.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)  return false
+
+                val statements          = argumentExpression.statements
+                val irFunction          = statements[0]                                     // Lambda function declaration.
+                val irCallableReference = statements[1]                                     // Lambda callable reference.
+                if (irFunction !is IrFunction)                   return false               // First statement of the block must be lambda declaration.
+                if (irCallableReference !is IrCallableReference) return false               // Second statement of the block must be CallableReference.
+                if (parameterDescriptor is ValueParameterDescriptor &&
+                    parameterDescriptor.isNoinline)              return false               // If parameter marked as "noinline" - do not inline.
+                return true                                                                 // The expression represents lambda.
             }
-
-        private fun isLambdaExpression(expression: IrExpression) : Boolean {
-            if (expression !is IrBlock)                                     return false    // Lambda must be represented with IrBlock.
-            if (expression.origin != IrStatementOrigin.LAMBDA                               // Origin must be LAMBDA or ANONYMOUS.
-                    && expression.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)  return false
-
-            val statements          = expression.statements
-            val irFunction          = statements[0]
-            val irCallableReference = statements[1]
-            if (irFunction !is IrFunction)                   return false                   // First statement of the block must be lambda declaration.
-            if (irCallableReference !is IrCallableReference) return false                   // Second statement of the block must be CallableReference.
-            return true                                                                     // The expression represents lambda.
-        }
     }
 
     //-------------------------------------------------------------------------//
@@ -338,8 +331,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         parameterToArgumentOld.forEach {
             val parameterDescriptor = it.parameterDescriptor
 
-            if (!it.needsEvaluation) {                                                      // If argument does not need evaluation
-                substituteMap[parameterDescriptor] = it.argumentExpression                  // Copy parameterDescriptor -> argumentExpression to new map.
+            if (it.isInlinableLambda) {                                                     // If argument is inlinable lambda.
+                substituteMap[parameterDescriptor] = it.argumentExpression                  // Associate parameter with lambda argument.
                 return@forEach
             }
 
