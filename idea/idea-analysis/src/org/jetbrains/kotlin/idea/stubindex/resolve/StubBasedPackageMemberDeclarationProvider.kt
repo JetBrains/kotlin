@@ -109,6 +109,10 @@ class StubBasedPackageMemberDeclarationProvider(
         return PackageIndexUtil.findFilesWithExactPackage(fqName, searchScope, project)
     }
 
+    override fun containsFile(file: KtFile): Boolean {
+        return searchScope.contains(file.virtualFile ?: return false)
+    }
+
     override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias> {
         return KotlinTopLevelTypeAliasFqNameIndex.getInstance().get(childName(name), project, searchScope)
     }
