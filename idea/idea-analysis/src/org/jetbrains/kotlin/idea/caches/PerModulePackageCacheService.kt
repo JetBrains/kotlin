@@ -21,7 +21,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfoByVirtualFile
 import org.jetbrains.kotlin.idea.caches.resolve.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPackageDirective
@@ -69,7 +69,7 @@ class KotlinPackageContentModificationListener(
                     events
                             .asSequence()
                             .filter { it.file != null }
-                            .filter(::isRelevant)
+                            .filter(this::isRelevant)
                             .mapNotNull { it.file }
                             .filter { it.isDirectory || FileTypeRegistry.getInstance().getFileTypeByFileName(it.name) == KotlinFileType.INSTANCE }
                             .forEach { file -> service.notifyPackageChange(file) }
