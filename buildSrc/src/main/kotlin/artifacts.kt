@@ -74,13 +74,15 @@ fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
 
 fun Project.runtimeJar(taskName: String = "jar", body: Jar.() -> Unit = {}): Jar = runtimeJar(getOrCreateTask(taskName, body))
 
-fun Project.sourcesJar(body: Jar.() -> Unit = {}): Jar =
+fun Project.sourcesJar(sourceSet: String? = "main", body: Jar.() -> Unit = {}): Jar =
         getOrCreateTask("sourcesJar") {
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             classifier = "sources"
             try {
-                project.pluginManager.withPlugin("java-base") {
-                    from(project.the<JavaPluginConvention>().sourceSets["main"].allSource)
+                if (sourceSet != null) {
+                    project.pluginManager.withPlugin("java-base") {
+                        from(project.the<JavaPluginConvention>().sourceSets[sourceSet].allSource)
+                    }
                 }
             } catch (e: UnknownDomainObjectException) {
                 // skip default sources location
