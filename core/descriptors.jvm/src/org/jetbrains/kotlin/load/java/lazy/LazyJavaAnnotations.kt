@@ -47,7 +47,7 @@ class LazyJavaAnnotations(
             (annotationOwner.annotations.asSequence().map(annotationDescriptors)
              + JavaAnnotationMapper.findMappedJavaAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated, annotationOwner, c)).filterNotNull().iterator()
 
-    override fun isEmpty() = !iterator().hasNext()
+    override fun isEmpty() = annotationOwner.annotations.isEmpty() && !annotationOwner.isDeprecatedInJavaDoc
 }
 
 fun LazyJavaResolverContext.resolveAnnotations(annotationsOwner: JavaAnnotationOwner): Annotations
