@@ -50,12 +50,14 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
         val resolveSession = componentProvider.get<ResolveSession>()
         val bodyResolver = componentProvider.get<BodyResolver>()
         val declarationScopeProvider = componentProvider.get<DeclarationScopeProvider>()
+        val topDownAnalyzer = componentProvider.get<LazyTopDownAnalyzer>()
 
         val topDownAnalysisContext = TopDownAnalysisContext(
                 TopDownAnalysisMode.TopLevelDeclarations, DataFlowInfo.EMPTY, declarationScopeProvider)
 
         for (file in files) {
             ForceResolveUtil.forceResolveAllContents(resolveSession.getFileAnnotations(file))
+            topDownAnalyzer.resolveImportsInFile(file)
         }
 
         doForEachDeclaration(files) { declaration ->
