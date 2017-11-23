@@ -64,7 +64,6 @@
         <fileset dir="${dependencies}" includes="jline3.jar"/>
         <fileset dir="${dependencies}" includes="jansi.jar"/>
         <fileset dir="${dependencies}" includes="javaslang-2.0.6.jar"/>
-        <fileset dir="${dependencies}" includes="json-org.jar"/>
         <fileset dir="${dependencies}" includes="kotlinx-coroutines-core.jar"/>
         <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
     </path>
@@ -402,7 +401,6 @@
                 <zipfileset src="${dependencies}/jline3.jar"/>
                 <zipfileset src="${dependencies}/jansi.jar"/>
                 <zipfileset src="${dependencies}/javaslang-2.0.6.jar"/>
-                <zipfileset src="${dependencies}/json-org.jar"/>
                 <zipfileset src="${protobuf.jar}"/>
                 <zipfileset src="${dependencies}/kotlinx-coroutines-core.jar"/>
 
