@@ -11,7 +11,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.util.Disposer
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.idea.util.getSourceRoot
 import org.jetbrains.kotlin.idea.util.sourceRoot
+import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPackageDirective
@@ -60,7 +60,7 @@ class KotlinPackageContentModificationListener(private val project: Project) {
                     events
                         .asSequence()
                         .filter { it.file != null }
-                        .filter(::isRelevant)
+                        .filter(this::isRelevant)
                         .filter {
                             val vFile = it.file!!
                             vFile.isDirectory || FileTypeRegistry.getInstance().getFileTypeByFileName(vFile.name) == KotlinFileType.INSTANCE
