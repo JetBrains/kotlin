@@ -19,7 +19,7 @@ open class KaptTask : ConventionTask() {
     @get:Internal
     internal lateinit var kotlinCompileTask: KotlinCompile
 
-    @get:OutputDirectory
+    @get:Internal
     internal lateinit var stubsDir: File
 
     private fun isInsideDestinationDirs(file: File): Boolean {

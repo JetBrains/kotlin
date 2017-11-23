@@ -39,7 +39,7 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     @get:OutputDirectory
     lateinit var stubsDir: File
 
-    @get:OutputDirectory
+    @get:Internal
     lateinit var generatedSourcesDir: File
 
     override fun source(vararg sources: Any?): SourceTask? {
