@@ -41,7 +41,6 @@ val packagesToExcludeFromDummy =
                "one/util/streamex/**",
                "org/iq80/snappy/**",
                "org/jline/**",
-               "org/json/**",
                "org/xmlpull/**",
                "*.txt")
 
