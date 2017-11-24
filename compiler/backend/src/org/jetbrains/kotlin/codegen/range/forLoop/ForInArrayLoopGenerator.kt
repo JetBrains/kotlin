@@ -17,21 +17,25 @@
 package org.jetbrains.kotlin.codegen.range.forLoop
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.AsmUtil.boxType
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
-import org.jetbrains.kotlin.codegen.AsmUtil.boxType
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-
-class ForInArrayLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression)
-    : AbstractForLoopGenerator(codegen, forExpression)
-{
+class ForInArrayLoopGenerator(
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression,
+        // We can cache array length if the corresponding range expression is not a local var.
+        // See https://youtrack.jetbrains.com/issue/KT-21354.
+        private val canCacheArrayLength: Boolean
+) : AbstractForLoopGenerator(codegen, forExpression) {
     private var indexVar: Int = 0
     private var arrayVar: Int = 0
+    private var arrayLengthVar: Int = 0
     private val loopRangeType: KotlinType = bindingContext.getType(forExpression.loopRange!!)!!
 
     override fun beforeLoop() {
@@ -51,6 +55,13 @@ class ForInArrayLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForEx
             v.store(arrayVar, OBJECT_TYPE)
         }
 
+        if (canCacheArrayLength) {
+            arrayLengthVar = createLoopTempVariable(Type.INT_TYPE)
+            v.load(arrayVar, OBJECT_TYPE)
+            v.arraylength()
+            v.store(arrayLengthVar, Type.INT_TYPE)
+        }
+
         v.iconst(0)
         v.store(indexVar, Type.INT_TYPE)
     }
@@ -59,8 +70,13 @@ class ForInArrayLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForEx
 
     override fun checkPreCondition(loopExit: Label) {
         v.load(indexVar, Type.INT_TYPE)
-        v.load(arrayVar, OBJECT_TYPE)
-        v.arraylength()
+        if (canCacheArrayLength) {
+            v.load(arrayLengthVar, Type.INT_TYPE)
+        }
+        else {
+            v.load(arrayVar, OBJECT_TYPE)
+            v.arraylength()
+        }
         v.ificmpge(loopExit)
     }
 

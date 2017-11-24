@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -44,7 +45,7 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
 
     return when {
         asmRangeType.sort == Type.ARRAY ->
-            ArrayRangeValue()
+            ArrayRangeValue(!isLocalVarReference(rangeExpression, bindingContext))
         isPrimitiveRange(rangeType) ->
             PrimitiveRangeRangeValue()
         isPrimitiveProgression(rangeType) ->
@@ -54,6 +55,12 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
         else ->
             IterableRangeValue()
     }
+}
+
+fun isLocalVarReference(rangeExpression: KtExpression, bindingContext: BindingContext): Boolean {
+    if (rangeExpression !is KtSimpleNameExpression) return false
+    val resultingDescriptor = rangeExpression.getResolvedCall(bindingContext)?.resultingDescriptor ?: return false
+    return resultingDescriptor is LocalVariableDescriptor && resultingDescriptor.isVar
 }
 
 private fun isSubtypeOfCharSequence(type: KotlinType, builtIns: KotlinBuiltIns) =
