@@ -76,7 +76,7 @@ open class KotlinUClass private constructor(
         fun createUMethod(psiMethod: PsiMethod): UMethod {
             return if (psiMethod is KtLightMethod &&
                        psiMethod.isConstructor) {
-                KotlinPrimaryConstructorUMethod(ktClass, psiMethod, this)
+                KotlinConstructorUMethod(ktClass, psiMethod, this)
             } else {
                 getLanguagePlugin().convert(psiMethod, this)
             }
@@ -102,11 +102,15 @@ open class KotlinUClass private constructor(
     }
 }
 
-class KotlinPrimaryConstructorUMethod(
+class KotlinConstructorUMethod(
         private val ktClass: KtClassOrObject?,
         override val psi: KtLightMethod,
         override val uastParent: UElement?
 ): KotlinUMethod(psi, uastParent) {
+
+    val isPrimary: Boolean
+        get() = psi.kotlinOrigin is KtPrimaryConstructor
+
     override val uastBody: UExpression? by lz {
         val delegationCall: KtCallElement? = psi.kotlinOrigin.let {
             when (it) {
