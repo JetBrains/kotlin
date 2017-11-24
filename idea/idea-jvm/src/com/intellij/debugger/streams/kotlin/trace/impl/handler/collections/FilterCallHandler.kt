@@ -1,5 +1,7 @@
 package com.intellij.debugger.streams.kotlin.trace.impl.handler.collections
 
+import com.intellij.debugger.streams.kotlin.trace.impl.handler.typeBefore
+import com.intellij.debugger.streams.kotlin.trace.impl.handler.withArgs
 import com.intellij.debugger.streams.trace.dsl.*
 import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
 import com.intellij.debugger.streams.trace.impl.handler.type.ClassTypeImpl
