@@ -7,7 +7,7 @@ configurePublishing(project)
 
 sourceSets {
     main {
-        kotlin {
+        java {
             srcDir 'src'
         }
     }
