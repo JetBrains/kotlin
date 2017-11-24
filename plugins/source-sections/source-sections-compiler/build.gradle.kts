@@ -3,7 +3,10 @@ description = "Kotlin SourceSections Compiler Plugin"
 
 apply { plugin("kotlin") }
 
-configureIntellijPlugin()
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+}
+
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
@@ -25,6 +28,8 @@ dependencies {
 
 afterEvaluate {
     dependencies {
+        compileOnly(intellijCoreJar())
+        testCompile(intellijCoreJar())
         testCompile(intellij { include("idea.jar", "idea_rt.jar", "openapi.jar") })
     }
 }

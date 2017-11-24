@@ -25,8 +25,8 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellij { include("openapi.jar") })
-        testCompile(intellij { include("idea.jar", "idea_rt.jar", "groovy-all-*.jar", "jps-builders.jar") })
+        compileOnly(intellij { include("openapi.jar") })
+        testCompile(intellij { include("openapi.jar", "idea.jar", "idea_rt.jar", "groovy-all-*.jar", "jps-builders.jar") })
         testCompile(intellijExtra("jps-standalone") { include("jps-model.jar") })
         testCompile(intellijExtra("jps-build-test"))
     }

@@ -35,7 +35,7 @@ dependencies {
 afterEvaluate {
     dependencies {
         testCompile(intellijCoreJar())
-        testCompile(intellij { include("openapi.jar", "idea.jar", "idea_rt.jar") })
+        testCompile(intellij { include("openapi.jar", "idea.jar", "idea_rt.jar", "guava-*.jar", "trove4j.jar", "picocontainer.jar", "asm-all.jar") })
     }
 }
 

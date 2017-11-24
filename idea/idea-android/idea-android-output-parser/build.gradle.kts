@@ -12,9 +12,10 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijCoreJar())
-        compile(intellijPlugin("gradle") { include("gradle-tooling-api.jar") })
-        compile(intellijPlugin("android") { include("android.jar", "android-common.jar", "sdk-common.jar") })
+        compileOnly(intellijCoreJar())
+        compileOnly(intellij { include("guava-*.jar") })
+        compileOnly(intellijPlugin("gradle") { include("gradle-tooling-api.jar") })
+        compileOnly(intellijPlugin("android") { include("android.jar", "android-common.jar", "sdk-common.jar") })
     }
 }
 

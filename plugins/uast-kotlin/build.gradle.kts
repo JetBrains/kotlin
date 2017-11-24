@@ -32,12 +32,13 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compileOnly(intellij { include("openapi.jar", "idea.jar") })
+        compileOnly(intellij { include("openapi.jar", "idea.jar", "util.jar", "extensions.jar", "asm-all.jar") })
+        compileOnly(intellijPlugins("junit", "gradle", "Groovy", "android",
+                                    "maven", // TODO: check whether it works in AS (it was marked optional before
+                                    "properties"))
         testCompileOnly(intellij { include("idea_rt.jar") })
+        testCompile(intellijPlugins("junit", "gradle", "Groovy", "android", "maven", "properties"))
         testRuntime(intellij())
-        compile(intellijPlugins("junit", "gradle", "Groovy", "android",
-                                "maven", // TODO: check whether it works in AS (it was marked optional before
-                                "properties"))
     }
 }
 

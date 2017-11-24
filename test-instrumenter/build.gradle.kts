@@ -13,8 +13,8 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijCoreJar())
-        compile(intellij { include("asm-all.jar") })
+        compileOnly(intellijCoreJar())
+        compileOnly(intellij { include("asm-all.jar") })
     }
 }
 

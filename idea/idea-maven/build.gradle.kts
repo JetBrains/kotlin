@@ -35,7 +35,7 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compileOnly(intellij { include("openapi.jar", "idea.jar", "gson-*.jar") })
+        compileOnly(intellij { include("openapi.jar", "idea.jar", "gson-*.jar", "jdom.jar", "extensions.jar", "util.jar") })
         compileOnly(intellijPlugin("maven") { include("maven.jar", "maven-server-api.jar") })
         testCompileOnly(intellij { include("openapi.jar", "idea.jar", "gson-*.jar", "idea_rt.jar") })
         testCompileOnly(intellijPlugin("maven") { include("maven.jar", "maven-server-api.jar") })

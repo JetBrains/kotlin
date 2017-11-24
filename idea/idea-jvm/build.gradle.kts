@@ -13,12 +13,12 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compileOnly(intellij { include("openapi.jar", "idea.jar") })
+        compileOnly(intellij { include("openapi.jar", "idea.jar", "extensions.jar", "util.jar") })
 
-        compile(intellijPlugin("junit") { include("idea-junit.jar") })
-        compile(intellijPlugin("testng") { include("testng.jar", "testng-plugin.jar") })
-        compile(intellijPlugin("coverage") { include("coverage.jar") })
-        compile(intellijPlugin("java-decompiler") { include("java-decompiler.jar") })
+        compileOnly(intellijPlugin("junit") { include("idea-junit.jar") })
+        compileOnly(intellijPlugin("testng") { include("testng.jar", "testng-plugin.jar") })
+        compileOnly(intellijPlugin("coverage") { include("coverage.jar") })
+        compileOnly(intellijPlugin("java-decompiler") { include("java-decompiler.jar") })
     }
 }
 

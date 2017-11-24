@@ -40,8 +40,12 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijPlugin("android") { include("android.jar", "android-common.jar", "sdk-common.jar", "sdk-tools.jar") })
-        compile(intellijPlugin("Groovy") { include("Groovy.jar") })
+        compileOnly(intellijPlugin("android") { include("android.jar", "android-common.jar", "sdk-common.jar", "sdk-tools.jar") })
+        compileOnly(intellijPlugin("Groovy") { include("Groovy.jar") })
+        compileOnly(intellij { include("extensions.jar", "openapi.jar", "util.jar", "idea.jar")} )
+        testCompile(intellijPlugin("android") { include("android.jar", "android-common.jar", "sdk-common.jar", "sdk-tools.jar") })
+        testCompile(intellijPlugin("Groovy") { include("Groovy.jar") })
+        testCompile(intellij { include("extensions.jar")} )
         testRuntime(intellij())
         testRuntime(intellijPlugins("junit", "IntelliLang", "testng", "copyright", "properties", "java-i18n",
                                     "gradle", "Groovy", "coverage", "java-decompiler", "maven", "android"))

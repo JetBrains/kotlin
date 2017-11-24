@@ -9,7 +9,7 @@ configureIntellijPlugin()
 
 afterEvaluate {
     dependencies {
-        compile(intellij { include("asm-all.jar") })
+        compileOnly(intellij { include("asm-all.jar") })
     }
 }
 

@@ -24,7 +24,7 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compileOnly(intellij { include("util.jar") })
+        compileOnly(intellij { include("annotations.jar", "asm-all.jar", "trove4j.jar", "util.jar") })
         testCompileOnly(intellij { include("openapi.jar") })
     }
 }

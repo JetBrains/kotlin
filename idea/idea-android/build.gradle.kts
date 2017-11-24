@@ -40,12 +40,15 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellij { include("openapi.jar", "idea.jar") })
-        compile(intellijPlugin("android") {
+        compileOnly(intellij { include("openapi.jar", "idea.jar", "extensions.jar", "util.jar", "guava-*.jar") })
+        compileOnly(intellijPlugin("android") {
             include("android.jar", "android-common.jar", "sdk-common.jar", "sdklib.jar", "sdk-tools.jar", "layoutlib-api.jar")
         })
         testCompile(intellij { include("gson-*.jar") })
         testCompile(intellijPlugin("properties"))
+        testCompileOnly(intellijPlugin("android") {
+            include("android.jar", "android-common.jar", "sdk-common.jar", "sdklib.jar", "sdk-tools.jar", "layoutlib-api.jar")
+        })
         testRuntime(intellij())
         testRuntime(intellijPlugins("android", "copyright", "coverage", "gradle", "Groovy", "IntelliLang",
                                     "java-decompiler", "java-i18n", "junit", "maven", "testng"))

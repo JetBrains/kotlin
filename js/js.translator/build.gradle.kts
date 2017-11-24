@@ -24,7 +24,8 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijCoreJar())
+        compileOnly(intellijCoreJar())
+        compileOnly(intellij { include("trove4j.jar", "guava-*.jar")} )
     }
 }
 

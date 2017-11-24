@@ -89,14 +89,16 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijCoreJar())
-        compile(intellij { include("util.jar") })
+        compileOnly(intellijCoreJar())
         compileOnly(intellij {
-            include("openapi.jar", "idea.jar", "velocity.jar", "boot.jar", "gson-*.jar",
-                    "swingx-core-*.jar", "jsr305.jar", "forms_rt.jar", "util.jar", "annotations.jar")
+            include("annotations.jar", "openapi.jar", "idea.jar", "velocity.jar", "boot.jar", "gson-*.jar", "log4j.jar", "asm-all.jar",
+                    "swingx-core-*.jar", "jsr305.jar", "forms_rt.jar", "util.jar", "jdom.jar", "trove4j.jar", "guava-*.jar")
         })
-        compile(intellijPlugins("IntelliLang", "copyright", "properties", "java-i18n"))
-        testCompileOnly(intellij { include("groovy-all-*.jar", "velocity.jar", "gson-*.jar", "jsr305.jar", "idea_rt.jar") })
+        compileOnly(intellijPlugins("IntelliLang", "copyright", "properties", "java-i18n"))
+        testCompileOnly(intellijCoreJar())
+        testCompile(intellijPlugins("IntelliLang", "copyright", "properties", "java-i18n"))
+        testCompileOnly(intellij { include("groovy-all-*.jar", "velocity.jar", "gson-*.jar", "jsr305.jar", "idea_rt.jar", "util.jar",
+                                           "log4j.jar") })
         testCompileOnly(intellijPlugin("gradle") { include("gradle-base-services-*.jar", "gradle-tooling-extension-impl.jar", "gradle-wrapper-*.jar") })
         testCompileOnly(intellijPlugin("Groovy") { include("Groovy.jar") })
         testCompileOnly(intellijPlugin("maven") { include("maven.jar", "maven-server-api.jar") })

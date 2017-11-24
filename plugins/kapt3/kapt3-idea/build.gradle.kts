@@ -17,9 +17,9 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellij { include("openapi.jar", "external-system-rt.jar") })
-        compile(intellijPlugin("gradle") { include("gradle-core-*.jar", "gradle-tooling-api-*.jar", "gradle.jar") })
-        compile(intellijPlugin("android") { include("android.jar", "android-common.jar", "sdklib.jar", "sdk-common.jar", "sdk-tools.jar") })
+        compileOnly(intellij { include("openapi.jar", "external-system-rt.jar", "util.jar") })
+        compileOnly(intellijPlugin("gradle") { include("gradle-core-*.jar", "gradle-tooling-api-*.jar", "gradle.jar") })
+        compileOnly(intellijPlugin("android") { include("android.jar", "android-common.jar", "sdklib.jar", "sdk-common.jar", "sdk-tools.jar") })
     }
 }
 

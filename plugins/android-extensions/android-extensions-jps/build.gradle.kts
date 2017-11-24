@@ -20,6 +20,7 @@ dependencies {
 
 afterEvaluate {
     dependencies {
+        compileOnly(intellij { include("openapi.jar", "jps-builders.jar") })
         compile(intellijPlugin("android") { include("**/android-jps-plugin.jar") })
         testCompileOnly(intellijExtra("jps-build-test") { include("jps-build-test.jar") } )
         testRuntime(intellijPlugin("android"))

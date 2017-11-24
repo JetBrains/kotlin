@@ -25,9 +25,9 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijCoreJar())
-        compile(intellij { include("util.jar", "openapi.jar", "idea.jar") })
-        compile(intellijPlugin("gradle") { include("gradle-tooling-api-*.jar", "gradle.jar") })
+        compileOnly(intellijCoreJar())
+        compileOnly(intellij { include("util.jar", "openapi.jar", "idea.jar", "asm-all.jar", "jdom.jar", "annotations.jar", "trove4j.jar", "guava-*.jar") })
+        compileOnly(intellijPlugin("gradle") { include("gradle-tooling-api-*.jar", "gradle.jar") })
     }
 }
 

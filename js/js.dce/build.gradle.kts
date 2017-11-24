@@ -13,7 +13,7 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijCoreJar())
+        compileOnly(intellijCoreJar())
     }
 }
 

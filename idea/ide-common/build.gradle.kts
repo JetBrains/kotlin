@@ -15,8 +15,8 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijCoreJar())
-        compile(intellij { include("annotations.jar", "guava-*.jar") })
+        compileOnly(intellijCoreJar())
+        compileOnly(intellij { include("annotations.jar", "guava-*.jar") })
     }
 }
 

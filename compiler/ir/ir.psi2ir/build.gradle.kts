@@ -2,11 +2,21 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+}
+
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:ir.tree"))
+}
+
+afterEvaluate {
+    dependencies {
+        compileOnly(intellijCoreJar())
+    }
 }
 
 sourceSets {

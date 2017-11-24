@@ -14,11 +14,10 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijCoreJar())
-        compile(intellij { include("trove6j.jar")} )
+        compileOnly(intellijCoreJar())
+        compileOnly(intellij { include("trove4j.jar")} )
     }
 }
-
 
 sourceSets {
     "main" { projectDefault() }

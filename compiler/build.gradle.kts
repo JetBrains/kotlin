@@ -73,9 +73,10 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        testCompile(intellij { include("openapi.jar", "idea.jar", "util.jar", "asm-all.jar", "commons-httpclient-3.1-patched.jar") })
+        testCompileOnly(intellijCoreJar())
+        testCompileOnly(intellij { include("openapi.jar", "idea.jar", "idea_rt.jar", "util.jar", "asm-all.jar",
+                                           "commons-httpclient-3.1-patched.jar") })
         testRuntime(intellij())
-        testRuntime(intellijCoreJar())
     }
 }
 

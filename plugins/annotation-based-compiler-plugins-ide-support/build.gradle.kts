@@ -21,7 +21,7 @@ afterEvaluate {
     dependencies {
         compileOnly(intellijPlugin("maven") { include("maven.jar", "maven-server-api.jar") })
         compileOnly(intellijPlugin("gradle") { include("gradle-tooling-api-*.jar", "gradle.jar") })
-        compileOnly(intellij { include("openapi.jar", "idea.jar") })
+        compileOnly(intellij { include("openapi.jar", "idea.jar", "extensions.jar", "jdom.jar", "util.jar") })
     }
 }
 

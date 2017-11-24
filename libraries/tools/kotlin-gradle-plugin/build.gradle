@@ -13,6 +13,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'org.jetbrains.intellij'
+}
+
 configureJvmProject(project)
 configurePublishing(project)
 
@@ -20,6 +24,13 @@ repositories {
     jcenter()
     mavenLocal()
     maven { url 'https://maven.google.com' }
+}
+
+intellij {
+    version = rootProject.ext["versions.intellij"]
+    instrumentCode = false
+    configureDefaultDependencies = false
+    extraDependencies = ['intellij-core']
 }
 
 configurations {
@@ -63,6 +74,12 @@ dependencies {
     testCompileOnly project(':kotlin-reflect-api')
     testCompileOnly project(':kotlin-annotation-processing')
     testCompileOnly project(':kotlin-annotation-processing-gradle')
+}
+
+afterEvaluate {
+    dependencies {
+        compileOnly intellijExtra('intellij-core')
+    }
 }
 
 tasks.withType(project.compileKotlin.class) {

@@ -18,7 +18,7 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellij { include("openapi.jar", "idea.jar") })
+        compileOnly(intellij { include("openapi.jar", "idea.jar", "log4j.jar") })
     }
 }
 

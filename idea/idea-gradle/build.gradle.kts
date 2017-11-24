@@ -32,9 +32,10 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compileOnly(intellij { include("openapi.jar", "idea.jar", "external-system-rt.jar", "forms_rt.jar") })
+        compileOnly(intellij { include("openapi.jar", "idea.jar", "external-system-rt.jar", "forms_rt.jar", "extensions.jar", "jdom.jar", "util.jar") })
         compileOnly(intellijPlugin("gradle") { include("gradle-tooling-api-*.jar", "gradle.jar", "gradle-base-services-*.jar") })
         compileOnly(intellijPlugin("Groovy") { include("Groovy.jar") })
+        compileOnly(intellijPlugin("junit") { include("idea-junit.jar") })
         testCompile(intellijPlugin("gradle") { include("gradle-wrapper-*.jar", "gradle-base-services-*.jar", "gradle-tooling-extension-impl.jar", "gradle-tooling-api-*.jar", "gradle.jar") })
         testCompileOnly(intellijPlugin("Groovy") { include("Groovy.jar") })
         testCompileOnly(intellij { include("groovy-all-*.jar", "idea_rt.jar") })

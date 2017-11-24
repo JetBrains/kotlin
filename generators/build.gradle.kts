@@ -49,7 +49,8 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijExtra("jps-build-test"))
+        compileOnly(intellijExtra("jps-build-test"))
+        testCompile(intellijExtra("jps-build-test"))
         testRuntime(intellij { include("idea_rt.jar") })
     }
 }

@@ -12,6 +12,13 @@ dependencies {
     testRuntime(projectDist(":kotlin-reflect"))
 }
 
+afterEvaluate {
+    dependencies {
+        testCompileOnly(intellijCoreJar())
+        testRuntime(intellij())
+    }
+}
+
 sourceSets {
     "main" {}
     "test" { projectDefault() }

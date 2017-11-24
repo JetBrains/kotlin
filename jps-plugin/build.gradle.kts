@@ -31,9 +31,10 @@ dependencies {
 
 afterEvaluate {
     dependencies {
+        compileOnly(intellij { include("jdom.jar", "trove4j.jar", "jps-model.jar", "openapi.jar", "util.jar") })
         compileOnly(intellijExtra("jps-standalone") { include("jps-builders.jar", "jps-builders-6.jar") })
         testCompileOnly(intellijExtra("jps-standalone") { include("jps-builders.jar", "jps-builders-6.jar") })
-        testCompile(intellij { include("openapi.jar", "idea.jar") })
+        testCompileOnly(intellij { include("openapi.jar", "idea.jar", "log4j.jar") })
         testCompile(intellijExtra("jps-build-test"))
         testRuntime(intellij())
         testRuntime(intellijCoreJar())

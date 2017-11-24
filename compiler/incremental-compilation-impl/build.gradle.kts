@@ -3,6 +3,10 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+}
+
 dependencies {
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
@@ -17,6 +21,15 @@ dependencies {
     testCompile(projectDist(":kotlin-stdlib"))
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":compiler:tests-common"))
+}
+
+afterEvaluate {
+    dependencies {
+        compileOnly(intellijCoreJar())
+        compileOnly(intellij { include("annotations.jar") })
+        testCompile(intellijCoreJar())
+        testCompile(intellij { include("annotations.jar") })
+    }
 }
 
 sourceSets {

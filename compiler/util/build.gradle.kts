@@ -14,9 +14,9 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijCoreJar())
-        compile(intellijCoreJarDependencies())
-        compile(intellijExtra("jps-standalone") { include("jps-model.jar") })
+        compileOnly(intellijCoreJar())
+        compileOnly(intellijCoreJarDependencies())
+        compileOnly(intellijExtra("jps-standalone") { include("jps-model.jar") })
     }
 }
 
