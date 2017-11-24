@@ -15,8 +15,8 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijCoreJar())
-        compile(intellij { include("util.jar") })
+        compileOnly(intellijCoreJar())
+        compileOnly(intellij { include("jdom.jar", "util.jar") })
     }
 }
 
