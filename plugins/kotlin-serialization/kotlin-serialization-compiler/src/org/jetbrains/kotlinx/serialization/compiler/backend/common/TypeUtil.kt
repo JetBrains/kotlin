@@ -91,10 +91,11 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "kotlin.String" -> "StringSerializer"
         "kotlin.Pair" -> "PairSerializer"
         "kotlin.Triple" -> "TripleSerializer"
-        "kotlin.collections.Collection", "kotlin.collections.List", "kotlin.collections.ArrayList" -> "ArrayListSerializer"
-        "kotlin.collections.Set", "kotlin.collections.LinkedHashSet" -> "LinkedHashSetSerializer"
+        "kotlin.collections.Collection", "kotlin.collections.List",
+        "kotlin.collections.ArrayList", "kotlin.collections.MutableList" -> "ArrayListSerializer"
+        "kotlin.collections.Set", "kotlin.collections.LinkedHashSet", "kotlin.collections.MutableSet" -> "LinkedHashSetSerializer"
         "kotlin.collections.HashSet" -> "HashSetSerializer"
-        "kotlin.collections.Map", "kotlin.collections.LinkedHashMap" -> "LinkedHashMapSerializer"
+        "kotlin.collections.Map", "kotlin.collections.LinkedHashMap", "kotlin.collections.MutableMap" -> "LinkedHashMapSerializer"
         "kotlin.collections.HashMap" -> "HashMapSerializer"
         "kotlin.collections.Map.Entry" -> "MapEntrySerializer"
         else -> return null
