@@ -33,7 +33,8 @@ import java.io.File
 abstract class AbstractDecompiledTextBaseTest(
         baseDirectory: String,
         private val isJsLibrary: Boolean = false,
-        private val allowKotlinPackage: Boolean = false
+        private val allowKotlinPackage: Boolean = false,
+        private val withRuntime: Boolean = false
 ) : KotlinLightCodeInsightFixtureTestCase() {
     protected val TEST_DATA_PATH: String = PluginTestCaseBase.getTestDataPathBase() + baseDirectory
 
@@ -55,7 +56,7 @@ abstract class AbstractDecompiledTextBaseTest(
         if (isAllFilesPresentInTest()) {
             return KotlinLightProjectDescriptor.INSTANCE
         }
-        return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(false), false, false, isJsLibrary, allowKotlinPackage)
+        return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(false), false, withRuntime, isJsLibrary, allowKotlinPackage)
     }
 
     private fun checkThatFileWasParsedCorrectly(clsFile: PsiFile) {
