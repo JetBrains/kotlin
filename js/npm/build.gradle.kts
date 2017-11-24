@@ -14,10 +14,13 @@ node {
 val deployDir = "$buildDir/deploy_to_npm"
 val templateDir = "$projectDir/templates"
 val kotlincDir = rootProject.extra["distKotlinHomeDir"] as String
-val deployVersion = System.getProperty("kotlin.deploy.version", "0.0.0")
-val deployTag = System.getProperty("kotlin.deploy.tag", "dev")
-val authToken = System.getProperty("kotlin.npmjs.auth.token")
-val dryRun = System.getProperty("dryRun", "false") // Pack instead of publish
+
+fun getProperty(name: String, default: String = "") = project.properties[name]?.toString() ?: default
+
+val deployVersion = getProperty("kotlin.deploy.version", "0.0.0")
+val deployTag = getProperty("kotlin.deploy.tag", "dev")
+val authToken = getProperty("kotlin.npmjs.auth.token")
+val dryRun = getProperty("dryRun", "false") // Pack instead of publish
 
 fun Project.createCopyTemplateTask(templateName: String): Copy {
   return task<Copy>("copy-$templateName-template") {
