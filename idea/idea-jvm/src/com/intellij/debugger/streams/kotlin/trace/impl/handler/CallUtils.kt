@@ -1,4 +1,4 @@
-package com.intellij.debugger.streams.kotlin.trace.impl.handler.collections
+package com.intellij.debugger.streams.kotlin.trace.impl.handler
 
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
 import com.intellij.debugger.streams.wrapper.*
