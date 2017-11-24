@@ -47,7 +47,8 @@ class JvmLower(val context: JvmBackendContext) {
                                               NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
                                   }).runOnFilePostfix(irFile)
         EnumClassLowering(context).runOnFilePostfix(irFile)
-        ObjectClassLowering(context).runOnFilePostfix(irFile)
+        //Should be before SyntheticAccessorLowering cause of synthetic accessor for companion constructor
+        ObjectClassLowering(context).lower(irFile)
         InitializersLowering(context).runOnFilePostfix(irFile)
         SingletonReferencesLowering(context).runOnFilePostfix(irFile)
         SyntheticAccessorLowering(context).lower(irFile)
