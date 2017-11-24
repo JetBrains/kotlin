@@ -6,18 +6,22 @@ import com.intellij.debugger.streams.kotlin.psi.KotlinPsiUtil
 import com.intellij.debugger.streams.kotlin.psi.callName
 import com.intellij.debugger.streams.kotlin.psi.resolveType
 import com.intellij.debugger.streams.psi.ChainTransformer
+import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.debugger.streams.wrapper.CallArgument
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
+import com.intellij.debugger.streams.wrapper.QualifierExpression
 import com.intellij.debugger.streams.wrapper.StreamChain
 import com.intellij.debugger.streams.wrapper.impl.*
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * @author Vitaliy.Bibaev
@@ -37,15 +41,10 @@ class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) :
         terminationsPsiCall.valueArguments.map { createCallArgument(terminationsPsiCall, it) },
         typeBeforeTerminator, resultType, terminationsPsiCall.textRange)
 
-    val qualifierTypeAfter =
+    val typeAfterQualifier =
         if (intermediateCalls.isEmpty()) typeBeforeTerminator else intermediateCalls.first().typeBefore
 
-    val firstCall = callChain.first()
-    val parent = firstCall.parent
-    val qualifier = if (parent is KtDotQualifiedExpression)
-      QualifierExpressionImpl(parent.receiverExpression.text, parent.receiverExpression.textRange, qualifierTypeAfter)
-    else // This is possible only when {@code this} inherits Stream/Iterable/Sequence/etc
-      QualifierExpressionImpl("", TextRange.EMPTY_RANGE, qualifierTypeAfter)
+    val qualifier = createQualifier(callChain.first(), typeAfterQualifier)
 
     return StreamChainImpl(qualifier, intermediateCalls, terminationCall, context)
   }
@@ -61,4 +60,29 @@ class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) :
     val parameter = resolvedCall.getParameterForArgument(arg) ?: return arg.toCallArgument()
     return CallArgumentImpl(KotlinPsiUtil.getTypeName(parameter.type), arg.text)
   }
+
+  private fun createQualifier(expression: PsiElement, typeAfter: GenericType): QualifierExpression {
+    val parent = expression.parent as? KtDotQualifiedExpression
+        ?: return QualifierExpressionImpl("", TextRange.EMPTY_RANGE, typeAfter)
+    val receiver = parent.receiverExpression
+    val qualifier = QualifierExpressionImpl(receiver.text, receiver.textRange, typeAfter)
+    if (receiver.resolveType().isArray) {
+      return WrappedQualifier(qualifier)
+    }
+
+    return qualifier
+  }
+
+  /**
+   * Kotlin arrays has not {@code onEach} extension. But current implementation uses onEach to increment a time counter.
+   * We use asIterable to avoid further issues with the transformed expression evaluation
+   */
+  private class WrappedQualifier(private val qualifierExpression: QualifierExpression)
+    : QualifierExpression by qualifierExpression {
+    override val text: String
+      get() = qualifierExpression.text + ".asIterable()"
+  }
+
+  private val KotlinType.isArray: Boolean
+    get() = KotlinBuiltIns.isArray(this) || KotlinBuiltIns.isPrimitiveArray(this)
 }
