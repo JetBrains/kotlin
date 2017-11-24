@@ -3,6 +3,26 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.1.61
+
+### Compiler
+
+- [`KT-17640`](https://youtrack.jetbrains.com/issue/KT-17640) Back-end (JVM) Internal error for inline reified suspend fun
+- [`KT-20651`](https://youtrack.jetbrains.com/issue/KT-20651) "Don't know how to generate outer expression" for enum-values with non-trivial self-closures 
+
+### IDE
+
+- [`KT-20782`](https://youtrack.jetbrains.com/issue/KT-20782) Non-atomic trees update
+- [`KT-20789`](https://youtrack.jetbrains.com/issue/KT-20789) Can't navigate to inline call/inline use site when runner is delegated to Gradle
+- [`KT-20843`](https://youtrack.jetbrains.com/issue/KT-20843) Kotlin TypeDeclarationProvider may stop other declarations providers execution
+- [`KT-20929`](https://youtrack.jetbrains.com/issue/KT-20929) Import Project from Gradle wizard: the same page is shown twice
+- [`KT-20967`](https://youtrack.jetbrains.com/issue/KT-20967) Kotlin plugin upgrade breaks Gradle refresh
+- [`KT-21263`](https://youtrack.jetbrains.com/issue/KT-21263) "Configure Kotlin Plugin Updates" suggests incompatible plugin for AS 3.0
+
+### IDE. Inspections and Intentions
+
+- [`KT-20315`](https://youtrack.jetbrains.com/issue/KT-20315) "call chain on collection type may be simplified" generates code that does not compile
+
 ## 1.1.60
 
 ### Android
