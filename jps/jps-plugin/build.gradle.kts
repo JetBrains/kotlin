@@ -31,12 +31,12 @@ dependencies {
 
 afterEvaluate {
     dependencies {
-        compile(intellijExtra("jps-standalone") { include("jps-builders.jar", "jps-builders-6.jar") })
+        compileOnly(intellijExtra("jps-standalone") { include("jps-builders.jar", "jps-builders-6.jar") })
+        testCompileOnly(intellijExtra("jps-standalone") { include("jps-builders.jar", "jps-builders-6.jar") })
         testCompile(intellij { include("openapi.jar", "idea.jar") })
         testCompile(intellijExtra("jps-build-test"))
-        testRuntime(intellijCoreJar())
         testRuntime(intellij())
-        testRuntime(intellijExtra("jps-standalone"))
+        testRuntime(intellijCoreJar())
     }
 }
 
