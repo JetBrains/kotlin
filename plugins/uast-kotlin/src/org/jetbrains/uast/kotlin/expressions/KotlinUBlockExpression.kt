@@ -27,9 +27,9 @@ class KotlinUBlockExpression(
 ) : KotlinAbstractUExpression(givenParent), UBlockExpression, KotlinUElementWithType {
     override val expressions by lz { psi.statements.map { KotlinConverter.convertOrEmpty(it, this) } }
 
-    private class KotlinLazyUBlockExpression(
+    class KotlinLazyUBlockExpression(
             override val uastParent: UElement?,
-            expressionProducer: (expressionParent: UElement?) -> List<UExpression>
+            expressionProducer: (expressionParent: UElement) -> List<UExpression>
     ) : UBlockExpression {
         override val psi: PsiElement? = null
         override val annotations: List<UAnnotation> = emptyList()

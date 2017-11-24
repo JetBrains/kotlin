@@ -189,7 +189,7 @@ open class KotlinUSimpleReferenceExpression(
 }
 
 class KotlinClassViaConstructorUSimpleReferenceExpression(
-        override val psi: KtCallExpression,
+        override val psi: KtCallElement,
         override val identifier: String,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression, KotlinUElementWithType {
