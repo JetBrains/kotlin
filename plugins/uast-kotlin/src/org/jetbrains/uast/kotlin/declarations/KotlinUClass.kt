@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.AbstractJavaUClass
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
@@ -108,9 +111,22 @@ class KotlinPrimaryConstructorUMethod(
         override val uastParent: UElement?
 ): KotlinUMethod(psi, uastParent) {
     override val uastBody: UExpression? by lz {
-        ktClass?.getAnonymousInitializers()
-                ?.takeIf { it.isNotEmpty() }
-                ?.let { KotlinUBlockExpression.create(it, this) }
+        val superTypeCallEntry = ktClass?.superTypeListEntries?.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
+        val initializers = ktClass?.getAnonymousInitializers()?.takeIf { it.isNotEmpty() }
+        if (superTypeCallEntry != null || initializers != null)
+            KotlinUBlockExpression.KotlinLazyUBlockExpression(this) { uastParent ->
+                SmartList<UExpression>().apply {
+                    superTypeCallEntry?.let {
+                        add(KotlinUFunctionCallExpression(it, uastParent))
+                    }
+                    val languagePlugin = uastParent.getLanguagePlugin()
+                    initializers?.forEach {
+                        addIfNotNull(languagePlugin.convertOpt(it.body, uastParent))
+                    }
+                }
+            }
+        else
+            null
     }
 }
 
