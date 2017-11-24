@@ -529,8 +529,15 @@ public abstract class StackValue {
         }
 
         ReceiverValue callExtensionReceiver = resolvedCall.getExtensionReceiver();
+
+        boolean isImportedObjectMember = false;
+        if (descriptor instanceof ImportedFromObjectCallableDescriptor) {
+            isImportedObjectMember = true;
+            descriptor = ((ImportedFromObjectCallableDescriptor) descriptor).getCallableFromObject();
+        }
+
         if (callDispatchReceiver != null || callExtensionReceiver != null
-            || isLocalFunCall(callableMethod) || isCallToMemberObjectImportedByName(resolvedCall)) {
+            || isLocalFunCall(callableMethod) || isImportedObjectMember) {
             ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
             ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
 
@@ -540,10 +547,10 @@ public abstract class StackValue {
 
             boolean hasExtensionReceiver = callExtensionReceiver != null;
             StackValue dispatchReceiver = platformStaticCallIfPresent(
-                    genReceiver(hasExtensionReceiver ? none() : receiver, codegen, resolvedCall, callableMethod, callDispatchReceiver, false),
+                    genReceiver(hasExtensionReceiver ? none() : receiver, codegen, descriptor, callableMethod, callDispatchReceiver, false),
                     descriptor
             );
-            StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, callExtensionReceiver, true);
+            StackValue extensionReceiver = genReceiver(receiver, codegen, descriptor, callableMethod, callExtensionReceiver, true);
             return CallReceiver.generateCallReceiver(
                     resolvedCall, codegen, callableMethod,
                     dispatchReceiverParameter, dispatchReceiver,
@@ -556,32 +563,30 @@ public abstract class StackValue {
     private static StackValue genReceiver(
             @NotNull StackValue receiver,
             @NotNull ExpressionCodegen codegen,
-            @NotNull ResolvedCall resolvedCall,
+            @NotNull CallableDescriptor descriptor,
             @Nullable Callable callableMethod,
             @Nullable ReceiverValue receiverValue,
             boolean isExtension
     ) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (receiver == none()) {
             if (receiverValue != null) {
                 return codegen.generateReceiverValue(receiverValue, false);
             }
             else if (isLocalFunCall(callableMethod) && !isExtension) {
-                StackValue value = codegen.findLocalOrCapturedValue(resolvedCall.getResultingDescriptor().getOriginal());
-                assert value != null : "Local fun should be found in locals or in captured params: " + resolvedCall;
+                StackValue value = codegen.findLocalOrCapturedValue(descriptor.getOriginal());
+                assert value != null : "Local fun should be found in locals or in captured params: " + descriptor;
                 return value;
             }
-            else if (isCallToMemberObjectImportedByName(resolvedCall)) {
-                return singleton(((ImportedFromObjectCallableDescriptor) resolvedCall.getResultingDescriptor()).getContainingObject(), codegen.typeMapper);
+            else if (!isExtension && DescriptorUtils.isObject(containingDeclaration)) {
+                // Object member could be imported by name, in which case it has no explicit dispatch receiver
+                return singleton((ClassDescriptor) containingDeclaration, codegen.typeMapper);
             }
         }
         else if (receiverValue != null) {
             return receiver;
         }
         return none();
-    }
-
-    private static boolean isCallToMemberObjectImportedByName(@NotNull ResolvedCall resolvedCall) {
-        return resolvedCall.getResultingDescriptor() instanceof ImportedFromObjectCallableDescriptor;
     }
 
     private static StackValue platformStaticCallIfPresent(@NotNull StackValue resultReceiver, @NotNull CallableDescriptor descriptor) {
