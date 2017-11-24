@@ -53,3 +53,57 @@ external public fun Double.isFinite(): Boolean
  */
 @SymbolName("Kotlin_Float_isFinite")
 external public fun Float.isFinite(): Boolean
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Long]
+ * according to the IEEE 754 floating-point "double format" bit layout.
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun Double.toBits(): Long = if (isNaN()) Double.NaN.toRawBits() else toRawBits()
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Long]
+ * according to the IEEE 754 floating-point "double format" bit layout,
+ * preserving `NaN` values exact layout.
+ */
+@SinceKotlin("1.2")
+public fun Double.toRawBits(): Long = bits()
+
+/**
+ * Returns the [Double] value corresponding to a given bit representation.
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun Double.Companion.fromBits(bits: Long): Double = kotlin.fromBits(bits)
+
+@PublishedApi
+@SymbolName("Kotlin_Double_fromBits")
+external internal fun fromBits(bits: Long): Double
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Int]
+ * according to the IEEE 754 floating-point "single format" bit layout.
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun Float.toBits(): Int = if (isNaN()) Float.NaN.toRawBits() else toRawBits()
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Int]
+ * according to the IEEE 754 floating-point "single format" bit layout,
+ * preserving `NaN` values exact layout.
+ */
+@SinceKotlin("1.2")
+public fun Float.toRawBits(): Int = bits()
+
+/**
+ * Returns the [Float] value corresponding to a given bit representation.
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun Float.Companion.fromBits(bits: Int): Float = kotlin.fromBits(bits)
+
+@PublishedApi
+@SymbolName("Kotlin_Float_fromBits")
+external internal fun fromBits(bits: Int): Float
