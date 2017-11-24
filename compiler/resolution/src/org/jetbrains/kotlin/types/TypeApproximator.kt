@@ -39,6 +39,7 @@ open class TypeApproximatorConfiguration {
     open val dynamic get() = false // DynamicType
     open val rawType get() = false // RawTypeImpl
     open val errorType get() = false
+    open val definitelyNotNullType get() = true
     open val intersection: IntersectionStrategy = TO_COMMON_SUPERTYPE
 
     open val typeVariable: (TypeVariableTypeConstructor) -> Boolean = { false }
@@ -61,6 +62,7 @@ open class TypeApproximatorConfiguration {
     object PublicDeclaration : AllFlexibleSameValue() {
         override val allFlexible get() = true
         override val errorType get() = true
+        override val definitelyNotNullType get() = false
     }
 
     abstract class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus): TypeApproximatorConfiguration.AllFlexibleSameValue() {
@@ -262,6 +264,10 @@ class TypeApproximator {
             return approximateParametrizedType(type, conf, toSuper, depth + 1)
         }
 
+        if (type is DefinitelyNotNullType) {
+            return approximateDefinitelyNotNullType(type, conf, toSuper, depth)
+        }
+
         val typeConstructor = type.constructor
 
         if (typeConstructor is NewCapturedTypeConstructor) {
@@ -281,6 +287,24 @@ class TypeApproximator {
         }
 
         return null // simple classifier type
+    }
+
+    private fun approximateDefinitelyNotNullType(
+            type: DefinitelyNotNullType,
+            conf: TypeApproximatorConfiguration,
+            toSuper: Boolean,
+            depth: Int
+    ): UnwrappedType? {
+        val approximatedOriginalType = approximateTo(type.original, conf, toSuper, depth)
+        return if (conf.definitelyNotNullType) {
+            approximatedOriginalType?.makeDefinitelyNotNullOrNotNull()
+        }
+        else {
+            if (toSuper)
+                (approximatedOriginalType ?: type.original).makeNullableAsSpecified(false)
+            else
+                type.defaultResult(toSuper)
+        }
     }
 
     private fun isApproximateDirectionToSuper(effectiveVariance: Variance, toSuper: Boolean) =
@@ -364,7 +388,7 @@ class TypeApproximator {
                      * Note that for case Inv<C> we will chose Inv<in Int>, because it is more informative then Inv<out Any?>.
                      * May be we should do the same for deeper types, but not now.
                      */
-                    if (argumentType is NewCapturedType) {
+                    if (argumentType.constructor is NewCapturedTypeConstructor) {
                         val subType = approximateToSubType(argumentType, conf, depth) ?: continue@loop
                         if (!subType.isTrivialSub()) {
                             newArguments[index] = TypeProjectionImpl(Variance.IN_VARIANCE, subType)
