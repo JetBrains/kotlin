@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -59,7 +60,8 @@ class UnusedLambdaExpressionBodyInspection : AbstractKotlinInspection() {
         }
     }
 
-    private fun KtExpression.used(context: BindingContext): Boolean = context[BindingContext.USED_AS_EXPRESSION, this] ?: true
+    private fun KtExpression.used(context: BindingContext): Boolean =
+            context[BindingContext.USED_AS_EXPRESSION, this] ?: true || getStrictParentOfType<KtValueArgument>() != null
 
     private fun CallableDescriptor.returnsFunction() = returnType?.isFunctionType ?: false
 
