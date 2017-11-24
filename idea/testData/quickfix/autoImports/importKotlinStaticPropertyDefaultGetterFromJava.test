@@ -1,5 +1,5 @@
 // FILE: bar/Foo.before.java
-// "/(Static import|Import static) method 'foo.Bar.getValue'/" "true"
+// "Import static method..." "true"
 // ERROR: Unresolved reference: getValue
 // ACTION: Create method 'foobar'
 // WITH_RUNTIME
@@ -21,7 +21,7 @@ object Bar {
 }
 
 // FILE: bar/Foo.after.java
-// "/(Static import|Import static) method 'foo.Bar.getValue'/" "true"
+// "Import static method..." "true"
 // ERROR: Unresolved reference: getValue
 // ACTION: Create method 'foobar'
 // WITH_RUNTIME
