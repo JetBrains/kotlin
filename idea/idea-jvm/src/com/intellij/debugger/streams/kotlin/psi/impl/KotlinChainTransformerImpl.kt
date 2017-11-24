@@ -76,6 +76,7 @@ class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) :
   /**
    * Kotlin arrays has not {@code onEach} extension. But current implementation uses onEach to increment a time counter.
    * We use asIterable to avoid further issues with the transformed expression evaluation
+   * TODO: Avoid showing "asIterable()" in the tab name in trace window
    */
   private class WrappedQualifier(private val qualifierExpression: QualifierExpression)
     : QualifierExpression by qualifierExpression {
