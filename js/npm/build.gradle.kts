@@ -15,7 +15,7 @@ val deployDir = "$buildDir/deploy_to_npm"
 val templateDir = "$projectDir/templates"
 val kotlincDir = rootProject.extra["distKotlinHomeDir"] as String
 
-fun getProperty(name: String, default: String = "") = project.properties[name]?.toString() ?: default
+fun getProperty(name: String, default: String = "") = findProperty(name)?.toString() ?: default
 
 val deployVersion = getProperty("kotlin.deploy.version", "0.0.0")
 val deployTag = getProperty("kotlin.deploy.tag", "dev")
