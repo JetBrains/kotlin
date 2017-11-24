@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.3
+// LANGUAGE_VERSION: 1.2
 
 class TestPrivateCompanion {
     private companion object Test
