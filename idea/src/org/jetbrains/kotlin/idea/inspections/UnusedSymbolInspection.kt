@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isInheritable
@@ -70,6 +71,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -225,14 +227,18 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
         return (declaration is KtObjectDeclaration && declaration.isCompanion() &&
                 declaration.getBody()?.declarations?.isNotEmpty() == true) ||
-               hasReferences(declaration, useScope) ||
+               hasReferences(declaration, descriptor, useScope) ||
                hasOverrides(declaration, useScope) ||
                hasFakeOverrides(declaration, useScope) ||
                isPlatformImplementation(declaration) ||
                hasPlatformImplementations(declaration, descriptor)
     }
 
-    private fun hasReferences(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
+    private fun hasReferences(
+            declaration: KtNamedDeclaration,
+            descriptor: DeclarationDescriptor?,
+            useScope: SearchScope
+    ): Boolean {
 
         fun checkReference(ref: PsiReference): Boolean {
             if (declaration.isAncestor(ref.element)) return true // usages inside element's declaration are not counted
@@ -270,6 +276,13 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             return false
         }
 
+        val referenceUsed: Boolean by lazy { !ReferencesSearch.search(declaration, useScope).forEach(::checkReference) }
+
+        if (descriptor is FunctionDescriptor &&
+            DescriptorUtils.getAnnotationByFqName(descriptor.annotations, JvmFileClassUtil.JVM_NAME) != null) {
+            if (referenceUsed) return true
+        }
+
         if (declaration is KtCallableDeclaration && !declaration.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
@@ -279,7 +292,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             }
         }
 
-        return !ReferencesSearch.search(declaration, useScope).forEach(::checkReference)
+        return referenceUsed
     }
 
     private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
