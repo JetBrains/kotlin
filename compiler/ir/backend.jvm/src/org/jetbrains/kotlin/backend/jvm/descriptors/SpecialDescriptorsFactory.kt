@@ -125,10 +125,12 @@ class SpecialDescriptorsFactory(
     private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {
         assert(objectDescriptor.kind == ClassKind.OBJECT) { "Should be an object: $objectDescriptor" }
 
+        val name = if (objectDescriptor.isCompanionObject) objectDescriptor.name else Name.identifier("INSTANCE")
+        val containingDeclaration = if (objectDescriptor.isCompanionObject) objectDescriptor.containingDeclaration else objectDescriptor
         return PropertyDescriptorImpl.create(
-                objectDescriptor,
+                containingDeclaration,
                 Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, false,
-                Name.identifier("INSTANCE"),
+                name,
                 CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false,
                 /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false, /* isDelegated = */ false
         ).initialize(objectDescriptor.defaultType)
