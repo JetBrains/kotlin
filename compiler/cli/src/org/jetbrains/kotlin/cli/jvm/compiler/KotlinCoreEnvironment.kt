@@ -172,7 +172,11 @@ class KotlinCoreEnvironment private constructor(
         JsSyntheticTranslateExtension.registerExtensionPoint(project)
 
         for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
-            registrar.registerProjectComponents(project, configuration)
+            try {
+                registrar.registerProjectComponents(project, configuration)
+            } catch (e: AbstractMethodError) {
+                throw IllegalStateException("The provided plugin ${registrar.javaClass.name} is not compatible with this version of compiler", e)
+            }
         }
 
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
