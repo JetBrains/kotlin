@@ -31,6 +31,9 @@ class KtPattern(node: ASTNode) : KtPatternElement(node) {
     val innerNotPatternExpressions: List<KtExpression>
         get() = collectDescendantsOfType({ it is KtPatternElement }, { it !is KtPatternElement })
 
+    val innerVariableDeclarations: List<KtPatternVariableDeclaration>
+        get() = collectDescendantsOfType({ it is KtPatternElement }, { true })
+
     val expression: KtPatternExpression?
         get() = findChildByType(KtNodeTypes.PATTERN_EXPRESSION)
 

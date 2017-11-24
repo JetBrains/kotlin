@@ -4254,14 +4254,18 @@ The "returned" value of try expression with no finally is either the last expres
         forceAssert(pattern != null, "Pattern in match condition must be defined " + condition.getText());
         KtPatternExpression expression = pattern.getExpression();
         forceAssert(expression != null, "Expression in pattern must be defined " + pattern.getText());
+        pattern.getInnerVariableDeclarations().stream()
+                .filter(UnderscoreUtilKt::isNotSingleUnderscore)
+                .forEach(this::putLocalVariableIntoFrameMap);
         return generateMatchExpression(expressionToMatch, expression);
     }
 
     private StackValue generateMatchExpression(StackValue expressionToMatch, KtPatternExpression expression) {
-        return expression.getConstraints().stream()
-                .map(constraint -> generateMatchConstraint(expressionToMatch, constraint))
-                .reduce(StackValue::and)
-                .orElseThrow(() -> new IllegalArgumentException("Unexpected pattern expression arguments"));
+        return new ConstantLocalVariable(myFrameMap, expressionToMatch, expressionToMatch.type, Type.BOOLEAN_TYPE, loadExpression ->
+                expression.getConstraints().stream()
+                        .map(constraint -> generateMatchConstraint(loadExpression, constraint))
+                        .reduce(StackValue::and)
+                        .orElseThrow(() -> new IllegalArgumentException("Unexpected pattern expression arguments")));
     }
 
     private StackValue generateMatchConstraint(StackValue expressionToMatch, KtPatternConstraint constraint) {
@@ -4312,7 +4316,6 @@ The "returned" value of try expression with no finally is either the last expres
         return generateMatchTypeReference(expressionToMatch, typeReference);
     }
 
-
     private StackValue generateMatchTypeReference(StackValue expressionToMatch, KtTypeReference typeReference) {
         return generateIsCheck(expressionToMatch, typeReference, false);
     }
@@ -4334,24 +4337,34 @@ The "returned" value of try expression with no finally is either the last expres
         forceAssert(tuple != null, "Pattern tuple is null for " + entry.getText());
         List<KtPatternExpression> expressions = tuple.getExpressions();
         assert expressions.size() > 0 : "Pattern tuple must be not empty";
-        StackValue result = null;
         KtTypeReference typeReference = entry.getTypeReference();
-        if (typeReference != null) {
-            result = generateMatchTypeReference(expressionToMatch, typeReference);
-        }
+
         Pair<ReceiverValue, StackValue> receiverAndValue = generatePatternDeconstructReceiver(expressionToMatch, entry);
         ReceiverValue receiver = receiverAndValue.getFirst();
         StackValue receiverStackValue = receiverAndValue.getSecond();
-        for (KtPatternExpression expression : expressions) {
-            ResolvedCall<FunctionDescriptor> componentCall = bindingContext.get(PATTERN_COMPONENT_RESOLVED_CALL, expression);
-            forceAssert(componentCall != null, "Resolved call is null for " + expression.getText());
-            Call call = makeFakeCall(receiver);
-            // Todo(sergei) skip invoke if expression.text == "_"
-            StackValue expressionValue = invokeFunction(call, componentCall, receiverStackValue);
-            StackValue value = generateMatchExpression(expressionValue, expression);
-            result = result == null ? value : StackValue.and(result, value);
+        Type receiverType = receiverStackValue.type;
+        Call receiverCall = makeFakeCall(receiver);
+
+        StackValue match = new ConstantLocalVariable(myFrameMap, receiverStackValue, receiverType, Type.BOOLEAN_TYPE, loadReceiver -> {
+            StackValue result = null;
+            for (KtPatternExpression expression : expressions) {
+                // Todo(sergei) continue if expression.text == "_"
+                ResolvedCall<FunctionDescriptor> componentCall = bindingContext.get(PATTERN_COMPONENT_RESOLVED_CALL, expression);
+                forceAssert(componentCall != null, "Resolved call is null for " + expression.getText());
+                StackValue expressionValue = invokeFunction(receiverCall, componentCall, loadReceiver);
+                StackValue matchExpression = generateMatchExpression(expressionValue, expression);
+                result = result == null ? matchExpression : StackValue.and(result, matchExpression);
+            }
+            return result;
+        });
+
+        if (typeReference != null) {
+            StackValue checkTupleType = generateMatchTypeReference(expressionToMatch, typeReference);
+            return StackValue.and(checkTupleType, match);
         }
-        return result;
+        else {
+            return match;
+        }
     }
 
     private Pair<ReceiverValue, StackValue> generatePatternDeconstructReceiver(StackValue expressionToMatch, KtPatternTypedTuple entry) {
@@ -4372,22 +4385,16 @@ The "returned" value of try expression with no finally is either the last expres
 
     private StackValue generateMatchVariableDeclaration(StackValue expressionToMatch, KtPatternVariableDeclaration entry) {
         KtPatternTypeReference typeReference = entry.getPatternTypeReference();
-        StackValue value;
+        StackValue value = StackValue.constant(true, Type.BOOLEAN_TYPE);
         if (typeReference != null) {
             value = generateMatchTypeReference(expressionToMatch, typeReference);
         }
-        else {
-            value = StackValue.constant(true, Type.BOOLEAN_TYPE);
-        }
-        StackValue initialize = StackValue.operation(Type.BOOLEAN_TYPE, v -> {
-            if (!UnderscoreUtilKt.isSingleUnderscore(entry)) {
-                putLocalVariableIntoFrameMap(entry);
+        return Trigger.Companion.make(value, Type.BOOLEAN_TYPE, v -> {
+            if (UnderscoreUtilKt.isNotSingleUnderscore(entry)) {
                 initializeLocalVariable(entry, expressionToMatch);
             }
-            v.iconst(1);
             return null;
         });
-        return StackValue.and(value, initialize);
     }
 
     private StackValue generateMatchHashExpression(StackValue expressionToMatch, KtPatternHashExpression entry) {

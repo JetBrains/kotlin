@@ -23,7 +23,7 @@ fun matcher(value: Any?, p1: Int, p2: Int, p3: Int, p4: Int) {
             println("[   6   ] MATCH $m -> { $a $b }")
         match m @ Pair<*, *>("some string $p4 with parameter", _) ->
             println("[   7   ] MATCH $m -> {}")
-        match m @ Pair<*, *>(: Int, Pair<*, *>(a, b)) ->
+        match m @ Pair<*, *>(:Int, Pair<*, *>(a, b)) ->
             println("[   8   ] MATCH $m -> { $a $b }")
         match m ->
             println("[   9   ] MATCH $m -> {}")
@@ -32,6 +32,7 @@ fun matcher(value: Any?, p1: Int, p2: Int, p3: Int, p4: Int) {
 }
 
 fun main(args: Array<String>) {
+    matcher("3D4R0V4", 0, 0, 0, 0)
     matcher(B(5, 6), 0, 4, 2, 0)
     matcher(A(5, 6), 0, 3, 3, 0)
     matcher(Pair(5, 7), 0, 0, 0, 0)
@@ -39,7 +40,6 @@ fun main(args: Array<String>) {
     matcher(listOf(1, 2, 3, 4, 5, 6, 7), 0, 0, 0, 0)
     matcher(Pair(1, 2), 0, 0, 0, 0)
     matcher(Pair("some string 4 with parameter", 7), 0, 0, 0, 4)
-    matcher("3D4R0V4", 0, 0, 0, 0)
-    matcher(10, 0, 0, 0, 0)
     matcher(Pair(1, Pair(3, 9)), 0, 0, 0, 0)
+    matcher(10, 0, 0, 0, 0)
 }
