@@ -13,7 +13,7 @@ node {
 
 val deployDir = "$buildDir/deploy_to_npm"
 val templateDir = "$projectDir/templates"
-val kotlincDir = "$projectDir/../../dist/kotlinc"
+val kotlincDir = rootProject.extra["distKotlinHomeDir"] as String
 val deployVersion = System.getProperty("kotlin.deploy.version", "0.0.0")
 val deployTag = System.getProperty("kotlin.deploy.tag", "dev")
 val authToken = System.getProperty("kotlin.npmjs.auth.token")
