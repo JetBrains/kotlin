@@ -8,4 +8,6 @@ class KotlinUastTypesTest : AbstractKotlinTypesTest() {
     @Test fun testUnexpectedContainerException() = doTest("UnexpectedContainerException")
 
     @Test fun testCycleInTypeParameters() = doTest("CycleInTypeParameters")
+
+    @Test fun testEa101715() = doTest("ea101715")
 }
