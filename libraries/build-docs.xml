@@ -81,6 +81,7 @@
             <!-- TODO Docs? -->
             <packageOptions prefix="org.w3c" reportUndocumented="false"/>
             <packageOptions prefix="org.khronos" reportUndocumented="false"/>
+            <packageOptions prefix="kotlin.reflect.jvm.internal" suppress="true"/>
         </dokka>
         <makeurl file="${docs.output}/jre8/kotlin-stdlib/package-list" property="stdlib.package.list"/>
         <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
