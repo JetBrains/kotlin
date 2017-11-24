@@ -268,3 +268,7 @@ TargetManager.enabled.each { target ->
 task update(type: Copy) {
     dependsOn tasks.withType(NativeDep)
 }
+
+task rmDotKonan(type: Delete) {
+    delete "${System.getProperty("user.home")}/.konan"
+}

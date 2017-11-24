@@ -109,7 +109,14 @@ class DependencyProcessor(dependenciesRoot: File,
 
         fun contains(dependency: String) = dependencies.contains(dependency)
         fun add(dependency: String) = dependencies.add(dependency)
-        fun addWithSave(dependency: String) {
+        fun remove(dependency: String) = dependencies.remove(dependency)
+
+        fun removeAndSave(dependency: String) {
+            remove(dependency)
+            save()
+        }
+
+        fun addAndSave(dependency: String) {
             add(dependency)
             save()
         }
@@ -129,21 +136,30 @@ class DependencyProcessor(dependenciesRoot: File,
         val depDir = File(dependenciesDirectory, dependency)
         val depName = depDir.name
 
+        val fileName = "$depName.$archiveExtension"
+        val archive = cacheDirectory.resolve(fileName)
+        val url = URL("$dependenciesUrl/$fileName")
+
         val extractedDependencies = DependencyFile(dependenciesDirectory, ".extracted")
         if (extractedDependencies.contains(depName) &&
-                depDir.exists() &&
-                depDir.isDirectory &&
-                depDir.list().isNotEmpty()) {
-            return
+            depDir.exists() &&
+            depDir.isDirectory &&
+            depDir.list().isNotEmpty()) {
+
+            if (depDir.list().contains(".unstable")) {
+                // The downloaded version of the dependency is unstable -> redownload it.
+                depDir.deleteRecursively()
+                archive.delete()
+                extractedDependencies.removeAndSave(dependency)
+            } else {
+                return
+            }
         }
 
         if (showInfo && !isInfoShown) {
             println("Downloading native dependencies (LLVM, sysroot etc). This is a one-time action performed only on the first run of the compiler.")
             isInfoShown = true
         }
-        val fileName = "$depName.$archiveExtension"
-        val archive = cacheDirectory.resolve(fileName)
-        val url = URL("$dependenciesUrl/$fileName")
 
         if (!archive.exists()) {
             if (airplaneMode) {
@@ -156,7 +172,7 @@ class DependencyProcessor(dependenciesRoot: File,
         }
         println("Extracting dependency: $archive into $dependenciesDirectory")
         extractor.extract(archive, dependenciesDirectory)
-        extractedDependencies.addWithSave(depName)
+        extractedDependencies.addAndSave(depName)
     }
 
     companion object {
