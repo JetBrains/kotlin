@@ -173,7 +173,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
     }
 
     private fun checkUpdatesInMainRepository(): PluginUpdateStatus {
-        val buildNumber = ApplicationInfo.getInstance().build.asString()
+        val buildNumber = ApplicationInfo.getInstance().apiVersion
         val currentVersion = KotlinPluginUtil.getPluginVersion()
         val os = URLEncoder.encode(SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION, CharsetToolkit.UTF8)
         val uid = UpdateChecker.getInstallationUID(propertiesComponent)
