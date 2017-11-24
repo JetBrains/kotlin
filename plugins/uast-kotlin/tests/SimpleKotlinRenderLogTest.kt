@@ -1,9 +1,5 @@
 package org.jetbrains.uast.test.kotlin
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtVisitor
 import org.junit.Test
 
 class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
@@ -57,4 +53,7 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testWhenAndDestructing() = doTest("WhenAndDestructing") { testName, file -> check(testName, file, false) }
+
+    @Test
+    fun testSuperCalls() = doTest("SuperCalls") { testName, file -> check(testName, file, false) }
 }
