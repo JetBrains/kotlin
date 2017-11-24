@@ -270,6 +270,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             return false
         }
 
+        if (!ReferencesSearch.search(declaration, useScope).forEach(::checkReference)) return true
+
         if (declaration is KtCallableDeclaration && !declaration.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
@@ -279,7 +281,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             }
         }
 
-        return !ReferencesSearch.search(declaration, useScope).forEach(::checkReference)
+        return false
     }
 
     private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {

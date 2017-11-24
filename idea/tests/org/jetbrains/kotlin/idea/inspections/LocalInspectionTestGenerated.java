@@ -2488,6 +2488,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unusedSymbol/internal.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("withJvmNameUsedFromKotlin.kt")
+        public void testWithJvmNameUsedFromKotlin() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unusedSymbol/withJvmNameUsedFromKotlin.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/useExpressionBody")
