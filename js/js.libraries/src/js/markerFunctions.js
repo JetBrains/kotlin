@@ -67,16 +67,27 @@ Kotlin.suspendCall = function(value) {
 };
 
 Kotlin.coroutineResult = function(qualifier) {
+    throwMarkerError();
 };
 
 Kotlin.coroutineController = function(qualifier) {
+    throwMarkerError();
 };
 
 Kotlin.coroutineReceiver = function(qualifier) {
+    throwMarkerError();
 };
 
 Kotlin.setCoroutineResult = function(value, qualifier) {
+    throwMarkerError();
 };
+
+function throwMarkerError() {
+    throw new Error(
+        "This marker function should never been called. " +
+        "Looks like compiler did not eliminate it properly. " +
+        "Please, report an issue if you caught this exception.");
+}
 
 Kotlin.getFunctionById = function(id, defaultValue) {
     return function() {
