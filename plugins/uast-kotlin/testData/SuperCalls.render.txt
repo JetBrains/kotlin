@@ -1,6 +1,6 @@
 public final class SuperCallsKt {
-    private static final var anon: A = anonymous object : A ("textForAnon"){
-        fun bar(){}
+    private static final var anon: A = anonymous object : A("textForAnon") {
+        fun bar() {}
     }
     public static final fun getAnon() : A = UastEmptyExpression
 }
@@ -11,7 +11,9 @@ public class A {
     }
     public final fun getStr() : java.lang.String = UastEmptyExpression
     public fun A(str: java.lang.String) = UastEmptyExpression
-    public fun A(i: int) = UastEmptyExpression
+    public fun A(i: int) {
+        <init>(i.toString())
+    }
 }
 
 public final class B : A {
@@ -24,8 +26,12 @@ public final class C : A {
     public fun foo(a: long) : void {
         super.foo(a)
     }
-    public fun C(p: java.lang.String) = UastEmptyExpression
-    public fun C(i: int) = UastEmptyExpression
+    public fun C(p: java.lang.String) {
+        <init>(p)
+    }
+    public fun C(i: int) {
+        <init>(i)
+    }
 }
 
 public final class O : A {

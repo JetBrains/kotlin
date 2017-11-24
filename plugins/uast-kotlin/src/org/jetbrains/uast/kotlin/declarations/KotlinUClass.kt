@@ -20,7 +20,6 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.SmartList
@@ -73,12 +72,10 @@ open class KotlinUClass private constructor(
     override fun getInitializers(): Array<UClassInitializer> = super.getInitializers()
 
     override fun getMethods(): Array<UMethod> {
-        val primaryConstructor = ktClass?.primaryConstructor?.toLightMethods()?.firstOrNull()
 
         fun createUMethod(psiMethod: PsiMethod): UMethod {
             return if (psiMethod is KtLightMethod &&
-                       psiMethod.isConstructor &&
-                       (primaryConstructor == null || psiMethod == primaryConstructor)) {
+                       psiMethod.isConstructor) {
                 KotlinPrimaryConstructorUMethod(ktClass, psiMethod, this)
             } else {
                 getLanguagePlugin().convert(psiMethod, this)
@@ -111,22 +108,27 @@ class KotlinPrimaryConstructorUMethod(
         override val uastParent: UElement?
 ): KotlinUMethod(psi, uastParent) {
     override val uastBody: UExpression? by lz {
-        val superTypeCallEntry = ktClass?.superTypeListEntries?.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
-        val initializers = ktClass?.getAnonymousInitializers()?.takeIf { it.isNotEmpty() }
-        if (superTypeCallEntry != null || initializers != null)
-            KotlinUBlockExpression.KotlinLazyUBlockExpression(this) { uastParent ->
-                SmartList<UExpression>().apply {
-                    superTypeCallEntry?.let {
-                        add(KotlinUFunctionCallExpression(it, uastParent))
-                    }
-                    val languagePlugin = uastParent.getLanguagePlugin()
-                    initializers?.forEach {
-                        addIfNotNull(languagePlugin.convertOpt(it.body, uastParent))
-                    }
+        val delegationCall: KtCallElement? = psi.kotlinOrigin.let {
+            when (it) {
+                is KtPrimaryConstructor, is KtObjectDeclaration ->
+                    ktClass?.superTypeListEntries?.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
+                is KtSecondaryConstructor -> it.getDelegationCall()
+                else -> null
+            }
+        }
+        val initializers = ktClass?.getAnonymousInitializers().orEmpty()
+        if (delegationCall == null && initializers.isEmpty()) return@lz null
+        KotlinUBlockExpression.KotlinLazyUBlockExpression(this) { uastParent ->
+            SmartList<UExpression>().apply {
+                delegationCall?.let {
+                    add(KotlinUFunctionCallExpression(it, uastParent))
+                }
+                val languagePlugin = uastParent.getLanguagePlugin()
+                initializers.forEach {
+                    addIfNotNull(languagePlugin.convertOpt(it.body, uastParent))
                 }
             }
-        else
-            null
+        }
     }
 }
 
