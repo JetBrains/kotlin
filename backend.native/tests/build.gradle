@@ -201,7 +201,6 @@ task run_external () {
         testTasks = testTasks.matching { it.name.startsWith(prefix) }
     }
     dependsOn(testTasks)
-//    finalizedBy resultsTask
 }
 
 task daily() {
