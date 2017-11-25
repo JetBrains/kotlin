@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -118,7 +119,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);
         }
-        updateConfigurationWithLanguageVersionDirective(ktFile, configuration);
+        updateConfigurationWithDirectives(ktFile, configuration);
 
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
@@ -145,14 +146,23 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         compareDescriptors(packageFromSource, packageFromBinary, comparatorConfiguration, txtFile);
     }
 
-    private static void updateConfigurationWithLanguageVersionDirective(File file, CompilerConfiguration configuration) throws IOException {
-        String version = InTextDirectivesUtils.findStringWithPrefixes(FileUtil.loadFile(file, true), "// LANGUAGE_VERSION:");
+    private static void updateConfigurationWithDirectives(File file, CompilerConfiguration configuration) throws IOException {
+        String content = FileUtil.loadFile(file, true);
+        String version = InTextDirectivesUtils.findStringWithPrefixes(content, "// LANGUAGE_VERSION:");
         if (version != null) {
             LanguageVersion explicitVersion = LanguageVersion.fromVersionString(version);
             CommonConfigurationKeysKt.setLanguageVersionSettings(
                     configuration,
                     new LanguageVersionSettingsImpl(explicitVersion, ApiVersion.createByLanguageVersion(explicitVersion))
             );
+        }
+
+        if (InTextDirectivesUtils.isDirectiveDefined(content, "ANDROID_ANNOTATIONS")) {
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.androidAnnotationsForTests());
+        }
+
+        if (InTextDirectivesUtils.isDirectiveDefined(content, "JVM_ANNOTATIONS")) {
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.jvmAnnotationsForTests());
         }
     }
 

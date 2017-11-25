@@ -87,7 +87,9 @@ public class LoadDescriptorUtil {
             @Nullable LanguageVersionSettings explicitLanguageVersionSettings
     ) {
         List<File> javaBinaryRoots = new ArrayList<>();
+        // TODO: use the same additional binary roots as those were used for compilation
         javaBinaryRoots.add(KotlinTestUtils.getAnnotationsJar());
+        javaBinaryRoots.add(ForTestCompileRuntime.jvmAnnotationsForTests());
 
         List<File> javaSourceRoots = new ArrayList<>();
         javaSourceRoots.add(new File("compiler/testData/loadJava/include"));
@@ -126,6 +128,10 @@ public class LoadDescriptorUtil {
 
             if (InTextDirectivesUtils.isDirectiveDefined(content, "ANDROID_ANNOTATIONS")) {
                 classpath.add(ForTestCompileRuntime.androidAnnotationsForTests());
+            }
+
+            if (InTextDirectivesUtils.isDirectiveDefined(content, "JVM_ANNOTATIONS")) {
+                classpath.add(ForTestCompileRuntime.jvmAnnotationsForTests());
             }
         }
 
