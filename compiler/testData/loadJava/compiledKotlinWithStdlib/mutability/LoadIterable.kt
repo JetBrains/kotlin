@@ -1,6 +1,7 @@
+// JVM_ANNOTATIONS
 package test
 
-import org.jetbrains.annotations.*
+import kotlin.annotations.jvm.*
 
 public interface LoadIterable<T> {
     @Mutable
