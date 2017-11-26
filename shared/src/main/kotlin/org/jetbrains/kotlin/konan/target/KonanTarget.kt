@@ -176,9 +176,11 @@ class TargetManager(val userRequest: String? = null) {
                     KonanTarget.LINUX_MIPSEL32.enabled = true
                     KonanTarget.ANDROID_ARM32.enabled = true
                     KonanTarget.ANDROID_ARM64.enabled = true
+                    KonanTarget.WASM32.enabled = true
                 }
                 KonanTarget.MINGW -> {
                     KonanTarget.MINGW.enabled = true
+                    KonanTarget.WASM32.enabled = true
                 }
                 KonanTarget.MACBOOK -> {
                     KonanTarget.MACBOOK.enabled = true

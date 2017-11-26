@@ -211,8 +211,10 @@ internal open class WasmPlatform(distribution: Distribution)
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
 
-        //No link stage for WASM yet, just give '.wasm' as output.
-        return mutableListOf("/bin/cp", objectFiles.single(), executable)
+        // No link stage for WASM yet, just give '.wasm' as output.
+        return mutableListOf(
+          *(if (TargetManager.host == KonanTarget.MINGW) arrayOf("${System.getenv("SystemRoot")}/System32/cmd.exe", "/c", "copy") else arrayOf("/bin/cp")),
+          objectFiles.single(), executable)
     }
 }
 
