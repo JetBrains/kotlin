@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
@@ -104,12 +103,6 @@ public class KotlinTypeMapper {
             return CommonSupertypes.commonSupertype(types);
         }
 
-        @NotNull
-        @Override
-        public Function2<String, String, String> getInnerClassNameFactory() {
-            return TypeMappingConfiguration.DefaultImpls.getInnerClassNameFactory(this);
-        }
-
         @Nullable
         @Override
         public Type getPredefinedTypeForClass(@NotNull ClassDescriptor classDescriptor) {
@@ -145,11 +138,6 @@ public class KotlinTypeMapper {
         this.moduleName = moduleName;
         this.isJvm8Target = isJvm8Target;
         this.isJvm8TargetWithDefaults = isJvm8TargetWithDefaults;
-    }
-
-    @NotNull
-    public TypeMappingConfiguration<Type> getTypeMappingConfiguration() {
-        return typeMappingConfiguration;
     }
 
     @NotNull
@@ -190,7 +178,7 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private String internalNameForPackageMemberOwner(@NotNull CallableMemberDescriptor descriptor, boolean publicFacade) {
+    private static String internalNameForPackageMemberOwner(@NotNull CallableMemberDescriptor descriptor, boolean publicFacade) {
         boolean isAccessor = descriptor instanceof AccessorForCallableDescriptor;
         if (isAccessor) {
             descriptor = ((AccessorForCallableDescriptor) descriptor).getCalleeDescriptor();
@@ -269,7 +257,7 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    public ContainingClassesInfo getContainingClassesForDeserializedCallable(
+    public static ContainingClassesInfo getContainingClassesForDeserializedCallable(
             @NotNull DeserializedCallableMemberDescriptor deserializedDescriptor
     ) {
         DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
@@ -288,15 +276,14 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private ClassId getContainerClassIdForClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
+    private static ClassId getContainerClassIdForClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
         ClassId classId = DescriptorUtilsKt.getClassId(classDescriptor);
         assert classId != null : "Deserialized class should have a ClassId: " + classDescriptor;
 
         if (isInterface(classDescriptor)) {
             FqName relativeClassName = classId.getRelativeClassName();
             //TODO test nested trait fun inlining
-            String defaultImplsClassName = typeMappingConfiguration.getInnerClassNameFactory()
-                    .invoke(relativeClassName.shortName().asString(), JvmAbi.DEFAULT_IMPLS_CLASS_NAME);
+            String defaultImplsClassName = relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX;
             return new ClassId(classId.getPackageFqName(), Name.identifier(defaultImplsClassName));
         }
 
@@ -304,7 +291,7 @@ public class KotlinTypeMapper {
     }
 
     @Nullable
-    private String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean publicFacade) {
+    private static String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean publicFacade) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         assert containingDeclaration instanceof PackageFragmentDescriptor : "Not a top-level member: " + descriptor;
 
@@ -315,7 +302,7 @@ public class KotlinTypeMapper {
 
         ClassId ownerClassId = publicFacade ? containingClasses.getFacadeClassId()
                                             : containingClasses.getImplClassId();
-        return JvmClassName.byClassId(ownerClassId, typeMappingConfiguration).getInternalName();
+        return JvmClassName.byClassId(ownerClassId).getInternalName();
     }
 
     private static final ClassId FAKE_CLASS_ID_FOR_BUILTINS = ClassId.topLevel(new FqName("kotlin.KotlinPackage"));
@@ -457,9 +444,7 @@ public class KotlinTypeMapper {
 
     @NotNull
     public Type mapDefaultImpls(@NotNull ClassDescriptor descriptor) {
-        String defaultImplsClassName = typeMappingConfiguration.getInnerClassNameFactory().invoke(
-                mapType(descriptor).getInternalName(), JvmAbi.DEFAULT_IMPLS_CLASS_NAME);
-        return Type.getObjectType(defaultImplsClassName);
+        return Type.getObjectType(mapType(descriptor).getInternalName() + JvmAbi.DEFAULT_IMPLS_SUFFIX);
     }
 
     @NotNull
@@ -957,7 +942,7 @@ public class KotlinTypeMapper {
     }
 
     @Nullable
-    private String getPartSimpleNameForMangling(@NotNull CallableMemberDescriptor descriptor) {
+    private static String getPartSimpleNameForMangling(@NotNull CallableMemberDescriptor descriptor) {
         KtFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
         if (containingFile != null) {
             JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile);
@@ -1058,7 +1043,7 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    public JvmMethodGenericSignature mapSignatureWithCustomParameters(
+    private JvmMethodGenericSignature mapSignatureWithCustomParameters(
             @NotNull FunctionDescriptor f,
             @NotNull OwnerKind kind,
             @NotNull List<ValueParameterDescriptor> valueParameters,
