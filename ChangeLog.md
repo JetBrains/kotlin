@@ -30,9 +30,9 @@
 
 This release also includes fixes and improvements from pre-releases:
 
-- [`v1.2-M1`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-M1)
-- [`v1.2-M2`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-M2)
-- [`v1.2-beta`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-beta)
-- [`v1.2-beta2`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-beta2)
-- [`v1.2-rc1`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-rc1)
 - [`v1.2-rc2`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-rc2)
+- [`v1.2-rc1`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-rc1)
+- [`v1.2-beta2`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-beta2)
+- [`v1.2-beta`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-beta)
+- [`v1.2-M2`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-M2)
+- [`v1.2-M1`](https://github.com/JetBrains/kotlin/releases/tag/v1.2-M1)
