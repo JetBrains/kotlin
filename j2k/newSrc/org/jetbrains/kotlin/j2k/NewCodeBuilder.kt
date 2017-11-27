@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.prettyDebugPrintTree
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.utils.Printer
 
@@ -37,7 +38,7 @@ class NewCodeBuilder {
 
     inner class Visitor : JKVisitor<Unit, Unit> {
         override fun visitElement(element: JKElement, data: Unit) {
-            builder.append("/* !!! Hit visitElement !!! */")
+            printer.print("/* !!! Hit visitElement for element type: ${element::class} !!! */")
         }
 
         override fun visitClass(klass: JKClass, data: Unit) {
