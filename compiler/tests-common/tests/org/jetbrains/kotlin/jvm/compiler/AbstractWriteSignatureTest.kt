@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -214,9 +214,9 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
                     throw AssertionError("$ktFile:${lineNo+1}: use $className\$$memberName to denote inner class")
                 }
 
-                val jvmSignatureMatch = jvmSignatureRegex.matchExact(lines[lineNo+1])
-                val genericSignatureMatch = genericSignatureRegex.matchExact(lines[lineNo+1])
-                                            ?: genericSignatureRegex.matchExact(lines[lineNo+2])
+                val jvmSignatureMatch = jvmSignatureRegex.matchExact(lines[lineNo + 1])
+                val genericSignatureMatch = genericSignatureRegex.matchExact(lines[lineNo + 1])
+                                            ?: genericSignatureRegex.matchExact(lines[lineNo + 2])
 
                 if (genericSignatureMatch != null) {
                     val jvmSignature = jvmSignatureMatch?.group(1)

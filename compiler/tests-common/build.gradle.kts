@@ -7,6 +7,7 @@ dependencies {
     testCompile(project(":core:deserialization"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:backend"))
+    testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:frontend"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(project(":compiler:util"))
