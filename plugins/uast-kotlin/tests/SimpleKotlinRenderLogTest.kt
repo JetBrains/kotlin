@@ -55,5 +55,5 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
     fun testWhenAndDestructing() = doTest("WhenAndDestructing") { testName, file -> check(testName, file, false) }
 
     @Test
-    fun testSuperCalls() = doTest("SuperCalls") { testName, file -> check(testName, file, false) }
+    fun testSuperCalls() = doTest("SuperCalls")
 }

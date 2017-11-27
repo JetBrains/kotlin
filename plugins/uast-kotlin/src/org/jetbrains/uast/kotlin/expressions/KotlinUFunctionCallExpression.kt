@@ -124,4 +124,18 @@ class KotlinUFunctionCallExpression(
         // KtAnnotationEntry -> KtValueArgumentList -> KtValueArgument -> arrayOf call
         return psi.parents.elementAtOrNull(2) is KtAnnotationEntry && CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)
     }
+
+    override fun convertParent(): UElement? = super.convertParent().let { result ->
+        when (result) {
+            is UMethod -> result.uastBody ?: result
+            is UClass ->
+                result.methods
+                        .filterIsInstance<KotlinConstructorUMethod>()
+                        .firstOrNull { it.isPrimary }
+                        ?.uastBody
+                ?: result
+            else -> result
+        }
+    }
+
 }

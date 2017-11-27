@@ -309,6 +309,10 @@ internal object KotlinConverter {
             is KtWhenEntry -> el<USwitchClauseExpressionWithBody>(build(::KotlinUSwitchEntry))
             is KtWhenCondition -> convertWhenCondition(element, givenParent, requiredType)
             is KtTypeReference -> el<UTypeReferenceExpression> { LazyKotlinUTypeReferenceExpression(element, givenParent) }
+            is KtConstructorDelegationCall ->
+                el<UCallExpression> { KotlinUFunctionCallExpression(element, givenParent) }
+            is KtSuperTypeCallEntry ->
+                el<UCallExpression> { KotlinUFunctionCallExpression(element, givenParent) }
 
             else -> {
                 if (element is LeafPsiElement && element.elementType == KtTokens.IDENTIFIER) {
