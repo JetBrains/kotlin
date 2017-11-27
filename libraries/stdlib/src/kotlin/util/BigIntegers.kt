@@ -95,12 +95,12 @@ public inline infix fun BigInteger.or(other: BigInteger): BigInteger = this.or(o
 @kotlin.internal.InlineOnly
 public inline infix fun BigInteger.xor(other: BigInteger): BigInteger = this.xor(other)
 
-/** Shifts this value left by [bits]. */
+/** Shifts this value left by the [n] number of bits. */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline infix fun BigInteger.shl(n: Int): BigInteger = this.shiftLeft(n)
 
-/** Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit. */
+/** Shifts this value right by the [n] number of bits, filling the leftmost bits with copies of the sign bit. */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline infix fun BigInteger.shr(n: Int): BigInteger = this.shiftRight(n)
