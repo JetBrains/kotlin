@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
-import org.jetbrains.kotlin.load.kotlin.TypeMappingConfiguration;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -87,7 +86,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private final BindingContext bindingContext;
     private final GenerationState.GenerateClassFilter filter;
     private final JvmRuntimeTypes runtimeTypes;
-    private final TypeMappingConfiguration<Type> typeMappingConfiguration;
     private final SwitchCodegenProvider switchCodegenProvider;
     private final LanguageVersionSettings languageVersionSettings;
     private final ClassBuilderMode classBuilderMode;
@@ -97,7 +95,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         this.bindingContext = state.getBindingContext();
         this.filter = state.getGenerateDeclaredClassFilter();
         this.runtimeTypes = state.getJvmRuntimeTypes();
-        this.typeMappingConfiguration = state.getTypeMapper().getTypeMappingConfiguration();
         this.switchCodegenProvider = new SwitchCodegenProvider(state);
         this.languageVersionSettings = state.getLanguageVersionSettings();
         this.classBuilderMode = state.getClassBuilderMode();
@@ -269,7 +266,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             return base.isEmpty() ? descriptorName.asString() : base + '/' + descriptorName;
         }
         else {
-            return typeMappingConfiguration.getInnerClassNameFactory().invoke(base, descriptorName.asString());
+            return base + "$" + descriptorName.asString();
         }
     }
 
