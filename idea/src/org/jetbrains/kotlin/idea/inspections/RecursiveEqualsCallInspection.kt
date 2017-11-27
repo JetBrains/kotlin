@@ -29,29 +29,47 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
 
+            private fun KtExpression.isRecursiveEquals(): Boolean {
+                val context = analyze(BodyResolveMode.PARTIAL)
+                val resolvedCall = getResolvedCall(context)
+                val dispatchReceiver = resolvedCall?.dispatchReceiver as? ThisClassReceiver ?: return false
+                val calledFunctionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor
+                if (calledFunctionDescriptor?.isAnyEquals() != true) return false
+
+                val containingFunctionDescriptor = getNonStrictParentOfType<KtNamedFunction>()?.descriptor as? FunctionDescriptor
+                return calledFunctionDescriptor == containingFunctionDescriptor &&
+                       dispatchReceiver.classDescriptor == containingFunctionDescriptor.containingDeclaration
+            }
+
+            private fun KtExpression.reportRecursiveEquals() {
+                holder.registerProblem(this,
+                                       "Recursive equals call",
+                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                       ReplaceWithReferentialEqualityFix())
+            }
+
             override fun visitBinaryExpression(expr: KtBinaryExpression) {
                 super.visitBinaryExpression(expr)
                 if (expr.operationToken != KtTokens.EQEQ) return
 
-                val context = expr.analyze(BodyResolveMode.PARTIAL)
-                val resolvedCall = expr.getResolvedCall(context)
-                val dispatchReceiver = resolvedCall?.dispatchReceiver as? ThisClassReceiver ?: return
-                val calledFunctionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor
-                if (calledFunctionDescriptor?.isAnyEquals() != true) return
+                if (!expr.isRecursiveEquals()) return
+                expr.reportRecursiveEquals()
+            }
 
-                val containingFunctionDescriptor = expr.getNonStrictParentOfType<KtNamedFunction>()?.descriptor as? FunctionDescriptor
-                if (calledFunctionDescriptor != containingFunctionDescriptor) return
-                if (dispatchReceiver.classDescriptor != containingFunctionDescriptor.containingDeclaration) return
+            override fun visitCallExpression(expr: KtCallExpression) {
+                super.visitCallExpression(expr)
+                val calleeExpression = expr.calleeExpression as? KtSimpleNameExpression ?: return
+                if (calleeExpression.getReferencedNameAsName() != OperatorNameConventions.EQUALS) return
+                if (expr.parent is KtSafeQualifiedExpression) return
 
-                holder.registerProblem(expr,
-                                       "Recursive equals call",
-                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                       ReplaceWithReferentialEqualityFix())
+                if (!expr.isRecursiveEquals()) return
+                expr.reportRecursiveEquals()
             }
         }
     }
@@ -63,10 +81,23 @@ private class ReplaceWithReferentialEqualityFix : LocalQuickFix {
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val expr = descriptor.psiElement as? KtBinaryExpression ?: return
-        val left = expr.left ?: return
-        val right = expr.right ?: return
-        expr.replace(KtPsiFactory(project).createExpressionByPattern("$0 $1 $2", left, "===", right))
+        val element = descriptor.psiElement
+        val (right, target) = when (element) {
+            is KtBinaryExpression -> element.right to element
+            is KtCallExpression -> {
+                val parent = element.parent
+                val argument = element.valueArguments.first().getArgumentExpression()
+                if (parent is KtDotQualifiedExpression) {
+                    argument to parent as KtExpression
+                }
+                else {
+                    argument to element
+                }
+            }
+            else -> return
+        }
+        if (right == null) return
+        target.replace(KtPsiFactory(project).createExpressionByPattern("this $0 $1", "===", right))
     }
 }
 
