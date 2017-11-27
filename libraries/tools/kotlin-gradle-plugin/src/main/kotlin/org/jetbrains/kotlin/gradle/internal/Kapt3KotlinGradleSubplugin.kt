@@ -203,9 +203,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         pluginOptions += SubpluginOption("aptMode", aptMode)
         disableAnnotationProcessingInJavaTask()
 
-        // Skip annotation processing in kotlinc if no kapt dependencies were provided
-        if (kaptClasspath.isEmpty()) return pluginOptions
-
         kaptClasspath.forEach { pluginOptions += SubpluginOption("apclasspath", it.absolutePath) }
 
         javaCompile.source(generatedFilesDir)
