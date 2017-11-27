@@ -70,6 +70,21 @@ public enum Colors {
 
 
 @kotlin.Metadata()
+@kapt.internal.KaptMetadata()
+public enum Enum1 {
+    /*public static final*/ BLACK /* = new Enum1() */,
+    @Anno1()
+    /*public static final*/ WHITE /* = new Enum1() */;
+
+    @kapt.internal.KaptSignature(value = "<init>(Ljava/lang/String;I)V")
+    Enum1() {
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
 @Anno3(value = "value")
 @Anno2(a = @Anno1(), clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
 @Anno1()

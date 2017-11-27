@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.kapt3.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaLog
 import org.jetbrains.kotlin.kapt3.parseJavaFiles
+import org.jetbrains.kotlin.kapt3.prettyPrint
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
@@ -116,7 +117,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass, correctErrorTypes)
 
         val convertedTrees = converter.convert()
-        val convertedFiles = convertedTrees.map { tree -> createTempFile("stub", ".java", tree.toString()) }
+        val convertedFiles = convertedTrees.map { tree -> createTempFile("stub", ".java", tree.prettyPrint(kaptContext.context)) }
 
         val allJavaFiles = javaFiles + convertedFiles
 
@@ -194,7 +195,10 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
         kaptContext.javaLog.interceptorData.files = convertedFiles.map { it.sourceFile to it }.toMap()
         if (validate) kaptContext.compiler.enterTrees(convertedFiles)
 
-        val actualRaw = convertedFiles.sortedBy { it.sourceFile.name }.joinToString(FILE_SEPARATOR)
+        val actualRaw = convertedFiles
+                .sortedBy { it.sourceFile.name }
+                .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context) }
+
         val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' }))
                 .trimTrailingWhitespacesAndAddNewlineAtEOF()
                 .let { removeMetadataAnnotationContents(it) }

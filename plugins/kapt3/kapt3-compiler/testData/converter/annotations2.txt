@@ -68,7 +68,9 @@ package test;
 @Anno(value = "enum")
 @kapt.internal.KaptMetadata()
 public enum Enum {
+    @Anno(value = "white")
     /*public static final*/ WHITE /* = new Enum() */,
+    @Anno(value = "black")
     /*public static final*/ BLACK /* = new Enum() */;
     private final int x = 0;
 

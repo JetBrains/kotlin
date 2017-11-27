@@ -29,3 +29,7 @@ class TestAnno2 {
     @get:Anno3("getter") @set:Anno3("setter") @property:Anno3("property") @field:Anno3("field") @setparam:Anno3("setparam")
     var b: String = "property initializer"
 }
+
+enum class Enum1 {
+    BLACK, @Anno1 WHITE
+}
