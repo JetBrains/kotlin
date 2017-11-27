@@ -105,18 +105,17 @@ open class KotlinUClass private constructor(
 class KotlinConstructorUMethod(
         private val ktClass: KtClassOrObject?,
         override val psi: KtLightMethod,
-        override val uastParent: UElement?
-): KotlinUMethod(psi, uastParent) {
+        givenParent: UElement?
+) : KotlinUMethod(psi, givenParent) {
 
     val isPrimary: Boolean
-        get() = psi.kotlinOrigin is KtPrimaryConstructor
+        get() = psi.kotlinOrigin.let { it is KtPrimaryConstructor || it is KtObjectDeclaration }
 
     override val uastBody: UExpression? by lz {
         val delegationCall: KtCallElement? = psi.kotlinOrigin.let {
-            when (it) {
-                is KtPrimaryConstructor, is KtObjectDeclaration ->
-                    ktClass?.superTypeListEntries?.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
-                is KtSecondaryConstructor -> it.getDelegationCall()
+            when {
+                isPrimary -> ktClass?.superTypeListEntries?.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
+                it is KtSecondaryConstructor -> it.getDelegationCall()
                 else -> null
             }
         }
