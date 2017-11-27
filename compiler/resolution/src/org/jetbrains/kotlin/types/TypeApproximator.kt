@@ -67,6 +67,7 @@ open class TypeApproximatorConfiguration {
 
     abstract class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus): TypeApproximatorConfiguration.AllFlexibleSameValue() {
         override val allFlexible get() = true
+        override val errorType get() = true
 
         // i.e. will be approximated only approximatedCapturedStatus captured types
         override val capturedType get() = { it: NewCapturedType -> it.captureStatus != approximatedCapturedStatus }
