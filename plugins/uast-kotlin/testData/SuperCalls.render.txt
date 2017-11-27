@@ -1,8 +1,16 @@
 public final class SuperCallsKt {
     private static final var anon: A = anonymous object : A("textForAnon") {
-        fun bar() {}
+        fun bar() {
+            cons(object : A("inner literal"))
+        }
+
+        object innerObject : A("inner object")
+
+        inner class InnerClass : A("inner class")
     }
     public static final fun getAnon() : A = UastEmptyExpression
+    public static final fun cons(a: A) : void {
+    }
 }
 
 public class A {
