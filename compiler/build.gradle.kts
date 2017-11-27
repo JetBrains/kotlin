@@ -81,8 +81,6 @@ jar.apply {
     }
 }
 
-testsJar {}
-
 projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
