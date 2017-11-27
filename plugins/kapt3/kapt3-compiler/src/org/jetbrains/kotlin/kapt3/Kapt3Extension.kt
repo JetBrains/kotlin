@@ -18,7 +18,11 @@ package org.jetbrains.kotlin.kapt3
 
 import com.intellij.ide.ClassUtilCore
 import com.intellij.openapi.project.Project
+import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
+import com.sun.tools.javac.tree.Pretty
+import com.sun.tools.javac.tree.TreeMaker
+import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
@@ -44,6 +48,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import java.io.File
+import java.io.StringWriter
+import java.io.Writer
 import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
@@ -264,7 +270,7 @@ abstract class AbstractKapt3Extension(
         logger.info { "Java stub generation took $stubGenerationTime ms" }
         logger.info { "Stubs for Kotlin classes: " + kotlinSourceStubs.joinToString { it.sourcefile.name } }
 
-        saveStubs(kotlinSourceStubs)
+        saveStubs(kaptContext, kotlinSourceStubs)
         saveIncrementalData(kaptContext, logger.messageCollector, converter)
     }
 
@@ -277,14 +283,14 @@ abstract class AbstractKapt3Extension(
         return javaFilesFromJavaSourceRoots
     }
 
-    protected open fun saveStubs(stubs: JavacList<JCTree.JCCompilationUnit>) {
+    protected open fun saveStubs(kaptContext: KaptContext<*>, stubs: JavacList<JCTree.JCCompilationUnit>) {
         for (stub in stubs) {
             val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
 
             val packageName = stub.getPackageNameJava9Aware()?.toString() ?: ""
             val packageDir = if (packageName.isEmpty()) stubsOutputDir else File(stubsOutputDir, packageName.replace('.', '/'))
             packageDir.mkdirs()
-            File(packageDir, className + ".java").writeText(stub.toString())
+            File(packageDir, className + ".java").writeText(stub.prettyPrint(kaptContext.context))
         }
     }
 
@@ -312,6 +318,25 @@ abstract class AbstractKapt3Extension(
     }
 
     protected abstract fun loadProcessors(): List<Processor>
+}
+
+internal fun JCTree.prettyPrint(context: Context): String {
+    return StringWriter().apply { PrettyWithWorkarounds(context, this, false).printStat(this@prettyPrint) }.toString()
+}
+
+private class PrettyWithWorkarounds(private val context: Context, out: Writer?, sourceOutput: Boolean) : Pretty(out, sourceOutput) {
+    companion object {
+        private val ENUM = Flags.ENUM.toLong()
+    }
+
+    override fun visitVarDef(tree: JCTree.JCVariableDecl) {
+        if ((tree.mods.flags and ENUM) != 0L) {
+            // Pretty does not print annotations for enum values for some reason
+            printExpr(TreeMaker.instance(context).Modifiers(0, tree.mods.annotations))
+        }
+
+        super.visitVarDef(tree)
+    }
 }
 
 private inline fun <T> measureTimeMillis(block: () -> T) : Pair<Long, T> {

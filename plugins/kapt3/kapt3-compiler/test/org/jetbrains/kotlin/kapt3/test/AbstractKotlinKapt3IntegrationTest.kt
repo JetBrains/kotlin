@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
 import org.jetbrains.kotlin.kapt3.AptMode.STUBS_AND_APT
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
+import org.jetbrains.kotlin.kapt3.prettyPrint
 import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
@@ -170,17 +171,17 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
 
         override fun loadProcessors() = processors
 
-        override fun saveStubs(stubs: JavacList<JCTree.JCCompilationUnit>) {
+        override fun saveStubs(kaptContext: KaptContext<*>, stubs: JavacList<JCTree.JCCompilationUnit>) {
             if (this.savedStubs != null) {
                 error("Stubs are already saved")
             }
 
             this.savedStubs = stubs
-                    .map { it.toString() }
+                    .map { it.prettyPrint(kaptContext.context) }
                     .sorted()
                     .joinToString(AbstractKotlinKapt3Test.FILE_SEPARATOR)
 
-            super.saveStubs(stubs)
+            super.saveStubs(kaptContext, stubs)
         }
 
         override fun saveIncrementalData(
