@@ -342,8 +342,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
 class KtFileClassProviderImpl(val lightClassGenerationSupport: LightClassGenerationSupport) : KtFileClassProvider {
     override fun getFileClasses(file: KtFile): Array<PsiClass> {
-        if (file.isCompiled) {
-            return arrayOf()
+        // TODO We don't currently support finding light classes for scripts
+        if (file.isCompiled || file.isScript()) {
+            return PsiClass.EMPTY_ARRAY
         }
 
         val result = arrayListOf<PsiClass>()
