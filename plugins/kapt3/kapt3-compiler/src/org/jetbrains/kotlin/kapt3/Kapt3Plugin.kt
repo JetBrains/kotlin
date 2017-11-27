@@ -218,14 +218,18 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val annotationProcessors = configuration.get(Kapt3ConfigurationKeys.ANNOTATION_PROCESSORS) ?: ""
 
-        val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File)
+        val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File) ?: emptyList()
 
-        if (sourcesOutputDir == null || classFilesOutputDir == null || apClasspath == null || stubsOutputDir == null) {
+        if (apClasspath.isEmpty()) {
+            // Skip annotation processing if no annotation processors were provided
+            return
+        }
+
+        if (sourcesOutputDir == null || classFilesOutputDir == null || stubsOutputDir == null) {
             if (aptMode != AptMode.WITH_COMPILATION) {
                 val nonExistentOptionName = when {
                     sourcesOutputDir == null -> "Sources output directory"
                     classFilesOutputDir == null -> "Classes output directory"
-                    apClasspath == null -> "Annotation processing classpath"
                     stubsOutputDir == null -> "Stubs output directory"
                     else -> throw IllegalStateException()
                 }
