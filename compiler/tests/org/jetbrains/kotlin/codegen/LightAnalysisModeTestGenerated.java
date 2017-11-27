@@ -14567,6 +14567,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("forInStringVarUpdatedInLoopBody.kt")
+        public void testForInStringVarUpdatedInLoopBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInStringVarUpdatedInLoopBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forIntRange.kt")
         public void testForIntRange() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forIntRange.kt");

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.org.objectweb.asm.Type
@@ -43,6 +44,7 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     val rangeType = bindingContext.getType(rangeExpression)!!
     val asmRangeType = asmType(rangeType)
 
+    val builtIns = state.module.builtIns
     return when {
         asmRangeType.sort == Type.ARRAY ->
             ArrayRangeValue(!isLocalVarReference(rangeExpression, bindingContext))
@@ -50,8 +52,10 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
             PrimitiveRangeRangeValue()
         isPrimitiveProgression(rangeType) ->
             PrimitiveProgressionRangeValue()
-        isSubtypeOfCharSequence(rangeType, state.module.builtIns) ->
-            CharSequenceRangeValue()
+        isSubtypeOfString(rangeType, builtIns) ->
+            CharSequenceRangeValue(true, AsmTypes.JAVA_STRING_TYPE)
+        isSubtypeOfCharSequence(rangeType, builtIns) ->
+            CharSequenceRangeValue(false, null)
         else ->
             IterableRangeValue()
     }
@@ -62,6 +66,9 @@ fun isLocalVarReference(rangeExpression: KtExpression, bindingContext: BindingCo
     val resultingDescriptor = rangeExpression.getResolvedCall(bindingContext)?.resultingDescriptor ?: return false
     return resultingDescriptor is LocalVariableDescriptor && resultingDescriptor.isVar
 }
+
+private fun isSubtypeOfString(type: KotlinType, builtIns: KotlinBuiltIns) =
+        KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.stringType)
 
 private fun isSubtypeOfCharSequence(type: KotlinType, builtIns: KotlinBuiltIns) =
         KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.getBuiltInClassByName(Name.identifier("CharSequence")).defaultType)
