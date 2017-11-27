@@ -793,7 +793,7 @@
 
         <sequential unless:set="have.android.studio.version">
             <loadresource property="android.studio.version">
-                <url url="https://developer.android.com/studio/preview/index.html"/>
+                <url url="https://developer.android.com/studio/index.html"/>
                 <filterchain>
                     <tokenfilter>
                         <filetokenizer/>
@@ -804,7 +804,7 @@
                 </filterchain>
             </loadresource>
             <loadresource property="android.studio.build.number">
-                <url url="https://developer.android.com/studio/preview/index.html"/>
+                <url url="https://developer.android.com/studio/index.html"/>
                 <filterchain>
                     <tokenfilter>
                         <filetokenizer/>
