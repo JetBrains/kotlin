@@ -145,7 +145,7 @@ class KotlinResolutionCandidate(
     override val isSuccessful: Boolean
         get() {
             processParts(stopOnFirstError = true)
-            return currentApplicability.isSuccess && variableApplicability.isSuccess
+            return currentApplicability.isSuccess && variableApplicability.isSuccess && !getSystem().hasContradiction
         }
 
     override val resultingApplicability: ResolutionCandidateApplicability
