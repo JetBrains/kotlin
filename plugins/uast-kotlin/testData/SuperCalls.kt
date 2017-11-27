@@ -21,5 +21,13 @@ class C : A {
 object O : A("text")
 
 val anon = object : A("textForAnon") {
-    fun bar() {}
+    fun bar() {
+        cons(object : A("inner literal"))
+    }
+
+    object innerObject : A("inner object")
+
+    inner class InnerClass : A("inner class")
 }
+
+fun cons(a: A) {}
