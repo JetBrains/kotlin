@@ -25245,6 +25245,63 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/when/patternMatching")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PatternMatching extends AbstractJsCodegenBoxTest {
+            public void testAllFilesPresentInPatternMatching() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/when/patternMatching"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("test1.kt")
+            public void testTest1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("test2.kt")
+            public void testTest2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("test3.kt")
+            public void testTest3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("test4.kt")
+            public void testTest4() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("test5.kt")
+            public void testTest5() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test5.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("test6.kt")
+            public void testTest6() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test6.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("test7.kt")
+            public void testTest7() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test7.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("test8.kt")
+            public void testTest8() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/patternMatching/test8.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

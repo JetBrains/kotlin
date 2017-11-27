@@ -4348,7 +4348,8 @@ The "returned" value of try expression with no finally is either the last expres
         StackValue match = new ConstantLocalVariable(myFrameMap, receiverStackValue, receiverType, Type.BOOLEAN_TYPE, loadReceiver -> {
             StackValue result = null;
             for (KtPatternExpression expression : expressions) {
-                // Todo(sergei) continue if expression.text == "_"
+                // it possible if expression is KtPatternVariableDeclaration without type matching
+                if (expression.getText().equals("_")) continue;
                 ResolvedCall<FunctionDescriptor> componentCall = bindingContext.get(PATTERN_COMPONENT_RESOLVED_CALL, expression);
                 forceAssert(componentCall != null, "Resolved call is null for " + expression.getText());
                 StackValue expressionValue = invokeFunction(receiverCall, componentCall, loadReceiver);
