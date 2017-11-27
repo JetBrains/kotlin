@@ -1,7 +1,7 @@
 package kotlin.js
 
 /**
- * An interface for indexing access to a collection of key-value pairs, where type of key is [String] and type of value is [Any?].
+ * An interface for indexing access to a collection of key-value pairs, where type of key is [String] and type of value is [Any?][Any].
  */
 public external interface Json {
     /**

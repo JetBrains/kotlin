@@ -109,7 +109,7 @@ private class ClosedFloatRange (
 public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = ComparableRange(this, that)
 
 /**
- * Creates a range from this [Double] value to the specified [other] value.
+ * Creates a range from this [Double] value to the specified [that] value.
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  */
@@ -117,7 +117,7 @@ public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = Comp
 public operator fun Double.rangeTo(that: Double): ClosedFloatingPointRange<Double> = ClosedDoubleRange(this, that)
 
 /**
- * Creates a range from this [Float] value to the specified [other] value.
+ * Creates a range from this [Float] value to the specified [that] value.
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  */

@@ -84,13 +84,14 @@ fun ranges(): List<GenericFunction> {
         val progressionType = elementType.name + "Range"
         returns(progressionType)
         val minValue = if (elementType == PrimitiveType.Char) "'\\u0000'" else "$elementType.MIN_VALUE"
+        val minValueRef = if (elementType == PrimitiveType.Char) "`$minValue`" else "[$minValue]"
 
         doc {
             """
             Returns a range from this value up to but excluding the specified [to] value.
 
             ${textWhen(elementType == toType) {
-                "If the [to] value is less than or equal to [$minValue] the returned range is empty."
+                "If the [to] value is less than or equal to $minValueRef the returned range is empty."
             }}
             """
         }

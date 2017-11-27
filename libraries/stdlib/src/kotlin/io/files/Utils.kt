@@ -52,7 +52,7 @@ public val File.extension: String
     get() = name.substringAfterLast('.', "")
 
 /**
- * Returns [path] of this File using the invariant separator '/' to
+ * Returns [path][File.path] of this File using the invariant separator '/' to
  * separate the names in the name sequence.
  */
 public val File.invariantSeparatorsPath: String

@@ -4,7 +4,7 @@
 package kotlin.collections
 
 /**
- * Creates an [Iterator] for an [Enumeration], allowing to use it in `for` loops.
+ * Creates an [Iterator] for an [java.util.Enumeration], allowing to use it in `for` loops.
  */
 @kotlin.jvm.JvmVersion
 public operator fun <T> java.util.Enumeration<T>.iterator(): Iterator<T> = object : Iterator<T> {

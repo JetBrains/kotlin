@@ -18,9 +18,7 @@
 
 package kotlin.coroutines.experimental.intrinsics
 
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.processBareContinuationResume
+import kotlin.coroutines.experimental.*
 
 /**
  * Obtains the current continuation instance inside suspend functions and either suspend
