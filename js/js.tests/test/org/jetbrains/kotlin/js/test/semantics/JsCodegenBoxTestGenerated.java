@@ -2094,6 +2094,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
                 }
 
+                @TestMetadata("emptyLhsProperty.kt")
+                public void testEmptyLhsProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/inline/emptyLhsProperty.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("simple.kt")
                 public void testSimple() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/inline/simple.kt");
