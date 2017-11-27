@@ -112,9 +112,7 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
         val dotQualified = calleeExpression.parent.parent as? KtDotQualifiedExpression ?: return null
         return when (identifier) {
             OperatorNameConventions.EQUALS -> {
-                val resolvedCall = dotQualified.toResolvedCall(BodyResolveMode.PARTIAL) ?: return null
-                val overriddenDescriptors = resolvedCall.resultingDescriptor.findOriginalTopMostOverriddenDescriptors()
-                if (overriddenDescriptors.none { it.fqNameUnsafe.asString() == "kotlin.Any.equals" }) return null
+                if (!dotQualified.isAnyEquals()) return null
 
                 val prefixExpression = dotQualified.getWrappingPrefixExpressionIfAny()
                 if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ

@@ -67,6 +67,14 @@ fun foo9() {
     consumer.Consumer<Any?> { it == null } // used
 }
 
+fun foo9a() {
+    consumer.ConsumerVoid<Any?> { it == null } // not used
+}
+
+fun foo9b() {
+    consumer.ConsumerVoid<Any?> { it.equals(null) } // not used
+}
+
 class Test(val successCondition: (Int) -> Boolean) {
     fun pass(num: Int): Boolean = successCondition(num)
 }
