@@ -21,16 +21,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
-import org.jetbrains.kotlin.types.typeUtil.isNullableAny
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 
 class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -38,18 +36,17 @@ class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
 
             override fun visitBinaryExpression(expr: KtBinaryExpression) {
                 super.visitBinaryExpression(expr)
-
                 if (expr.operationToken != KtTokens.EQEQ) return
 
-                val classDescriptor = expr.containingClass()?.descriptor ?: return
                 val context = expr.analyze(BodyResolveMode.PARTIAL)
-                if (classDescriptor != expr.getResolvedCall(context)?.dispatchReceiver?.type?.constructor?.declarationDescriptor) return
+                val resolvedCall = expr.getResolvedCall(context)
+                val dispatchReceiver = resolvedCall?.dispatchReceiver as? ThisClassReceiver ?: return
+                val calledFunctionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor
+                if (calledFunctionDescriptor?.isAnyEquals() != true) return
 
-                val functionDescriptor = expr.getNonStrictParentOfType<KtNamedFunction>()?.descriptor as? FunctionDescriptor ?: return
-                if (functionDescriptor.name.asString() != "equals" ||
-                    !DescriptorUtils.isOverride(functionDescriptor) ||
-                    functionDescriptor.valueParameters.singleOrNull()?.type?.isNullableAny() == false ||
-                    functionDescriptor.returnType?.isBoolean() == false) return
+                val containingFunctionDescriptor = expr.getNonStrictParentOfType<KtNamedFunction>()?.descriptor as? FunctionDescriptor
+                if (calledFunctionDescriptor != containingFunctionDescriptor) return
+                if (dispatchReceiver.classDescriptor != containingFunctionDescriptor.containingDeclaration) return
 
                 holder.registerProblem(expr,
                                        "Recursive equals call",
