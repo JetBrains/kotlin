@@ -324,11 +324,15 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             }
         };
 
-        GenerationState state = new GenerationState(
+        GenerationState state = new GenerationState.Builder(
                 ktFile.getProject(), ClassBuilderFactories.TEST, resolutionFacade.getModuleDescriptor(), bindingContext, toProcess,
-                configuration, generateClassFilter,
-                configuration.getBoolean(JVMConfigurationKeys.IR) ? JvmIrCodegenFactory.INSTANCE : DefaultCodegenFactory.INSTANCE
-        );
+                configuration
+        )
+                .generateDeclaredClassFilter(generateClassFilter)
+                .codegenFactory(configuration.getBoolean(JVMConfigurationKeys.IR)
+                                ? JvmIrCodegenFactory.INSTANCE
+                                : DefaultCodegenFactory.INSTANCE)
+                .build();
 
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
 

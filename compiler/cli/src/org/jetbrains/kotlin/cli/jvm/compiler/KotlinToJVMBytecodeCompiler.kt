@@ -421,6 +421,13 @@ object KotlinToJVMBytecodeCompiler {
         override fun toString() = "All files under: $directories"
     }
 
+    private fun GenerationState.Builder.withModule(module: Module?) =
+            apply {
+                targetId(module?.let { TargetId(it) })
+                moduleName(module?.getModuleName())
+                outDirectory(module?.let { File(it.getOutputDirectory()) })
+            }
+
     private fun generate(
             environment: KotlinCoreEnvironment,
             configuration: CompilerConfiguration,
@@ -429,20 +436,19 @@ object KotlinToJVMBytecodeCompiler {
             module: Module?
     ): GenerationState {
         val isKapt2Enabled = environment.project.getUserData(IS_KAPT2_ENABLED_KEY) ?: false
-        val generationState = GenerationState(
+        val generationState = GenerationState.Builder(
                 environment.project,
                 ClassBuilderFactories.binaries(isKapt2Enabled),
                 result.moduleDescriptor,
                 result.bindingContext,
                 sourceFiles,
-                configuration,
-                GenerationState.GenerateClassFilter.GENERATE_ALL,
-                if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory,
-                module?.let(::TargetId),
-                module?.let(Module::getModuleName),
-                module?.let { File(it.getOutputDirectory()) },
-                createOutputFilesFlushingCallbackIfPossible(configuration)
+                configuration
         )
+                .codegenFactory(if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory)
+                .withModule(module)
+                .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
+                .build()
+
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val generationStart = PerformanceCounter.currentTime()
