@@ -52,6 +52,7 @@ class CodeInliner<TCallElement : KtElement>(
         private val bindingContext: BindingContext,
         private val resolvedCall: ResolvedCall<out CallableDescriptor>,
         private val callElement: TCallElement,
+        private val inlineSetter: Boolean,
         codeToInline: CodeToInline
 ) {
     private val codeToInline = codeToInline.toMutable()
@@ -67,7 +68,7 @@ class CodeInliner<TCallElement : KtElement>(
                 ?.getAssignmentByLHS()
                 ?.takeIf { it.operationToken == KtTokens.EQ }
         val callableForParameters = if (assignment != null && descriptor is PropertyDescriptor)
-            descriptor.setter?.takeIf { it.hasBody() } ?: descriptor
+            descriptor.setter?.takeIf { inlineSetter && it.hasBody() } ?: descriptor
         else
             descriptor
         val elementToBeReplaced = assignment.takeIf { callableForParameters is PropertySetterDescriptor } ?: qualifiedElement

@@ -141,7 +141,7 @@ abstract class DeprecatedSymbolUsageFixBase(
                     val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
                     if (!resolvedCall.isReallySuccess()) return null
                     val replacement = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, target, resolutionFacade) ?: return null
-                    return CallableUsageReplacementStrategy(replacement)
+                    return CallableUsageReplacementStrategy(replacement, inlineSetter = false)
                 }
 
                 is ClassifierDescriptorWithTypeParameters -> {

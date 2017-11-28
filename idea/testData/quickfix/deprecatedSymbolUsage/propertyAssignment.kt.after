@@ -14,6 +14,5 @@ class A {
 
 fun foo() {
     val a = A()
-    // Works incorrectly yet
-    a.new
+    a.new = "foo"
 }
