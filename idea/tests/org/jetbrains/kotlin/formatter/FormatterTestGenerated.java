@@ -428,6 +428,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("IfClosingParen.after.kt")
+        public void testIfClosingParen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfClosingParen.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IfElseRemoveLineBreak.after.kt")
         public void testIfElseRemoveLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfElseRemoveLineBreak.after.kt");
