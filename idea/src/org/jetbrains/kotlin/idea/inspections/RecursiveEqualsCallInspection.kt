@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
@@ -35,16 +36,19 @@ class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
 
-            private fun KtExpression.isRecursiveEquals(): Boolean {
+            private fun KtExpression.isRecursiveEquals(argumentExpr: KtExpression?): Boolean {
+                if (argumentExpr !is KtNameReferenceExpression) return false
                 val context = analyze(BodyResolveMode.PARTIAL)
                 val resolvedCall = getResolvedCall(context)
                 val dispatchReceiver = resolvedCall?.dispatchReceiver as? ThisClassReceiver ?: return false
+                val argumentDescriptor = context[BindingContext.REFERENCE_TARGET, argumentExpr] ?: return false
                 val calledFunctionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor
                 if (calledFunctionDescriptor?.isAnyEquals() != true) return false
 
                 val containingFunctionDescriptor = getNonStrictParentOfType<KtNamedFunction>()?.descriptor as? FunctionDescriptor
                 return calledFunctionDescriptor == containingFunctionDescriptor &&
-                       dispatchReceiver.classDescriptor == containingFunctionDescriptor.containingDeclaration
+                       dispatchReceiver.classDescriptor == containingFunctionDescriptor.containingDeclaration &&
+                       argumentDescriptor == containingFunctionDescriptor.valueParameters.singleOrNull()
             }
 
             private fun KtExpression.reportRecursiveEquals() {
@@ -58,7 +62,7 @@ class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
                 super.visitBinaryExpression(expr)
                 if (expr.operationToken != KtTokens.EQEQ) return
 
-                if (!expr.isRecursiveEquals()) return
+                if (!expr.isRecursiveEquals(expr.right)) return
                 expr.reportRecursiveEquals()
             }
 
@@ -68,7 +72,7 @@ class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
                 if (calleeExpression.getReferencedNameAsName() != OperatorNameConventions.EQUALS) return
                 if (expr.parent is KtSafeQualifiedExpression) return
 
-                if (!expr.isRecursiveEquals()) return
+                if (!expr.isRecursiveEquals(expr.valueArguments.singleOrNull()?.getArgumentExpression())) return
                 expr.reportRecursiveEquals()
             }
         }
