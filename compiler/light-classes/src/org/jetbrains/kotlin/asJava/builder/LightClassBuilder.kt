@@ -47,16 +47,14 @@ fun buildLightClass(
 
     try {
         val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(project, packageFqName, files))
-        val state = GenerationState(
+        val state = GenerationState.Builder(
                 project,
                 classBuilderFactory,
                 context.module,
                 context.bindingContext,
                 files.toList(),
-                CompilerConfiguration.EMPTY,
-                generateClassFilter,
-                wantsDiagnostics = false
-        )
+                CompilerConfiguration.EMPTY
+        ).generateDeclaredClassFilter(generateClassFilter).wantsDiagnostics(false).build()
         state.beforeCompile()
 
         generate(state, files)

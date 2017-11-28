@@ -83,14 +83,14 @@ open class GenericReplCompiler(disposable: Disposable,
                 else -> error("Unexpected result ${analysisResult::class.java}")
             }
 
-            val generationState = GenerationState(
+            val generationState = GenerationState.Builder(
                     psiFile.project,
                     ClassBuilderFactories.binaries(false),
                     compilerState.analyzerEngine.module,
                     compilerState.analyzerEngine.trace.bindingContext,
                     listOf(psiFile),
                     compilerConfiguration
-            )
+            ).build()
             generationState.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
             generationState.replSpecific.earlierScriptsForReplInterpreter = compilerState.history.map { it.item }
             generationState.beforeCompile()

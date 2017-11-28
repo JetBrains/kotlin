@@ -222,14 +222,14 @@ abstract class AbstractKapt3Extension(
                 name = compilerConfiguration[CommonConfigurationKeys.MODULE_NAME] ?: module.name.asString(),
                 type = "java-production")
 
-        val generationState = GenerationState(
+        val generationState = GenerationState.Builder(
                 project,
                 builderFactory,
                 module,
                 bindingContext,
                 files,
-                compilerConfiguration,
-                targetId = targetId)
+                compilerConfiguration
+        ).targetId(targetId).build()
 
         val (classFilesCompilationTime) = measureTimeMillis {
             KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
