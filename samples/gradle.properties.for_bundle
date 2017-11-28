@@ -1,1 +1,2 @@
 konan.home=../..
+konan.jvmArgs=-Xmx3G

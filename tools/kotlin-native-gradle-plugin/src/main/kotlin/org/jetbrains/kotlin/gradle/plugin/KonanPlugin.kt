@@ -34,6 +34,7 @@ import javax.inject.Inject
  *      konan.home          - directory where compiler is located (aka dist in konan project output).
  *      konan.version       - a konan compiler version for downloading.
  *      konan.build.targets - list of targets to build (by default all the declared targets are built).
+ *      konan.jvmArgs       - additional args to be passed to a JVM executing the compiler/cinterop tool.
  */
 
 internal fun Project.hasProperty(property: KonanPlugin.ProjectProperty) = hasProperty(property.propertyName)
@@ -89,6 +90,9 @@ internal val Project.requestedTargets
     get() = findProperty(KonanPlugin.ProjectProperty.KONAN_BUILD_TARGETS)?.let {
         it.toString().trim().split("\\s+".toRegex())
     }.orEmpty()
+
+internal val Project.jvmArgs
+    get() = (findProperty(KonanPlugin.ProjectProperty.KONAN_JVM_ARGS) as String?)?.split("\\s+".toRegex()).orEmpty()
 
 internal val Project.compileAllTask
     get() = getOrCreateTask(COMPILE_ALL_TASK_NAME)
@@ -223,6 +227,8 @@ open class KonanExtension {
     var languageVersion: String? = null
     var apiVersion: String? = null
 
+    val jvmArgs = mutableListOf<String>()
+
     internal val konanTargets: List<KonanTarget>
         get() = targets.map { TargetManager(it).target }.distinct()
 }
@@ -234,6 +240,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         KONAN_HOME          ("konan.home"),
         KONAN_VERSION       ("konan.version"),
         KONAN_BUILD_TARGETS ("konan.build.targets"),
+        KONAN_JVM_ARGS      ("konan.jvmArgs"),
         DOWNLOAD_COMPILER   ("download.compiler")
     }
 
