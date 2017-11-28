@@ -3388,6 +3388,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("externalEnumSubject.kt")
+            public void testExternalEnumSubject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/when/externalEnumSubject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forWithOneStmWhen.kt")
             public void testForWithOneStmWhen() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/when/forWithOneStmWhen.kt");
