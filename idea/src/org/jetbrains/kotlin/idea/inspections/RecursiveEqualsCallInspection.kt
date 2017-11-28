@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -51,26 +52,25 @@ class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
                        argumentDescriptor == containingFunctionDescriptor.valueParameters.singleOrNull()
             }
 
-            private fun KtExpression.reportRecursiveEquals() {
+            private fun KtExpression.reportRecursiveEquals(invert: Boolean = false) {
                 holder.registerProblem(this,
                                        "Recursive equals call",
                                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                       ReplaceWithReferentialEqualityFix())
+                                       ReplaceWithReferentialEqualityFix(invert))
             }
 
             override fun visitBinaryExpression(expr: KtBinaryExpression) {
                 super.visitBinaryExpression(expr)
-                if (expr.operationToken != KtTokens.EQEQ) return
+                if (expr.operationToken != KtTokens.EQEQ && expr.operationToken != KtTokens.EXCLEQ) return
 
                 if (!expr.isRecursiveEquals(expr.right)) return
-                expr.reportRecursiveEquals()
+                expr.reportRecursiveEquals(invert = expr.operationToken == KtTokens.EXCLEQ)
             }
 
             override fun visitCallExpression(expr: KtCallExpression) {
                 super.visitCallExpression(expr)
                 val calleeExpression = expr.calleeExpression as? KtSimpleNameExpression ?: return
                 if (calleeExpression.getReferencedNameAsName() != OperatorNameConventions.EQUALS) return
-                if (expr.parent is KtSafeQualifiedExpression) return
 
                 if (!expr.isRecursiveEquals(expr.valueArguments.singleOrNull()?.getArgumentExpression())) return
                 expr.reportRecursiveEquals()
@@ -79,29 +79,26 @@ class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
     }
 }
 
-private class ReplaceWithReferentialEqualityFix : LocalQuickFix {
-    override fun getName() = "Replace with '==='"
+private class ReplaceWithReferentialEqualityFix(invert: Boolean) : LocalQuickFix {
+    private val operator = if (invert) "!==" else "==="
+
+    override fun getName() = "Replace with '$operator'"
 
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val element = descriptor.psiElement
         val (right, target) = when (element) {
-            is KtBinaryExpression -> element.right to element
-            is KtCallExpression -> {
-                val parent = element.parent
-                val argument = element.valueArguments.first().getArgumentExpression()
-                if (parent is KtDotQualifiedExpression) {
-                    argument to parent as KtExpression
-                }
-                else {
-                    argument to element
-                }
+            is KtBinaryExpression -> {
+                element.right to element
+            }
+            is KtCallExpression -> with (element ){
+                valueArguments.first().getArgumentExpression() to getQualifiedExpressionForSelectorOrThis()
             }
             else -> return
         }
         if (right == null) return
-        target.replace(KtPsiFactory(project).createExpressionByPattern("this $0 $1", "===", right))
+        target.replace(KtPsiFactory(project).createExpressionByPattern("this $0 $1", operator, right))
     }
 }
 
