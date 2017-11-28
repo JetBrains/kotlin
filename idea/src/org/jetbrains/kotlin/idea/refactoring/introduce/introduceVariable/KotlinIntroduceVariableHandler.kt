@@ -80,7 +80,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
     private val REPLACE_KEY = Key.create<Boolean>("REPLACE_KEY")
     private val COMMON_PARENT_KEY = Key.create<Boolean>("COMMON_PARENT_KEY")
 
-    private var KtExpression.isOccurrence: Boolean by NotNullableCopyableUserDataProperty(Key.create("OCCURRENCE"), false)
+    private var KtExpression.isOccurrence: Boolean by NotNullablePsiCopyableUserDataProperty(Key.create("OCCURRENCE"), false)
 
     private class IntroduceVariableContext(
             private val expression: KtExpression,

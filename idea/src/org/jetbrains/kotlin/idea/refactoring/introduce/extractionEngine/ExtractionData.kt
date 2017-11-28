@@ -78,7 +78,7 @@ data class ResolvedReferenceInfo(
         val shouldSkipPrimaryReceiver: Boolean
 )
 
-internal var KtSimpleNameExpression.resolveResult: ResolveResult? by CopyableUserDataProperty(Key.create("RESOLVE_RESULT"))
+internal var KtSimpleNameExpression.resolveResult: ResolveResult? by CopyablePsiUserDataProperty(Key.create("RESOLVE_RESULT"))
 
 data class ExtractionData(
         val originalFile: KtFile,

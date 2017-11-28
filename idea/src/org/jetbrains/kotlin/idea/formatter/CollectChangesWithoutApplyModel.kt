@@ -27,10 +27,10 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.formatter.FormattingDocumentModelImpl
 import org.jetbrains.kotlin.idea.formatter.FormattingChange.ReplaceWhiteSpace
 import org.jetbrains.kotlin.idea.formatter.FormattingChange.ShiftIndentInsideRange
-import org.jetbrains.kotlin.psi.NotNullableCopyableUserDataProperty
+import org.jetbrains.kotlin.psi.NotNullablePsiCopyableUserDataProperty
 import org.jetbrains.kotlin.psi.UserDataProperty
 
-private var PsiFile.collectFormattingChanges: Boolean by NotNullableCopyableUserDataProperty(Key.create("COLLECT_FORMATTING_CHANGES"), false)
+private var PsiFile.collectFormattingChanges: Boolean by NotNullablePsiCopyableUserDataProperty(Key.create("COLLECT_FORMATTING_CHANGES"), false)
 private var PsiFile.collectChangesFormattingModel: CollectChangesWithoutApplyModel? by UserDataProperty(Key.create("COLLECT_CHANGES_FORMATTING_MODEL"))
 
 fun createCollectFormattingChangesModel(file: PsiFile, block: Block): FormattingModel? {
