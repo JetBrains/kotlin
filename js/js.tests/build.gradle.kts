@@ -63,7 +63,7 @@ projectTest("quickTest") {
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
 
 val runMocha by task<NpmTask> {
-    setWorkingDir(File("${project(":js:js.translator").projectDir}/testData"))
+    setWorkingDir(project(":js:js.translator").projectDir.resolve("testData"))
 
     val target = if (project.hasProperty("teamcity")) "runOnTeamcity" else "test"
     setArgs(listOf("run", target))
