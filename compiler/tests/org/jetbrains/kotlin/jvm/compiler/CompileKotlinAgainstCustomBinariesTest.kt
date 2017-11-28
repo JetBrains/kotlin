@@ -415,6 +415,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         assertEquals(result[0], result[1])
     }
 
+    fun testClassFromJdkInLibrary() {
+        val library = compileLibrary("library")
+        compileKotlin("source.kt", tmpdir, listOf(library))
+    }
+
     companion object {
         // compiler before 1.1.4 version  did not include suspension marks into bytecode.
         private fun stripSuspensionMarksToImitateLegacyCompiler(bytes: ByteArray): Pair<ByteArray, Int> {

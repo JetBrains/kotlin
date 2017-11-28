@@ -579,10 +579,12 @@ class KotlinCoreEnvironment private constructor(
             }
 
             if (!CoreJrtFileSystem.isModularJdk(javaRoot)) {
-                addJvmClasspathRoots(classesRoots)
                 if (classesRoots.isEmpty()) {
                     val messageCollector = get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                     messageCollector?.report(ERROR, "No class roots are found in the JDK path: $javaRoot")
+                }
+                else {
+                    addJvmSdkRoots(classesRoots)
                 }
             }
         }
