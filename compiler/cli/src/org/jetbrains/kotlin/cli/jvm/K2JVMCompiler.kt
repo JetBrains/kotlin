@@ -91,17 +91,19 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
-        configureContentRoots(paths, arguments, configuration)
-
         configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
-        if (arguments.buildFile == null && arguments.freeArgs.isEmpty() && !arguments.version) {
-            if (arguments.script) {
-                messageCollector.report(ERROR, "Specify script source path to evaluate")
-                return COMPILATION_ERROR
+        if (arguments.buildFile == null) {
+            configureContentRoots(paths, arguments, configuration)
+
+            if (arguments.freeArgs.isEmpty() && !arguments.version) {
+                if (arguments.script) {
+                    messageCollector.report(ERROR, "Specify script source path to evaluate")
+                    return COMPILATION_ERROR
+                }
+                ReplFromTerminal.run(rootDisposable, configuration)
+                return ExitCode.OK
             }
-            ReplFromTerminal.run(rootDisposable, configuration)
-            return ExitCode.OK
         }
 
         if (arguments.includeRuntime) {
