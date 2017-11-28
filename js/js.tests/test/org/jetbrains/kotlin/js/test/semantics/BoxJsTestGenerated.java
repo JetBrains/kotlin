@@ -3803,6 +3803,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineLambda.kt")
+        public void testInlineLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/incremental/inlineLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jsModule.kt")
         public void testJsModule() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/incremental/jsModule.kt");
