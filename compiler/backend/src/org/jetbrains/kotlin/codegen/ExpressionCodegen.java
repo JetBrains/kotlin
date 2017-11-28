@@ -3389,7 +3389,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private TypeAndNullability calcTypeForIEEE754ArithmeticIfNeeded(@Nullable KtExpression expression) {
-        return CodegenUtilKt.calcTypeForIEEE754ArithmeticIfNeeded(expression, bindingContext, context.getFunctionDescriptor());
+        return CodegenUtilKt.calcTypeForIEEE754ArithmeticIfNeeded(
+                expression, bindingContext, context.getFunctionDescriptor(), state.getLanguageVersionSettings());
     }
 
     private StackValue generateAssignmentExpression(KtBinaryExpression expression) {

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -199,7 +200,8 @@ internal fun createSimplePSICallArgument(
         typeInfoForArgument: KotlinTypeInfo
 ) = createSimplePSICallArgument(contextForArgument.trace.bindingContext, contextForArgument.statementFilter,
                                 contextForArgument.scope.ownerDescriptor, valueArgument,
-                                contextForArgument.dataFlowInfo, typeInfoForArgument)
+                                contextForArgument.dataFlowInfo, typeInfoForArgument,
+                                contextForArgument.languageVersionSettings)
 
 internal fun createSimplePSICallArgument(
         bindingContext: BindingContext,
@@ -207,7 +209,8 @@ internal fun createSimplePSICallArgument(
         ownerDescriptor: DeclarationDescriptor,
         valueArgument: ValueArgument,
         dataFlowInfoBeforeThisArgument: DataFlowInfo,
-        typeInfoForArgument: KotlinTypeInfo
+        typeInfoForArgument: KotlinTypeInfo,
+        languageVersionSettings: LanguageVersionSettings
 ): SimplePSIKotlinCallArgument? {
 
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
@@ -223,7 +226,8 @@ internal fun createSimplePSICallArgument(
     val receiverToCast = transformToReceiverWithSmartCastInfo(
             ownerDescriptor, bindingContext,
             typeInfoForArgument.dataFlowInfo, // dataFlowInfoBeforeThisArgument cannot be used here, because of if() { if (x != null) return; x }
-            ExpressionReceiver.create(ktExpression, baseType, bindingContext)
+            ExpressionReceiver.create(ktExpression, baseType, bindingContext),
+            languageVersionSettings
     ).let {
         if (onlyResolvedCall == null) it.prepareReceiverRegardingCaptureTypes() else it
     }
