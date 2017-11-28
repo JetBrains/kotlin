@@ -31,7 +31,9 @@ abstract class InapplicableArgumentDiagnostic : KotlinCallDiagnostic(INAPPLICABL
 }
 
 // ArgumentsToParameterMapper
-class TooManyArguments(override val argument: KotlinCallArgument, val descriptor: CallableDescriptor) : InapplicableArgumentDiagnostic()
+class TooManyArguments(val argument: KotlinCallArgument, val descriptor: CallableDescriptor) : KotlinCallDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
+}
 
 class NonVarargSpread(val argument: KotlinCallArgument) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentSpread(argument, this)
@@ -50,7 +52,7 @@ class NameNotFound(val argument: KotlinCallArgument, val descriptor: CallableDes
 class NoValueForParameter(
         val parameterDescriptor: ValueParameterDescriptor,
         val descriptor: CallableDescriptor
-) : KotlinCallDiagnostic(INAPPLICABLE) {
+) : KotlinCallDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
 }
 
