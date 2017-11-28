@@ -16,7 +16,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("net.sf.proguard:proguard-gradle:5.2.1")
+        classpath("net.sf.proguard:proguard-gradle:${property("versions.proguard")}")
         classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     }
 }

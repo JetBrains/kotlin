@@ -20,6 +20,7 @@ buildscript {
     extra["repos"] = repos
 
     extra["versions.shadow"] = "2.0.1"
+    extra["versions.proguard"] = "5.3.3"
 
     repositories {
         for (repo in repos) {
