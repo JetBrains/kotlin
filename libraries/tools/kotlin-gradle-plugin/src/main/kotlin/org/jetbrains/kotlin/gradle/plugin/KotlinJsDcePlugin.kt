@@ -43,7 +43,7 @@ class KotlinJsDcePlugin : Plugin<Project> {
         }
 
         project.afterEvaluate {
-            val outputDir = File(kotlinTask.outputFile).parentFile
+            val outputDir = File(File(project.buildDir, DEFAULT_OUT_DIR), sourceSet.name)
 
             val configuration = project.configurations.findByName(sourceSet.compileConfigurationName)
             val dceInputTrees = listOf(project.fileTree(kotlinTask.outputFile)) + configuration.map { project.fileTree(it) }
@@ -51,7 +51,7 @@ class KotlinJsDcePlugin : Plugin<Project> {
 
             with (dceTask) {
                 classpath = sourceSet.compileClasspath
-                destinationDir = File(outputDir, "min")
+                destinationDir = dceTask.dceOptions.outputDirectory?.let { File(it) } ?: outputDir
                 source(dceInputFiles)
             }
         }
@@ -60,5 +60,6 @@ class KotlinJsDcePlugin : Plugin<Project> {
     companion object {
         private const val TASK_SUFFIX = "kotlinJs"
         private const val DCE_TASK_PREFIX = "runDce"
+        private const val DEFAULT_OUT_DIR = "kotlin-js-min"
     }
 }
