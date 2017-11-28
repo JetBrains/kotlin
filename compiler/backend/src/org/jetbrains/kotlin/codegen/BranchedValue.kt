@@ -46,7 +46,9 @@ open class BranchedValue(
 
     override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
         when (arg1) {
-            is AbstractBranchedValue -> arg1.condJump(jumpLabel, v, jumpIfFalse)
+            is CondJump -> arg1.condJump(jumpLabel, v, jumpIfFalse)
+            is Trigger -> arg1.condJump(jumpLabel, v, jumpIfFalse)
+            is ConstantLocalVariable -> arg1.condJump(jumpLabel, v, jumpIfFalse)
             else -> arg1.put(operandType, v)
         }
         arg2?.put(operandType, v)
@@ -229,35 +231,6 @@ class ConstantLocalVariable(
         free()
     }
 }
-
-// ToDo(sergei): java doc
-class Chain private constructor(private val values: List<StackValue>, val type: Type) : AbstractBranchedValue(type) {
-
-    private val last: StackValue
-        get() = values.last()
-
-    override fun putSelector(type: Type, v: InstructionAdapter) {
-        for (value in values)
-            value.put(value.type, v)
-        coerceTo(type, v)
-    }
-
-    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        for (value in values.dropLast(1))
-            value.put(value.type, v)
-        BranchedValue.condJump(last).condJump(jumpLabel, v, jumpIfFalse)
-    }
-
-    companion object {
-        fun make(first: StackValue, vararg other: StackValue): Chain {
-            val last = other.lastOrNull() ?: first
-            val values = listOf(first) + other.toList()
-            val flat = values.flatMap { (it as? Chain)?.values ?: listOf(it) }.toList()
-            return Chain(flat, last.type)
-        }
-    }
-}
-
 
 class And(
         arg1: StackValue,
