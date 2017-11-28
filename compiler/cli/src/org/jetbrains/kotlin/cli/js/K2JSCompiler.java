@@ -72,7 +72,6 @@ import org.jetbrains.kotlin.utils.StringsKt;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
@@ -167,8 +166,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        ExitCode plugLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration);
-        if (plugLoadResult != ExitCode.OK) return plugLoadResult;
+        ExitCode pluginLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration);
+        if (pluginLoadResult != ExitCode.OK) return pluginLoadResult;
 
         configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
 
