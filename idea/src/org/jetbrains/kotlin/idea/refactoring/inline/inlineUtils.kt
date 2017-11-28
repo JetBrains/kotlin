@@ -86,7 +86,7 @@ fun showDialog(
 }
 
 internal var KtSimpleNameExpression.internalUsageInfos: MutableMap<FqName, (KtSimpleNameExpression) -> UsageInfo?>?
-        by CopyableUserDataProperty(Key.create("INTERNAL_USAGE_INFOS"))
+        by CopyablePsiUserDataProperty(Key.create("INTERNAL_USAGE_INFOS"))
 
 internal fun preProcessInternalUsages(element: KtElement, usages: Collection<KtElement>) {
     val mainFile = element.containingKtFile
