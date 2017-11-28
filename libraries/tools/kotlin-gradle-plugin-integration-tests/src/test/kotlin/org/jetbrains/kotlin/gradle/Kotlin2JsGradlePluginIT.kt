@@ -223,6 +223,30 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
         project.build("runRhino") {
             assertSuccessful()
+            val pathPrefix = "mainProject/build/kotlin-js-min/main"
+            assertFileExists("$pathPrefix/exampleapp.js.map")
+            assertFileExists("$pathPrefix/examplelib.js.map")
+            assertFileContains("$pathPrefix/exampleapp.js.map", "\"../../../src/main/kotlin/exampleapp/main.kt\"")
+
+            assertFileExists("$pathPrefix/kotlin.js")
+            assertTrue(fileInWorkingDir("$pathPrefix/kotlin.js").length() < 500 * 1000, "Looks like kotlin.js file was not minified by DCE")
+        }
+    }
+
+    @Test
+    fun testDceOutputPath() {
+        val project = Project("kotlin2JsDceProject", "2.10", minLogLevel = LogLevel.INFO)
+
+        project.setupWorkingDir()
+        File(project.projectDir, "mainProject/build.gradle").modify {
+            it + "\n" +
+            "runDceKotlinJs.dceOptions.outputDirectory = \"\${buildDir}/min\"\n" +
+            "runRhino.args = [\"-f\", \"min/kotlin.js\", \"-f\", \"min/examplelib.js\", \"-f\", \"min/exampleapp.js\"," +
+                "\"-f\", \"../check.js\"]\n"
+        }
+
+        project.build("runRhino") {
+            assertSuccessful()
             val pathPrefix = "mainProject/build/min"
             assertFileExists("$pathPrefix/exampleapp.js.map")
             assertFileExists("$pathPrefix/examplelib.js.map")
@@ -245,10 +269,10 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
         project.build("runRhino") {
             assertSuccessful()
-            val pathPrefix = "mainProject/build/min"
+            val pathPrefix = "mainProject/build/kotlin-js-min/main"
             assertFileExists("$pathPrefix/exampleapp.js.map")
             assertFileExists("$pathPrefix/examplelib.js.map")
-            assertFileContains("$pathPrefix/exampleapp.js.map", "\"../../src/main/kotlin/exampleapp/main.kt\"")
+            assertFileContains("$pathPrefix/exampleapp.js.map", "\"../../../src/main/kotlin/exampleapp/main.kt\"")
 
             assertFileExists("$pathPrefix/kotlin.js")
             assertTrue(fileInWorkingDir("$pathPrefix/kotlin.js").length() > 1000 * 1000, "Looks like kotlin.js file was minified by DCE")
