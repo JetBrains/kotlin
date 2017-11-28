@@ -1,1 +1,3 @@
 **/testData/** linguist-vendored
+compiler/cli/bin/* eol=lf
+compiler/cli/bin/*.bat eol=crlf
