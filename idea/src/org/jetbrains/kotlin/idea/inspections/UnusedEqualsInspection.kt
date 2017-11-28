@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -48,15 +49,14 @@ class UnusedEqualsInspection : AbstractKotlinInspection() {
                 }
             }
 
-            override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-                super.visitDotQualifiedExpression(expression)
+            override fun visitCallExpression(expression: KtCallExpression) {
+                super.visitCallExpression(expression)
 
-                val callExpression = expression.selectorExpression as? KtCallExpression ?: return
-                val calleeExpression = callExpression.calleeExpression as? KtSimpleNameExpression ?: return
+                val calleeExpression = expression.calleeExpression as? KtSimpleNameExpression ?: return
                 if (calleeExpression.getReferencedNameAsName() != OperatorNameConventions.EQUALS) return
 
                 if (!expression.isAnyEquals()) return
-                reportIfNotUsedAsExpression(expression, calleeExpression)
+                reportIfNotUsedAsExpression(expression.getQualifiedExpressionForSelectorOrThis(), calleeExpression)
             }
         }
     }
