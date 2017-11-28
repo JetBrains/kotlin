@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
+import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
@@ -60,7 +60,7 @@ class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: 
         if (substitutor.isEmpty) return descriptors
         if (descriptors.isEmpty()) return descriptors
 
-        val result = newHashSetWithExpectedSize<D>(descriptors.size)
+        val result = newLinkedHashSetWithExpectedSize<D>(descriptors.size)
         for (descriptor in descriptors) {
             val substitute = substitute(descriptor)
             result.add(substitute)
