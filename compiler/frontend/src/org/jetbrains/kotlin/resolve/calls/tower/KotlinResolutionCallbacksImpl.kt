@@ -79,7 +79,7 @@ class KotlinResolutionCallbacksImpl(
 
         fun createCallArgument(ktExpression: KtExpression, typeInfo: KotlinTypeInfo) =
                 createSimplePSICallArgument(trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
-                                            CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo)
+                                            CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings)
 
         val lambdaInfo = LambdaInfo(expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
                                     if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT)
@@ -156,7 +156,8 @@ class KotlinResolutionCallbacksImpl(
                 resolvedAtom.candidateDescriptor,
                 trace.bindingContext,
                 psiKotlinCall.resultDataFlowInfo,
-                ExpressionReceiver.create(expression, returnType, trace.bindingContext)
+                ExpressionReceiver.create(expression, returnType, trace.bindingContext),
+                languageVersionSettings
         )
     }
 }

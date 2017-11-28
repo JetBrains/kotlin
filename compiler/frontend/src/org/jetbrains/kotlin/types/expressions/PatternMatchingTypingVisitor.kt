@@ -102,7 +102,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             DataFlowValueFactory.createDataFlowValue(it, subjectType, contextAfterSubject)
         } ?: DataFlowValue.nullValue(components.builtIns)
 
-        val possibleTypesForSubject = subjectTypeInfo?.dataFlowInfo?.getStableTypes(subjectDataFlowValue) ?: emptySet()
+        val possibleTypesForSubject = subjectTypeInfo?.dataFlowInfo?.getStableTypes(
+                subjectDataFlowValue, components.languageVersionSettings) ?: emptySet()
         checkSmartCastsInSubjectIfRequired(expression, contextBeforeSubject, subjectType, possibleTypesForSubject)
 
         val dataFlowInfoForEntries = analyzeConditionsInWhenEntries(expression, contextAfterSubject, subjectDataFlowValue, subjectType)
@@ -463,7 +464,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     ) {
         if (subjectType.containsError() || targetType.containsError()) return
 
-        val possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(subjectType, context, subjectDataFlowValue)
+        val possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(subjectType, context, subjectDataFlowValue, context.languageVersionSettings)
         if (CastDiagnosticsUtil.isRefinementUseless(possibleTypes, targetType, false)) {
             context.trace.report(Errors.USELESS_IS_CHECK.on(isCheck, !negated))
         }
