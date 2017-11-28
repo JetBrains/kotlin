@@ -30,7 +30,7 @@ afterEvaluate {
     dependencies {
         compileOnly(intellijCoreJar())
         testCompile(intellijCoreJar())
-        testCompile(intellij { include("idea.jar", "idea_rt.jar", "openapi.jar") })
+        testCompile(intellij { include("idea.jar", "idea_rt.jar", "openapi.jar", "log4j.jar", "jdom.jar", "jps-model.jar") })
     }
 }
 
