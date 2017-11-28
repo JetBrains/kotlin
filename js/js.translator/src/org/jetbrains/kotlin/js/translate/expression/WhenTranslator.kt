@@ -243,7 +243,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
     private fun KotlinType.getEnumClass(): ClassDescriptor? {
         if (isMarkedNullable) return null
         val classDescriptor = (constructor.declarationDescriptor as? ClassDescriptor)
-        return if (classDescriptor?.kind == ClassKind.ENUM_CLASS) classDescriptor else null
+        return if (classDescriptor?.kind == ClassKind.ENUM_CLASS && !classDescriptor.isExternal) classDescriptor else null
     }
 
     private fun translateEntryExpression(
