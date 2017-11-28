@@ -46,7 +46,7 @@ class KotlinJsDcePlugin : Plugin<Project> {
         }
 
         project.afterEvaluate {
-            val outputDir = File(kotlinTask.outputFile).parentFile
+            val outputDir = kotlinTask.outputFile.parentFile
 
             val dependenciesDir = File(outputDir, "dependencies")
             val dependenciesTemporaryDir = File(outputDir, "dependencies-tmp")

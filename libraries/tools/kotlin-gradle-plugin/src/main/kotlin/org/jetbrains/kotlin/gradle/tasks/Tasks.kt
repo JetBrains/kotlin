@@ -446,8 +446,8 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
 
     @Suppress("unused")
     @get:OutputFile
-    val outputFile: String
-        get() = kotlinOptions.outputFile ?: defaultOutputFile.canonicalPath
+    val outputFile: File
+        get() = kotlinOptions.outputFile?.let(::File) ?: defaultOutputFile
 
     override fun findKotlinCompilerClasspath(project: Project): List<File> =
             findKotlinJsCompilerClasspath(project)
@@ -459,7 +459,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly)
 
-        args.outputFile = outputFile
+        args.outputFile = outputFile.canonicalPath
 
         if (defaultsOnly) return
 
@@ -473,8 +473,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     internal val friendDependency
         get() = friendTaskName
                 ?.let { project.getTasksByName(it, false).singleOrNull() as? Kotlin2JsCompile }
-                ?.outputFile
-                ?.let { File(it).parentFile }
+                ?.outputFile?.parentFile
                 ?.let { if (LibraryUtils.isKotlinJavascriptLibrary(it)) it else null }
                 ?.absolutePath
 

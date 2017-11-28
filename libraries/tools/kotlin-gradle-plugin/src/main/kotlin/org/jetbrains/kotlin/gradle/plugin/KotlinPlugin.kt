@@ -296,8 +296,8 @@ internal class Kotlin2JsSourceSetProcessor(
             val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
                     project, kotlinTask, kotlinTask, null, null, sourceSet)
 
-            kotlinTask.kotlinOptions.outputFile = File(kotlinTask.outputFile).absolutePath
-            val outputDir = File(kotlinTask.outputFile).parentFile
+            kotlinTask.kotlinOptions.outputFile = kotlinTask.outputFile.absolutePath
+            val outputDir = kotlinTask.outputFile.parentFile
 
             if (FileUtil.isAncestor(outputDir, project.rootDir, false))
                 throw InvalidUserDataException(
@@ -323,7 +323,7 @@ internal class Kotlin2JsSourceSetProcessor(
         val task = project.tasks.create(taskName, Delete::class.java)
         task.onlyIf { kotlinTask.kotlinOptions.sourceMap }
         task.delete(object : Closure<String>(this) {
-            override fun call(): String? = (kotlinTask.property("outputFile") as String) + ".map"
+            override fun call(): String? = (kotlinTask.property("outputFile") as File).canonicalPath + ".map"
         })
         project.tasks.findByName("clean")?.dependsOn(taskName)
     }
