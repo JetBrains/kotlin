@@ -72,7 +72,7 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
                 editor
         ) ?: return
 
-        val replacementStrategy = CallableUsageReplacementStrategy(codeToInline)
+        val replacementStrategy = CallableUsageReplacementStrategy(codeToInline, inlineSetter = false)
 
         val dialog = KotlinInlineFunctionDialog(project, element, nameReference, replacementStrategy,
                                                 allowInlineThisOnly = recursive)

@@ -14,6 +14,5 @@ class A {
 
 fun foo() {
     val a = A()
-    // Works incorrectly yet
     a.<caret>old = "foo"
 }
