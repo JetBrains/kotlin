@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.addJvmSdkRoots
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
@@ -67,7 +68,7 @@ class KotlinJsr223JvmLocalScriptEngine(
     }
 
     private fun makeCompilerConfiguration() = CompilerConfiguration().apply {
-        addJvmClasspathRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
+        addJvmSdkRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
         addJvmClasspathRoots(templateClasspath)
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
         languageVersionSettings = LanguageVersionSettingsImpl(
