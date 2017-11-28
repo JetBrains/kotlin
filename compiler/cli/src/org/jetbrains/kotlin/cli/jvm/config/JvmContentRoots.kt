@@ -40,6 +40,10 @@ fun CompilerConfiguration.addJvmClasspathRoots(files: List<File>) {
     files.forEach(this::addJvmClasspathRoot)
 }
 
+fun CompilerConfiguration.addJvmSdkRoots(files: List<File>) {
+    addAll(JVMConfigurationKeys.CONTENT_ROOTS, 0, files.map(::JvmClasspathRoot))
+}
+
 val CompilerConfiguration.jvmClasspathRoots: List<File>
     get() = getList(JVMConfigurationKeys.CONTENT_ROOTS).filterIsInstance<JvmClasspathRoot>().map(JvmContentRoot::file)
 
