@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.KonanInteropLibrary
 import org.jetbrains.kotlin.gradle.plugin.KonanLibrary
 import org.jetbrains.kotlin.gradle.plugin.KonanProgram
 import org.jetbrains.kotlin.gradle.plugin.konanArtifactsContainer
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.TargetManager
 import java.io.File
 
@@ -70,7 +71,7 @@ open class KonanGenerateCMakeTask : DefaultTask() {
                 appendln(
                         Call("cinterop")
                                 .arg("NAME", interop.name)
-                                .arg("DEF_FILE", task.defFile.relativePath.toString())
+                                .arg("DEF_FILE", task.defFile.relativePath.toString().crossPlatformPath)
                                 .arg("COMPILER_OPTS", task.cMakeCompilerOpts)
                 )
             }
@@ -99,11 +100,15 @@ open class KonanGenerateCMakeTask : DefaultTask() {
 
     private val File.relativePath get() = relativeTo(project.projectDir)
 
+    private val String.crossPlatformPath get() =
+        if (TargetManager.host.family == Family.WINDOWS) replace('\\', '/') else this
+
     private val FileCollection.asCMakeSourceList: List<String>
-        get() = files.map { it.relativePath.toString() }
+        get() = files.map { it.relativePath.toString().crossPlatformPath }
 
     private val KonanInteropTask.cMakeCompilerOpts: String
-        get() = compilerOpts.joinToString(" ")
+        get() = (compilerOpts + includeDirs.allHeadersDirs.map { "-I${it.absolutePath.crossPlatformPath}" })
+                .joinToString(" ")
 
     private val KonanCompileTask.cMakeSources: String
         get() = srcFiles.flatMap { it.asCMakeSourceList }.joinToString(" ")
@@ -112,7 +117,7 @@ open class KonanGenerateCMakeTask : DefaultTask() {
         get() = mutableListOf<String>().apply {
             addAll(libraries.artifacts.map { it.artifactName })
             addAll(libraries.namedKlibs)
-            addAll(libraries.files.flatMap { it.files }.map { it.canonicalPath })
+            addAll(libraries.files.flatMap { it.files }.map { it.canonicalPath.crossPlatformPath })
         }.joinToString(" ")
 
     private val KonanCompileTask.cMakeLinkerOpts: String

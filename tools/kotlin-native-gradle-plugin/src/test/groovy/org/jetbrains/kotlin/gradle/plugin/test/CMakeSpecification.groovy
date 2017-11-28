@@ -1,9 +1,12 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
-class CMakeSpecification extends BaseKonanSpecification {
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.TargetManager
 
+class CMakeSpecification extends BaseKonanSpecification {
     def 'Plugin should generate CMake from project without additional settings'() {
         when:
+        def sdlIncludePath = (TargetManager.host.family == Family.WINDOWS) ? "C:/SDL2/include" : "/usr/include/SDL2"
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
             it.buildFile.write("""
             plugins { id 'konan' }
@@ -11,7 +14,7 @@ class CMakeSpecification extends BaseKonanSpecification {
                 interop('stdio')
                 interop('sdl') {
                     defFile 'src/main/c_interop/sdl.def'
-                    includeDirs '/usr/include/SDL2'
+                    includeDirs '$sdlIncludePath'
                 }
                 library('main_lib')
                 program('Main') {
@@ -40,7 +43,7 @@ class CMakeSpecification extends BaseKonanSpecification {
             cinterop(
                 NAME sdl
                 DEF_FILE src/main/c_interop/sdl.def
-                COMPILER_OPTS -I/usr/include/SDL2)
+                COMPILER_OPTS -I$sdlIncludePath)
             
             cinterop(
                 NAME stdio
@@ -61,7 +64,7 @@ class CMakeSpecification extends BaseKonanSpecification {
         cMakeModule.exists()
         cMakeLists.exists()
 
-        def actualCMakeLists = cMakeLists.text.trim()
+        def actualCMakeLists = cMakeLists.text.trim().replace('\r\n', '\n')
         actualCMakeLists == expectedCMakeLists
     }
 
