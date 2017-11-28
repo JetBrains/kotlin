@@ -20,6 +20,8 @@ import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
@@ -506,10 +508,22 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .within(KtNodeTypes.PARENTHESIZED)
                 .set(Indent.getContinuationWithoutFirstIndent(false)),
 
-        strategy("Round Brackets around conditions")
-                .forType(LPAR, RPAR)
+        strategy("Opening parenthesis for conditions")
+                .forType(LPAR)
                 .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
                 .set(Indent.getContinuationWithoutFirstIndent(true)),
+
+        strategy("Closing parenthesis for conditions")
+                .forType(RPAR)
+                .forElement { node -> !hasErrorElementBefore(node) }
+                .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+                .set(Indent.getNoneIndent()),
+
+        strategy("Closing parenthesis for incomplete conditions")
+                .forType(RPAR)
+                .forElement { node -> hasErrorElementBefore(node) }
+                .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+                .set(Indent.getContinuationWithoutFirstIndent()),
 
         strategy("KDoc comment indent")
                 .within(KDOC_CONTENT)
@@ -549,6 +563,13 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
 
 
 private fun getOperationType(node: ASTNode): IElementType? = node.findChildByType(KtNodeTypes.OPERATION_REFERENCE)?.firstChildNode?.elementType
+
+private fun hasErrorElementBefore(node: ASTNode): Boolean {
+    val prevSibling = getPrevWithoutWhitespace(node) ?: return false
+    if (prevSibling.elementType == TokenType.ERROR_ELEMENT) return true
+    val lastChild = TreeUtil.getLastChild(prevSibling)
+    return lastChild?.elementType == TokenType.ERROR_ELEMENT
+}
 
 private fun getAlignmentForChildInParenthesis(
         shouldAlignChild: Boolean, parameter: IElementType, delimiter: IElementType,
