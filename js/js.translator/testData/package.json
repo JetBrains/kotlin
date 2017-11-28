@@ -7,7 +7,7 @@
     "mocha-teamcity-reporter": "1.1.1"
   },
   "scripts": {
-    "test": "mocha --reporter mocha-teamcity-reporter",
-    "mocha": "mocha"
+    "runOnTeamcity": "mocha --reporter mocha-teamcity-reporter",
+    "test": "mocha"
   }
 }
