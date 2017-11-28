@@ -56,7 +56,7 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
         // Foo<Bar!>! -> Foo<Bar>?
         var approximation =
                 if (isCollection)
-                    (if (isAnnotatedReadOnly()) flexible.upperBound else flexible.lowerBound).makeNullableAsSpecified(!preferNotNull)
+                    flexible.lowerBound.makeNullableAsSpecified(!preferNotNull)
                 else
                     if (this is RawType && preferStarForRaw) flexible.upperBound.makeNullableAsSpecified(!preferNotNull)
                 else
@@ -83,10 +83,6 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
                                                                  ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
     )
 }
-
-fun KotlinType.isAnnotatedReadOnly(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_READONLY_ANNOTATION)
-fun KotlinType.isAnnotatedNotNull(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NOT_NULL_ANNOTATION)
-fun KotlinType.isAnnotatedNullable(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NULLABLE_ANNOTATION)
 
 private fun KotlinType.hasAnnotationMaybeExternal(fqName: FqName) = with (annotations) {
     findAnnotation(fqName) ?: findExternalAnnotation(fqName)
