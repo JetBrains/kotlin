@@ -451,7 +451,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                 }
 
                 android {
-                    compileSdkVersion 23
+                    compileSdkVersion 26
                     buildToolsVersion "23.0.1"
                     defaultConfig {
                         applicationId "org.jetbrains.kotlin"
@@ -584,7 +584,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                 }
 
                 android {
-                    compileSdkVersion 23
+                    compileSdkVersion 26
                     buildToolsVersion "23.0.1"
                     defaultConfig {
                         applicationId "org.jetbrains.kotlin"
