@@ -23,5 +23,5 @@ fun <T : String?> foo(x: T) {
 
     x<!NI;UNSAFE_CALL!>.<!><!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar3<!>()
 
-    x?.let { it<!UNSAFE_CALL!>.<!>length }
+    x?.let { it<!OI;UNSAFE_CALL!>.<!>length }
 }
