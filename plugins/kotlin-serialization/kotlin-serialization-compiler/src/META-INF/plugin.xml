@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin url="https://github.com/Kotlin/kotlinx.serialization" >
     <name>Kotlin-serialization</name>
     <id>org.jetbrains.kotlinx.serialization</id>
     <version>0.3</version>
