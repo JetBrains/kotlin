@@ -270,7 +270,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
         project.tasks.create(KONAN_GENERATE_CMAKE_TASK_NAME, KonanGenerateCMakeTask::class.java)
         project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)
-        project.extensions.create(ARTIFACTS_CONTAINER_NAME, KonanArtifactContainer::class.java, project)
+        project.extensions.create(KonanArtifactContainer::class.java, ARTIFACTS_CONTAINER_NAME, KonanArtifactContainer::class.java, project)
 
         // Set additional project properties like konan.home, konan.build.targets etc.
         if (!project.hasProperty(ProjectProperty.KONAN_HOME)) {
