@@ -94,22 +94,22 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
 
                 expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ")
                 val contents = StringUtil.convertLineSeparators(fileText)
-                var filePath = testFile.canonicalFile.name
+                var fileName = testFile.canonicalFile.name
                 val putIntoPackageFolder = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FORCE_PACKAGE_FOLDER") != null
                 if (putIntoPackageFolder) {
-                    filePath = getPathAccordingToPackage(filePath, contents)
-                    myFixture.addFileToProject(filePath, contents)
-                    myFixture.configureByFile(filePath)
+                    fileName = getPathAccordingToPackage(fileName, contents)
+                    myFixture.addFileToProject(fileName, contents)
+                    myFixture.configureByFile(fileName)
                 }
                 else {
-                    myFixture.configureByText(filePath, contents)
+                    myFixture.configureByText(fileName, contents)
                 }
 
                 checkForUnexpectedActions()
 
                 configExtra(fileText)
 
-                applyAction(contents, filePath)
+                applyAction(contents, fileName)
 
                 UsefulTestCase.assertEmpty(expectedErrorMessage)
             }
@@ -136,8 +136,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
         }, "", "")
     }
 
-    private fun applyAction(contents: String, testFullPath: String) {
-        val fileName = testFullPath.substringAfterLast(File.separatorChar, "")
+    private fun applyAction(contents: String, fileName: String) {
         val actionHint = ActionHint.parse(myFixture.file, contents.replace("\${file}", fileName, ignoreCase = true))
         val intention = findActionWithText(actionHint.expectedText)
         if (actionHint.shouldPresent()) {
@@ -150,11 +149,11 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
             UIUtil.dispatchAllInvocationEvents()
 
             if (!shouldBeAvailableAfterExecution()) {
-                assertNull("Action '${actionHint.expectedText}' is still available after its invocation in test " + testFullPath,
+                assertNull("Action '${actionHint.expectedText}' is still available after its invocation in test " + fileName,
                             findActionWithText(actionHint.expectedText))
             }
 
-            myFixture.checkResultByFile(File(testFullPath).name + ".after")
+            myFixture.checkResultByFile(File(fileName).name + ".after")
         }
         else {
             assertNull("Action with text ${actionHint.expectedText} is present, but should not", intention)
