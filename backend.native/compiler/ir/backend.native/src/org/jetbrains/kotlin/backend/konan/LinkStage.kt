@@ -329,18 +329,25 @@ internal class LinkStage(val context: Context) {
         get() = if (nomain || dynamic) emptyList() else platform.entrySelector
 
     private fun link(objectFiles: List<ObjectFile>, includedBinaries: List<String>, libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
-        val executable = if (context.config.produce != CompilerOutputKind.FRAMEWORK) {
-            context.config.outputFile
+        val frameworkLinkerArgs: List<String>
+        val executable: String
+
+        if (context.config.produce != CompilerOutputKind.FRAMEWORK) {
+            frameworkLinkerArgs = emptyList()
+            executable = context.config.outputFile
         } else {
             val framework = File(context.config.outputFile)
+            val dylibName = framework.name.removeSuffix(".framework")
+            frameworkLinkerArgs = listOf("-install_name", "@rpath/${framework.name}/$dylibName")
             framework.mkdirs()
-            framework.child(framework.name.removeSuffix(".framework")).absolutePath
+            executable = framework.child(dylibName).absolutePath
         }
 
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize, debug, dynamic) +
                 platform.targetLibffi +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                 entryPointSelector +
+                frameworkLinkerArgs +
                 platform.linkCommandSuffix() +
                 platform.linkStaticLibraries(includedBinaries) +
                 libraryProvidedLinkerFlags
