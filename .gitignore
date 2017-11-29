@@ -22,8 +22,9 @@ workspace.xml
 .gradle/
 build/
 !**/src/**/build
-*.iml
 !**/test/**/build
+*.iml
+!**/testData/**/*.iml
 .idea/modules.xml
 .idea/libraries/Gradle*.xml
 .idea/modules
