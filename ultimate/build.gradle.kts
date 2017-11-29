@@ -54,6 +54,8 @@ dependencies {
     compile(ideaUltimatePluginDeps("*.jar", plugin = "JavaScriptLanguage"))
     compile(ideaUltimatePluginDeps("*.jar", plugin = "JavaScriptDebugger"))
 
+    runtime(project(":plugins:kapt3-idea")) { isTransitive = false }
+
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
