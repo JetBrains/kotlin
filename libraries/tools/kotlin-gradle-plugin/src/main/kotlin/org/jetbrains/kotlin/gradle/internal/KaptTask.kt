@@ -26,6 +26,9 @@ open class KaptTask : ConventionTask() {
                 || FileUtil.isAncestor(classesDir, file, /* strict = */ false)
     }
 
+    @get:InputFiles
+    lateinit var kaptClasspath: List<File>
+
     @OutputDirectory
     internal lateinit var classesDir: File
 
