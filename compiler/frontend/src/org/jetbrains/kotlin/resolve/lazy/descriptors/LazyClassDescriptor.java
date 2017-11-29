@@ -607,6 +607,19 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             }
         }
 
+        @Override
+        protected void reportScopesLoopError(@NotNull KotlinType type) {
+            PsiElement reportOn = DescriptorToSourceUtils.getSourceFromDescriptor(type.getConstructor().getDeclarationDescriptor());
+
+            if (reportOn instanceof KtClass) {
+                reportOn = ((KtClass) reportOn).getNameIdentifier();
+            }
+
+            if (reportOn != null) {
+                c.getTrace().report(CYCLIC_SCOPES_WITH_COMPANION.on(reportOn));
+            }
+        }
+
         private void reportCyclicInheritanceHierarchyError(
                 @NotNull BindingTrace trace,
                 @NotNull ClassDescriptor classDescriptor,
