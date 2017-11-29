@@ -67,6 +67,9 @@ class JavaClassesTrackerImpl(private val cache: IncrementalJvmCache) : JavaClass
         for (classDescriptor in classDescriptors.toList()) {
             val classId = classDescriptor.classId!!
             if (cache.isJavaClassAlreadyInCache(classId) || classDescriptor.wasContentRequested()) {
+                assert(classId !in classToSourceSerialized) {
+                    "Duplicated JavaClassDescriptor $classId reported to IC"
+                }
                 classToSourceSerialized[classId] = CONVERTING_JAVA_CLASSES_TO_PROTO.time {
                     classDescriptor.convertToProto()
                 }
