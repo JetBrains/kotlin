@@ -22,6 +22,7 @@ import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.konan.target.*
 
 class ExecClang {
 
@@ -31,11 +32,52 @@ class ExecClang {
         this.project = project
     }
 
-    public ExecResult execClang(Closure closure) {
-        return this.execClang(ConfigureUtil.configureUsing(closure));
+    private List<String> konanArgs(KonanTarget target) {
+        return project.rootProject.targetClangArgs(target)
     }
 
-    public ExecResult execClang(Action<? super ExecSpec> action) {
+    private List<String> konanArgs(String target) {
+        return konanArgs(new TargetManager(target).target)
+    }
+
+    // The bare ones invoke clang with system default sysroot.
+
+    public ExecResult execBareClang(Action<? super ExecSpec> action) {
+        return this.execClang([], action)
+    }
+
+    public ExecResult execBareClang(Closure closure) {
+        return this.execClang([], closure)
+    }
+
+    // The konan ones invoke clang with konan provided sysroots.
+    // So they require a target or assume it to be the host.
+    // The target can be specified as KonanTarget or as a
+    // (nullable, which means host) target name.
+
+    public ExecResult execKonanClang(String target, Action<? super ExecSpec> action) {
+        return this.execClang(konanArgs(target), action)
+    }
+
+    public ExecResult execKonanClang(KonanTarget target, Action<? super ExecSpec> action) {
+        return this.execClang(konanArgs(target), action)
+    }
+
+    public ExecResult execKonanClang(String target, Closure closure) {
+        return this.execClang(konanArgs(target), closure)
+    }
+
+    public ExecResult execKonanClang(KonanTarget target, Closure closure) {
+        return this.execClang(konanArgs(target), closure)
+    }
+
+    // These ones are private, so one has to choose either Bare or Konan.
+
+    private ExecResult execClang(List<String> defaultArgs, Closure closure) {
+        return this.execClang(defaultArgs, ConfigureUtil.configureUsing(closure))
+    }
+
+    private ExecResult execClang(List<String> defaultArgs, Action<? super ExecSpec> action) {
         Action<? super ExecSpec> extendedAction = new Action<ExecSpec>() {
             @Override
             void execute(ExecSpec execSpec) {
@@ -55,6 +97,7 @@ class ExecClang {
 
                     environment["PATH"] = project.files(project.hostClang.hostClangPath).asPath +
                             File.pathSeparator + environment["PATH"]
+                    args defaultArgs
                 }
             }
         }

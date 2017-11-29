@@ -98,11 +98,6 @@ class CompileCppToBitcode extends DefaultTask {
         linkerArgs.addAll(args)
     }
 
-    List<String> targetArgs(String target) {
-        def result = project.rootProject.targetClangArgs(KonanTarget.valueOf(target.toUpperCase()))
-        return result
-    }
-
     @TaskAction
     void compile() {
         // the strange code below seems to be required due to some Gradle (Groovy?) behaviour
@@ -113,12 +108,11 @@ class CompileCppToBitcode extends DefaultTask {
         File objDir = this.getObjDir()
         objDir.mkdirs()
 
-        project.execClang {
+        project.execKonanClang(this.target) {
             workingDir objDir
             executable "clang++"
             args '-std=c++11'
 
-            args targetArgs(this.target)
             args compilerArgs
 
             args "-I$headersDir"

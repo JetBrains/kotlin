@@ -2286,7 +2286,7 @@ if (isMac()) {
         interop = 'objcSmoke'
 
         doFirst {
-            execClang {
+            execKonanClang(project.testTarget) {
                 args "$projectDir/interop/objc/smoke.m"
                 args "-lobjc", '-fobjc-arc'
                 args '-fPIC', '-shared', '-o', "$buildDir/libobjcsmoke.dylib"
