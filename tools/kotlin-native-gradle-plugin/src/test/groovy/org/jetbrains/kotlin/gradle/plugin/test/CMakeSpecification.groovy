@@ -6,7 +6,26 @@ import org.jetbrains.kotlin.konan.target.TargetManager
 class CMakeSpecification extends BaseKonanSpecification {
     def 'Plugin should generate CMake from project without additional settings'() {
         when:
-        def sdlIncludePath = (TargetManager.host.family == Family.WINDOWS) ? "C:/SDL2/include" : "/usr/include/SDL2"
+        def sdlIncludePath
+        def sdlLinkOptions
+        switch (TargetManager.host.family) {
+            case Family.WINDOWS:
+                sdlIncludePath = "C:/SDL2/include"
+                sdlLinkOptions = "C:/SDL2/lib"
+                break
+            case Family.OSX:
+                sdlIncludePath = "/usr/include/SDL2"
+                sdlLinkOptions = "-F /Library/Frameworks -framework SDL2"
+                break
+            case Family.LINUX:
+                sdlIncludePath = "/usr/include/SDL2"
+                sdlLinkOptions = "-L/usr/lib/x86_64-linux-gnu"
+                break
+            default:
+                throw IllegalStateException("Unknown host: $TargetManager.host")
+                break
+        }
+
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
             it.buildFile.write("""
             plugins { id 'konan' }
@@ -14,14 +33,18 @@ class CMakeSpecification extends BaseKonanSpecification {
                 interop('stdio')
                 interop('sdl') {
                     defFile 'src/main/c_interop/sdl.def'
-                    includeDirs '$sdlIncludePath'
+                    target('mingw') { includeDirs 'C:/SDL2/include' }
+                    target('macbook') { includeDirs '/usr/include/SDL2' }
+                    target('linux') { includeDirs '/usr/include/SDL2' }
                 }
                 library('main_lib')
                 program('Main') {
                     libraries {
                         artifact 'stdio'
                         artifact 'main_lib'
-                        linkerOpts '-L/usr/lib/x86_64-linux-gnu'
+                        target('mingw') { linkerOpts 'C:/SDL2/lib' }
+                        target('macbook') { linkerOpts '-F /Library/Frameworks -framework SDL2' }
+                        target('linux') { linkerOpts '-L/usr/lib/x86_64-linux-gnu' }
                     }
                 }
             }
@@ -57,7 +80,7 @@ class CMakeSpecification extends BaseKonanSpecification {
                 NAME Main
                 SOURCES src/main/kotlin/main.kt
                 LIBRARIES stdio main_lib
-                LINKER_OPTS -L/usr/lib/x86_64-linux-gnu)
+                LINKER_OPTS $sdlLinkOptions)
             """.stripIndent().trim()
 
         then:
