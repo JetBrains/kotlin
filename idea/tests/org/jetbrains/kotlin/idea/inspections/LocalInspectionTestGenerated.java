@@ -800,6 +800,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/javaCollectionsStaticMethod"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("fill.kt")
+        public void testFill() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/fill.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("reverse.kt")
         public void testReverse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/reverse.kt");
@@ -809,6 +815,18 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("reverseImmutableList.kt")
         public void testReverseImmutableList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/reverseImmutableList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shuffle.kt")
+        public void testShuffle() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/shuffle.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shuffleRandom.kt")
+        public void testShuffleRandom() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/javaCollectionsStaticMethod/shuffleRandom.kt");
             doTest(fileName);
         }
 

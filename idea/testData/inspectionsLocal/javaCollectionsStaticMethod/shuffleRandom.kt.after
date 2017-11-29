@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+import java.util.*
+
+fun test() {
+    val mutableList = mutableListOf(1, 2)
+    mutableList.shuffle(Random(1))
+}

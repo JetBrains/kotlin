@@ -58,13 +58,14 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
         if (!fqName.startsWith("java.util.Collections.")) return false
         val valueArgs = callExpression.valueArguments
         val valueArgsSize = valueArgs.size
+        if (valueArgsSize < 1) return false
+        if (!isMutableList(valueArgs[0], context)) return false
         return when (fqName) {
-            "java.util.Collections.reverse" ->
-                valueArgsSize == 1 && isMutableList(valueArgs[0], context)
-            "java.util.Collections.sort" ->
-                (valueArgsSize == 1 || valueArgsSize == 2) && isMutableList(valueArgs[0], context)
-            else ->
-                false
+            "java.util.Collections.fill" -> valueArgsSize == 2
+            "java.util.Collections.reverse" -> valueArgsSize == 1
+            "java.util.Collections.shuffle" -> valueArgsSize == 1 || valueArgsSize == 2
+            "java.util.Collections.sort" -> valueArgsSize == 1 || valueArgsSize == 2
+            else -> false
         }
     }
 
@@ -87,8 +88,17 @@ private class ReplaceWithSortFix(private val fqName: String) : LocalQuickFix {
         val arg2 = valueArguments.getOrNull(1)?.getArgumentExpression()
         val factory = KtPsiFactory(project)
         val newExpression = when (fqName) {
+            "java.util.Collections.fill" -> when {
+                arg1 != null && arg2 != null -> factory.createExpressionByPattern("$0.fill($1)", arg1, arg2)
+                else -> null
+            }
             "java.util.Collections.reverse" -> when {
                 arg1 != null -> factory.createExpressionByPattern("$0.reverse()", arg1)
+                else -> null
+            }
+            "java.util.Collections.shuffle" -> when {
+                arg1 != null && arg2 != null -> factory.createExpressionByPattern("$0.shuffle($1)", arg1, arg2)
+                arg1 != null -> factory.createExpressionByPattern("$0.shuffle()", arg1)
                 else -> null
             }
             "java.util.Collections.sort" -> when {
