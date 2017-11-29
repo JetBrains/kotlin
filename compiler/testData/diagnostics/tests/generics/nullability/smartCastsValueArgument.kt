@@ -11,12 +11,12 @@ fun <T : CharSequence?> foo(x: T) {
     if (x != null) {
         if (<!SENSELESS_COMPARISON!>x != null<!>) {}
 
-        y1 = <!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>x<!>
+        y1 = <!DEBUG_INFO_SMARTCAST!>x<!>
         y2 = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
 
-        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(<!NI;TYPE_MISMATCH!>x<!>)
-        bar1<CharSequence>(<!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>x<!>)
-        bar2(<!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>x<!>)
+        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(<!NI;DEBUG_INFO_SMARTCAST!>x<!>)
+        bar1<CharSequence>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar3(<!TYPE_MISMATCH!>x<!>)
     }
 
@@ -40,9 +40,9 @@ fun <T : CharSequence?> foo(x: T) {
 
     if (1 == 1) {
         val y = x!!
-        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(<!NI;TYPE_MISMATCH!>x<!>)
-        bar1<CharSequence>(<!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>x<!>)
-        bar2(<!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>x<!>)
+        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(<!NI;DEBUG_INFO_SMARTCAST!>x<!>)
+        bar1<CharSequence>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar3(<!TYPE_MISMATCH!>x<!>)
 
         <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(y)

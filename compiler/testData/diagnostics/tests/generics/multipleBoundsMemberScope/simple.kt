@@ -9,6 +9,6 @@ interface B: A
 fun <T> test(x: T) where T : C?, T : B? {
     x?.foo()
     if (x != null) {
-        <!OI;DEBUG_INFO_SMARTCAST!>x<!><!NI;UNSAFE_CALL!>.<!>foo()
+        <!DEBUG_INFO_SMARTCAST!>x<!>.foo()
     }
 }

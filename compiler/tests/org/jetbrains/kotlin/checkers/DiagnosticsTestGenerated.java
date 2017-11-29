@@ -9237,6 +9237,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/nullability"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("capturedTypeWithPlatformSupertype.kt")
+                public void testCapturedTypeWithPlatformSupertype() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/capturedTypeWithPlatformSupertype.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("declarationsBoundsViolation.kt")
                 public void testDeclarationsBoundsViolation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/declarationsBoundsViolation.kt");
