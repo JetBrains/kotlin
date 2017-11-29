@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
@@ -568,20 +569,3 @@ private inline fun buildStub(block: StubBuilder.() -> Unit) = StubBuilder().let 
 private inline fun MutableCollection<Stub>.addBuiltBy(block: StubBuilder.() -> Unit) {
     this.add(buildStub(block))
 }
-
-private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
-    val result = mutableSetOf<FqName>()
-
-    fun getSubPackages(fqName: FqName) {
-        result.add(fqName)
-        module.getSubPackagesOf(fqName) { true }.forEach { getSubPackages(it) }
-    }
-
-    getSubPackages(FqName.ROOT)
-    return result
-}
-
-private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescriptor> =
-        getPackagesFqNames(this).flatMap {
-            getPackage(it).fragments.filter { it.module == this }
-        }

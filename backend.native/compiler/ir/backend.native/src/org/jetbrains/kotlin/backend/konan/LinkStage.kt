@@ -107,7 +107,7 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
     open val osVersionMin by lazy {
         listOf(
                 propertyTargetString("osVersionMinFlagLd"),
-                propertyTargetString("osVersionMin") + ".0")
+                properties.osVersionMin!! + ".0")
     }
 
     override fun filterStaticLibraries(binaries: List<String>) 

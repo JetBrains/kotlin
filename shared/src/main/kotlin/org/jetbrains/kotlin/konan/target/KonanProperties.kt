@@ -73,4 +73,6 @@ class KonanProperties(val target: KonanTarget, val properties: Properties, val b
             // Use (equal) llvmHome fow now.
             return targetString("llvmHome")
         }
+
+    val osVersionMin: String? get() = targetString("osVersionMin")
 }

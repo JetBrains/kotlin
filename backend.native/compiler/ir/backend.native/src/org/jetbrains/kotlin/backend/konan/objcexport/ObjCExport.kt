@@ -17,12 +17,21 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.isSubpackageOf
 
 internal class ObjCExport(val context: Context) {
+
+    private val target get() = context.config.targetManager.target
+
     internal fun produceObjCFramework() {
         if (context.config.produce != CompilerOutputKind.FRAMEWORK) return
 
@@ -55,7 +64,108 @@ internal class ObjCExport(val context: Context) {
 
         modules.child("module.modulemap").writeBytes(moduleMap.toByteArray())
 
+        emitInfoPlist(framework, frameworkName)
+
         val objCCodeGenerator = ObjCExportCodeGenerator(CodeGenerator(context), namer, mapper)
         objCCodeGenerator.emitRtti(headerGenerator.generatedClasses, headerGenerator.topLevel)
     }
+
+    private fun emitInfoPlist(framework: File, name: String) {
+        val directory = when (target) {
+            KonanTarget.IPHONE,
+            KonanTarget.IPHONE_SIM -> framework
+            KonanTarget.MACBOOK -> framework.child("Resources").also { it.mkdirs() }
+            else -> error(target)
+        }
+
+        val file = directory.child("Info.plist")
+        val bundleExecutable = name
+        val pkg = context.moduleDescriptor.guessMainPackage() // TODO: consider showing warning if it is root.
+        val bundleId = pkg.child(Name.identifier(name)).asString()
+
+        val platform = when (target) {
+            KonanTarget.IPHONE -> "iPhoneOS"
+            KonanTarget.IPHONE_SIM -> "iPhoneSimulator"
+            KonanTarget.MACBOOK -> "MacOSX"
+            else -> error(target)
+        }
+        val minimumOsVersion = context.config.distribution.targetProperties.osVersionMin!!
+
+        val contents = StringBuilder()
+        contents.append("""
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0">
+            <dict>
+                <key>CFBundleExecutable</key>
+                <string>$bundleExecutable</string>
+                <key>CFBundleIdentifier</key>
+                <string>$bundleId</string>
+                <key>CFBundleInfoDictionaryVersion</key>
+                <string>6.0</string>
+                <key>CFBundleName</key>
+                <string>$name</string>
+                <key>CFBundlePackageType</key>
+                <string>FMWK</string>
+                <key>CFBundleShortVersionString</key>
+                <string>1.0</string>
+                <key>CFBundleSupportedPlatforms</key>
+                <array>
+                    <string>$platform</string>
+                </array>
+                <key>CFBundleVersion</key>
+                <string>1</string>
+
+        """.trimIndent())
+
+
+        contents.append(when (target) {
+            KonanTarget.IPHONE,
+            KonanTarget.IPHONE_SIM -> """
+                |    <key>MinimumOSVersion</key>
+                |    <string>$minimumOsVersion</string>
+                |    <key>UIDeviceFamily</key>
+                |    <array>
+                |        <integer>1</integer>
+                |        <integer>2</integer>
+                |    </array>
+
+                """.trimMargin()
+            KonanTarget.MACBOOK -> ""
+            else -> error(target)
+        })
+
+        if (target == KonanTarget.IPHONE) {
+            contents.append("""
+                |    <key>UIRequiredDeviceCapabilities</key>
+                |    <array>
+                |        <string>arm64</string>
+                |    </array>
+
+                """.trimMargin()
+            )
+        }
+
+        contents.append("""
+            </dict>
+            </plist>
+        """.trimIndent())
+
+        // TODO: Xcode also add some number of DT* keys.
+
+        file.writeBytes(contents.toString().toByteArray())
+    }
+}
+
+private fun ModuleDescriptor.guessMainPackage(): FqName {
+    val allPackages = this.getPackageFragments() // Includes also all parent packages, e.g. the root one.
+
+    val nonEmptyPackages = allPackages
+            .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
+            .map { it.fqName }.distinct()
+
+    return allPackages.map { it.fqName }.distinct()
+            .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
+            // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
+            .maxBy { it.asString().length }!!
 }
