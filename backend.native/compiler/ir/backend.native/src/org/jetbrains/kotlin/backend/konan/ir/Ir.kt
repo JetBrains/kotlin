@@ -160,11 +160,23 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
         symbol.descriptor to symbolTable.referenceSimpleFunction(functionDescriptor)
     }.toMap()
 
-     val valuesForEnum = symbolTable.referenceSimpleFunction(
+    val valuesForEnum = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("valuesForEnum").single())
 
     val valueOfForEnum = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("valueOfForEnum").single())
+
+    val enumValues = symbolTable.referenceSimpleFunction(
+             builtInsPackage("kotlin").getContributedFunctions(Name.identifier("enumValues"), NoLookupLocation.FROM_BACKEND).single())
+
+    val enumValueOf = symbolTable.referenceSimpleFunction(
+            builtInsPackage("kotlin").getContributedFunctions(Name.identifier("enumValueOf"), NoLookupLocation.FROM_BACKEND).single())
+
+    val createUninitializedInstance = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("createUninitializedInstance").single())
+
+    val initInstance = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("initInstance").single())
 
     val getContinuation = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("getContinuation").single())

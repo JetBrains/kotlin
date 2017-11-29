@@ -105,6 +105,16 @@ fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T>
     return result as Array<T>
 }
 
+@Intrinsic
+internal fun <T> createUninitializedInstance(): T {
+    throw Exception("Call to this function should've been lowered")
+}
+
+@Intrinsic
+internal fun initInstance(thiz: Any, constructorCall: Any): Unit {
+    throw Exception("Call to this function should've been lowered")
+}
+
 fun checkProgressionStep(step: Int)  = if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
 fun checkProgressionStep(step: Long) = if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
 

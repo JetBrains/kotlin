@@ -2050,6 +2050,20 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 }
             }
 
+            context.ir.symbols.createUninitializedInstance.descriptor -> {
+                val typeParameterT = context.ir.symbols.createUninitializedInstance.descriptor.typeParameters[0]
+                val enumClass = callee.getTypeArgument(typeParameterT)!!
+                val enumClassDescriptor = enumClass.constructor.declarationDescriptor as ClassDescriptor
+                functionGenerationContext.allocInstance(typeInfoForAllocation(enumClassDescriptor), lifetimes[callee]!!)
+            }
+
+            context.ir.symbols.initInstance.descriptor -> {
+                val initializer = callee.getValueArgument(1) as IrCall
+                val thiz = evaluateExpression(callee.getValueArgument(0)!!)
+                evaluateSimpleFunctionCall(initializer.descriptor, listOf(thiz) + evaluateExplicitArgs(initializer), lifetimes[initializer]!!)
+                codegen.theUnitInstanceRef.llvm
+            }
+
             else -> TODO(callee.descriptor.original.toString())
         }
     }
