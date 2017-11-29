@@ -19,7 +19,10 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
             assertContains("Finished executing kotlin compiler using daemon strategy")
-            assertReportExists("build/reports/tests/classes/demo.TestSource.html")
+            assertTrue {
+                fileInWorkingDir("build/reports/tests/classes/demo.TestSource.html").exists() ||
+                fileInWorkingDir("build/reports/tests/test/classes/demo.TestSource.html").exists()
+            }
             assertContains(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
         }
 
@@ -131,7 +134,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         Project("allOpenSpring", GRADLE_VERSION).build("build") {
             assertSuccessful()
 
-            val classesDir = File(project.projectDir, "build/classes/main")
+            val classesDir = File(project.projectDir, kotlinClassesDir())
             val openClass = File(classesDir, "test/OpenClass.class")
             val closedClass = File(classesDir, "test/ClosedClass.class")
             assertTrue(openClass.exists())

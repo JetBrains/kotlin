@@ -299,7 +299,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testWipeClassesDirectoryBetweenBuilds() {
-        val project = Project("kotlinJavaProject", NoSpecificGradleVersion)
+        val project = Project("kotlinJavaProject", SpecificGradleVersion("3.5"))
 
         project.build("build") {
             assertSuccessful()
@@ -589,7 +589,7 @@ class KotlinGradleIT: BaseGradleIT() {
         val deployKotlinSrcKt = File(project.projectDir, "src/deploy/kotlin/kotlinSrc.kt")
         deployKotlinSrcKt.appendText("\nfun topLevelFun() = 1")
 
-        project.build("build", "compileDeployKotlin") {
+        project.build("build", "deployClasses") {
             assertSuccessful()
             // Main source set should have a *.kotlin_module file without '_main'
             assertFileExists(kotlinClassesDir() + "META-INF/$archivesBaseName.kotlin_module")
@@ -605,7 +605,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
             // Check that the Java source in a non-full-depth package structure was located correctly:
             checkBytecodeContains(
-                    File(project.projectDir, "build/classes/kotlin/main/my/pack/name/app/MyApp.class"),
+                    File(project.projectDir, kotlinClassesDir() + "my/pack/name/app/MyApp.class"),
                     "my/pack/name/util/JUtil.util")
         }
     }
