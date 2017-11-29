@@ -25,13 +25,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.IntersectionTypeConstructor
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class NewConstraintSystemImpl(
         private val constraintInjector: ConstraintInjector,
@@ -44,10 +41,6 @@ class NewConstraintSystemImpl(
         KotlinConstraintSystemCompleter.Context,
         PostponedArgumentsAnalyzer.Context
 {
-    companion object {
-        private val TYPE_PARAMETER_FOR_EXCLXCL = "<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>" // TODO: Get this variable from ResolveConstruct
-    }
-
     private val storage = MutableConstraintStorage()
     private var state = State.BUILDING
     private val typeVariablesTransaction: MutableList<NewTypeVariable> = SmartList()
@@ -213,8 +206,7 @@ class NewConstraintSystemImpl(
     override fun fixVariable(variable: NewTypeVariable, resultType: UnwrappedType) {
         checkState(State.BUILDING, State.COMPLETION)
 
-        val actualResultType = eliminateSpecialIntersectionType(variable, resultType) ?: resultType
-        constraintInjector.addInitialEqualityConstraint(this, variable.defaultType, actualResultType, FixVariableConstraintPosition(variable))
+        constraintInjector.addInitialEqualityConstraint(this, variable.defaultType, resultType, FixVariableConstraintPosition(variable))
         notFixedTypeVariables.remove(variable.freshTypeConstructor)
 
         for (variableWithConstraint in notFixedTypeVariables.values) {
@@ -223,25 +215,7 @@ class NewConstraintSystemImpl(
             }
         }
 
-        storage.fixedTypeVariables[variable.freshTypeConstructor] = actualResultType
-    }
-
-    private fun eliminateSpecialIntersectionType(variable: NewTypeVariable, type: UnwrappedType): UnwrappedType? {
-        if (variable.shouldBeDefinitelyNotNull()) return null
-
-        val constructor = type.constructor.safeAs<IntersectionTypeConstructor>() ?: return null
-
-        if (constructor.supertypes.size != 2) return null
-        val actualType = constructor.supertypes.singleOrNull { it != type.builtIns.anyType }
-
-        return actualType?.unwrap()
-    }
-
-    private fun NewTypeVariable.shouldBeDefinitelyNotNull(): Boolean {
-        return when (this) {
-            is TypeVariableFromCallableDescriptor -> originalTypeParameter.name.asString() == TYPE_PARAMETER_FOR_EXCLXCL
-            is TypeVariableForLambdaReturnType -> false
-        }
+        storage.fixedTypeVariables[variable.freshTypeConstructor] = resultType
     }
 
     // KotlinConstraintSystemCompleter.Context, PostponedArgumentsAnalyzer.Context
