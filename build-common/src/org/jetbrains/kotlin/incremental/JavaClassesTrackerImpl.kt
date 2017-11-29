@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -31,11 +32,14 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.java.JavaClassProtoBuf
+import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
+
+val CONVERTING_JAVA_CLASSES_TO_PROTO = PerformanceCounter.create("Converting Java sources to proto")
 
 class JavaClassesTrackerImpl(private val cache: IncrementalJvmCache) : JavaClassesTracker {
     private val classToSourceSerialized: MutableMap<ClassId, SerializedJavaClassWithSource> = hashMapOf()
@@ -61,10 +65,17 @@ class JavaClassesTrackerImpl(private val cache: IncrementalJvmCache) : JavaClass
         }
 
         for (classDescriptor in classDescriptors.toList()) {
-            classToSourceSerialized[classDescriptor.classId!!] =
+            val classId = classDescriptor.classId!!
+            if (cache.isJavaClassAlreadyInCache(classId) || classDescriptor.wasContentRequested()) {
+                classToSourceSerialized[classId] = CONVERTING_JAVA_CLASSES_TO_PROTO.time {
                     classDescriptor.convertToProto()
+                }
+            }
         }
     }
+
+    private fun JavaClassDescriptor.wasContentRequested() =
+            this.safeAs<LazyJavaClassDescriptor>()?.wasScopeContentRequested() != false
 }
 
 private val JavaClassDescriptor.javaSourceFile: File?

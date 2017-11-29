@@ -67,6 +67,8 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     protected val declaredMemberIndex: NotNullLazyValue<DeclaredMemberIndex> = c.storageManager.createLazyValue { computeMemberIndex() }
 
+    fun wasContentRequested() = declaredMemberIndex.isComputed()
+
     protected abstract fun computeMemberIndex(): DeclaredMemberIndex
 
     // Fake overrides, values()/valueOf(), etc.

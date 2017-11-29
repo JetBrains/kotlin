@@ -194,6 +194,11 @@ open class IncrementalJvmCache(
                javaSourcesProtoMap[jvmClassName.internalName] == null
     }
 
+    fun isJavaClassAlreadyInCache(classId: ClassId): Boolean {
+        val jvmClassName = JvmClassName.byClassId(classId)
+        return javaSourcesProtoMap[jvmClassName.internalName] != null
+    }
+
     fun clearCacheForRemovedClasses(changesCollector: ChangesCollector) {
         val dirtyClasses = dirtyOutputClassesMap
                                 .getDirtyOutputClasses()
