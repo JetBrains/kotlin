@@ -293,6 +293,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kaptTask.stubsDir = getKaptStubsDir()
         kaptTask.destinationDir = sourcesOutputDir
+        kaptTask.kotlinSourcesDestinationDir = kotlinSourcesOutputDir
         kaptTask.classesDir = classesOutputDir
 
         javaSourceSet?.output?.apply {
