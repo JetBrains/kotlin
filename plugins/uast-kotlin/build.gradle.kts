@@ -2,9 +2,7 @@
 apply { plugin("kotlin") }
 
 configureIntellijPlugin {
-    setPlugins("junit", "gradle", "Groovy", "android",
-               "maven", // TODO: check whether it works in AS (it was marked optional before
-               "properties")
+    setPlugins("junit", "gradle", "Groovy", "properties")
 }
 
 dependencies {
@@ -33,12 +31,10 @@ dependencies {
 afterEvaluate {
     dependencies {
         compileOnly(intellij { include("openapi.jar", "idea.jar", "util.jar", "extensions.jar", "asm-all.jar") })
-        compileOnly(intellijPlugins("junit", "gradle", "Groovy", "android",
-                                    "maven", // TODO: check whether it works in AS (it was marked optional before
-                                    "properties"))
         testCompileOnly(intellij { include("idea_rt.jar") })
-        testCompile(intellijPlugins("junit", "gradle", "Groovy", "android", "maven", "properties"))
+        testRuntime(project(":plugins:kapt3-idea"))
         testRuntime(intellij())
+        testRuntime(intellijPlugins("junit", "gradle", "Groovy", "properties"))
     }
 }
 
