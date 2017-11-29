@@ -32,6 +32,7 @@ dependencies {
     compileOnly project(':compiler:incremental-compilation-impl')
 
     compile project(':kotlin-stdlib')
+    compileOnly project(':kotlin-reflect-api')
     compileOnly project(':kotlin-android-extensions')
     compileOnly project(':kotlin-build-common')
     compileOnly project(':kotlin-compiler-runner')
@@ -59,6 +60,7 @@ dependencies {
     testCompile project(':kotlin-compiler-runner')
     testCompile project(':kotlin-test::kotlin-test-junit')
     testCompile "junit:junit:4.12"
+    testCompileOnly project(':kotlin-reflect-api')
     testCompileOnly project(':kotlin-annotation-processing')
     testCompileOnly project(':kotlin-annotation-processing-gradle')
 }
