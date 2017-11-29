@@ -172,8 +172,7 @@ class ExpressionCodegen(
             //coerceNotToUnit(r.type, Type.VOID_TYPE)
             exp.accept(this, data)
         }
-        coerceNotToUnit(result.type, expression.asmType)
-        return expression.onStack
+        return coerceNotToUnit(result.type, expression.asmType)
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: BlockInfo): StackValue {
@@ -283,7 +282,7 @@ class ExpressionCodegen(
             mv.athrow()
         } else if (expression.descriptor !is ConstructorDescriptor) {
             val expectedTypeOnStack = returnType?.let { typeMapper.mapType(it) } ?: callable.returnType
-            StackValue.coerce(callable.returnType, expectedTypeOnStack, mv)
+            return coerceNotToUnit(callable.returnType, expectedTypeOnStack)
         }
 
         return expression.onStack
@@ -521,14 +520,11 @@ class ExpressionCodegen(
     }
 
 
-    override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue {
-        val resultType = expression.asmType
-        genIfWithBranches(expression.branches[0], data, resultType, expression.branches.drop(1))
-        return expression.onStack
-    }
+    override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue =
+        genIfWithBranches(expression.branches[0], data, expression.asmType, expression.branches.drop(1))
 
 
-    fun genIfWithBranches(branch: IrBranch, data: BlockInfo, type: Type, otherBranches: List<IrBranch>) {
+    private fun genIfWithBranches(branch: IrBranch, data: BlockInfo, type: Type, otherBranches: List<IrBranch>): StackValue {
         val elseLabel = Label()
         val condition = branch.condition
         val thenBranch = branch.result
@@ -541,9 +537,9 @@ class ExpressionCodegen(
 
         val end = Label()
 
-        thenBranch.apply {
-            gen(this, type, data)
-            //coerceNotToUnit(this.asmType, type)
+        val result = thenBranch.run {
+            val stackValue = gen(this, data)
+            coerceNotToUnit(stackValue.type, type)
         }
 
         mv.goTo(end)
@@ -555,6 +551,7 @@ class ExpressionCodegen(
         }
 
         mv.mark(end)
+        return result
     }
 
 
@@ -878,7 +875,7 @@ class ExpressionCodegen(
     override fun visitThrow(expression: IrThrow, data: BlockInfo): StackValue {
         gen(expression.value, JAVA_THROWABLE_TYPE, data)
         mv.athrow()
-        return expression.onStack
+        return none()
     }
 
     override fun visitGetClass(expression: IrGetClass, data: BlockInfo): StackValue {
@@ -916,10 +913,12 @@ class ExpressionCodegen(
 
     }
 
-    private fun coerceNotToUnit(fromType: Type, toType: Type) {
+    private fun coerceNotToUnit(fromType: Type, toType: Type): StackValue {
         if (toType != AsmTypes.UNIT_TYPE) {
             coerce(fromType, toType, mv)
+            return onStack(toType)
         }
+        return onStack(fromType)
     }
 
     val IrExpression.asmType: Type
