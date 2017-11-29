@@ -1,0 +1,20 @@
+<html>
+<body>
+Reports recursive equals calls.
+
+<p>
+For example:
+<code>
+<pre>
+class X {
+    override fun equals(other: Any?): Boolean {
+        if (this == other) return true // recursive equals call
+        return false
+    }
+}
+</pre>
+</code>
+</p>
+
+</body>
+</html>
