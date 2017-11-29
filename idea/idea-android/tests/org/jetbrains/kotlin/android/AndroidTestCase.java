@@ -26,6 +26,7 @@ import com.intellij.codeInspection.ex.GlobalInspectionToolWrapper;
 import com.intellij.codeInspection.ex.InspectionManagerEx;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -77,6 +78,7 @@ public abstract class AndroidTestCase extends AndroidTestBase {
 
     @Override
     protected void setUp() throws Exception {
+        PluginManagerCore.BUILD_NUMBER = "AI-171.4249.39";
         super.setUp();
 
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());

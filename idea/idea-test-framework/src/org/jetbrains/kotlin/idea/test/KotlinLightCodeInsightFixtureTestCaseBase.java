@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.test;
 
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -23,6 +24,13 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCodeInsightFixtureTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        PluginManagerCore.BUILD_NUMBER = "AI-171.4249.39";
+        super.setUp();
+    }
+
     @NotNull
     @Override
     public Project getProject() {
