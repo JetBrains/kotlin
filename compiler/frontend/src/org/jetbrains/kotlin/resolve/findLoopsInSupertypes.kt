@@ -18,6 +18,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.utils.DFS
@@ -38,6 +39,12 @@ class SupertypeLoopCheckerImpl : SupertypeLoopChecker {
             if (isReachable(superType.constructor, currentTypeConstructor, graph)) {
                 superTypesToRemove.add(superType)
                 reportLoop(superType)
+
+                currentTypeConstructor.declarationDescriptor?.let {
+                    if (it.isCompanionObject()) {
+                        reportLoop(it.defaultType)
+                    }
+                }
             }
         }
 
