@@ -7,9 +7,11 @@
     <properties>
         <maven.version>3.0.5</maven.version>
         <serialization.src>${basedir}/../../../plugins/kotlin-serialization/kotlin-serialization-compiler/src/</serialization.src>
+        <serialization.src.kt>${basedir}/../../../plugins/kotlin-serialization/kotlin-serialization-compiler/src/org/jetbrains/kotlinx/serialization/compiler</serialization.src.kt>
         <serialization.maven.plugin.src>${basedir}/src/main/kotlin</serialization.maven.plugin.src>
         <serialization.maven.plugin.resources>${basedir}/src/main/resources</serialization.maven.plugin.resources>
         <serialization.target-src>${basedir}/target/src/main/kotlin</serialization.target-src>
+        <serialization.target-src.kt>${basedir}/target/src/main/kotlin/org/jetbrains/kotlinx/serialization/compiler</serialization.target-src.kt>
         <serialization.target-resources>${basedir}/target/resource</serialization.target-resources>
         <kotlin.version>1.2-SNAPSHOT</kotlin.version>
     </properties>
@@ -56,7 +58,7 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <id>copy-sources</id>
+                        <id>copy-maven-sources</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -64,8 +66,20 @@
                         <configuration>
                             <outputDirectory>${serialization.target-src}</outputDirectory>
                             <resources>
-                                <resource><directory>${serialization.src}</directory></resource>
                                 <resource><directory>${serialization.maven.plugin.src}</directory></resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-sources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${serialization.target-src.kt}</outputDirectory>
+                            <resources>
+                                <resource><directory>${serialization.src.kt}</directory></resource>
                             </resources>
                         </configuration>
                     </execution>
