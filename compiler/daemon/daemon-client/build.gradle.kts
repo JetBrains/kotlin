@@ -11,6 +11,7 @@ dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:daemon-common"))
+    compileOnly(project(":kotlin-reflect-api"))
     compileOnly(nativePlatformUberjar)
 }
 

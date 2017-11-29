@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 val receiver = { Int.(<!SYNTAX!><!>) <!SYNTAX!>-><!> }
 val receiverWithParameter = { Int.<!ILLEGAL_SELECTOR!>(<!UNRESOLVED_REFERENCE!>a<!>)<!> <!SYNTAX!>-><!> }
 
@@ -9,7 +10,7 @@ val returnTypeWithParameter = { (<!COMPONENT_FUNCTION_MISSING!><!UNUSED_DESTRUCT
 
 val receiverWithFunctionType = { ((Int)<!SYNTAX!><!> <!SYNTAX!>-> Int).() -><!> }
 
-val parenthesizedParameters = { <!CANNOT_INFER_PARAMETER_TYPE!>(<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>: Int)<!> -> }
+val parenthesizedParameters = { <!CANNOT_INFER_PARAMETER_TYPE!>(<!NI;TYPE_MISMATCH!><!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>: Int<!>)<!> -> }
 val parenthesizedParameters2 = { <!CANNOT_INFER_PARAMETER_TYPE!>(<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>)<!> -> }
 
 val none = { -> }

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
 import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnly
 import org.jetbrains.kotlin.name.Name
@@ -36,10 +37,10 @@ import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
@@ -48,8 +49,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.expressions.LabelResolver
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -557,7 +558,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
 
             assert(callableDescriptor is DeserializedCallableMemberDescriptor) { "Not a deserialized function or proper: " + callableDescriptor }
 
-            val containingClasses = state.typeMapper.getContainingClassesForDeserializedCallable(callableDescriptor as DeserializedCallableMemberDescriptor)
+            val containingClasses = KotlinTypeMapper.getContainingClassesForDeserializedCallable(callableDescriptor as DeserializedCallableMemberDescriptor)
 
             val containerId = containingClasses.implClassId
 
@@ -704,19 +705,10 @@ class PsiInlineCodegen(
         activeLambda = null
     }
 
-
-    private fun getBoundCallableReferenceReceiver(
-            argumentExpression: KtExpression
-    ): KtExpression? {
-        val deparenthesized = KtPsiUtil.deparenthesize(argumentExpression)
-        if (deparenthesized is KtCallableReferenceExpression) {
-            val receiverExpression = deparenthesized.receiverExpression
-            if (receiverExpression != null) {
-                val lhs = state.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, receiverExpression)
-                if (lhs is DoubleColonLHS.Expression) return receiverExpression
-            }
-        }
-        return null
+    private fun getBoundCallableReferenceReceiver(argumentExpression: KtExpression): ReceiverValue? {
+        val deparenthesized = KtPsiUtil.deparenthesize(argumentExpression) as? KtCallableReferenceExpression ?: return null
+        val resolvedCall = deparenthesized.callableReference.getResolvedCallWithAssert(state.bindingContext)
+        return JvmCodegenUtil.getBoundCallableReferenceReceiver(resolvedCall)
     }
 
     /*lambda or callable reference*/
@@ -736,10 +728,10 @@ class PsiInlineCodegen(
         if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
             val lambdaInfo = rememberClosure(argumentExpression, parameterType, valueParameterDescriptor)
 
-            val receiver = getBoundCallableReferenceReceiver(argumentExpression)
-            if (receiver != null) {
-                val receiverValue = codegen.gen(receiver)
-                putClosureParametersOnStack(lambdaInfo, StackValue.coercion(receiverValue, receiverValue.type.boxReceiverForBoundReference()))
+            val receiverValue = getBoundCallableReferenceReceiver(argumentExpression)
+            if (receiverValue != null) {
+                val receiver = codegen.generateReceiverValue(receiverValue, false)
+                putClosureParametersOnStack(lambdaInfo, StackValue.coercion(receiver, receiver.type.boxReceiverForBoundReference()))
             }
         }
         else {

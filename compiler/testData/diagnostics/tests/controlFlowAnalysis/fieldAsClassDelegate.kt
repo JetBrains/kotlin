@@ -1,4 +1,6 @@
+// !WITH_NEW_INFERENCE
 // See KT-15566
+// NI_EXPECTED_FILE
 
 import DefaultHttpClient.client
 
@@ -27,7 +29,7 @@ private fun <T> lazy(init: () -> T): kotlin.<!UNRESOLVED_REFERENCE!>Lazy<!><T> {
 }
 
 object DefaultHttpClientWithBy : HttpClient by client {
-    val client by lazy { HttpClientImpl() }
+    val client by <!NI;DELEGATE_SPECIAL_FUNCTION_MISSING!>lazy { HttpClientImpl() }<!>
 }
 
 object DefaultFqHttpClient : HttpClient by DefaultFqHttpClient.<!UNINITIALIZED_VARIABLE!>client<!> {

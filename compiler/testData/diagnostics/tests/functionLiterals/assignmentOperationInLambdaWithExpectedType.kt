@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun test(bal: Array<Int>) {
     var bar = 4
 
@@ -11,5 +12,5 @@ fun test(bal: Array<Int>) {
 
     val <!UNUSED_VARIABLE!>e<!>: Unit = run { bar += 4 }
 
-    val <!UNUSED_VARIABLE!>f<!>: Int = run { <!ASSIGNMENT_TYPE_MISMATCH!>bar += 4<!> }
+    val <!UNUSED_VARIABLE!>f<!>: Int = <!NI;TYPE_MISMATCH!>run { <!NI;TYPE_MISMATCH, OI;ASSIGNMENT_TYPE_MISMATCH!>bar += 4<!> }<!>
 }

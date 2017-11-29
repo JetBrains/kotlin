@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.inline.util.replaceNames
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.splitToRanges
 
 fun JsNode.collectNodesToSplit(breakContinueTargets: Map<JsContinue, JsStatement>): Set<JsNode> {
@@ -240,6 +241,31 @@ fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
     visitor.accept(this)
 }
 
+fun JsBlock.replaceSpecialReferencesInSimpleFunction(continuationParam: JsParameter, resultVar: JsName) {
+    val visitor = object : JsVisitorWithContextImpl() {
+        override fun visit(x: JsFunction, ctx: JsContext<*>) = false
+
+        override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
+            when {
+                x.coroutineReceiver -> {
+                    ctx.replaceMe(pureFqn(continuationParam.name, null).source(x.source))
+                }
+
+                x.coroutineController -> {
+                    ctx.replaceMe(JsThisRef().apply {
+                        source = x.source
+                    })
+                }
+
+                x.coroutineResult && x.qualifier.let { it is JsNameRef && it.name == continuationParam.name } -> {
+                    ctx.replaceMe(pureFqn(resultVar, null).source(x.source))
+                }
+            }
+        }
+    }
+    visitor.accept(this)
+}
+
 fun List<CoroutineBlock>.collectVariablesSurvivingBetweenBlocks(localVariables: Set<JsName>, parameters: Set<JsName>): Set<JsName> {
     val varDefinedIn = localVariables.associate { it to mutableSetOf<Int>() }
     val varDeclaredIn = localVariables.associate { it to mutableSetOf<Int>() }
@@ -378,3 +404,6 @@ fun JsBlock.replaceLocalVariables(context: CoroutineTransformationContext, local
     }
     visitor.accept(this)
 }
+
+internal fun JsExpression?.isStateMachineResult() =
+        this is JsNameRef && this.coroutineResult && qualifier.let { it is JsNameRef && it.coroutineReceiver && it.qualifier == null }

@@ -1,11 +1,12 @@
+// !WITH_NEW_INFERENCE
 package a
 
 fun <R> foo (f: ()->R, r: MutableList<R>) = r.add(f())
 fun <R> bar (r: MutableList<R>, f: ()->R) = r.add(f())
 
 fun test() {
-    val <!UNUSED_VARIABLE!>a<!> = <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>({1}, arrayListOf("")) //no type inference error on 'arrayListOf'
-    val <!UNUSED_VARIABLE!>b<!> = <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>bar<!>(arrayListOf(""), {1})
+    val <!UNUSED_VARIABLE!>a<!> = <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>({1}, arrayListOf("")) //no type inference error on 'arrayListOf'
+    val <!UNUSED_VARIABLE!>b<!> = <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>bar<!>(arrayListOf(""), {1})
 }
 
 // from standard library

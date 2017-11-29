@@ -48,6 +48,12 @@ public class KotlinMavenInspectionTestGenerated extends AbstractKotlinMavenInspe
         doTest(fileName);
     }
 
+    @TestMetadata("deprecatedJre.xml")
+    public void testDeprecatedJre() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/deprecatedJre.xml");
+        doTest(fileName);
+    }
+
     @TestMetadata("ideAndMavenVersions.xml")
     public void testIdeAndMavenVersions() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/ideAndMavenVersions.xml");
@@ -75,6 +81,12 @@ public class KotlinMavenInspectionTestGenerated extends AbstractKotlinMavenInspe
     @TestMetadata("noExecutions.xml")
     public void testNoExecutions() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/noExecutions.xml");
+        doTest(fileName);
+    }
+
+    @TestMetadata("oldVersionWithJre.xml")
+    public void testOldVersionWithJre() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/oldVersionWithJre.xml");
         doTest(fileName);
     }
 

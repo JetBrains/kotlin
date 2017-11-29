@@ -72,10 +72,13 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
         get() = JvmPlatform
 
     override fun getLibraryJarDescriptors(sdk: Sdk?): List<LibraryJarDescriptor> {
-        var result = listOf(LibraryJarDescriptor.RUNTIME_JAR,
-                      LibraryJarDescriptor.REFLECT_JAR,
-                      LibraryJarDescriptor.RUNTIME_SRC_JAR,
-                      LibraryJarDescriptor.TEST_JAR)
+        var result = listOf(
+                LibraryJarDescriptor.RUNTIME_JAR,
+                LibraryJarDescriptor.RUNTIME_SRC_JAR,
+                LibraryJarDescriptor.REFLECT_JAR,
+                LibraryJarDescriptor.REFLECT_SRC_JAR,
+                LibraryJarDescriptor.TEST_JAR,
+                LibraryJarDescriptor.TEST_SRC_JAR)
         val sdkVersion = sdk?.version ?: return result
         if (sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_7)) {
             result += listOf(LibraryJarDescriptor.RUNTIME_JDK7_JAR, LibraryJarDescriptor.RUNTIME_JDK7_SOURCES_JAR)

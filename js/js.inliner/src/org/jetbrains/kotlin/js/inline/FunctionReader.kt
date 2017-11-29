@@ -233,7 +233,8 @@ class FunctionReader(
         }
 
         val position = info.offsetToSourceMapping[offset]
-        val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram())) ?:
+        val jsScope = JsRootScope(JsProgram())
+        val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, jsScope) ?:
                            return null
         functionExpr.fixForwardNameReferences()
         val (function, wrapper) = if (isWrapped) {
@@ -261,12 +262,7 @@ class FunctionReader(
         wrapperStatements?.forEach { replaceExternalNames(it, replacements, allDefinedNames) }
         function.markInlineArguments(descriptor)
         markDefaultParams(function)
-
-        for (externalName in (collectReferencedNames(function) - allDefinedNames)) {
-            info.specialFunctions[externalName.ident]?.let {
-                externalName.specialFunction = it
-            }
-        }
+        markSpecialFunctions(function, allDefinedNames, info, jsScope)
 
         val namesWithoutSizeEffects = wrapperStatements.orEmpty().asSequence()
                 .flatMap { collectDefinedNames(it).asSequence() }
@@ -287,6 +283,33 @@ class FunctionReader(
         }
 
         return FunctionWithWrapper(function, wrapper)
+    }
+
+    private fun markSpecialFunctions(function: JsFunction, allDefinedNames: Set<JsName>, info: ModuleInfo, scope: JsScope) {
+        for (externalName in (collectReferencedNames(function) - allDefinedNames)) {
+            info.specialFunctions[externalName.ident]?.let {
+                externalName.specialFunction = it
+            }
+        }
+
+        function.body.accept(object : RecursiveJsVisitor() {
+            override fun visitNameRef(nameRef: JsNameRef) {
+                super.visitNameRef(nameRef)
+                markQualifiedSpecialFunction(nameRef)
+            }
+
+            private fun markQualifiedSpecialFunction(nameRef: JsNameRef) {
+                val qualifier = nameRef.qualifier as? JsNameRef ?: return
+                if (qualifier.ident != info.kotlinVariable || qualifier.qualifier != null) return
+                if (nameRef.name?.specialFunction != null) return
+
+                val specialFunction = specialFunctionsByName[nameRef.ident] ?: return
+                if (nameRef.name == null) {
+                    nameRef.name = scope.declareName(nameRef.ident)
+                }
+                nameRef.name!!.specialFunction = specialFunction
+            }
+        })
     }
 
     private fun markDefaultParams(function: JsFunction) {

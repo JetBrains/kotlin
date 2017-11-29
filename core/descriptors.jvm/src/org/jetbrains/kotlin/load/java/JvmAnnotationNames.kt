@@ -47,9 +47,11 @@ val NOT_NULL_ANNOTATIONS = listOf(
 )
 
 val READ_ONLY_ANNOTATIONS = listOf(
-        JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION
+        JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION,
+        JvmAnnotationNames.READONLY_ANNOTATION
 )
 
 val MUTABLE_ANNOTATIONS = listOf(
-        JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION
+        JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION,
+        JvmAnnotationNames.MUTABLE_ANNOTATION
 )

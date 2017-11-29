@@ -745,6 +745,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
                 doTest(fileName);
             }
 
+            @TestMetadata("emptyLhsFunction.kt")
+            public void testEmptyLhsFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("expression.kt")
             public void testExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/bound/expression.kt");

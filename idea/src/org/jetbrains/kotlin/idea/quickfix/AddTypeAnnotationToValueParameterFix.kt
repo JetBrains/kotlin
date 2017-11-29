@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtParameter
@@ -40,11 +41,16 @@ class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFi
     init {
         val defaultValue = element.defaultValue
         var type = defaultValue?.getType(defaultValue.analyze(BodyResolveMode.PARTIAL))
-        if (defaultValue is KtCollectionLiteralExpression && type != null && KotlinBuiltIns.isArray(type)) {
-            val builtIns = element.builtIns
-            val elementType = builtIns.getArrayElementType(type)
-            if (KotlinBuiltIns.isPrimitiveType(elementType)) {
-                type = builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(elementType)
+        if (type != null && KotlinBuiltIns.isArray(type)) {
+            if (element.hasModifier(KtTokens.VARARG_KEYWORD)) {
+                type = type.arguments.singleOrNull()?.type
+            }
+            else if (defaultValue is KtCollectionLiteralExpression) {
+                val builtIns = element.builtIns
+                val elementType = builtIns.getArrayElementType(type)
+                if (KotlinBuiltIns.isPrimitiveType(elementType)) {
+                    type = builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(elementType)
+                }
             }
         }
 

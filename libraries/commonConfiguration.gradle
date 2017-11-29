@@ -20,6 +20,15 @@ ext.configureJvmProject = { Project project ->
     }
 }
 
+ext.configureJavaOnlyJvm6Project = { Project project ->
+    project.tasks.withType(JavaCompile) {
+        sourceCompatibility = 1.6
+        targetCompatibility = 1.6
+        options.fork = true
+        options.forkOptions.javaHome = file(JDK_16)
+    }
+}
+
 ext.configureJvm6Project = { Project project ->
     project.configure(project) {
         project.ext.jvmTarget = "1.6"
@@ -30,12 +39,7 @@ ext.configureJvm6Project = { Project project ->
             from sourceSets.main.kotlin
         }
 
-        tasks.withType(JavaCompile) {
-            sourceCompatibility = 1.6
-            targetCompatibility = 1.6
-            options.fork = true
-            options.forkOptions.javaHome = file(JDK_16)
-        }
+        configureJavaOnlyJvm6Project(project)
 
         tasks.withType(project.compileKotlin.class) {
             kotlinOptions.jdkHome = JDK_16

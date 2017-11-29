@@ -1,8 +1,10 @@
+// !WITH_NEW_INFERENCE
+
 var x : Int = 1 + <!UNINITIALIZED_VARIABLE!>x<!>
    get() : Int = 1
    set(value : <!WRONG_SETTER_PARAMETER_TYPE!>Long<!>) {
       field = value.toInt()
-      field = <!TYPE_MISMATCH!>1.toLong()<!>
+      field = <!TYPE_MISMATCH!>1.<!NI;TYPE_MISMATCH!>toLong()<!><!>
     }
 
  val xx : Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1 + x<!>

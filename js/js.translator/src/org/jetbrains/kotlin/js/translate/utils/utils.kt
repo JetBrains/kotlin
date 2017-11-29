@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
@@ -163,17 +161,11 @@ fun TranslationContext.addAccessorsToPrototype(
     addDeclarationStatement(defineProperty.makeStmt())
 }
 
-fun FunctionDescriptor.requiresStateMachineTransformation(context: TranslationContext): Boolean =
-        this is AnonymousFunctionDescriptor ||
-        context.bindingContext()[BindingContext.CONTAINS_NON_TAIL_SUSPEND_CALLS, this] == true
-
 fun JsFunction.fillCoroutineMetadata(
         context: TranslationContext,
         descriptor: FunctionDescriptor,
         hasController: Boolean
 ) {
-    if (!descriptor.requiresStateMachineTransformation(context)) return
-
     val suspendPropertyDescriptor = context.currentModule.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME)
             .memberScope
             .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND).first()

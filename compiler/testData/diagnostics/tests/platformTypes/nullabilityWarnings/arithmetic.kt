@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -33,15 +34,15 @@ fun test() {
     platformJ++
 
     1 + platformNN
-    1 + <!TYPE_MISMATCH!>platformN<!>
+    1 <!NI;NONE_APPLICABLE!>+<!> <!OI;TYPE_MISMATCH!>platformN<!>
     1 + platformJ
 
     platformNN + 1
-    platformN <!UNSAFE_OPERATOR_CALL!>+<!> 1
+    platformN <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;UNSAFE_OPERATOR_CALL!>+<!> 1
     platformJ + 1
 
     1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformNN
-    1 <!INFIX_MODIFIER_REQUIRED!>plus<!> <!TYPE_MISMATCH!>platformN<!>
+    1 <!NI;NONE_APPLICABLE, OI;INFIX_MODIFIER_REQUIRED!>plus<!> <!OI;TYPE_MISMATCH!>platformN<!>
     1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformJ
 
     platformNN <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
@@ -49,6 +50,6 @@ fun test() {
     platformJ <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
 
     platformNN += 1
-    platformN <!UNSAFE_OPERATOR_CALL!>+=<!> 1
+    platformN <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;UNSAFE_OPERATOR_CALL!>+=<!> 1
     platformJ += 1
 }

@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.daemon.QuickFixBundle
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
 import org.jetbrains.kotlin.idea.test.KotlinLightJava9ModulesCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinMultiModuleJava9ProjectDescriptor.ModuleDescriptor.*
 
@@ -25,9 +27,15 @@ class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTes
     private val messageM2 = QuickFixBundle.message("module.info.add.requires.name", "M_TWO")!!
 
     override fun setUp() {
+        ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = true
         super.setUp()
         moduleInfo("module M_TWO { exports pkgA; }", M2)
         addJavaFile("pkgA/A.java", "package pkgA; public class A {}", M2)
+    }
+
+    override fun tearDown() {
+        super.tearDown()
+        ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = false
     }
 
     fun testAddRequiresToModuleInfo() {

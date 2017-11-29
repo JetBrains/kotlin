@@ -21,7 +21,7 @@ val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceS
 evaluationDependsOn(":prepare:idea-plugin")
 
 dependencies {
-    compile(projectDist(":kotlin-reflect"))
+    compileOnly(project(":kotlin-reflect-api"))
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":core:descriptors")) { isTransitive = false }
     compile(project(":core:descriptors.jvm")) { isTransitive = false }
@@ -65,6 +65,7 @@ dependencies {
     testCompile(ideaUltimateSdkDeps("gson"))
     testCompile(preloadedDeps("kotlinx-coroutines-core"))
 
+    testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-script-runtime"))
     testRuntime(projectRuntimeJar(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }

@@ -209,6 +209,12 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/lineMarker/recursiveCall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("companionInvoke.kt")
+        public void testCompanionInvoke() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/companionInvoke.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("conventionCall.kt")
         public void testConventionCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/conventionCall.kt");

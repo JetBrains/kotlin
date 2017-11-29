@@ -1,0 +1,35 @@
+package
+
+package i {
+    public val i.C.bar: i.C.D
+    public val kotlin.String.bd: kotlin.Any?
+    public val kotlin.String.bd1: kotlin.String
+    public val i.A.foo: [ERROR : Type for ii]
+    public val i.C.foo: i.C.D
+    public val i.A.foo1: kotlin.Int
+    public val i.C.foo1: i.C.D
+    public val </*0*/ T> kotlin.collections.List<T>.length: [ERROR : Type for size]
+    public val </*0*/ T> kotlin.collections.List<T>.length1: kotlin.Int
+
+    public final class A {
+        public constructor A()
+        public final val ii: kotlin.Int = 1
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class C {
+        public constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final inner class D {
+            public constructor D()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

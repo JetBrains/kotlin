@@ -60,12 +60,12 @@ class ResolvedAtomCompleter(
 ) {
     private val callCheckerContext = CallCheckerContext(topLevelCallContext, languageVersionSettings, deprecationResolver)
 
-    fun completeAndReport(resolvedAtom: ResolvedAtom) {
+    private fun complete(resolvedAtom: ResolvedAtom) {
         when (resolvedAtom) {
             is ResolvedCollectionLiteralAtom -> completeCollectionLiteralCalls(resolvedAtom)
             is ResolvedCallableReferenceAtom -> completeCallableReference(resolvedAtom)
             is ResolvedLambdaAtom -> completeLambda(resolvedAtom)
-            is ResolvedCallAtom -> completeResolvedCall(resolvedAtom)
+            is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
         }
     }
 
@@ -73,14 +73,14 @@ class ResolvedAtomCompleter(
         for (subKtPrimitive in resolvedAtom.subResolvedAtoms) {
             completeAll(subKtPrimitive)
         }
-        completeAndReport(resolvedAtom)
+        complete(resolvedAtom)
     }
 
-    fun completeResolvedCall(resolvedCallAtom: ResolvedCallAtom): ResolvedCall<*>? {
+    fun completeResolvedCall(resolvedCallAtom: ResolvedCallAtom, diagnostics: Collection<KotlinCallDiagnostic>): ResolvedCall<*>? {
         if (resolvedCallAtom.atom.psiKotlinCall is PSIKotlinCallForVariable) return null
 
-        val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(resolvedCallAtom, trace, resultSubstitutor)
-        kotlinToResolvedCallTransformer.bindAndReport(topLevelCallContext, trace, resolvedCall)
+        val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(resolvedCallAtom, trace, resultSubstitutor, diagnostics)
+        kotlinToResolvedCallTransformer.bindAndReport(topLevelCallContext, trace, resolvedCall, diagnostics)
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, callCheckerContext)
 
         val lastCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.functionCall else resolvedCall

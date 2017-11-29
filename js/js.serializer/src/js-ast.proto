@@ -440,6 +440,7 @@ enum SpecialFunction {
     COROUTINE_RESULT = 6;
     COROUTINE_CONTROLLER = 7;
     COROUTINE_RECEIVER = 8;
+    SET_COROUTINE_RESULT = 9;
 }
 
 

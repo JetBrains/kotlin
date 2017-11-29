@@ -1,0 +1,28 @@
+package
+
+public val r1: LateInitNumRef<kotlin.Int>
+public val r1a: LateNR<kotlin.Int> /* = LateInitNumRef<kotlin.Int> */
+public val r2: LateInitNumRef<kotlin.Int>
+public val r2a: LateNR<kotlin.Int> /* = LateInitNumRef<kotlin.Int> */
+public val r3: LateInitNumRef<kotlin.Int>
+public val r3a: LateNR<kotlin.Int> /* = LateInitNumRef<kotlin.Int> */
+public fun test(): kotlin.Unit
+public fun </*0*/ V, /*1*/ R : Ref<in V>> update(/*0*/ r: R, /*1*/ v: V): R
+
+public final class LateInitNumRef</*0*/ NN : kotlin.Number> : Ref<NN> {
+    public constructor LateInitNumRef</*0*/ NN : kotlin.Number>()
+    public constructor LateInitNumRef</*0*/ NN : kotlin.Number>(/*0*/ x: NN)
+    public open override /*1*/ var x: NN
+    private final var xx: NN?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Ref</*0*/ T> {
+    public abstract var x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias LateNR</*0*/ Nt>  = LateInitNumRef<Nt>

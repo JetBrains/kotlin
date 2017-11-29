@@ -1,5 +1,6 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
+import groovy.lang.Closure
 import org.gradle.api.*
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.*
@@ -11,6 +12,9 @@ import java.io.File
 
 inline fun <reified T : Task> Project.task(noinline configuration: T.() -> Unit) = tasks.creating(T::class, configuration)
 
+fun Project.callGroovy(name: String, vararg args: Any?): Any? {
+    return (property(name) as Closure<*>).call(*args)
+}
 
 fun AbstractTask.dependsOnTaskIfExists(task: String, project: Project?, parentProject: Project?) {
     val thisTask = this

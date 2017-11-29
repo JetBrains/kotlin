@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // See also KT-7804 (Wrong type inference of kotlin.Any? was for 'a' without explicit type)
 fun <T> foo(a: T) = a
 
@@ -11,7 +12,7 @@ fun <T> test(v: T): T {
         v
     }
 
-    val t: T = a
+    val t: T = <!NI;DEBUG_INFO_SMARTCAST!>a<!>
     return t
 }
 
@@ -35,7 +36,7 @@ fun <T> test3(v: T): T {
         v
     }
 
-    val t: T = a
+    val t: T = <!NI;DEBUG_INFO_SMARTCAST!>a<!>
     return t
 }
 

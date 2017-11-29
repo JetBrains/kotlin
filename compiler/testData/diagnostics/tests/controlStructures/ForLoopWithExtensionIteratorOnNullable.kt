@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // See also KT-7428
 class Container<K>(val k: K)
 // iterator() must be an extension, otherwise code will not compile
@@ -17,5 +18,5 @@ class OtherContainer<K>(val k: K) {
 fun test2() {
     val other: OtherContainer<String>? = null
     // Error
-    for (s in <!ITERATOR_ON_NULLABLE!>other<!>) {}
+    for (s in <!NI;ITERATOR_MISSING, OI;ITERATOR_ON_NULLABLE!>other<!>) {}
 }

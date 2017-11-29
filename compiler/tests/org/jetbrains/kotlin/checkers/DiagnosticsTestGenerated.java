@@ -20818,6 +20818,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("severalSmartCastsOnReified.kt")
+            public void testSeveralSmartCastsOnReified() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/severalSmartCastsOnReified.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("shortIfExprNotNull.kt")
             public void testShortIfExprNotNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/shortIfExprNotNull.kt");

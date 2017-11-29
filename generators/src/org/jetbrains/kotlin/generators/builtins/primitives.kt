@@ -36,9 +36,9 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             "unaryPlus" to "Returns this value.",
             "unaryMinus" to "Returns the negative of this value.")
     private val shiftOperators: Map<String, String> = mapOf(
-            "shl" to "Shifts this value left by [bits].",
-            "shr" to "Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit.",
-            "ushr" to "Shifts this value right by [bits], filling the leftmost bits with zeros.")
+            "shl" to "Shifts this value left by the [bitCount] number of bits.",
+            "shr" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.",
+            "ushr" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.")
     private val bitwiseOperators: Map<String, String> = mapOf(
             "and" to "Performs a bitwise AND operation between the two values.",
             "or" to "Performs a bitwise OR operation between the two values.",

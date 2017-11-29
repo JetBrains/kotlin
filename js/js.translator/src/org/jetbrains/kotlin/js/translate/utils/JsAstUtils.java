@@ -454,26 +454,6 @@ public final class JsAstUtils {
         return new JsObjectLiteral(Collections.singletonList(new JsPropertyInitializer(label, value)));
     }
 
-    public static JsExpression replaceRootReference(@NotNull JsNameRef fullQualifier, @NotNull JsExpression newQualifier) {
-        if (fullQualifier.getQualifier() == null) {
-            assert Namer.getRootPackageName().equals(fullQualifier.getIdent()) : "Expected root package, but: " + fullQualifier.getIdent();
-            return newQualifier;
-        }
-
-        fullQualifier = fullQualifier.deepCopy();
-        JsNameRef qualifier = fullQualifier;
-        while (true) {
-            JsExpression parent = qualifier.getQualifier();
-            assert parent instanceof JsNameRef : "unexpected qualifier: " + parent + ", original: " + fullQualifier;
-            if (((JsNameRef) parent).getQualifier() == null) {
-                assert Namer.getRootPackageName().equals(((JsNameRef) parent).getIdent());
-                qualifier.setQualifier(newQualifier);
-                return fullQualifier;
-            }
-            qualifier = (JsNameRef) parent;
-        }
-    }
-
     @NotNull
     public static List<JsStatement> flattenStatement(@NotNull JsStatement statement) {
         if (statement instanceof JsBlock) {
@@ -527,7 +507,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsExpression stateMachineReceiver() {
-        JsNameRef result = new JsNameRef("$this$");
+        JsNameRef result = pureFqn("$this$", null);
         MetadataProperties.setCoroutineReceiver(result, true);
         return result;
     }

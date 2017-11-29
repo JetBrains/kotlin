@@ -80,6 +80,7 @@ open class LazyClassMemberScope(
         }
 
         addDataClassMethods(result, location)
+        addSyntheticFunctions(result, location)
         addSyntheticCompanionObject(result, location)
         addSyntheticNestedClasses(result, location)
 
@@ -218,6 +219,10 @@ open class LazyClassMemberScope(
         val syntheticCompanionName = c.syntheticResolveExtension.getSyntheticCompanionObjectNameIfNeeded(thisDescriptor) ?: return
         val descriptor = getContributedClassifier(syntheticCompanionName, location) ?: return
         result.add(descriptor)
+    }
+
+    private fun addSyntheticFunctions(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
+        result.addAll(c.syntheticResolveExtension.getSyntheticFunctionNames(thisDescriptor).flatMap { getContributedFunctions(it, location) }.toList())
     }
 
     private fun addSyntheticNestedClasses(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {

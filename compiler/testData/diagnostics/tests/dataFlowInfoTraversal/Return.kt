@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 fun bar(x: Int): Int = x + 1
 
@@ -13,5 +14,5 @@ fun foo(): Int {
     val z: Int? = null
     if (z != null) return if (<!SENSELESS_COMPARISON!>z == null<!>) z else z
     
-    return <!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>z<!>
+    return <!NI;TYPE_MISMATCH, DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>z<!>
 }

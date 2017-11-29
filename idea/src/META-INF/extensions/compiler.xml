@@ -51,5 +51,7 @@
         <extensionPoint name="defaultScriptDependenciesProvider"
                         interface="org.jetbrains.kotlin.idea.core.script.DefaultScriptDependenciesProvider"
                         area="IDEA_PROJECT"/>
+        <extensionPoint name="renameHandler"
+                        interface="com.intellij.refactoring.rename.RenameHandler"/>
     </extensionPoints>
 </idea-plugin>

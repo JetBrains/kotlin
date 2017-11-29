@@ -68,6 +68,9 @@ fun KotlinFacetSettings.initializeIfNeeded(
 ) {
     val project = module.project
 
+    val shouldInferLanguageLevel = languageLevel == null
+    val shouldInferAPILevel = apiLevel == null
+
     if (compilerSettings == null) {
         compilerSettings = KotlinCompilerSettings.getInstance(project).settings
     }
@@ -82,12 +85,12 @@ fun KotlinFacetSettings.initializeIfNeeded(
         }
     }
 
-    if (languageLevel == null) {
+    if (shouldInferLanguageLevel) {
         languageLevel = (if (useProjectSettings) LanguageVersion.fromVersionString(commonArguments.languageVersion) else null)
                         ?: getDefaultLanguageLevel(module, languageVersion)
     }
 
-    if (apiLevel == null) {
+    if (shouldInferAPILevel) {
         apiLevel = if (useProjectSettings) {
             LanguageVersion.fromVersionString(commonArguments.apiVersion) ?: languageLevel
         }
@@ -249,10 +252,16 @@ private val jsSpecificUIExposedFields = listOf(K2JSCompilerArguments::sourceMap.
 val jsUIExposedFields = commonUIExposedFields + jsSpecificUIExposedFields
 private val jsPrimaryFields = commonPrimaryFields + jsSpecificUIExposedFields
 
+private val metadataSpecificUIExposedFields = listOf(K2MetadataCompilerArguments::destination.name,
+                                                     K2MetadataCompilerArguments::classpath.name)
+val metadataUIExposedFields = commonUIExposedFields + metadataSpecificUIExposedFields
+private val metadataPrimaryFields = commonPrimaryFields + metadataSpecificUIExposedFields
+
 private val CommonCompilerArguments.primaryFields: List<String>
     get() = when (this) {
         is K2JVMCompilerArguments -> jvmPrimaryFields
         is K2JSCompilerArguments -> jsPrimaryFields
+        is K2MetadataCompilerArguments -> metadataPrimaryFields
         else -> commonPrimaryFields
     }
 

@@ -208,6 +208,16 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             extraLanguageFeatures.put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED);
         }
 
+        if (arguments.getLegacySmartCastAfterTry()) {
+            extraLanguageFeatures.put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED);
+        }
+
+        if (arguments.getEffectSystem()) {
+            extraLanguageFeatures.put(LanguageFeature.CallsInPlaceEffect, LanguageFeature.State.ENABLED);
+            extraLanguageFeatures.put(LanguageFeature.ReturnsEffect, LanguageFeature.State.ENABLED);
+        }
+
+
         setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, arguments);
 
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
