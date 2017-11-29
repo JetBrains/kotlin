@@ -1,12 +1,7 @@
 # Kotlin serialization IDEA plugin
 
 Kotlin serialization plugin consists of three parts: a compiler plugin, an IntelliJ plugin and a runtime library.
-This is the IDEA plugin. Gradle and Maven plugins can be found in `libraries` folder.
-
-Please note that this plugin currently works only for highlighting and resolving symbols, and it doesn't work with embedded IDEA compiler.
-To build any project with serialization within IDEA, you'll need to delegate all build actions to gradle:
-`File - Settings - Build, Execution, Deployment - Build Tools - Gradle - Runner -` tick `Delegate IDE build/run actions to gradle`.
-IntelliJ projects currently are not supported.
+This is the folder with common source for all plugins, IDEA plugin is built from here. Gradle and Maven plugins can be found in `libraries` folder.
 
 Compiler plugins are uploaded on bintray: https://bintray.com/kotlin/kotlinx/kotlinx.serialization.plugin
 
