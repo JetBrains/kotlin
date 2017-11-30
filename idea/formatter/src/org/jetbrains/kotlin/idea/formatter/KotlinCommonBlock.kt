@@ -175,7 +175,10 @@ abstract class KotlinCommonBlock(
                     return Indent.getNoneIndent()
                 }
 
-                return Indent.getContinuationWithoutFirstIndent()
+                return if (settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_ARGUMENT_LISTS)
+                    Indent.getContinuationWithoutFirstIndent()
+                else
+                    Indent.getNormalIndent()
             }
 
             if (parentType === KtNodeTypes.TYPE_PARAMETER_LIST || parentType === KtNodeTypes.TYPE_ARGUMENT_LIST) {
