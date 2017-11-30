@@ -293,7 +293,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                 val realDescriptor = realFunction.descriptor
 
                 log { "$descriptor -> $realDescriptor" }
-                val maskValues = Array(descriptor.valueParameters.size / 32 + 1, {0})
+                val maskValues = Array((descriptor.valueParameters.size + 31) / 32, {0})
                 val params = mutableListOf<Pair<ValueParameterDescriptor, IrExpression?>>()
                 params.addAll(descriptor.valueParameters.mapIndexed { i, _ ->
                     val valueArgument = expression.getValueArgument(i)
@@ -362,7 +362,7 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
             }
         }
 
-        val syntheticParameters = MutableList(valueParameters.size / 32 + 1) { i ->
+        val syntheticParameters = MutableList((valueParameters.size + 31) / 32) { i ->
             valueParameter(descriptor, valueParameters.size + i, parameterMaskName(i), descriptor.builtIns.intType)
         }
         if (this is ClassConstructorDescriptor) {
