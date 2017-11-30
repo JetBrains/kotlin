@@ -214,25 +214,28 @@ class ExpressionCodegen(
     }
 
     private fun generateCall(expression: IrMemberAccessExpression, superQualifier: ClassDescriptor?, data: BlockInfo): StackValue {
-        val callable = resolveToCallable(expression, superQualifier != null)
-        if (callable is IrIntrinsicFunction) {
-            return callable.invoke(mv, this, data)
+        val isSuperCall = superQualifier != null
+        val callable = resolveToCallable(expression, isSuperCall)
+        return if (callable is IrIntrinsicFunction) {
+            callable.invoke(mv, this, data)
         } else {
-            return generateCall(expression, callable, data)
+            generateCall(expression, callable, data, isSuperCall)
         }
     }
 
-    fun generateCall(expression: IrMemberAccessExpression, callable: Callable, data: BlockInfo): StackValue {
+    fun generateCall(expression: IrMemberAccessExpression, callable: Callable, data: BlockInfo, isSuperCall: Boolean = false): StackValue {
         val callGenerator = getOrCreateCallGenerator(expression, expression.descriptor)
 
         val receiver = expression.dispatchReceiver
         receiver?.apply {
-            //gen(receiver, callable.dispatchReceiverType!!, data)
-            callGenerator.genValueAndPut(null, this, callable.dispatchReceiverType!!, -1, this@ExpressionCodegen, data)
+            callGenerator.genValueAndPut(
+                    null, this,
+                    if (isSuperCall) receiver.asmType else callable.dispatchReceiverType!!,
+                    -1, this@ExpressionCodegen, data
+            )
         }
 
         expression.extensionReceiver?.apply {
-            //gen(this, callable.extensionReceiverType!!, data)
             callGenerator.genValueAndPut(null, this, callable.extensionReceiverType!!, -1, this@ExpressionCodegen, data)
         }
 
