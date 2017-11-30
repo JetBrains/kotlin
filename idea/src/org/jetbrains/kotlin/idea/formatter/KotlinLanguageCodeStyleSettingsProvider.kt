@@ -270,6 +270,14 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                                  CodeStyleSettingsCustomizable.WRAPPING_BRACES)
 
                 showCustomOption(
+                        KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_PARAMETER_LISTS,
+                        "Use continuation indent",
+                        CodeStyleSettingsCustomizable.WRAPPING_METHOD_PARAMETERS)
+                showCustomOption(
+                        KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_CHAINED_CALLS,
+                        "Use continuation indent",
+                        CodeStyleSettingsCustomizable.WRAPPING_CALL_CHAIN)
+                showCustomOption(
                         KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_SUPERTYPE_LISTS,
                         "Use continuation indent",
                         CodeStyleSettingsCustomizable.WRAPPING_EXTENDS_LIST)
