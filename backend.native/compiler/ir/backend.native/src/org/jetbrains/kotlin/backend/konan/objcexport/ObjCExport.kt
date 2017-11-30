@@ -157,7 +157,7 @@ internal class ObjCExport(val context: Context) {
     }
 }
 
-private fun ModuleDescriptor.guessMainPackage(): FqName {
+internal fun ModuleDescriptor.guessMainPackage(): FqName {
     val allPackages = this.getPackageFragments() // Includes also all parent packages, e.g. the root one.
 
     val nonEmptyPackages = allPackages

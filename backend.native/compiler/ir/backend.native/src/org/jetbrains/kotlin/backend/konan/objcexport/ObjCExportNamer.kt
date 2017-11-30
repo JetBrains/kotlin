@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMapper) {
     val kotlinAnyName = "KotlinBase"
 
+    private val commonPackageSegments = context.moduleDescriptor.guessMainPackage().pathSegments()
+    private val topLevelNamePrefix = context.moduleDescriptor.namePrefix
+
     private val methodSelectors = object : Mapping<FunctionDescriptor, String>() {
         override fun conflict(first: FunctionDescriptor, second: FunctionDescriptor): Boolean =
                 !mapper.canHaveSameSelector(first, second)
@@ -56,11 +59,13 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
 
     fun getPackageName(fqName: FqName): String = classNames.getOrPut(fqName) {
         StringBuilder().apply {
-            append(context.moduleDescriptor.namePrefix)
-            if (fqName.isRoot) {
-                append("TopLevel")
-            } else {
-                append(fqName.pathSegments().joinToString("") { it.asString().capitalize() })
+            append(topLevelNamePrefix)
+            fqName.pathSegments().forEachIndexed { index, segment ->
+                if (index < commonPackageSegments.size) {
+                    assert(commonPackageSegments[index] == segment)
+                } else {
+                    append(segment.asString().capitalize())
+                }
             }
         }.mangledSequence { append("_") }
     }
@@ -70,7 +75,7 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
 
         return mapping.getOrPut(descriptor) {
             StringBuilder().apply {
-                append(context.moduleDescriptor.namePrefix)
+                append(topLevelNamePrefix)
 
                 if (descriptor.module != context.moduleDescriptor) {
                     append(descriptor.module.namePrefix)
