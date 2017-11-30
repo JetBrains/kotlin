@@ -1,5 +1,6 @@
 // !LANGUAGE: +ReturnsEffect
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// !WITH_NEW_INFERENCE
 
 import kotlin.internal.contracts.*
 
@@ -29,12 +30,12 @@ fun intersectingInfo(x: Any?, y: Any?) {
     if ((isString(x) && y is String) || (!notIsString(x) && !notIsInt(y))) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        y.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        y.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
 }
 
@@ -47,13 +48,13 @@ fun intersectingInfo2(x: Any?, y: Any?) {
         (!notIsString(x) && isString(y) && y is Int) ||
         (x is String && !notIsInt(y) && x is Int)) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        y.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
-    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+    x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     y.<!UNRESOLVED_REFERENCE!>length<!>
-    y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+    y.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
 }
 

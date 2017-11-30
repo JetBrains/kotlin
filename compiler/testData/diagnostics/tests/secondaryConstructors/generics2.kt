@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 open class B<R1, R2>(x: R1, y: R2)
 
 class A0<T1, T2> {

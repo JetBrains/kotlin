@@ -1,5 +1,6 @@
 // !LANGUAGE: +ReturnsEffect
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// !WITH_NEW_INFERENCE
 
 import kotlin.internal.contracts.*
 
@@ -97,6 +98,6 @@ fun branchedAndNestedWithNativeOperators(x: Any?, y: Any?) {
     )
     <!DEBUG_INFO_SMARTCAST!>x<!>.length
     y.<!UNRESOLVED_REFERENCE!>length<!>
-    y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+    y.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
 }
 

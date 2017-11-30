@@ -38,7 +38,7 @@ fun test() {
     1 + platformJ
 
     platformNN + 1
-    platformN <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;UNSAFE_OPERATOR_CALL!>+<!> 1
+    platformN <!UNSAFE_OPERATOR_CALL!>+<!> 1
     platformJ + 1
 
     1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformNN
@@ -50,6 +50,6 @@ fun test() {
     platformJ <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
 
     platformNN += 1
-    platformN <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;UNSAFE_OPERATOR_CALL!>+=<!> 1
+    platformN <!UNSAFE_OPERATOR_CALL!>+=<!> 1
     platformJ += 1
 }

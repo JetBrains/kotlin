@@ -15,7 +15,7 @@ fun bar(arg: Long?): Long {
         return <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>i<!UNSAFE_CALL!>--<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> i<!>
     }
     if (i++ == 7L) {
-        return i++ <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;UNSAFE_OPERATOR_CALL!>+<!> <!OI;TYPE_MISMATCH!>i<!>
+        return i++ <!NI;NONE_APPLICABLE, OI;UNSAFE_OPERATOR_CALL!>+<!> <!OI;TYPE_MISMATCH!>i<!>
     }
     return 0L
 }

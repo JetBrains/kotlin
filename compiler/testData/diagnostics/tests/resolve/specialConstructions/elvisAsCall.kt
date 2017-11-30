@@ -23,13 +23,13 @@ fun testDataFlowInfo1(a: Int?, b: Int?) {
     val c: Int = a ?: b!!
     doInt(c)
     // b is nullable if a != null
-    b <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;UNSAFE_OPERATOR_CALL!>+<!> 1
+    b <!UNSAFE_OPERATOR_CALL!>+<!> 1
 }
 
 fun testDataFlowInfo2(a: Int?, b: Int?) {
     doInt(a ?: b!!)
     // b is nullable if a != null
-    b <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;UNSAFE_OPERATOR_CALL!>+<!> 1
+    b <!UNSAFE_OPERATOR_CALL!>+<!> 1
 }
 
 fun testTypeMismatch(a: String?, b: Any) {
