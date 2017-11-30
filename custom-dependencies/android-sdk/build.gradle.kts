@@ -1,5 +1,6 @@
 
 import java.io.File
+import org.gradle.internal.os.OperatingSystem
 
 // TODO: consider adding dx sources (the only jar used on the compile time so far)
 // e.g. from "https://android.googlesource.com/platform/dalvik/+archive/android-5.0.0_r2/dx.tar.gz"
@@ -24,13 +25,22 @@ val sdkDestDir = File(buildDir, "androidSdk")
 data class LocMap(val name: String, val ver: String, val dest: String, val suffix: String,
                   val additionalConfig: Configuration? = null, val dirLevelsToSkit: Int = 0)
 
+val toolsOs = when {
+    OperatingSystem.current().isWindows -> "windows"
+    OperatingSystem.current().isMacOsX -> "macosx"
+    OperatingSystem.current().isLinux -> "linux"
+    else -> {
+        logger.error("Unknown operating system for android tools: ${OperatingSystem.current().name}")
+        ""
+    }
+}
+
 val sdkLocMaps = listOf(
         LocMap("platform", "26_r02", "platforms/android-26", "", androidPlatform, 1),
         LocMap("android_m2repository", "r44", "extras/android", ""),
-        LocMap("platform-tools", "r25.0.3", "", "linux"),
-        LocMap("tools", "r24.3.4", "", "linux"),
-        LocMap("build-tools", "r23.0.1", "build-tools/23.0.1", "linux", buildTools, 1))
-
+        LocMap("platform-tools", "r25.0.3", "", toolsOs),
+        LocMap("tools", "r24.3.4", "", toolsOs),
+        LocMap("build-tools", "r23.0.1", "build-tools/23.0.1", toolsOs, buildTools, 1))
 
 val prepareSdk by task<DefaultTask> {
     outputs.dir(sdkDestDir)
