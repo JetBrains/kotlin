@@ -1,5 +1,6 @@
 // !LANGUAGE: +ReturnsEffect
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// !WITH_NEW_INFERENCE
 
 import kotlin.internal.contracts.*
 

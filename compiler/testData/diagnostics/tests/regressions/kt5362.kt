@@ -25,7 +25,7 @@ public class Manager {
 
     class Task(val callback: Manager.() -> Unit) : Runnable {
         override public fun run() {
-            <!NI;DEBUG_INFO_MISSING_UNRESOLVED!><!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>callback<!>(<!OI;NO_VALUE_FOR_PARAMETER!>)<!><!> // Manager is not accessible here, but no error is shown
+            callback(<!NO_VALUE_FOR_PARAMETER!>)<!> // Manager is not accessible here, but no error is shown
         }
     }
 }
