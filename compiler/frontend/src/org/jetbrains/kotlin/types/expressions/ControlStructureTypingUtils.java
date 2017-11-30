@@ -26,6 +26,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -116,7 +118,7 @@ public class ControlStructureTypingUtils {
         SimpleFunctionDescriptorImpl function = createFunctionDescriptorForSpecialConstruction(
                 construct, argumentNames, isArgumentNullable);
         TracingStrategy tracing = createTracingForSpecialConstruction(call, construct.getName(), context);
-        TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType);
+        TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType, context.languageVersionSettings);
         ResolutionCandidate<FunctionDescriptor> resolutionCandidate =
                 ResolutionCandidate.create(call, function, knownTypeParameterSubstitutor);
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
@@ -128,9 +130,11 @@ public class ControlStructureTypingUtils {
     private static @Nullable TypeSubstitutor createKnownTypeParameterSubstitutorForSpecialCall(
             @NotNull ResolveConstruct construct,
             @NotNull SimpleFunctionDescriptorImpl function,
-            @NotNull KotlinType expectedType
+            @NotNull KotlinType expectedType,
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         if (construct == ResolveConstruct.ELVIS
+            || construct == ResolveConstruct.EXCL_EXCL
             || TypeUtils.noExpectedType(expectedType)
             || TypeUtils.isDontCarePlaceholder(expectedType)
             || KotlinBuiltIns.isUnitOrNullableUnit(expectedType)
