@@ -2,7 +2,7 @@ package
 
 package i {
     public val i.C.bar: i.C.D
-    public val kotlin.String.bd: kotlin.Any?
+    public val kotlin.String.bd: [ERROR : <ERROR FUNCTION RETURN TYPE>]
     public val kotlin.String.bd1: kotlin.String
     public val i.A.foo: [ERROR : Type for ii]
     public val i.C.foo: i.C.D

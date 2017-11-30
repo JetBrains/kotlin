@@ -37,7 +37,7 @@ fun test() {
         takeNotNull(dependOn(dependOn(x) as? String) <!NI;USELESS_ELVIS!>?: ""<!>)
     }
 
-    takeNotNull(<!NI;TYPE_MISMATCH!>bar()!!<!>)
+    takeNotNull(bar()!!)
 }
 
 inline fun <reified T : Any> reifiedNull(): T? = null

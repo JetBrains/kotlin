@@ -21,7 +21,7 @@ public object DefaultHttpClient : HttpClient {
 
 public object DefaultHttpClientWithBy : HttpClient {
     private constructor DefaultHttpClientWithBy()
-    public final val client: [ERROR : Type from delegate]
+    public final val client: [ERROR : <ERROR FUNCTION RETURN TYPE>]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
