@@ -128,6 +128,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("CallChainWrapping.after.kt")
+        public void testCallChainWrapping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallChainWrapping.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("CallLParenthOnNextLine.after.kt")
         public void testCallLParenthOnNextLine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallLParenthOnNextLine.after.kt");
@@ -1145,6 +1151,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("BinaryExpressionsWithoutAlignment.after.inv.kt")
         public void testBinaryExpressionsWithoutAlignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("CallChainWrapping.after.inv.kt")
+        public void testCallChainWrapping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallChainWrapping.after.inv.kt");
             doTestInverted(fileName);
         }
 

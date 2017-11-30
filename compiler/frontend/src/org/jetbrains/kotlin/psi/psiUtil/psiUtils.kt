@@ -391,6 +391,7 @@ fun KtModifierListOwner.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD)
 fun KtModifierList.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD) || hasModifier(KtTokens.ACTUAL_KEYWORD)
 
 fun ASTNode.children() = generateSequence(firstChildNode) { node -> node.treeNext }
+fun ASTNode.parents() = generateSequence(treeParent) { node -> node.treeParent }
 
 fun ASTNode.siblings(forward: Boolean = true): Sequence<ASTNode> {
     if (forward) {

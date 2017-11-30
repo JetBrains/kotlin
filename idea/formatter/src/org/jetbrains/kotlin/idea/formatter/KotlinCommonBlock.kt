@@ -34,9 +34,11 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.children
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
+private val QUALIFIED_EXPRESSIONS = TokenSet.create(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
 private val KDOC_COMMENT_INDENT = 1
 
 private val BINARY_EXPRESSIONS = TokenSet.create(KtNodeTypes.BINARY_EXPRESSION, KtNodeTypes.BINARY_WITH_TYPE, KtNodeTypes.IS_EXPRESSION)
@@ -92,7 +94,7 @@ abstract class KotlinCommonBlock(
 
         var nodeSubBlocks = buildSubBlocks()
 
-        if (node.elementType === KtNodeTypes.DOT_QUALIFIED_EXPRESSION || node.elementType === KtNodeTypes.SAFE_ACCESS_EXPRESSION) {
+        if (node.elementType in QUALIFIED_EXPRESSIONS) {
             val operationBlockIndex = findNodeBlockIndex(nodeSubBlocks, QUALIFIED_OPERATION)
             if (operationBlockIndex != -1) {
                 // Create fake ".something" or "?.something" block here, so child indentation will be
@@ -103,10 +105,17 @@ abstract class KotlinCommonBlock(
                     Indent.getContinuationWithoutFirstIndent()
                 else
                     Indent.getNormalIndent()
+                val isNonFirstChainedCall = operationBlockIndex > 0 && isCallBlock(nodeSubBlocks[operationBlockIndex - 1])
+                val wrap = if ((settings.kotlinCommonSettings.WRAP_FIRST_METHOD_IN_CALL_CHAIN || isNonFirstChainedCall) &&
+                               canWrapCallChain(node))
+                    Wrap.createWrap(settings.kotlinCommonSettings.METHOD_CALL_CHAIN_WRAP, true)
+                else
+                    null
+
                 val operationSyntheticBlock = SyntheticKotlinBlock(
                         operationBlock.node,
                         nodeSubBlocks.subList(operationBlockIndex, nodeSubBlocks.size),
-                        null, indent, null, spacingBuilder) { createSyntheticSpacingNodeBlock(it) }
+                        null, indent, wrap, spacingBuilder) { createSyntheticSpacingNodeBlock(it) }
 
                 nodeSubBlocks = nodeSubBlocks.subList(0, operationBlockIndex) + operationSyntheticBlock
             }
@@ -115,6 +124,20 @@ abstract class KotlinCommonBlock(
         mySubBlocks = nodeSubBlocks
 
         return nodeSubBlocks
+    }
+
+    private fun isCallBlock(astBlock: ASTBlock): Boolean {
+        val node = astBlock.node
+        return node.elementType in QUALIFIED_EXPRESSIONS && node.lastChildNode?.elementType == KtNodeTypes.CALL_EXPRESSION
+    }
+
+    private fun canWrapCallChain(node: ASTNode): Boolean {
+        val callChainParent = node.parents().firstOrNull { it.elementType !in QUALIFIED_EXPRESSIONS } ?: return true
+        return callChainParent.elementType in CODE_BLOCKS ||
+               callChainParent.elementType == KtNodeTypes.PROPERTY ||
+               (callChainParent.elementType == KtNodeTypes.BINARY_EXPRESSION &&
+                (callChainParent.psi as KtBinaryExpression).operationToken in KtTokens.ALL_ASSIGNMENTS) ||
+               callChainParent.elementType == KtNodeTypes.RETURN
     }
 
     fun createChildIndent(child: ASTNode): Indent? {
@@ -182,7 +205,7 @@ abstract class KotlinCommonBlock(
 
             KtNodeTypes.TRY -> ChildAttributes(Indent.getNoneIndent(), null)
 
-            KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION -> ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null)
+            in QUALIFIED_EXPRESSIONS -> ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null)
 
             KtNodeTypes.VALUE_PARAMETER_LIST, KtNodeTypes.VALUE_ARGUMENT_LIST -> {
                 val subBlocks = getSubBlocks()
@@ -463,7 +486,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .set(Indent.getContinuationWithoutFirstIndent()),
 
         strategy("Chained calls")
-                .within(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
+                .within(QUALIFIED_EXPRESSIONS)
                 .notForType(KtTokens.DOT, KtTokens.SAFE_ACCESS)
                 .forElement { it.treeParent.firstChildNode != it }
                 .set { settings ->
