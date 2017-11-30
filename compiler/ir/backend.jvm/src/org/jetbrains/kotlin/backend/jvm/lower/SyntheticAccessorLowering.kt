@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -156,7 +157,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
         fun createSyntheticAccessorCallForFunction(superResult: IrElement, expression: IrMemberAccessExpression, codegenContext: CodegenContext<*>?, context: JvmBackendContext): IrElement {
 
             val descriptor = expression.descriptor
-            if (descriptor is FunctionDescriptor) {
+            if (descriptor is FunctionDescriptor && !expression.usesDefaultArguments()) {
                 val directAccessor = codegenContext!!.accessibleDescriptor(JvmCodegenUtil.getDirectMember(descriptor), (expression as? IrCall)?.superQualifier)
                 val accessor = Companion.actualAccessor(descriptor, directAccessor)
 
