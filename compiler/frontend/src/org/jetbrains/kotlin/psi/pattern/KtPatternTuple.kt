@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi.pattern
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.types.expressions.NotNullKotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
@@ -31,11 +31,11 @@ class KtPatternTuple(node: ASTNode) : KtPatternElement(node) {
         get() = findChildrenByType(KtNodeTypes.PATTERN_EXPRESSION)
 
 
-    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
+    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
         throw UnsupportedOperationException("use KtPattenTypedTuple.getTypeInfo")
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
         throw UnsupportedOperationException("use KtPattenTypedTuple.resolve")
     }
 }

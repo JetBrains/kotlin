@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
 import org.jetbrains.kotlin.psi.addRemoveModifier.removeModifier
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
 import org.jetbrains.kotlin.psi.typeRefHelpers.setTypeReference
-import org.jetbrains.kotlin.types.expressions.NotNullKotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
@@ -193,7 +193,7 @@ class KtPatternVariableDeclaration(node: ASTNode) : KtPatternEntry(node), KtVari
         patternTypeReference?.getTypeInfo(resolver, state)
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
         val info = resolver.resolveType(this, state)
         resolver.defineVariable(this, state)
         return info

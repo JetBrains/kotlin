@@ -103,7 +103,7 @@ public interface BindingContext {
     WritableSlice<KtTypeReference, KotlinType> TYPE = Slices.createSimpleSlice();
     WritableSlice<KtTypeReference, KotlinType> ABBREVIATED_TYPE = Slices.createSimpleSlice();
     WritableSlice<KtExpression, KotlinType> PATTERN_SUBJECT_TYPE = new BasicWritableSlice<>(DO_NOTHING);
-    WritableSlice<KtPatternElement, NotNullKotlinTypeInfo> PATTERN_ELEMENT_TYPE_INFO = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<KtPatternElement, KotlinTypeInfo> PATTERN_ELEMENT_TYPE_INFO = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, KotlinTypeInfo> EXPRESSION_TYPE_INFO = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, DataFlowInfo> DATA_FLOW_INFO_BEFORE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, KotlinType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<>(DO_NOTHING);

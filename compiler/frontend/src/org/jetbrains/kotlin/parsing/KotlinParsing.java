@@ -1263,16 +1263,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return parseProperty(isScriptTopLevel ? PropertyParsingMode.SCRIPT_TOPLEVEL : PropertyParsingMode.LOCAL);
     }
 
-    //private IElementType newParseProperty() {
-    //    parseProperty(PropertyParsingMode.MEMBER_OR_TOPLEVEL);
-    //    return PROPERTY;
-    //}
-
-    //public IElementType newParseLocalProperty(boolean isScriptTopLevel) {
-    //    parseProperty(isScriptTopLevel ? PropertyParsingMode.SCRIPT_TOPLEVEL : PropertyParsingMode.LOCAL);
-    //    return PROPERTY;
-    //}
-
     enum PropertyParsingMode {
         MEMBER_OR_TOPLEVEL(false, true),
         LOCAL(true, false),
@@ -1369,72 +1359,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
     }
-
-    //public void parseProperty(PropertyParsingMode mode) {
-    //    assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
-    //    advance(); // VAL_KEYWORD or VAR_KEYWORD
-    //
-    //    boolean typeParametersDeclared = at(LT) && parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON));
-    //
-    //    TokenSet propertyNameFollow =
-    //            TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
-    //
-    //    myBuilder.disableJoiningComplexTokens();
-    //
-    //    boolean receiverTypeDeclared = parseReceiverType("property", propertyNameFollow);
-    //
-    //    myBuilder.restoreJoiningComplexTokensState();
-    //
-    //    boolean isNameOnTheNextLine = eol();
-    //    PsiBuilder.Marker beforeName = mark();
-    //
-    //    boolean noTypeReference = !(at(IDENTIFIER) && at(1, COLON));
-    //
-    //    PsiBuilder.Marker patternMarker = mark();
-    //    boolean isSimple = parsePattern();
-    //    boolean falsePatternAssign = !isSimple && !mode.destructuringAllowed;
-    //    errorIf(patternMarker, falsePatternAssign, "Pattern assign are only allowed for local variables/values");
-    //
-    //    parseTypeConstraintsGuarded(typeParametersDeclared);
-    //
-    //    if (!parsePropertyDelegateOrAssignment() && isNameOnTheNextLine && noTypeReference && !receiverTypeDeclared) {
-    //        // Do not parse property identifier on the next line if declaration is invalid
-    //        // In most cases this identifier relates to next statement/declaration
-    //        beforeName.rollbackTo();
-    //        error("Expecting property name or receiver type");
-    //        return;
-    //    }
-    //
-    //    beforeName.drop();
-    //
-    //    if (mode.accessorsAllowed) {
-    //        // It's only needed for non-local properties, because in local ones:
-    //        // "val a = 1; b" must not be an infix call of b on "val ...;"
-    //
-    //        myBuilder.enableNewlines();
-    //        boolean hasNewLineWithSemicolon = consumeIf(SEMICOLON) && myBuilder.newlineBeforeCurrentToken();
-    //        myBuilder.restoreNewlinesState();
-    //
-    //        if (!hasNewLineWithSemicolon) {
-    //            AccessorKind accessorKind = parsePropertyGetterOrSetter(null);
-    //            if (accessorKind != null) {
-    //                parsePropertyGetterOrSetter(accessorKind);
-    //            }
-    //
-    //            if (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
-    //                if (getLastToken() != SEMICOLON) {
-    //                    errorUntil(
-    //                            "Property getter or setter expected",
-    //                            TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE)));
-    //                }
-    //            }
-    //            else {
-    //                consumeIf(SEMICOLON);
-    //            }
-    //        }
-    //    }
-    //}
-
 
     private boolean parsePropertyDelegateOrAssignment() {
         if (at(BY_KEYWORD)) {
@@ -2025,28 +1949,21 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * : "if" "(" expression ")"
      * ;
      */
-    public boolean parsePattern() {
+    public void parsePattern() {
         PsiBuilder.Marker patternMarker = mark();
-        boolean isSimple = parsePatternExpression();
+        parsePatternExpression();
         patternMarker.done(PATTERN);
-        return isSimple;
     }
 
-    private boolean parsePatternExpression() {
+    private void parsePatternExpression() {
         PsiBuilder.Marker patternExpressionMarker = mark();
-        boolean isSimple = at(IDENTIFIER) && !at(1, LPAR);
-        while (at(AT)) errorAndAdvance("Expected pattern before '@'");
-        int counter = 0;
-        do {
-            if (at(AT)) {
-                advance(); // AT
-            }
+        while (true) {
+            errorWhile("Expected pattern", AT);
             parsePatternConstraint();
-            counter++;
+            if (!at(AT)) break;
+            advance(); // AT
         }
-        while (at(AT));
         patternExpressionMarker.done(PATTERN_EXPRESSION);
-        return isSimple && counter == 1;
     }
 
     private void parsePatternConstraint() {

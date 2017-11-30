@@ -37,8 +37,6 @@ class KotlinTypeInfo @JvmOverloads constructor(
     val jumpFlowInfo: DataFlowInfo = dataFlowInfo
 ) {
 
-    fun kotlinTypeInfo(type: KotlinType) = NotNullKotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
-
     fun clearType() = replaceType(null)
 
     // NB: do not compare type with this.type because this comparison is complex and unstable

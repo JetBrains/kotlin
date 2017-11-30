@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi.pattern
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.types.expressions.NotNullKotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 import org.jetbrains.kotlin.types.expressions.and
@@ -40,7 +40,7 @@ class KtPatternConstraint(node: ASTNode) : KtPatternElement(node) {
         entry?.getTypeInfo(resolver, state)
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
         val entryInfo = entry?.resolve(resolver, state)
         val guardInfo = guard?.resolve(resolver, state)
         val thisInfo = resolver.resolveType(this, state)

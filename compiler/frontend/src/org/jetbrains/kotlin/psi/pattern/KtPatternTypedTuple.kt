@@ -36,7 +36,7 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternEntry(node) {
         return visitor.visitPatternTypedTuple(this, data)
     }
 
-    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo = resolver.restoreOrCreate(this, state) {
+    override fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo = resolver.restoreOrCreate(this, state) {
         typeReference?.let { typeReference ->
             resolver.getTypeInfo(typeReference, state).also {
                 it.type.errorIfNull(typeReference, state, Errors.NON_DERIVABLE_TYPE)
@@ -44,7 +44,7 @@ class KtPatternTypedTuple(node: ASTNode) : KtPatternEntry(node) {
         }
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
         val info = resolver.resolveType(this, state)
         val expressions = tuple?.expressions.errorIfNull(this, state, Errors.EXPECTED_PATTERN_TUPLE_INSTANCE) ?: return info
         if (expressions.isEmpty()) {

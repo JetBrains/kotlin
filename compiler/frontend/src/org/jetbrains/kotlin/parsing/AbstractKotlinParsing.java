@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.utils.strings.StringsKt;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
@@ -274,6 +275,28 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         while (!eof() && !tokenSet.contains(tt()) && !(stopAtEolOrSemi && at(EOL_OR_SEMICOLON))) {
             advance();
         }
+    }
+
+    private void skipWhile(Predicate<IElementType> predicate) {
+        while (!eof() && predicate.test(tt())) {
+            advance();
+        }
+    }
+
+    private void errorWhile(String message, Predicate<IElementType> predicate) {
+        if (predicate.test(tt())) {
+            PsiBuilder.Marker error = mark();
+            skipWhile(predicate);
+            error.error(message);
+        }
+    }
+
+    private void errorWhile(String message, TokenSet tokenSet) {
+        errorWhile(message, tokenSet::contains);
+    }
+
+    protected void errorWhile(String message, IElementType token) {
+        errorWhile(message, TokenSet.create(token));
     }
 
     protected void errorUntil(String message, TokenSet tokenSet) {

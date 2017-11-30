@@ -41,10 +41,10 @@ class KtPatternExpression(node: ASTNode) : KtPatternEntry(node) {
         val dataFlowInfo = flowsInfo.asSequence()
                 .map { it.dataFlowInfo }
                 .reduce { acc, info -> acc.and(info) }
-        NotNullKotlinTypeInfo(type, dataFlowInfo)
+        KotlinTypeInfo(type, dataFlowInfo)
     }
 
-    override fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo {
+    override fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo {
         val constraintsTypeInfo = constraints.asSequence().map { it.resolve(resolver, state) }
         val thisTypeInfo = resolver.resolveType(this, state)
         return thisTypeInfo.and(constraintsTypeInfo)

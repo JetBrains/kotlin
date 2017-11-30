@@ -259,11 +259,7 @@ public class ControlStructureTypingUtils {
             @NotNull KtExpression calleeExpression,
             @NotNull List<? extends KtExpression> arguments
     ) {
-        List<LexicalScope> scopes = new ArrayList<>();
-        for (int i = 0; i < arguments.size(); ++i) {
-            scopes.add(null);
-        }
-        return createCallForSpecialConstruction(expression, calleeExpression, arguments, scopes);
+        return createCallForSpecialConstruction(expression, calleeExpression, arguments, null);
     }
 
     /*package*/
@@ -271,7 +267,7 @@ public class ControlStructureTypingUtils {
             @NotNull KtExpression expression,
             @NotNull KtExpression calleeExpression,
             @NotNull List<? extends KtExpression> arguments,
-            @NotNull List<LexicalScope> scopeArguments
+            @Nullable List<LexicalScope> scopeArguments
     ) {
         List<ValueArgument> valueArguments = Lists.newArrayList();
         for (KtExpression argument : arguments) {

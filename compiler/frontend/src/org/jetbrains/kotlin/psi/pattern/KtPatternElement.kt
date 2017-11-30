@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi.pattern
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.psi.KtExpressionImpl
 import org.jetbrains.kotlin.psi.KtVisitor
-import org.jetbrains.kotlin.types.expressions.NotNullKotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PatternResolveState
 import org.jetbrains.kotlin.types.expressions.PatternResolver
 
@@ -29,7 +29,7 @@ abstract class KtPatternElement(node: ASTNode) : KtExpressionImpl(node) {
         return visitor.visitPatternElement(this, data)
     }
 
-    abstract fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo
+    abstract fun getTypeInfo(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo
 
-    abstract fun resolve(resolver: PatternResolver, state: PatternResolveState): NotNullKotlinTypeInfo
+    abstract fun resolve(resolver: PatternResolver, state: PatternResolveState): KotlinTypeInfo
 }

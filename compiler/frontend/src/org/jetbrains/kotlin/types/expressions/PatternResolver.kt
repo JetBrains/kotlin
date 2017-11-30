@@ -50,7 +50,7 @@ class PatternResolver(
         fun getComponentName(index: Int) = DataClassDescriptorResolver.createComponentName(index + 1)
     }
 
-    fun resolve(context: ExpressionTypingContext, pattern: KtPattern, expectedType: KotlinType, allowDefinition: Boolean, subjectDataFlowValue: DataFlowValue): Pair<NotNullKotlinTypeInfo, LexicalScope> {
+    fun resolve(context: ExpressionTypingContext, pattern: KtPattern, expectedType: KotlinType, allowDefinition: Boolean, subjectDataFlowValue: DataFlowValue): Pair<KotlinTypeInfo, LexicalScope> {
         val redeclarationChecker = TraceBasedLocalRedeclarationChecker(context.trace, components.overloadChecker)
         val scope = PatternScope(context.scope, redeclarationChecker)
         val newContext = context.replaceExpectedType(expectedType)
@@ -80,7 +80,7 @@ class PatternResolver(
                 expressions.mapIndexed { i, expression ->
                     getComponentTypeInfo(callElement, expression, receiver, getComponentName(i), state)
                 }.map {
-                    NotNullKotlinTypeInfo(it, DataFlowInfo.EMPTY)
+                    KotlinTypeInfo(it, DataFlowInfo.EMPTY)
                 }
             }
 
@@ -107,29 +107,29 @@ class PatternResolver(
         return resultType
     }
 
-    fun getTypeInfo(typeReference: KtTypeReference, state: PatternResolveState): NotNullKotlinTypeInfo {
+    fun getTypeInfo(typeReference: KtTypeReference, state: PatternResolveState): KotlinTypeInfo {
         val context = state.context
         val subjectType = state.expectedType
         val dataFlowValue = state.subjectDataFlowValue
         val (type, conditionInfo) = patternMatchingTypingVisitor.checkTypeForIs(context, typeReference, false, subjectType, typeReference, dataFlowValue)
-        return NotNullKotlinTypeInfo(type, conditionInfo.thenInfo)
+        return KotlinTypeInfo(type, conditionInfo.thenInfo)
     }
 
-    fun getTypeInfo(expression: KtExpression, state: PatternResolveState): NotNullKotlinTypeInfo {
+    fun getTypeInfo(expression: KtExpression, state: PatternResolveState): KotlinTypeInfo {
         val info = facade.getTypeInfo(expression, state.context)
         val patch = ErrorUtils.createErrorType("${expression.text} return type")
         val type = info.type.errorAndReplaceIfNull(expression, state, Errors.NON_DERIVABLE_TYPE, patch)
-        return info.kotlinTypeInfo(type)
+        return info.replaceType(type)
     }
 
-    fun restoreOrCreate(element: KtPatternElement, state: PatternResolveState, creator: () -> NotNullKotlinTypeInfo?): NotNullKotlinTypeInfo {
+    fun restoreOrCreate(element: KtPatternElement, state: PatternResolveState, creator: () -> KotlinTypeInfo?): KotlinTypeInfo {
         state.context.trace.bindingContext.get(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element)?.let { return it }
-        val info = creator() ?: NotNullKotlinTypeInfo(state.expectedType, DataFlowInfo.EMPTY)
+        val info = creator() ?: KotlinTypeInfo(state.expectedType, DataFlowInfo.EMPTY)
         state.context.trace.record(BindingContext.PATTERN_ELEMENT_TYPE_INFO, element, info)
         return info
     }
 
-    fun resolveType(expression: KtExpression, state: PatternResolveState): NotNullKotlinTypeInfo {
+    fun resolveType(expression: KtExpression, state: PatternResolveState): KotlinTypeInfo {
         val subjectType = state.context.trace.bindingContext.get(BindingContext.PATTERN_SUBJECT_TYPE, expression)
         if (subjectType == null) {
             state.context.trace.record(BindingContext.PATTERN_SUBJECT_TYPE, expression, state.expectedType)
@@ -137,9 +137,9 @@ class PatternResolver(
         return getTypeInfo(expression, state)
     }
 
-    fun resolveType(element: KtPatternElement, state: PatternResolveState): NotNullKotlinTypeInfo {
+    fun resolveType(element: KtPatternElement, state: PatternResolveState): KotlinTypeInfo {
         val info = element.getTypeInfo(this, state)
-        PatternMatchingTypingVisitor.checkTypeCompatibility(state.context, info.type, state.expectedType, element)
+        PatternMatchingTypingVisitor.checkTypeCompatibility(state.context, info.type!!, state.expectedType, element)
         return info
     }
 
@@ -174,15 +174,15 @@ fun <T, E : PsiElement> T?.errorIfNull(element: E, state: PatternResolveState, e
     it ?: state.context.trace.report(error.on(element, element))
 }
 
-fun NotNullKotlinTypeInfo.and(vararg children: NotNullKotlinTypeInfo?): NotNullKotlinTypeInfo {
+fun KotlinTypeInfo.and(vararg children: KotlinTypeInfo?): KotlinTypeInfo {
     return this.and(children.asSequence())
 }
 
-fun NotNullKotlinTypeInfo.and(children: Iterable<NotNullKotlinTypeInfo?>): NotNullKotlinTypeInfo {
+fun KotlinTypeInfo.and(children: Iterable<KotlinTypeInfo?>): KotlinTypeInfo {
     return this.and(children.asSequence())
 }
 
-fun NotNullKotlinTypeInfo.and(children: Sequence<NotNullKotlinTypeInfo?>): NotNullKotlinTypeInfo {
+fun KotlinTypeInfo.and(children: Sequence<KotlinTypeInfo?>): KotlinTypeInfo {
     val dataFlowInfo = children.map { it?.dataFlowInfo }
     return this.replaceDataFlowInfo(this.dataFlowInfo.and(dataFlowInfo))
 }
@@ -261,12 +261,12 @@ class PatternResolveState(
         return PatternResolveState(scope, context, allowDefinition, subjectDataFlowValue, redeclarationChecker)
     }
 
-    fun replaceType(expectedType: KotlinType): PatternResolveState {
+    fun replaceType(expectedType: KotlinType?): PatternResolveState {
         val context = context.replaceExpectedType(expectedType)
         return PatternResolveState(scope, context, allowDefinition, subjectDataFlowValue, redeclarationChecker)
     }
 
-    fun next(expectedType: KotlinType): PatternResolveState {
+    fun next(expectedType: KotlinType?): PatternResolveState {
         val context = context.replaceExpectedType(expectedType)
         return PatternResolveState(scope.child(redeclarationChecker), context, allowDefinition, subjectDataFlowValue, redeclarationChecker)
     }
