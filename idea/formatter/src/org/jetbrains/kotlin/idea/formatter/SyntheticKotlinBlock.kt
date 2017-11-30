@@ -22,7 +22,7 @@ import com.intellij.openapi.util.TextRange
 
 class SyntheticKotlinBlock(
         private val node: ASTNode,
-        private val subBlocks: List<Block>,
+        private val subBlocks: List<ASTBlock>,
         private val alignment: Alignment?,
         private val indent: Indent?,
         private val wrap: Wrap?,
@@ -56,9 +56,7 @@ class SyntheticKotlinBlock(
         while (treeNode == null) when (child) {
             is SyntheticKotlinBlock -> child = child.getSubBlocks().first()
 
-            is ASTBlock -> treeNode = child.node
-
-            else -> break@loop
+            else -> treeNode = child.node
         }
 
         val textRange = getTextRange()

@@ -24,8 +24,8 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.KtNodeTypes.WHEN_ENTRY
+import org.jetbrains.kotlin.lexer.KtTokens.ARROW
 
 /**
  * @see Block for good JavaDoc documentation
@@ -63,7 +63,7 @@ class KotlinBlock(
 
         override fun getSubBlocks(): List<Block> = subBlocks
 
-        override fun createBlock(node: ASTNode, alignmentStrategy: CommonAlignmentStrategy, indent: Indent?, wrap: Wrap?, settings: CodeStyleSettings, spacingBuilder: KotlinSpacingBuilder): Block {
+        override fun createBlock(node: ASTNode, alignmentStrategy: CommonAlignmentStrategy, indent: Indent?, wrap: Wrap?, settings: CodeStyleSettings, spacingBuilder: KotlinSpacingBuilder): ASTBlock {
             return KotlinBlock(
                     node,
                     alignmentStrategy,
