@@ -51,6 +51,14 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     param2: String) {
                        @Deprecated val foo = 1
                    }
+
+                   fun multilineMethod(
+                           foo: String,
+                           bar: String
+                       ) {
+                       foo.toUpperCase().trim()
+                           .length
+                   }
                }
 
                @Deprecated val bar = 1
@@ -247,7 +255,9 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE",
                         "CALL_PARAMETERS_LPAREN_ON_NEXT_LINE",
                         "CALL_PARAMETERS_RPAREN_ON_NEXT_LINE",
-                        "ENUM_CONSTANTS_WRAP"
+                        "ENUM_CONSTANTS_WRAP",
+                        "METHOD_CALL_CHAIN_WRAP",
+                        "WRAP_FIRST_METHOD_IN_CALL_CHAIN"
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
                 consumer.renameStandardOption("FIELD_ANNOTATION_WRAP", "Property annotations")
