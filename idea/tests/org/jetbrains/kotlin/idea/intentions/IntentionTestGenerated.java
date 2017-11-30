@@ -12686,6 +12686,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("elseInDotQualifiedExpression.kt")
+        public void testElseInDotQualifiedExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/elseInDotQualifiedExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("for.kt")
         public void testFor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/for.kt");
@@ -12701,6 +12707,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("if.kt")
         public void testIf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/if.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifInDotQualifiedExpression.kt")
+        public void testIfInDotQualifiedExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/ifInDotQualifiedExpression.kt");
             doTest(fileName);
         }
 
@@ -12737,6 +12749,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("removeBracesFromIfWithCommentedCode.kt")
         public void testRemoveBracesFromIfWithCommentedCode() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/removeBracesFromIfWithCommentedCode.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenInDotQualifiedExpression.kt")
+        public void testWhenInDotQualifiedExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whenInDotQualifiedExpression.kt");
             doTest(fileName);
         }
 
