@@ -494,7 +494,12 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
 
         strategy("Delegation list")
                 .within(KtNodeTypes.SUPER_TYPE_LIST, KtNodeTypes.INITIALIZER_LIST)
-                .set(Indent.getContinuationIndent(false)),
+                .set { settings ->
+                    if (settings.kotlinSettings.CONTINUATION_INDENT_IN_SUPERTYPE_LISTS)
+                        Indent.getContinuationIndent(false)
+                    else
+                        Indent.getNormalIndent()
+                },
 
         strategy("Indices")
                 .within(KtNodeTypes.INDICES)
