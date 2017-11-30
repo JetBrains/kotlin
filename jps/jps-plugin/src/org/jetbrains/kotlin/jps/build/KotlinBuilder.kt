@@ -333,7 +333,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val changesCollector = ChangesCollector()
         for ((target, files) in generatedFiles) {
-            updateIncrementalCache(files, incrementalCaches[target]!!, changesCollector)
+            updateIncrementalCache(files, incrementalCaches[target]!!, changesCollector, null)
         }
         updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
 
