@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.codegen.AsmUtil.unboxPrimitiveTypeOrNull
 import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.Constant
-import org.jetbrains.kotlin.load.java.EnumEntry
 import org.jetbrains.kotlin.load.java.descriptors.NullDefaultValue
 import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
 import org.jetbrains.kotlin.load.java.descriptors.getDefaultValueFromAnnotation
-import org.jetbrains.kotlin.load.java.lexicalCastFrom
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter

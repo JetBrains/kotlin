@@ -39,10 +39,8 @@ import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_COMMENTS_BINDER;
 
 public class KotlinExpressionParsing extends AbstractKotlinParsing {
-    private static final TokenSet WHEN_CONDITION_RECOVERY_SET =
-            TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
-    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW =
-            TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
+    private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
+    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
 
 
     private static final ImmutableMap<String, KtToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
@@ -189,7 +187,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
         //        ARROW(KtTokens.ARROW),
-        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),;
+        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
+        ;
 
         static {
             Precedence[] values = Precedence.values();
@@ -212,8 +211,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
 
         /**
+         *
          * @param operation the operation sign (e.g. PLUS or IS)
-         * @param parser    the parser object
+         * @param parser the parser object
          * @return node type of the result
          */
         public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
@@ -669,7 +669,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             parseDoWhile();
         }
         else if (atSet(LOCAL_DECLARATION_FIRST) &&
-                 parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ myBuilder.newlineBeforeCurrentToken(), false)) {
+                    parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ myBuilder.newlineBeforeCurrentToken(), false)) {
             // declaration was parsed, do nothing
         }
         else if (at(IDENTIFIER)) {
@@ -1196,11 +1196,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         return false;
     }
 
-    private boolean rollbackOrDrop(
-            PsiBuilder.Marker rollbackMarker,
+    private boolean rollbackOrDrop(PsiBuilder.Marker rollbackMarker,
             KtToken expected, String expectMessage,
-            IElementType validForDrop
-    ) {
+            IElementType validForDrop) {
         if (at(expected)) {
             advance(); // dropAt
             rollbackMarker.drop();
@@ -1314,7 +1312,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             if (!atSet(EXPRESSION_FIRST)) {
                 errorAndAdvance("Expecting a statement");
             }
-            else if (isScriptTopLevel) {
+            else if (isScriptTopLevel){
                 PsiBuilder.Marker scriptInitializer = mark();
                 parseBlockLevelExpression();
                 scriptInitializer.done(SCRIPT_INITIALIZER);
@@ -1370,7 +1368,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             return myKotlinParsing.parseFunction(/* failIfIdentifierExists = */ true);
         }
 
-        if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
+        if (keywordToken == CLASS_KEYWORD ||  keywordToken == INTERFACE_KEYWORD) {
             declType = myKotlinParsing.parseClass(isEnum);
         }
         else if (keywordToken == FUN_KEYWORD) {

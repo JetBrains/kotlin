@@ -49,11 +49,11 @@ class KotlinTypeInfo @JvmOverloads constructor(
         if (jumpFlowInfo == this.jumpFlowInfo) this else KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
     fun replaceDataFlowInfo(dataFlowInfo: DataFlowInfo) = when (this.dataFlowInfo) {
-    // Nothing changed
+        // Nothing changed
         dataFlowInfo -> this
-    // Jump info is the same as data flow info: change both
+        // Jump info is the same as data flow info: change both
         jumpFlowInfo -> KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, dataFlowInfo)
-    // Jump info is not the same: change data flow info only
+        // Jump info is not the same: change data flow info only
         else -> KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
     }
 }

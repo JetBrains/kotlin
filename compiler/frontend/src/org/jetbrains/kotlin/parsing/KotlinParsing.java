@@ -40,8 +40,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             TYPE_ALIAS_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, OBJECT_KEYWORD,
             FUN_KEYWORD, VAL_KEYWORD, PACKAGE_KEYWORD);
     private static final TokenSet DECLARATION_FIRST = TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
-                                                                     TokenSet.create(INIT_KEYWORD, GET_KEYWORD, SET_KEYWORD,
-                                                                                     CONSTRUCTOR_KEYWORD));
+                                                                     TokenSet.create(INIT_KEYWORD, GET_KEYWORD, SET_KEYWORD, CONSTRUCTOR_KEYWORD));
 
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, COLON, LBRACE),
                                                                            TOP_LEVEL_DECLARATION_FIRST);
@@ -115,8 +114,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             int startOffset = myBuilder.rawTokenTypeStart(-1);
             int endOffset = myBuilder.rawTokenTypeStart(0);
             CharSequence tokenChars = myBuilder.getOriginalText().subSequence(startOffset, endOffset);
-            if (!(tokenChars.length() > 2 &&
-                  tokenChars.subSequence(tokenChars.length() - 2, tokenChars.length()).toString().equals("*/"))) {
+            if (!(tokenChars.length() > 2 && tokenChars.subSequence(tokenChars.length() - 2, tokenChars.length()).toString().equals("*/"))) {
                 PsiBuilder.Marker marker = myBuilder.mark();
                 marker.error("Unclosed comment");
                 marker.setCustomEdgeTokenBinders(WhitespacesBinders.GREEDY_RIGHT_BINDER, null);
@@ -246,8 +244,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         boolean simpleName = true;
         while (true) {
             if (myBuilder.newlineBeforeCurrentToken()) {
-                errorWithRecovery("Package name must be a '.'-separated identifier list placed on a single line",
-                                  PACKAGE_NAME_RECOVERY_SET);
+                errorWithRecovery("Package name must be a '.'-separated identifier list placed on a single line", PACKAGE_NAME_RECOVERY_SET);
                 break;
             }
 
@@ -374,8 +371,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private boolean closeImportWithErrorIfNewline(
             PsiBuilder.Marker importDirective,
             @Nullable PsiBuilder.Marker importAlias,
-            String errorMessage
-    ) {
+            String errorMessage) {
         if (myBuilder.newlineBeforeCurrentToken()) {
             if (importAlias != null) {
                 importAlias.done(IMPORT_ALIAS);
@@ -466,7 +462,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /**
      * (modifier | annotation)*
-     * <p>
+     *
      * Feeds modifiers (not annotations) into the passed consumer, if it is not null
      *
      * @param noModifiersBefore is a token set with elements indicating when met them
@@ -481,8 +477,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private boolean parseFunctionTypeValueParameterModifierList() {
-        return doParseModifierList(null, RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS, NO_ANNOTATIONS,
-                                   NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
+        return doParseModifierList(null, RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS, NO_ANNOTATIONS, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
     }
 
     private boolean parseTypeModifierList() {
@@ -938,8 +933,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /**
      * enumEntries
-     * : enumEntry{","}?
-     * ;
+     *   : enumEntry{","}?
+     *   ;
      *
      * @return true if enum regular members can follow, false otherwise
      */
@@ -1052,8 +1047,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /**
      * members
-     * : memberDeclaration*
-     * ;
+     *   : memberDeclaration*
+     *   ;
      */
     private void parseMembers() {
         while (!eof() && !at(RBRACE)) {
@@ -1106,7 +1101,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             declType = parseClass(isEnum);
         }
         else if (keywordToken == FUN_KEYWORD) {
-            declType = parseFunction();
+                declType = parseFunction();
         }
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             declType = parseProperty();
@@ -1283,8 +1278,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         boolean typeParametersDeclared = at(LT) && parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON));
 
-        TokenSet propertyNameFollow =
-                TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
+        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
 
         myBuilder.disableJoiningComplexTokens();
 
@@ -1427,7 +1421,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         myBuilder.restoreNewlinesState();
     }
 
-    private enum AccessorKind {GET, SET}
+    private enum AccessorKind { GET, SET}
 
     /*
      * getterOrSetter
@@ -1466,8 +1460,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (!at(LPAR)) {
             // Account for Jet-114 (val a : int get {...})
-            TokenSet ACCESSOR_FIRST_OR_PROPERTY_END =
-                    TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(AT, GET_KEYWORD, SET_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
+            TokenSet ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(AT, GET_KEYWORD, SET_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
             if (!atSet(ACCESSOR_FIRST_OR_PROPERTY_END)) {
                 errorUntil("Accessor body expected", TokenSet.orSet(ACCESSOR_FIRST_OR_PROPERTY_END, TokenSet.create(LBRACE, LPAR, EQ)));
             }
@@ -1861,8 +1854,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseAnnotations(DEFAULT);
 
         PsiBuilder.Marker reference = mark();
-        if (expect(IDENTIFIER, "Expecting type parameter name",
-                   TokenSet.orSet(TokenSet.create(COLON, COMMA, LBRACE, RBRACE), TYPE_REF_FIRST))) {
+        if (expect(IDENTIFIER, "Expecting type parameter name", TokenSet.orSet(TokenSet.create(COLON, COMMA, LBRACE, RBRACE), TYPE_REF_FIRST))) {
             reference.done(REFERENCE_EXPRESSION);
         }
         else {
@@ -2188,12 +2180,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 functionOrParenthesizedType.rollbackTo();
                 parseFunctionType();
             }
+
         }
         else {
             errorWithRecovery("Type expected",
-                              TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
-                                             TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
-                                             extraRecoverySet));
+                    TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
+                                   TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
+                                   extraRecoverySet));
             typeBeforeDot = false;
         }
 
@@ -2268,8 +2261,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             recoverOnParenthesizedWordForPlatformTypes(0, "Mutable", true);
 
             if (expect(IDENTIFIER, "Expecting type name",
-                       TokenSet.orSet(KotlinExpressionParsing.EXPRESSION_FIRST, KotlinExpressionParsing.EXPRESSION_FOLLOW,
-                                      DECLARATION_FIRST))) {
+                       TokenSet.orSet(KotlinExpressionParsing.EXPRESSION_FIRST, KotlinExpressionParsing.EXPRESSION_FOLLOW, DECLARATION_FIRST))) {
                 reference.done(REFERENCE_EXPRESSION);
             }
             else {
@@ -2307,10 +2299,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     private boolean recoverOnParenthesizedWordForPlatformTypes(int offset, String word, boolean consume) {
         // Array<(out) Foo>! or (Mutable)List<Bar>!
-        if (lookahead(offset) == LPAR &&
-            lookahead(offset + 1) == IDENTIFIER &&
-            lookahead(offset + 2) == RPAR &&
-            lookahead(offset + 3) == IDENTIFIER) {
+        if (lookahead(offset) == LPAR && lookahead(offset + 1) == IDENTIFIER && lookahead(offset + 2) == RPAR && lookahead(offset + 3) == IDENTIFIER) {
             PsiBuilder.Marker error = mark();
 
             advance(offset);

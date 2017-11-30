@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope

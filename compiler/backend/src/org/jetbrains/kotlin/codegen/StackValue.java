@@ -278,13 +278,7 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static Field field(
-            @NotNull Type type,
-            @NotNull Type owner,
-            @NotNull String name,
-            boolean isStatic,
-            @NotNull StackValue receiver
-    ) {
+    public static Field field(@NotNull Type type, @NotNull Type owner, @NotNull String name, boolean isStatic, @NotNull StackValue receiver) {
         return field(type, owner, name, isStatic, receiver, null);
     }
 
@@ -311,10 +305,7 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static StackValue changeReceiverForFieldAndSharedVar(
-            @NotNull StackValueWithSimpleReceiver stackValue,
-            @Nullable StackValue newReceiver
-    ) {
+    public static StackValue changeReceiverForFieldAndSharedVar(@NotNull StackValueWithSimpleReceiver stackValue, @Nullable StackValue newReceiver) {
         //TODO static check
         if (newReceiver == null || stackValue.isStaticPut) return stackValue;
         return stackValue.changeReceiver(newReceiver);
@@ -361,7 +352,7 @@ public abstract class StackValue {
         if (boxedType == type) return;
 
         v.invokestatic(boxedType.getInternalName(), "valueOf", Type.getMethodDescriptor(boxedType, type), false);
-        coerce(boxedType, toType, v);
+        coerce(boxedType, toType,  v);
     }
 
     private static void unbox(Type methodOwner, Type type, InstructionAdapter v) {
@@ -559,8 +550,7 @@ public abstract class StackValue {
 
             boolean hasExtensionReceiver = callExtensionReceiver != null;
             StackValue dispatchReceiver = platformStaticCallIfPresent(
-                    genReceiver(hasExtensionReceiver ? none() : receiver, codegen, descriptor, callableMethod, callDispatchReceiver,
-                                false),
+                    genReceiver(hasExtensionReceiver ? none() : receiver, codegen, descriptor, callableMethod, callDispatchReceiver, false),
                     descriptor
             );
             StackValue extensionReceiver = genReceiver(receiver, codegen, descriptor, callableMethod, callExtensionReceiver, true);
@@ -593,8 +583,7 @@ public abstract class StackValue {
             }
             else if (!isExtension && DescriptorUtils.isObject(containingDeclaration)) {
                 // Object member could be imported by name, in which case it has no explicit dispatch receiver
-                return singleton((ClassDescriptor) containingDeclaration,
-                                 codegen.typeMapper);
+                return singleton((ClassDescriptor) containingDeclaration, codegen.typeMapper);
             }
         }
         else if (receiverValue != null) {
@@ -640,11 +629,7 @@ public abstract class StackValue {
         return field(FieldInfo.createForSingleton(classDescriptor, typeMapper), none());
     }
 
-    public static Field createSingletonViaInstance(
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull KotlinTypeMapper typeMapper,
-            @NotNull String name
-    ) {
+    public static Field createSingletonViaInstance(@NotNull ClassDescriptor classDescriptor, @NotNull KotlinTypeMapper typeMapper, @NotNull String name) {
         return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper, name), none());
     }
 
@@ -745,7 +730,7 @@ public abstract class StackValue {
 
         private ResolvedCall<FunctionDescriptor> getResolvedCall(boolean isGetter) {
             BindingContext bindingContext = codegen.getState().getBindingContext();
-            VariableAccessorDescriptor accessor = isGetter ? variableDescriptor.getGetter() : variableDescriptor.getSetter();
+            VariableAccessorDescriptor accessor = isGetter ? variableDescriptor.getGetter(): variableDescriptor.getSetter();
             assert accessor != null : "Accessor descriptor for delegated local property should be present " + variableDescriptor;
             ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor);
             assert resolvedCall != null : "Resolve call should be recorded for delegate call " + variableDescriptor;
@@ -1357,8 +1342,7 @@ public abstract class StackValue {
                 coerceFrom(topOfStackType, v);
                 assert fieldName != null : "Property should have either a setter or a field name: " + descriptor;
                 assert backingFieldOwner != null : "Property should have either a setter or a backingFieldOwner: " + descriptor;
-                v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, backingFieldOwner.getInternalName(), fieldName,
-                                 this.type.getDescriptor());
+                v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
             }
             else {
                 coerce(topOfStackType, ArraysKt.last(setter.getParameterTypes()), v);
@@ -1429,8 +1413,7 @@ public abstract class StackValue {
             this.index = index;
 
             if (isLateinit && name == null) {
-                throw new IllegalArgumentException(
-                        "Lateinit shared local variable should have name: #" + index + " " + type.getDescriptor());
+                throw new IllegalArgumentException("Lateinit shared local variable should have name: #" + index + " " + type.getDescriptor());
             }
 
             this.isLateinit = isLateinit;
@@ -1829,7 +1812,7 @@ public abstract class StackValue {
 
         if (stackValue instanceof StackValueWithSimpleReceiver) {
             return new DelegatedForComplexReceiver(stackValue.type, (StackValueWithSimpleReceiver) stackValue,
-                                                   new ComplexReceiver((StackValueWithSimpleReceiver) stackValue, isReadOperations));
+                                 new ComplexReceiver((StackValueWithSimpleReceiver) stackValue, isReadOperations));
         }
         else {
             return stackValue;

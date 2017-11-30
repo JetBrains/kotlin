@@ -184,14 +184,14 @@ public class ExpressionTypingUtils {
 
     /**
      * The primary case for local extensions is the following:
-     * <p>
+     *
      * I had a locally declared extension function or a local variable of function type called foo
      * And I called it on my x
      * Now, someone added function foo() to the class of x
      * My code should not change
-     * <p>
+     *
      * thus
-     * <p>
+     *
      * local extension prevail over members (and members prevail over all non-local extensions)
      */
     public static boolean isLocal(DeclarationDescriptor containerOfTheCurrentLocality, DeclarationDescriptor candidate) {

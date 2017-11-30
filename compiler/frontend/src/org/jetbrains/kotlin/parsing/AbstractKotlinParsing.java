@@ -404,11 +404,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         return myBuilder.newlineBeforeCurrentToken() || eof();
     }
 
-    protected static void closeDeclarationWithCommentBinders(
-            @NotNull PsiBuilder.Marker marker,
-            @NotNull IElementType elementType,
-            boolean precedingNonDocComments
-    ) {
+    protected static void closeDeclarationWithCommentBinders(@NotNull PsiBuilder.Marker marker, @NotNull IElementType elementType, boolean precedingNonDocComments) {
         marker.done(elementType);
         marker.setCustomEdgeTokenBinders(precedingNonDocComments ? PrecedingCommentsBinder.INSTANCE : PrecedingDocCommentsBinder.INSTANCE,
                                          TrailingCommentsBinder.INSTANCE);
@@ -438,6 +434,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         public boolean matching(boolean topLevel) {
             return (topLevel || !topLevelOnly) && at(lookFor);
         }
+
     }
 
     protected class AtSet extends AbstractTokenStreamPredicate {
