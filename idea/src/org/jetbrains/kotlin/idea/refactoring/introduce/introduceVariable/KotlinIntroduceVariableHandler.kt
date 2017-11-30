@@ -529,7 +529,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
             else {
                 expression.parent as KtElement
             }
-            var commonContainer = commonParent.getContainer()!!
+            var commonContainer = commonParent as? KtFile ?: commonParent.getContainer()!!
             if (commonContainer != container && container.isAncestor(commonContainer, true)) {
                 commonContainer = container
             }
