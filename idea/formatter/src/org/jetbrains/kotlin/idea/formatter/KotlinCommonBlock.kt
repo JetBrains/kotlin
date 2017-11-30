@@ -47,8 +47,11 @@ private val CODE_BLOCKS = TokenSet.create(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_B
 private val ALIGN_FOR_BINARY_OPERATIONS = TokenSet.create(MUL, DIV, PERC, PLUS, MINUS, ELVIS, LT, GT, LTEQ, GTEQ, ANDAND, OROR)
 private val ANNOTATIONS = TokenSet.create(KtNodeTypes.ANNOTATION_ENTRY, KtNodeTypes.ANNOTATION)
 
-val CodeStyleSettings.kotlinSettings
-    get() = getCustomSettings(KotlinCodeStyleSettings::class.java)
+val CodeStyleSettings.kotlinCommonSettings: CommonCodeStyleSettings
+    get() = getCommonSettings(KotlinLanguage.INSTANCE)
+
+val CodeStyleSettings.kotlinCustomSettings: KotlinCodeStyleSettings
+    get() = getCustomSettings(KotlinCodeStyleSettings::class.java)!!
 
 abstract class KotlinCommonBlock(
         private val node: ASTNode,
@@ -96,7 +99,7 @@ abstract class KotlinCommonBlock(
                 // relative to it when it starts from new line (see Indent javadoc).
 
                 val operationBlock = nodeSubBlocks[operationBlockIndex]
-                val indent = if (settings.kotlinSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
+                val indent = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
                     Indent.getContinuationWithoutFirstIndent()
                 else
                     Indent.getNormalIndent()
@@ -188,7 +191,7 @@ abstract class KotlinCommonBlock(
                     ChildAttributes(block.indent, block.alignment)
                 }
                 else {
-                    val indent = if (type == KtNodeTypes.VALUE_PARAMETER_LIST && !settings.kotlinSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
+                    val indent = if (type == KtNodeTypes.VALUE_PARAMETER_LIST && !settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
                         Indent.getNormalIndent()
                     else
                         Indent.getContinuationIndent()
@@ -220,35 +223,35 @@ abstract class KotlinCommonBlock(
     }
 
     private fun getChildrenAlignmentStrategy(): CommonAlignmentStrategy {
-        val jetCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)
-        val kotlinSettings = settings.kotlinSettings
+        val kotlinCommonSettings = settings.kotlinCommonSettings
+        val kotlinCustomSettings = settings.kotlinCustomSettings
         val parentType = node.elementType
         return when {
             parentType === KtNodeTypes.VALUE_PARAMETER_LIST ->
                 getAlignmentForChildInParenthesis(
-                        jetCommonSettings.ALIGN_MULTILINE_PARAMETERS, KtNodeTypes.VALUE_PARAMETER, COMMA,
-                        jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
+                        kotlinCommonSettings.ALIGN_MULTILINE_PARAMETERS, KtNodeTypes.VALUE_PARAMETER, COMMA,
+                        kotlinCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
 
             parentType === KtNodeTypes.VALUE_ARGUMENT_LIST ->
                 getAlignmentForChildInParenthesis(
-                        jetCommonSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS, KtNodeTypes.VALUE_ARGUMENT, COMMA,
-                        jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
+                        kotlinCommonSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS, KtNodeTypes.VALUE_ARGUMENT, COMMA,
+                        kotlinCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
 
             parentType === KtNodeTypes.WHEN ->
-                getAlignmentForCaseBranch(kotlinSettings.ALIGN_IN_COLUMNS_CASE_BRANCH)
+                getAlignmentForCaseBranch(kotlinCustomSettings.ALIGN_IN_COLUMNS_CASE_BRANCH)
 
             parentType === KtNodeTypes.WHEN_ENTRY ->
                 alignmentStrategy
 
             parentType in BINARY_EXPRESSIONS && getOperationType(node) in ALIGN_FOR_BINARY_OPERATIONS ->
-                createAlignmentStrategy(jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())
+                createAlignmentStrategy(kotlinCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())
 
             parentType === KtNodeTypes.SUPER_TYPE_LIST || parentType === KtNodeTypes.INITIALIZER_LIST ->
-                createAlignmentStrategy(jetCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())
+                createAlignmentStrategy(kotlinCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())
 
             parentType === KtNodeTypes.PARENTHESIZED ->
                 object : CommonAlignmentStrategy() {
-                    private var bracketsAlignment: Alignment? = if (jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION) Alignment.createAlignment() else null
+                    private var bracketsAlignment: Alignment? = if (kotlinCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION) Alignment.createAlignment() else null
 
                     override fun getAlignment(node: ASTNode): Alignment? {
                         val childNodeType = node.elementType
@@ -306,7 +309,7 @@ abstract class KotlinCommonBlock(
     }
 
     private fun getWrappingStrategy(): WrappingStrategy {
-        val commonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)
+        val commonSettings = settings.kotlinCommonSettings
         val elementType = node.elementType
         val nodePsi = node.psi
 
@@ -441,7 +444,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                     it.psi is KtExpression && it.psi !is KtBlockExpression
                 }
                 .set { settings ->
-                    if (settings.kotlinSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES)
+                    if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES)
                         Indent.getContinuationIndent()
                     else
                         Indent.getNormalIndent()
@@ -464,7 +467,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .notForType(KtTokens.DOT, KtTokens.SAFE_ACCESS)
                 .forElement { it.treeParent.firstChildNode != it }
                 .set { settings ->
-                    if (settings.kotlinSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
+                    if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
                         Indent.getContinuationWithoutFirstIndent()
                     else
                         Indent.getNormalIndent()
@@ -478,7 +481,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
         strategy("Delegation list")
                 .within(KtNodeTypes.SUPER_TYPE_LIST, KtNodeTypes.INITIALIZER_LIST)
                 .set { settings ->
-                    if (settings.kotlinSettings.CONTINUATION_INDENT_IN_SUPERTYPE_LISTS)
+                    if (settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_SUPERTYPE_LISTS)
                         Indent.getContinuationIndent(false)
                     else
                         Indent.getNormalIndent()
@@ -527,7 +530,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .within(KtNodeTypes.VALUE_PARAMETER_LIST)
                 .forElement { it.elementType == KtNodeTypes.VALUE_PARAMETER && it.psi.prevSibling != null }
                 .set { settings ->
-                    if (settings.kotlinSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
+                    if (settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
                         Indent.getContinuationIndent()
                     else
                         Indent.getNormalIndent()
