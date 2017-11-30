@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinTypeFactory.flexibleType
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -91,25 +92,25 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
      *
      * T?
      *
-     * Foo <: T? -- Foo & Any <: T
-     * Foo? <: T? -- Foo? & Any <: T
-     * (Foo..Bar) <: T? -- (Foo..Bar) & Any <: T
+     * Foo <: T? -- Foo & Any <: T -- Foo!! <: T
+     * Foo? <: T? -- Foo? & Any <: T -- Foo!! <: T
+     * (Foo..Bar) <: T? -- (Foo..Bar) & Any <: T -- (Foo..Bar)!! <: T
      *
      * T!
      *
      * Foo <: T! --
      * assert T! == (T..T?)
-     *  Foo <: T
      *  Foo <: T?
+     *  Foo <: T (optional constraint, needs to preserve nullability)
      * =>
-     *  Foo <: T
      *  Foo & Any <: T
+     *  Foo <: T
      * =>
-     *  (Foo & Any .. Foo) <: T
+     *  (Foo & Any .. Foo) <: T -- (Foo!! .. Foo) <: T
      *
-     * => Foo <: T! -- (Foo & Any .. Foo) <: T
+     * => Foo <: T! -- (Foo!! .. Foo) <: T
      *
-     * Foo? <: T! -- (Foo? & Any .. Foo?) <: T
+     * Foo? <: T! -- (Foo!! .. Foo?) <: T
      *
      *
      * (Foo..Bar) <: T! --
@@ -117,50 +118,37 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
      *  (Foo..Bar) <: (T..T?)
      * =>
      *  Foo <: T?
-     *  Bar <: T
+     *  Bar <: T (optional constraint, needs to preserve nullability)
      * =>
-     *  (Foo & Any .. Bar) <: T
+     *  (Foo & Any .. Bar) <: T -- (Foo!! .. Bar) <: T
      *
-     * => (Foo..Bar) <: T! -- (Foo & Any .. Bar) <: T
+     * => (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
      */
     private fun simplifyLowerConstraint(typeVariable: UnwrappedType, subType: UnwrappedType): Boolean {
-        when (typeVariable) {
+        val lowerConstraint = when (typeVariable) {
             is SimpleType ->
-                addLowerConstraintForSimpleType(typeVariable, subType)
+                // Foo <: T or
+                // Foo <: T? -- Foo!! <: T
+                if (typeVariable.isMarkedNullable) subType.makeDefinitelyNotNullOrNotNull() else subType
 
-            is FlexibleType ->
+            is FlexibleType -> {
+                assertFlexibleTypeVariable(typeVariable)
+
                 when (subType) {
-                    is SimpleType -> addLowerConstraintWithSimpleSubtype(typeVariable, subType)
-                    is FlexibleType -> addLowerConstraintWithFlexibleSubtype(typeVariable, subType)
+                    is SimpleType ->
+                        // Foo <: T! -- (Foo!! .. Foo) <: T
+                        flexibleType(subType.makeSimpleTypeDefinitelyNotNullOrNotNull(), subType)
+
+                    is FlexibleType ->
+                        // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
+                        flexibleType(subType.lowerBound.makeSimpleTypeDefinitelyNotNullOrNotNull(), subType.upperBound)
                 }
+            }
         }
 
+        addLowerConstraint(typeVariable.constructor, lowerConstraint)
+
         return true
-    }
-
-    // Foo <: T! -- (Foo & Any .. Foo) <: T
-    private fun addLowerConstraintWithSimpleSubtype(typeVariable: FlexibleType, subType: SimpleType) {
-        assertFlexibleTypeVariable(typeVariable)
-        addLowerConstraint(typeVariable.constructor, KotlinTypeFactory.flexibleType(subType.makeSimpleTypeDefinitelyNotNullOrNotNull(), subType))
-    }
-
-    // (Foo..Bar) <: T! -- (Foo & Any .. Bar) <: T
-    private fun addLowerConstraintWithFlexibleSubtype(typeVariable: FlexibleType, subType: FlexibleType) {
-        assertFlexibleTypeVariable(typeVariable)
-
-        val lowerBound = subType.lowerBound
-        val upperBound = subType.upperBound
-
-        addLowerConstraint(typeVariable.constructor, KotlinTypeFactory.flexibleType(lowerBound.makeSimpleTypeDefinitelyNotNullOrNotNull(), upperBound))
-    }
-
-    // Foo <: T or
-    // Foo <: T? -- Foo & Any <: T
-    private fun addLowerConstraintForSimpleType(typeVariable: SimpleType, subType: UnwrappedType) {
-        if (typeVariable.isMarkedNullable)
-            addLowerConstraint(typeVariable.constructor, subType.makeDefinitelyNotNullOrNotNull())
-        else
-            addLowerConstraint(typeVariable.constructor, subType)
     }
 
     private fun assertFlexibleTypeVariable(typeVariable: FlexibleType) {
