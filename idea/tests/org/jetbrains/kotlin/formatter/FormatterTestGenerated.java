@@ -218,6 +218,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ContinuationIndentInSupertypeLists.after.kt")
+        public void testContinuationIndentInSupertypeLists() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentInSupertypeLists.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("CurlyBraceStringInterpolation.after.kt")
         public void testCurlyBraceStringInterpolation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CurlyBraceStringInterpolation.after.kt");

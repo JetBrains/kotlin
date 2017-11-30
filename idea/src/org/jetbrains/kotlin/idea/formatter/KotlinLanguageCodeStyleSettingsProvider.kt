@@ -258,6 +258,11 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                 showCustomOption(KotlinCodeStyleSettings::LBRACE_ON_NEXT_LINE,
                                 "Put left brace on new line",
                                  CodeStyleSettingsCustomizable.WRAPPING_BRACES)
+
+                showCustomOption(
+                        KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_SUPERTYPE_LISTS,
+                        "Use continuation indent",
+                        CodeStyleSettingsCustomizable.WRAPPING_EXTENDS_LIST)
             }
             LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS -> {
                 consumer.showStandardOptions(
