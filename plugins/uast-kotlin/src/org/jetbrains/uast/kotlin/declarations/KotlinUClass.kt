@@ -35,7 +35,7 @@ abstract class AbstractKotlinUClass(private val givenParent: UElement?) : Abstra
     override val uastParent: UElement? by lz { givenParent ?: convertParent() }
 
     //TODO: should be merged with KotlinAbstractUElement.convertParent() after detaching from AbstractJavaUClass
-    open fun convertParent(): UElement? =
+    override fun convertParent(): UElement? =
             (this.psi as? KtLightClassForLocalDeclaration)?.kotlinOrigin?.parent?.let {
                 when (it) {
                     is KtClassBody -> it.parent.toUElement() // TODO: it seems that `class_body`-s are never created in kotlin uast in top-down walk, probably they should be completely skipped and always unwrapped
