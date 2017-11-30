@@ -1,5 +1,5 @@
 public class JavaClass {
-    public void foo() {
+    void foo() {
     }
 
     public void bar() {
