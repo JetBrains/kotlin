@@ -262,7 +262,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
 
     @get:Internal
-    val buildHistoryFile: File = File(taskBuildDirectory, "build-history.bin")
+    val buildHistoryFile: File get() = File(taskBuildDirectory, "build-history.bin")
 
     @get:Internal
     val kaptOptions = KaptOptions()
