@@ -46,6 +46,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean CONTINUATION_INDENT_FOR_CHAINED_CALLS = true;
     public boolean CONTINUATION_INDENT_IN_SUPERTYPE_LISTS = true;
     public int BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES = 0;
+    public int WRAP_EXPRESSION_BODY_FUNCTIONS = 0;
 
     public KotlinCodeStyleSettings(CodeStyleSettings container) {
         super("JetCodeStyleSettings", container);

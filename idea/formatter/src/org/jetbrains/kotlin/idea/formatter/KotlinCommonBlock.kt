@@ -337,6 +337,7 @@ abstract class KotlinCommonBlock(
     private fun getWrappingStrategy(): WrappingStrategy {
         val commonSettings = settings.kotlinCommonSettings
         val elementType = node.elementType
+        val parentElementType = node.treeParent?.elementType
         val nodePsi = node.psi
 
         when {
@@ -344,7 +345,6 @@ abstract class KotlinCommonBlock(
                 return getWrappingStrategyForItemList(commonSettings.CALL_PARAMETERS_WRAP, KtNodeTypes.VALUE_ARGUMENT)
 
             elementType === KtNodeTypes.VALUE_PARAMETER_LIST -> {
-                val parentElementType = node.treeParent.elementType
                 if (parentElementType === KtNodeTypes.FUN ||
                     parentElementType === KtNodeTypes.PRIMARY_CONSTRUCTOR ||
                     parentElementType === KtNodeTypes.SECONDARY_CONSTRUCTOR) {
@@ -402,7 +402,17 @@ abstract class KotlinCommonBlock(
                 return wrapAfterAnnotation(commonSettings.CLASS_ANNOTATION_WRAP)
 
             nodePsi is KtNamedFunction ->
-                return wrapAfterAnnotation(commonSettings.METHOD_ANNOTATION_WRAP)
+                return object : WrappingStrategy {
+                    override fun getWrap(childElement: ASTNode): Wrap? {
+                        getWrapAfterAnnotation(childElement, commonSettings.METHOD_ANNOTATION_WRAP)?.let {
+                            return it
+                        }
+                        if (getPrevWithoutWhitespaceAndComments(childElement)?.elementType == KtTokens.EQ) {
+                            return Wrap.createWrap(settings.kotlinCustomSettings.WRAP_EXPRESSION_BODY_FUNCTIONS, true)
+                        }
+                        return null
+                    }
+                }
 
             nodePsi is KtProperty ->
                 return wrapAfterAnnotation(if (nodePsi.isLocal)
@@ -422,19 +432,23 @@ private fun ASTNode.isFirstParameter(): Boolean = treePrev?.elementType == KtTok
 private fun wrapAfterAnnotation(wrapType: Int): WrappingStrategy {
     return object : WrappingStrategy {
         override fun getWrap(childElement: ASTNode): Wrap? {
-            if (childElement.elementType in KtTokens.COMMENTS) return null
-            var prevLeaf = childElement.treePrev
-            while (prevLeaf?.elementType == TokenType.WHITE_SPACE) {
-                prevLeaf = prevLeaf.treePrev
-            }
-            if (prevLeaf?.elementType == KtNodeTypes.MODIFIER_LIST) {
-                if (prevLeaf?.lastChildNode?.elementType in ANNOTATIONS) {
-                    return Wrap.createWrap(wrapType, true)
-                }
-            }
-            return null
+            return getWrapAfterAnnotation(childElement, wrapType)
         }
     }
+}
+
+private fun getWrapAfterAnnotation(childElement: ASTNode, wrapType: Int): Wrap? {
+    if (childElement.elementType in COMMENTS) return null
+    var prevLeaf = childElement.treePrev
+    while (prevLeaf?.elementType == TokenType.WHITE_SPACE) {
+        prevLeaf = prevLeaf.treePrev
+    }
+    if (prevLeaf?.elementType == KtNodeTypes.MODIFIER_LIST) {
+        if (prevLeaf?.lastChildNode?.elementType in ANNOTATIONS) {
+            return Wrap.createWrap(wrapType, true)
+        }
+    }
+    return null
 }
 
 private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
