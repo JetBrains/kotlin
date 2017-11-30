@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -376,5 +377,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     lateinit var debugInfo: DebugInfo
+
+    val isDynamicLibrary: Boolean by lazy {
+        config.configuration.get(KonanConfigKeys.PRODUCE) == CompilerOutputKind.DYNAMIC
+    }
 }
 

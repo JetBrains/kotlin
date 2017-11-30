@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -281,6 +280,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
     }
 
+    private fun appendCAdapters(declaration: IrModuleFragment) {
+        declaration.acceptVoid(CAdapterGenerator(context, codegen))
+    }
+
     //-------------------------------------------------------------------------//
 
     override fun visitElement(element: IrElement) {
@@ -300,6 +303,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
         appendStaticInitializers(context.llvm.staticInitializers)
         appendEntryPointSelector(findMainEntryPoint(context))
+        if (context.isDynamicLibrary) {
+            appendCAdapters(declaration)
+        }
+
     }
 
     //-------------------------------------------------------------------------//
@@ -615,8 +622,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
 
 
-        if (declaration.descriptor.usedAnnotation || 
-            context.config.configuration.get(KonanConfigKeys.PRODUCE) == CompilerOutputKind.DYNAMIC) {
+        if (declaration.descriptor.usedAnnotation) {
             context.llvm.usedFunctions.add(codegen.llvmFunction(declaration.descriptor))
         }
 

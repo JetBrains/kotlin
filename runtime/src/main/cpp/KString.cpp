@@ -694,6 +694,16 @@ OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes) {
   RETURN_RESULT_OF(utf8ToUtf16, utf8, lengthBytes);
 }
 
+char* CreateCStringFromString(KConstRef kref) {
+  KString kstring = kref->array();
+  const KChar* utf16 = CharArrayAddressOfElementAt(kstring, 0);
+  KStdString utf8;
+  utf8::unchecked::utf16to8(utf16, utf16 + kstring->count_, back_inserter(utf8));
+  char* result = reinterpret_cast<char*>(konan::calloc(1, utf8.size() + 1));
+  ::memcpy(result, utf8.c_str(), utf8.size());
+  return result;
+}
+
 // String.kt
 KInt Kotlin_String_compareTo(KString thiz, KString other) {
   int result = memcmp(
