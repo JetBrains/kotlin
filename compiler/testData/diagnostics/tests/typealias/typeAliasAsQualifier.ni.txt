@@ -3,7 +3,7 @@ package
 public val c: [ERROR : Type for C.Self.Self()]
 public val ic: [ERROR : Type for C.Self.InCompanion()]
 public val n: [ERROR : Type for C.Self.Nested()]
-public val n2: kotlin.Any?
+public val n2: [ERROR : <ERROR FUNCTION RETURN TYPE>]
 public val ok: kotlin.String = "OK"
 public val x: [ERROR : Type for C.Self.X]
 

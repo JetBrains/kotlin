@@ -1,9 +1,9 @@
 package
 
-public val a: kotlin.Any?
+public val a: [ERROR : <ERROR FUNCTION RETURN TYPE>]
 public val b: kotlin.Int
-public val c: [ERROR : Type from delegate]
-public val d: kotlin.Any?
+public val c: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+public val d: [ERROR : <ERROR FUNCTION RETURN TYPE>]
 
 public final class Delegate {
     public constructor Delegate(/*0*/ i: kotlin.Int)

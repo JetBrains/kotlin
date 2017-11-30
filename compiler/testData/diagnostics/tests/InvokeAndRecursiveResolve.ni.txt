@@ -21,7 +21,7 @@ public final class B {
 
 public final class C {
     public constructor C()
-    public final val bar: kotlin.Any?
+    public final val bar: [ERROR : <ERROR FUNCTION RETURN TYPE>]
     public final val test: [ERROR : Type for bar()]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
