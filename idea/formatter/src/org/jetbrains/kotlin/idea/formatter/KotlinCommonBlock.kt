@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
-import java.util.*
+import org.jetbrains.kotlin.psi.psiUtil.children
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
 private val KDOC_COMMENT_INDENT = 1
@@ -104,8 +105,7 @@ abstract class KotlinCommonBlock(
                         nodeSubBlocks.subList(operationBlockIndex, nodeSubBlocks.size),
                         null, indent, null, spacingBuilder) { createSyntheticSpacingNodeBlock(it) }
 
-                nodeSubBlocks = ArrayList<Block>(nodeSubBlocks.subList(0, operationBlockIndex))
-                nodeSubBlocks.add(operationSyntheticBlock)
+                nodeSubBlocks = nodeSubBlocks.subList(0, operationBlockIndex) + operationSyntheticBlock
             }
         }
 
@@ -295,31 +295,14 @@ abstract class KotlinCommonBlock(
         return createBlock(child, alignmentStrategy, createChildIndent(child), childWrap, settings, spacingBuilder)
     }
 
-    private fun buildSubBlocks(): ArrayList<Block> {
-        val blocks = ArrayList<Block>()
-
+    private fun buildSubBlocks(): List<Block> {
         val childrenAlignmentStrategy = getChildrenAlignmentStrategy()
         val wrappingStrategy = getWrappingStrategy()
 
-        var child: ASTNode? = node.firstChildNode
-        while (child != null) {
-            val childType = child.elementType
-
-            if (child.textRange.length == 0) {
-                child = child.treeNext
-                continue
-            }
-
-            if (childType === TokenType.WHITE_SPACE) {
-                child = child.treeNext
-                continue
-            }
-
-            blocks.add(buildSubBlock(child, childrenAlignmentStrategy, wrappingStrategy))
-            child = child.treeNext
-        }
-
-        return blocks
+        return node.children()
+                .filter { it.textRange.length > 0 && it.elementType != TokenType.WHITE_SPACE }
+                .map { buildSubBlock(it, childrenAlignmentStrategy, wrappingStrategy ) }
+                .toMutableList()
     }
 
     private fun getWrappingStrategy(): WrappingStrategy {
@@ -605,24 +588,14 @@ private fun getAlignmentForChildInParenthesis(
     }
 }
 
-private fun getPrevWithoutWhitespace(pNode: ASTNode?): ASTNode? {
-    var node = pNode
-    node = node!!.treePrev
-    while (node != null && node.elementType === TokenType.WHITE_SPACE) {
-        node = node.treePrev
-    }
-
-    return node
+private fun getPrevWithoutWhitespace(pNode: ASTNode): ASTNode? {
+    return pNode.siblings(forward = false).firstOrNull { it.elementType != TokenType.WHITE_SPACE }
 }
 
-private fun getPrevWithoutWhitespaceAndComments(pNode: ASTNode?): ASTNode? {
-    var node = pNode
-    node = node!!.treePrev
-    while (node != null && (node.elementType === TokenType.WHITE_SPACE || COMMENTS.contains(node.elementType))) {
-        node = node.treePrev
+private fun getPrevWithoutWhitespaceAndComments(pNode: ASTNode): ASTNode? {
+    return pNode.siblings(forward = false).firstOrNull {
+        it.elementType != TokenType.WHITE_SPACE && it.elementType !in COMMENTS
     }
-
-    return node
 }
 
 private fun getWrappingStrategyForItemList(wrapType: Int, itemType: IElementType, wrapFirstElement: Boolean = false): WrappingStrategy {

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi.psiUtil
 
 import com.intellij.injected.editor.VirtualFileWindow
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.search.PsiSearchScopeUtil
@@ -389,3 +390,12 @@ fun KtModifierList.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD) ||
 fun KtModifierListOwner.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD) || hasModifier(KtTokens.ACTUAL_KEYWORD)
 fun KtModifierList.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD) || hasModifier(KtTokens.ACTUAL_KEYWORD)
 
+fun ASTNode.children() = generateSequence(firstChildNode) { node -> node.treeNext }
+
+fun ASTNode.siblings(forward: Boolean = true): Sequence<ASTNode> {
+    if (forward) {
+        return generateSequence(treeNext) { it.treeNext }
+    } else {
+        return generateSequence(treePrev) { it.treePrev }
+    }
+}
