@@ -68,21 +68,31 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     override fun visitCall(expression: IrCall): IrExpression {
 
-        val irCall = super.visitCall(expression) as IrCall
-        val functionDescriptor = irCall.descriptor
-        if (!functionDescriptor.needsInlining) return irCall                                // This call does not need inlining.
+        val functionDescriptor = expression.descriptor
+        if (!functionDescriptor.needsInlining) return super.visitCall(expression)           // This call does not need inlining.
+        if (isInlineFunctionScope())           return super.visitCall(expression)           // Ignore inlining in functions declared as "inline"
 
-        val functionDeclaration = getFunctionDeclaration(irCall)                            // Get declaration of the function to be inlined.
+        val functionDeclaration = getFunctionDeclaration(expression)                        // Get declaration of the function to be inlined.
         if (functionDeclaration == null) {                                                  // We failed to get the declaration.
             val message = "Inliner failed to obtain function declaration: " +
                           functionDescriptor.fqNameSafe.toString()
-            context.reportWarning(message, currentFile, irCall)                             // Report warning.
-            return irCall
+            context.reportWarning(message, currentFile, expression)                         // Report warning.
+            return super.visitCall(expression)
         }
 
-        functionDeclaration.transformChildrenVoid(this)                                     // Process recursive inline.
         val inliner = Inliner(globalSubstituteMap, functionDeclaration, currentScope!!, context)    // Create inliner for this scope.
-        return inliner.inline(irCall )                                  // Return newly created IrInlineBody instead of IrCall.
+        val inlinedFunctionBody = inliner.inline(expression)                                // Return newly created IrInlineBody instead of IrCall.
+        inlinedFunctionBody.transformChildrenVoid(this)
+        return inlinedFunctionBody
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun isInlineFunctionScope(): Boolean {
+        if (currentFunction == null) return false
+        val scopeOwner = currentFunction!!.scope.scopeOwner
+        if (scopeOwner !is FunctionDescriptor) return false
+        return scopeOwner.isInline
     }
 
     //-------------------------------------------------------------------------//
@@ -226,21 +236,35 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
     private class ParameterToArgument(val parameterDescriptor: ValueDescriptor,
                                       val argumentExpression : IrExpression) {
 
-        val isInlinableLambda : Boolean
+        val needsEvaluation : Boolean
             get() {
-                if (argumentExpression !is IrBlock)                                     return false    // Lambda must be represented with IrBlock.
-                if (argumentExpression.origin != IrStatementOrigin.LAMBDA &&                            // Origin must be LAMBDA or ANONYMOUS.
-                    argumentExpression.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)  return false
-
-                val statements          = argumentExpression.statements
-                val irFunction          = statements[0]                                     // Lambda function declaration.
-                val irCallableReference = statements[1]                                     // Lambda callable reference.
-                if (irFunction !is IrFunction)                   return false               // First statement of the block must be lambda declaration.
-                if (irCallableReference !is IrCallableReference) return false               // Second statement of the block must be CallableReference.
-                if (parameterDescriptor is ValueParameterDescriptor &&
-                    parameterDescriptor.isNoinline)              return false               // If parameter marked as "noinline" - do not inline.
-                return true                                                                 // The expression represents lambda.
+                if (parameterDescriptor.isNoinline()) return true
+                if (argumentExpression.isLambda())    return false
+                return true                                                                 // The expression must be evaluated.
             }
+
+        //-------------------------------------------------------------------------//
+
+        fun ValueDescriptor.isNoinline(): Boolean {
+            if (this !is ValueParameterDescriptor) return false
+            if (this.isNoinline)                   return true                              // If parameter marked as "noinline" - do not inline.
+            return false
+        }
+
+        //-------------------------------------------------------------------------//
+
+        fun IrExpression.isLambda(): Boolean {
+            if (this !is IrBlock)                                     return false          // Lambda must be represented with IrBlock.
+            if (this.origin != IrStatementOrigin.LAMBDA &&                                  // Origin must be LAMBDA or ANONYMOUS.
+                this.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)  return false
+
+            val statements          = this.statements
+            val irFunction          = statements[0]                                         // Lambda function declaration.
+            val irCallableReference = statements[1]                                         // Lambda callable reference.
+            if (irFunction !is IrFunction)                   return false                   // First statement of the block must be lambda declaration.
+            if (irCallableReference !is IrCallableReference) return false                   // Second statement of the block must be CallableReference.
+            return true
+        }
     }
 
     //-------------------------------------------------------------------------//
@@ -331,7 +355,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         parameterToArgumentOld.forEach {
             val parameterDescriptor = it.parameterDescriptor
 
-            if (it.isInlinableLambda) {                                                     // If argument is inlinable lambda.
+            if (!it.needsEvaluation) {                                                      // If parameter has functional type - it can not be evaluated.
                 substituteMap[parameterDescriptor] = it.argumentExpression                  // Associate parameter with lambda argument.
                 return@forEach
             }
