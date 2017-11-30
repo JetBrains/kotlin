@@ -52,6 +52,20 @@ val writeCompilerVersion by tasks.creating {
     }
 }
 
+val writePluginVersion by tasks.creating {
+    val versionFile = project(":idea").projectDir.resolve("src/META-INF/plugin.xml")
+    val pluginVersion = rootProject.findProperty("pluginVersion") as String?
+    inputs.property("version", pluginVersion)
+    outputs.file(versionFile)
+    doLast {
+        requireNotNull(pluginVersion) { "Specify 'pluginVersion' property" }
+        replaceVersion(versionFile, """<version>([^<]+)</version>""") {
+            logger.lifecycle("Writing new plugin version: $pluginVersion")
+            pluginVersion!!
+        }
+    }
+}
+
 val writeVersions by tasks.creating {
     dependsOn(writeBuildNumber, writeStdlibVersion, writeCompilerVersion)
 }

@@ -507,83 +507,59 @@ tasks {
     "check" { dependsOn("test") }
 }
 
-// TODO: copied from build.xml (used on TC), reconsider location and dependencies after complete migration
-val `zip-compiler` by task<Zip> {
+fun CopySpec.compilerScriptPermissionsSpec() {
+    filesMatching("bin/*") { mode = 0b111101101 }
+    filesMatching("bin/*.bat") { mode = 0b110100100 }
+}
+
+val zipCompiler by task<Zip> {
     destinationDir = file(distDir)
     archiveName = "kotlin-compiler-$kotlinVersion.zip"
     from(distKotlinHomeDir) {
-        exclude("bin/**")
         into("kotlinc")
+        compilerScriptPermissionsSpec()
     }
-    from("$distKotlinHomeDir/bin") {
-        include("*.bat")
-        into("kotlinc/bin")
-        fileMode = 0b110100100
-    }
-    from("$distKotlinHomeDir/bin") {
-        exclude("*.bat")
-        into("kotlinc/bin")
-        fileMode = 0b111101101
+    doLast {
+        logger.lifecycle("Compiler artifacts packed to $archivePath")
     }
 }
 
-// TODO: copied from build.xml (used on TC), reconsider location and dependencies after complete migration
-val `zip-test-data` by task<Zip> {
+val zipTestData by task<Zip> {
     destinationDir = file(distDir)
     archiveName = "kotlin-test-data.zip"
     from("compiler/testData") { into("compiler") }
     from("idea/testData") { into("ide") }
     from("idea/idea-completion/testData") { into("ide/completion") }
+    doLast {
+        logger.lifecycle("Test data packed to $archivePath")
+    }
 }
 
-// TODO: copied from TeamCityBuild.xml (excluding some parts), consider implementing patching in the appropriate projects
-
-val pluginXmlDir = "$rootDir/idea/src/META-INF"
-val pluginXmlPath = "$pluginXmlDir/plugin.xml"
-val pluginXmlBackupDir = "$buildDir/plugin_xml_backup"
-val pluginXmlBackupPath = "$pluginXmlBackupDir/plugin.xml"
-
-val backupTemplateFile by task<Copy> {
-    from(pluginXmlPath)
-    into(pluginXmlBackupDir)
-}
-
-val writePluginVersionToTemplateFile by task<Copy> {
-    dependsOn(backupTemplateFile)
-    from(pluginXmlBackupPath)
-    into(pluginXmlDir)
-    filter { it.replace("@snapshot@", "$buildNumber") }
-}
-
-val restoreTemplateFile by task<Copy> {
-    from(pluginXmlBackupPath)
-    into(pluginXmlDir)
-}
-
-val revertTemplateFiles by task<Delete> {
-    dependsOn(restoreTemplateFile)
-    delete(pluginXmlBackupDir)
-}
-
-// TODO: copied from build.xml (used on TC), reconsider location, logic and dependencies after complete migration
-val zipArtifacts by task<Zip> {
-    val dest = File(System.getProperty("plugin.zip") ?: "$distDir/artifacts/kotlin-plugin-$buildNumber.zip")
-    val src = System.getProperty("pluginArtifactDir") ?: ideaPluginDir
+val zipPlugin by task<Zip> {
+    val src = when (project.findProperty("pluginArtifactDir") as String?) {
+        "Kotlin" -> ideaPluginDir
+        "KotlinUltimate" -> ideaUltimatePluginDir
+        null -> if (project.hasProperty("ultimate")) ideaUltimatePluginDir else ideaPluginDir
+        else -> error("Unsupported plugin artifact dir")
+    }
+    val destPath = project.findProperty("pluginZipPath") as String?
+    val dest = File(destPath ?: "$buildDir/kotlin-plugin.zip")
     destinationDir = dest.parentFile
     archiveName = dest.name
-    from(src) {
-        exclude("kotlinc/bin/**")
-        into("Kotlin")
+    doFirst {
+        if (destPath == null) throw GradleException("Specify target zip path with 'pluginZipPath' property")
     }
-    from("$src/kotlinc/bin") {
-        include("*.bat")
-        into("Kotlin/kotlinc/bin")
-        fileMode = 0b110100100
+    into("Kotlin") {
+        from("$src/kotlinc") {
+            into("kotlinc")
+            compilerScriptPermissionsSpec()
+        }
+        from(src) {
+            exclude("kotlinc")
+        }
     }
-    from("$src/kotlinc/bin") {
-        exclude("*.bat")
-        into("Kotlin/kotlinc/bin")
-        fileMode = 0b111101101
+    doLast {
+        logger.lifecycle("Plugin artifacts packed to $archivePath")
     }
 }
 

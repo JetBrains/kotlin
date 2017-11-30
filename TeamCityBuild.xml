@@ -41,6 +41,7 @@
 
     <macrodef name="run-gradle">
         <attribute name="tasks" />
+        <attribute name="args" default="" />
         <sequential>
             <java classname="org.gradle.wrapper.GradleWrapperMain"
                   fork="true"
@@ -54,6 +55,7 @@
                 </classpath>
                 <arg line="--no-daemon" />
                 <arg line="@{tasks}" />
+                <arg line="@{args}" />
             </java>
         </sequential>
     </macrodef>
@@ -63,11 +65,11 @@
     </target>
 
     <target name="zip-compiler">
-        <run-gradle tasks="zip-compiler" />
+        <run-gradle tasks="zipCompiler" args="-PdeployVersion=${build.number}" />
     </target>
 
     <target name="zip-test-data">
-        <run-gradle tasks="zip-test-data" />
+        <run-gradle tasks="zipTestData" />
     </target>
 
     <target name="writeCompilerVersionToTemplateFile">
@@ -75,17 +77,11 @@
     </target>
 
     <target name="writePluginVersionToTemplateFile">
-        <run-gradle tasks="writePluginVersionToTemplateFile" />
+        <run-gradle tasks="writePluginVersion" args="-PpluginVersion=${plugin.xml.version.number}" />
     </target>
-
-    <target name="revertTemplateFiles">
-        <run-gradle tasks="revertTemplateFiles" />
-    </target>
-
-    <target name="pre_build" depends="writeCompilerVersionToTemplateFile, writePluginVersionToTemplateFile, cleanupArtifacts"/>
 
     <target name="zipArtifacts">
-        <run-gradle tasks="zipArtifacts" />
+        <run-gradle tasks="zipPlugin" args="-PpluginArtifactDir=${pluginArtifactDir} -PpluginZipPath=${plugin.zip}"/>
     </target>
 
     <macrodef name="print-statistic">
@@ -118,42 +114,8 @@
         <print-file-size-statistic path="${basedir}/libraries/stdlib/js/build/classes/main" file-name="kotlin.meta.js"/>
     </target>
 
-    <target name="post_build" depends="zipArtifacts, revertTemplateFiles, printStatistics, remove_internal_artifacts, dont_remove_internal_artifacts"/>
-
     <target name="none">
         <fail message="Either specify pre_build or post_build"/>
     </target>
 
-    <property name="teamcity.build.branch" value=""/>
-
-    <condition property="need.remove.artifacts" value="true">
-        <and>
-            <matches pattern="rri?/.*" string="${teamcity.build.branch}"/>
-            <not>
-                <matches pattern="rri?/internal/.*" string="${teamcity.build.branch}"/>
-            </not>
-        </and>
-    </condition>
-
-    <target name="remove_internal_artifacts"
-            description="Remove internal artifacts for rri?/* branches, but store them for rri?/internal/*"
-            if="need.remove.artifacts">
-        <echo message="Remove internal artifacts" />
-
-        <delete failonerror="false" verbose="true">
-            <fileset dir="dist">
-                <include name="kotlin-compiler-before-shrink.jar"/>
-                <include name="kotlin-for-upsource.jar"/>
-                <include name="kotlin-for-upsource-sources.jar"/>
-                <include name="kotlin-test-data.zip"/>
-            </fileset>
-            <fileset dir="out/artifacts/internal">
-                <include name="kotlin-ide-common.jar"/>
-            </fileset>
-        </delete>
-    </target>
-
-    <target name="dont_remove_internal_artifacts" unless="need.remove.artifacts">
-        <echo message="Internal artifacts left untouched"/>
-    </target>
 </project>
