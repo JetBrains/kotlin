@@ -21,6 +21,7 @@ import com.android.build.gradle.api.AndroidSourceSet
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.tasks.SourceSet
@@ -34,8 +35,6 @@ import java.io.File
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
-import org.jetbrains.kotlin.gradle.tasks.shouldEnableGradleCache
-import org.jetbrains.kotlin.gradle.tasks.useBuildCacheIfSupported
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.util.*
@@ -209,14 +208,14 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         pluginOptions += SubpluginOption("aptMode", aptMode)
         disableAnnotationProcessingInJavaTask()
 
-        kaptClasspath.forEach { pluginOptions += SubpluginOption("apclasspath", it.absolutePath) }
+        kaptClasspath.forEach { pluginOptions += FilesSubpluginOption("apclasspath", listOf(it)) }
 
         javaCompile.source(generatedFilesDir)
 
-        pluginOptions += SubpluginOption("sources", generatedFilesDir.canonicalPath)
-        pluginOptions += SubpluginOption("classes", getKaptGeneratedClassesDir(project, sourceSetName).canonicalPath)
+        pluginOptions += FilesSubpluginOption("sources", listOf(generatedFilesDir))
+        pluginOptions += FilesSubpluginOption("classes", listOf(getKaptGeneratedClassesDir(project, sourceSetName)))
 
-        pluginOptions += SubpluginOption("incrementalData", getKaptIncrementalDataDir().canonicalPath)
+        pluginOptions += FilesSubpluginOption("incrementalData", listOf(getKaptIncrementalDataDir()))
 
         val annotationProcessors = kaptExtension.processors
         if (annotationProcessors.isNotEmpty()) {
@@ -231,13 +230,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kotlinSourcesOutputDir.mkdirs()
 
-        val apOptions = kaptExtension.getAdditionalArguments(
-                project,
-                kaptVariantData?.variantData,
-                androidPlugin
-        ) + androidOptions + mapOf("kapt.kotlin.generated" to kotlinSourcesOutputDir.absolutePath)
+        val apOptions =
+                (kaptExtension.getAdditionalArguments(project, kaptVariantData?.variantData, androidPlugin) + androidOptions)
+                        .map { SubpluginOption(it.key, it.value) } +
+                FilesSubpluginOption("kapt.kotlin.generated", listOf(kotlinSourcesOutputDir))
 
-        pluginOptions += SubpluginOption("apoptions", encodeList(apOptions))
+        pluginOptions += CompositeSubpluginOption("apoptions", encodeList(apOptions.associate { it.key to it.value }), apOptions)
 
         pluginOptions += SubpluginOption("javacArguments", encodeList(kaptExtension.getJavacOptions()))
 
@@ -246,10 +244,20 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         return pluginOptions
     }
 
-    private fun Kapt3SubpluginContext.buildAndAddOptionsTo(container: CompilerPluginOptions, aptMode: String) {
+    private fun Kapt3SubpluginContext.buildAndAddOptionsTo(task: Task, container: CompilerPluginOptions, aptMode: String) {
         val compilerPluginId = getCompilerPluginId()
-        for (option in wrapPluginOptions(buildOptions(aptMode), "configuration")) {
-            container.addPluginArgument(compilerPluginId, option.key, option.value)
+        val kaptSubpluginOptions = wrapPluginOptions(buildOptions(aptMode), "configuration")
+        task.registerSubpluginOptionsAsInputs(compilerPluginId, kaptSubpluginOptions)
+
+        for (option in kaptSubpluginOptions) {
+            container.addPluginArgument(compilerPluginId, option)
+        }
+
+        // Also register all the subplugin options from the Kotlin task:
+        project.afterEvaluate {
+            kotlinCompile.pluginOptions.subpluginOptionsByPluginId.forEach { (pluginId, options) ->
+                task.registerSubpluginOptionsAsInputs("kotlinCompile.$pluginId", options)
+            }
         }
     }
 
@@ -274,7 +282,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         pluginOptions += SubpluginOption("useLightAnalysis", "${kaptExtension.useLightAnalysis}")
         pluginOptions += SubpluginOption("correctErrorTypes", "${kaptExtension.correctErrorTypes}")
-        pluginOptions += SubpluginOption("stubs", getKaptStubsDir().canonicalPath)
+        pluginOptions += FilesSubpluginOption("stubs", listOf(getKaptStubsDir()))
 
         if (project.hasProperty(VERBOSE_OPTION_NAME) && project.property(VERBOSE_OPTION_NAME) == "true") {
             pluginOptions += SubpluginOption("verbose", "true")
@@ -286,7 +294,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 getKaptTaskName("kapt"),
                 KaptTask::class.java)
 
-        kaptTask.useBuildCacheIfSupported()
+        kaptTask.useBuildCache = kaptExtension.useBuildCache
 
         kaptTask.kotlinCompileTask = kotlinCompile
 
@@ -314,15 +322,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kaptTask.kaptClasspath = kaptClasspath
 
-        kaptTask.useBuildCache = kaptExtension.useBuildCache
-
-        if (shouldEnableGradleCache()) {
-            val reason = "Caching is disabled by default for kapt because of arbitrary behavior of external " +
-                         "annotation processors. You can enable it by adding 'kapt.useBuildCache = true' to the build script."
-            kaptTask.outputs.doNotCacheIf(reason) { !kaptTask.useBuildCache }
-        }
-
-        buildAndAddOptionsTo(kaptTask.pluginOptions, aptMode = "apt")
+        buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "apt")
 
         return kaptTask
     }
@@ -331,8 +331,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val kaptTask = project.tasks.create(
                 getKaptTaskName("kaptGenerateStubs"),
                 KaptGenerateStubsTask::class.java)
-
-        kaptTask.useBuildCacheIfSupported()
 
         kaptTask.sourceSetName = sourceSetName
         kaptTask.kotlinCompileTask = kotlinCompile
@@ -347,7 +345,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         mapKotlinTaskProperties(project, kaptTask)
 
         kaptTask.kaptClasspath = kaptClasspath
-        buildAndAddOptionsTo(kaptTask.pluginOptions, aptMode = "stubs")
+        buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "stubs")
 
         return kaptTask
     }

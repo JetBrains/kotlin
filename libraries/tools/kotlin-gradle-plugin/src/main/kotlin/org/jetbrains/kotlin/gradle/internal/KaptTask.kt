@@ -14,7 +14,17 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.File
 
 @CacheableTask
-open class KaptTask : ConventionTask(), CompilerArgumentAware<K2JVMCompilerArguments> {
+open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
+
+    init {
+        cacheOnlyIfEnabledForKotlin()
+
+        if (isBuildCacheSupported()) {
+            val reason = "Caching is disabled by default for kapt because of arbitrary behavior of external " +
+                         "annotation processors. You can enable it by adding 'kapt.useBuildCache = true' to the build script."
+            outputs.cacheIf(reason) { useBuildCache }
+        }
+    }
 
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
@@ -65,7 +75,7 @@ open class KaptTask : ConventionTask(), CompilerArgumentAware<K2JVMCompilerArgum
     @get:Classpath @get:InputFiles
     internal val pluginClasspath get() = pluginOptions.classpath
 
-    @get:InputFiles @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
     val source: FileCollection
         get() {
             val sourcesFromKotlinTask = kotlinCompileTask.source
