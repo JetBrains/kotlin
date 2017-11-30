@@ -37,7 +37,7 @@ class KotlinIndentOptionsEditor : SmartIndentOptionsEditor() {
 
     override fun isModified(settings: CodeStyleSettings, options: CommonCodeStyleSettings.IndentOptions): Boolean {
         var isModified = super.isModified(settings, options)
-        val kotlinSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)
+        val kotlinSettings = settings.kotlinCustomSettings
         isModified = isModified || IndentOptionsEditor.isFieldModified(useContinuationIndentInParameterList,
                                                                        kotlinSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
         isModified = isModified || IndentOptionsEditor.isFieldModified(useContinuationIndentForExpressionBodies,
