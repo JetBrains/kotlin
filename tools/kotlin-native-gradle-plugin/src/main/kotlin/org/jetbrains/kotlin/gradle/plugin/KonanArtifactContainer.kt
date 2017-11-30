@@ -45,48 +45,41 @@ open class KonanArtifactContainer(val project: ProjectInternal)
         }
     }
 
-    override fun createConfigureDelegate(configureClosure: Closure<*>?): ConfigureDelegate {
-        return ConfigureDelegate(configureClosure)
-    }
-
     // TODO: Investigate if we can support the same DSL as project.task:
     //   program foo(targets: [target1, target2, target3]) {
     //       ...
     //   }
-    open inner class ConfigureDelegate(configureClosure: Closure<*>?)
-        : org.gradle.internal.metaobject.ConfigureDelegate(configureClosure, this@KonanArtifactContainer) {
 
-        fun program(name: String) = create(name, KonanProgram::class.java)
-        fun program(name: String, configureAction: Action<KonanProgram>) =
-                create(name, KonanProgram::class.java, configureAction)
-        fun program(name: String, configureAction: KonanProgram.() -> Unit) =
-                create(name, KonanProgram::class.java, configureAction)
-        fun program(name: String, configureAction: Closure<*>) =
-                program(name, ConfigureUtil.configureUsing(configureAction))
+    fun program(name: String) = create(name, KonanProgram::class.java)
+    fun program(name: String, configureAction: Action<KonanProgram>) =
+            create(name, KonanProgram::class.java, configureAction)
+    fun program(name: String, configureAction: KonanProgram.() -> Unit) =
+            create(name, KonanProgram::class.java, configureAction)
+    fun program(name: String, configureAction: Closure<*>) =
+            program(name, ConfigureUtil.configureUsing(configureAction))
 
-        fun library(name: String) = create(name, KonanLibrary::class.java)
-        fun library(name: String, configureAction: Action<KonanLibrary>) =
-                create(name, KonanLibrary::class.java, configureAction)
-        fun library(name: String, configureAction: KonanLibrary.() -> Unit) =
-                create(name, KonanLibrary::class.java, configureAction)
-        fun library(name: String, configureAction: Closure<*>) =
-                library(name, ConfigureUtil.configureUsing(configureAction))
+    fun library(name: String) = create(name, KonanLibrary::class.java)
+    fun library(name: String, configureAction: Action<KonanLibrary>) =
+            create(name, KonanLibrary::class.java, configureAction)
+    fun library(name: String, configureAction: KonanLibrary.() -> Unit) =
+            create(name, KonanLibrary::class.java, configureAction)
+    fun library(name: String, configureAction: Closure<*>) =
+            library(name, ConfigureUtil.configureUsing(configureAction))
 
-        fun bitcode(name: String) = create(name, KonanBitcode::class.java)
-        fun bitcode(name: String, configureAction: Action<KonanBitcode>) =
-                create(name, KonanBitcode::class.java, configureAction)
-        fun bitcode(name: String, configureAction: KonanBitcode.() -> Unit) =
-                create(name, KonanBitcode::class.java, configureAction)
-        fun bitcode(name: String, configureAction: Closure<*>) =
-                bitcode(name, ConfigureUtil.configureUsing(configureAction))
+    fun bitcode(name: String) = create(name, KonanBitcode::class.java)
+    fun bitcode(name: String, configureAction: Action<KonanBitcode>) =
+            create(name, KonanBitcode::class.java, configureAction)
+    fun bitcode(name: String, configureAction: KonanBitcode.() -> Unit) =
+            create(name, KonanBitcode::class.java, configureAction)
+    fun bitcode(name: String, configureAction: Closure<*>) =
+            bitcode(name, ConfigureUtil.configureUsing(configureAction))
 
-        fun interop(name: String) = create(name, KonanInteropLibrary::class.java)
-        fun interop(name: String, configureAction: Action<KonanInteropLibrary>) =
-                create(name, KonanInteropLibrary::class.java, configureAction)
-        fun interop(name: String, configureAction: KonanInteropLibrary.() -> Unit) =
-                create(name, KonanInteropLibrary::class.java, configureAction)
-        fun interop(name: String, configureAction: Closure<*>) =
-                interop(name, ConfigureUtil.configureUsing(configureAction))
-    }
+    fun interop(name: String) = create(name, KonanInteropLibrary::class.java)
+    fun interop(name: String, configureAction: Action<KonanInteropLibrary>) =
+            create(name, KonanInteropLibrary::class.java, configureAction)
+    fun interop(name: String, configureAction: KonanInteropLibrary.() -> Unit) =
+            create(name, KonanInteropLibrary::class.java, configureAction)
+    fun interop(name: String, configureAction: Closure<*>) =
+            interop(name, ConfigureUtil.configureUsing(configureAction))
 
 }
