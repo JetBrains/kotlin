@@ -913,6 +913,7 @@ fun main(args: Array<String>) {
             model("incremental/classHierarchyAffected", extension = null, recursive = false)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
+            model("incremental/incrementalJvmCompilerOnly", extension = null, excludeParentDirs = true)
         }
 
         testClass<AbstractIncrementalJsCompilerRunnerTest> {

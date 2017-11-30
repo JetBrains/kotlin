@@ -31,14 +31,12 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
 import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
+import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
-import java.util.*
-import kotlin.collections.HashSet
 
 fun makeIncrementally(
         cachesDir: File,
@@ -110,8 +108,6 @@ class IncrementalJvmCompilerRunner(
     override fun destinationDir(args: K2JVMCompilerArguments): File =
             args.destinationAsFile
 
-    private var javaFilesProcessor = ChangedJavaFilesProcessor(reporter)
-
     override fun calculateSourcesToCompile(caches: IncrementalJvmCachesManager, changedFiles: ChangedFiles.Known, args: K2JVMCompilerArguments): CompilationMode {
         val dirtyFiles = getDirtyFiles(changedFiles)
 
@@ -170,21 +166,20 @@ class IncrementalJvmCompilerRunner(
             return CompilationMode.Rebuild { "could not get changes from modified classpath entries: ${reporter.pathsAsString(modifiedClasspathEntries)}" }
         }
 
-        val javaFilesChanges = javaFilesProcessor.process(changedFiles)
-        val affectedJavaSymbols = when (javaFilesChanges) {
-            is ChangesEither.Known -> javaFilesChanges.lookupSymbols
-            is ChangesEither.Unknown -> return CompilationMode.Rebuild { "Could not get changes for java files" }
-        }
+        processChangedJava(changedFiles, caches)
 
         if ((changedFiles.modified + changedFiles.removed).any { it.extension.toLowerCase() == "xml" }) {
             return CompilationMode.Rebuild { "XML resource files were changed" }
         }
 
-        markDirtyBy(affectedJavaSymbols)
         markDirtyBy(classpathChanges.lookupSymbols)
         markDirtyBy(classpathChanges.fqNames)
 
         return CompilationMode.Incremental(dirtyFiles)
+    }
+
+    private fun processChangedJava(changedFiles: ChangedFiles.Known, caches: IncrementalJvmCachesManager) {
+        caches.platformCache.markDirty((changedFiles.modified + changedFiles.removed).filter(File::isJavaFile))
     }
 
     private fun getClasspathChanges(
@@ -249,8 +244,14 @@ class IncrementalJvmCompilerRunner(
             generatedFiles: List<GeneratedFile>,
             changesCollector: ChangesCollector
     ) {
-        updateIncrementalCache(generatedFiles, caches.platformCache, changesCollector)
+        updateIncrementalCache(
+                generatedFiles, caches.platformCache, changesCollector,
+                services[JavaClassesTracker::class.java] as? JavaClassesTrackerImpl
+        )
     }
+
+    override fun runWithNoDirtyKotlinSources(caches: IncrementalJvmCachesManager): Boolean =
+            caches.platformCache.getObsoleteJavaClasses().isNotEmpty()
 
     override fun additionalDirtyFiles(
             caches: IncrementalJvmCachesManager,
@@ -292,9 +293,6 @@ class IncrementalJvmCompilerRunner(
         return result
     }
 
-    override fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
-            javaFilesProcessor.allChangedSymbols
-
     override fun processChangesAfterBuild(compilationMode: CompilationMode, currentBuildInfo: BuildInfo, dirtyData: DirtyData) {
         super.processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData)
 
@@ -323,6 +321,8 @@ class IncrementalJvmCompilerRunner(
             val targetToCache = mapOf(targetId to caches.platformCache)
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
             register(IncrementalCompilationComponents::class.java, incrementalComponents)
+            val changesTracker = JavaClassesTrackerImpl(caches.platformCache)
+            register(JavaClassesTracker::class.java, changesTracker)
         }
 
     override fun runCompiler(

@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 abstract class IncrementalCompilerRunner<
     Args : CommonCompilerArguments,
@@ -143,8 +142,6 @@ abstract class IncrementalCompilerRunner<
     protected open fun postCompilationHook(exitCode: ExitCode) {}
     protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>): Iterable<File> =
             emptyList()
-    protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
-            emptyList()
 
     protected open fun makeServices(
             args: Args,
@@ -187,7 +184,7 @@ abstract class IncrementalCompilerRunner<
         var exitCode = ExitCode.OK
         val allGeneratedFiles = hashSetOf<GeneratedFile>()
 
-        while (dirtySources.any()) {
+        while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
 
@@ -248,9 +245,6 @@ abstract class IncrementalCompilerRunner<
         if (exitCode == ExitCode.OK) {
             BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
         }
-        if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
-            buildDirtyLookupSymbols.addAll(additionalDirtyLookupSymbols())
-        }
 
         val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
         processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData)
@@ -261,6 +255,8 @@ abstract class IncrementalCompilerRunner<
 
         return exitCode
     }
+
+    open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 
     protected open fun processChangesAfterBuild(compilationMode: CompilationMode, currentBuildInfo: BuildInfo, dirtyData: DirtyData) {
         if (changesRegistry == null) return

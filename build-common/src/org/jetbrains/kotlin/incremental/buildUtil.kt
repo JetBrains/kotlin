@@ -79,13 +79,19 @@ fun makeCompileServices(
 fun updateIncrementalCache(
         generatedFiles: Iterable<GeneratedFile>,
         cache: IncrementalJvmCache,
-        changesCollector: ChangesCollector
+        changesCollector: ChangesCollector,
+        javaChangesTracker: JavaClassesTrackerImpl?
 ) {
     for (generatedFile in generatedFiles) {
         when {
             generatedFile is GeneratedJvmClass -> cache.saveFileToCache(generatedFile, changesCollector)
             generatedFile.outputFile.isModuleMappingFile() -> cache.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
         }
+    }
+
+    javaChangesTracker?.javaClassesUpdates?.forEach {
+        (source, serializedJavaClass) ->
+        cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 
     cache.clearCacheForRemovedClasses(changesCollector)
@@ -173,7 +179,7 @@ fun mapClassesFqNamesToFiles(
     for (cache in caches) {
         for (dirtyClassFqName in classesFqNames) {
             val srcFile = cache.getSourceFileIfClass(dirtyClassFqName)
-            if (srcFile == null || srcFile in excludes) continue
+            if (srcFile == null || srcFile in excludes || srcFile.isJavaFile()) continue
 
             reporter.report { ("Class $dirtyClassFqName caused recompilation of: ${reporter.pathsAsString(srcFile)}") }
             dirtyFiles.add(srcFile)
