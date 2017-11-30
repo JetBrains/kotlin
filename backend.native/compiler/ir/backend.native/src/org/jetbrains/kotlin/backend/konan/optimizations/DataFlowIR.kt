@@ -406,6 +406,8 @@ internal object DataFlowIR {
             return parent.child(localName)
         }
 
+        private val FunctionDescriptor.internalName get() = getFqName(this).asString() + "#internal"
+
         fun mapFunction(descriptor: CallableDescriptor) = descriptor.original.let {
             functionMap.getOrPut(it) {
                 when (it) {
@@ -413,8 +415,9 @@ internal object DataFlowIR {
                         FunctionSymbol.Private(privateFunIndex++, module, -1, takeName { "${it.symbolName}_init" })
 
                     is FunctionDescriptor -> {
+                        val name = if (it.isExported()) it.symbolName else it.internalName
                         if (it.module != irModule.descriptor || it.externalOrIntrinsic())
-                            FunctionSymbol.External(it.symbolName.localHash.value, takeName { it.symbolName })
+                            FunctionSymbol.External(name.localHash.value, takeName { name })
                         else {
                             val isAbstract = it.modality == Modality.ABSTRACT
                             val classDescriptor = it.containingDeclaration as? ClassDescriptor
@@ -425,9 +428,9 @@ internal object DataFlowIR {
                                 ++module.numberOfFunctions
                             val symbolTableIndex = if (!placeToFunctionsTable) -1 else couldBeCalledVirtuallyIndex++
                             if (it.isExported())
-                                FunctionSymbol.Public(it.symbolName.localHash.value, module, symbolTableIndex, takeName { it.symbolName })
+                                FunctionSymbol.Public(name.localHash.value, module, symbolTableIndex, takeName { name })
                             else
-                                FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, takeName { getFqName(it).asString() + "#internal" })
+                                FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, takeName { name })
                         }
                     }
 
