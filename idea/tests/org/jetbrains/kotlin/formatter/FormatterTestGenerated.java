@@ -344,6 +344,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ExpressionBodyWrap.after.kt")
+        public void testExpressionBodyWrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ExpressionBodyWrap.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExtendsListWrap.after.kt")
         public void testExtendsListWrap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ExtendsListWrap.after.kt");
