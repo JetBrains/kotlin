@@ -30,7 +30,7 @@ class MyActivity(): Activity() {
     val editTextWidget2 = EditText(this)
     val buttonWidget2 = Button(this)
 
-    override fun findViewById(id: Int): View? {
+    override fun <T : View> findViewById(id: Int): T? {
         return when (id) {
             R.id.textView1 -> textViewWidget
             R.id.password -> editTextWidget
@@ -39,7 +39,7 @@ class MyActivity(): Activity() {
             R.id.passwordCaption -> editTextWidget2
             R.id.loginButton -> buttonWidget2
             else -> null
-        }
+        } as T?
     }
 
 

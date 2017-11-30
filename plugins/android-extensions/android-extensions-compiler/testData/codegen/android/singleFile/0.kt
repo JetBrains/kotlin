@@ -24,13 +24,13 @@ class MyActivity(): Activity() {
     val editTextWidget = EditText(this)
     val buttonWidget = Button(this)
 
-    override fun findViewById(id: Int): View? {
+    override fun <T : View> findViewById(id: Int): T? {
         return when (id) {
             R.id.textView1 -> textViewWidget
             R.id.password -> editTextWidget
             R.id.login -> buttonWidget
             else -> null
-        }
+        } as T?
     }
 
     public fun box(): String {
