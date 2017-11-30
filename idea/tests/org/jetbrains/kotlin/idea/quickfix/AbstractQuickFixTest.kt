@@ -104,9 +104,11 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
                 throw e
             }
             catch (e: Throwable) {
-                if (expectedErrorMessage == null || expectedErrorMessage != e.message) {
-                    e.printStackTrace()
-                    TestCase.fail(getTestName(true))
+                if (expectedErrorMessage == null) {
+                    throw e
+                }
+                else {
+                    Assert.assertEquals("Wrong exception message", expectedErrorMessage, e.message)
                 }
             }
             finally {
