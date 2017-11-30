@@ -14094,6 +14094,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/replacePutWithArrayAssignment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplacePutWithArrayAssignment extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplacePutWithArrayAssignment() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replacePutWithArrayAssignment"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("nonMap.kt")
+        public void testNonMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replacePutWithArrayAssignment/nonMap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("putOnParameter.kt")
+        public void testPutOnParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replacePutWithArrayAssignment/putOnParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("putOnThis.kt")
+        public void testPutOnThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replacePutWithArrayAssignment/putOnThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("putOnVal.kt")
+        public void testPutOnVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replacePutWithArrayAssignment/putOnVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("putOnVar.kt")
+        public void testPutOnVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replacePutWithArrayAssignment/putOnVar.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/replaceSingleLineLetIntention")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
