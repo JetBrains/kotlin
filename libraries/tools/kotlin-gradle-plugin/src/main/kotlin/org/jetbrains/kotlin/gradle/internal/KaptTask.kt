@@ -56,6 +56,9 @@ open class KaptTask : ConventionTask(), CompilerArgumentAware<K2JVMCompilerArgum
     val classpath: FileCollection
         get() = kotlinCompileTask.classpath
 
+    @get:Internal
+    var useBuildCache: Boolean = false
+
     @get:Classpath @get:InputFiles @Suppress("unused")
     internal val kotlinTaskPluginClasspaths get() = kotlinCompileTask.pluginClasspath
 

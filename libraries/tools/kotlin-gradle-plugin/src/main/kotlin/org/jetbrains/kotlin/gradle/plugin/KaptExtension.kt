@@ -32,11 +32,19 @@ open class KaptExtension {
 
     open var processors: String = ""
 
+    /** Explicit opt-in switch for Kapt caching. Should be used when annotation processors used by this project are
+     * certain NOT to use anything aside from the task inputs in their logic and are guaranteed to produce the same
+     * output on subsequent runs without input changes. */
+    var useBuildCache: Boolean = false
+
     private val apOptionsActions =
             mutableListOf<(KaptAnnotationProcessorOptions) -> Unit>()
 
     private val javacOptionsActions =
             mutableListOf<(KaptJavacOptionsDelegate) -> Unit>()
+
+    private var apOptionsClosure: Closure<*>? = null
+    private var javacOptionsClosure: Closure<*>? = null
 
     open fun arguments(closure: Closure<*>) {
         apOptionsActions += { apOptions ->

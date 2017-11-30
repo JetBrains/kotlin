@@ -34,6 +34,7 @@ import java.io.File
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
+import org.jetbrains.kotlin.gradle.tasks.shouldEnableGradleCache
 import org.jetbrains.kotlin.gradle.tasks.useBuildCacheIfSupported
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
@@ -312,6 +313,14 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         kaptTask.kaptClasspath = kaptClasspath
+
+        kaptTask.useBuildCache = kaptExtension.useBuildCache
+
+        if (shouldEnableGradleCache()) {
+            val reason = "Caching is disabled by default for kapt because of arbitrary behavior of external " +
+                         "annotation processors. You can enable it by adding 'kapt.useBuildCache = true' to the build script."
+            kaptTask.outputs.doNotCacheIf(reason) { !kaptTask.useBuildCache }
+        }
 
         buildAndAddOptionsTo(kaptTask.pluginOptions, aptMode = "apt")
 
