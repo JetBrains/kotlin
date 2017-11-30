@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -74,7 +75,8 @@ class BridgeLowering(val state: GenerationState) : ClassLoweringPass {
         val functions = irClass.declarations.filterIsInstance<IrFunction>().filterNot {
             val descriptor = it.descriptor
             descriptor is ConstructorDescriptor ||
-            DescriptorUtils.isStaticDeclaration(descriptor)
+            DescriptorUtils.isStaticDeclaration(descriptor) ||
+            !descriptor.kind.isReal
         }
 
         functions.forEach {
@@ -82,7 +84,7 @@ class BridgeLowering(val state: GenerationState) : ClassLoweringPass {
         }
 
 
-        //additional bridges for interface methods
+        //additional bridges for inherited interface methods
         if (!DescriptorUtils.isInterface(classDescriptor) && classDescriptor !is DefaultImplsClassDescriptor) {
             for (memberDescriptor in DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope)) {
                 if (memberDescriptor is CallableMemberDescriptor) {
