@@ -35,8 +35,7 @@ class ReplInterpreter(
         disposable: Disposable,
         private val configuration: CompilerConfiguration,
         private val replConfiguration: ReplConfiguration
-): ReplConfiguration by replConfiguration {
-
+) {
     private val lineNumber = AtomicInteger()
 
     private val previousIncompleteLines = arrayListOf<String>()
@@ -92,12 +91,12 @@ class ReplInterpreter(
         try {
 
             val evalRes = scriptEvaluator.compileAndEval(evalState, ReplCodeLine(lineNumber.getAndIncrement(), 0, fullText), null, object : InvokeWrapper {
-                override fun <T> invoke(body: () -> T): T = executionInterceptor.execute(body)
+                override fun <T> invoke(body: () -> T): T = replConfiguration.executionInterceptor.execute(body)
             })
 
             when {
                 evalRes !is ReplEvalResult.Incomplete -> previousIncompleteLines.clear()
-                allowIncompleteLines -> previousIncompleteLines.add(line)
+                replConfiguration.allowIncompleteLines -> previousIncompleteLines.add(line)
                 else -> return ReplEvalResult.Error.CompileTime("incomplete code")
             }
             return evalRes
