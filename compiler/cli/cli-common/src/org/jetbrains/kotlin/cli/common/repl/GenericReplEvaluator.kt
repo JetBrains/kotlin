@@ -29,7 +29,9 @@ open class GenericReplEvaluator(
         protected val repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
 ) : ReplEvaluator {
 
-    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = GenericReplEvaluatorState(baseClasspath, baseClassloader, lock)
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> {
+        return GenericReplEvaluatorState(baseClasspath, baseClassloader, lock)
+    }
 
     override fun eval(state: IReplStageState<*>,
                       compileResult: ReplCompileResult.CompiledClasses,
