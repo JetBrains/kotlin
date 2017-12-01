@@ -92,7 +92,7 @@ class ReplInterpreter(
         try {
 
             val evalRes = scriptEvaluator.compileAndEval(evalState, ReplCodeLine(lineNumber.getAndIncrement(), 0, fullText), null, object : InvokeWrapper {
-                override fun <T> invoke(body: () -> T): T = executeUserCode { body() }
+                override fun <T> invoke(body: () -> T): T = executionInterceptor.execute(body)
             })
 
             when {
@@ -107,16 +107,6 @@ class ReplInterpreter(
             classLoader.dumpClasses(writer)
             writer.flush()
             throw e
-        }
-    }
-
-    private fun <T> executeUserCode(body: () -> T): T {
-        try {
-            onUserCodeExecuting(true)
-            return body()
-        }
-        finally {
-            onUserCodeExecuting(false)
         }
     }
 

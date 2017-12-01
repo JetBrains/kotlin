@@ -27,16 +27,23 @@ interface ReplConfiguration {
     val commandReader: ReplCommandReader
     val allowIncompleteLines: Boolean
 
+    val executionInterceptor: SnippetExecutionInterceptor
     fun createDiagnosticHolder(): DiagnosticMessageHolder
-    fun onUserCodeExecuting(isExecuting: Boolean)
 }
 
 class ReplForIdeConfiguration : ReplConfiguration {
     override val allowIncompleteLines: Boolean
         get() = false
 
-    override fun onUserCodeExecuting(isExecuting: Boolean) {
-        sinWrapper.isReplScriptExecuting = isExecuting
+    override val executionInterceptor: SnippetExecutionInterceptor = object : SnippetExecutionInterceptor {
+        override fun <T> execute(block: () -> T): T {
+            try {
+                sinWrapper.isReplScriptExecuting = true
+                return block()
+            } finally {
+                sinWrapper.isReplScriptExecuting = false
+            }
+        }
     }
 
     override fun createDiagnosticHolder() = ReplIdeDiagnosticMessageHolder()
@@ -66,22 +73,18 @@ class ReplForIdeConfiguration : ReplConfiguration {
 }
 
 class ConsoleReplConfiguration : ReplConfiguration {
+    override val writer = ReplConsoleWriter()
+
+    override val exceptionReporter
+        get() = ReplExceptionReporter.DoNothing
+
+    override val commandReader = ConsoleReplCommandReader()
+
     override val allowIncompleteLines: Boolean
         get() = true
 
-    override fun onUserCodeExecuting(isExecuting: Boolean) {
-        // do nothing
-    }
+    override val executionInterceptor
+        get() = SnippetExecutionInterceptor.Plain
 
     override fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
-
-    override val writer: ReplWriter
-    override val exceptionReporter: ReplExceptionReporter
-    override val commandReader: ReplCommandReader
-
-    init {
-        writer = ReplConsoleWriter()
-        exceptionReporter = ReplExceptionReporter.DoNothing
-        commandReader = ConsoleReplCommandReader()
-    }
 }
