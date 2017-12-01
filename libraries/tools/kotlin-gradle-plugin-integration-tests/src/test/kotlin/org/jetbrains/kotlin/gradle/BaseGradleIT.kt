@@ -128,7 +128,14 @@ abstract class BaseGradleIT {
                             wrapperProperties.modify { it.replace("<GRADLE_WRAPPER_VERSION>", version) }
                         }
 
+        private val runnerGradleVersion = System.getProperty("runnerGradleVersion")
+
         private fun stopDaemon(version: String, environmentVariables: Map<String, String>) {
+            if (version == runnerGradleVersion) {
+                println("Not stopping Gradle daemon v$version as it matches the runner version")
+                return
+            }
+
             println("Stopping gradle daemon v$version")
 
             val wrapperDir = gradleWrappers[version] ?: error("Was asked to stop unknown daemon $version")
@@ -146,7 +153,9 @@ abstract class BaseGradleIT {
             for (version in wrapperVersions) {
                 stopDaemon(version, environmentVariables)
             }
-            assert(daemonRunCount.isEmpty()) { "Could not stop some daemons ${daemonRunCount.keys.joinToString()}" }
+            assert(daemonRunCount.keys.none { it != runnerGradleVersion }) {
+                "Could not stop some daemons ${(daemonRunCount.keys - runnerGradleVersion).joinToString()}"
+            }
         }
     }
 

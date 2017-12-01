@@ -84,6 +84,8 @@ tasks.withType(Test) {
     executable = "${JDK_18}/bin/java"
 
     systemProperty("kotlinVersion", kotlinVersion)
+    systemProperty("runnerGradleVersion", gradle.gradleVersion)
+
     def mavenLocalRepo = System.getProperty("maven.repo.local")
     if (mavenLocalRepo != null) {
         systemProperty("maven.repo.local", mavenLocalRepo)
