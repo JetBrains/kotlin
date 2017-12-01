@@ -1,7 +1,7 @@
 @echo off
 setlocal
 set DIR=.
-set "PATH=..\..\dist\bin;..\..\bin;%home%\.konan\dependencies\msys2-mingw-w64-x86_64-gcc-6.3.0-clang-llvm-3.9.1-windows-x86-64\bin;%PATH%"
+set "PATH=..\..\dist\bin;..\..\bin;%HOME%\.konan\dependencies\msys2-mingw-w64-x86_64-gcc-7.2.0-clang-llvm-5.0.0-windows-x86-64\bin;%PATH%"
 if "%TARGET%" == "" set TARGET=mingw
 rem Requires default mingw64 install path yet.
 set MINGW=\msys64\mingw64
