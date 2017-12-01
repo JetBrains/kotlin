@@ -54,10 +54,12 @@ abstract class IncrementalCompilerRunner<
     protected abstract fun destinationDir(args: Args): File
 
     fun compile(
-            allKotlinSources: List<File>,
+            allSourceFiles: List<File>,
             args: Args,
             messageCollector: MessageCollector,
-            getChangedFiles: (CacheManager)-> ChangedFiles
+            // when [providedChangedFiles] is not null, changes are provided by external system (e.g. Gradle)
+            // otherwise we track source files changes ourselves.
+            providedChangedFiles: ChangedFiles?
     ): ExitCode {
         assert(isICEnabled()) { "Incremental compilation is not enabled" }
         var caches = createCacheManager(args)
@@ -70,18 +72,20 @@ abstract class IncrementalCompilerRunner<
             destinationDir(args).deleteRecursively()
 
             caches = createCacheManager(args)
-            // todo more optimal fix
-            caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allKotlinSources)
-            return compileIncrementally(args, caches, allKotlinSources, CompilationMode.Rebuild(), messageCollector)
+            if (providedChangedFiles == null) {
+                caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            }
+            val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile() }
+            return compileIncrementally(args, caches, allKotlinFiles, CompilationMode.Rebuild(), messageCollector)
         }
 
         return try {
-            val changedFiles = getChangedFiles(caches)
+            val changedFiles = providedChangedFiles ?: caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             val compilationMode = sourcesToCompile(caches, changedFiles, args)
 
             val exitCode = when (compilationMode) {
                 is CompilationMode.Incremental -> {
-                    compileIncrementally(args, caches, allKotlinSources, compilationMode, messageCollector)
+                    compileIncrementally(args, caches, allSourceFiles, compilationMode, messageCollector)
                 }
                 is CompilationMode.Rebuild -> {
                     rebuild { "Non-incremental compilation will be performed: ${compilationMode.reason}" }

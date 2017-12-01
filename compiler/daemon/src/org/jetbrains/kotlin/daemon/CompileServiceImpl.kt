@@ -453,8 +453,8 @@ class CompileServiceImpl(
                                           workingDir,
                                           enabled = true)
 
-        return IncrementalJsCompilerRunner(workingDir, versions, reporter)
-                .compile(allKotlinFiles, args, compilerMessageCollector, { changedFiles })
+        val compiler = IncrementalJsCompilerRunner(workingDir, versions, reporter)
+        return compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
     }
 
     private fun execIncrementalCompiler(
@@ -514,7 +514,7 @@ class CompileServiceImpl(
                                                     friendBuildHistoryFile = incrementalCompilationOptions.friendDifferenceFile,
                                                     usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking
         )
-        return compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, { changedFiles })
+        return compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)
     }
 
     override fun leaseReplSession(

@@ -63,7 +63,6 @@ fun makeIncrementally(
     val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
     val files = rootsWalk.filter(File::isFile)
     val sourceFiles = files.filter { it.extension.toLowerCase() in allExtensions }.toList()
-    val kotlinFiles = sourceFiles.filter { it.extension.toLowerCase() in kotlinExtensions }
 
     withIC {
         val compiler = IncrementalJvmCompilerRunner(
@@ -73,9 +72,7 @@ fun makeIncrementally(
                 // Use precise setting in case of non-Gradle build
                 usePreciseJavaTracking = true
         )
-        compiler.compile(kotlinFiles, args, messageCollector) {
-            it.inputsCache.sourceSnapshotMap.compareAndUpdate(sourceFiles)
-        }
+        compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
 }
 
