@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.checker.NullabilityChecker
+import org.jetbrains.kotlin.types.typeUtil.canHaveUndefinedNullability
 
 abstract class DelegatingSimpleType : SimpleType() {
     protected abstract val delegate: SimpleType
@@ -82,12 +82,7 @@ class DefinitelyNotNullType private constructor(val original: SimpleType) : Dele
         }
 
         fun makesSenseToBeDefinitelyNotNull(type: UnwrappedType): Boolean =
-                canHaveUndefinedNullability(type) && !NullabilityChecker.isSubtypeOfAny(type)
-
-        private fun canHaveUndefinedNullability(type: UnwrappedType): Boolean =
-                type.constructor is NewTypeVariableConstructor ||
-                type.constructor.declarationDescriptor is TypeParameterDescriptor ||
-                type is NewCapturedType
+                type.canHaveUndefinedNullability() && !NullabilityChecker.isSubtypeOfAny(type)
     }
 
     override val delegate: SimpleType

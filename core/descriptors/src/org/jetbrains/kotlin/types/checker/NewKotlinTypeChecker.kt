@@ -398,6 +398,9 @@ object NullabilityChecker {
     fun isSubtypeOfAny(type: UnwrappedType): Boolean =
             TypeCheckerContext(false).hasNotNullSupertype(type.lowerIfFlexible(), SupertypesPolicy.LowerIfFlexible)
 
+    fun hasPathByNotMarkedNullableNodes(start: SimpleType, end: TypeConstructor) =
+            TypeCheckerContext(false).hasPathByNotMarkedNullableNodes(start, end)
+
     private fun TypeCheckerContext.runIsPossibleSubtype(subType: SimpleType, superType: SimpleType): Boolean {
         // it makes for case String? & Any <: String
         assert(subType.isIntersectionType || subType.isSingleClassifierType || subType.isAllowedTypeVariable) {
