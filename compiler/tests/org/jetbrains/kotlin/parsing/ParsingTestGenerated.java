@@ -651,6 +651,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("PatternMatching.kt")
+        public void testPatternMatching() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/PatternMatching.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Precedence.kt")
         public void testPrecedence() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/Precedence.kt");
