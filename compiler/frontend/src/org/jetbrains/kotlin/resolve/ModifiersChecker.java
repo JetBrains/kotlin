@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension;
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -280,7 +281,7 @@ public class ModifiersChecker {
                 @NotNull DeclarationDescriptor descriptor
         ) {
             for (DeclarationChecker checker : declarationCheckers) {
-                checker.check(declaration, descriptor, trace, trace.getBindingContext(), languageVersionSettings);
+                checker.check(declaration, descriptor, trace, trace.getBindingContext(), languageVersionSettings, expectActualTracker);
             }
             OperatorModifierChecker.INSTANCE.check(declaration, descriptor, trace, languageVersionSettings);
             PublishedApiUsageChecker.INSTANCE.check(declaration, descriptor, trace);
@@ -304,14 +305,19 @@ public class ModifiersChecker {
     @NotNull
     private final LanguageVersionSettings languageVersionSettings;
 
+    @NotNull
+    private final ExpectActualTracker expectActualTracker;
+
     public ModifiersChecker(
             @NotNull AnnotationChecker annotationChecker,
             @NotNull Iterable<DeclarationChecker> declarationCheckers,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull ExpectActualTracker expectActualTracker
     ) {
         this.annotationChecker = annotationChecker;
         this.declarationCheckers = declarationCheckers;
         this.languageVersionSettings = languageVersionSettings;
+        this.expectActualTracker = expectActualTracker;
     }
 
     @NotNull

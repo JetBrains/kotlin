@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.config
 
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 
 object CommonConfigurationKeys {
@@ -33,6 +34,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val LOOKUP_TRACKER = CompilerConfigurationKey.create<LookupTracker>("lookup tracker")
+
+    @JvmField
+    val EXPECT_ACTUAL_TRACKER = CompilerConfigurationKey.create<ExpectActualTracker>("expect actual tracker")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

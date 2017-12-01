@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
 import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
@@ -153,11 +154,13 @@ abstract class IncrementalCompilerRunner<
     protected open fun makeServices(
             args: Args,
             lookupTracker: LookupTracker,
+            expectActualTracker: ExpectActualTracker,
             caches: CacheManager,
             compilationMode: CompilationMode
     ): Services.Builder =
         Services.Builder().apply {
             register(LookupTracker::class.java, lookupTracker)
+            register(ExpectActualTracker::class.java, expectActualTracker)
             register(CompilationCanceledStatus::class.java, EmptyCompilationCanceledStatus)
         }
 
@@ -191,10 +194,13 @@ abstract class IncrementalCompilerRunner<
         var exitCode = ExitCode.OK
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
+            val complementaryFiles = caches.inputsCache.clearComplementaryFilesMapping(dirtySources)
+            dirtySources.addAll(complementaryFiles)
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
 
             val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
+            val expectActualTracker = ExpectActualTrackerImpl()
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
 
             // todo: more optimal to save only last iteration, but it will require adding standalone-ic specific logs
@@ -203,7 +209,7 @@ abstract class IncrementalCompilerRunner<
             val text = allSourcesToCompile.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
             dirtySourcesSinceLastTimeFile.writeText(text)
 
-            val services = makeServices(args, lookupTracker, caches, compilationMode).build()
+            val services = makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).build()
 
             args.reportOutputFiles = true
             val outputItemsCollector = OutputItemsCollectorImpl()
@@ -227,6 +233,7 @@ abstract class IncrementalCompilerRunner<
                 }
             }
 
+            caches.inputsCache.registerComplementaryFiles(expectActualTracker)
             caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
             val changesCollector = ChangesCollector()

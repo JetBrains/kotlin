@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser;
 import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
@@ -416,6 +417,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         LookupTracker lookupTracker = services.get(LookupTracker.class);
         if (lookupTracker != null) {
             configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, lookupTracker);
+        }
+
+        ExpectActualTracker expectActualTracker = services.get(ExpectActualTracker.class);
+        if (expectActualTracker != null) {
+            configuration.put(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, expectActualTracker);
         }
 
         String sourceMapEmbedContentString = arguments.getSourceMapEmbedSources();
