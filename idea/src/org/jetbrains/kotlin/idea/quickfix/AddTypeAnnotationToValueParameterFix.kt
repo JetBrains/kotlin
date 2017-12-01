@@ -41,9 +41,12 @@ class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFi
     init {
         val defaultValue = element.defaultValue
         var type = defaultValue?.getType(defaultValue.analyze(BodyResolveMode.PARTIAL))
-        if (type != null && KotlinBuiltIns.isArray(type)) {
+        if (type != null && KotlinBuiltIns.isArrayOrPrimitiveArray(type)) {
             if (element.hasModifier(KtTokens.VARARG_KEYWORD)) {
-                type = type.arguments.singleOrNull()?.type
+                type = if (KotlinBuiltIns.isPrimitiveArray(type))
+                    element.builtIns.getArrayElementType(type)
+                else
+                    type.arguments.singleOrNull()?.type
             }
             else if (defaultValue is KtCollectionLiteralExpression) {
                 val builtIns = element.builtIns
