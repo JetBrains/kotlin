@@ -39,6 +39,7 @@ public final class C : A {
     }
     public fun C(i: int) {
         <init>(i)
+        println()
     }
 }
 
