@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.io.File
+import java.io.IOException
 import java.io.PrintWriter
 import java.util.*
 import java.util.concurrent.Callable
@@ -140,8 +141,12 @@ class ReplFromTerminal(
         }
         else if (split.size >= 2 && split[0] == "load") {
             val fileName = split[1]
-            val scriptText = FileUtil.loadFile(File(fileName))
-            eval(scriptText)
+            try {
+                val scriptText = FileUtil.loadFile(File(fileName))
+                eval(scriptText)
+            } catch (e: IOException) {
+                writer.outputCompileError("Can not load script: ${e.message}")
+            }
             return true
         }
         else {
