@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl
+package org.jetbrains.kotlin.cli.jvm.repl.configuration
 
-import org.jetbrains.kotlin.cli.jvm.repl.messages.*
-import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader
+import org.jetbrains.kotlin.cli.jvm.repl.IdeReplExceptionReporter
+import org.jetbrains.kotlin.cli.jvm.repl.ReplExceptionReporter
+import org.jetbrains.kotlin.cli.jvm.repl.messages.IdeDiagnosticMessageHolder
 import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader
 import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader
+import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplSystemInWrapper
+import org.jetbrains.kotlin.cli.jvm.repl.writer.IdeSystemOutWrapperReplWriter
+import org.jetbrains.kotlin.cli.jvm.repl.writer.ReplWriter
 
-interface ReplConfiguration {
-    val writer: ReplWriter
-    val exceptionReporter: ReplExceptionReporter
-    val commandReader: ReplCommandReader
-    val allowIncompleteLines: Boolean
-
-    val executionInterceptor: SnippetExecutionInterceptor
-    fun createDiagnosticHolder(): DiagnosticMessageHolder
-}
-
-class ReplForIdeConfiguration : ReplConfiguration {
+class IdeReplConfiguration : ReplConfiguration {
     override val allowIncompleteLines: Boolean
         get() = false
 
@@ -46,7 +40,7 @@ class ReplForIdeConfiguration : ReplConfiguration {
         }
     }
 
-    override fun createDiagnosticHolder() = ReplIdeDiagnosticMessageHolder()
+    override fun createDiagnosticHolder() = IdeDiagnosticMessageHolder()
 
     override val writer: ReplWriter
     override val exceptionReporter: ReplExceptionReporter
@@ -58,7 +52,7 @@ class ReplForIdeConfiguration : ReplConfiguration {
         // wrapper for `out` is required to escape every input in [ideMode];
         // if [ideMode == false] then just redirects all input to [System.out]
         // if user calls [System.setOut(...)] then undefined behaviour
-        val soutWrapper = ReplSystemOutWrapperForIde(System.out)
+        val soutWrapper = IdeSystemOutWrapperReplWriter(System.out)
         System.setOut(soutWrapper)
 
         // wrapper for `in` is required to give user possibility of calling
@@ -70,21 +64,4 @@ class ReplForIdeConfiguration : ReplConfiguration {
         exceptionReporter = IdeReplExceptionReporter(writer)
         commandReader = IdeReplCommandReader()
     }
-}
-
-class ConsoleReplConfiguration : ReplConfiguration {
-    override val writer = ReplConsoleWriter()
-
-    override val exceptionReporter
-        get() = ReplExceptionReporter.DoNothing
-
-    override val commandReader = ConsoleReplCommandReader()
-
-    override val allowIncompleteLines: Boolean
-        get() = true
-
-    override val executionInterceptor
-        get() = SnippetExecutionInterceptor.Plain
-
-    override fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
 }

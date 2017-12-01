@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl.messages
+package org.jetbrains.kotlin.cli.jvm.repl.writer
 
-class ReplConsoleWriter : ReplWriter {
+class ConsoleReplWriter : ReplWriter {
     override fun printlnWelcomeMessage(x: String) = println(x)
     override fun printlnHelpMessage(x: String) = println(x)
     override fun outputCompileError(x: String) = println(x)
