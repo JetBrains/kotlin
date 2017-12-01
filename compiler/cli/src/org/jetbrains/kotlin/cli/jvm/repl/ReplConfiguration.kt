@@ -20,12 +20,10 @@ import org.jetbrains.kotlin.cli.jvm.repl.messages.*
 import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader
 import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader
 import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader
-import java.io.PrintWriter
-import java.io.StringWriter
 
 interface ReplConfiguration {
     val writer: ReplWriter
-    val errorLogger: ReplErrorLogger
+    val exceptionReporter: ReplExceptionReporter
     val commandReader: ReplCommandReader
     val allowIncompleteLines: Boolean
 
@@ -44,7 +42,7 @@ class ReplForIdeConfiguration : ReplConfiguration {
     override fun createDiagnosticHolder() = ReplIdeDiagnosticMessageHolder()
 
     override val writer: ReplWriter
-    override val errorLogger: ReplErrorLogger
+    override val exceptionReporter: ReplExceptionReporter
     override val commandReader: ReplCommandReader
 
     val sinWrapper: ReplSystemInWrapper
@@ -62,7 +60,7 @@ class ReplForIdeConfiguration : ReplConfiguration {
         System.setIn(sinWrapper)
 
         writer = soutWrapper
-        errorLogger = IdeReplErrorLogger(writer)
+        exceptionReporter = IdeReplExceptionReporter(writer)
         commandReader = IdeReplCommandReader()
     }
 }
@@ -78,35 +76,12 @@ class ConsoleReplConfiguration : ReplConfiguration {
     override fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
 
     override val writer: ReplWriter
-    override val errorLogger: ReplErrorLogger
+    override val exceptionReporter: ReplExceptionReporter
     override val commandReader: ReplCommandReader
 
     init {
         writer = ReplConsoleWriter()
-        errorLogger = object : ReplErrorLogger {
-            override fun logException(e: Throwable): Nothing {
-                throw e
-            }
-        }
-
+        exceptionReporter = ReplExceptionReporter.DoNothing
         commandReader = ConsoleReplCommandReader()
-    }
-}
-
-interface ReplErrorLogger {
-    fun logException(e: Throwable): Nothing
-}
-
-class IdeReplErrorLogger(private val replWriter: ReplWriter) : ReplErrorLogger {
-    override fun logException(e: Throwable): Nothing {
-        val errorStringWriter = StringWriter()
-        val errorPrintWriter = PrintWriter(errorStringWriter)
-        e.printStackTrace(errorPrintWriter)
-
-        val writerString = errorStringWriter.toString()
-        val internalErrorText = if (writerString.isEmpty()) "Unknown error" else writerString
-
-        replWriter.sendInternalErrorReport(internalErrorText)
-        throw e
     }
 }

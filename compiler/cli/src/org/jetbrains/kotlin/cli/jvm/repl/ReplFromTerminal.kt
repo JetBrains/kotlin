@@ -67,14 +67,16 @@ class ReplFromTerminal(
             }
         }
         catch (e: Exception) {
-            errorLogger.logException(e)
+            exceptionReporter.report(e)
+            throw e
         }
         finally {
             try {
                 commandReader.flushHistory()
             }
             catch (e: Exception) {
-                errorLogger.logException(e)
+                exceptionReporter.report(e)
+                throw e
             }
 
         }
@@ -167,7 +169,8 @@ class ReplFromTerminal(
                 ReplFromTerminal(disposable, configuration, replConfiguration).doRun()
             }
             catch (e: Exception) {
-                replConfiguration.errorLogger.logException(e)
+                replConfiguration.exceptionReporter.report(e)
+                throw e
             }
         }
     }
