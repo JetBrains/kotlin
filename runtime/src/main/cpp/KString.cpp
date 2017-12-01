@@ -704,6 +704,10 @@ char* CreateCStringFromString(KConstRef kref) {
   return result;
 }
 
+void DisposeCString(char* cstring) {
+  if (cstring) konan::free(cstring);
+}
+
 // String.kt
 KInt Kotlin_String_compareTo(KString thiz, KString other) {
   int result = memcmp(

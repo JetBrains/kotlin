@@ -391,7 +391,7 @@ bool ClearSubgraphReferences(ObjHeader* root, bool checked) RUNTIME_NOTHROW;
 // Creates stable pointer out of the object.
 void* CreateStablePointer(ObjHeader* obj) RUNTIME_NOTHROW;
 // Disposes stable pointer to the object.
-void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;;
+void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;
 // Translate stable pointer to object reference.
 OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
 // Move stable pointer ownership.

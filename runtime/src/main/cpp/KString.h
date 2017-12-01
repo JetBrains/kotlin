@@ -29,6 +29,7 @@ extern "C" {
 OBJ_GETTER(CreateStringFromCString, const char* cstring);
 OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t size);
 char* CreateCStringFromString(KConstRef kstring);
+void DisposeCString(char* cstring);
 
 #ifdef __cplusplus
 }

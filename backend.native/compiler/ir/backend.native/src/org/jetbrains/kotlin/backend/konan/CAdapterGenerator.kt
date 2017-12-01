@@ -163,10 +163,6 @@ private class ExportedElement(val kind: ElementKind,
         val params = ArrayList(original.explicitParameters.map {
             owner.translateName(it.name.asString()) to TypeUtils.getClassDescriptor(it.type)!!
         })
-        if (original is ConstructorDescriptor) {
-            // Remove `this` parameter from the constructor.
-            params.removeAt(0)
-        }
         return listOf(returned) + params
     }
 
@@ -186,7 +182,7 @@ private class ExportedElement(val kind: ElementKind,
             owner.translateTypeBridge(TypeUtils.getClassDescriptor(it.type)!!)
         })
         if (owner.isMappedToReference(returnedClass) || owner.isMappedToString(returnedClass)) {
-            params += "ObjHeader**"
+            params += "KObjHeader**"
         }
         return listOf(owner.translateTypeBridge(returnedClass)) + params
     }
@@ -221,14 +217,14 @@ private class ExportedElement(val kind: ElementKind,
         return when {
             fqName == "kotlin.String" ->
                 if (direction == Direction.C_TO_KOTLIN) {
-                    builder.append("  ObjHolder ${name}_holder;\n")
+                    builder.append("  KObjHolder ${name}_holder;\n")
                     "CreateStringFromCString($name, ${name}_holder.slot())"
                 } else {
                     "CreateCStringFromString($name)"
                 }
             owner.isMappedToReference(clazz) ->
                 if (direction == Direction.C_TO_KOTLIN) {
-                    builder.append("  ObjHolder ${name}_holder2;\n")
+                    builder.append("  KObjHolder ${name}_holder2;\n")
                     "DerefStablePointer(${name}.pinned, ${name}_holder2.slot())"
                 } else {
                     "((${owner.translateType(clazz)}){ .pinned = CreateStablePointer(${name})})"
@@ -247,15 +243,17 @@ private class ExportedElement(val kind: ElementKind,
         val isConstructor = declaration is ConstructorDescriptor
         val isObjectReturned = !isConstructor && owner.isMappedToReference(cfunction[0].second)
         val isStringReturned = owner.isMappedToString(cfunction[0].second)
+        // TODO: do we really need that in every function?
+        builder.append("  Kotlin_initRuntimeIfNeeded();\n")
         if (isObjectReturned || isStringReturned) {
-            builder.append("  ObjHolder result_holder;\n")
+            builder.append("  KObjHolder result_holder;\n")
             args += "result_holder.slot()"
         }
         if (isConstructor) {
-            builder.append("  ObjHolder result_holder;\n")
+            builder.append("  KObjHolder result_holder;\n")
             val clazz = scope.elements[0]
             assert(clazz.kind == ElementKind.TYPE)
-            builder.append("  KRef result = AllocInstance((const TypeInfo*)${clazz.cname}(), result_holder.slot());\n")
+            builder.append("  KObjHeader* result = AllocInstance((const KTypeInfo*)${clazz.cname}(), result_holder.slot());\n")
             args.add(0, "result")
         }
         if (!isVoidReturned && !isConstructor) {
@@ -476,19 +474,51 @@ internal class CAdapterGenerator(val context: Context,
 
         outputStreamWriter = PrintWriter(File(".", "${prefix}_api.cpp").outputStream())
         output("#include \"${prefix}_api.h\"")
-        output("#include \"KString.h\"")
-        output("#include \"Memory.h\"")
-        output("#include \"Types.h\"")
         output("""
+        |struct KObjHeader;
+        |typedef struct KObjHeader KObjHeader;
+        |struct KTypeInfo;
+        |typedef struct KTypeInfo KTypeInfo;
+        |
+        |#define RUNTIME_NOTHROW __attribute__((nothrow))
+        |#define RUNTIME_USED __attribute__((used))
+        |
+        |void SetRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
+        |void UpdateRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
+        |KObjHeader* AllocInstance(const KTypeInfo*, KObjHeader**) RUNTIME_NOTHROW;
+        |KObjHeader* DerefStablePointer(void*, KObjHeader**) RUNTIME_NOTHROW;
+        |void* CreateStablePointer(KObjHeader*) RUNTIME_NOTHROW;
+        |void DisposeStablePointer(void*) RUNTIME_NOTHROW;
+        |int IsInstance(const KObjHeader*, const KTypeInfo*) RUNTIME_NOTHROW;
+        |void Kotlin_initRuntimeIfNeeded();
+        |
+        |KObjHeader* CreateStringFromCString(const char*, KObjHeader**);
+        |char* CreateCStringFromString(const KObjHeader*);
+        |void DisposeCString(char* cstring);
+        |
+        |class KObjHolder {
+        |public:
+        |  KObjHolder() : obj_(nullptr) {}
+        |  explicit KObjHolder(const KObjHeader* obj) {
+        |    SetRef(&obj_, obj);
+        |  }
+        |  ~KObjHolder() {
+        |    UpdateRef(&obj_, nullptr);
+        |  }
+        |  KObjHeader* obj() { return obj_; }
+        |  KObjHeader** slot() { return &obj_; }
+        | private:
+        |  KObjHeader* obj_;
+        |};
         |static void DisposeStablePointerImpl(${prefix}_KNativePtr ptr) {
         |  DisposeStablePointer(ptr);
         |}
         |static void DisposeStringImpl(char* ptr) {
-        |  if (ptr) konan::free(ptr);
+        |  DisposeCString(ptr);
         |}
         |static ${prefix}_KBoolean IsInstanceImpl(${prefix}_KNativePtr ref, const ${prefix}_KType* type) {
-        |  ObjHolder holder;
-        |  return IsInstance(DerefStablePointer(ref, holder.slot()), (const TypeInfo*)type);
+        |  KObjHolder holder;
+        |  return IsInstance(DerefStablePointer(ref, holder.slot()), (const KTypeInfo*)type);
         |}
         """.trimMargin())
         makeScopeDefinitions(top, DefinitionKind.C_SOURCE_DECLARATION, 0)
@@ -498,7 +528,7 @@ internal class CAdapterGenerator(val context: Context,
         output(".IsInstance = IsInstanceImpl,", 1)
         makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, 1)
         output("};")
-        output("${prefix}_ExportedSymbols* ${prefix}_symbols() { return &__konan_symbols;}")
+        output("RUNTIME_USED ${prefix}_ExportedSymbols* ${prefix}_symbols() { return &__konan_symbols;}")
         outputStreamWriter.close()
     }
 
@@ -540,9 +570,9 @@ internal class CAdapterGenerator(val context: Context,
         val fqName = clazz.fqNameSafe.asString()
         return when {
             clazz.isUnit() -> "void" to "void"
-            fqName == "kotlin.String" -> "const char*" to "KRef"
+            fqName == "kotlin.String" -> "const char*" to "KObjHeader*"
             primitiveTypeMapping.contains(fqName) -> primitiveTypeMapping[fqName]!! to primitiveTypeMapping[fqName]!!
-            else -> "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KRef"
+            else -> "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
         }
     }
 
