@@ -41,9 +41,7 @@ fun makeJsIncrementally(
 
     withJsIC {
         val compiler = IncrementalJsCompilerRunner(cachesDir, versions, reporter)
-        compiler.compile(allKotlinFiles, args, messageCollector) {
-            it.inputsCache.sourceSnapshotMap.compareAndUpdate(allKotlinFiles)
-        }
+        compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles = null)
     }
 }
 
