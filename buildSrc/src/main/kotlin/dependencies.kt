@@ -100,18 +100,3 @@ fun firstFromJavaHomeThatExists(vararg paths: String): File? =
 
 fun toolsJar(): File? = firstFromJavaHomeThatExists("../lib/tools.jar", "../Classes/tools.jar")
 
-private fun Task.addConfigurationAndProjectDependency(name: String, sourceProject: String, sourceConfiguration: String, sourceTask: String): Configuration {
-    dependsOn("$sourceProject:$sourceTask")
-    return project.configurations.findByName(name) // assuming that dependency is already added too
-           ?: project.configurations.create(name).also {
-                      DependencyHandlerScope(project.dependencies).let { dh -> dh.add(name, dh.project(sourceProject, configuration = sourceConfiguration)) }
-                 }
-}
-
-fun Task.androidSdkPath(): String =
-        addConfigurationAndProjectDependency("androidSdk", ":custom-dependencies:android-sdk", "androidSdk", "prepareSdk")
-                .singleFile.canonicalPath
-
-fun Task.androidJarPath(): String =
-        addConfigurationAndProjectDependency("androidJar", ":custom-dependencies:android-sdk", "androidJar", "extractAndroidJar")
-                .singleFile.canonicalPath

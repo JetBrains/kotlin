@@ -56,17 +56,24 @@ sdkLocMaps.forEach {
     val dependency = it.toDependency()
     dependencies.add(cfg.name, dependency)
 
-    val t = task<Copy>("unzip_$id") {
-        afterEvaluate {
-            from(zipTree(cfg.singleFile))
-        }
-        into(file("$sdkDestDir/${it.dest}"))
-    }
-    if (it.dirLevelsToSkit > 0) {
-        t.apply {
-            eachFile {
-                path = path.split("/").drop(it.dirLevelsToSkit).joinToString("/")
+    val t = task("unzip_$id") {
+        dependsOn(cfg)
+        inputs.files(cfg)
+        val targetDir = file("$sdkDestDir/${it.dest}")
+        val targetFlagFile = File(targetDir, "$id.prepared")
+        outputs.files(targetFlagFile)
+        outputs.upToDateWhen { targetFlagFile.exists() } // TODO: consider more precise check, e.g. hash-based
+        doFirst {
+            project.copy {
+                from(zipTree(cfg.singleFile))
+                if (it.dirLevelsToSkit > 0) {
+                    eachFile {
+                        path = path.split("/").drop(it.dirLevelsToSkit).joinToString("/")
+                    }
+                }
+                into(targetDir)
             }
+            targetFlagFile.writeText("prepared")
         }
     }
     prepareSdk.dependsOn(t)
@@ -80,20 +87,32 @@ val clean by task<Delete> {
     delete(buildDir)
 }
 
-val extractAndroidJar by task<Copy> {
-    configurations.add(androidJar)
-    afterEvaluate {
-        from(zipTree(androidPlatform.singleFile).matching { include("**/android.jar") }.files.first())
+val extractAndroidJar by tasks.creating {
+    dependsOn(androidPlatform)
+    inputs.files(androidPlatform)
+    val targetFile = File(libsDestDir, "android.jar")
+    outputs.files(targetFile)
+    outputs.upToDateWhen { targetFile.exists() } // TODO: consider more precise check, e.g. hash-based
+    doFirst {
+        project.copy {
+            from(zipTree(androidPlatform.singleFile).matching { include("**/android.jar") }.files.first())
+            into(libsDestDir)
+        }
     }
-    into(libsDestDir)
 }
 
-val extractDxJar by task<Copy> {
-    configurations.add(dxJar)
-    afterEvaluate {
-        from(zipTree(buildTools.singleFile).matching { include("**/dx.jar") }.files.first())
+val extractDxJar by tasks.creating {
+    dependsOn(buildTools)
+    inputs.files(buildTools)
+    val targetFile = File(libsDestDir, "dx.jar")
+    outputs.files(targetFile)
+    outputs.upToDateWhen { targetFile.exists() } // TODO: consider more precise check, e.g. hash-based
+    doFirst {
+        project.copy {
+            from(zipTree(buildTools.singleFile).matching { include("**/dx.jar") }.files.first())
+            into(libsDestDir)
+        }
     }
-    into(libsDestDir)
 }
 
 artifacts.add(androidSdk.name, file("$sdkDestDir")) {

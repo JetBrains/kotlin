@@ -87,7 +87,9 @@ tasks.withType(Test) {
     if (mavenLocalRepo != null) {
         systemProperty("maven.repo.local", mavenLocalRepo)
     }
-    systemProperty("android.sdk", project.configurations["androidSdk"].singleFile.getCanonicalPath())
+    doFirst {
+        systemProperty("android.sdk", project.configurations["androidSdk"].singleFile.getCanonicalPath())
+    }
 
     testLogging {
         // set options for log level LIFECYCLE
