@@ -389,7 +389,10 @@ public class BodyResolver {
 
         if (ktClass instanceof KtEnumEntry && DescriptorUtils.isEnumEntry(descriptor) && ktClass.getSuperTypeListEntries().isEmpty()) {
             assert scopeForConstructor != null : "Scope for enum class constructor should be non-null: " + descriptor;
-            resolveConstructorCallForEnumEntryWithoutInitializer((KtEnumEntry) ktClass, descriptor, scopeForConstructor, outerDataFlowInfo);
+            resolveConstructorCallForEnumEntryWithoutInitializer(
+                    (KtEnumEntry) ktClass, descriptor,
+                    scopeForConstructor, outerDataFlowInfo, primaryConstructorDelegationCall
+            );
         }
 
         for (KtSuperTypeListEntry delegationSpecifier : ktClass.getSuperTypeListEntries()) {
@@ -430,7 +433,8 @@ public class BodyResolver {
             @NotNull KtEnumEntry ktEnumEntry,
             @NotNull ClassDescriptor enumEntryDescriptor,
             @NotNull LexicalScope scopeForConstructor,
-            @NotNull DataFlowInfo outerDataFlowInfo
+            @NotNull DataFlowInfo outerDataFlowInfo,
+            @NotNull ResolvedCall<?>[] primaryConstructorDelegationCall
     ) {
         assert enumEntryDescriptor.getKind() == ClassKind.ENUM_ENTRY : "Enum entry expected: " + enumEntryDescriptor;
         ClassDescriptor enumClassDescriptor = (ClassDescriptor) enumEntryDescriptor.getContainingDeclaration();
@@ -448,7 +452,11 @@ public class BodyResolver {
         Call call = CallMaker.makeConstructorCallWithoutTypeArguments(ktCallEntry);
         trace.record(BindingContext.TYPE, ktCallEntry.getTypeReference(), enumClassDescriptor.getDefaultType());
         trace.record(BindingContext.CALL, ktEnumEntry, call);
-        callResolver.resolveFunctionCall(trace, scopeForConstructor, call, NO_EXPECTED_TYPE, outerDataFlowInfo, false);
+        OverloadResolutionResults<FunctionDescriptor> results =
+                callResolver.resolveFunctionCall(trace, scopeForConstructor, call, NO_EXPECTED_TYPE, outerDataFlowInfo, false);
+        if (primaryConstructorDelegationCall[0] == null) {
+            primaryConstructorDelegationCall[0] = results.getResultingCall();
+        }
     }
 
     // Returns a set of enum or sealed types of which supertypeOwner is an entry or a member
