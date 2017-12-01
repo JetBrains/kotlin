@@ -21,9 +21,11 @@ import java.net.URLClassLoader
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 
-open class GenericReplEvaluatorState(baseClasspath: Iterable<File>, baseClassloader: ClassLoader?, override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock())
-    : IReplStageState<EvalClassWithInstanceAndLoader>
-{
+open class GenericReplEvaluatorState(
+        baseClasspath: Iterable<File>,
+        baseClassloader: ClassLoader?,
+        override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+) : IReplStageState<EvalClassWithInstanceAndLoader> {
     override val history: IReplStageHistory<EvalClassWithInstanceAndLoader> = BasicReplStageHistory(lock)
 
     override val currentGeneration: Int get() = (history as BasicReplStageHistory<*>).currentGeneration.get()

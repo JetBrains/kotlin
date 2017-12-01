@@ -20,16 +20,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-
 interface ILineId : Comparable<ILineId> {
     val no: Int
     val generation: Int
 }
 
-data class ReplHistoryRecord<out T> (val id: ILineId, val item: T)
+data class ReplHistoryRecord<out T>(val id: ILineId, val item: T)
 
 interface IReplStageHistory<T> : List<ReplHistoryRecord<T>> {
-
     fun peek(): ReplHistoryRecord<T>? = lock.read { lastOrNull() }
 
     fun push(id: ILineId, item: T)
@@ -37,8 +35,12 @@ interface IReplStageHistory<T> : List<ReplHistoryRecord<T>> {
     fun pop(): ReplHistoryRecord<T>?
 
     fun verifiedPop(id: ILineId): ReplHistoryRecord<T>? = lock.write {
-        if (lastOrNull()?.id == id) pop()
-        else null
+        if (lastOrNull()?.id == id) {
+            pop()
+        }
+        else {
+            null
+        }
     }
 
     fun reset(): Iterable<ILineId>
@@ -55,26 +57,49 @@ interface IReplStageState<T> {
 
     val currentGeneration: Int
 
-    fun getNextLineNo(): Int = history.peek()?.id?.no?.let { it + 1 } ?: REPL_CODE_LINE_FIRST_NO // TODO: it should be more robust downstream (e.g. use atomic)
+    fun getNextLineNo(): Int {
+        // TODO: it should be more robust downstream (e.g. use atomic)
+        return history.peek()?.id?.no?.let { it + 1 } ?: REPL_CODE_LINE_FIRST_NO
+    }
 
-    fun <StateT : IReplStageState<*>> asState(target: Class<out StateT>): StateT =
-            if (target.isAssignableFrom(this::class.java)) this as StateT
-            else throw IllegalArgumentException("$this is not an expected instance of IReplStageState")
+    fun <StateT : IReplStageState<*>> asState(target: Class<out StateT>): StateT {
+        return if (target.isAssignableFrom(this::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            this as StateT
+        }
+        else {
+            throw IllegalArgumentException("$this is not an expected instance of IReplStageState")
+        }
+    }
 }
 
 
-fun <T> IReplStageHistory<T>.firstMismatch(other: Sequence<ILineId>): Pair<ReplHistoryRecord<T>?, ILineId?>? =
-        lock.read {
-            iterator().asSequence().zip(other.asSequence()).firstOrNull { it.first.id != it.second }?.let { it.first to it.second }
+fun <T> IReplStageHistory<T>.firstMismatch(other: Sequence<ILineId>): Pair<ReplHistoryRecord<T>?, ILineId?>? = lock.read {
+            iterator().asSequence()
+                    .zip(other.asSequence())
+                    .firstOrNull { it.first.id != it.second }
+                    ?.let { it.first to it.second }
         }
 
-fun<T> IReplStageHistory<T>.firstMismatchFiltered(other: Sequence<ILineId>, predicate: (ReplHistoryRecord<T>) -> Boolean): Pair<ReplHistoryRecord<T>?, ILineId?>? =
-        lock.read {
-            iterator().asSequence().filter(predicate).zip(other.asSequence()).firstOrNull { it.first.id != it.second }?.let { it.first to it.second }
+fun<T> IReplStageHistory<T>.firstMismatchFiltered(
+        other: Sequence<ILineId>,
+        predicate: (ReplHistoryRecord<T>) -> Boolean
+): Pair<ReplHistoryRecord<T>?, ILineId?>? = lock.read {
+            iterator().asSequence()
+                    .filter(predicate)
+                    .zip(other.asSequence())
+                    .firstOrNull { it.first.id != it.second }
+                    ?.let { it.first to it.second }
         }
 
-fun<T> IReplStageHistory<T>.firstMismatchWhile(other: Sequence<ILineId>, predicate: (ReplHistoryRecord<T>) -> Boolean): Pair<ReplHistoryRecord<T>?, ILineId?>? =
+fun<T> IReplStageHistory<T>.firstMismatchWhile(
+        other: Sequence<ILineId>,
+        predicate: (ReplHistoryRecord<T>) -> Boolean
+): Pair<ReplHistoryRecord<T>?, ILineId?>? =
         lock.read {
-            iterator().asSequence().takeWhile(predicate).zip(other.asSequence()).firstOrNull { it.first.id != it.second }?.let { it.first to it.second }
+            iterator().asSequence()
+                    .takeWhile(predicate)
+                    .zip(other.asSequence())
+                    .firstOrNull { it.first.id != it.second }
+                    ?.let { it.first to it.second }
         }
-
