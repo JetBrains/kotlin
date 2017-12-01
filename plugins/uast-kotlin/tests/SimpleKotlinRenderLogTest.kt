@@ -56,4 +56,7 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testSuperCalls() = doTest("SuperCalls")
+
+    @Test
+    fun testConstructors() = doTest("Constructors")
 }

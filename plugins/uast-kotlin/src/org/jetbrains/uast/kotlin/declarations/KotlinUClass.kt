@@ -128,27 +128,37 @@ class KotlinConstructorUMethod(
                 else -> null
             }
         }
-        val initializers = ktClass?.getAnonymousInitializers().orEmpty()
-        if (delegationCall == null && initializers.isEmpty()) return@lz null
+        val bodyExpressions = getBodyExpressions()
+        if (delegationCall == null && bodyExpressions.isEmpty()) return@lz null
         KotlinUBlockExpression.KotlinLazyUBlockExpression(this) { uastParent ->
             SmartList<UExpression>().apply {
                 delegationCall?.let {
                     add(KotlinUFunctionCallExpression(it, uastParent))
                 }
                 val languagePlugin = uastParent.getLanguagePlugin()
-                initializers.forEach {
-                    addIfNotNull(languagePlugin.convertOpt(it.body, uastParent))
+                bodyExpressions.forEach {
+                    addIfNotNull(languagePlugin.convertOpt(it, uastParent))
                 }
             }
         }
     }
+
+    private fun getBodyExpressions(): List<KtExpression> {
+        if (isPrimary) return getInitializers()
+        val bodyExpression = (psi.kotlinOrigin as? KtFunction)?.bodyExpression ?: return emptyList()
+        if (bodyExpression is KtBlockExpression) return bodyExpression.statements
+        return listOf(bodyExpression)
+    }
+
+    private fun getInitializers() = ktClass?.getAnonymousInitializers()?.mapNotNull { it.body } ?: emptyList()
+
 }
 
 class KotlinUAnonymousClass(
         psi: PsiAnonymousClass,
         givenParent: UElement?
 ) : AbstractKotlinUClass(givenParent), UAnonymousClass, PsiAnonymousClass by psi {
-    
+
     override val psi: PsiAnonymousClass = unwrap<UAnonymousClass, PsiAnonymousClass>(psi)
 
     override fun getOriginalElement(): PsiElement? = super<AbstractKotlinUClass>.getOriginalElement()
@@ -163,7 +173,7 @@ class KotlinUAnonymousClass(
 
     override val uastAnchor: UElement?
         get() {
-            val ktClassOrObject = (psi.originalElement as? KtLightClass)?.kotlinOrigin as? KtObjectDeclaration ?: return null 
+            val ktClassOrObject = (psi.originalElement as? KtLightClass)?.kotlinOrigin as? KtObjectDeclaration ?: return null
             return UIdentifier(ktClassOrObject.getObjectKeyword(), this)
         }
 
