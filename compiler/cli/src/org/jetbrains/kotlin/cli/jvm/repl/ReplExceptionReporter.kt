@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl
 
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplWriter
+import org.jetbrains.kotlin.cli.jvm.repl.writer.ReplWriter
 import java.io.PrintWriter
 import java.io.StringWriter
 

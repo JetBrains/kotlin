@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl.messages
+package org.jetbrains.kotlin.cli.jvm.repl.configuration
 
-import com.intellij.openapi.util.text.StringUtil
+interface SnippetExecutionInterceptor {
+    fun <T> execute(block: () -> T): T
 
-// using '#' to avoid collisions with xml escaping
-internal val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
-internal val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
-
-fun unescapeLineBreaks(s: String) = StringUtil.replace(s, XML_REPLACEMENTS, SOURCE_CHARS)
+    companion object Plain : SnippetExecutionInterceptor {
+        override fun <T> execute(block: () -> T) = block()
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl.messages
+package org.jetbrains.kotlin.cli.jvm.repl.reader
 
+import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
+import org.jetbrains.kotlin.cli.jvm.repl.writer.END_LINE
+import org.jetbrains.kotlin.cli.jvm.repl.writer.ReplWriter
+import org.w3c.dom.Element
+import org.xml.sax.InputSource
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import javax.xml.parsers.DocumentBuilderFactory
 
 class ReplSystemInWrapper(
         private val stdin: InputStream,
@@ -87,4 +94,15 @@ class ReplSystemInWrapper(
             isLastByteProcessed = true
         }
     }
+}
+
+private fun parseXml(inputMessage: String): String {
+    fun strToSource(s: String) = InputSource(ByteArrayInputStream(s.toByteArray()))
+
+    val docFactory = DocumentBuilderFactory.newInstance()
+    val docBuilder = docFactory.newDocumentBuilder()
+    val input = docBuilder.parse(strToSource(inputMessage))
+
+    val root = input.firstChild as Element
+    return root.textContent
 }

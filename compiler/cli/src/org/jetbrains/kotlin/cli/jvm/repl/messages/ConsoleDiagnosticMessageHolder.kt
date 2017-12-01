@@ -22,20 +22,16 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-import java.nio.ByteBuffer
 
-class ReplTerminalDiagnosticMessageHolder : MessageCollectorBasedReporter, DiagnosticMessageHolder {
+class ConsoleDiagnosticMessageHolder : MessageCollectorBasedReporter, DiagnosticMessageHolder {
     private val outputStream = ByteArrayOutputStream()
 
     override val messageCollector: GroupingMessageCollector = GroupingMessageCollector(
             PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.WITHOUT_PATHS, false),
-            false
-    )
+            false)
 
-    override val renderedDiagnostics: String
-        get() {
-            messageCollector.flush()
-            val bytes = outputStream.toByteArray()
-            return Charsets.UTF_8.decode(ByteBuffer.wrap(bytes)).toString()
-        }
+    override fun renderMessage(): String {
+        messageCollector.flush()
+        return outputStream.toString("UTF-8")
+    }
 }

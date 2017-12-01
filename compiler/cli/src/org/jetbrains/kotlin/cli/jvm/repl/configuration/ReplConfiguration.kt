@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl
+package org.jetbrains.kotlin.cli.jvm.repl.configuration
 
-interface SnippetExecutionInterceptor {
-    fun <T> execute(block: () -> T): T
+import org.jetbrains.kotlin.cli.jvm.repl.ReplExceptionReporter
+import org.jetbrains.kotlin.cli.jvm.repl.messages.*
+import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader
+import org.jetbrains.kotlin.cli.jvm.repl.writer.ReplWriter
 
-    companion object Plain : SnippetExecutionInterceptor {
-        override fun <T> execute(block: () -> T) = block()
-    }
+interface ReplConfiguration {
+    val writer: ReplWriter
+    val exceptionReporter: ReplExceptionReporter
+    val commandReader: ReplCommandReader
+    val allowIncompleteLines: Boolean
+
+    val executionInterceptor: SnippetExecutionInterceptor
+    fun createDiagnosticHolder(): DiagnosticMessageHolder
 }
