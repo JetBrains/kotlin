@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.compiletest.lldbTest
 import org.junit.Test
 
 class LldbTests {
-    //FIXME: the last one should be main.kt.5
     @Test
     fun `can step through code`() = lldbTest("""
         fun main(args: Array<String>) {
@@ -29,7 +28,7 @@ class LldbTests {
 
         > n
         Process [..] stopped
-        [..] at main.kt:3, [..] stop reason = step over
+        [..] at main.kt:5, [..] stop reason = step over
     """)
 
     //FIXME: Boolean and Int are wrong
