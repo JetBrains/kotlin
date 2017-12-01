@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
 import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
@@ -401,10 +402,11 @@ class IncrementalJvmCompilerRunner(
     override fun makeServices(
             args: K2JVMCompilerArguments,
             lookupTracker: LookupTracker,
+            expectActualTracker: ExpectActualTracker,
             caches: IncrementalJvmCachesManager,
             compilationMode: CompilationMode
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, caches, compilationMode).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).apply {
             val targetId = TargetId(args.moduleName!!, "java-production")
             val targetToCache = mapOf(targetId to caches.platformCache)
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)

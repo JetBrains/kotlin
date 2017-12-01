@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.*
 import java.io.File
@@ -97,10 +98,11 @@ class IncrementalJsCompilerRunner(
     override fun makeServices(
             args: K2JSCompilerArguments,
             lookupTracker: LookupTracker,
+            expectActualTracker: ExpectActualTracker,
             caches: IncrementalJsCachesManager,
             compilationMode: CompilationMode
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, caches, compilationMode).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).apply {
             register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
 
             if (compilationMode is CompilationMode.Incremental) {

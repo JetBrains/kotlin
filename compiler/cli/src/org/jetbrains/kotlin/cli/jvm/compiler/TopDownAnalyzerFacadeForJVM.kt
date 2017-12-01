@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.frontend.java.di.initialize
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.javac.components.JavacBasedClassFinder
 import org.jetbrains.kotlin.javac.components.JavacBasedSourceElementFactory
@@ -133,6 +134,7 @@ object TopDownAnalyzerFacadeForJVM {
 
         val incrementalComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
+        val expectActualTracker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
         val targetIds = configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
 
         val separateModules = !configuration.getBoolean(JVMConfigurationKeys.USE_SINGLE_MODULE)
@@ -171,7 +173,7 @@ object TopDownAnalyzerFacadeForJVM {
             val dependencyScope = GlobalSearchScope.notScope(sourceScope)
 
             val dependenciesContainer = createContainerForTopDownAnalyzerForJvm(
-                    dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker,
+                    dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker, expectActualTracker,
                     packagePartProvider(dependencyScope), moduleClassResolver, jvmTarget, languageVersionSettings, configureJavaClassFinder
             )
 
@@ -196,7 +198,7 @@ object TopDownAnalyzerFacadeForJVM {
         // to be stored in CliLightClassGenerationSupport, and it better be the source one (otherwise light classes would not be found)
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForTopDownAnalyzerForJvm(
-                moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker,
+                moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker, expectActualTracker,
                 partProvider, moduleClassResolver, jvmTarget, languageVersionSettings, configureJavaClassFinder,
                 javaClassTracker = configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER]
         ).apply {

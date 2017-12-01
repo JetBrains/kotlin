@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
@@ -298,6 +299,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         if (IncrementalCompilation.isEnabled()) {
             services.get(LookupTracker::class.java)?.let {
                 configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it)
+            }
+
+            services.get(ExpectActualTracker::class.java)?.let {
+                configuration.put(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, it)
             }
 
             services.get(IncrementalCompilationComponents::class.java)?.let {
