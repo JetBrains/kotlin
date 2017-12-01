@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinStringTemplateBackspaceHandler : BackspaceHandlerDelegate() {
-    override fun beforeCharDeleted(c: Char, file: PsiFile?, editor: Editor?) {
+    override fun beforeCharDeleted(c: Char, file: PsiFile, editor: Editor) {
         if (c != '{' || file !is KtFile || !CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return
 
         val offset = editor?.caretModel?.offset ?: return
@@ -38,7 +38,7 @@ class KotlinStringTemplateBackspaceHandler : BackspaceHandlerDelegate() {
         editor.document.deleteString(offset, offset + 1)
     }
 
-    override fun charDeleted(c: Char, file: PsiFile?, editor: Editor?): Boolean {
+    override fun charDeleted(c: Char, file: PsiFile, editor: Editor): Boolean {
         return false
     }
 }
