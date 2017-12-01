@@ -11,7 +11,9 @@ class B(param: String) : A(param)
 class C : A {
     constructor(p: String) : super(p)
 
-    constructor(i: Int) : super(i)
+    constructor(i: Int) : super(i) {
+        println()
+    }
 
     override fun foo(a: Long) {
         super.foo(a)
