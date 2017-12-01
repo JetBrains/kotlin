@@ -21,6 +21,9 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.cli.jvm.repl.configuration.ConsoleReplConfiguration
+import org.jetbrains.kotlin.cli.jvm.repl.configuration.ReplConfiguration
+import org.jetbrains.kotlin.cli.jvm.repl.configuration.IdeReplConfiguration
 import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -167,7 +170,7 @@ class ReplFromTerminal(
 
         fun run(disposable: Disposable, configuration: CompilerConfiguration) {
             val replIdeMode = System.getProperty("kotlin.repl.ideMode") == "true"
-            val replConfiguration = if (replIdeMode) ReplForIdeConfiguration() else ConsoleReplConfiguration()
+            val replConfiguration = if (replIdeMode) IdeReplConfiguration() else ConsoleReplConfiguration()
             return try {
                 ReplFromTerminal(disposable, configuration, replConfiguration).doRun()
             }

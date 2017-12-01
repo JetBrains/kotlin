@@ -19,5 +19,5 @@ package org.jetbrains.kotlin.cli.jvm.repl.messages
 import org.jetbrains.kotlin.cli.common.messages.DiagnosticMessageReporter
 
 interface DiagnosticMessageHolder : DiagnosticMessageReporter {
-    val renderedDiagnostics: String
+    fun renderMessage(): String
 }

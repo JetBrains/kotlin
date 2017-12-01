@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl.messages
+package org.jetbrains.kotlin.cli.jvm.repl.writer
 
 interface ReplWriter {
     fun printlnWelcomeMessage(x: String)

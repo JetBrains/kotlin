@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl.messages
+package org.jetbrains.kotlin.cli.jvm.repl.writer
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.LineSeparator
+import org.jetbrains.kotlin.cli.jvm.repl.messages.SOURCE_CHARS
+import org.jetbrains.kotlin.cli.jvm.repl.messages.XML_REPLACEMENTS
 import org.jetbrains.kotlin.utils.repl.ReplEscapeType
 import java.io.PrintStream
 import org.jetbrains.kotlin.utils.repl.ReplEscapeType.*
@@ -25,7 +27,7 @@ import org.jetbrains.kotlin.utils.repl.ReplEscapeType.*
 internal val END_LINE: String = LineSeparator.getSystemLineSeparator().separatorString
 internal val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
-class ReplSystemOutWrapperForIde(standardOut: PrintStream) : PrintStream(standardOut, true), ReplWriter {
+class IdeSystemOutWrapperReplWriter(standardOut: PrintStream) : PrintStream(standardOut, true), ReplWriter {
     override fun print(x: Boolean) = printWithEscaping(x.toString())
     override fun print(x: Char) = printWithEscaping(x.toString())
     override fun print(x: Int) = printWithEscaping(x.toString())
@@ -40,12 +42,12 @@ class ReplSystemOutWrapperForIde(standardOut: PrintStream) : PrintStream(standar
     }
 
     private fun printWithEscaping(text: String, escapeType: ReplEscapeType = USER_OUTPUT) {
-        super.print("${xmlEscape(text, escapeType)}$END_LINE")
+        super.print("${xmlEscape(text, escapeType)}${END_LINE}")
     }
 
     private fun xmlEscape(s: String, escapeType: ReplEscapeType): String {
         val singleLine = StringUtil.replace(s, SOURCE_CHARS, XML_REPLACEMENTS)
-        return "$XML_PREAMBLE<output type=\"$escapeType\">${StringUtil.escapeXml(singleLine)}</output>"
+        return "${XML_PREAMBLE}<output type=\"$escapeType\">${StringUtil.escapeXml(singleLine)}</output>"
     }
 
     override fun printlnWelcomeMessage(x: String) = printlnWithEscaping(x, INITIAL_PROMPT)
