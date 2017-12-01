@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.canHaveUndefinedNullability
 
 object NewCommonSuperTypeCalculator {
 
@@ -61,9 +62,18 @@ object NewCommonSuperTypeCalculator {
         val notAllNotNull = types.any { !NullabilityChecker.isSubtypeOfAny(it) }
         val notNullTypes = if (notAllNotNull) types.map { it.makeNullableAsSpecified(false) } else types
 
-        val commonSuperTypes = commonSuperTypeForNotNullTypes(notNullTypes, depth)
+        val commonSuperType = commonSuperTypeForNotNullTypes(notNullTypes, depth)
+        return if (notAllNotNull)
+            refineNullabilityForUndefinedNullability(types, commonSuperType) ?: commonSuperType.makeNullableAsSpecified(true)
+        else
+            commonSuperType
+    }
 
-        return if (notAllNotNull) commonSuperTypes.makeNullableAsSpecified(true) else commonSuperTypes
+    private fun refineNullabilityForUndefinedNullability(types: List<SimpleType>, commonSuperType: SimpleType): SimpleType? {
+        if (!commonSuperType.unwrap().canHaveUndefinedNullability()) return null
+
+        val actuallyNotNull = types.all { NullabilityChecker.hasPathByNotMarkedNullableNodes(it, commonSuperType.constructor) }
+        return if (actuallyNotNull) commonSuperType else null
     }
 
     private fun List<SimpleType>.uniquify(): List<SimpleType> {

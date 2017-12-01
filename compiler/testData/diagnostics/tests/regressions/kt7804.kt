@@ -12,7 +12,7 @@ fun <T> test(v: T): T {
         v
     }
 
-    val t: T = <!NI;DEBUG_INFO_SMARTCAST!>a<!>
+    val t: T = a
     return t
 }
 
@@ -36,7 +36,7 @@ fun <T> test3(v: T): T {
         v
     }
 
-    val t: T = <!NI;DEBUG_INFO_SMARTCAST!>a<!>
+    val t: T = a
     return t
 }
 
