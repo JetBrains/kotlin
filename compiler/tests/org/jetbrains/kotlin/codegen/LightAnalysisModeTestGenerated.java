@@ -8473,6 +8473,18 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("entryClassConstructorWithDefaultArguments.kt")
+            public void testEntryClassConstructorWithDefaultArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/entryClassConstructorWithDefaultArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("entryClassConstructorWithVarargs.kt")
+            public void testEntryClassConstructorWithVarargs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/entryClassConstructorWithVarargs.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("secondaryConstructorWithDefaultArguments.kt")
             public void testSecondaryConstructorWithDefaultArguments() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/secondaryConstructorWithDefaultArguments.kt");
