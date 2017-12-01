@@ -64,15 +64,21 @@ class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
 
         val inJar = File(PathUtil.getJarPathForClass(this::class.java)).isFile
         val manifestFile = getAndroidManifest(moduleBuildTarget.module)
+
         return if (manifestFile != null) {
-            listOf(
-                    if (inJar) {
-                        val libDirectory = File(PathUtil.getJarPathForClass(this::class.java)).parentFile.parentFile
-                        File(libDirectory, JAR_FILE_NAME).absolutePath
-                    } else {
-                        // We're in tests now (project root dir)
-                        File("dist/kotlinc/lib/$JAR_FILE_NAME").absolutePath
-                    })
+            val jpsPluginJar = File(PathUtil.getJarPathForClass(this::class.java))
+            val compilerPluginJar: File
+
+            if (jpsPluginJar.parentFile?.name == "libs" && jpsPluginJar.parentFile?.parentFile?.name == "build") {
+                // We're in tests now (inside plugins/android-extensions/android-extensions-jps/build/libs)
+                compilerPluginJar = File("dist/kotlinc/lib/$JAR_FILE_NAME")
+            } else {
+                // Inside Kotlin/jps directory (Kotlin plugin)
+                val libDirectory = File(PathUtil.getJarPathForClass(this::class.java)).parentFile.parentFile
+                compilerPluginJar = File(libDirectory, JAR_FILE_NAME)
+            }
+
+            listOf(compilerPluginJar.absolutePath)
         }
         else emptyList()
     }
