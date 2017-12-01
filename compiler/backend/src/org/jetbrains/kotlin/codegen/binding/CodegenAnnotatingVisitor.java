@@ -648,6 +648,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     @Override
     public void visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call) {
         withinUninitializedClass(call, () -> super.visitConstructorDelegationCall(call));
+        
+        checkSamCall(call);
     }
 
     private void withinUninitializedClass(@NotNull KtElement element, @NotNull Runnable operation) {
