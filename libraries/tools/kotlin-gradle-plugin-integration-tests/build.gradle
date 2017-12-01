@@ -118,9 +118,25 @@ tasks.withType(Test) {
     }
 }
 
-task testAdvanceGradleVersion(type: Test) {
-    systemProperty("advanceGradleVersion", "4.3-rc-1")
+def jpsIncrementalTestsClass = '**/KotlinGradlePluginJpsParametrizedIT.class'
+
+test {
+    exclude jpsIncrementalTestsClass
+}
+
+task testsFromJps(type: Test) {
+    include jpsIncrementalTestsClass
     dependsOn = test.dependsOn
+}
+
+task testAdvanceGradleVersion(type: Test) {
+    def gradleVersionForTests = "4.3-rc-1"
+    systemProperty("advanceGradleVersion", gradleVersionForTests)
+    dependsOn = test.dependsOn
+    beforeTest { descriptor ->
+        logger.info("(!) Using Gradle version $gradleVersionForTests")
+    }
+    exclude jpsIncrementalTestsClass
 }
 
 check.dependsOn(testAdvanceGradleVersion)
