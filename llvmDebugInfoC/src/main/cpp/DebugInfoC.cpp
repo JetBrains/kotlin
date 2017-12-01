@@ -29,7 +29,7 @@
  */
 
 namespace llvm {
-DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DIBuilder,        DIBuilderRef)
+//DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DIBuilder,        DIBuilderRef)
 DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DICompileUnit,    DICompileUnitRef)
 DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DIFile,           DIFileRef)
 DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DIBasicType,      DIBasicTypeRef)
@@ -45,7 +45,7 @@ DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DILocalVariable,  DILocalVariableRef)
 DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DIExpression,     DIExpressionRef)
 
 // from Module.cpp
-DEFINE_SIMPLE_CONVERSION_FUNCTIONS(Module,        LLVMModuleRef)
+//DEFINE_SIMPLE_CONVERSION_FUNCTIONS(Module,        LLVMModuleRef)
 }
 
 /**
@@ -68,7 +68,8 @@ DICompileUnitRef DICreateCompilationUnit(DIBuilderRef builder, unsigned int lang
                                          const char *file, const char* dir,
                                          const char * producer, int isOptimized,
                                          const char * flags, unsigned int rv) {
-  return llvm::wrap(llvm::unwrap(builder)->createCompileUnit(lang, file, dir, producer, isOptimized, flags, rv));
+  llvm::DIBuilder *D = llvm::unwrap(builder);
+  return llvm::wrap(llvm::unwrap(builder)->createCompileUnit(lang, D->createFile(file, dir), producer, isOptimized, flags, rv));
 }
 
 DIFileRef DICreateFile(DIBuilderRef builder, const char *filename, const char *directory) {
@@ -76,7 +77,7 @@ DIFileRef DICreateFile(DIBuilderRef builder, const char *filename, const char *d
 }
 
 DIBasicTypeRef DICreateBasicType(DIBuilderRef builder, const char* name, uint64_t sizeInBits, uint64_t alignment, unsigned encoding) {
-  return llvm::wrap(llvm::unwrap(builder)->createBasicType(name, sizeInBits, alignment, encoding));
+  return llvm::wrap(llvm::unwrap(builder)->createBasicType(name, sizeInBits, encoding));
 }
 
 DIModuleRef DICreateModule(DIBuilderRef builder, DIScopeOpaqueRef scope,
@@ -111,7 +112,7 @@ DICompositeTypeRef DICreateStructType(DIBuilderRef refBuilder,
                                       DICompositeTypeRef refPlace) {
   auto builder = llvm::unwrap(refBuilder);
   if ((flags & DI_FORWARD_DECLARAION) != 0) {
-    return llvm::wrap(builder->createStructType(llvm::unwrap(scope), name, NULL, 0, 0, 0, flags, NULL, NULL));
+    return llvm::wrap(builder->createStructType(llvm::unwrap(scope), name, NULL, 0, 0, 0, (llvm::DINode::DIFlags)flags, NULL, NULL));
   }
   std::vector<llvm::Metadata *> typeElements;
   for(int i = 0; i < elementsCount; ++i) {
@@ -121,7 +122,7 @@ DICompositeTypeRef DICreateStructType(DIBuilderRef refBuilder,
   auto composite = builder->createStructType(llvm::unwrap(scope),
                                               name, llvm::unwrap(file),
                                               lineNumber,
-                                              sizeInBits, alignInBits, flags,
+                                              sizeInBits, alignInBits, (llvm::DINode::DIFlags)flags,
                                               llvm::unwrap(derivedFrom),
                                               elementsArray);
   builder->replaceTemporary(llvm::TempDIType(llvm::unwrap(refPlace)), composite);
@@ -158,7 +159,7 @@ DIDerivedTypeRef DICreateMemberType(DIBuilderRef refBuilder,
                       sizeInBits,
                       alignInBits,
                       offsetInBits,
-                      flags,
+                      (llvm::DINode::DIFlags)flags,
                       llvm::unwrap(type)));
 }
 
@@ -270,8 +271,5 @@ int DISubprogramDescribesFunction(DISubprogramRef sp, LLVMValueRef fn) {
   return llvm::unwrap(sp)->describes(llvm::cast<llvm::Function>(llvm::unwrap(fn)));
 }
 
-void DIScopeDump(DIScopeOpaqueRef scope) {
-  llvm::unwrap(scope)->dump();
-}
 } /* extern "C" */
 

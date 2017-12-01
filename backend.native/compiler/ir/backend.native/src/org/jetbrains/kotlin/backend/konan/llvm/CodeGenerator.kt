@@ -290,8 +290,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private fun callRaw(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
                         lazyLandingpad: () -> LLVMBasicBlockRef?): LLVMValueRef {
         val rargs = args.toCValues()
-        if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
-                (LLVMGetFunctionAttr(llvmFunction) and LLVMNoUnwindAttribute) != 0) {
+        if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */  &&
+                isFunctionNoUnwind(llvmFunction)) {
 
             return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
         } else {

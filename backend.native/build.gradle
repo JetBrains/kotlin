@@ -99,13 +99,17 @@ kotlinNativeInterop {
     llvm {
         dependsOn ":llvmDebugInfoC:debugInfoStaticLibrary"
         defFile 'llvm.def'
-        compilerOpts "-fPIC", "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include"
+	if (!project.parent.convention.plugins.platformInfo.isWindows())
+            compilerOpts "-fPIC"
+        compilerOpts "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include"
         linkerOpts "-L$llvmDir/lib", "-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static"
     }
 
     hash { // TODO: copy-pasted from ':common:compileHash'
-        compilerOpts '-fPIC'
-        linkerOpts '-fPIC'
+        if (!project.parent.convention.plugins.platformInfo.isWindows()) {
+            compilerOpts '-fPIC'
+            linkerOpts '-fPIC'
+	}
         linker 'clang++'
         linkOutputs ":common:${hostName}Hash"
 

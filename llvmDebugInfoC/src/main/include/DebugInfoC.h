@@ -20,7 +20,9 @@
 # ifdef __cplusplus
 extern "C" {
 # endif
-typedef struct DIBuilder          *DIBuilderRef;
+
+typedef struct LLVMOpaqueDIBuilder *DIBuilderRef;
+//typedef struct DIBuilder          *DIBuilderRef;
 typedef struct DICompileUnit      *DICompileUnitRef;
 typedef struct DIFile             *DIFileRef;
 typedef struct DIBasicType        *DIBasicTypeRef;
@@ -103,7 +105,7 @@ const char* LLVMBuilderGetCurrentBbName(LLVMBuilderRef builder);
 const char *DIGetSubprogramLinkName(DISubprogramRef sp);
 LLVMValueRef LLVMBuilderGetCurrentFunction(LLVMBuilderRef builder);
 int DISubprogramDescribesFunction(DISubprogramRef sp, LLVMValueRef fn);
-void DIScopeDump(DIScopeOpaqueRef scope);
+//void DIScopeDump(DIScopeOpaqueRef scope);
 # ifdef __cplusplus
 }
 # endif

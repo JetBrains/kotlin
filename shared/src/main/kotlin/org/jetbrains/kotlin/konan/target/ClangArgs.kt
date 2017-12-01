@@ -54,7 +54,7 @@ class ClangTarget(val target: KonanTarget, konanProperties: KonanProperties) {
 
             KonanTarget.MINGW ->
                 listOf("-target", targetArg!!, "--sysroot=$sysRoot",
-                        "-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1")
+                        "-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1", "-Xclang", "-flto-visibility-public-std")
 
             KonanTarget.MACBOOK ->
                 listOf("--sysroot=$sysRoot", "-mmacosx-version-min=10.11", "-DKONAN_OSX=1",

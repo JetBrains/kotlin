@@ -3,7 +3,7 @@ headers = llvm-c/Core.h llvm-c/Target.h llvm-c/Analysis.h llvm-c/BitWriter.h \
 
 headerFilter = llvm-c/* DebugInfoC.h
 
-compilerOpts = -std=c99 -fPIC \
+compilerOpts = -std=c99 \
     -Wall -W -Wno-unused-parameter -Wwrite-strings -Wmissing-field-initializers \
     -pedantic -Wno-long-long -Wcovered-switch-default -Wdelete-non-virtual-dtor \
     -DNDEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
@@ -11,27 +11,35 @@ compilerOpts = -std=c99 -fPIC \
 
 linker = clang++
 
-linkerOpts = -fPIC -fvisibility-inlines-hidden \
+linkerOpts = -fvisibility-inlines-hidden \
     -Wall -W -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers \
     -pedantic -Wno-long-long -Wcovered-switch-default -Wnon-virtual-dtor -Wdelete-non-virtual-dtor \
     -std=c++11 \
     -DNDEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS \
     -ldebugInfo -lLLVMTarget -lLLVMMC -lLLVMLinker -lLLVMTransformUtils -lLLVMBitWriter \
-    -lLLVMBitReader -lLLVMAnalysis -lLLVMProfileData -lLLVMCore -lLLVMSupport
+    -lLLVMBitReader -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMMC \
+    -lLLVMCore -lLLVMBinaryFormat -lLLVMSupport -lLLVMDemangle
 
 # ./llvm-config --libs analysis bitreader bitwriter core linker target
 
 
-linkerOpts.osx = \
+linkerOpts.osx = -fPIC \
     -Wl,-search_paths_first -Wl,-headerpad_max_install_names \
-    -lpthread -lz -lm  -lcurses
+    -lpthread -lz -lm  -lcurses -Wl,-U,_futimens -Wl,-U,_LLVMDumpType
 
-linkerOpts.linux=\
+linkerOpts.linux= -fPIC \
      -Wl,-z,noexecstack \
      -lrt -ldl -lpthread -lz -lm
 
 linkerOpts.mingw = -lole32 -luuid -static-libgcc -static-libstdc++ \
     -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive,-Bdynamic
+
+# It looks like mingw port compiled without LLVM_ENABLE_DUMP
+#Note: ld on mingw process -Wl,-U,_LLVMDumpType use different from other platform
+# way, using this option cause linkage error:
+# ld: -r and -shared may not be used together
+excludedFunctions.mingw = LLVMDumpType
+
 
 excludedFunctions = LLVMInitializeAllAsmParsers LLVMInitializeAllAsmPrinters LLVMInitializeAllDisassemblers \
     LLVMInitializeAllTargetInfos LLVMInitializeAllTargetMCs LLVMInitializeAllTargets LLVMInitializeNativeTarget \

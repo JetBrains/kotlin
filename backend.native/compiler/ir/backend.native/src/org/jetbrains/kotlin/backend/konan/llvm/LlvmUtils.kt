@@ -281,6 +281,28 @@ fun parseBitcodeFile(path: String): LLVMModuleRef = memScoped {
     }
 }
 
+private val nounwindAttrKindId: Int
+    get() = getAttributeKindId("nounwind")
+
+fun isFunctionNoUnwind(function: LLVMValueRef): Boolean {
+
+    val attribute = LLVMGetEnumAttributeAtIndex(function, LLVMAttributeFunctionIndex, nounwindAttrKindId)
+    return attribute != null
+}
+
+private fun getAttributeKindId(attributeName: String): Int {
+    val nounwindAttrKindId = LLVMGetEnumAttributeKindForName(attributeName, attributeName.length.signExtend())
+    if (nounwindAttrKindId == 0) {
+        throw Error("Unable to find '$attributeName' attribute kind id")
+    }
+    return nounwindAttrKindId
+}
+
+fun setFunctionNoUnwind(function: LLVMValueRef) {
+    val attribute = LLVMCreateEnumAttribute(LLVMGetTypeContext(function.type), nounwindAttrKindId, 0)!!
+    LLVMAddAttributeAtIndex(function, LLVMAttributeFunctionIndex, attribute)
+}
+
 internal fun String.mdString() = LLVMMDString(this, this.length)!!
 internal fun node(vararg it:LLVMValueRef) = LLVMMDNode(it.toList().toCValues(), it.size)
 

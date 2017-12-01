@@ -280,9 +280,23 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
         val functionType = getFunctionType(externalFunction)
         val function = LLVMAddFunction(llvmModule, name, functionType)!!
-        val attributes = LLVMGetFunctionAttr(externalFunction)
-        LLVMAddFunctionAttr(function, attributes)
+
+        copyFunctionAttributes(externalFunction, function)
+
         return function
+    }
+
+    private fun copyFunctionAttributes(source: LLVMValueRef, destination: LLVMValueRef) {
+        // TODO: consider parameter attributes
+        val attributeIndex = LLVMAttributeFunctionIndex
+        val count = LLVMGetAttributeCountAtIndex(source, attributeIndex)
+        memScoped {
+            val attributes = allocArray<LLVMAttributeRefVar>(count)
+            LLVMGetAttributesAtIndex(source, attributeIndex, attributes)
+            (0 until count).forEach {
+                LLVMAddAttributeAtIndex(destination, attributeIndex, attributes[it])
+            }
+        }
     }
 
     private fun importMemset() : LLVMValueRef {
@@ -306,7 +320,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     private fun externalNounwindFunction(name: String, type: LLVMTypeRef, origin: LlvmSymbolOrigin): LLVMValueRef {
         val function = externalFunction(name, type, origin)
-        LLVMAddFunctionAttr(function, LLVMNoUnwindAttribute)
+        setFunctionNoUnwind(function)
         return function
     }
 

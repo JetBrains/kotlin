@@ -308,7 +308,7 @@ extern "C" {
     void _ZNKSt3__221__basic_string_commonILb1EE20__throw_length_errorEv(void) {
         Konan_abort("TODO: throw_length_error not implemented.");
     }
-    int _ZNSt3__212__next_primeEm(unsigned long n) {
+    int _ZNSt3__212__next_primeEj(unsigned long n) {
         static unsigned long primes[] = {
                 11UL,
                 101UL,

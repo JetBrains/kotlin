@@ -82,9 +82,10 @@ internal class KonanInteropRunner(project: Project)
 {
     init {
         if (project.host == "mingw") {
+	    //TODO: Oh-ho-ho fix it in more convinient way.
             environment.put("PATH", DependencyProcessor.defaultDependenciesRoot.absolutePath +
-                    "\\msys2-mingw-w64-x86_64-gcc-6.3.0-clang-llvm-3.9.1-windows-x86-64" +
-                    "\\bin;${System.getenv("PATH")}")
+                    "\\msys2-mingw-w64-x86_64-gcc-7.2.0-clang-llvm-5.0.0-windows-x86-64" +
+                    "\\bin;${environment.get("PATH")}")
         }
     }
 }

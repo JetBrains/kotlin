@@ -25,6 +25,8 @@ targetList.each { targetName ->
         dependsOn ":common:${targetName}Hash"
         dependsOn "${targetName}Launcher"
         target targetName
+	    if (!isWindows())
+	       compilerArgs '-fPIC'
         compilerArgs '-I' + project.file('../common/src/hash/headers')
         if (rootProject.hasProperty("${targetName}LibffiDir"))
             compilerArgs '-I' + project.file(rootProject.ext.get("${targetName}LibffiDir") + "/include")
