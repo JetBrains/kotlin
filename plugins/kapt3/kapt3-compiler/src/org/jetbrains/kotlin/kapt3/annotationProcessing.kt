@@ -26,8 +26,11 @@ import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.util.putJavacOption
+import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 import java.io.File
 import javax.annotation.processing.Processor
+import javax.annotation.processing.RoundEnvironment
+import javax.lang.model.element.TypeElement
 import javax.tools.JavaFileObject
 import com.sun.tools.javac.util.List as JavacList
 
@@ -58,15 +61,16 @@ fun KaptContext<*>.doAnnotationProcessing(
     }
 
     val processingEnvironment = JavacProcessingEnvironment.instance(context)
+    val wrappedProcessors = processors.map { ProcessorWrapper(it) }
 
     val compilerAfterAP: JavaCompiler
     try {
         if (isJava9OrLater) {
             val initProcessAnnotationsMethod = JavaCompiler::class.java.declaredMethods.single { it.name == "initProcessAnnotations" }
-            initProcessAnnotationsMethod.invoke(compiler, processors, emptyList<JavaFileObject>(), emptyList<String>())
+            initProcessAnnotationsMethod.invoke(compiler, wrappedProcessors, emptyList<JavaFileObject>(), emptyList<String>())
         }
         else {
-            compiler.initProcessAnnotations(processors)
+            compiler.initProcessAnnotations(wrappedProcessors)
         }
 
         val parsedJavaFiles = parseJavaFiles(javaSourceFiles)
@@ -94,8 +98,18 @@ fun KaptContext<*>.doAnnotationProcessing(
         val errorCount = log.nerrors
         val warningCount = log.nwarnings
 
-        logger.info { "Annotation processing complete, errors: $errorCount, warnings: $warningCount" }
         if (logger.isVerbose) {
+            logger.info("Annotation processing complete, errors: $errorCount, warnings: $warningCount")
+
+            logger.info("Annotation processor stats:")
+            wrappedProcessors.forEach { processor ->
+                val rounds = processor.rounds
+                val roundMs = rounds.joinToString { "$it ms" }
+                val totalMs = rounds.sum()
+
+                logger.info("${processor.name}: ${rounds.size} rounds ($roundMs), $totalMs ms in total")
+            }
+
             filer.displayState()
         }
 
@@ -105,6 +119,22 @@ fun KaptContext<*>.doAnnotationProcessing(
     } finally {
         processingEnvironment.close()
         this@doAnnotationProcessing.close()
+    }
+}
+
+private class ProcessorWrapper(private val delegate: Processor) : Processor by delegate {
+    val rounds = mutableListOf<Long>()
+
+    val name: String
+        get() = delegate.javaClass.simpleName
+
+    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
+        val (time, result) = measureTimeMillisWithResult {
+            delegate.process(annotations, roundEnv)
+        }
+
+        rounds += time
+        return result
     }
 }
 
