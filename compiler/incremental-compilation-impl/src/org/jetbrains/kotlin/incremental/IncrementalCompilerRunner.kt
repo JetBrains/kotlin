@@ -189,7 +189,6 @@ abstract class IncrementalCompilerRunner<
         val allSourcesToCompile = HashSet<File>()
 
         var exitCode = ExitCode.OK
-        val allGeneratedFiles = hashSetOf<GeneratedFile>()
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             caches.platformCache.markDirty(dirtySources)
@@ -228,7 +227,6 @@ abstract class IncrementalCompilerRunner<
                 }
             }
 
-            allGeneratedFiles.addAll(generatedFiles)
             caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
             val changesCollector = ChangesCollector()
