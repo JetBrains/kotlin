@@ -26,7 +26,6 @@ build/
 !**/test/**/build
 *.iml
 !**/testData/**/*.iml
-.idea/modules.xml
 .idea/libraries/Gradle*.xml
 .idea/libraries/Maven*.xml
 .idea/modules
