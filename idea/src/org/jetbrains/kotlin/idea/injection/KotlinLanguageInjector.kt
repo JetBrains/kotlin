@@ -319,6 +319,10 @@ class KotlinLanguageInjector(
                 (argument.reference ?: argument.getArgumentName()?.referenceExpression?.mainReference)
                         ?.let { it.resolve() as? PsiMethod }
                         ?.let { findInjection(it, Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID)) }
+                        ?.takeIf { injectionInfo ->
+                            // Temporary forbid injection for SpEL because of inspections that gives warnings when host language is not Java.
+                            injectionInfo.languageId != "SpEL"
+                        }
             }
             else -> null
         }
