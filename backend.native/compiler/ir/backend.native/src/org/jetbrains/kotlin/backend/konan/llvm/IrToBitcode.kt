@@ -1636,6 +1636,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     val arg = expression.getValueArgument(0) as IrConst<String>
                     return context.llvm.staticData.createImmutableBinaryBlob(arg)
                 }
+
+                context.ir.symbols.initInstance.descriptor -> {
+                    val callee = expression as IrCall
+                    val initializer = callee.getValueArgument(1) as IrCall
+                    val thiz = evaluateExpression(callee.getValueArgument(0)!!)
+                    evaluateSimpleFunctionCall(initializer.descriptor, listOf(thiz) + evaluateExplicitArgs(initializer), lifetimes[initializer]!!)
+                    return codegen.theUnitInstanceRef.llvm
+                }
             }
         }
 
@@ -2061,13 +2069,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 val enumClass = callee.getTypeArgument(typeParameterT)!!
                 val enumClassDescriptor = enumClass.constructor.declarationDescriptor as ClassDescriptor
                 functionGenerationContext.allocInstance(typeInfoForAllocation(enumClassDescriptor), lifetimes[callee]!!)
-            }
-
-            context.ir.symbols.initInstance.descriptor -> {
-                val initializer = callee.getValueArgument(1) as IrCall
-                val thiz = evaluateExpression(callee.getValueArgument(0)!!)
-                evaluateSimpleFunctionCall(initializer.descriptor, listOf(thiz) + evaluateExplicitArgs(initializer), lifetimes[initializer]!!)
-                codegen.theUnitInstanceRef.llvm
             }
 
             else -> TODO(callee.descriptor.original.toString())
