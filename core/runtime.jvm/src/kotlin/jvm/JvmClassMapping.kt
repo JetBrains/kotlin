@@ -55,6 +55,7 @@ public val <T : Any> KClass<T>.javaPrimitiveType: Class<T>?
             "java.lang.Float"     -> Float::class.java
             "java.lang.Long"      -> Long::class.java
             "java.lang.Double"    -> Double::class.java
+            "java.lang.Void"      -> Void.TYPE
             else -> null
         } as Class<T>?
     }
@@ -77,6 +78,7 @@ public val <T : Any> KClass<T>.javaObjectType: Class<T>
             "float"   -> JavaLangFloat::class.java
             "long"    -> JavaLangLong::class.java
             "double"  -> JavaLangDouble::class.java
+            "void"    -> Void::class.java
             else -> thisJClass
         } as Class<T>
     }
