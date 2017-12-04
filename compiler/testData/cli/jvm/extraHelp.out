@@ -11,8 +11,15 @@ where advanced options include:
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjavac-arguments=<option[,]> Java compiler arguments
-  -Xjsr305={ignore|strict|warn}|under-migration:{ignore-strict-warn}|@<fully qualified class name>:{ignore|strict|warn}
-                             Specify behaviors for JSR-305 nullability annotations for: global, annotated with @UnderMigration or custom annotation with specific value: ignore, treat as other supported nullability annotations, or report a warning. Note that strict value is experimental yet
+  -Xjsr305={ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}
+                             Specify behavior for JSR-305 nullability annotations:
+                             -Xjsr305={ignore/strict/warn}                   globally (all non-@UnderMigration annotations)
+                             -Xjsr305=under-migration:{ignore/strict/warn}   all @UnderMigration annotations
+                             -Xjsr305=@<fq.name>:{ignore/strict/warn}        annotation with the given fully qualified class name
+                             Modes:
+                               * ignore
+                               * strict (experimental; treat as other supported nullability annotations)
+                               * warn (report a warning)
   -Xload-builtins-from-dependencies
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types

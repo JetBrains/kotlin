@@ -177,13 +177,17 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
             value = "-Xjsr305",
             deprecatedName = "-Xjsr305-annotations",
-            valueDescription = "{ignore|strict|warn}" +
-                               "|under-migration:{ignore-strict-warn}" +
-                               "|@<fully qualified class name>:{ignore|strict|warn}",
-            description = "Specify behaviors for JSR-305 nullability annotations for: " +
-                          "global, annotated with @UnderMigration or custom annotation " +
-                          "with specific value: ignore, treat as other supported nullability annotations, or report a warning. " +
-                          "Note that strict value is experimental yet"
+            valueDescription = "{ignore/strict/warn}" +
+                               "|under-migration:{ignore/strict/warn}" +
+                               "|@<fq.name>:{ignore/strict/warn}",
+            description = "Specify behavior for JSR-305 nullability annotations:\n" +
+                          "-Xjsr305={ignore/strict/warn}                   globally (all non-@UnderMigration annotations)\n" +
+                          "-Xjsr305=under-migration:{ignore/strict/warn}   all @UnderMigration annotations\n" +
+                          "-Xjsr305=@<fq.name>:{ignore/strict/warn}        annotation with the given fully qualified class name\n" +
+                          "Modes:\n" +
+                          "  * ignore\n" +
+                          "  * strict (experimental; treat as other supported nullability annotations)\n" +
+                          "  * warn (report a warning)"
     )
     var jsr305: Array<String>? by FreezableVar(null)
 
