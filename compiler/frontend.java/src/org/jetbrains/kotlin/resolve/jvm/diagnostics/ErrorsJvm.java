@@ -109,6 +109,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtExpression> API_VERSION_IS_AT_LEAST_ARGUMENT_SHOULD_BE_CONSTANT = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<KtExpression> ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE = DiagnosticFactory0.create(WARNING);
+
     enum NullabilityInformationSource {
         KOTLIN {
             @NotNull
