@@ -171,7 +171,7 @@ When using such `klib` in your program the library is linked automatically.
 
 All supported C types have corresponding representations in Kotlin:
 
-*   Singed, unsigned integral and floating point types are mapped to their
+*   Signed, unsigned integral and floating point types are mapped to their
     Kotlin counterpart with the same width.
 *   Pointers and arrays are mapped to `CPointer<T>?`.
 *   Enums can be mapped to either Kotlin enum or integral values, depending on
