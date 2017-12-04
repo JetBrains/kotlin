@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.maven.K2JVMCompileMojo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.maven.Util.joinArrays;
@@ -52,6 +54,12 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
     @Parameter
     private boolean correctErrorTypes = false;
+
+    @Parameter
+    private List<String> annotationProcessorArgs;
+
+    @Parameter
+    private List<String> javacOptions;
 
     // Components for AnnotationProcessingManager
 
@@ -109,6 +117,9 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         options.add(new KaptOption("sources", sourcesDirectory.getAbsolutePath()));
         options.add(new KaptOption("classes", classesDirectory.getAbsolutePath()));
         options.add(new KaptOption("stubs", stubsDirectory.getAbsolutePath()));
+
+        options.add(new KaptOption("javacArguments", encodeOptionList(parseOptionList(javacOptions))));
+        options.add(new KaptOption("apoptions", encodeOptionList(parseOptionList(annotationProcessorArgs))));
 
         return options;
     }
@@ -255,5 +266,43 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
             deleteRecursivelySafe(file);
         }
         mkdirsSafe(file);
+    }
+
+    private static Map<String, String> parseOptionList(@Nullable List<String> rawOptions) {
+        Map<String, String> map = new LinkedHashMap<>();
+
+        if (rawOptions == null) {
+            return map;
+        }
+
+        for (String option : rawOptions) {
+            int equalsIndex = option.indexOf("=");
+            if (equalsIndex < 0 && equalsIndex < (option.length() - 1)) {
+                map.put(option, "");
+            }
+            else {
+                map.put(option.substring(0, equalsIndex).trim(), option.substring(equalsIndex + 1).trim());
+            }
+        }
+
+        return map;
+    }
+
+    private static String encodeOptionList(Map<String, String> options) {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+
+            oos.writeInt(options.size());
+            for (Map.Entry<String, String> entry : options.entrySet()) {
+                oos.writeUTF(entry.getKey());
+                oos.writeUTF(entry.getValue());
+            }
+
+            return Base64.getEncoder().encodeToString(os.toByteArray());
+        } catch (IOException e) {
+            // Should not occur
+            throw new RuntimeException(e);
+        }
     }
 }
