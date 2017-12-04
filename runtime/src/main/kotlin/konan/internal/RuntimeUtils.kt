@@ -111,6 +111,7 @@ internal fun <T> createUninitializedInstance(): T {
 }
 
 @Intrinsic
+@Suppress("UNUSED_PARAMETER")
 internal fun initInstance(thiz: Any, constructorCall: Any): Unit {
     throw Exception("Call to this function should've been lowered")
 }
