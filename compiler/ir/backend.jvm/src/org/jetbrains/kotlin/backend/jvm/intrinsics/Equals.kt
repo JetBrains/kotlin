@@ -29,8 +29,11 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class Equals(val operator: IElementType) : IntrinsicMethod() {
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        var leftType = context.state.typeMapper.mapType(expression.getValueArgument(0)!!.type)
-        var rightType = context.state.typeMapper.mapType(expression.getValueArgument(1)!!.type)
+        val receiverAndArgs = expression.receiverAndArgs().apply {
+            assert(size == 2) { "Equals expects 2 arguments, but ${joinToString()}" }
+        }
+        var leftType = context.state.typeMapper.mapType(receiverAndArgs.first().type)
+        var rightType = context.state.typeMapper.mapType(receiverAndArgs.last().type)
 
         if (isPrimitive(leftType) != isPrimitive(rightType)) {
             leftType = boxType(leftType)
