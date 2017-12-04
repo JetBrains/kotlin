@@ -42,7 +42,13 @@ internal class ObjCExport(val context: Context) {
         val mapper = headerGenerator.mapper
 
         val framework = File(context.config.outputFile)
-        val headers = framework.child("Headers")
+        val frameworkContents = when (target) {
+            KonanTarget.IPHONE, KonanTarget.IPHONE_SIM -> framework
+            KonanTarget.MACBOOK -> framework.child("Versions/A")
+            else -> error(target)
+        }
+
+        val headers = frameworkContents.child("Headers")
 
         val frameworkName = framework.name.removeSuffix(".framework")
         val headerName = frameworkName + ".h"
@@ -50,7 +56,7 @@ internal class ObjCExport(val context: Context) {
         headers.mkdirs()
         header.writeLines(headerGenerator.build())
 
-        val modules = framework.child("Modules")
+        val modules = frameworkContents.child("Modules")
         modules.mkdirs()
 
         val moduleMap = """
@@ -64,17 +70,24 @@ internal class ObjCExport(val context: Context) {
 
         modules.child("module.modulemap").writeBytes(moduleMap.toByteArray())
 
-        emitInfoPlist(framework, frameworkName)
+        emitInfoPlist(frameworkContents, frameworkName)
+
+        if (target == KonanTarget.MACBOOK) {
+            framework.child("Versions/Current").createAsSymlink("A")
+            for (child in listOf(frameworkName, "Headers", "Modules", "Resources")) {
+                framework.child(child).createAsSymlink("Versions/Current/$child")
+            }
+        }
 
         val objCCodeGenerator = ObjCExportCodeGenerator(CodeGenerator(context), namer, mapper)
         objCCodeGenerator.emitRtti(headerGenerator.generatedClasses, headerGenerator.topLevel)
     }
 
-    private fun emitInfoPlist(framework: File, name: String) {
+    private fun emitInfoPlist(frameworkContents: File, name: String) {
         val directory = when (target) {
             KonanTarget.IPHONE,
-            KonanTarget.IPHONE_SIM -> framework
-            KonanTarget.MACBOOK -> framework.child("Resources").also { it.mkdirs() }
+            KonanTarget.IPHONE_SIM -> frameworkContents
+            KonanTarget.MACBOOK -> frameworkContents.child("Resources").also { it.mkdirs() }
             else -> error(target)
         }
 

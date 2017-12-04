@@ -338,9 +338,15 @@ internal class LinkStage(val context: Context) {
         } else {
             val framework = File(context.config.outputFile)
             val dylibName = framework.name.removeSuffix(".framework")
-            frameworkLinkerArgs = listOf("-install_name", "@rpath/${framework.name}/$dylibName")
-            framework.mkdirs()
-            executable = framework.child(dylibName).absolutePath
+            val dylibRelativePath = when (target) {
+                KonanTarget.IPHONE, KonanTarget.IPHONE_SIM -> dylibName
+                KonanTarget.MACBOOK -> "Versions/A/$dylibName"
+                else -> error(target)
+            }
+            frameworkLinkerArgs = listOf("-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+            val dylibPath = framework.child(dylibRelativePath)
+            dylibPath.parentFile.mkdirs()
+            executable = dylibPath.absolutePath
         }
 
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize, debug, dynamic) +

@@ -39,6 +39,8 @@ data class File constructor(internal val javaPath: Path) {
         get() = javaPath.fileName.toString()
     val parent: String
         get() = javaPath.parent.toString()
+    val parentFile: File
+        get() = File(javaPath.parent)
 
     val exists 
         get() = Files.exists(javaPath)
@@ -119,6 +121,14 @@ data class File constructor(internal val javaPath: Path) {
         Files.lines(javaPath).use { lines ->
             lines.forEach { action(it) }
         }
+    }
+
+    fun createAsSymlink(target: String) {
+        val targetPath = Paths.get(target)
+        if (Files.isSymbolicLink(this.javaPath) && Files.readSymbolicLink(javaPath) == targetPath) {
+            return
+        }
+        Files.createSymbolicLink(this.javaPath, targetPath)
     }
 
     override fun toString() = path
