@@ -630,6 +630,11 @@ task enum_linkTest(type: LinkKonanTest) {
     lib = "codegen/enum/linkTest_lib.kt"
 }
 
+task enum_varargParam(type: RunKonanTest) {
+    goldValue = "3\n"
+    source = "codegen/enum/varargParam.kt"
+}
+
 task mangling(type: LinkKonanTest) {
     goldValue = 
         "Int direct [1, 2, 3, 4]\n" +
