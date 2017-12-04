@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.codeHighlighting.Pass
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
@@ -43,19 +44,12 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
     ) {
         override fun createGutterRenderer(): GutterIconRenderer? {
             return object : LineMarkerInfo.LineMarkerGutterIconRenderer<KtElement>(this) {
-                override fun getClickAction() = null
+                override fun getClickAction(): AnAction? = null
             }
         }
     }
 
-    override fun getLineMarkerInfo(element: PsiElement) = null
-
-    private fun isValidCandidateExpression(expression: KtExpression): Boolean {
-        if (expression is KtOperationReferenceExpression || expression is KtForExpression) return true
-        val parent = expression.parent
-        if (parent is KtCallExpression && parent.calleeExpression == expression) return true
-        return false
-    }
+    override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? = null
 
     override fun collectSlowLineMarkers(
             elements: MutableList<PsiElement>,
@@ -67,27 +61,34 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
             ProgressManager.checkCanceled()
 
             if (element !is KtExpression) continue
-            if (!isValidCandidateExpression(element)) continue
-
             val lineNumber = element.getLineNumber()
             if (lineNumber in markedLineNumbers) continue
-
-            val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
-            val resolvedCall = if (element is KtForExpression) {
-                bindingContext[BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, element.loopRange]
-            } else {
-                element.getResolvedCall(bindingContext)
-            } ?: continue
-            val calleeDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: continue
-            if (!calleeDescriptor.isSuspend) continue
+            if (!element.hasSuspendCalls()) continue
 
             markedLineNumbers += lineNumber
             result += if (element is KtForExpression) {
                 SuspendCallMarkerInfo(element.loopRange!!, "Suspending iteration")
-
             } else {
                 SuspendCallMarkerInfo(element, "Suspend function call")
             }
         }
     }
+}
+
+private fun KtExpression.isValidCandidateExpression(): Boolean {
+    if (this is KtOperationReferenceExpression || this is KtForExpression) return true
+    val parent = parent
+    if (parent is KtCallExpression && parent.calleeExpression == this) return true
+    return false
+}
+
+fun KtExpression.hasSuspendCalls(bindingContext: BindingContext = analyze(BodyResolveMode.PARTIAL)): Boolean {
+    if (!isValidCandidateExpression()) return false
+
+    val resolvedCall = if (this is KtForExpression) {
+        bindingContext[BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange]
+    } else {
+        this.getResolvedCall(bindingContext)
+    } ?: return false
+    return (resolvedCall.resultingDescriptor as? FunctionDescriptor)?.isSuspend == true
 }
