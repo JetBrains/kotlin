@@ -511,7 +511,9 @@ class CompileServiceImpl(
                                                     reporter, annotationFileUpdater,
                                                     artifactChanges, changesRegistry,
                                                     buildHistoryFile = incrementalCompilationOptions.resultDifferenceFile,
-                                                    friendBuildHistoryFile = incrementalCompilationOptions.friendDifferenceFile)
+                                                    friendBuildHistoryFile = incrementalCompilationOptions.friendDifferenceFile,
+                                                    usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking
+        )
         return compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, { changedFiles })
     }
 

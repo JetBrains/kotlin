@@ -143,6 +143,9 @@ abstract class IncrementalCompilerRunner<
     protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>): Iterable<File> =
             emptyList()
 
+    protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
+            emptyList()
+
     protected open fun makeServices(
             args: Args,
             lookupTracker: LookupTracker,
@@ -244,6 +247,9 @@ abstract class IncrementalCompilerRunner<
 
         if (exitCode == ExitCode.OK) {
             BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
+        }
+        if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
+            buildDirtyLookupSymbols.addAll(additionalDirtyLookupSymbols())
         }
 
         val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)

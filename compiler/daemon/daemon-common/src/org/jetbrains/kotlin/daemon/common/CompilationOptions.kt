@@ -61,7 +61,8 @@ class IncrementalCompilationOptions(
         /** @See [CompilationResultCategory]] */
         requestedCompilationResults: Array<Int>,
         val resultDifferenceFile: File? = null,
-        val friendDifferenceFile: File? = null
+        val friendDifferenceFile: File? = null,
+        val usePreciseJavaTracking: Boolean
 ) : CompilationOptions(compilerMode, targetPlatform, reportCategories, reportSeverity, requestedCompilationResults) {
     companion object {
         const val serialVersionUID: Long = 0
@@ -77,7 +78,8 @@ class IncrementalCompilationOptions(
                "customCacheVersionFileName='$customCacheVersionFileName', " +
                "customCacheVersion=$customCacheVersion, " +
                "resultDifferenceFile=$resultDifferenceFile, " +
-               "friendDifferenceFile=$friendDifferenceFile" +
+               "friendDifferenceFile=$friendDifferenceFile, " +
+               "usePreciseJavaTracking=$usePreciseJavaTracking" +
                ")"
     }
 }
