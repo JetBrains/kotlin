@@ -1746,6 +1746,39 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ForInArrayLoop extends AbstractDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInForInArrayLoop() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("capturedRangeVariableAssignmentBefore13.kt")
+        public void testCapturedRangeVariableAssignmentBefore13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/capturedRangeVariableAssignmentBefore13.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rangeLocalDelegatedPropertyAssignmentBefore13.kt")
+        public void testRangeLocalDelegatedPropertyAssignmentBefore13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/rangeLocalDelegatedPropertyAssignmentBefore13.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rangeVariableAssignment13.kt")
+        public void testRangeVariableAssignment13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/rangeVariableAssignment13.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rangeVariableAssignmentBefore13.kt")
+        public void testRangeVariableAssignmentBefore13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/rangeVariableAssignmentBefore13.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/functionLiterals")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
