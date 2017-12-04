@@ -112,9 +112,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             return false
         }
 
-        private fun KtNamedFunction.isSerializationImplicitlyUsedMethod(): Boolean {
-            return toLightMethods().any { JavaHighlightUtil.isSerializationRelatedMethod(it, it.containingClass) }
-        }
+        private fun KtNamedFunction.isSerializationImplicitlyUsedMethod(): Boolean =
+                toLightMethods().any { JavaHighlightUtil.isSerializationRelatedMethod(it, it.containingClass) }
 
         // variation of IDEA's AnnotationUtil.checkAnnotatedUsingPatterns()
         fun checkAnnotatedUsingPatterns(annotated: Annotated, annotationPatterns: Collection<String>): Boolean {
@@ -295,9 +294,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         return referenceUsed
     }
 
-    private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
-        return DefinitionsScopedSearch.search(declaration, useScope).findFirst() != null
-    }
+    private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean =
+            DefinitionsScopedSearch.search(declaration, useScope).findFirst() != null
 
     private fun hasFakeOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
         val ownerClass = declaration.containingClassOrObject as? KtClass ?: return false
