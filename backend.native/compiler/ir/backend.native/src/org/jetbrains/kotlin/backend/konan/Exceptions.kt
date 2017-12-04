@@ -22,6 +22,11 @@ package org.jetbrains.kotlin.backend.konan
 open class KonanException(message: String = "", cause: Throwable? = null) : Exception(message, cause)
 
 /**
+ * An error occured during external tool invocation. Such as non-zero exit code. 
+ */
+class KonanExternalToolFailure(message: String = "", cause: Throwable? = null) : KonanException(message, cause)
+
+/**
  * Represents a compilation error caused by mistakes in an input file, e.g. undefined reference.
  */
 class KonanCompilationException(message: String = "", cause: Throwable? = null) : KonanException(message, cause)
@@ -30,9 +35,4 @@ class KonanCompilationException(message: String = "", cause: Throwable? = null) 
  * Internal compiler error: could not deserialize IR for inline function body.
  */
 class KonanIrDeserializationException(message: String = "", cause: Throwable? = null) : KonanException(message, cause)
-
-/**
- * An error occured during external tool invocation. Such as non-zero exit code. 
- */
-class KonanExternalToolFailure(message: String = "", cause: Throwable? = null) : KonanException(message, cause)
 

@@ -31,18 +31,31 @@ internal fun produceOutput(context: Context) {
 
     val llvmModule = context.llvmModule!!
     val config = context.config.configuration
+    val tempFiles = context.config.tempFiles
+    val produce = config.get(KonanConfigKeys.PRODUCE)
 
-    when (config.get(KonanConfigKeys.PRODUCE)) {
+    when (produce) {
         CompilerOutputKind.DYNAMIC,
         CompilerOutputKind.FRAMEWORK,
         CompilerOutputKind.PROGRAM -> {
             val program = context.config.outputName
-            val output = "$program.kt.bc"
+            val output = tempFiles.nativeBinaryFileName
             context.bitcodeFileName = output
+
+            val generatedBitcodeFiles = 
+                if (produce == CompilerOutputKind.DYNAMIC) {
+                    produceCAdapterBitcode(
+                        context.config.clang, 
+                        tempFiles.cAdapterHeaderName,
+                        tempFiles.cAdapterCppName, 
+                        tempFiles.cAdapterBitcodeName)
+                    listOf(tempFiles.cAdapterBitcodeName)
+                } else emptyList()
 
             val nativeLibraries = 
                 context.config.nativeLibraries +
-                context.config.defaultNativeLibraries 
+                context.config.defaultNativeLibraries + 
+                generatedBitcodeFiles
 
             PhaseManager(context).phase(KonanPhase.BITCODE_LINKER) {
                 for (library in nativeLibraries) {

@@ -36,6 +36,9 @@ fun nTabs(amount: Int): String {
     return String.format("%1$-${(amount+1)*4}s", "") 
 }
 
+fun String.prefixIfNot(prefix: String) =
+    if (this.startsWith(prefix)) this else "$prefix$this"
+
 fun String.suffixIfNot(suffix: String) =
     if (this.endsWith(suffix)) this else "$this$suffix"
 

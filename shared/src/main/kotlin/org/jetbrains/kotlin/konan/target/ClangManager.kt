@@ -39,5 +39,21 @@ class ClangManager(val properties: Properties, val baseDir: String) {
         = (hostClang.commonClangArgs + targetClangArgs[target]!!.specificClangArgs).toTypedArray()
 
     val hostCompilerArgsForJni = hostClang.hostCompilerArgsForJni.toTypedArray()
+
+    fun targetClangCmd(target: KonanTarget)
+        = listOf("${hostClang.llvmDir}/bin/clang") + targetClangArgs(target)
+
+    fun targetClangXXCmd(target: KonanTarget)
+        = listOf("${hostClang.llvmDir}/bin/clang++") + targetClangArgs(target)
 }
+
+class TargetClang(private val clangManager: ClangManager, private val target: KonanTarget) {
+    constructor (properties: Properties, baseDir: String, target: KonanTarget) 
+        : this (ClangManager(properties, baseDir), target)
+
+    fun clangC(vararg userArgs: String) = clangManager.targetClangCmd(target) + userArgs.asList()
+
+    fun clangCXX(vararg userArgs: String) = clangManager.targetClangXXCmd(target) + userArgs.asList()
+}
+
 

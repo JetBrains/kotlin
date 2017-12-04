@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.konan.target
 
-enum class Family(name:String, val exeSuffix:String, val dynamicSuffix: String?) {
-    OSX("osx", "kexe", "dylib"),
-    IOS("ios", "kexe", "dylib"),
-    LINUX("linux", "kexe", "so"),
-    WINDOWS("windows", "exe", "dll"),
-    ANDROID("android", "so", "so"),
-    WASM("wasm", "wasm", "wasm")
+enum class Family(name:String, val exeSuffix:String, val dynamicPrefix: String, val dynamicSuffix: String) {
+    OSX(    "osx"    , "kexe", "lib", "dylib"),
+    IOS(    "ios"    , "kexe", "lib", "dylib"),
+    LINUX(  "linux"  , "kexe", "lib", "so"   ),
+    WINDOWS("windows", "exe" , ""   , "dll"  ),
+    ANDROID("android", "so"  , "lib", "so"   ),
+    WASM(   "wasm"   , "wasm", ""   , "wasm" )
 }
 
 enum class Architecture(val bitness: Int) {
@@ -62,6 +62,7 @@ enum class CompilerOutputKind {
     },
     DYNAMIC {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.dynamicSuffix}"
+        override fun prefix(target: KonanTarget?) = ".${target!!.family.dynamicPrefix}"
     },
     FRAMEWORK {
         override fun suffix(target: KonanTarget?): String = ".framework"
@@ -74,6 +75,7 @@ enum class CompilerOutputKind {
     };
 
     abstract fun suffix(target: KonanTarget? = null): String
+    open fun prefix(target: KonanTarget? = null): String = ""
 }
 
 class TargetManager(val userRequest: String? = null) {

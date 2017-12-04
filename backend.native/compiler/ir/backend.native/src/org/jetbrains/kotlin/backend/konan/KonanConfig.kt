@@ -20,9 +20,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.konan.descriptors.createForwardDeclarationsModule
 import org.jetbrains.kotlin.backend.konan.library.*
 import org.jetbrains.kotlin.backend.konan.library.impl.*
-import org.jetbrains.kotlin.backend.konan.util.profile
-import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
-import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
+import org.jetbrains.kotlin.backend.konan.util.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -44,14 +42,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val targetManager = TargetManager(
         configuration.get(KonanConfigKeys.TARGET))
 
-    val indirectBranchesAreAllowed = targetManager.target != KonanTarget.WASM32
+    private val target = targetManager.target
 
     init {
-        val target = targetManager.target
         if (!target.enabled) {
             error("Target $target is not available on the ${TargetManager.host} host")
         }
     }
+
+    val indirectBranchesAreAllowed = target != KonanTarget.WASM32
 
     private fun Distribution.prepareDependencies(checkDependencies: Boolean) {
         if (checkDependencies) {
@@ -65,10 +64,17 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         prepareDependencies(configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES))
     }
 
+    internal val clang = TargetClang(distribution.properties, distribution.dependenciesDir, target)
+
     internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
-    private val suffix = produce.suffix(targetManager.target)
+    private val prefix = produce.prefix(target)
+    private val suffix = produce.suffix(target)
     val outputName = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(suffix) ?: produce.name.toLowerCase()
-    val outputFile = outputName.suffixIfNot(produce.suffix(targetManager.target))
+    val outputFile = outputName
+        .prefixIfNot(prefix)
+        .suffixIfNot(suffix)
+
+    val tempFiles = TempFiles(outputName)
 
     val moduleId: String
         get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: File(outputName).name
@@ -85,13 +91,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val immediateLibraries: List<LibraryReaderImpl> by lazy {
         val result = resolver.resolveImmediateLibraries(
                 libraryNames,
-                targetManager.target,
+                target,
                 currentAbiVersion,
                 configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
                 configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
                 { msg -> configuration.report(STRONG_WARNING, msg) } 
         )
-        resolver.resolveLibrariesRecursive(result, targetManager.target, currentAbiVersion)
+        resolver.resolveLibrariesRecursive(result, target, currentAbiVersion)
         result
     }
 

@@ -103,10 +103,11 @@ data class File constructor(internal val javaPath: Path) {
         })
 
     }
-    fun deleteOnExit() {
+    fun deleteOnExit(): File {
         // Works only on the default file system, 
         // but that's okay for now.
         javaPath.toFile().deleteOnExit()
+        return this // Allow streaming.
     }
     fun readBytes() = Files.readAllBytes(javaPath)
     fun writeBytes(bytes: ByteArray) = Files.write(javaPath, bytes)
@@ -136,6 +137,7 @@ data class File constructor(internal val javaPath: Path) {
     // TODO: Consider removeing these after konanazing java.util.Properties.
     fun bufferedReader() = Files.newBufferedReader(javaPath)
     fun outputStream() = Files.newOutputStream(javaPath)
+    fun printWriter() = javaPath.toFile().printWriter()
 
     companion object {
         val userDir

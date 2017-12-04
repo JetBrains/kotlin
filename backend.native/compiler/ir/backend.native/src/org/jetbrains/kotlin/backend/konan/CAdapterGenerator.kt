@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.*
 
 private enum class ScopeKind {
     TOP,
@@ -426,7 +426,10 @@ internal class CAdapterGenerator(val context: Context,
     }
 
     private fun makeGlobalStruct(top: ExportedElementScope) {
-        outputStreamWriter = PrintWriter(File(".", "${prefix}_api.h").outputStream())
+        outputStreamWriter = context.config.tempFiles
+            .cAdapterHeader
+            .printWriter()
+
         output("#ifndef KONAN_${prefix.toUpperCase()}_H")
         output("#define KONAN_${prefix.toUpperCase()}_H")
         // TODO: use namespace for C++ case?
@@ -472,7 +475,10 @@ internal class CAdapterGenerator(val context: Context,
         outputStreamWriter.close()
         println("Produced dynamic library API in ${prefix}_api.h")
 
-        outputStreamWriter = PrintWriter(File(".", "${prefix}_api.cpp").outputStream())
+        outputStreamWriter = context.config.tempFiles
+            .cAdapterCpp
+            .printWriter()
+
         output("#include \"${prefix}_api.h\"")
         output("""
         |struct KObjHeader;
