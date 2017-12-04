@@ -25,18 +25,18 @@ class ClangManager(val properties: Properties, val baseDir: String) {
         it to KonanProperties(it, properties, baseDir)
     }.toMap()
 
-    private val targetClangs = enabledTargets.map {
-        it to ClangTarget(it, konanProperties[it]!!) 
+    private val targetClangArgs = enabledTargets.map {
+        it to ClangTargetArgs(it, konanProperties[it]!!) 
     }.toMap()
 
-    private val hostClang = ClangHost(konanProperties[host]!!)
+    private val hostClang = ClangHostArgs(konanProperties[host]!!)
 
     // These are converted to arrays to be convenient
     // in groovy plugins.
-    val hostClangArgs = (hostClang.commonClangArgs + targetClangs[host]!!.specificClangArgs).toTypedArray()
+    val hostClangArgs = (hostClang.commonClangArgs + targetClangArgs[host]!!.specificClangArgs).toTypedArray()
 
     fun targetClangArgs(target: KonanTarget)
-        = (hostClang.commonClangArgs + targetClangs[target]!!.specificClangArgs).toTypedArray()
+        = (hostClang.commonClangArgs + targetClangArgs[target]!!.specificClangArgs).toTypedArray()
 
     val hostCompilerArgsForJni = hostClang.hostCompilerArgsForJni.toTypedArray()
 }
