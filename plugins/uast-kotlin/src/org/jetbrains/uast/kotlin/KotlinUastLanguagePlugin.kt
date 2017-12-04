@@ -54,8 +54,6 @@ var PsiElement.destructuringDeclarationInitializer: Boolean? by UserDataProperty
 class KotlinUastLanguagePlugin : UastLanguagePlugin {
     override val priority = 10
 
-    private val javaPlugin by lz { UastLanguagePlugin.getInstances().first { it is JavaUastLanguagePlugin } }
-
     override val language: Language
         get() = KotlinLanguage.INSTANCE
 
