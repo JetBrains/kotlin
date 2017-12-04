@@ -108,20 +108,17 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
     private fun stepLogAsString(step: Int, ktSources: Iterable<String>, errors: Collection<String>, includeErrors: Boolean = true): String {
         val sb = StringBuilder()
 
-        sb.appendLine("<======= STEP $step =======>")
+        sb.appendLine("================ Step #$step =================")
         sb.appendLine()
-        sb.appendLine("Compiled kotlin sources:")
-        ktSources.toSet().toTypedArray().sortedArray().forEach { sb.appendLine(it) }
-        sb.appendLine()
+        sb.appendLine("Compiling files:")
+        ktSources.toSet().toTypedArray().sortedArray().forEach { sb.appendLine("  $it") }
+        sb.appendLine("End of files")
+        sb.appendLine("Exit code: ${if (errors.isEmpty()) "OK" else "ABORT"}")
 
-        if (errors.isEmpty()) {
-            sb.appendLine("SUCCESS")
-        }
-        else {
-            sb.appendLine("FAILURE")
-            if (includeErrors) {
-                errors.filter(String::isNotEmpty).forEach { sb.appendLine(it) }
-            }
+        if (errors.isNotEmpty() && includeErrors) {
+            sb.appendLine("------------------------------------------")
+            sb.appendLine("COMPILATION FAILED")
+            errors.filter(String::isNotEmpty).forEach { sb.appendLine(it) }
         }
 
         return sb.toString()
