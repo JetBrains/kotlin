@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -46,8 +48,15 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
 
     val builtIns = state.module.builtIns
     return when {
-        asmRangeType.sort == Type.ARRAY ->
-            ArrayRangeValue(!isLocalVarReference(rangeExpression, bindingContext))
+        asmRangeType.sort == Type.ARRAY -> {
+            val properForInArraySemantics =
+                    state.languageVersionSettings.supportsFeature(LanguageFeature.ProperForInArrayLoopRangeVariableAssignmentSemantic)
+            ArrayRangeValue(
+                    properForInArraySemantics || !isLocalVarReference(rangeExpression, bindingContext),
+                    properForInArraySemantics
+            )
+        }
+
         isPrimitiveRange(rangeType) ->
             PrimitiveRangeRangeValue()
         isPrimitiveProgression(rangeType) ->
@@ -64,7 +73,10 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
 fun isLocalVarReference(rangeExpression: KtExpression, bindingContext: BindingContext): Boolean {
     if (rangeExpression !is KtSimpleNameExpression) return false
     val resultingDescriptor = rangeExpression.getResolvedCall(bindingContext)?.resultingDescriptor ?: return false
-    return resultingDescriptor is LocalVariableDescriptor && resultingDescriptor.isVar
+    return resultingDescriptor is LocalVariableDescriptor &&
+           resultingDescriptor !is SyntheticFieldDescriptor &&
+           !resultingDescriptor.isDelegated &&
+           resultingDescriptor.isVar
 }
 
 private fun isSubtypeOfString(type: KotlinType, builtIns: KotlinBuiltIns) =
