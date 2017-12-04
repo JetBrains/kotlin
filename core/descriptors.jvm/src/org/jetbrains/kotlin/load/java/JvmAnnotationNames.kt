@@ -24,6 +24,7 @@ val NULLABLE_ANNOTATIONS = listOf(
         FqName("com.android.annotations.Nullable"),
         FqName("org.eclipse.jdt.annotation.Nullable"),
         FqName("org.checkerframework.checker.nullness.qual.Nullable"),
+        FqName("org.checkerframework.checker.nullness.compatqual.NullableDecl"),
         FqName("javax.annotation.Nullable"),
         FqName("javax.annotation.CheckForNull"),
         FqName("edu.umd.cs.findbugs.annotations.CheckForNull"),
@@ -42,6 +43,7 @@ val NOT_NULL_ANNOTATIONS = listOf(
         FqName("com.android.annotations.NonNull"),
         FqName("org.eclipse.jdt.annotation.NonNull"),
         FqName("org.checkerframework.checker.nullness.qual.NonNull"),
+        FqName("org.checkerframework.checker.nullness.compatqual.NonNullDecl"),
         FqName("lombok.NonNull"),
         FqName("io.reactivex.annotations.NonNull")
 )
