@@ -29,9 +29,8 @@ import org.jetbrains.org.objectweb.asm.Type
 class ForInArrayLoopGenerator(
         codegen: ExpressionCodegen,
         forExpression: KtForExpression,
-        // We can cache array length if the corresponding range expression is not a local var.
-        // See https://youtrack.jetbrains.com/issue/KT-21354.
-        private val canCacheArrayLength: Boolean
+        private val canCacheArrayLength: Boolean,
+        private val shouldAlwaysStoreArrayInNewVar: Boolean
 ) : AbstractForLoopGenerator(codegen, forExpression) {
     private var indexVar: Int = 0
     private var arrayVar: Int = 0
@@ -46,7 +45,7 @@ class ForInArrayLoopGenerator(
         val loopRange = forExpression.loopRange
         val value = codegen.gen(loopRange)
         val asmLoopRangeType = codegen.asmType(loopRangeType)
-        if (value is StackValue.Local && value.type == asmLoopRangeType) {
+        if (!shouldAlwaysStoreArrayInNewVar && value is StackValue.Local && value.type == asmLoopRangeType) {
             arrayVar = value.index // no need to copy local variable into another variable
         }
         else {
