@@ -28,6 +28,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.AsyncResult
 import org.jdom.Element
+import org.jdom.Text
 import org.jetbrains.idea.maven.importing.MavenImporter
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter
 import org.jetbrains.idea.maven.model.MavenPlugin
@@ -39,15 +40,14 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.framework.libraryKind
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.util.*
 
@@ -160,7 +160,23 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             }
         }
 
-        val additionalArgs = configuration?.getChild("args")?.getChildren("arg")?.mapNotNull { it.text }.orEmpty()
+        val additionalArgs = SmartList<String>().apply {
+            val argsElement = configuration?.getChild("args")
+
+            argsElement?.content?.forEach { argElement ->
+                when (argElement) {
+                    is Text -> {
+                        argElement.text?.let { addAll(splitArgumentString(it)) }
+                    }
+                    is Element -> {
+                        if (argElement.name == "arg") {
+                            addIfNotNull(argElement.text)
+                        }
+                    }
+                }
+            }
+            argsElement?.getChildren("arg")?.mapNotNullTo(this) { it.text }
+        }
         parseCommandLineArguments(additionalArgs, arguments)
 
         return ArgumentUtils.convertArgumentsToStringList(arguments)
