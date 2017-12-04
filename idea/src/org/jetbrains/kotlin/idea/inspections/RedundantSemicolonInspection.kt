@@ -48,7 +48,7 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
         val isAtEndOfLine = nextLeaf == null || nextLeaf.isLineBreak()
         if (!isAtEndOfLine) {
             //when there is no imports parser generates empty import list with no spaces
-            if (semicolon.parent is KtPackageDirective && (nextLeaf as? KtImportList)?.imports?.isEmpty() ?: false) {
+            if (semicolon.parent is KtPackageDirective && (nextLeaf as? KtImportList)?.imports?.isEmpty() == true) {
                 return true
             }
             return false
