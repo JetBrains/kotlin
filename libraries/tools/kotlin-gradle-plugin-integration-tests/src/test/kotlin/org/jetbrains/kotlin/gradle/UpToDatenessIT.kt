@@ -26,6 +26,7 @@ class UpToDateIT : BaseGradleIT() {
                       OptionMutation("compileKotlin.kotlinOptions.freeCompilerArgs", "[]", "['-Xallow-kotlin-package']"),
                       OptionMutation("kotlin.experimental.coroutines", "'error'", "'enable'"),
                       OptionMutation("archivesBaseName", "'someName'", "'otherName'"),
+                      subpluginOptionMutation,
                       externalOutputMutation,
                       compilerClasspathMutation)
     }
@@ -83,6 +84,26 @@ class UpToDateIT : BaseGradleIT() {
                 }.reversed()
                 it.replace(originalPaths, modifiedClasspath.joinToString(", ") { "'${it.replace("\\", "/")}'" })
             }
+        }
+
+        override fun checkAfterRebuild(compiledProject: CompiledProject) = with(compiledProject) {
+            assertTasksExecuted(listOf(":compileKotlin"))
+        }
+    }
+
+    private val subpluginOptionMutation = object : ProjectMutation {
+        override val name: String get() = "subpluginOptionMutation"
+
+        override fun initProject(project: Project) = with(project) {
+            buildGradle.appendText("\n" + """
+                buildscript { dependencies { classpath "org.jetbrains.kotlin:kotlin-allopen:${'$'}kotlin_version" } }
+                apply plugin: "kotlin-allopen"
+                allOpen { annotation("allopen.Foo"); annotation("allopen.Bar") }
+            """.trimIndent())
+        }
+
+        override fun mutateProject(project: Project) = with(project) {
+            buildGradle.modify { it.replace("allopen.Foo", "allopen.Baz") }
         }
 
         override fun checkAfterRebuild(compiledProject: CompiledProject) = with(compiledProject) {
