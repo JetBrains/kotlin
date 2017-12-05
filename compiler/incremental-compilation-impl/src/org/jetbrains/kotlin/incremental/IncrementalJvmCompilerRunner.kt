@@ -212,10 +212,9 @@ class IncrementalJvmCompilerRunner(
             }
         }
 
-        if ((changedFiles.modified + changedFiles.removed).any { it.extension.toLowerCase() == "xml" }) {
-            return CompilationMode.Rebuild { "XML resource files were changed" }
-        }
+        val androidLayoutChanges = processLookupSymbolsForAndroidLayouts(changedFiles)
 
+        markDirtyBy(androidLayoutChanges)
         markDirtyBy(classpathChanges.lookupSymbols)
         markDirtyBy(classpathChanges.fqNames)
 
@@ -258,6 +257,17 @@ class IncrementalJvmCompilerRunner(
             val name = innerClass.name ?: continue
             processChangedUntrackedJavaClass(innerClass, classId.createNestedClassId(Name.identifier(name)))
         }
+    }
+
+    private fun processLookupSymbolsForAndroidLayouts(changedFiles: ChangedFiles.Known): Collection<LookupSymbol> {
+        val result = mutableListOf<LookupSymbol>()
+        for (file in changedFiles.modified + changedFiles.removed) {
+            if (file.extension.toLowerCase() != "xml") continue
+            val layoutName = file.name.substringBeforeLast('.')
+            result.add(LookupSymbol(ANDROID_LAYOUT_CONTENT_LOOKUP_NAME, layoutName))
+        }
+
+        return result
     }
 
     private fun getClasspathChanges(

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.android.synthetic.test
 
 import org.jetbrains.kotlin.android.synthetic.res.AndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticPackageFragmentProvider
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -39,8 +40,11 @@ abstract class AbstractAndroidSyntheticPropertyDescriptorTest : KtUsefulTestCase
 
         val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(listOf(), env)
 
-        val fragmentProvider = ext.getPackageFragmentProvider(project, analysisResult.moduleDescriptor, LockBasedStorageManager.NO_LOCKS,
-                                       KotlinTestUtils.DUMMY_EXCEPTION_ON_ERROR_TRACE, null) as AndroidSyntheticPackageFragmentProvider
+        val fragmentProvider =
+                ext.getPackageFragmentProvider(
+                        project, analysisResult.moduleDescriptor, LockBasedStorageManager.NO_LOCKS,
+                        KotlinTestUtils.DUMMY_EXCEPTION_ON_ERROR_TRACE, null, LookupTracker.DO_NOTHING
+                ) as AndroidSyntheticPackageFragmentProvider
 
         val renderer = DescriptorRenderer.COMPACT_WITH_MODIFIERS
         val expected = fragmentProvider.packageFragments.sortedBy { it.fqName.asString() }.map {

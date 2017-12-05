@@ -35,8 +35,14 @@ fun LookupTracker.record(from: LookupLocation, scopeOwner: ClassDescriptor, name
 }
 
 fun LookupTracker.record(from: LookupLocation, scopeOwner: PackageFragmentDescriptor, name: Name) {
+    recordPackageLookup(from, scopeOwner.fqName.asString(), name.asString())
+}
+
+fun LookupTracker.recordPackageLookup(from: LookupLocation, packageFqName: String, name: String) {
     if (this === LookupTracker.DO_NOTHING) return
     val location = from.location ?: return
     val position = if (requiresPosition) location.position else Position.NO_POSITION
-    record(location.filePath, position, scopeOwner.fqName.asString(), ScopeKind.PACKAGE, name.asString())
+    record(location.filePath, position, packageFqName, ScopeKind.PACKAGE, name)
 }
+
+const val ANDROID_LAYOUT_CONTENT_LOOKUP_NAME = "<LAYOUT-CONTENT>"

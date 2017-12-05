@@ -221,7 +221,7 @@ object TopDownAnalyzerFacadeForJVM {
 
         // TODO: consider putting extension package fragment providers into the dependency module
         PackageFragmentProviderExtension.getInstances(project).mapNotNullTo(additionalProviders) { extension ->
-            extension.getPackageFragmentProvider(project, module, storageManager, trace, null)
+            extension.getPackageFragmentProvider(project, module, storageManager, trace, null, lookupTracker)
         }
 
         // TODO: remove dependencyModule from friends
