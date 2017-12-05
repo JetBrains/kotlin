@@ -50,6 +50,8 @@ class LazyScriptDescriptor(
         resolveSession.trace.record(BindingContext.SCRIPT, scriptInfo.script, this)
     }
 
+    override fun isReplSnippet() = scriptInfo.isReplSnippet
+
     private val sourceElement = scriptInfo.script.toSourceElement()
 
     override fun getSource() = sourceElement

@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 public interface ScriptDescriptor extends ClassDescriptor {
     int getPriority();
 
+    boolean isReplSnippet();
+
     @NotNull
     @Override
     ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor();

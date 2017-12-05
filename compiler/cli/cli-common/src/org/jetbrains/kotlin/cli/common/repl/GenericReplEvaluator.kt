@@ -73,36 +73,29 @@ open class GenericReplEvaluator(
                 return@eval ReplEvalResult.Error.Runtime(e.message ?: "unknown", e)
             }
 
-            val currentScriptArgs = scriptArgs ?: fallbackScriptArgs
-            val useScriptArgs = currentScriptArgs?.scriptArgs
-            val useScriptArgsTypes = currentScriptArgs?.scriptArgsTypes?.map { it.java }
-
-            val hasHistory = historyActor.effectiveHistory.isNotEmpty()
-
-            val constructorParams: Array<Class<*>> = (if (hasHistory) arrayOf<Class<*>>(Array<Any>::class.java) else emptyArray<Class<*>>()) +
-                                                     (useScriptArgs?.mapIndexed { i, it -> useScriptArgsTypes?.getOrNull(i) ?: it?.javaClass ?: Any::class.java } ?: emptyList())
-
-            val constructorArgs: Array<out Any?> = if (hasHistory) arrayOf(historyActor.effectiveHistory.map { it.instance }.takeIf { it.isNotEmpty() }?.toTypedArray(),
-                                                                           *(useScriptArgs.orEmpty()))
-                                                   else useScriptArgs.orEmpty()
-
-            // TODO: try/catch ?
-            val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
-
             historyActor.addPlaceholder(compileResult.lineId, EvalClassWithInstanceAndLoader(scriptClass.kotlin, null, classLoader, invokeWrapper))
+
+            fun makeErrorMessage(e: Throwable) = renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.run")
 
             val scriptInstance =
                     try {
-                        if (invokeWrapper != null) invokeWrapper.invoke { scriptInstanceConstructor.newInstance(*constructorArgs) }
-                        else scriptInstanceConstructor.newInstance(*constructorArgs)
+                        val scriptInstance = if (invokeWrapper != null) {
+                            invokeWrapper.invoke { scriptClass.newInstance() }
+                        }
+                        else {
+                            scriptClass.newInstance()
+                        }
+
+                        scriptInstance.javaClass.getDeclaredMethod("run").invoke(null)
+                        scriptInstance
                     }
                     catch (e: InvocationTargetException) {
                         // ignore everything in the stack trace until this constructor call
-                        return@eval ReplEvalResult.Error.Runtime(renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"), e.targetException as? Exception)
+                        return@eval ReplEvalResult.Error.Runtime(makeErrorMessage(e), e.targetException as? Exception)
                     }
                     catch (e: Throwable) {
                         // ignore everything in the stack trace until this constructor call
-                        return@eval ReplEvalResult.Error.Runtime(renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"), e as? Exception)
+                        return@eval ReplEvalResult.Error.Runtime(makeErrorMessage(e), e as? Exception)
                     }
                     finally {
                         historyActor.removePlaceholder(compileResult.lineId)

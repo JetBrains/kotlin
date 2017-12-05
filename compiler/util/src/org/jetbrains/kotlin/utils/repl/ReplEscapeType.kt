@@ -16,6 +16,10 @@
 
 package org.jetbrains.kotlin.utils.repl
 
+import com.intellij.openapi.util.Key
+
+val IS_REPL_SNIPPET = Key<Boolean>("IS_REPL_SNIPPET")
+
 enum class ReplEscapeType {
     INITIAL_PROMPT,
     HELP_PROMPT,

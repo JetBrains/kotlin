@@ -35,7 +35,12 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
+import org.jetbrains.kotlin.utils.repl.IS_REPL_SNIPPET
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.PrintWriter
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 
@@ -79,6 +84,10 @@ open class GenericReplCompiler(disposable: Disposable,
                 classpathAddendum = newDependencies?.let { checker.environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) }
             }
 
+            val ktScript = psiFile.getChildOfType<KtScript>()?.also { ktScript ->
+                ktScript.putUserData(IS_REPL_SNIPPET, true)
+            }
+
             val analysisResult = compilerState.analyzerEngine.analyzeReplLine(psiFile, codeLine)
             AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
             val scriptDescriptor = when (analysisResult) {
@@ -107,7 +116,7 @@ open class GenericReplCompiler(disposable: Disposable,
             val generatedClassname = makeScriptBaseName(codeLine)
             compilerState.history.push(LineId(codeLine), scriptDescriptor)
 
-            val expression = psiFile.getChildOfType<KtScript>()?.
+            val expression = ktScript?.
                     getChildOfType<KtBlockExpression>()?.
                     getChildOfType<KtScriptInitializer>()?.
                     getChildOfType<KtExpression>()
