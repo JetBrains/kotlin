@@ -9848,6 +9848,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("hasLateinit.kt")
+        public void testHasLateinit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/hasLateinit.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("incorrectConditionalAssignment.kt")
         public void testIncorrectConditionalAssignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/incorrectConditionalAssignment.kt");
