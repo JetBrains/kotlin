@@ -44,4 +44,16 @@ class KotlinUBlockExpression(
             }
         }
     }
+
+    override fun convertParent(): UElement? {
+        val directParent = super.convertParent()
+        if (directParent is UnknownKotlinExpression && directParent.psi is KtAnonymousInitializer) {
+            val containingUClass = directParent.getContainingUClass() ?: return directParent
+            containingUClass.methods
+                    .find { it is KotlinConstructorUMethod && it.isPrimary || it is KotlinSecondaryConstructorWithInitializersUMethod }?.let {
+                return it.uastBody
+            }
+        }
+        return directParent
+    }
 }

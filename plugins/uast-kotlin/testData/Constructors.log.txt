@@ -130,6 +130,10 @@ UFile (package = )
                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                     UIdentifier (Identifier ())
                     USimpleNameReferenceExpression (identifier = <init>)
+                UBlockExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (println))
+                        USimpleNameReferenceExpression (identifier = println)
                 UBinaryExpression (operator = =)
                     USimpleNameReferenceExpression (identifier = a)
                     UQualifiedReferenceExpression
