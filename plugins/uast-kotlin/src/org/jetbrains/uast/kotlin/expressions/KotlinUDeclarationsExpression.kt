@@ -28,8 +28,8 @@ open class KotlinUDeclarationsExpression(
     override val sourcePsi: PsiElement?
         get() = psiAnchor
 
-    override val uastParent: UElement?
-        get() = if (psiAnchor != null) doConvertParent(this, psiAnchor.parent) else super.uastParent
+    override fun convertParent(): UElement? =
+            psiAnchor?.let { doConvertParent(this, it.parent) } ?: super.convertParent()
 
     constructor(uastParent: UElement?) : this(null, uastParent)
 
