@@ -170,12 +170,6 @@ void ThrowException(KRef exception) {
   PrintThrowable(exception);
   RuntimeAssert(false, "Exceptions unsupported");
 #else
-#if (__MINGW32__ || __MINGW64__)
-  // Workaround for https://bugs.llvm.org/show_bug.cgi?id=33220
-  // This code forces the function to have at least one landingpad:
-  ObjHolder toBeDestructed(exception);
-#endif
-
   throw ObjHolder(exception);
 #endif
 }

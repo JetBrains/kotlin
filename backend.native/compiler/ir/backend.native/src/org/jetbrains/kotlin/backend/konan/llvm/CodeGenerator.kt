@@ -713,9 +713,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     private val needSlots: Boolean
         get() {
-            return slotCount > frameOverlaySlotCount || localAllocs > 0 ||
-                    // Prevent empty cleanup on mingw to workaround LLVM bug:
-                    context.config.targetManager.target == KonanTarget.MINGW
+            return slotCount > frameOverlaySlotCount || localAllocs > 0
         }
 
     private fun releaseVars() {
