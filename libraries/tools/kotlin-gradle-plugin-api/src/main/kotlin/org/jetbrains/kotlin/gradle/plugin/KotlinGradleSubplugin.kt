@@ -19,8 +19,24 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import java.io.File
 
-class SubpluginOption(val key: String, val value: String)
+open class SubpluginOption(val key: String, open val value: String)
+
+class FilesSubpluginOption(
+        key: String,
+        val kind: FileOptionKind,
+        val files: List<File>,
+        value: String = files.joinToString(File.pathSeparator) { it.canonicalPath })
+    : SubpluginOption(key, value)
+
+class WrapperSubpluginOption(
+        key: String,
+        value: String,
+        val originalOptions: List<SubpluginOption>)
+    : SubpluginOption(key, value)
+
+enum class FileOptionKind { INPUT_FILES, CLASSPATH_INPUT, OUTPUT_FILES, OUTPUT_DIRS, INTERNAL }
 
 interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     fun isApplicable(project: Project, task: AbstractCompile): Boolean
