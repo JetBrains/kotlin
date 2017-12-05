@@ -147,7 +147,8 @@ abstract class BaseGradleIT {
             val freeCommandLineArgs: List<String> = emptyList(),
             val kotlinVersion: String = KOTLIN_VERSION,
             val kotlinDaemonDebugPort: Int? = null,
-            val usePreciseJavaTracking: Boolean? = null
+            val usePreciseJavaTracking: Boolean? = null,
+            val withBuildCache: Boolean = false
     )
 
     open inner class Project(
