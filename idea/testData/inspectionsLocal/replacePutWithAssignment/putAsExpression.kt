@@ -3,4 +3,4 @@
 
 val map = mutableMapOf(42 to "foo")
 
-fun foo() = map.put<caret>(60, "bar")
+fun foo() = map.<caret>put(60, "bar")

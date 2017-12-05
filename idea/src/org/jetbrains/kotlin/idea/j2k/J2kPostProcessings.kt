@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
-import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
-import org.jetbrains.kotlin.idea.inspections.UnnecessaryVariableInspection
-import org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection
-import org.jetbrains.kotlin.idea.inspections.findExistingEditor
+import org.jetbrains.kotlin.idea.inspections.*
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention
@@ -81,6 +78,7 @@ object J2KPostProcessingRegistrar {
         _processings.add(UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing())
         _processings.add(RemoveRedundantSamAdaptersProcessing())
         _processings.add(RemoveRedundantCastToNullableProcessing())
+        _processings.add(ReplacePutWithAssignmentProcessing())
         _processings.add(UseExpressionBodyProcessing())
         _processings.add(UnnecessaryVariableProcessing())
 
@@ -270,6 +268,19 @@ object J2KPostProcessingRegistrar {
             return {
                 RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
                         .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
+            }
+        }
+    }
+
+    private class ReplacePutWithAssignmentProcessing : J2kPostProcessing {
+        override val writeActionNeeded = true
+
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtDotQualifiedExpression) return null
+            if (!ReplacePutWithAssignmentInspection.isActiveFor(element)) return null
+
+            return {
+                ReplacePutWithAssignmentInspection.simplify(element)
             }
         }
     }

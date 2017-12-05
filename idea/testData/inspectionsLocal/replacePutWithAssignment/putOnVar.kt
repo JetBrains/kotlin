@@ -2,5 +2,5 @@
 
 fun foo() {
     var map = mutableMapOf(42 to "foo")
-    map.put<caret>(60, "bar")
+    map.<caret>put(60, "bar")
 }
