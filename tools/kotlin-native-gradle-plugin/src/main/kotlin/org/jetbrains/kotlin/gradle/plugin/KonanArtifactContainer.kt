@@ -34,6 +34,12 @@ open class KonanArtifactContainer(val project: ProjectInternal)
         registerFactory(KonanProgram::class.java) { name ->
             instantiator.newInstance(KonanProgram::class.java, name, project, instantiator)
         }
+        registerFactory(KonanDynamic::class.java) { name ->
+            instantiator.newInstance(KonanDynamic::class.java, name, project, instantiator)
+        }
+        registerFactory(KonanFramework::class.java) { name ->
+            instantiator.newInstance(KonanFramework::class.java, name, project, instantiator)
+        }
         registerFactory(KonanLibrary::class.java) { name ->
             instantiator.newInstance(KonanLibrary::class.java, name, project, instantiator)
         }
@@ -57,6 +63,22 @@ open class KonanArtifactContainer(val project: ProjectInternal)
             create(name, KonanProgram::class.java, configureAction)
     fun program(name: String, configureAction: Closure<*>) =
             program(name, ConfigureUtil.configureUsing(configureAction))
+
+    fun dynamic(name: String) = create(name, KonanDynamic::class.java)
+    fun dynamic(name: String, configureAction: Action<KonanDynamic>) =
+            create(name, KonanDynamic::class.java, configureAction)
+    fun dynamic(name: String, configureAction: KonanDynamic.() -> Unit) =
+            create(name, KonanDynamic::class.java, configureAction)
+    fun dynamic(name: String, configureAction: Closure<*>) =
+            dynamic(name, ConfigureUtil.configureUsing(configureAction))
+
+    fun framework(name: String) = create(name, KonanFramework::class.java)
+    fun framework(name: String, configureAction: Action<KonanFramework>) =
+            create(name, KonanFramework::class.java, configureAction)
+    fun framework(name: String, configureAction: KonanFramework.() -> Unit) =
+            create(name, KonanFramework::class.java, configureAction)
+    fun framework(name: String, configureAction: Closure<*>) =
+            framework(name, ConfigureUtil.configureUsing(configureAction))
 
     fun library(name: String) = create(name, KonanLibrary::class.java)
     fun library(name: String, configureAction: Action<KonanLibrary>) =

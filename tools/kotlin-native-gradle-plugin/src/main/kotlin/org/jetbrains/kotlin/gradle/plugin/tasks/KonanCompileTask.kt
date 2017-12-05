@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 enum class Produce(val cliOption: String, val kind: CompilerOutputKind) {
     PROGRAM("program", CompilerOutputKind.PROGRAM),
+    DYNAMIC("dynamic", CompilerOutputKind.DYNAMIC),
+    FRAMEWORK("framework", CompilerOutputKind.FRAMEWORK),
     LIBRARY("library", CompilerOutputKind.LIBRARY),
     BITCODE("bitcode", CompilerOutputKind.BITCODE)
 }
@@ -169,6 +171,17 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
 open class KonanCompileProgramTask: KonanCompileTask() {
     override val produce: Produce  get() = Produce.PROGRAM
+}
+
+open class KonanCompileDynamicTask: KonanCompileTask() {
+    override val produce: Produce  get() = Produce.DYNAMIC
+}
+
+open class KonanCompileFrameworkTask: KonanCompileTask() {
+    override val produce: Produce  get() = Produce.FRAMEWORK
+
+    override val artifact
+        @OutputDirectory get() = super.artifact
 }
 
 open class KonanCompileLibraryTask: KonanCompileTask() {

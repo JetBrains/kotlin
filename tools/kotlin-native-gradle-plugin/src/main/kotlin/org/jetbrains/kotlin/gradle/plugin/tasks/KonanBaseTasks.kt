@@ -60,7 +60,7 @@ abstract class KonanTargetableTask: DefaultTask() {
 /** A task building an artifact. */
 abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
 
-    val artifact: File
+    open val artifact: File
         @OutputFile get() = destinationDir.resolve(artifactNameWithSuffix)
 
     @Internal lateinit var destinationDir: File

@@ -20,10 +20,7 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileBitcodeTask
-import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileLibraryTask
-import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileProgramTask
-import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileTask
+import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -71,6 +68,26 @@ open class KonanProgram(name: String, project: ProjectInternal, instantiator: In
 
     override val typeForDescription: String
         get() = "executable"
+
+    override val defaultBaseDir: File
+        get() = project.konanBinBaseDir
+}
+
+open class KonanDynamic(name: String, project: ProjectInternal, instantiator: Instantiator)
+    : KonanCompileConfig<KonanCompileDynamicTask>(name, KonanCompileDynamicTask::class.java, project, instantiator) {
+
+    override val typeForDescription: String
+        get() = "dynamic library"
+
+    override val defaultBaseDir: File
+        get() = project.konanBinBaseDir
+}
+
+open class KonanFramework(name: String, project: ProjectInternal, instantiator: Instantiator)
+    : KonanCompileConfig<KonanCompileFrameworkTask>(name, KonanCompileFrameworkTask::class.java, project, instantiator) {
+
+    override val typeForDescription: String
+        get() = "framework"
 
     override val defaultBaseDir: File
         get() = project.konanBinBaseDir
