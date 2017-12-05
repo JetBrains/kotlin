@@ -25,21 +25,21 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class CharSequenceIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
     private val expectedReceiverType: KotlinType = ExpressionCodegen.getExpectedReceiverType(rangeCall)
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-            object : AbstractBoundedValue(codegen, rangeCall, isHighInclusive = false) {
-                override fun putHighLow(v: InstructionAdapter, type: Type) {
-                    codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
-                    v.invokeinterface("java/lang/CharSequence", "length", "()I")
-                    StackValue.coerce(Type.INT_TYPE, type, v)
-
-                    StackValue.constant(0, asmElementType).put(type, v)
-                }
-            }
+            SimpleBoundedValue(
+                    codegen, rangeCall,
+                    lowBound = StackValue.constant(0, asmElementType),
+                    isLowInclusive = true,
+                    highBound = StackValue.operation(Type.INT_TYPE) { v ->
+                        codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
+                        v.invokeinterface("java/lang/CharSequence", "length", "()I")
+                    },
+                    isHighInclusive = false
+            )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInCharSequenceIndicesRangeLoopGenerator(codegen, forExpression, rangeCall)
