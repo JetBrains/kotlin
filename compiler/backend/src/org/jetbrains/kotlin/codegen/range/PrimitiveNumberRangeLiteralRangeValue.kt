@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class PrimitiveNumberRangeLiteralRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+class PrimitiveNumberRangeLiteralRangeValue(
+        rangeCall: ResolvedCall<out CallableDescriptor>
+): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
     override fun getBoundedValue(codegen: ExpressionCodegen) =
             SimpleBoundedValue(codegen, rangeCall)
 
