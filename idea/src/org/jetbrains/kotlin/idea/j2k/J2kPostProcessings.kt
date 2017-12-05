@@ -280,7 +280,9 @@ object J2KPostProcessingRegistrar {
             if (!ReplacePutWithAssignmentInspection.isActiveFor(element)) return null
 
             return {
-                ReplacePutWithAssignmentInspection.simplify(element)
+                if (ReplacePutWithAssignmentInspection.isActiveFor(element)) {
+                    ReplacePutWithAssignmentInspection.simplify(element)
+                }
             }
         }
     }
@@ -295,7 +297,9 @@ object J2KPostProcessingRegistrar {
             if (!inspection.isActiveFor(element)) return null
 
             return {
-                inspection.simplify(element, false)
+                if (inspection.isActiveFor(element)) {
+                    inspection.simplify(element, false)
+                }
             }
         }
     }
