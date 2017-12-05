@@ -85,10 +85,18 @@ private fun KtExpression.isValidCandidateExpression(): Boolean {
 fun KtExpression.hasSuspendCalls(bindingContext: BindingContext = analyze(BodyResolveMode.PARTIAL)): Boolean {
     if (!isValidCandidateExpression()) return false
 
-    val resolvedCall = if (this is KtForExpression) {
-        bindingContext[BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange]
-    } else {
-        this.getResolvedCall(bindingContext)
-    } ?: return false
-    return (resolvedCall.resultingDescriptor as? FunctionDescriptor)?.isSuspend == true
+    return when (this) {
+        is KtForExpression -> {
+            val iteratorResolvedCall = bindingContext[BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange]
+            val loopRangeHasNextResolvedCall = bindingContext[BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, loopRange]
+            val loopRangeNextResolvedCall = bindingContext[BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange]
+            listOf(iteratorResolvedCall, loopRangeHasNextResolvedCall, loopRangeNextResolvedCall).any {
+                it?.resultingDescriptor?.isSuspend == true
+            }
+        }
+        else -> {
+            val resolvedCall = getResolvedCall(bindingContext)
+            (resolvedCall?.resultingDescriptor as? FunctionDescriptor)?.isSuspend == true
+        }
+    }
 }
