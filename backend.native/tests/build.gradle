@@ -564,6 +564,30 @@ task worker3(type: RunKonanTest) {
     source = "runtime/workers/worker3.kt"
 }
 
+task worker4(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
+    goldValue = "Got 42\nOK\n"
+    source = "runtime/workers/worker4.kt"
+}
+
+task worker5(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
+    goldValue = "Got 3\nOK\n"
+    source = "runtime/workers/worker5.kt"
+}
+
+task worker6(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
+    goldValue = "Got 42\nOK\n"
+    source = "runtime/workers/worker6.kt"
+}
+
+task worker7(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
+    goldValue = "Input\nGot kotlin.Unit\nOK\n"
+    source = "runtime/workers/worker7.kt"
+}
+
 task superFunCall(type: RunKonanTest) {
     goldValue = "<fun:C><fun:C1>\n<fun:C><fun:C3>\n"
     source = "codegen/basics/superFunCall.kt"
