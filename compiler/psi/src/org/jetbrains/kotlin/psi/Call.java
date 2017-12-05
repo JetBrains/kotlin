@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
