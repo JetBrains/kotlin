@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.utils.repl.IS_REPL_SNIPPET
 
 class KtScriptInfo(
     val script: KtScript
@@ -32,7 +33,10 @@ class KtScriptInfo(
     override fun getCorrespondingClassOrObject() = null
     override fun getTypeParameterList() = null
     override fun getPrimaryConstructorParameters() = listOf<KtParameter>()
-    override fun getClassKind() = ClassKind.CLASS
+    override fun getClassKind() = if (isReplSnippet) ClassKind.OBJECT else ClassKind.CLASS
     override fun getDeclarations() = script.declarations
     override fun getDanglingAnnotations() = listOf<KtAnnotationEntry>()
+
+    val isReplSnippet: Boolean
+        get() = script.getUserData(IS_REPL_SNIPPET) == true
 }

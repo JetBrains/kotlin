@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.context.ScriptContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
@@ -29,12 +29,9 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 
-class ScriptCodegen private constructor(
+class ScriptCodegenForRepl private constructor(
         private val scriptDeclaration: KtScript,
         state: GenerationState,
         private val scriptContext: ScriptContext,
@@ -44,21 +41,26 @@ class ScriptCodegen private constructor(
     private val classAsmType = typeMapper.mapClass(scriptContext.contextDescriptor)
 
     override fun generateDeclaration() {
+        // Do not allow superclasses for REPL line scripts
+        assert(scriptDescriptor.getSuperClassNotAny() == null)
+
         v.defineClass(
                 scriptDeclaration,
                 state.classFileVersion,
                 ACC_PUBLIC or ACC_SUPER,
                 classAsmType.internalName,
                 null,
-                typeMapper.mapSupertype(scriptDescriptor.getSuperClassOrAny().defaultType, null).internalName,
+                "java/lang/Object",
                 mapSupertypesNames(typeMapper, scriptDescriptor.getSuperInterfaces(), null)
         )
     }
 
     override fun generateBody() {
         genMembers()
-        genFieldsForParameters(v)
-        genConstructor(scriptDescriptor, v, scriptContext.intoFunction(scriptDescriptor.unsubstitutedPrimaryConstructor))
+
+        genDefaultConstructor(v)
+        genRunMethod(v, scriptContext.intoFunction(scriptDescriptor.unsubstitutedPrimaryConstructor))
+        genResultFieldIfNeeded(v)
     }
 
     override fun generateSyntheticPartsBeforeBody() {
@@ -71,100 +73,48 @@ class ScriptCodegen private constructor(
         generateKotlinClassMetadataAnnotation(scriptDescriptor, true)
     }
 
-    private fun genConstructor(
-            scriptDescriptor: ScriptDescriptor,
-            classBuilder: ClassBuilder,
-            methodContext: MethodContext
-    ) {
-        val jvmSignature = typeMapper.mapScriptSignature(scriptDescriptor, scriptContext.earlierScripts)
-
+    private fun genResultFieldIfNeeded(classBuilder: ClassBuilder) {
         if (state.replSpecific.shouldGenerateScriptResultValue) {
             val resultFieldInfo = scriptContext.resultFieldInfo
             classBuilder.newField(
                     JvmDeclarationOrigin.NO_ORIGIN,
-                    ACC_PUBLIC or ACC_FINAL,
+                    ACC_PUBLIC or ACC_FINAL or ACC_STATIC,
                     resultFieldInfo.fieldName,
                     resultFieldInfo.fieldType.descriptor,
                     null, null)
         }
+    }
 
-        val mv = classBuilder.newMethod(
-                OtherOrigin(scriptDeclaration, scriptDescriptor.unsubstitutedPrimaryConstructor),
-                ACC_PUBLIC, jvmSignature.asmMethod.name, jvmSignature.asmMethod.descriptor, null, null)
+    private fun genDefaultConstructor(classBuilder: ClassBuilder) {
+        val mv = classBuilder.newMethod(OtherOrigin(scriptDeclaration), ACC_PUBLIC, "<init>", "()V", null, null)
 
         if (state.classBuilderMode.generateBodies) {
             mv.visitCode()
-
-            val iv = InstructionAdapter(mv)
-
-            val classType = typeMapper.mapType(scriptDescriptor)
-
-            val superclass = scriptDescriptor.getSuperClassNotAny()
-            // TODO: throw if class is not found)
-
-            if (superclass == null) {
-                iv.load(0, classType)
-                iv.invokespecial("java/lang/Object", "<init>", "()V", false)
+            with (InstructionAdapter(mv)) {
+                load(0, typeMapper.mapType(scriptDescriptor))
+                invokespecial("java/lang/Object", "<init>", "()V", false)
+                areturn(Type.VOID_TYPE)
             }
-            else {
-                val ctorDesc = superclass.unsubstitutedPrimaryConstructor
-                               ?: throw RuntimeException("Primary constructor not found for script template " + superclass.toString())
-
-                iv.load(0, classType)
-
-                val valueParamStart = if (scriptContext.earlierScripts.isEmpty()) 1 else 2 // this + array of earlier scripts if not empty
-
-                val valueParameters = scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters
-                for (superclassParam in ctorDesc.valueParameters) {
-                    val valueParam = valueParameters.first { it.name == superclassParam.name }
-                    iv.load(valueParam!!.index + valueParamStart, typeMapper.mapType(valueParam.type))
-                }
-
-                val ctorMethod = typeMapper.mapToCallableMethod(ctorDesc, false)
-                val sig = ctorMethod.getAsmMethod().descriptor
-
-                iv.invokespecial(
-                        typeMapper.mapSupertype(superclass.defaultType, null).internalName,
-                        "<init>", sig, false)
-            }
-            iv.load(0, classType)
-
-            val frameMap = FrameMap()
-            frameMap.enterTemp(OBJECT_TYPE)
-
-
-            if (!scriptContext.earlierScripts.isEmpty()) {
-                val scriptsParamIndex = frameMap.enterTemp(AsmUtil.getArrayType(OBJECT_TYPE))
-
-                var earlierScriptIndex = 0
-                for (earlierScript in scriptContext.earlierScripts) {
-                    val earlierClassType = typeMapper.mapClass(earlierScript)
-                    iv.load(0, classType)
-                    iv.load(scriptsParamIndex, earlierClassType)
-                    iv.aconst(earlierScriptIndex++)
-                    iv.aload(OBJECT_TYPE)
-                    iv.checkcast(earlierClassType)
-                    iv.putfield(classType.internalName, scriptContext.getScriptFieldName(earlierScript), earlierClassType.descriptor)
-                }
-            }
-
-            val codegen = ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this)
-
-            generateInitializers { codegen }
-
-            iv.areturn(Type.VOID_TYPE)
         }
 
         mv.visitMaxs(-1, -1)
         mv.visitEnd()
     }
 
-    private fun genFieldsForParameters(classBuilder: ClassBuilder) {
-        for (earlierScript in scriptContext.earlierScripts) {
-            val earlierClassName = typeMapper.mapType(earlierScript)
-            val access = ACC_PUBLIC or ACC_FINAL
-            classBuilder.newField(NO_ORIGIN, access, scriptContext.getScriptFieldName(earlierScript), earlierClassName.descriptor, null, null)
+    private fun genRunMethod(classBuilder: ClassBuilder, methodContext: MethodContext) {
+        val mv = classBuilder.newMethod(OtherOrigin(scriptDeclaration), ACC_PUBLIC or ACC_STATIC, RUN_METHOD_NAME, "()V", null, null)
+
+        if (state.classBuilderMode.generateBodies) {
+            mv.visitCode()
+            with (InstructionAdapter(mv)) {
+                val codegen = ExpressionCodegen(mv, FrameMap(), Type.VOID_TYPE, methodContext, state, this@ScriptCodegenForRepl)
+                generateInitializers { codegen }
+                areturn(Type.VOID_TYPE)
+            }
         }
+
+        mv.visitMaxs(-1, -1)
+        mv.visitEnd()
     }
 
     private fun genMembers() {
@@ -184,6 +134,8 @@ class ScriptCodegen private constructor(
     }
 
     companion object {
+        val RUN_METHOD_NAME = "run"
+
         @JvmStatic
         fun createScriptCodegen(
                 declaration: KtScript,
@@ -192,10 +144,6 @@ class ScriptCodegen private constructor(
         ): MemberCodegen<KtScript> {
             val bindingContext = state.bindingContext
             val scriptDescriptor = bindingContext.get<PsiElement, ScriptDescriptor>(BindingContext.SCRIPT, declaration)!!
-
-            if (scriptDescriptor.isReplSnippet) {
-                return ScriptCodegenForRepl.createScriptCodegen(declaration, state, parentContext)
-            }
 
             val classType = state.typeMapper.mapType(scriptDescriptor)
 
@@ -211,7 +159,7 @@ class ScriptCodegen private constructor(
                     state.typeMapper
             )
 
-            return ScriptCodegen(declaration, state, scriptContext, builder)
+            return ScriptCodegenForRepl(declaration, state, scriptContext, builder)
         }
     }
 }

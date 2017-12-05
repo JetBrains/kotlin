@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.annotations
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -29,6 +31,13 @@ val JVM_STATIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmStatic")
 val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")
 
 fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
+    if (this is CallableDescriptor) {
+        val containingDeclaration = this.containingDeclaration
+        if (containingDeclaration is ScriptDescriptor && containingDeclaration.isReplSnippet) {
+            return true
+        }
+    }
+
     return annotations.findAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) != null
 }
 

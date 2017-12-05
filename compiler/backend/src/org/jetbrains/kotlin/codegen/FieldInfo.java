@@ -58,6 +58,16 @@ public class FieldInfo {
         return new FieldInfo(owner, fieldType, fieldName, false);
     }
 
+    @NotNull
+    public static FieldInfo createForHiddenField(
+            @NotNull Type owner,
+            @NotNull Type fieldType,
+            @NotNull String fieldName,
+            @NotNull boolean isStatic
+    ) {
+        return new FieldInfo(owner, fieldType, fieldName, isStatic);
+    }
+
     private final Type fieldType;
     private final Type ownerType;
     private final String fieldName;
