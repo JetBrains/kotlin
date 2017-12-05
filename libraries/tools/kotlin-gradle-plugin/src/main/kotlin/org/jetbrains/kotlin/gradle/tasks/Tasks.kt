@@ -38,8 +38,7 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
@@ -413,15 +412,15 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                         kaptAnnotationsFileUpdater = AnnotationFileUpdaterImpl(kaptAnnotationsFile)
                     }
 
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "output", kaptAnnotationsFile.canonicalPath)
+                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, FilesSubpluginOption("output", FileOptionKind.INTERNAL, listOf(kaptAnnotationsFile)))
                 }
 
                 if (kaptOptions.generateStubs) {
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "stubs", destinationDir.canonicalPath)
+                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, FilesSubpluginOption("stubs", FileOptionKind.INTERNAL, listOf(destinationDir)))
                 }
 
                 if (kaptOptions.supportInheritedAnnotations) {
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "inherited", true.toString())
+                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, SubpluginOption("inherited", true.toString()))
                 }
             }
 

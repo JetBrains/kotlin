@@ -16,11 +16,15 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import java.io.File
 
 internal class CompilerPluginOptions {
     private val mutableClasspath = arrayListOf<String>()
     private val mutableArguments = arrayListOf<String>()
+
+    internal val subpluginOptionsByPluginId =
+            mutableMapOf<String, MutableList<SubpluginOption>>()
 
     val classpath: List<String>
         get() = mutableClasspath
@@ -38,7 +42,8 @@ internal class CompilerPluginOptions {
         mutableClasspath.remove(file.canonicalPath)
     }
 
-    fun addPluginArgument(pluginId: String, key: String, value: String) {
-        mutableArguments.add("plugin:$pluginId:$key=$value")
+    fun addPluginArgument(pluginId: String, option: SubpluginOption) {
+        mutableArguments.add("plugin:$pluginId:${option.key}=${option.value}")
+        subpluginOptionsByPluginId.getOrPut(pluginId) { mutableListOf() }.add(option)
     }
 }

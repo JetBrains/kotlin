@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.kapt.generateAnnotationProcessorWrapper
 import org.jetbrains.kotlin.gradle.tasks.kapt.generateKotlinAptAnnotation
+import org.jetbrains.kotlin.gradle.tasks.shouldEnableGradleCache
 import java.io.File
 import java.io.IOException
 import java.util.zip.ZipFile
@@ -78,6 +79,11 @@ internal fun Project.initKapt(
 //        javaTask.doLast {
 //            moveGeneratedJavaFilesToCorrespondingDirectories(kaptManager.aptOutputDir)
 //        }
+
+        if (shouldEnableGradleCache()) {
+            // Since Kapt1 is about to be dropped, disable the cache for it:
+            kotlinAfterJavaTask.outputs.doNotCacheIf("Caching is not supported with deprecated Kapt1") { true }
+        }
     } else {
         kotlinAfterJavaTask = null
         kotlinTask.logger.kotlinDebug("kapt: Class file stubs are not used")
@@ -103,6 +109,12 @@ internal fun Project.initKapt(
     }
 
     kotlinTask.kaptOptions.annotationsFile = kaptManager.getAnnotationFile()
+
+    if (shouldEnableGradleCache()) {
+        // Since Kapt1 is about to be dropped, disable the cache for it:
+        kotlinTask.outputs.doNotCacheIf("Caching is not supported with deprecated Kapt1") { true }
+    }
+
     return kotlinAfterJavaTask
 }
 
