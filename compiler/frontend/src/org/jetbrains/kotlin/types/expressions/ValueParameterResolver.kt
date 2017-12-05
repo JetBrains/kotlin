@@ -30,13 +30,13 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isError
 
 class ValueParameterResolver(
     private val expressionTypingServices: ExpressionTypingServices,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
-
     fun resolveValueParameters(
         valueParameters: List<KtParameter>,
         valueParameterDescriptors: List<ValueParameterDescriptor>,
@@ -60,15 +60,16 @@ class ValueParameterResolver(
 
     private fun resolveDefaultValue(
         valueParameterDescriptor: ValueParameterDescriptor,
-        jetParameter: KtParameter,
+        parameter: KtParameter,
         context: ExpressionTypingContext
     ) {
         if (!valueParameterDescriptor.declaresDefaultValue()) return
-        val defaultValue = jetParameter.defaultValue ?: return
-        expressionTypingServices.getTypeInfo(defaultValue, context.replaceExpectedType(valueParameterDescriptor.type))
+        val defaultValue = parameter.defaultValue ?: return
+        val type = valueParameterDescriptor.type
+        expressionTypingServices.getTypeInfo(defaultValue, context.replaceExpectedType(type))
         if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(context.scope))) {
-            val constant = constantExpressionEvaluator.evaluateExpression(defaultValue, context.trace, valueParameterDescriptor.type)
-            if (constant == null || constant.usesNonConstValAsConstant) {
+            val constant = constantExpressionEvaluator.evaluateExpression(defaultValue, context.trace, type)
+            if ((constant == null || constant.usesNonConstValAsConstant) && !type.isError) {
                 context.trace.report(Errors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT.on(defaultValue))
             }
         }
