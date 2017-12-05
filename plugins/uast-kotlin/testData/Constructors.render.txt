@@ -67,6 +67,9 @@ public final class AWithSecondaryInit {
     public final fun setA(p: java.lang.String) : void = UastEmptyExpression
     public fun AWithSecondaryInit(i: int) {
         <init>()
+        {
+            println()
+        }
         a = i.toString()
     }
     public fun AWithSecondaryInit(s: java.lang.String) {
