@@ -6,5 +6,5 @@ class A {
 }
 
 fun foo() {
-    A().put<caret>(1, "foo")
+    A().<caret>put(1, "foo")
 }

@@ -2,6 +2,6 @@
 
 class MyMap() : HashMap<String, String>() {
     init {
-        this.put<caret>("foo", "bar")
+        this.<caret>put("foo", "bar")
     }
 }

@@ -21,68 +21,68 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 
 class ReplacePutWithAssignmentInspection : AbstractKotlinInspection() {
-    private val compatibleNames = setOf("put")
-
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
                 super.visitDotQualifiedExpression(expression)
-                val callExpression = expression.callExpression ?: return
-                if (callExpression.valueArguments.size != 2) return
-
-                val calleeExpression = callExpression.calleeExpression as? KtNameReferenceExpression ?: return
-                if (calleeExpression.getReferencedName() !in compatibleNames) return
-
-                val context = expression.analyze()
-                if (expression.isUsedAsExpression(context)) return
-                val resolvedCall = expression.getResolvedCall(context) ?: return
-                val receiverType = resolvedCall.getExplicitReceiverValue()?.type ?: return
-                val receiverClass = receiverType.constructor.declarationDescriptor as? ClassDescriptor ?: return
-                if (receiverClass.isSubclassOf(DefaultBuiltIns.Instance.mutableMap)) {
-                    val argumentOffset = expression.startOffset
-                    val problemDescriptor = holder.manager.createProblemDescriptor(
-                            calleeExpression,
-                            TextRange(expression.startOffset - argumentOffset,
-                                      callExpression.endOffset - argumentOffset),
+                if (isActiveFor(expression)) {
+                    holder.registerProblem(
+                            expression.callExpression!!.calleeExpression!!,
                             "map.put() can be converted to assignment",
                             ProblemHighlightType.WEAK_WARNING,
-                            isOnTheFly,
                             ReplacePutWithAssignmentQuickfix()
                     )
-                    holder.registerProblem(problemDescriptor)
                 }
             }
         }
     }
-}
 
-class ReplacePutWithAssignmentQuickfix : LocalQuickFix {
-    override fun getName() = "Convert put to assignment"
+    companion object {
+        private val compatibleNames = setOf("put")
 
-    override fun getFamilyName() = name
+        fun isActiveFor(expression: KtDotQualifiedExpression): Boolean {
+            val callExpression = expression.callExpression
+            if (callExpression?.valueArguments?.size != 2) return false
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val element = descriptor.psiElement as KtNameReferenceExpression
-        val valueArguments = (element.parent as? KtCallExpression)?.valueArguments ?: return
-        val qualifiedExpression = element.parent.parent as? KtDotQualifiedExpression ?: return
-        qualifiedExpression.replace(KtPsiFactory(element).createExpressionByPattern("$0[$1] = $2",
-                                                                                    qualifiedExpression.receiverExpression,
-                                                                                    valueArguments[0]?.getArgumentExpression() ?: return,
-                                                                                    valueArguments[1]?.getArgumentExpression() ?: return))
+            val calleeExpression = callExpression.calleeExpression as? KtNameReferenceExpression ?: return false
+            if (calleeExpression.getReferencedName() !in compatibleNames) return false
+
+            val context = expression.analyze()
+            if (expression.isUsedAsExpression(context)) return false
+            val resolvedCall = expression.getResolvedCall(context)
+            val receiverType = resolvedCall?.getExplicitReceiverValue()?.type ?: return false
+            val receiverClass = receiverType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+            return receiverClass.isSubclassOf(DefaultBuiltIns.Instance.mutableMap)
+        }
+
+        fun simplify(expression: KtDotQualifiedExpression) {
+            val valueArguments = expression.callExpression?.valueArguments ?: return
+            expression.replace(KtPsiFactory(expression).createExpressionByPattern("$0[$1] = $2",
+                                                                                  expression.receiverExpression,
+                                                                                  valueArguments[0]?.getArgumentExpression() ?: return,
+                                                                                  valueArguments[1]?.getArgumentExpression() ?: return))
+        }
+    }
+
+    class ReplacePutWithAssignmentQuickfix : LocalQuickFix {
+        override fun getName() = "Convert put to assignment"
+
+        override fun getFamilyName() = name
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            simplify(descriptor.psiElement.parent.parent as? KtDotQualifiedExpression ?: return)
+        }
     }
 }
