@@ -455,6 +455,39 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Sam extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInSam() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/sam"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("kt21671.kt")
+            public void testKt21671() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam/kt21671.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt21671_2.kt")
+            public void testKt21671_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam/kt21671_2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt21671_3.kt")
+            public void testKt21671_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam/kt21671_3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("samOnCallSite.kt")
+            public void testSamOnCallSite() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam/samOnCallSite.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

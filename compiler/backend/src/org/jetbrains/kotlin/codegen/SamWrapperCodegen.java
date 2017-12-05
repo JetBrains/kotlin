@@ -185,6 +185,8 @@ public class SamWrapperCodegen {
     private FqName getWrapperName(@NotNull KtFile containingFile) {
         FqName fileClassFqName = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile).getFileClassFqName();
         JavaClassDescriptor descriptor = samType.getJavaClassDescriptor();
+        //Change sam wrapper name template carefully cause it's used in inliner:
+        // see isSamWrapper/isSamWrapperConstructorCall in inlineCodegenUtils.kt
         int hash = PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +
                 DescriptorUtils.getFqNameSafe(descriptor).hashCode();
         String shortName = String.format(

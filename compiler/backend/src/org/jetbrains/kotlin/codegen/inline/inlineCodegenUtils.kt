@@ -219,9 +219,15 @@ internal fun isWhenMappingAccess(internalName: String, fieldName: String): Boole
 internal fun isAnonymousSingletonLoad(internalName: String, fieldName: String): Boolean =
         JvmAbi.INSTANCE_FIELD == fieldName && isAnonymousClass(internalName)
 
-internal fun isAnonymousClass(internalName: String): Boolean {
-    return internalName.substringAfterLast('/').substringAfterLast("$", "").isInteger()
-}
+internal fun isSamWrapper(internalName: String) =
+        internalName.contains("\$sam$") && internalName.substringAfter("\$i$", "").run { length == 8 && toLongOrNull(16) != null }
+
+internal fun isSamWrapperConstructorCall(internalName: String, methodName: String) =
+        isConstructor(methodName) && isSamWrapper(internalName)
+
+internal fun isAnonymousClass(internalName: String) =
+        !isSamWrapper(internalName) &&
+        internalName.substringAfterLast('/').substringAfterLast("$", "").isInteger()
 
 fun wrapWithMaxLocalCalc(methodNode: MethodNode) =
         MaxStackFrameSizeAndLocalsCalculator(API, methodNode.access, methodNode.desc, methodNode)
