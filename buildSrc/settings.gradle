@@ -1,0 +1,3 @@
+
+include "prepare-deps:dx",
+        "prepare-deps:intellij-sdk"

@@ -1,4 +1,5 @@
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.io.File
 import org.gradle.internal.os.OperatingSystem
 
@@ -17,13 +18,15 @@ val androidSdk by configurations.creating
 val androidJar by configurations.creating
 val dxJar by configurations.creating
 val androidPlatform by configurations.creating
+val dxSources by configurations.creating
 val buildTools by configurations.creating
 
 val libsDestDir = File(buildDir, "libs")
 val sdkDestDir = File(buildDir, "androidSdk")
 
 data class LocMap(val name: String, val ver: String, val dest: String, val suffix: String,
-                  val additionalConfig: Configuration? = null, val dirLevelsToSkit: Int = 0)
+                  val additionalConfig: Configuration? = null, val dirLevelsToSkit: Int = 0, val ext: String = "zip",
+                  val filter: CopySpec.() -> Unit = {})
 
 val toolsOs = when {
     OperatingSystem.current().isWindows -> "windows"
@@ -48,37 +51,46 @@ val prepareSdk by task<DefaultTask> {
 }
 
 fun LocMap.toDependency(): String =
-        "google:$name:$ver${suffix?.takeIf{ it.isNotEmpty() }?.let { ":$it" } ?: ""}@zip"
+        "google:$name:$ver${suffix?.takeIf{ it.isNotEmpty() }?.let { ":$it" } ?: ""}@$ext"
 
-sdkLocMaps.forEach {
-    val id = "${it.name}_${it.ver}"
+sdkLocMaps.forEach { locMap ->
+    val id = "${locMap.name}_${locMap.ver}"
     val cfg = configurations.create(id)
-    val dependency = it.toDependency()
+    val dependency = locMap.toDependency()
     dependencies.add(cfg.name, dependency)
 
-    val t = task("unzip_$id") {
+    val unzipTask = task("unzip_$id") {
         dependsOn(cfg)
         inputs.files(cfg)
-        val targetDir = file("$sdkDestDir/${it.dest}")
+        val targetDir = file("$sdkDestDir/${locMap.dest}")
         val targetFlagFile = File(targetDir, "$id.prepared")
         outputs.files(targetFlagFile)
         outputs.upToDateWhen { targetFlagFile.exists() } // TODO: consider more precise check, e.g. hash-based
         doFirst {
             project.copy {
-                from(zipTree(cfg.singleFile))
-                if (it.dirLevelsToSkit > 0) {
+                when (locMap.ext) {
+                    "zip" -> from(zipTree(cfg.singleFile))
+                    "tar.gz" -> from(tarTree(resources.gzip(cfg.singleFile)))
+                    else -> throw GradleException("Don't know how to handle the extension \"${locMap.ext}\"")
+                }
+                locMap.filter.invoke(this)
+                if (locMap.dirLevelsToSkit > 0) {
                     eachFile {
-                        path = path.split("/").drop(it.dirLevelsToSkit).joinToString("/")
+                        path = path.split("/").drop(locMap.dirLevelsToSkit).joinToString("/")
+                        if (path.isBlank()) {
+                            exclude()
+                        }
                     }
                 }
                 into(targetDir)
             }
+            
             targetFlagFile.writeText("prepared")
         }
     }
-    prepareSdk.dependsOn(t)
+    prepareSdk.dependsOn(unzipTask)
 
-    it.additionalConfig?.also {
+    locMap.additionalConfig?.also {
         dependencies.add(it.name, dependency)
     }
 }
@@ -101,20 +113,6 @@ val extractAndroidJar by tasks.creating {
     }
 }
 
-val extractDxJar by tasks.creating {
-    dependsOn(buildTools)
-    inputs.files(buildTools)
-    val targetFile = File(libsDestDir, "dx.jar")
-    outputs.files(targetFile)
-    outputs.upToDateWhen { targetFile.exists() } // TODO: consider more precise check, e.g. hash-based
-    doFirst {
-        project.copy {
-            from(zipTree(buildTools.singleFile).matching { include("**/dx.jar") }.files.first())
-            into(libsDestDir)
-        }
-    }
-}
-
 artifacts.add(androidSdk.name, file("$sdkDestDir")) {
     builtBy(prepareSdk)
 }
@@ -123,6 +121,3 @@ artifacts.add(androidJar.name, file("$libsDestDir/android.jar")) {
     builtBy(extractAndroidJar)
 }
 
-artifacts.add(dxJar.name, file("$libsDestDir/dx.jar")) {
-    builtBy(extractDxJar)
-}

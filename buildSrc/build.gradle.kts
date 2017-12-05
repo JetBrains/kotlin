@@ -31,6 +31,8 @@ plugins {
     `kotlin-dsl`
 }
 
+extra["versions.intellij"] = "172.4343.14"
+
 repositories {
     extra["buildSrcKotlinRepo"]?.let {
         maven(url = it)
@@ -60,3 +62,5 @@ samWithReceiver {
 
 fun Project.`samWithReceiver`(configure: org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension.() -> Unit): Unit =
         extensions.configure("samWithReceiver", configure)
+
+tasks["build"].dependsOn(":prepare-deps:dx:build")
