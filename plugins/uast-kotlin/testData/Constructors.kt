@@ -58,8 +58,6 @@ class AWithSecondaryInit {
     lateinit var a: String
 
     init {
-        // This body will not be picked by UAST because no lightMethod contains it.
-        // Of course it is not a desired behaviour, so fix it if you know how
         println()
     }
 

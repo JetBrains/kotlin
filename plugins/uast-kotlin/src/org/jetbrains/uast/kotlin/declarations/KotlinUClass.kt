@@ -81,11 +81,16 @@ open class KotlinUClass private constructor(
     override fun getInitializers(): Array<UClassInitializer> = super.getInitializers()
 
     override fun getMethods(): Array<UMethod> {
+        val hasPrimaryConstructor = ktClass?.hasPrimaryConstructor() ?: false
+        var secondaryConstructorsCount = 0
 
         fun createUMethod(psiMethod: PsiMethod): UMethod {
             return if (psiMethod is KtLightMethod &&
                        psiMethod.isConstructor) {
-                KotlinConstructorUMethod(ktClass, psiMethod, this)
+                if (!hasPrimaryConstructor && secondaryConstructorsCount++ == 0)
+                    KotlinSecondaryConstructorWithInitializersUMethod(ktClass, psiMethod, this)
+                else
+                    KotlinConstructorUMethod(ktClass, psiMethod, this)
             } else {
                 getLanguagePlugin().convert(psiMethod, this)
             }
@@ -111,7 +116,7 @@ open class KotlinUClass private constructor(
     }
 }
 
-class KotlinConstructorUMethod(
+open class KotlinConstructorUMethod(
         private val ktClass: KtClassOrObject?,
         override val psi: KtLightMethod,
         givenParent: UElement?
@@ -143,15 +148,26 @@ class KotlinConstructorUMethod(
         }
     }
 
-    private fun getBodyExpressions(): List<KtExpression> {
+    open protected fun getBodyExpressions(): List<KtExpression> {
         if (isPrimary) return getInitializers()
         val bodyExpression = (psi.kotlinOrigin as? KtFunction)?.bodyExpression ?: return emptyList()
         if (bodyExpression is KtBlockExpression) return bodyExpression.statements
         return listOf(bodyExpression)
     }
 
-    private fun getInitializers() = ktClass?.getAnonymousInitializers()?.mapNotNull { it.body } ?: emptyList()
+    protected fun getInitializers() = ktClass?.getAnonymousInitializers()?.mapNotNull { it.body } ?: emptyList()
 
+}
+
+// This class was created as a workaround for KT-21617 to be the only constructor which includes `init` block
+// when there is no primary constructors in the class.
+// It is expected to have only one constructor of this type in a UClass.
+class KotlinSecondaryConstructorWithInitializersUMethod(
+        ktClass: KtClassOrObject?,
+        psi: KtLightMethod,
+        givenParent: UElement?
+) : KotlinConstructorUMethod(ktClass, psi, givenParent) {
+    override fun getBodyExpressions(): List<KtExpression> = getInitializers() + super.getBodyExpressions()
 }
 
 class KotlinUAnonymousClass(
