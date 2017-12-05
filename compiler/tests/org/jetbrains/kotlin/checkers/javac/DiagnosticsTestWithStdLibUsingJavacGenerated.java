@@ -1760,6 +1760,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             doTest(fileName);
         }
 
+        @TestMetadata("forInFieldUpdatedInLoopBodyBefore13.kt")
+        public void testForInFieldUpdatedInLoopBodyBefore13() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/forInFieldUpdatedInLoopBodyBefore13.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("rangeLocalDelegatedPropertyAssignmentBefore13.kt")
         public void testRangeLocalDelegatedPropertyAssignmentBefore13() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop/rangeLocalDelegatedPropertyAssignmentBefore13.kt");
