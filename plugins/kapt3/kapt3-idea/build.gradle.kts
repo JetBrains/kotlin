@@ -1,6 +1,8 @@
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":compiler:frontend"))
