@@ -132,6 +132,7 @@ internal class KonanLower(val context: Context) {
         }
         phaser.phase(KonanPhase.BRIDGES_BUILDING) {
             BridgesBuilding(context).runOnFilePostfix(irFile)
+            WorkersBridgesBuilding(context).lower(irFile)
         }
         phaser.phase(KonanPhase.AUTOBOX) {
             validateIrFile(context, irFile)
