@@ -337,7 +337,7 @@ open class KotlinUAnnotatedLocalVariable(
     override val annotations: List<UAnnotation> by lz { computeAnnotations(this) }
 }
 
-open class KotlinUEnumConstant(
+class KotlinUEnumConstant(
         psi: PsiEnumConstant,
         override val sourcePsi: KtElement?,
         givenParent: UElement?
@@ -348,6 +348,10 @@ open class KotlinUEnumConstant(
             KotlinUClass.create(initializingClass, this)
         }
     }
+
+    override fun getInitializer(): PsiExpression? = super<AbstractKotlinUVariable>.getInitializer()
+
+    override fun getOriginalElement(): PsiElement? = super<AbstractKotlinUVariable>.getOriginalElement()
 
     override val javaPsi = unwrap<UEnumConstant, PsiEnumConstant>(psi)
 
@@ -404,14 +408,10 @@ open class KotlinUEnumConstant(
     private class KotlinEnumConstantClassReference(
             override val psi: PsiEnumConstant,
             override val sourcePsi: KtElement?,
-            private val givenParent: UElement?
+            givenParent: UElement?
     ) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression {
         override val javaPsi: PsiElement?
             get() = psi
-
-        override val uastParent: UElement? by lz {
-            givenParent ?: KotlinUastLanguagePlugin().convertElementWithParent(psi.parent ?: psi.containingFile, null)
-        }
 
         override fun resolve() = psi.containingClass
         override val resolvedName: String?
