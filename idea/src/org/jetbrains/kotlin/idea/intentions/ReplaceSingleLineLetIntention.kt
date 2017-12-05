@@ -90,21 +90,35 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         }
     }
 
-    private fun KtBinaryExpression.isApplicable(parameterName: String): Boolean {
+    private fun KtBinaryExpression.isApplicable(parameterName: String, isHighestExpression: Boolean = true): Boolean {
         val left = left ?: return false
-        when (left) {
-            is KtNameReferenceExpression -> if (left.text != parameterName) return false
-            is KtDotQualifiedExpression -> if (!left.isApplicable(parameterName)) return false
-            else -> return false
+        if (isHighestExpression) {
+            when (left) {
+                is KtNameReferenceExpression -> if (left.text != parameterName) return false
+                is KtDotQualifiedExpression -> if (!left.isApplicable(parameterName)) return false
+                else -> return false
+            }
+        }
+        else {
+            if (!left.isApplicable(parameterName)) return false
         }
 
         val right = right ?: return false
-        return when (right) {
-            is KtNameReferenceExpression -> right.text != parameterName
-            is KtDotQualifiedExpression -> !right.hasLambdaExpression() && !right.nameUsed(parameterName)
-            is KtConstantExpression -> true
-            else -> false
-        }
+        return right.isApplicable(parameterName)
+    }
+
+    private fun KtExpression.isApplicable(parameterName: String): Boolean = when (this) {
+        is KtNameReferenceExpression -> text != parameterName
+        is KtDotQualifiedExpression -> !hasLambdaExpression() && !nameUsed(parameterName)
+        is KtBinaryExpression -> isApplicable(parameterName, isHighestExpression = false)
+        is KtCallExpression -> isApplicable(parameterName)
+        is KtConstantExpression -> true
+        else -> false
+    }
+
+    private fun KtCallExpression.isApplicable(parameterName: String): Boolean = valueArguments.all {
+        val argumentExpression = it.getArgumentExpression() ?: return@all false
+        argumentExpression.isApplicable(parameterName)
     }
 
     private fun KtDotQualifiedExpression.isApplicable(parameterName: String) =
