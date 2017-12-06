@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 
 abstract class AbstractForInRangeLoopGenerator : AbstractForInProgressionOrRangeLoopGenerator {
-    private val step: Int
+    protected val step: Int
 
     constructor(codegen: ExpressionCodegen, forExpression: KtForExpression, step: Int) : super(codegen, forExpression) {
         assert(step == 1 || step == -1) { "'step' should be either 1 or -1: " + step }

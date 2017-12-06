@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
-import org.jetbrains.kotlin.codegen.range.forLoop.ForInCollectionIndicesRangeLoopGenerator
+import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -42,5 +42,5 @@ class CollectionIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
             )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            ForInCollectionIndicesRangeLoopGenerator(codegen, forExpression, rangeCall)
+            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
 }

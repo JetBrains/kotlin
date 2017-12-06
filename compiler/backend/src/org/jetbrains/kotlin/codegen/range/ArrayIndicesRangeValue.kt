@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
-import org.jetbrains.kotlin.codegen.range.forLoop.ForInArrayIndicesRangeLoopGenerator
+import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
 class ArrayIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+
     private val expectedReceiverType: KotlinType = ExpressionCodegen.getExpectedReceiverType(rangeCall)
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
@@ -42,6 +43,5 @@ class ArrayIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): P
             )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            ForInArrayIndicesRangeLoopGenerator(codegen, forExpression, rangeCall)
-
+            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
 }
