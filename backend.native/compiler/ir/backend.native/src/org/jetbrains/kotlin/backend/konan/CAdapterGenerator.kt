@@ -426,9 +426,8 @@ internal class CAdapterGenerator(val context: Context,
     }
 
     private fun makeGlobalStruct(top: ExportedElementScope) {
-        outputStreamWriter = context.config.tempFiles
-            .cAdapterHeader
-            .printWriter()
+        val headerFile = context.config.tempFiles.cAdapterHeader
+        outputStreamWriter = headerFile.printWriter()
 
         output("#ifndef KONAN_${prefix.toUpperCase()}_H")
         output("#define KONAN_${prefix.toUpperCase()}_H")
@@ -479,7 +478,9 @@ internal class CAdapterGenerator(val context: Context,
             .cAdapterCpp
             .printWriter()
 
-        output("#include \"${prefix}_api.h\"")
+        // Include header into C++ source.
+        headerFile.forEachLine { it -> output(it) }
+
         output("""
         |struct KObjHeader;
         |typedef struct KObjHeader KObjHeader;
