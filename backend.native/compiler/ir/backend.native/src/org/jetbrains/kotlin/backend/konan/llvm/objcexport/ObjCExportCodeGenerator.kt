@@ -41,6 +41,16 @@ internal class ObjCExportCodeGenerator(
 
     val rttiGenerator = RTTIGenerator(context)
 
+    private val objcTerminate: LLVMValueRef by lazy {
+        context.llvm.externalFunction(
+                "objc_terminate",
+                functionType(voidType, false),
+                CurrentKonanModule
+        ).also {
+            setFunctionNoUnwind(it)
+        }
+    }
+
     // TODO: currently bridges don't have any custom `landingpad`s,
     // so it is correct to use [callAtFunctionScope] here.
     // However, exception handling probably should be refactored
@@ -49,7 +59,13 @@ internal class ObjCExportCodeGenerator(
             function: LLVMValueRef,
             args: List<LLVMValueRef>,
             resultLifetime: Lifetime = Lifetime.IRRELEVANT
-    ): LLVMValueRef = callAtFunctionScope(function, args, resultLifetime)
+    ): LLVMValueRef {
+
+        // TODO: it is required only for Kotlin-to-Objective-C bridges.
+        this.forwardingForeignExceptionsTerminatedWith = objcTerminate
+
+        return callAtFunctionScope(function, args, resultLifetime)
+    }
 
     fun FunctionGenerationContext.genSendMessage(
             returnType: LLVMTypeRef,

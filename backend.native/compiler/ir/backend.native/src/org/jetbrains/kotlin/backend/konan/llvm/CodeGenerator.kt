@@ -21,12 +21,12 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.descriptors.stdlibModule
 import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
@@ -131,6 +131,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private val entryBb           = basicBlockInFunction("entry", startLocation)
     private val epilogueBb        = basicBlockInFunction("epilogue", endLocation)
     private val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
+
+    var forwardingForeignExceptionsTerminatedWith: LLVMValueRef? = null
 
     init {
         functionDescriptor?.let {
@@ -420,6 +422,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     fun structGep(base: LLVMValueRef, index: Int, name: String = ""): LLVMValueRef =
             LLVMBuildStructGEP(builder, base, index, name)!!
 
+    fun extractValue(aggregate: LLVMValueRef, index: Int, name: String = ""): LLVMValueRef =
+            LLVMBuildExtractValue(builder, aggregate, index, name)!!
+
     fun gxxLandingpad(numClauses: Int, name: String = ""): LLVMValueRef {
         val personalityFunction = LLVMConstBitCast(context.llvm.gxxPersonalityFunction, int8TypePtr)
 
@@ -605,6 +610,41 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         appendingTo(cleanupLandingpad) {
             val landingpad = gxxLandingpad(numClauses = 0)
             LLVMSetCleanup(landingpad, 1)
+
+            forwardingForeignExceptionsTerminatedWith?.let { terminator ->
+                val kotlinExceptionRtti = constPointer(importGlobal(
+                        "_ZTI9ObjHolder", // typeinfo for ObjHolder
+                        int8TypePtr,
+                        origin = context.stdlibModule.llvmSymbolOrigin
+                ))
+
+                // Catch all but Kotlin exceptions.
+                val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti.bitcast(int8TypePtr)))
+                LLVMAddClause(landingpad, clause.llvm)
+
+                val bbCleanup = basicBlock("forwardException", null)
+                val bbUnexpected = basicBlock("unexpectedException", null)
+
+                val selector = extractValue(landingpad, 1)
+                condBr(
+                        icmpLt(selector, Int32(0).llvm),
+                        bbUnexpected,
+                        bbCleanup
+                )
+
+                appendingTo(bbUnexpected) {
+                    val exceptionRecord = extractValue(landingpad, 0)
+
+                    val beginCatch = context.llvm.cxaBeginCatchFunction
+                    // So `terminator` is called from C++ catch block:
+                    call(beginCatch, listOf(exceptionRecord))
+                    call(terminator, emptyList())
+                    unreachable()
+                }
+
+                positionAtEnd(bbCleanup)
+            }
+
             releaseVars()
             LLVMBuildResume(builder, landingpad)
         }

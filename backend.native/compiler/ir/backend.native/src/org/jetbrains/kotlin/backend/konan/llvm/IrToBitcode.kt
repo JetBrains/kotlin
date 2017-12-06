@@ -917,7 +917,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 // FIXME: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
                 // bypassing the finally block.
 
-                val exceptionRecord = LLVMBuildExtractValue(functionGenerationContext.builder, landingpadResult, 0, "er")!!
+                val exceptionRecord = extractValue(landingpadResult, 0, "er")
 
                 // __cxa_begin_catch returns pointer to C++ exception object.
                 val beginCatch = context.llvm.cxaBeginCatchFunction
