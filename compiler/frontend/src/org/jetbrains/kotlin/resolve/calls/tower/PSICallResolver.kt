@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -69,7 +70,8 @@ class PSICallResolver(
         private val kotlinCallResolver: KotlinCallResolver,
         private val typeApproximator: TypeApproximator,
         private val argumentTypeResolver: ArgumentTypeResolver,
-        private val effectSystem: EffectSystem
+        private val effectSystem: EffectSystem,
+        private val constantExpressionEvaluator: ConstantExpressionEvaluator
 ) {
     private val GIVEN_CANDIDATES_NAME = Name.special("<given candidates>")
 
@@ -151,7 +153,8 @@ class PSICallResolver(
 
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =
             KotlinResolutionCallbacksImpl(context, expressionTypingServices, typeApproximator,
-                                          argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer)
+                                          argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
+                                          constantExpressionEvaluator)
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
         val expectedType = context.expectedType.unwrap()
