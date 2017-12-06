@@ -406,7 +406,12 @@ class TypeApproximator {
                         }
                     }
 
-                    newArguments[index] = TypeProjectionImpl(Variance.OUT_VARIANCE, approximatedSuperType)
+                    if (NewKotlinTypeChecker.equalTypes(argumentType, approximatedSuperType)) {
+                        newArguments[index] = approximatedSuperType.asTypeProjection()
+                    }
+                    else {
+                        newArguments[index] = TypeProjectionImpl(Variance.OUT_VARIANCE, approximatedSuperType)
+                    }
                 }
             }
         }
