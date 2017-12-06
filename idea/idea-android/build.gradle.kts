@@ -14,7 +14,7 @@ dependencies {
 
     compile(ideaSdkDeps("openapi", "idea"))
     compile(ideaPluginDeps("gradle-api", plugin = "gradle"))
-    compile(ideaPluginDeps("android", "android-common", "sdklib", "sdk-common", "sdk-tools", "layoutlib-api", plugin = "android"))
+    compile(ideaPluginDeps("android", "android-common", "android-base-common", "sdklib", "sdk-common", "sdk-tools", "layoutlib-api", plugin = "android"))
     compile(preloadedDeps("dx", subdir = "android-5.0/lib"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
