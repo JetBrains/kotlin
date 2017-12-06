@@ -7,6 +7,6 @@ error: unresolved reference: a
 a
 ^
 >>> val s: String = s
-error: variable 's' must be initialized
+error: unresolved reference: s
 val s: String = s
                 ^
