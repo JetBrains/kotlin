@@ -157,7 +157,7 @@ public class Emulator {
         bootCheckCommand.addParameter("sys.boot_completed");
         int counter = 0;
         RunResult execute = RunUtils.execute(bootCheckCommand);
-        while (counter < 12) {
+        while (counter < 20) {
             String output = execute.getOutput();
             if (output.trim().endsWith("1")) {
                 System.out.println("Emulator fully booted!");
