@@ -41,10 +41,11 @@ import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
 import org.jetbrains.kotlin.script.ScriptPriorities
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
 
@@ -217,12 +218,23 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         }
 
         private fun computeFileScopes(lineInfo: LineInfo, fileScopeFactory: FileScopeFactory): FileScopes? {
-            // create scope that wraps previous line lexical scope and adds imports from this line
-            val lexicalScopeAfterLastLine = lineInfo.parentLine?.lineDescriptor?.scopeForInitializerResolution ?: return null
-            val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.first { it is ImportingScope } as ImportingScope
+            val previousLineDescriptor = lineInfo.parentLine?.lineDescriptor ?: return null
+
+            val lexicalScopeAfterLastLine = previousLineDescriptor.scopeForInitializerResolution
+            val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.firstIsInstance<ImportingScope>()
+
             val scopesForThisLine = fileScopeFactory.createScopesForFile(lineInfo.linePsi, lastLineImports)
-            val combinedLexicalScopes = lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
-            return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importResolver)
+
+            // Create scope that wraps previous line lexical scope and adds imports from this line
+            val newScope = LexicalChainedScope(
+                    lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope),
+                    previousLineDescriptor,
+                    false,
+                    null,
+                    LexicalScopeKind.CODE_BLOCK,
+                    listOf(previousLineDescriptor.unsubstitutedMemberScope))
+
+            return FileScopes(newScope, scopesForThisLine.importingScope, scopesForThisLine.importResolver)
         }
     }
 }

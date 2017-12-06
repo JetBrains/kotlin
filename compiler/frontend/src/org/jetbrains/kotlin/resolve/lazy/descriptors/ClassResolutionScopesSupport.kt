@@ -100,7 +100,13 @@ class ClassResolutionScopesSupport(
 
         if (withCompanionObject) {
             staticScopes.addIfNotNull(classDescriptor.companionObjectDescriptor?.unsubstitutedInnerClassesScope)
-            implicitReceiver = classDescriptor.companionObjectDescriptor?.thisAsReceiverParameter
+
+            if (classDescriptor is LazyScriptDescriptor && classDescriptor.isReplSnippet) {
+                implicitReceiver = null
+            }
+            else {
+                implicitReceiver = classDescriptor.companionObjectDescriptor?.thisAsReceiverParameter
+            }
 
             parentForNewScope = classDescriptor.companionObjectDescriptor?.let {
                 it.getAllSuperclassesWithoutAny().asReversed().fold(parent) { scope, currentClass ->
