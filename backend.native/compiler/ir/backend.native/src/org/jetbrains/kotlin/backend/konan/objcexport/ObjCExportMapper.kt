@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.correspondingValueType
+import org.jetbrains.kotlin.backend.konan.isObjCObjectType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
@@ -50,7 +51,10 @@ internal fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescript
         descriptor.isEffectivelyPublicApi && !descriptor.isSuspend
 
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
-        descriptor.isEffectivelyPublicApi
+        descriptor.isEffectivelyPublicApi && !descriptor.defaultType.isObjCObjectType() && when (descriptor.kind) {
+            ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
+            ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
+        }
 
 private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }
@@ -117,7 +121,7 @@ private fun ObjCExportMapper.bridgeType(kotlinType: KotlinType): TypeBridge {
             ?: return ReferenceBridge
 
     val objCValueType = ObjCValueType.values().singleOrNull { it.kotlinValueType == valueType }
-            ?: error(valueType)
+            ?: error("Can't produce $kotlinType to framework API")
 
     return ValueTypeBridge(objCValueType)
 }
