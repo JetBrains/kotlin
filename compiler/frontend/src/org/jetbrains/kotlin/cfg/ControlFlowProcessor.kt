@@ -151,6 +151,23 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                     generateInstructions(expression)
                     createNonSyntheticValue(condition, MagicKind.MATCH, expression)
                 }
+                for (declaration in condition.pattern.innerVariableDeclarations) {
+                    builder.declareVariable(declaration)
+
+                    val initializer = declaration.parentExpression
+
+                    val resolvedCall = trace.get(BindingContext.PATTERN_COMPONENT_RESOLVED_CALL, initializer)
+
+                    val writtenValue: PseudoValue?
+                    writtenValue = if (resolvedCall != null) {
+                        builder.call(declaration, resolvedCall, getReceiverValues(resolvedCall), emptyMap()).outputValue
+                    }
+                    else {
+                        initializer?.let { createSyntheticValue(declaration, MagicKind.UNRESOLVED_CALL, it) }
+                    }
+
+                    generateInitializer(declaration, writtenValue ?: createSyntheticValue(declaration, MagicKind.FAKE_INITIALIZER))
+                }
             }
 
             override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {

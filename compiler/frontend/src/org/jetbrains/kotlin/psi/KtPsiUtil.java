@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.parsing.KotlinExpressionParsing;
+import org.jetbrains.kotlin.psi.pattern.KtPatternVariableDeclaration;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.StatementFilterKt;
@@ -295,6 +296,7 @@ public class KtPsiUtil {
     public static boolean isRemovableVariableDeclaration(@NotNull KtDeclaration declaration) {
         if (!(declaration instanceof KtVariableDeclaration)) return false;
         if (declaration instanceof KtProperty) return true;
+        if (declaration instanceof KtPatternVariableDeclaration) return true;
         assert declaration instanceof KtDestructuringDeclarationEntry;
         // We can always replace destructuring entry with _
         return true;

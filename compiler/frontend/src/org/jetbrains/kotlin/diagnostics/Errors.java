@@ -903,7 +903,7 @@ public interface Errors {
 
     DiagnosticFactory1<KtElement, KtElement> NON_DERIVABLE_TYPE = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory1<KtElement, KtElement> NOT_ALLOW_MULTIMATCHING_IN_WHEN_CONDITION = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtElement, KtElement> NOT_ALLOW_OR_CONDITIONS_WITH_MATCH = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<KtElement, KtElement> NOT_ALLOW_PROPERTY_DEFINITION = DiagnosticFactory1.create(ERROR);
 

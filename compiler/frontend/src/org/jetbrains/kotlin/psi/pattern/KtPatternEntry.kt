@@ -20,6 +20,9 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.psi.KtVisitor
 
 abstract class KtPatternEntry(node: ASTNode) : KtPatternElement(node) {
+    val parentExpression: KtPatternExpression?
+        get() = (parent as? KtPatternConstraint)?.parent as? KtPatternExpression
+
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitPatternEntry(this, data)
     }

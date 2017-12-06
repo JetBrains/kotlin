@@ -316,21 +316,17 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         var entryScope: LexicalScope? = null
         var contextForCondition = context
         for (condition in whenEntry.conditions) {
+            if (condition.isMatch && whenEntry.conditions.size > 1) {
+                context.trace.report(NOT_ALLOW_OR_CONDITIONS_WITH_MATCH.on(whenEntry, condition))
+            }
             val (conditionInfo, scope) = checkWhenCondition(
                 subjectExpression, subjectType, condition,
                 contextForCondition, subjectDataFlowValue
             )
+            entryScope = scope
             entryInfo = entryInfo?.let {
                 ConditionalDataFlowInfo(it.thenInfo.or(conditionInfo.thenInfo), it.elseInfo.and(conditionInfo.elseInfo))
             } ?: conditionInfo
-
-            if (condition.isMatch) {
-                if (entryScope != null) {
-                    context.trace.report(NOT_ALLOW_MULTIMATCHING_IN_WHEN_CONDITION.on(whenEntry, condition))
-                }
-                entryScope = scope
-            }
-
             contextForCondition = contextForCondition.replaceDataFlowInfo(conditionInfo.elseInfo)
         }
 

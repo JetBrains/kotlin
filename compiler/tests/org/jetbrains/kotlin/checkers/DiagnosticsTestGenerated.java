@@ -24848,6 +24848,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("PatternMatching.kt")
+            public void testPatternMatching() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/PatternMatching.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PropertyNotInitialized.kt")
             public void testPropertyNotInitialized() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt");
