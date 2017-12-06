@@ -228,7 +228,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         +JsVars(bitMasks.map { JsVars.JsVar(it.name, JsIntLiteral(0)) }, false)
 
         // var localProp0, localProp1, ...
-        val localProps = orderedProperties.map { JsNameRef(jsFun.scope.declareFreshName(it.name)) }
+        val localProps = orderedProperties.mapIndexed {i, _ -> JsNameRef(jsFun.scope.declareFreshName("local$i")) }
         +JsVars(localProps.map { JsVars.JsVar(it.name) }, true)
 
         //input = input.readBegin(...)
