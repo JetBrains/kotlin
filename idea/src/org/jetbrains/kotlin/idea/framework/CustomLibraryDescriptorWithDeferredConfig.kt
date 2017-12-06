@@ -31,6 +31,11 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.VersionView
+import org.jetbrains.kotlin.config.apiVersionView
+import org.jetbrains.kotlin.config.languageVersionView
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState.COPY
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY
@@ -95,6 +100,11 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
             }
 
             configureKotlinSettings(module.project, rootModel.sdk)
+
+            KotlinCommonCompilerArgumentsHolder.getInstance(module.project).update {
+                languageVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
+                apiVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
+            }
 
             collector.showNotification()
         }
