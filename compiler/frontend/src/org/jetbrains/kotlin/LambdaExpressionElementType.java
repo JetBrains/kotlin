@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.parsing.KotlinParser;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
+import org.jetbrains.kotlin.psi.KtParameterList;
 
 class LambdaExpressionElementType extends IErrorCounterReparseableElementType {
     public LambdaExpressionElementType() {
@@ -55,7 +56,7 @@ class LambdaExpressionElementType extends IErrorCounterReparseableElementType {
     @Override
     public boolean isParsable(@Nullable ASTNode parent, CharSequence buffer, Language fileLanguage, Project project) {
         return super.isParsable(parent, buffer, fileLanguage, project) &&
-               !wasArrowMovedOrDeleted(parent, buffer);
+               !wasArrowMovedOrDeleted(parent, buffer) && !wasParameterCommaMovedOrDeleted(parent, buffer);
     }
 
     private static boolean wasArrowMovedOrDeleted(@Nullable ASTNode parent, CharSequence buffer) {
@@ -73,6 +74,27 @@ class LambdaExpressionElementType extends IErrorCounterReparseableElementType {
         int arrowOffset = arrow.getStartOffsetInParent() + literal.getStartOffsetInParent();
 
         return hasTokenMoved(lambdaExpression.getText(), buffer, arrowOffset, KtTokens.ARROW);
+    }
+
+    private static boolean wasParameterCommaMovedOrDeleted(@Nullable ASTNode parent, CharSequence buffer) {
+        KtLambdaExpression lambdaExpression = findLambdaExpression(parent);
+        if (lambdaExpression == null) {
+            return false;
+        }
+
+        KtFunctionLiteral literal = lambdaExpression.getFunctionLiteral();
+        KtParameterList valueParameterList = literal.getValueParameterList();
+        if (valueParameterList == null || valueParameterList.getParameters().size() <= 1) {
+            return false;
+        }
+
+        PsiElement comma = valueParameterList.getFirstComma();
+        if (comma == null) {
+            return false;
+        }
+
+        int commaOffset = comma.getTextOffset() - lambdaExpression.getTextOffset();
+        return hasTokenMoved(lambdaExpression.getText(), buffer, commaOffset, KtTokens.COMMA);
     }
 
     private static KtLambdaExpression findLambdaExpression(@Nullable ASTNode parent) {
