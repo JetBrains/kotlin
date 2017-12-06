@@ -1694,6 +1694,24 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("hasType.kt")
+        public void testHasType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantGetter/hasType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasTypeWithPropertyExplicitType.kt")
+        public void testHasTypeWithPropertyExplicitType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantGetter/hasTypeWithPropertyExplicitType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasTypeWithPropertyInitializer.kt")
+        public void testHasTypeWithPropertyInitializer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantGetter/hasTypeWithPropertyInitializer.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notFieldExpression.kt")
         public void testNotFieldExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantGetter/notFieldExpression.kt");
