@@ -28,13 +28,11 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.prepareReceiverRegardingCaptureTypes
+import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SimpleTypeArgumentImpl(
         val typeReference: KtTypeReference,
@@ -61,10 +59,11 @@ val KotlinCallArgument.psiCallArgument: PSIKotlinCallArgument get() {
 }
 
 val KotlinCallArgument.psiExpression: KtExpression? get() {
-    if (this is ReceiverExpressionKotlinCallArgument) {
-        return (receiver.receiverValue as? ExpressionReceiver)?.expression
+    return when (this) {
+        is ReceiverExpressionKotlinCallArgument -> receiver.receiverValue.safeAs<ExpressionReceiver>()?.expression
+        is QualifierReceiverKotlinCallArgument -> receiver.safeAs<Qualifier>()?.expression
+        else -> psiCallArgument.valueArgument.getArgumentExpression()
     }
-    return psiCallArgument.valueArgument.getArgumentExpression()
 }
 
 class ParseErrorKotlinCallArgument(

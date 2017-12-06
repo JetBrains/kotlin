@@ -141,7 +141,7 @@ class KotlinCallCompleter(
         val actualType = withSmartCastInfo?.stableType ?: unsubstitutedReturnType
 
         val returnType = resolvedCall.substitutor.substituteKeepAnnotations(actualType)
-        if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
+        if (expectedType != null && !TypeUtils.noExpectedType(expectedType) && !resolutionCallbacks.isCompileTimeConstant(resolvedCall, expectedType)) {
             csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
         }
 
