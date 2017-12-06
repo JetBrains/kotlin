@@ -48,6 +48,12 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
         doTest(fileName);
     }
 
+    @TestMetadata("checkerFramework.kt")
+    public void testCheckerFramework() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/checkerFramework.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("eclipse.kt")
     public void testEclipse() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/eclipse.kt");
