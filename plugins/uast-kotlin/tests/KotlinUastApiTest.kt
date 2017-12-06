@@ -11,6 +11,7 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.test.env.findElementByText
 import org.jetbrains.uast.test.env.findElementByTextFromPsi
+import org.jetbrains.uast.visitor.AbstractUastVisitor
 import org.junit.Assert
 import org.junit.Test
 
@@ -164,6 +165,19 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 Assert.assertNotNull(uMethod)
             }
 
+        }
+    }
+
+    @Test
+    fun testBrokenMethodTypeResolve() {
+        doTest("BrokenMethod") { _, file ->
+
+            file.accept(object : AbstractUastVisitor() {
+                override fun visitCallExpression(node: UCallExpression): Boolean {
+                    node.returnType
+                    return false
+                }
+            })
         }
     }
 }
