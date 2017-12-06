@@ -410,4 +410,82 @@ class KotlinInjectionTest : AbstractInjectionTest() {
                     ShredInfo(range(7, 15), hostRange=range(12, 22), prefix="s")
             )
     )
+
+    fun testJavaAnnotationsPattern() {
+        val customInjection = BaseInjection("java")
+        customInjection.injectedLanguageId = RegExpLanguage.INSTANCE.id
+        val elementPattern = customInjection.compiler.createElementPattern(
+                """psiMethod().withName("value").withParameters().definedInClass("Matches")""",
+                "temp rule")
+        customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
+
+        try {
+            Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
+
+            doInjectionPresentTest(
+                    javaText = """
+                        @interface Matches { String value(); }
+                    """,
+                    text = """
+                        @Matches("[A-Z]<caret>[a-z]+")
+                        val name = "John"
+                    """,
+                    languageId = RegExpLanguage.INSTANCE.id,
+                    unInjectShouldBePresent = false
+            )
+
+            doInjectionPresentTest(
+                    javaText = """
+                        @interface Matches { String value(); }
+                    """,
+                    text = """
+                        @Matches(value = "[A-Z]<caret>[a-z]+")
+                        val name = "John"
+                    """,
+                    languageId = RegExpLanguage.INSTANCE.id,
+                    unInjectShouldBePresent = false
+            )
+        }
+        finally {
+            Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
+        }
+    }
+
+    fun testKotlinAnnotationsPattern() {
+        val customInjection = BaseInjection("kotlin")
+        customInjection.injectedLanguageId = RegExpLanguage.INSTANCE.id
+        val elementPattern = customInjection.compiler.createElementPattern(
+                """kotlinParameter().ofFunction(0, kotlinFunction().withName("Matches").definedInClass("Matches"))""".trimIndent(),
+                "temp rule")
+        customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
+
+        try {
+            Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
+
+            doInjectionPresentTest(
+                    text = """
+                        annotation class Matches(val pattern: String)
+
+                        @Matches("[A-Z]<caret>[a-z]+")
+                        val name = "John"
+                    """,
+                    languageId = RegExpLanguage.INSTANCE.id,
+                    unInjectShouldBePresent = false
+            )
+
+            doInjectionPresentTest(
+                    text = """
+                        annotation class Matches(val pattern: String)
+
+                        @Matches(pattern = "[A-Z]<caret>[a-z]+")
+                        val name = "John"
+                    """,
+                    languageId = RegExpLanguage.INSTANCE.id,
+                    unInjectShouldBePresent = false
+            )
+        }
+        finally {
+            Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
+        }
+    }
 }
