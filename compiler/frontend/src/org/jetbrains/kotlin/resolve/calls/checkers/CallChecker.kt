@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.checkers.CheckerContext
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.KotlinType
@@ -37,10 +38,10 @@ interface CallChecker {
 
 class CallCheckerContext(
     val resolutionContext: ResolutionContext<*>,
-    val trace: BindingTrace,
-    val languageVersionSettings: LanguageVersionSettings,
-    val deprecationResolver: DeprecationResolver
-) {
+    override val trace: BindingTrace,
+    override val languageVersionSettings: LanguageVersionSettings,
+    override val deprecationResolver: DeprecationResolver
+) : CheckerContext {
     val scope: LexicalScope
         get() = resolutionContext.scope
 

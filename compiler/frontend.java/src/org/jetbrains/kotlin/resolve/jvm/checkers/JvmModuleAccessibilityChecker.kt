@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
@@ -28,14 +27,13 @@ import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageChecker
+import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageCheckerContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver.AccessError.*
@@ -101,27 +99,21 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
     }
 
     inner class ClassifierUsage : ClassifierUsageChecker {
-        override fun check(
-                targetDescriptor: ClassifierDescriptor,
-                trace: BindingTrace,
-                element: PsiElement,
-                languageVersionSettings: LanguageVersionSettings,
-                deprecationResolver: DeprecationResolver
-        ) {
+        override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
             val virtualFile = element.containingFile.virtualFile
             when (targetDescriptor) {
                 is ClassDescriptor -> {
-                    diagnosticFor(targetDescriptor, targetDescriptor, virtualFile, element)?.let(trace::report)
+                    diagnosticFor(targetDescriptor, targetDescriptor, virtualFile, element)?.let(context.trace::report)
                 }
                 is TypeAliasDescriptor -> {
                     val containingClassOrPackage = DescriptorUtils.getParentOfType(targetDescriptor, ClassOrPackageFragmentDescriptor::class.java)
                     if (containingClassOrPackage != null) {
-                        diagnosticFor(containingClassOrPackage, targetDescriptor, virtualFile, element)?.let(trace::report)
+                        diagnosticFor(containingClassOrPackage, targetDescriptor, virtualFile, element)?.let(context.trace::report)
                     }
 
                     val expandedClass = targetDescriptor.expandedType.constructor.declarationDescriptor as? ClassDescriptor
                     if (expandedClass != null) {
-                        diagnosticFor(expandedClass, expandedClass, virtualFile, element)?.let(trace::report)
+                        diagnosticFor(expandedClass, expandedClass, virtualFile, element)?.let(context.trace::report)
                     }
                 }
             }

@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageChecker
+import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.checkClassifierUsages
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
@@ -223,7 +225,10 @@ class LazyTopDownAnalyzer(
 
         resolveImportsInAllFiles(c)
 
-        ClassifierUsageChecker.check(declarations, trace, languageVersionSettings, deprecationResolver, classifierUsageCheckers)
+        checkClassifierUsages(
+            declarations, classifierUsageCheckers,
+            ClassifierUsageCheckerContext(trace, languageVersionSettings, deprecationResolver)
+        )
 
         return c
     }
