@@ -1411,7 +1411,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional",
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async",
                            "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable",
-                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.boot.test.context.SpringBootTest"),
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.boot.test.context.SpringBootTest",
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.validation.annotation.Validated"),
                     compilerArguments!!.pluginOptions!!.toList()
             )
         }
