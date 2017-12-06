@@ -156,11 +156,11 @@ class IncrementalJvmCompilerRunner(
             dirtyFiles.addAll(dirtyFilesFromFqNames)
         }
 
-        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
+        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild { "No information on previous build" }
         reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
 
         val changesFromFriend by lazy {
-            val myLastTS = lastBuildInfo?.startTS ?: return@lazy ChangesEither.Unknown()
+            val myLastTS = lastBuildInfo.startTS 
             val storage = friendBuildHistoryFile?.let { BuildDiffsStorage.readFromFile(it, reporter) } ?: return@lazy ChangesEither.Unknown()
 
             val (prevDiffs, newDiffs) = storage.buildDiffs.partition { it.ts < myLastTS }
