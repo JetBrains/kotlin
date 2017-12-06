@@ -24,6 +24,8 @@ repositories {
     }
 }
 
+val dxRepoDir = File(buildDir, "libs")
+
 val buildToolsZip by configurations.creating
 val dxSourcesTar by configurations.creating
 
@@ -35,14 +37,12 @@ dependencies {
 val unzipDxJar by tasks.creating {
     dependsOn(buildToolsZip)
     inputs.files(buildToolsZip)
-    val targetFile = File(buildDir, "dx.jar")
-    outputs.files(targetFile)
-    outputs.upToDateWhen { targetFile.exists() } // TODO: consider more precise check, e.g. hash-based
+    outputs.files(File(dxRepoDir, "dx.jar"))
     doFirst {
         project.copy {
             from(zipTree(buildToolsZip.singleFile).files)
             include("**/dx.jar")
-            into(buildDir)
+            into(dxRepoDir)
         }
     }
 }
@@ -52,8 +52,7 @@ val dxSourcesTargetDir = File(buildDir, "dx_src")
 val untarDxSources by tasks.creating {
     dependsOn(dxSourcesTar)
     inputs.files(dxSourcesTar)
-    outputs.files(dxSourcesTargetDir)
-    outputs.upToDateWhen { dxSourcesTargetDir.isDirectory } // TODO: consider more precise check, e.g. hash-based
+    outputs.dir(dxSourcesTargetDir)
     doFirst {
         project.copy {
             from(tarTree(dxSourcesTar.singleFile))
@@ -67,7 +66,7 @@ val untarDxSources by tasks.creating {
 val prepareDxSourcesJar by tasks.creating(Jar::class) {
     dependsOn(untarDxSources)
     from("$dxSourcesTargetDir/src")
-    destinationDir = buildDir
+    destinationDir = dxRepoDir
     baseName = "dx"
     classifier = "sources"
 }

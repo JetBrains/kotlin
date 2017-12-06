@@ -2,6 +2,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply { plugin("kotlin") }
 
+repositories {
+    androidDxJarRepo(project)
+}
+
 configureIntellijPlugin {
     setPlugins("android", "copyright", "coverage", "gradle", "Groovy", "IntelliLang",
                "java-decompiler", "java-i18n", "junit", "maven", "properties", "testng")
@@ -21,7 +25,7 @@ dependencies {
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-gradle"))
 
-    compile(project(":custom-dependencies:android-sdk", configuration = "dxJar"))
+    compile(androidDxJar())
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
@@ -61,10 +65,6 @@ afterEvaluate {
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
-}
-
-tasks.withType<KotlinCompile> {
-    dependsOn(":custom-dependencies:android-sdk:extractDxJar")
 }
 
 projectTest {

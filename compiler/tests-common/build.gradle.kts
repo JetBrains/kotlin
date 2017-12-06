@@ -6,9 +6,7 @@ configureIntellijPlugin {
 }
 
 repositories {
-    ivy {
-        artifactPattern("${rootDir.absoluteFile.toURI().toURL()}/buildSrc/prepare-deps/dx/build/[artifact](-[classifier]).jar")
-    }
+    androidDxJarRepo(project)
 }
 
 dependencies {
@@ -35,7 +33,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common-jvm6"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))
-    testCompile("my-custom-deps:dx:0")
+    testCompile(androidDxJar())
 }
 
 afterEvaluate {

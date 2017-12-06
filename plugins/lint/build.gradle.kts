@@ -4,6 +4,10 @@ apply {
     plugin("java")
 }
 
+repositories {
+    androidDxJarRepo(project)
+}
+
 configureIntellijPlugin {
     setExtraDependencies("intellij-core")
     setPlugins("android")

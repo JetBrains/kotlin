@@ -6,6 +6,10 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
+repositories {
+    androidDxJarRepo(project)
+}
+
 configureIntellijPlugin {
     setExtraDependencies("intellij-core")
 }
@@ -62,7 +66,7 @@ dependencies {
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-daemon-client"))
-    testRuntime(project(":custom-dependencies:android-sdk", configuration = "dxJar"))
+    testRuntime(androidDxJar())
     testRuntime(files(toolsJar()))
 
     testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))

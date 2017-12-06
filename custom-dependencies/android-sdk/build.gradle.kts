@@ -16,7 +16,6 @@ repositories {
 
 val androidSdk by configurations.creating
 val androidJar by configurations.creating
-val dxJar by configurations.creating
 val androidPlatform by configurations.creating
 val dxSources by configurations.creating
 val buildTools by configurations.creating
