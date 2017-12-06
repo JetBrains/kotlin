@@ -1,0 +1,25 @@
+buildscript {
+    ext.kotlin_version = '1.2.0'
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
+}
+
+apply plugin: 'konan'
+
+konan.targets = ['iphone']
+
+konanArtifacts {
+    framework('KotlinArithmeticParser')
+}

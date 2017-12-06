@@ -1,3 +1,4 @@
+include ':calculator'
 include ':csvparser'
 include ':gitchurn'
 include ':gtk'
