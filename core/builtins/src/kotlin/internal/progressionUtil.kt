@@ -49,6 +49,7 @@ private fun differenceModulo(a: Long, b: Long, c: Long): Long {
  * @return the final element of the progression
  * @suppress
  */
+@PublishedApi
 internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int {
     if (step > 0) {
         return end - differenceModulo(end, start, step)
@@ -74,6 +75,7 @@ internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int {
  * @return the final element of the progression
  * @suppress
  */
+@PublishedApi
 internal fun getProgressionLastElement(start: Long, end: Long, step: Long): Long {
     if (step > 0) {
         return end - differenceModulo(end, start, step)

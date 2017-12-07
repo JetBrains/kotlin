@@ -179,6 +179,11 @@ public abstract class kotlin/collections/ShortIterator : java/util/Iterator, kot
 	public fun remove ()V
 }
 
+public final class kotlin/internal/ProgressionUtilKt {
+	public static final fun getProgressionLastElement (III)I
+	public static final fun getProgressionLastElement (JJJ)J
+}
+
 public final class kotlin/jvm/JvmClassMappingKt {
 	public static final fun getAnnotationClass (Ljava/lang/annotation/Annotation;)Lkotlin/reflect/KClass;
 	public static final fun getJavaClass (Ljava/lang/Object;)Ljava/lang/Class;
