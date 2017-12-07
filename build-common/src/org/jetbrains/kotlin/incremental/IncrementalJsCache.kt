@@ -31,18 +31,19 @@ import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
 
-open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon(cachesDir) {
+open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon<FqName>(cachesDir) {
     companion object {
         private val TRANSLATION_RESULT_MAP = "translation-result"
-        private val SOURCES_TO_CLASSES_FQNS = "sources-to-classes"
         private val INLINE_FUNCTIONS = "inline-functions"
         private val HEADER_FILE_NAME = "header.meta"
     }
 
-    private val dirtySources = arrayListOf<File>()
+    override val sourceToClassesMap = registerMap(SourceToFqNameMap(SOURCE_TO_CLASSES.storageFile))
+    override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile))
     private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile))
-    private val sourcesToClasses = registerMap(SourceToClassesMap(SOURCES_TO_CLASSES_FQNS.storageFile))
     private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
+
+    private val dirtySources = hashSetOf<File>()
 
     private val headerFile: File
         get() = File(cachesDir, HEADER_FILE_NAME)
@@ -55,30 +56,23 @@ open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon(cachesDi
         }
 
     override fun markDirty(removedAndCompiledSources: List<File>) {
+        super.markDirty(removedAndCompiledSources)
         dirtySources.addAll(removedAndCompiledSources)
     }
 
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
         val translatedFiles = incrementalResults.packageParts
 
-        dirtySources.forEach {
-            if (it !in translatedFiles) {
-                translationResults.remove(it, changesCollector)
-                inlineFunctions.remove(it)
-            }
-
-            removeAllFromClassStorage(sourcesToClasses[it])
-            sourcesToClasses.clearOutputsForSource(it)
-        }
-        dirtySources.clear()
-
         for ((srcFile, data) in translatedFiles) {
+            dirtySources.remove(srcFile)
             val (binaryMetadata, binaryAst) = data
 
             val oldProtoMap = translationResults[srcFile]?.metadata?.let { getProtoData(srcFile, it) } ?: emptyMap()
             val newProtoMap = getProtoData(srcFile, binaryMetadata)
 
-            for (protoData in newProtoMap.values) {
+            for ((classId, protoData) in newProtoMap) {
+                registerOutputForFile(srcFile, classId.asSingleFqName())
+
                 if (protoData is ClassProtoData) {
                     addToClassStorage(protoData.proto, protoData.nameResolver, srcFile)
                 }
@@ -96,6 +90,21 @@ open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon(cachesDi
         }
     }
 
+    private fun registerOutputForFile(srcFile: File, name: FqName) {
+        sourceToClassesMap.add(srcFile, name)
+        dirtyOutputClassesMap.notDirty(name)
+    }
+
+    override fun clearCacheForRemovedClasses(changesCollector: ChangesCollector) {
+        dirtySources.forEach {
+            translationResults.remove(it, changesCollector)
+            inlineFunctions.remove(it)
+        }
+        removeAllFromClassStorage(dirtyOutputClassesMap.getDirtyOutputClasses())
+        dirtySources.clear()
+        dirtyOutputClassesMap.clean()
+    }
+
     fun nonDirtyPackageParts(): Map<File, TranslationResultValue> =
             hashMapOf<File, TranslationResultValue>().apply {
                 for (path in translationResults.keys()) {
@@ -105,25 +114,6 @@ open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon(cachesDi
                     }
                 }
             }
-}
-
-private class SourceToClassesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
-    fun clearOutputsForSource(sourceFile: File) {
-        remove(sourceFile.canonicalPath)
-    }
-
-    fun add(sourceFile: File, className: FqName) {
-        storage.append(sourceFile.canonicalPath, className.asString())
-    }
-
-    operator fun get(sourceFile: File): Collection<FqName> =
-            storage[sourceFile.canonicalPath].orEmpty().map { FqName(it) }
-
-    override fun dumpValue(value: Collection<String>) = value.dumpCollection()
-
-    private fun remove(path: String) {
-        storage.remove(path)
-    }
 }
 
 private object TranslationResultValueExternalizer : DataExternalizer<TranslationResultValue> {

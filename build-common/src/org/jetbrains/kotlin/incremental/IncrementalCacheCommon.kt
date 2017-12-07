@@ -28,18 +28,20 @@ import java.io.File
 /**
  * Incremental cache common for JVM and JS
  */
-abstract class IncrementalCacheCommon(workingDir: File) : BasicMapsOwner(workingDir) {
+abstract class IncrementalCacheCommon<ClassName>(workingDir: File) : BasicMapsOwner(workingDir) {
     companion object {
         private val SUBTYPES = "subtypes"
         private val SUPERTYPES = "supertypes"
         private val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
+        @JvmStatic protected val SOURCE_TO_CLASSES = "source-to-classes"
+        @JvmStatic protected val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
     }
 
-    private val dependents = arrayListOf<IncrementalCacheCommon>()
-    fun addDependentCache(cache: IncrementalCacheCommon) {
+    private val dependents = arrayListOf<IncrementalCacheCommon<ClassName>>()
+    fun addDependentCache(cache: IncrementalCacheCommon<ClassName>) {
         dependents.add(cache)
     }
-    val thisWithDependentCaches: Iterable<IncrementalCacheCommon> by lazy {
+    val thisWithDependentCaches: Iterable<IncrementalCacheCommon<ClassName>> by lazy {
         val result = arrayListOf(this)
         result.addAll(dependents)
         result
@@ -48,6 +50,8 @@ abstract class IncrementalCacheCommon(workingDir: File) : BasicMapsOwner(working
     private val subtypesMap = registerMap(SubtypesMap(SUBTYPES.storageFile))
     private val supertypesMap = registerMap(SupertypesMap(SUPERTYPES.storageFile))
     protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile))
+    internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
+    internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
 
     fun getSubtypesOf(className: FqName): Sequence<FqName> =
             subtypesMap[className].asSequence()
@@ -55,7 +59,16 @@ abstract class IncrementalCacheCommon(workingDir: File) : BasicMapsOwner(working
     fun getSourceFileIfClass(fqName: FqName): File? =
             classFqNameToSourceMap[fqName]
 
-    abstract fun markDirty(removedAndCompiledSources: List<File>)
+    open fun markDirty(removedAndCompiledSources: List<File>) {
+        for (sourceFile in removedAndCompiledSources) {
+            val classes = sourceToClassesMap[sourceFile]
+            classes.forEach {
+                dirtyOutputClassesMap.markDirty(it)
+            }
+
+            sourceToClassesMap.clearOutputsForSource(sourceFile)
+        }
+    }
 
     protected fun addToClassStorage(proto: ProtoBuf.Class, nameResolver: NameResolver, srcFile: File) {
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))
@@ -72,6 +85,8 @@ abstract class IncrementalCacheCommon(workingDir: File) : BasicMapsOwner(working
         supertypesMap[child] = parents
         classFqNameToSourceMap[child] = srcFile
     }
+
+    abstract fun clearCacheForRemovedClasses(changesCollector: ChangesCollector)
 
     protected fun removeAllFromClassStorage(removedClasses: Collection<FqName>) {
         if (removedClasses.isEmpty()) return
