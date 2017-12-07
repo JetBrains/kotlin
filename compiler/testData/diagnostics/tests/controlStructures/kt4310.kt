@@ -2,9 +2,9 @@
 package f
 
 fun test(a: Boolean, b: Boolean): Int {
-    return if(a) {
+    return <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if(a) {
         1
-    } else <!NI;TYPE_MISMATCH!>{
+    } else {
         <!OI;TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (b) {
             3
         }<!>
