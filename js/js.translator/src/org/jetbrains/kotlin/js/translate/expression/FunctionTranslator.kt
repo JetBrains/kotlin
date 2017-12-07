@@ -120,7 +120,16 @@ fun TranslationContext.wrapWithInlineMetadata(
                     else -> descriptor.fqNameSafe.asString()
                 }
 
-                processInlineFunction(file, fqName, functionWithMetadata)
+                val offset = sourceInfo?.node?.startOffset
+                val document = psiFile.viewProvider.document
+                var sourceLine = -1
+                var sourceColumn = -1
+                if (offset != null && document != null) {
+                    sourceLine = document.getLineNumber(offset)
+                    sourceColumn = offset - document.getLineStartOffset(sourceLine)
+                }
+
+                processInlineFunction(file, fqName, functionWithMetadata, sourceLine, sourceColumn)
             }
 
             functionWithMetadata
