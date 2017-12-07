@@ -9,7 +9,7 @@ import org.gradle.internal.os.OperatingSystem
 val intellijRepo = "https://www.jetbrains.com/intellij-repository"
 val intellijReleaseType = "releases" // or "snapshots"
 val intellijSdkDependencyName = "ideaIC" // or "ideaIU"
-val intellijVersion = rootProject.extra["versions.intellij"] as String
+val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
 
 repositories {
     maven { setUrl("$intellijRepo/$intellijReleaseType") }
@@ -21,7 +21,11 @@ val jpsStandalone by configurations.creating
 val jpsBuildTest by configurations.creating
 val intellijCore by configurations.creating
 
-val repoDir = File(buildDir, "repo")
+val customDepsRepoDir = File(buildDir, "repo")
+val customDepsOrg: String by rootProject.extra
+val customDepsRevision = intellijVersion
+val customDepsRepoModulesDir = File(customDepsRepoDir, "$customDepsOrg/$customDepsRevision")
+val repoDir = customDepsRepoModulesDir
 
 dependencies {
     intellijSdk("com.jetbrains.intellij.idea:$intellijSdkDependencyName:$intellijVersion")
@@ -54,51 +58,54 @@ val copyIntellijSdkSources by tasks.creating { configureExtractFromConfiguration
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(jpsBuildTest) { it.singleFile } }
 
-fun createIvyDependency(baseDir: File, file: File, configuration: String, extension: String?, type: String) : DefaultIvyArtifact {
-    val relativePath = baseDir.toURI().relativize(file.toURI()).path
-    val name = if (extension != null) relativePath.removeSuffix(".$extension") else relativePath
-    val artifact = DefaultIvyArtifact(file, name, extension, type, null)
-    artifact.conf = configuration
-    return artifact
-}
-
-fun makeIvyXml(name: String, ivyFile: File, jarFiles: FileCollection, baseDir: File, sourcesJar: File): File {
-    val generator = IvyDescriptorFileGenerator(DefaultIvyPublicationIdentity("com.jetbrains", name, intellijVersion))
-    generator.addConfiguration(DefaultIvyConfiguration("default"))
-    generator.addConfiguration(DefaultIvyConfiguration("compile"))
-    generator.addConfiguration(DefaultIvyConfiguration("sources"))
-    jarFiles.forEach {
-        generator.addArtifact(createIvyDependency(baseDir, it, "compile", "jar", "jar"))
+fun writeIvyXml(moduleName: String, jarFiles: FileCollection, baseDir: File, sourcesJar: File) {
+    with(IvyDescriptorFileGenerator(DefaultIvyPublicationIdentity(customDepsOrg, moduleName, intellijVersion))) {
+        addConfiguration(DefaultIvyConfiguration("default"))
+        addConfiguration(DefaultIvyConfiguration("sources"))
+        jarFiles.asFileTree.files.forEach {
+            if (it.isFile && it.extension == "jar") {
+                val relativeName = it.toRelativeString(baseDir).removeSuffix(".jar")
+                addArtifact(DefaultIvyArtifact(it, relativeName, "jar", "jar", null).also { it.conf = "default" })
+            }
+        }
+        val sourcesArtifactName = sourcesJar.name.removeSuffix(".jar").substringBefore("-")
+        addArtifact(DefaultIvyArtifact(sourcesJar, sourcesArtifactName, "jar", "sources", "sources").also { it.conf = "sources" })
+        writeTo(File(customDepsRepoModulesDir, "$moduleName.ivy.xml"))
     }
-    val relativeSourcesPath = baseDir.toURI().relativize(sourcesJar.parentFile.toURI()).path
-    val sourcesArtifactName = sourcesJar.name.removeSuffix(".jar").substringBefore("-")
-    val artifact = DefaultIvyArtifact(sourcesJar, "$relativeSourcesPath/$sourcesArtifactName", "jar", "sources", "sources")
-    artifact.conf = "sources"
-    generator.addArtifact(artifact)
-    generator.writeTo(ivyFile)
-    return ivyFile
 }
 
 val prepareIvyXml by tasks.creating {
     dependsOn(unzipIntellijSdk, unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest)
-    inputs.dir(File(repoDir, intellijSdk.name))
+    val intellijSdkDir = File(repoDir, intellijSdk.name)
+    inputs.dir(intellijSdkDir)
+    outputs.file(File(repoDir, "${intellijSdk.name}.ivy.xml"))
     val flatDeps = listOf(intellijCore, jpsStandalone, jpsBuildTest)
     flatDeps.forEach {
         inputs.dir(File(repoDir, it.name))
+        outputs.file(File(repoDir, "${it.name}.ivy.xml"))
     }
     inputs.dir(File(repoDir, intellijSources.name))
-    val ivyXml = File(repoDir, "ivy.xml")
-    outputs.files(ivyXml)
-    val sourcesFile = File(repoDir, "${intellijSources.name}/${intellijSources.singleFile.name}")
+//    outputs.files("$repoDir/intellij.plugin.*.ivy.xml")
     doFirst {
-        makeIvyXml(intellijSdk.name, File(repoDir, "${intellijSdk.name}.ivy.xml"),
-                   files("$repoDir/${intellijSdk.name}/lib").filter { !it.name.startsWith("kotlin-") },
-                   repoDir, sourcesFile)
-        File(repoDir, "${intellijSdk.name}/plugins").listFiles { it: File -> it.isDirectory }.forEach {
-            makeIvyXml(it.name, File(repoDir, "intellij.plugin.${it.name}.ivy.xml"), files("$it/lib"), repoDir, sourcesFile)
+        val sourcesFile = File(repoDir, "${intellijSources.name}/${intellijSources.singleFile.name}")
+        writeIvyXml(intellijSdk.name,
+                    files("$intellijSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
+                    File(intellijSdkDir, "lib"),
+                    sourcesFile)
+        File(intellijSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
+            writeIvyXml("intellij.plugin.${it.name}", files("$it/lib/"), File(it, "lib"), sourcesFile)
         }
         flatDeps.forEach {
-            makeIvyXml(it.name, File(repoDir, "${it.name}.ivy.xml"), files("$repoDir/${it.name}"), repoDir, sourcesFile)
+            writeIvyXml(it.name, files("$repoDir/${it.name}"), File(repoDir, it.name), sourcesFile)
         }
     }
+}
+
+val build by tasks.creating {
+    dependsOn(prepareIvyXml)
+}
+
+val clean by tasks.creating(Delete::class) {
+    delete(customDepsRepoModulesDir)
+    delete(buildDir)
 }

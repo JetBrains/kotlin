@@ -2,6 +2,7 @@
 
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.util.PatternFilterable
@@ -10,6 +11,28 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.the
 import org.jetbrains.intellij.IntelliJPluginExtension
 import org.jetbrains.intellij.dependency.PluginDependency
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.artifacts.repositories.IvyArtifactRepository
+
+fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository = ivy {
+    val baseDir = File("${project.rootDir.absoluteFile}/buildSrc/prepare-deps/intellij-sdk/build/repo")
+    setUrl(baseDir)
+    ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module].ivy.xml")
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/lib/[artifact](-[classifier]).jar")
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact].jar")
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact](-[revision])(-[classifier]).jar")
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellijSources/[artifact]-[revision]-[classifier].[ext]")
+}
+
+fun Project.intellijDep() = "kotlin.build.custom.deps:intellijSdk:${rootProject.extra["versions.intellijSdk"]}"
+
+fun Project.intellijCoreDep() = "kotlin.build.custom.deps:intellijCore:${rootProject.extra["versions.intellijSdk"]}"
+
+fun ModuleDependency.includeJars(vararg names: String) {
+    names.forEach {
+        artifact { name = it; extension = "jar" }
+    }
+}
 
 fun Project.configureIntellijPlugin(body: (IntelliJPluginExtension.() -> Unit) = {}) {
 

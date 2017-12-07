@@ -31,7 +31,12 @@ plugins {
     `kotlin-dsl`
 }
 
-extra["versions.intellij"] = "172.4343.14"
+extra["versions.intellijSdk"] = "172.4343.14"
+extra["versions.androidBuildTools"] = "r23.0.1"
+extra["versions.androidDxSources"] = "5.0.0_r2"
+
+extra["customDepsRepo"] = "$rootDir/repo"
+extra["customDepsOrg"] = "kotlin.build.custom.deps"
 
 repositories {
     extra["buildSrcKotlinRepo"]?.let {
@@ -63,4 +68,4 @@ samWithReceiver {
 fun Project.`samWithReceiver`(configure: org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension.() -> Unit): Unit =
         extensions.configure("samWithReceiver", configure)
 
-tasks["build"].dependsOn(":prepare-deps:android-dx:build")
+tasks["build"].dependsOn(":prepare-deps:android-dx:build", ":prepare-deps:intellij-sdk:build")

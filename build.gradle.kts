@@ -115,6 +115,8 @@ extra["JDK_18"] = jdkPath("1.8")
 extra["JDK_9"] = jdkPathIfFound("9")
 
 extra["versions.intellij"] = "IC-172.4343.14"
+extra["versions.intellijSdk"] = "172.4343.14"
+extra["versions.androidBuildTools"] = "r23.0.1"
 extra["versions.protobuf-java"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
 extra["versions.jsr305"] = "1.3.9"
