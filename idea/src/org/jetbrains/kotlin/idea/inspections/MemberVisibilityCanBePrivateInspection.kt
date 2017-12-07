@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 
-class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
+class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
