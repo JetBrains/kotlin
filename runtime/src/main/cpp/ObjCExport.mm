@@ -673,17 +673,34 @@ static void addDefinedSelectors(Class clazz, KStdUnorderedSet<SEL>& result) {
 
 static KStdVector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz) {
   KStdVector<const TypeInfo*> result;
+  KStdUnorderedSet<Protocol*> handledProtocols;
+  KStdVector<Protocol*> protocolsToHandle;
 
-  unsigned int protocolCount;
-  Protocol** protocols = class_copyProtocolList(clazz, &protocolCount);
-  if (protocols == nullptr) return result;
-
-  for (int i = 0; i < protocolCount; ++i) {
-    Protocol* protocol = protocols[i];
-    const ObjCTypeAdapter* typeAdapter = findProtocolAdapter(protocol);
-    if (typeAdapter != nullptr) result.push_back(typeAdapter->kotlinTypeInfo);
+  {
+    unsigned int protocolCount;
+    Protocol** protocols = class_copyProtocolList(clazz, &protocolCount);
+    if (protocols != nullptr) {
+      protocolsToHandle.insert(protocolsToHandle.end(), protocols, protocols + protocolCount);
+      free(protocols);
+    }
   }
-  if (protocols != nullptr) free(protocols);
+
+  while (!protocolsToHandle.empty()) {
+    Protocol* proto = protocolsToHandle[protocolsToHandle.size() - 1];
+    protocolsToHandle.pop_back();
+
+    if (handledProtocols.insert(proto).second) {
+      const ObjCTypeAdapter* typeAdapter = findProtocolAdapter(proto);
+      if (typeAdapter != nullptr) result.push_back(typeAdapter->kotlinTypeInfo);
+
+      unsigned int protocolCount;
+      Protocol** protocols = protocol_copyProtocolList(proto, &protocolCount);
+      if (protocols != nullptr) {
+        protocolsToHandle.insert(protocolsToHandle.end(), protocols, protocols + protocolCount);
+        free(protocols);
+      }
+    }
+  }
 
   return result;
 }
