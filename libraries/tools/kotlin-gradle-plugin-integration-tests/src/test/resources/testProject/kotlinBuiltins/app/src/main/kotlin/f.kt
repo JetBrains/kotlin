@@ -1,3 +1,4 @@
 package foo
 
-fun f(fn: (x: Int)->Unit) {}
+@Suppress("unused_parameter")
+fun f(fn: (x: Int)->Unit) { }

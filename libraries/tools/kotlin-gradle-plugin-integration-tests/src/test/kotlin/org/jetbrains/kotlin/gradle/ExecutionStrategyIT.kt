@@ -7,7 +7,7 @@ import java.io.File
 
 class ExecutionStrategyJsIT : ExecutionStrategyIT() {
     override fun setupProject(project: Project) {
-        project.setupWorkingDir()
+        super.setupProject(project)
         val buildGradle = File(project.projectDir, "app/build.gradle")
         buildGradle.modify { it.replace("apply plugin: \"kotlin\"", "apply plugin: \"kotlin2js\"") +
                 "\ncompileKotlin2Js.kotlinOptions.outputFile = \"web/js/out.js\"" }
@@ -62,6 +62,10 @@ open class ExecutionStrategyIT : BaseGradleIT() {
     }
 
     protected open fun setupProject(project: Project) {
+        project.setupWorkingDir()
+        File(project.projectDir, "app/build.gradle").appendText(
+                "\ntasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all { kotlinOptions.allWarningsAsErrors = true }"
+        )
     }
 
     protected open fun CompiledProject.checkOutput() {

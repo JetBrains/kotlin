@@ -299,7 +299,7 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.assertNoWarnings() {
-        val warnings = "w: .*$".toRegex().findAll(output).map { it.groupValues[0] }
+        val warnings = "w: .*".toRegex().findAll(output).map { it.groupValues[0] }
 
         if (warnings.any()) {
             val message = (listOf("Output should not contain any warnings:") + warnings).joinToString(SYSTEM_LINE_SEPARATOR)
