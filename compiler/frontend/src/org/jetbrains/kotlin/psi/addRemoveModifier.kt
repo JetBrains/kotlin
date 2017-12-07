@@ -121,6 +121,13 @@ fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken)
     }
 }
 
+fun sortModifiers(modifiers: List<KtModifierKeywordToken>): List<KtModifierKeywordToken> {
+    return modifiers.sortedBy {
+        val index = MODIFIERS_ORDER.indexOf(it)
+        if (index == -1) Int.MAX_VALUE else index
+    }
+}
+
 private val MODIFIERS_TO_REPLACE = mapOf(
         OVERRIDE_KEYWORD to listOf(OPEN_KEYWORD),
         ABSTRACT_KEYWORD to listOf(OPEN_KEYWORD, FINAL_KEYWORD),
