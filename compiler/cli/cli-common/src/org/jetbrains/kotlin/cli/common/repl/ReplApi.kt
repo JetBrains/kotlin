@@ -157,7 +157,9 @@ sealed class ReplEvalResult : Serializable {
     }
 }
 
-interface ReplEvaluator : ReplEvalAction, CreateReplStageStateAction
+interface ReplEvaluator : ReplEvalAction, CreateReplStageStateAction {
+    val classLoader: ReplClassLoader
+}
 
 // --- compileAdnEval
 

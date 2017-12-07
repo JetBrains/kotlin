@@ -49,8 +49,6 @@ class ReplInterpreter(
         }
     }
 
-    private val classLoader = ReplClassLoader(classpathRoots, null)
-
     private val messageCollector = object : MessageCollector {
         private var hasErrors = false
         private val messageRenderer = MessageRenderer.WITHOUT_PATHS
@@ -81,7 +79,7 @@ class ReplInterpreter(
         GenericReplCompiler(disposable, REPL_LINE_AS_SCRIPT_DEFINITION, configuration, messageCollector)
     }
     private val scriptEvaluator: ReplFullEvaluator by lazy {
-        GenericReplCompilingEvaluator(scriptCompiler, classpathRoots, classLoader, null, ReplRepeatingMode.REPEAT_ANY_PREVIOUS)
+        GenericReplCompilingEvaluator(scriptCompiler, classpathRoots, null, null, ReplRepeatingMode.REPEAT_ANY_PREVIOUS)
     }
 
     private val evalState by lazy { scriptEvaluator.createState() }
@@ -105,14 +103,14 @@ class ReplInterpreter(
         }
         catch (e: Throwable) {
             val writer = PrintWriter(System.err)
-            classLoader.dumpClasses(writer)
+            scriptEvaluator.classLoader.dumpClasses(writer)
             writer.flush()
             throw e
         }
     }
 
     fun dumpClasses(out: PrintWriter) {
-        classLoader.dumpClasses(out)
+        scriptEvaluator.classLoader.dumpClasses(out)
     }
 
     companion object {

@@ -21,12 +21,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 
 class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
-                                    baseClasspath: Iterable<File>,
+                                    baseClasspath: List<File>,
                                     baseClassloader: ClassLoader? = Thread.currentThread().contextClassLoader,
                                     private val fallbackScriptArgs: ScriptArgsWithTypes? = null,
                                     repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
 ) : ReplFullEvaluator {
     private val evaluator = GenericReplEvaluator(baseClasspath, baseClassloader, fallbackScriptArgs, repeatingMode)
+
+    override val classLoader: ReplClassLoader
+        get() = evaluator.classLoader
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = AggregatedReplStageState(compiler.createState(lock), evaluator.createState(lock), lock)
 
