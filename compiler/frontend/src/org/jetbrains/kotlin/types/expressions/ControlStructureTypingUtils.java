@@ -133,8 +133,8 @@ public class ControlStructureTypingUtils {
             @NotNull KotlinType expectedType,
             @NotNull LanguageVersionSettings languageVersionSettings
     ) {
-        if (construct == ResolveConstruct.ELVIS
-            || construct == ResolveConstruct.EXCL_EXCL
+        if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+            || construct == ResolveConstruct.ELVIS
             || TypeUtils.noExpectedType(expectedType)
             || TypeUtils.isDontCarePlaceholder(expectedType)
             || KotlinBuiltIns.isUnitOrNullableUnit(expectedType)

@@ -1,11 +1,11 @@
 // !WITH_NEW_INFERENCE
 fun test1(): Int {
-    val x: String = if (true) <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>{
+    val x: String = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (true) {
         when {
             true -> <!OI;TYPE_MISMATCH!>Any()<!>
             else -> <!OI;NULL_FOR_NONNULL_TYPE!>null<!>
         }
-    }<!> else ""
+    } else ""<!>
     return x.hashCode()
 }
 
