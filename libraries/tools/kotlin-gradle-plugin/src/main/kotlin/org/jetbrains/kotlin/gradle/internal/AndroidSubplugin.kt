@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,7 +135,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         fun isLayoutDirectory(file: File) = file.name == "layout" || file.name.startsWith("layout-")
 
         return resDirectories.flatMap { resDir ->
-            (resDir.listFiles(::isLayoutDirectory)).orEmpty().asList()
+            (resDir.listFiles { file: File -> isLayoutDirectory(file) }).orEmpty().asList()
         }
     }
 

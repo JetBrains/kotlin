@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -377,7 +377,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                         LightClassDataProviderForClassOrObject(classOrObject), false)
                 value = classOrObject.putUserDataIfAbsent(JAVA_API_STUB, value)
             }
-            return value
+            return value!!
         }
 
         private fun checkSuperTypeByFQName(classDescriptor: ClassDescriptor, qualifiedName: String, deep: Boolean): Boolean {

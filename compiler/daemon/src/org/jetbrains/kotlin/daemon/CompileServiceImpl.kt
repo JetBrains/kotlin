@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -964,6 +964,7 @@ class CompileServiceImpl(
             body()
             CompileService.CallResult.Ok()
         }
+        Unit
     }
 
     private inline fun<R> ifAliveExclusive(minAliveness: Aliveness = Aliveness.LastSession, body: () -> CompileService.CallResult<R>): CompileService.CallResult<R> = rwlock.write {
@@ -975,6 +976,7 @@ class CompileServiceImpl(
             body()
             CompileService.CallResult.Ok()
         }
+        Unit
     }
 
     private inline fun<R> ifAliveChecksImpl(minAliveness: Aliveness = Aliveness.LastSession, body: () -> CompileService.CallResult<R>): CompileService.CallResult<R> {

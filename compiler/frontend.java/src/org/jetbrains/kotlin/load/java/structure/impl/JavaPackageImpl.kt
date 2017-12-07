@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl
 
+import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.java.structure.*
@@ -41,7 +42,7 @@ class JavaPackageImpl(
         get() = FqName(psi.qualifiedName)
 
     override val annotations: Collection<JavaAnnotation>
-        get() = org.jetbrains.kotlin.load.java.structure.impl.annotations(psi.annotationList?.annotations.orEmpty())
+        get() = org.jetbrains.kotlin.load.java.structure.impl.annotations(psi.annotationList?.annotations.orEmpty() as Array<out PsiAnnotation>)
 
     override val annotationsByFqName: Map<FqName?, JavaAnnotation> by buildLazyValueForMap()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class MethodInliner(
     //keeps order
     private val transformations = ArrayList<TransformationInfo>()
     //current state
-    private val currentTypeMapping = HashMap<String, String>()
+    private val currentTypeMapping = HashMap<String, String?>()
     private val result = InlineResult.create()
     private var lambdasFinallyBlocks: Int = 0
 

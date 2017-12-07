@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.frontend.java.di.initialize
@@ -69,6 +68,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
+import kotlin.reflect.KFunction1
 
 object TopDownAnalyzerFacadeForJVM {
     @JvmStatic
@@ -157,8 +157,10 @@ object TopDownAnalyzerFacadeForJVM {
         }
 
         val configureJavaClassFinder =
-                if (configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) StorageComponentContainer::useJavac
-                else null
+                if (configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC))
+                    StorageComponentContainer::useJavac
+                else
+                    null as KFunction1<StorageComponentContainer, Unit>?
 
         val dependencyModule = if (separateModules) {
             val dependenciesContext = ContextForNewModule(

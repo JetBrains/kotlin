@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.psi.KtElement
 
 class RootInliningContext(
         expressionMap: Map<Int, LambdaInfo>,
@@ -74,7 +73,7 @@ open class InliningContext(
 
     fun subInlineWithClassRegeneration(
             generator: NameGenerator,
-            newTypeMappings: MutableMap<String, String>,
+            newTypeMappings: MutableMap<String, String?>,
             callSiteInfo: InlineCallSiteInfo
     ): InliningContext = RegeneratedClassContext(
             this, expressionMap, state, generator, TypeRemapper.createFrom(typeRemapper, newTypeMappings),

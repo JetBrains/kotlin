@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,15 @@
 package org.jetbrains.kotlin.preprocessor
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import java.io.File
 import java.io.IOException
-
-
 
 
 data class Profile(val name: String, val evaluator: Evaluator, val targetRoot: File)
@@ -37,7 +34,9 @@ fun createJvmProfile(targetRoot: File, version: Int): Profile = Profile("JVM$ver
 fun createJsProfile(targetRoot: File): Profile = Profile("JS", JsPlatformEvaluator(), File(targetRoot, "js"))
 
 val profileEvaluators: Map<String, () -> Evaluator> =
-        listOf(6, 7, 8).associateBy({ version -> "JVM$version" }, { version -> { JvmPlatformEvaluator(version) } }) + ("JS" to { JsPlatformEvaluator() })
+        listOf(6, 7, 8)
+                .associateBy({ version -> "JVM$version" }, { version -> { JvmPlatformEvaluator(version) } })
+                .plus<String, () -> PlatformEvaluator>("JS" to { JsPlatformEvaluator() })
 
 fun createProfile(name: String, targetRoot: File): Profile {
     val (profileName, evaluator) = profileEvaluators.entries.firstOrNull { it.key.equals(name, ignoreCase = true) } ?: throw IllegalArgumentException("Profile with name '$name' is not supported")

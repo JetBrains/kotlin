@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ private val createDefaultSourceDirectorySet: (name: String?, resolver: FileResol
 
     if (defaultConstructor != null && defaultConstructor.getAnnotation(java.lang.Deprecated::class.java) == null) {
         // TODO: drop when gradle < 2.12 are obsolete
-        { name, resolver -> defaultConstructor.newInstance(name, resolver) }
+        return@run { name: String?, resolver: FileResolver? -> defaultConstructor!!.newInstance(name, resolver) }
     }
     else {
         val directoryFileTreeFactoryClass = Class.forName("org.gradle.api.internal.file.collections.DirectoryFileTreeFactory")
@@ -58,7 +58,7 @@ private val createDefaultSourceDirectorySet: (name: String?, resolver: FileResol
 
         val defaultFileTreeFactoryClass = Class.forName("org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory")
         val defaultFileTreeFactory = defaultFileTreeFactoryClass.getConstructor().newInstance()
-        return@run { name, resolver -> alternativeConstructor.newInstance(name, resolver, defaultFileTreeFactory) }
+        return@run { name: String?, resolver: FileResolver? -> alternativeConstructor.newInstance(name, resolver, defaultFileTreeFactory) }
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.kapt3.AptMode.*
+import org.jetbrains.kotlin.kapt3.AptMode.APT_ONLY
+import org.jetbrains.kotlin.kapt3.AptMode.WITH_COMPILATION
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
@@ -297,17 +298,20 @@ abstract class AbstractKapt3Extension(
         val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
         kaptContext.generationState.factory.writeAll(
                 incrementalDataOutputDir,
-                if (!reportOutputFiles) null else fun(file: OutputFile, sources: List<File>, output: File) {
-                    val stubFileObject = converter.bindings[file.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")]
-                    if (stubFileObject != null) {
-                        val stubFile = File(stubsOutputDir, stubFileObject.name)
-                        if (stubFile.exists()) {
-                            messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, stubFile))
+                if (!reportOutputFiles)
+                    null as ((file: OutputFile, sources: List<File>, output: File) -> Unit)?
+                else
+                    fun(file: OutputFile, sources: List<File>, output: File) {
+                        val stubFileObject = converter.bindings[file.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")]
+                        if (stubFileObject != null) {
+                            val stubFile = File(stubsOutputDir, stubFileObject.name)
+                            if (stubFile.exists()) {
+                                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, stubFile))
+                            }
                         }
-                    }
 
-                    messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
-                }
+                        messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
+                    }
         )
     }
 
