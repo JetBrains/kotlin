@@ -88,10 +88,16 @@ abstract class IncrementalCacheCommon<ClassName>(workingDir: File) : BasicMapsOw
 
     abstract fun clearCacheForRemovedClasses(changesCollector: ChangesCollector)
 
-    protected fun removeAllFromClassStorage(removedClasses: Collection<FqName>) {
+    protected fun removeAllFromClassStorage(removedClasses: Collection<FqName>, changesCollector: ChangesCollector) {
         if (removedClasses.isEmpty()) return
 
         val removedFqNames = removedClasses.toSet()
+
+        for (removedClass in removedFqNames) {
+            for (affectedClass in withSubtypes(removedClass, thisWithDependentCaches)) {
+                changesCollector.collectSignature(affectedClass, areSubclassesAffected = false)
+            }
+        }
 
         for (cache in thisWithDependentCaches) {
             val parentsFqNames = hashSetOf<FqName>()
