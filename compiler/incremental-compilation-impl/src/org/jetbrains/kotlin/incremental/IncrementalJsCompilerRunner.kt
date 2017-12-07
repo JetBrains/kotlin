@@ -121,7 +121,8 @@ class IncrementalJsCompilerRunner(
         val jsCache = caches.platformCache
         jsCache.header = incrementalResults.headerMetadata
 
-        return jsCache.compareAndUpdate(incrementalResults, changesCollector)
+        jsCache.compareAndUpdate(incrementalResults, changesCollector)
+        jsCache.clearCacheForRemovedClasses(changesCollector)
     }
 
     override fun runCompiler(
