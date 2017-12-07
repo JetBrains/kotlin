@@ -37,9 +37,10 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
                     val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)
                     if (foldableReturns?.isNotEmpty() == true) {
                         val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns }
-                        holder.registerProblem(
+                        holder.registerProblemWithoutOfflineInformation(
                                 keyword,
                                 "Return can be lifted out of '${keyword.text}'",
+                                isOnTheFly,
                                 if (!hasOtherReturns && foldableReturns.size > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                 else ProblemHighlightType.INFORMATION,
                                 LiftReturnOutFix(keyword.text)
