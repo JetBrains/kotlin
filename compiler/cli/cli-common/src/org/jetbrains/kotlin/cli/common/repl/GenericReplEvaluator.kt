@@ -28,7 +28,6 @@ open class GenericReplEvaluator(
         protected val fallbackScriptArgs: ScriptArgsWithTypes? = null,
         protected val repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
 ) : ReplEvaluator {
-
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> {
         return GenericReplEvaluatorState(baseClasspath, baseClassloader, lock)
     }
@@ -66,14 +65,16 @@ open class GenericReplEvaluator(
                 return@eval ReplEvalResult.HistoryMismatch(firstMismatch.first?.id?.no ?: firstMismatch.second?.no ?: -1 /* means error? */)
             }
 
-            val (classLoader, scriptClass) = try {
+            val scriptClass = try {
                 historyActor.processClasses(compileResult)
             }
             catch (e: Exception) {
                 return@eval ReplEvalResult.Error.Runtime(e.message ?: "unknown", e)
             }
 
-            historyActor.addPlaceholder(compileResult.lineId, EvalClassWithInstanceAndLoader(scriptClass.kotlin, null, classLoader, invokeWrapper))
+            historyActor.addPlaceholder(
+                    compileResult.lineId,
+                    EvalClassWithInstanceAndLoader(scriptClass.kotlin, null, evalState.classLoader, invokeWrapper))
 
             fun makeErrorMessage(e: Throwable) = renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.run")
 
@@ -101,7 +102,9 @@ open class GenericReplEvaluator(
                         historyActor.removePlaceholder(compileResult.lineId)
                     }
 
-            historyActor.addFinal(compileResult.lineId, EvalClassWithInstanceAndLoader(scriptClass.kotlin, scriptInstance, classLoader, invokeWrapper))
+            historyActor.addFinal(
+                    compileResult.lineId,
+                    EvalClassWithInstanceAndLoader(scriptClass.kotlin, scriptInstance, evalState.classLoader, invokeWrapper))
 
             val resultField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
             val resultValue: Any? = resultField.get(scriptInstance)
@@ -118,43 +121,39 @@ open class GenericReplEvaluator(
 }
 
 private open class HistoryActionsForNoRepeat(val state: GenericReplEvaluatorState) {
+    open val effectiveHistory: List<EvalClassWithInstanceAndLoader>
+        get() = state.history.map { it.item }
 
-    open val effectiveHistory: List<EvalClassWithInstanceAndLoader> get() = state.history.map { it.item }
+    open fun firstMismatch(other: Sequence<ILineId>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ILineId?>? {
+        return state.history.firstMismatch(other)
+    }
 
-    open fun firstMismatch(other: Sequence<ILineId>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ILineId?>? = state.history.firstMismatch(other)
-
-    open fun addPlaceholder(lineId: ILineId, value: EvalClassWithInstanceAndLoader) { state.history.push(lineId, value) }
+    open fun addPlaceholder(lineId: ILineId, value: EvalClassWithInstanceAndLoader) {
+        state.history.push(lineId, value)
+    }
 
     open fun removePlaceholder(lineId: ILineId): Boolean = state.history.verifiedPop(lineId) != null
 
-    open fun addFinal(lineId: ILineId, value: EvalClassWithInstanceAndLoader) { state.history.push(lineId, value) }
+    open fun addFinal(lineId: ILineId, value: EvalClassWithInstanceAndLoader) {
+        state.history.push(lineId, value)
+    }
 
-    open fun processClasses(compileResult: ReplCompileResult.CompiledClasses): Pair<ClassLoader, Class<out Any>> = prependClassLoaderWithNewClasses(effectiveHistory, compileResult)
+    open fun processClasses(compileResult: ReplCompileResult.CompiledClasses): Class<out Any> {
+        class ClassToLoad(val name: JvmClassName, val bytes: ByteArray)
 
-    private fun prependClassLoaderWithNewClasses(effectiveHistory: List<EvalClassWithInstanceAndLoader>,
-                                                 compileResult: ReplCompileResult.CompiledClasses
-    ): Pair<ClassLoader, Class<out Any>> {
-        var mainLineClassName: String? = null
-        val classLoader = makeReplClassLoader(effectiveHistory.lastOrNull()?.classLoader ?: state.topClassLoader, compileResult.classpathAddendum)
-        fun classNameFromPath(path: String) = JvmClassName.byInternalName(path.removeSuffix(".class"))
-        fun compiledClassesNames() = compileResult.classes.map { classNameFromPath(it.path).internalName.replace('/', '.') }
-        val expectedClassName = compileResult.mainClassName
-        compileResult.classes.filter { it.path.endsWith(".class") }
-                .forEach {
-                    val className = classNameFromPath(it.path)
-                    if (className.internalName == expectedClassName || className.internalName.endsWith("/$expectedClassName")) {
-                        mainLineClassName = className.internalName.replace('/', '.')
-                    }
-                    classLoader.addClass(className, it.bytes)
-                }
+        val classesToLoad = compileResult.classes
+                .filter { it.path.endsWith(".class") }
+                .map { ClassToLoad(JvmClassName.byInternalName(it.path.removeSuffix(".class")), it.bytes) }
 
-        val scriptClass = try {
-            classLoader.loadClass(mainLineClassName!!)
+        val mainClassName = compileResult.mainClassName
+
+        if (!classesToLoad.any { it.name.internalName == mainClassName }) {
+            val compiledClassNames = classesToLoad.joinToString { it.name.internalName }
+            throw IllegalStateException("Error loading class $mainClassName: known classes: $compiledClassNames")
         }
-        catch (t: Throwable) {
-            throw Exception("Error loading class $mainLineClassName: known classes: ${compiledClassesNames()}", t)
-        }
-        return Pair(classLoader, scriptClass)
+
+        classesToLoad.forEach { state.classLoader.addClass(it.name, it.bytes) }
+        return Class.forName(mainClassName, true, state.classLoader)
     }
 }
 
@@ -176,8 +175,7 @@ private open class HistoryActionsForRepeatRecentOnly(state: GenericReplEvaluator
         state.history.push(lineId, value)
     }
 
-    override fun processClasses(compileResult: ReplCompileResult.CompiledClasses): Pair<ClassLoader, Class<out Any>> =
-            currentLast.item.classLoader to currentLast.item.klass.java
+    override fun processClasses(compileResult: ReplCompileResult.CompiledClasses) = currentLast.item.klass.java
 }
 
 private open class HistoryActionsForRepeatAny(state: GenericReplEvaluatorState, val matchingLine: ReplHistoryRecord<EvalClassWithInstanceAndLoader>): HistoryActionsForNoRepeat(state) {
@@ -201,6 +199,5 @@ private open class HistoryActionsForRepeatAny(state: GenericReplEvaluatorState, 
         }
     }
 
-    override fun processClasses(compileResult: ReplCompileResult.CompiledClasses): Pair<ClassLoader, Class<out Any>> =
-            matchingLine.item.classLoader to matchingLine.item.klass.java
+    override fun processClasses(compileResult: ReplCompileResult.CompiledClasses) = matchingLine.item.klass.java
 }

@@ -48,7 +48,8 @@ class ReplInterpreter(
             else -> null
         }
     }
-    private val classLoader = ReplClassLoader(URLClassLoader(classpathRoots.map { it.toURI().toURL() }.toTypedArray(), null))
+
+    private val classLoader = ReplClassLoader(classpathRoots, null)
 
     private val messageCollector = object : MessageCollector {
         private var hasErrors = false

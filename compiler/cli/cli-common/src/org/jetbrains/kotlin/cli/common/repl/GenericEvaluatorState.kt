@@ -17,26 +17,21 @@
 package org.jetbrains.kotlin.cli.common.repl
 
 import java.io.File
-import java.net.URLClassLoader
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 
 open class GenericReplEvaluatorState(
         baseClasspath: Iterable<File>,
         baseClassloader: ClassLoader?,
-        override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+        final override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
 ) : IReplStageState<EvalClassWithInstanceAndLoader> {
     override val history: IReplStageHistory<EvalClassWithInstanceAndLoader> = BasicReplStageHistory(lock)
 
     override val currentGeneration: Int get() = (history as BasicReplStageHistory<*>).currentGeneration.get()
 
-    val topClassLoader: ReplClassLoader = makeReplClassLoader(baseClassloader, baseClasspath)
+    val classLoader: ReplClassLoader = ReplClassLoader(baseClasspath.toList(), baseClassloader)
 
     val currentClasspath: List<File> get() = lock.read {
-        history.peek()?.item?.classLoader?.listAllUrlsAsFiles()
-        ?: topClassLoader.listAllUrlsAsFiles()
+        history.peek()?.item?.classLoader?.listAllUrlsAsFiles() ?: classLoader.listAllUrlsAsFiles()
     }
 }
-
-internal fun makeReplClassLoader(baseClassloader: ClassLoader?, baseClasspath: Iterable<File>) =
-        ReplClassLoader(URLClassLoader(baseClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassloader))
