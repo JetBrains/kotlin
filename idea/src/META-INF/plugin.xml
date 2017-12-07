@@ -2333,7 +2333,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MemberVisibilityCanPrivateInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MemberVisibilityCanBePrivateInspection"
                      displayName="Class member can have 'private' visibility"
                      groupPath="Kotlin"
                      groupName="Style issues"
