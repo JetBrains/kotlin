@@ -135,7 +135,7 @@ class ReplFromTerminal(
         if (split.isNotEmpty() && command == "help") {
             val commands = mapOf("help" to "show this help",
                                  "load <file>" to "load script from specified file",
-                                 "dump bytecode" to "dump classes to terminal",
+                                 "classes" to "dump classes to terminal",
                                  "quit" to "quit the interpreter")
 
             val maxCommandLength = commands.keys.fold(0) { max, s -> maxOf(max, s.length) } + 4
@@ -146,14 +146,14 @@ class ReplFromTerminal(
             writer.printlnHelpMessage("Available commands:\n" + renderedCommands)
             return true
         }
-        else if (split.size >= 2 && split[0] == "dump" && split[1] == "bytecode") {
+        else if (split.size == 1 && split.single() == "classes") {
             replInterpreter.dumpClasses(PrintWriter(System.out))
             return true
         }
-        else if (split.isNotEmpty() && split[0] == "quit") {
+        else if (split.size == 1 && split.single() == "quit") {
             return false
         }
-        else if (split.size >= 2 && split[0] == "load") {
+        else if (split.size == 2 && split[0] == "load") {
             val fileName = split[1]
             try {
                 val scriptText = FileUtil.loadFile(File(fileName))
