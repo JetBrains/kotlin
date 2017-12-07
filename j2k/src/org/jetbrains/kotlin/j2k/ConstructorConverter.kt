@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,53 +123,7 @@ class ConstructorConverter(
 
         val parameterUsageReplacementMap = HashMap<String, String>()
 
-        val bodyGenerator: (CodeConverter) -> Block = if (body != null) {
-            val statementsToRemove = HashSet<PsiStatement>()
-            for (parameter in params) {
-                val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, primaryConstructor) ?: continue
-
-                val fieldType = converter.typeConverter.convertVariableType(field)
-                val parameterType = converter.typeConverter.convertVariableType(parameter)
-                // types can be different only in nullability
-                val type = if (fieldType == parameterType) {
-                    fieldType
-                }
-                else if (fieldType.toNotNullType() == parameterType.toNotNullType()) {
-                    if (fieldType.isNullable) fieldType else parameterType // prefer nullable one
-                }
-                else {
-                    continue
-                }
-
-                val propertyInfo = fieldToPropertyInfo(field)
-                if (propertyInfo.needExplicitGetter || propertyInfo.needExplicitSetter) continue
-
-                parameterToField.put(parameter, field to type)
-                statementsToRemove.add(initializationStatement)
-                fieldsToDrop.add(field)
-
-                val fieldName = propertyInfo.name
-                if (fieldName != parameter.name) {
-                    parameterUsageReplacementMap.put(parameter.name!!, fieldName)
-                }
-            }
-
-            { codeConverter ->
-                val bodyConverter = codeConverter.withSpecialExpressionConverter(
-                        object : ReplacingExpressionConverter(parameterUsageReplacementMap) {
-                            override fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression? {
-                                if (expression.isSuperConstructorCall()) {
-                                    return Expression.Empty // skip it
-                                }
-                                return super.convertExpression(expression, codeConverter)
-                            }
-                        })
-                postProcessBody(bodyConverter.convertBlock(body, false, { !statementsToRemove.contains(it) }))
-            }
-        }
-        else {
-            { Block.Empty }
-        }
+        val bodyGenerator: (CodeConverter) -> Block = { Block.Empty }
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -614,7 +614,7 @@ class KotlinPsiUnifier(
             }
 
             fun sortDeclarationsByElementType(declarations: List<KtDeclaration>): List<KtDeclaration> {
-                return declarations.sortedBy { it.node?.elementType?.index ?: -1 }
+                return declarations.sortedBy { it.node?.elementType?.index?.toInt() ?: -1 }
             }
 
             if (desc1.kind != desc2.kind) return UNMATCHED

@@ -49,7 +49,7 @@ abstract class IdePlatformSupport {
     companion object {
         val EP_NAME = ExtensionPointName.create<IdePlatformSupport>("org.jetbrains.kotlin.idePlatformSupport")
 
-        val platformSupport by lazy {
+        val platformSupport by lazy<Map<TargetPlatform, IdePlatformSupport>> {
             Extensions.getExtensions(EP_NAME).associateBy { it.platform }
         }
 
