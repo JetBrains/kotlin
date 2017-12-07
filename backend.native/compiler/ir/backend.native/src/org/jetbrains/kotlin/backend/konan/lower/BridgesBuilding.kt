@@ -149,13 +149,14 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
 
                 val body = declaration.body as? IrBlockBody
                         ?: return declaration
-                val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(declaration.descriptor)
-                if (typeSafeBarrierDescription == null || builtBridges.contains(declaration.descriptor))
+                val descriptor = declaration.descriptor
+                val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)
+                if (typeSafeBarrierDescription == null || builtBridges.contains(descriptor))
                     return declaration
 
                 val irBuilder = context.createIrBuilder(declaration.symbol, declaration.startOffset, declaration.endOffset)
                 declaration.body = irBuilder.irBlockBody(declaration) {
-                    buildTypeSafeBarrier(declaration, typeSafeBarrierDescription)
+                    buildTypeSafeBarrier(declaration, descriptor, typeSafeBarrierDescription)
                     body.statements.forEach { +it }
                 }
                 return declaration
@@ -199,12 +200,14 @@ private fun IrBuilderWithScope.irConst(value: Any?) = when (value) {
 }
 
 private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
+                                                    originalDescriptor: FunctionDescriptor,
                                                     typeSafeBarrierDescription: BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription) {
     val valueParameters = function.valueParameters
+    val originalValueParameters = originalDescriptor.valueParameters
     for (i in valueParameters.indices) {
         if (!typeSafeBarrierDescription.checkParameter(i))
             continue
-        val type = valueParameters[i].type
+        val type = originalValueParameters[i].type
         if (type != context.builtIns.nullableAnyType) {
             +returnIfBadType(irGet(valueParameters[i].symbol), type,
                     if (typeSafeBarrierDescription == BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT)
@@ -225,7 +228,7 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
     val irBuilder = createIrBuilder(bridge.symbol, startOffset, endOffset)
     bridge.body = irBuilder.irBlockBody(bridge) {
         val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor.overriddenDescriptor)
-        typeSafeBarrierDescription?.let { buildTypeSafeBarrier(bridge, it) }
+        typeSafeBarrierDescription?.let { buildTypeSafeBarrier(bridge, descriptor.descriptor, it) }
 
         val delegatingCall = IrCallImpl(startOffset, endOffset, targetSymbol, descriptor.descriptor,
                 superQualifierSymbol = superQualifierSymbol /* Call non-virtually */
