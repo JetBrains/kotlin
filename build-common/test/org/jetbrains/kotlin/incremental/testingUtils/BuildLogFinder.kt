@@ -28,6 +28,9 @@ data class BuildLogFinder(
         private const val GRADLE_LOG = "gradle-build.log"
         private const val DATA_CONTAINER_LOG = "data-container-version-build.log"
         private const val SIMPLE_LOG = "build.log"
+
+        fun isJpsLogFile(file: File): Boolean =
+                file.name.let { it == SIMPLE_LOG || it == DATA_CONTAINER_LOG }
     }
 
     fun findBuildLog(dir: File): File? {
