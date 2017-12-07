@@ -21,15 +21,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 
 open class GenericReplEvaluatorState(
-        baseClasspath: Iterable<File>,
-        baseClassloader: ClassLoader?,
+        val classLoader: ReplClassLoader,
         final override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
 ) : IReplStageState<EvalClassWithInstanceAndLoader> {
     override val history: IReplStageHistory<EvalClassWithInstanceAndLoader> = BasicReplStageHistory(lock)
 
     override val currentGeneration: Int get() = (history as BasicReplStageHistory<*>).currentGeneration.get()
-
-    val classLoader: ReplClassLoader = ReplClassLoader(baseClasspath.toList(), baseClassloader)
 
     val currentClasspath: List<File> get() = lock.read {
         history.peek()?.item?.classLoader?.listAllUrlsAsFiles() ?: classLoader.listAllUrlsAsFiles()
