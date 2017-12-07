@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.script
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
@@ -33,7 +32,7 @@ class ScriptTemplatesFromCompilerSettingsProvider(private val project: Project) 
             override fun <T> settingsChanged(newSettings: T) {
                 if (newSettings !is CompilerSettings) return
 
-                project.service<ScriptDefinitionsManager>().reloadDefinitionsBy(this@ScriptTemplatesFromCompilerSettingsProvider)
+                ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(this@ScriptTemplatesFromCompilerSettingsProvider)
             }
         })
     }
