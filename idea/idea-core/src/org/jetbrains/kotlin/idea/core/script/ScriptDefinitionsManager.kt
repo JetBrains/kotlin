@@ -47,7 +47,8 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     private var definitions: List<KotlinScriptDefinition> = emptyList()
 
     fun reloadDefinitionsBy(contributor: ScriptDefinitionContributor) = lock.write {
-        currentDefinitions() //force definitions to be computed
+        val notLoadedYet = definitions.isEmpty()
+        if (notLoadedYet) return
 
         if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
 
