@@ -81,7 +81,13 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         }
 
         if (expectedSBWithoutErrors.toString() != actualSBWithoutErrors.toString()) {
-            Assert.assertEquals(expectedSB.toString(), actualSB.toString())
+            if (BuildLogFinder.isJpsLogFile(buildLogFile)) {
+                // JPS logs should be updated carefully, because standalone logs are a bit different (no removed classes, iterations, etc)
+                Assert.assertEquals(expectedSB.toString(), actualSB.toString())
+            }
+            else {
+                UsefulTestCase.assertSameLinesWithFile(buildLogFile.canonicalPath, actualSB.toString(), false)
+            }
         }
 
         // todo: also compare caches
