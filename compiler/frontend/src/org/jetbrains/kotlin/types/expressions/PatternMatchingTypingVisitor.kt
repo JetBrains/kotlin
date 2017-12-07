@@ -341,9 +341,9 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         condition: KtWhenCondition,
         context: ExpressionTypingContext,
         subjectDataFlowValue: DataFlowValue
-    ): Pair<ConditionalDataFlowInfo, LexicalScope> {
+    ): Pair<ConditionalDataFlowInfo, LexicalScope?> {
         var newDataFlowInfo = noChange(context)
-        var newScope = context.scope
+        var newScope: LexicalScope? = null
         condition.accept(object : KtVisitorVoid() {
             override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {
                 val rangeExpression = condition.rangeExpression ?: return

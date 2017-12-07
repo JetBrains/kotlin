@@ -1997,7 +1997,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * '(a, b, c)'
      */
     private void parseEscapedTypedTuple() {
-        assert at(LPAR);
+        assert _at(LPAR);
 
         PsiBuilder.Marker patternTypedTupleMarker = mark();
         advance(); // LPAR
@@ -2022,7 +2022,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * '#(a)'
      */
     private void parseHashExpression() {
-        assert at(HASH);
+        assert _at(HASH);
 
         PsiBuilder.Marker patternHashExpressionMarker = mark();
         advance(); // HASH
@@ -2044,7 +2044,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * ':(Int) -> Int'
      */
     private void parsePatternTypeReference() {
-        assert at(COLON);
+        assert _at(COLON);
 
         PsiBuilder.Marker typeConstraintMarker = mark();
         advance(); // COLON
@@ -2083,7 +2083,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private void parseTuple() {
-        assert at(LPAR);
+        assert _at(LPAR);
         PsiBuilder.Marker tupleMarker = mark();
         advance(); // LPAR
         while (at(COMMA)) errorAndAdvance("Expected pattern parameter before ','");
@@ -2099,7 +2099,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private void parseGuard() {
-        assert at(IF_KEYWORD);
+        assert _at(IF_KEYWORD);
         PsiBuilder.Marker guardMarker = mark();
         advance(); // IF_KEYWORD
         myExpressionParsing.parseCondition();
