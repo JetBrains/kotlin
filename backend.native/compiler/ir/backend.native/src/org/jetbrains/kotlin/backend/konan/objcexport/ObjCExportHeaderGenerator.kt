@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
@@ -200,6 +201,11 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
             }
 
             +"@interface $name : $superName${descriptor.superProtocolsClause}"
+
+            if (descriptor.isUnit()) {
+                +"+ (instancetype)unit NS_SWIFT_NAME(init());"
+                +""
+            }
 
             val presentConstructors = mutableSetOf<String>()
 

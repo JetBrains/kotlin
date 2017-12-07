@@ -16,6 +16,7 @@
 
 package kotlin
 
+@ExportTypeInfo("theUnitTypeInfo")
 public object Unit {
     override fun toString() = "kotlin.Unit"
 }

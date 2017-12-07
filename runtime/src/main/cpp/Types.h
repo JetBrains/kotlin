@@ -83,6 +83,7 @@ extern const TypeInfo* theDoubleArrayTypeInfo;
 extern const TypeInfo* theBooleanArrayTypeInfo;
 extern const TypeInfo* theStringTypeInfo;
 extern const TypeInfo* theThrowableTypeInfo;
+extern const TypeInfo* theUnitTypeInfo;
 extern const TypeInfo* theObjCPointerHolderTypeInfo;
 
 KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;

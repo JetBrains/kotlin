@@ -27,6 +27,7 @@
 #import <Foundation/NSMethodSignature.h>
 #import <Foundation/NSException.h>
 #import <objc/runtime.h>
+#import <dispatch/dispatch.h>
 #import "MemoryPrivate.hpp"
 #import "Runtime.h"
 #import "Utils.h"
@@ -57,6 +58,9 @@ struct ObjCTypeAdapter {
 
   const ObjCToKotlinMethodAdapter* directAdapters;
   int directAdapterNum;
+
+  const ObjCToKotlinMethodAdapter* classAdapters;
+  int classAdapterNum;
 
   const ObjCToKotlinMethodAdapter* virtualAdapters;
   int virtualAdapterNum;
@@ -107,6 +111,7 @@ inline static OBJ_GETTER(AllocInstanceWithAssociatedObject, const TypeInfo* type
   return result;
 }
 
+static Class getOrCreateClass(const TypeInfo* typeInfo);
 static void initializeClass(Class clazz);
 
 @protocol ConvertibleToKotlin
@@ -200,6 +205,16 @@ extern "C" void Kotlin_ObjCExport_releaseReservedObjectTail(ObjHeader* obj) {
   }
 }
 
+extern "C" id Kotlin_ObjCExport_convertUnit(ObjHeader* unitInstance) {
+  static dispatch_once_t onceToken;
+  static id instance = nullptr;
+  dispatch_once(&onceToken, ^{
+    Class unitClass = getOrCreateClass(unitInstance->type_info());
+    instance = [[unitClass createWrapper:unitInstance] retain];
+  });
+  return instance;
+}
+
 static const ObjCTypeAdapter* findAdapterByName(
       const char* name,
       const ObjCTypeAdapter** sortedAdapters,
@@ -279,8 +294,14 @@ static void initializeClass(Class clazz) {
   for (int i = 0; i < typeAdapter->directAdapterNum; ++i) {
     const ObjCToKotlinMethodAdapter* adapter = typeAdapter->directAdapters + i;
     SEL selector = sel_registerName(adapter->selector);
-    Class methodContainer = isClassForPackage ? object_getClass(clazz) : clazz;
-    BOOL added = class_addMethod(methodContainer, selector, adapter->imp, adapter->encoding);
+    BOOL added = class_addMethod(clazz, selector, adapter->imp, adapter->encoding);
+    RuntimeAssert(added, "Unexpected selector clash");
+  }
+
+  for (int i = 0; i < typeAdapter->classAdapterNum; ++i) {
+    const ObjCToKotlinMethodAdapter* adapter = typeAdapter->classAdapters + i;
+    SEL selector = sel_registerName(adapter->selector);
+    BOOL added = class_addMethod(object_getClass(clazz), selector, adapter->imp, adapter->encoding);
     RuntimeAssert(added, "Unexpected selector clash");
   }
 
@@ -570,8 +591,6 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj) {
   return [convertible toKotlin:OBJ_RESULT];
 }
 
-static Class getOrCreateClass(const TypeInfo* typeInfo);
-
 static id convertKotlinObject(ObjHeader* obj) {
   Class clazz = obj->type_info()->writableInfo_->objCExport.objCClass;
   RuntimeAssert(clazz != nullptr, "");
@@ -589,7 +608,7 @@ static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj) {
 
   if (converter == nullptr) {
     getOrCreateClass(typeInfo);
-    converter = &convertKotlinObject;
+    converter = (typeInfo == theUnitTypeInfo) ? &Kotlin_ObjCExport_convertUnit : &convertKotlinObject;
   }
 
   typeInfo->writableInfo_->objCExport.convert = converter;

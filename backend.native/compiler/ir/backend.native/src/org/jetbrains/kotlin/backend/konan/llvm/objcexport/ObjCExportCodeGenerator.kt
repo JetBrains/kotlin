@@ -254,6 +254,7 @@ internal class ObjCExportCodeGenerator(
             methodTable: List<RTTIGenerator.MethodTableRecord>,
             val objCName: String,
             directAdapters: List<ObjCToKotlinMethodAdapter>,
+            classAdapters: List<ObjCToKotlinMethodAdapter>,
             virtualAdapters: List<ObjCToKotlinMethodAdapter>,
             reverseAdapters: List<KotlinToObjCMethodAdapter>
     ) : Struct(
@@ -274,6 +275,13 @@ internal class ObjCExportCodeGenerator(
                     directAdapters
             ),
             Int32(directAdapters.size),
+
+            staticData.placeGlobalConstArray(
+                    "",
+                    runtime.objCToKotlinMethodAdapter,
+                    classAdapters
+            ),
+            Int32(classAdapters.size),
 
             staticData.placeGlobalConstArray(
                     "",
@@ -611,7 +619,8 @@ private fun ObjCExportCodeGenerator.createTypeAdapterForPackage(
             vtableSize = -1,
             methodTable = emptyList(),
             objCName = name,
-            directAdapters = adapters,
+            directAdapters = emptyList(),
+            classAdapters = adapters,
             virtualAdapters = emptyList(),
             reverseAdapters = emptyList()
     )
@@ -719,6 +728,12 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         emptyList()
     }
 
+    val classAdapters = mutableListOf<ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter>()
+
+    if (descriptor.isUnit()) {
+        classAdapters += createUnitInstanceAdapter()
+    }
+
     return ObjCTypeAdapter(
             descriptor,
             typeInfo,
@@ -727,9 +742,24 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             methodTable,
             objCName,
             adapters,
+            classAdapters,
             virtualAdapters,
             reverseAdapters
     )
+}
+
+private fun ObjCExportCodeGenerator.createUnitInstanceAdapter(): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
+    val selector = "unit"
+    val methodBridge = MethodBridge(ReferenceBridge, listOf(ReferenceBridge, ReferenceBridge))
+    val encoding = getEncoding(methodBridge)
+
+    val imp = generateFunction(codegen, objCFunctionType(methodBridge), "") {
+        ret(callFromBridge(context.llvm.Kotlin_ObjCExport_convertUnit, listOf(codegen.theUnitInstanceRef.llvm)))
+    }
+
+    LLVMSetLinkage(imp, LLVMLinkage.LLVMPrivateLinkage)
+
+    return ObjCToKotlinMethodAdapter(selector, encoding, constPointer(imp))
 }
 
 private fun List<CallableMemberDescriptor>.toMethods(): List<FunctionDescriptor> = this.flatMap {
