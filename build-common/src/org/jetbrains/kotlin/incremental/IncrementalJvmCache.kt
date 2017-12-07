@@ -223,7 +223,7 @@ open class IncrementalJvmCache(
             javaSourcesProtoMap.remove(it, changesCollector)
         }
 
-        removeAllFromClassStorage(dirtyClasses.map { it.fqNameForClassNameWithoutDollars })
+        removeAllFromClassStorage(dirtyClasses.map { it.fqNameForClassNameWithoutDollars }, changesCollector)
         dirtyOutputClassesMap.clean()
     }
 
