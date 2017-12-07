@@ -132,19 +132,25 @@ class ReplFromTerminal(
     @Throws(Exception::class)
     private fun oneCommand(command: String): Boolean {
         val split = splitCommand(command)
-        if (split.size >= 1 && command == "help") {
-            writer.printlnHelpMessage("Available commands:\n" +
-                                      ":help                   show this help\n" +
-                                      ":quit                   exit the interpreter\n" +
-                                      ":dump bytecode          dump classes to terminal\n" +
-                                      ":load <file>            load script from specified file")
+        if (split.isNotEmpty() && command == "help") {
+            val commands = mapOf("help" to "show this help",
+                                 "load <file>" to "load script from specified file",
+                                 "dump bytecode" to "dump classes to terminal",
+                                 "quit" to "quit the interpreter")
+
+            val maxCommandLength = commands.keys.fold(0) { max, s -> maxOf(max, s.length) } + 4
+            val renderedCommands = commands.entries.joinToString("\n") {
+                ":" + it.key + " ".repeat(maxCommandLength - it.key.length) + it.value
+            }
+
+            writer.printlnHelpMessage("Available commands:\n" + renderedCommands)
             return true
         }
         else if (split.size >= 2 && split[0] == "dump" && split[1] == "bytecode") {
             replInterpreter.dumpClasses(PrintWriter(System.out))
             return true
         }
-        else if (split.size >= 1 && split[0] == "quit") {
+        else if (split.isNotEmpty() && split[0] == "quit") {
             return false
         }
         else if (split.size >= 2 && split[0] == "load") {
