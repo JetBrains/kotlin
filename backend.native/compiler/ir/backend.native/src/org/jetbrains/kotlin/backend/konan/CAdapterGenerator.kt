@@ -208,7 +208,7 @@ private class ExportedElement(val kind: ElementKind,
 
     fun makeClassDeclaration(): String {
         assert(isClass)
-        return "extern \"C\" ${owner.prefix}_KType* $cname();"
+        return "extern \"C\" ${owner.prefix}_KType* $cname(void);"
     }
 
     private fun translateArgument(name: String, clazz: ClassDescriptor, direction: Direction,
@@ -366,7 +366,7 @@ internal class CAdapterGenerator(val context: Context,
                     element.isFunction ->
                         output(element.makeFunctionPointerString(), indent)
                     element.isClass ->
-                        output("${prefix}_KType* (*_type)();", indent)
+                        output("${prefix}_KType* (*_type)(void);", indent)
                 // TODO: handle properties.
                 }
             }
@@ -455,7 +455,7 @@ internal class CAdapterGenerator(val context: Context,
         output("typedef struct {")
         output("/* Service functions. */", 1)
         output("void (*DisposeStablePointer)(${prefix}_KNativePtr ptr);", 1)
-        output("void (*DisposeString)(char* string);", 1)
+        output("void (*DisposeString)(const char* string);", 1)
         output("${prefix}_KBoolean (*IsInstance)(${prefix}_KNativePtr ref, const ${prefix}_KType* type);", 1)
 
         output("")
@@ -463,7 +463,7 @@ internal class CAdapterGenerator(val context: Context,
         makeScopeDefinitions(top, DefinitionKind.C_HEADER_STRUCT, 1)
         output("} ${prefix}_ExportedSymbols;")
 
-        output("extern ${prefix}_ExportedSymbols* ${prefix}_symbols();")
+        output("extern ${prefix}_ExportedSymbols* ${prefix}_symbols(void);")
         output("""
         #ifdef __cplusplus
         }  /* extern "C" */
@@ -490,7 +490,7 @@ internal class CAdapterGenerator(val context: Context,
         |#define RUNTIME_NOTHROW __attribute__((nothrow))
         |#define RUNTIME_USED __attribute__((used))
         |
-        |void SetRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
+        |extern "C" {
         |void UpdateRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
         |KObjHeader* AllocInstance(const KTypeInfo*, KObjHeader**) RUNTIME_NOTHROW;
         |KObjHeader* DerefStablePointer(void*, KObjHeader**) RUNTIME_NOTHROW;
@@ -502,12 +502,13 @@ internal class CAdapterGenerator(val context: Context,
         |KObjHeader* CreateStringFromCString(const char*, KObjHeader**);
         |char* CreateCStringFromString(const KObjHeader*);
         |void DisposeCString(char* cstring);
+        |}  // extern "C"
         |
         |class KObjHolder {
         |public:
         |  KObjHolder() : obj_(nullptr) {}
-        |  explicit KObjHolder(const KObjHeader* obj) {
-        |    SetRef(&obj_, obj);
+        |  explicit KObjHolder(const KObjHeader* obj) : obj_(nullptr) {
+        |    UpdateRef(&obj_, obj);
         |  }
         |  ~KObjHolder() {
         |    UpdateRef(&obj_, nullptr);
@@ -520,8 +521,8 @@ internal class CAdapterGenerator(val context: Context,
         |static void DisposeStablePointerImpl(${prefix}_KNativePtr ptr) {
         |  DisposeStablePointer(ptr);
         |}
-        |static void DisposeStringImpl(char* ptr) {
-        |  DisposeCString(ptr);
+        |static void DisposeStringImpl(const char* ptr) {
+        |  DisposeCString((char*)ptr);
         |}
         |static ${prefix}_KBoolean IsInstanceImpl(${prefix}_KNativePtr ref, const ${prefix}_KType* type) {
         |  KObjHolder holder;
@@ -535,7 +536,7 @@ internal class CAdapterGenerator(val context: Context,
         output(".IsInstance = IsInstanceImpl,", 1)
         makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, 1)
         output("};")
-        output("RUNTIME_USED ${prefix}_ExportedSymbols* ${prefix}_symbols() { return &__konan_symbols;}")
+        output("RUNTIME_USED ${prefix}_ExportedSymbols* ${prefix}_symbols(void) { return &__konan_symbols;}")
         outputStreamWriter.close()
     }
 

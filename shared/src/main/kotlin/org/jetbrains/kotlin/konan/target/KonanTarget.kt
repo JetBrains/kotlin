@@ -62,7 +62,7 @@ enum class CompilerOutputKind {
     },
     DYNAMIC {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.dynamicSuffix}"
-        override fun prefix(target: KonanTarget?) = ".${target!!.family.dynamicPrefix}"
+        override fun prefix(target: KonanTarget?) = "${target!!.family.dynamicPrefix}"
     },
     FRAMEWORK {
         override fun suffix(target: KonanTarget?): String = ".framework"
