@@ -40,10 +40,11 @@ class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: S
         "target" to target.detailedName,
         "arch" to target.architecture.userName)
 
-    fun downloadDependencies() = maybeExecuteHelper(dependencies.absolutePath, 
-            properties, targetProperties.dependencies)
+    fun downloadDependencies() = targetProperties.downloadDependencies()
 
-    val llvmHome = targetProperties.absolute(targetProperties.hostString("llvmHome"))
+    val llvmHome = targetProperties.absoluteLlvmHome
+
+    val sysRoot get() = targetProperties.absoluteTargetSysRoot
 
     val defaultCompilerOpts = 
         targetProperties.defaultCompilerOpts()

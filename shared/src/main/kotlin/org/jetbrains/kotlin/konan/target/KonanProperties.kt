@@ -18,8 +18,13 @@ package org.jetbrains.kotlin.konan.properties
 
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 class KonanProperties(val target: KonanTarget, val properties: Properties, val baseDir: String? = null) {
+
+    fun downloadDependencies() {
+        dependencyProcessor!!.run()
+    }
 
     fun targetString(key: String): String? 
         = properties.targetString(key, target)
@@ -33,6 +38,8 @@ class KonanProperties(val target: KonanTarget, val properties: Properties, val b
         = properties.hostTargetString(key, target)
     fun hostTargetList(key: String): List<String> 
         = properties.hostTargetList(key, target)
+
+    val llvmHome get() = hostString("llvmHome")
 
     // TODO: Delegate to a map?
     val llvmLtoNooptFlags get() = targetList("llvmLtoNooptFlags")
@@ -51,12 +58,12 @@ class KonanProperties(val target: KonanTarget, val properties: Properties, val b
     val libffiDir get() = targetString("libffiDir")
     val gccToolchain get() = targetString("gccToolchain")
     val targetArg get() = targetString("quadruple")
-    val llvmHome get() = targetString("llvmHome")
     // Notice: these ones are host-target.
     val targetToolchain get() = hostTargetString("targetToolchain")
     val dependencies get() = hostTargetList("dependencies")
 
-    fun absolute(value: String?) = "${baseDir!!}/${value!!}"
+    private fun absolute(value: String?): String =
+            dependencyProcessor!!.resolveRelative(value!!).absolutePath
 
     val absoluteTargetSysRoot get() = absolute(targetSysRoot)
     val absoluteTargetToolchain get() = absolute(targetToolchain)
@@ -75,4 +82,7 @@ class KonanProperties(val target: KonanTarget, val properties: Properties, val b
         }
 
     val osVersionMin: String? get() = targetString("osVersionMin")
+
+    private val dependencyProcessor = baseDir?.let { DependencyProcessor(java.io.File(it), this) }
+
 }

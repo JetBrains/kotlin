@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.konan.util
 import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.konan.properties.KonanProperties
 import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.konan.properties.propertyList
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.RandomAccessFile
@@ -45,12 +46,43 @@ private val Properties.downloadingAttemptIntervalMs : Long
 private val Properties.homeDependencyCache : String
     get() = getProperty("homeDependencyCache") ?: DependencyProcessor.DEFAULT_HOME_DEPENDENCY_CACHE
 
+private fun Properties.findCandidates(dependencies: List<String>): Map<String, List<DependencySource>> {
+    val dependencyProfiles = this.propertyList("dependencyProfiles")
+    return dependencies.map { dependency ->
+        dependency to dependencyProfiles.flatMap { profile ->
+            val candidateSpecs = propertyList("$dependency.$profile")
+            if (profile == "default" && candidateSpecs.isEmpty()) {
+                listOf(DependencySource.Remote.Public)
+            } else {
+                candidateSpecs.map { candidateSpec ->
+                    when (candidateSpec) {
+                        "remote:public" -> DependencySource.Remote.Public
+                        "remote:internal" -> DependencySource.Remote.Internal
+                        else -> DependencySource.Local(File(candidateSpec))
+                    }
+                }
+            }
+        }
+    }.toMap()
+}
+
 
 private val KonanProperties.dependenciesUrl : String            get() = properties.dependenciesUrl
 private val KonanProperties.airplaneMode : Boolean              get() = properties.airplaneMode
 private val KonanProperties.downloadingAttempts : Int           get() = properties.downloadingAttempts
 private val KonanProperties.downloadingAttemptIntervalMs : Long get() = properties.downloadingAttemptIntervalMs
 private val KonanProperties.homeDependencyCache : String        get() = properties.homeDependencyCache
+
+private val internalDependenciesUrl = "http://repo.labs.intellij.net/kotlin-native"
+
+sealed class DependencySource {
+    data class Local(val path: File) : DependencySource()
+
+    sealed class Remote : DependencySource() {
+        object Public : Remote()
+        object Internal : Remote()
+    }
+}
 
 // TODO: Try to use some dependency management system (Ivy?)
 // TODO: Maybe rename.
@@ -60,13 +92,13 @@ private val KonanProperties.homeDependencyCache : String        get() = properti
  */
 class DependencyProcessor(dependenciesRoot: File,
                           val dependenciesUrl: String,
-                          val dependencies: Collection<String>,
+                          dependencyToCandidates: Map<String, List<DependencySource>>,
                           homeDependencyCache: String = DEFAULT_HOME_DEPENDENCY_CACHE,
                           val airplaneMode: Boolean = false,
                           maxAttempts: Int = DependencyDownloader.DEFAULT_MAX_ATTEMPTS,
                           attemptIntervalMs: Long = DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS,
                           customProgressCallback: ProgressCallback? = null,
-                          val keepUnstable:Boolean = true) {
+                          val keepUnstable: Boolean = true) {
 
     val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
     val cacheDirectory = System.getProperty("user.home")?.let {
@@ -101,7 +133,7 @@ class DependencyProcessor(dependenciesRoot: File,
                 keepUnstable:Boolean = true) : this(
             dependenciesRoot,
             dependenciesUrl,
-            dependencies,
+            dependencyToCandidates = properties.findCandidates(dependencies),
             airplaneMode = properties.airplaneMode,
             maxAttempts = properties.downloadingAttempts,
             attemptIntervalMs = properties.downloadingAttemptIntervalMs,
@@ -137,13 +169,13 @@ class DependencyProcessor(dependenciesRoot: File,
         }
     }
 
-    private fun processDependency(dependency: String) {
+    private fun downloadDependency(dependency: String, baseUrl: String) {
         val depDir = File(dependenciesDirectory, dependency)
         val depName = depDir.name
 
         val fileName = "$depName.$archiveExtension"
         val archive = cacheDirectory.resolve(fileName)
-        val url = URL("$dependenciesUrl/$fileName")
+        val url = URL("$baseUrl/$fileName")
 
         val extractedDependencies = DependencyFile(dependenciesDirectory, ".extracted")
         if (extractedDependencies.contains(depName) &&
@@ -190,10 +222,57 @@ class DependencyProcessor(dependenciesRoot: File,
             get() = Paths.get(System.getProperty("user.home")).resolve(".konan/dependencies").toFile()
     }
 
+    private fun internalServerIsAvailable(): Boolean = System.getenv("KONAN_USE_INTERNAL_SERVER") != null
+
+    private val resolvedDependencies = dependencyToCandidates.map { (dependency, candidates) ->
+        val candidate = candidates.asSequence().mapNotNull { candidate ->
+            when (candidate) {
+                is DependencySource.Local -> candidate.takeIf { it.path.exists() }
+                DependencySource.Remote.Public -> candidate
+                DependencySource.Remote.Internal -> candidate.takeIf { internalServerIsAvailable() }
+            }
+        }.firstOrNull()
+
+        candidate ?: error("$dependency is not available; candidates:\n${candidates.joinToString("\n")}")
+
+        dependency to candidate
+    }.toMap()
+
+    private fun resolveDependency(dependency: String): File {
+        val candidate = resolvedDependencies[dependency]
+        return when (candidate) {
+            is DependencySource.Local -> candidate.path
+            is DependencySource.Remote -> File(dependenciesDirectory, dependency)
+            null -> error("$dependency not declared as dependency")
+        }
+    }
+
+    fun resolveRelative(relative: String): File {
+        val path = Paths.get(relative)
+        if (path.isAbsolute) error("not a relative path: $relative")
+
+        val dependency = path.first().toString()
+        return resolveDependency(dependency).let {
+            if (path.nameCount > 1) {
+                it.toPath().resolve(path.subpath(1, path.nameCount)).toFile()
+            } else {
+                it
+            }
+        }
+    }
+
     fun run() = lock.withLock {
         RandomAccessFile(lockFile, "rw").channel.lock().use {
-            dependencies.forEach {
-                processDependency(it)
+            resolvedDependencies.forEach { (dependency, candidate) ->
+                val baseUrl = when (candidate) {
+                    is DependencySource.Local -> null
+                    DependencySource.Remote.Public -> dependenciesUrl
+                    DependencySource.Remote.Internal -> internalDependenciesUrl
+                }
+                // TODO: consider using different caches for different remotes.
+                if (baseUrl != null) {
+                    downloadDependency(dependency, baseUrl)
+                }
             }
         }
     }

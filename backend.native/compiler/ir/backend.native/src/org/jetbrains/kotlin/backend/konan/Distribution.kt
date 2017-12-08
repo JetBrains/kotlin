@@ -52,15 +52,8 @@ class Distribution(val targetManager: TargetManager,
     val dependenciesDir = DependencyProcessor.defaultDependenciesRoot.absolutePath
 
     val targetProperties = KonanProperties(target, properties, dependenciesDir)
-    val hostProperties = if (target == host) {
-        targetProperties 
-    } else {
-        KonanProperties(host, properties, dependenciesDir)
-    }
-    val dependencies = targetProperties.dependencies
 
-    val llvmHome = hostProperties.absoluteLlvmHome
-    val hostSysRoot = hostProperties.absoluteTargetSysRoot
+    val llvmHome = targetProperties.absoluteLlvmHome
     val llvmBin = "$llvmHome/bin"
     val llvmLib = "$llvmHome/lib"
     val llvmLto = "$llvmBin/llvm-lto"

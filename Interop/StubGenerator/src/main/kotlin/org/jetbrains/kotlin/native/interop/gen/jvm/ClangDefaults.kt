@@ -28,7 +28,7 @@ fun KonanProperties.defaultCompilerOpts(): List<String> {
     // TODO: eliminate this. below
     val targetToolchain = absoluteTargetToolchain
     val targetSysRoot = absoluteTargetSysRoot
-    val llvmHome = absolute(hostString("llvmHome"))
+    val llvmHome = absoluteLlvmHome
     val llvmVersion = hostString("llvmVersion")!!
 
     // StubGenerator passes the arguments to libclang which

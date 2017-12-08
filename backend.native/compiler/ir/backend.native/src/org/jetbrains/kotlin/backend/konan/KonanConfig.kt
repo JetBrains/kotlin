@@ -54,7 +54,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private fun Distribution.prepareDependencies(checkDependencies: Boolean) {
         if (checkDependencies) {
-            DependencyProcessor(java.io.File(dependenciesDir), targetProperties).run()
+            targetProperties.downloadDependencies()
         }
     }
 

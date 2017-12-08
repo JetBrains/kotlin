@@ -44,6 +44,7 @@ interface HeaderInclusionPolicy {
 data class NativeLibrary(val includes: List<String>,
                          val additionalPreambleLines: List<String>,
                          val compilerArgs: List<String>,
+                         val headerToIdMapper: HeaderToIdMapper,
                          val language: Language,
                          val excludeSystemLibs: Boolean, // TODO: drop?
                          val excludeDepdendentModules: Boolean,

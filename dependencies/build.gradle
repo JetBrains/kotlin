@@ -139,7 +139,7 @@ task update_kotlin_compiler(type: DefaultTask) {
 
 abstract class NativeDep extends DefaultTask {
     protected final String hostSystem = TargetManager.longerSystemName();
-    String baseUrl = "https://jetbrains.bintray.com/kotlin-native-dependencies"
+    static final String baseUrl = "https://jetbrains.bintray.com/kotlin-native-dependencies"
 
     @Input
     abstract String getFileName()
@@ -254,12 +254,19 @@ TargetManager.enabled.each { target ->
         }
     }
 
+    // Also resolves all dependencies:
+    final DependencyProcessor dependencyProcessor = new DependencyProcessor(
+            project.rootProject.ext.dependenciesDir,
+            rootProject.ext.konanProperties,
+            konanProperties.dependencies,
+            HelperNativeDep.baseUrl,
+            false
+    )
+
     DependencyKind.values().each { kind ->
         def dir = kind.getDirectory(konanProperties)
         if (dir != null) {
-            def path = rootProject.ext.dependenciesDir.toPath()
-                    .resolve(dir).toFile()
-                    .canonicalPath
+            String path = dependencyProcessor.resolveRelative(dir).canonicalPath
             rootProject.ext.set(kind.getPropertyName(target), path)
         }
     }
