@@ -27,9 +27,19 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.PrintWriter
-import java.net.URLClassLoader
 import java.util.concurrent.atomic.AtomicInteger
 
 class ReplInterpreter(
@@ -75,7 +85,7 @@ class ReplInterpreter(
     }
 
     // TODO: add script definition with project-based resolving for IDEA repl
-    private val scriptCompiler: ReplCompiler by lazy {
+    private val scriptCompiler by lazy {
         GenericReplCompiler(disposable, REPL_LINE_AS_SCRIPT_DEFINITION, configuration, messageCollector)
     }
     private val scriptEvaluator: ReplFullEvaluator by lazy {
@@ -85,11 +95,9 @@ class ReplInterpreter(
     private val evalState by lazy { scriptEvaluator.createState() }
 
     fun eval(line: String): ReplEvalResult {
-
-        val fullText = (previousIncompleteLines + line).joinToString(separator = "\n")
+        val fullText = concatWithPreviousLines(line)
 
         try {
-
             val evalRes = scriptEvaluator.compileAndEval(evalState, ReplCodeLine(lineNumber.getAndIncrement(), 0, fullText), null, object : InvokeWrapper {
                 override fun <T> invoke(body: () -> T): T = replConfiguration.executionInterceptor.execute(body)
             })
@@ -109,6 +117,79 @@ class ReplInterpreter(
         }
     }
 
+    fun doc(rawFqName: String): String? {
+        val compilerState = evalState.asState(GenericReplCompilerState::class.java)
+        val bindingContext = compilerState.analyzerEngine.trace.bindingContext
+        val moduleDescriptor = compilerState.analyzerEngine.module
+        val qualifiedExpressionResolver = compilerState.analyzerEngine.qualifiedExpressionResolver
+
+        val codeFragment = KtPsiFactory(compilerState.analyzerEngine.project).createExpressionCodeFragment(rawFqName, null)
+        compilerState.analyzerEngine.setDelegateFactory(codeFragment.containingKtFile)
+
+
+        val targetExpression = codeFragment.findElementAt(codeFragment.textLength - 1)?.let {
+            it.getStrictParentOfType<KtQualifiedExpression>()
+                    ?: it.getNonStrictParentOfType(KtSimpleNameExpression::class.java)
+        } ?: return null
+
+        val scope = compilerState.analyzerEngine.lastSuccessfulLine()?.scopeForInitializerResolution
+                    ?: LexicalScope.Base(ImportingScope.Empty, moduleDescriptor)
+
+        val descriptors = when (targetExpression) {
+            is KtDotQualifiedExpression -> {
+                val (containingDescriptor, memberName) = qualifiedExpressionResolver
+                        .resolveClassOrPackageInQualifiedExpression(targetExpression, scope, bindingContext)
+
+                if (containingDescriptor == null) {
+                    return null
+                }
+
+                when (memberName) {
+                    null -> listOf(containingDescriptor)
+                    else -> {
+                        val memberScope = when (containingDescriptor) {
+                            is PackageViewDescriptor -> containingDescriptor.memberScope
+                            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope()
+                            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope
+                            is TypeAliasDescriptor -> containingDescriptor.classDescriptor?.unsubstitutedMemberScope
+                            else -> null
+                        } ?: return null
+
+                        memberScope.getContributedDescriptors(CALLABLES_AND_CLASSIFIERS) { it == memberName }
+                    }
+                }
+            }
+            is KtSimpleNameExpression -> {
+                val a = scope.collectDescriptorsFiltered(
+                        CALLABLES_AND_CLASSIFIERS,
+                        { it.asString() == targetExpression.getReferencedName() })
+                a
+            }
+            else -> return null
+        }.takeIf { it.isNotEmpty() } ?: return null
+
+        return descriptors.joinToString(LINE_SEPARATOR + LINE_SEPARATOR) { descriptor ->
+            val fqName = descriptor.fqNameSafe
+            val documentation = findDocumentation(descriptor)
+            fqName.asString() + LINE_SEPARATOR + documentation.lines().joinToString(LINE_SEPARATOR) { "    " + it }
+        }
+    }
+
+    private fun findDocumentation(descriptor: DeclarationDescriptor): String {
+        if (descriptor is DeclarationDescriptorWithSource) {
+            val psi = descriptor.source.getPsi()
+            if (psi != null) {
+                return psi.getChildrenOfType<KDoc>()
+                        .flatMap { it.getChildrenOfType<KDocSection>().asList() }
+                        .joinToString(LINE_SEPARATOR + LINE_SEPARATOR) { it.text.trim() }
+            }
+        }
+
+        return "No documentation found."
+    }
+
+    private fun concatWithPreviousLines(line: String) = (previousIncompleteLines + line).joinToString(separator = "\n")
+
     fun dumpClasses(out: PrintWriter) {
         scriptEvaluator.classLoader.dumpClasses(out)
     }
@@ -117,5 +198,10 @@ class ReplInterpreter(
         private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinition(Any::class) {
             override val name = "Kotlin REPL"
         }
+
+        private val LINE_SEPARATOR = System.getProperty("line.separator")
+
+        private val CALLABLES_AND_CLASSIFIERS = DescriptorKindFilter(
+                DescriptorKindFilter.CALLABLES_MASK or DescriptorKindFilter.CLASSIFIERS_MASK)
     }
 }

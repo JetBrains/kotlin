@@ -18,6 +18,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.repl.CompiledReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -54,7 +55,9 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
     private val resolveSession: ResolveSession
     private val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory
     private val replState = ResettableAnalyzerState()
+    val qualifiedExpressionResolver: QualifiedExpressionResolver
 
+    val project: Project
     val module: ModuleDescriptorImpl
 
     val trace: BindingTraceContext = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
@@ -72,9 +75,12 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
                 { _, _ -> ScriptMutableDeclarationProviderFactory() }
         )
 
+        this.project = environment.project
+
         this.module = container.get<ModuleDescriptorImpl>()
         this.scriptDeclarationFactory = container.get<ScriptMutableDeclarationProviderFactory>()
         this.resolveSession = container.get<ResolveSession>()
+        this.qualifiedExpressionResolver = container.get<QualifiedExpressionResolver>()
         this.topDownAnalysisContext = TopDownAnalysisContext(
                 TopDownAnalysisMode.TopLevelDeclarations, DataFlowInfoFactory.EMPTY, resolveSession.declarationScopeProvider
         )
@@ -92,6 +98,12 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         }
     }
 
+    fun lastSuccessfulLine() = replState.lastSuccessfulLine()
+
+    fun setDelegateFactory(linePsi: KtFile) {
+        scriptDeclarationFactory.setDelegateFactory(FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(linePsi)))
+    }
+
     fun resetToLine(lineId: ILineId): List<ReplCodeLine> = replState.resetToLine(lineId)
 
     fun reset(): List<ReplCodeLine> = replState.reset()
@@ -106,7 +118,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
     }
 
     private fun doAnalyze(linePsi: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
-        scriptDeclarationFactory.setDelegateFactory(FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(linePsi)))
+        setDelegateFactory(linePsi)
         replState.submitLine(linePsi, codeLine)
 
         val context = topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi))
@@ -173,6 +185,8 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
     class ResettableAnalyzerState {
         private val successfulLines = ReplHistory<LineInfo.SuccessfulLine>()
         private val submittedLines = hashMapOf<KtFile, LineInfo>()
+
+        fun lastSuccessfulLine() = successfulLines.lastValue()?.lineDescriptor
 
         fun resetToLine(lineId: ILineId): List<ReplCodeLine> {
             val removed = successfulLines.resetToLine(lineId.no)

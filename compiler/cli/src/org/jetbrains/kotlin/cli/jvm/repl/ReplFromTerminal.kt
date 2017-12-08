@@ -134,6 +134,7 @@ class ReplFromTerminal(
         val split = splitCommand(command)
         if (split.isNotEmpty() && command == "help") {
             val commands = mapOf("help" to "show this help",
+                                 "doc <qualified name>" to "show documentation for declaration",
                                  "load <file>" to "load script from specified file",
                                  "classes" to "dump classes to terminal",
                                  "quit" to "quit the interpreter")
@@ -144,6 +145,17 @@ class ReplFromTerminal(
             }
 
             writer.printlnHelpMessage("Available commands:\n" + renderedCommands)
+            return true
+        }
+        else if (split.size == 2 && split[0] == "doc") {
+            val docComment = replInterpreter.doc(split[1])
+
+            if (docComment != null) {
+                writer.printlnHelpMessage(docComment)
+            } else {
+                writer.printlnHelpMessage("No documentation found.")
+            }
+
             return true
         }
         else if (split.size == 1 && split.single() == "classes") {

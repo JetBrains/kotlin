@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -60,6 +61,13 @@ open class GenericReplCompiler(disposable: Disposable,
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = GenericReplCompilerState(checker.environment, lock)
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult = checker.check(state, codeLine)
+
+    fun extractSnippetExpression(file: PsiFile): KtExpression? {
+        return file.getChildOfType<KtScript>()
+                ?.getChildOfType<KtBlockExpression>()
+                ?.getChildOfType<KtScriptInitializer>()
+                ?.getChildOfType<KtExpression>()
+    }
 
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
         state.lock.write {
@@ -116,10 +124,7 @@ open class GenericReplCompiler(disposable: Disposable,
             val generatedClassname = makeScriptBaseName(codeLine)
             compilerState.history.push(LineId(codeLine), scriptDescriptor)
 
-            val expression = ktScript?.
-                    getChildOfType<KtBlockExpression>()?.
-                    getChildOfType<KtScriptInitializer>()?.
-                    getChildOfType<KtExpression>()
+            val expression = extractSnippetExpression(psiFile)
 
             val type = expression?.let {
                 compilerState.analyzerEngine.trace.bindingContext.getType(it)
