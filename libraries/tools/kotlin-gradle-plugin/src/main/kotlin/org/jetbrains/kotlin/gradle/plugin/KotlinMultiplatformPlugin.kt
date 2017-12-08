@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -114,12 +115,12 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
 
             commonProject.sourceSets.all { commonSourceSet ->
                 // todo: warn if not found
-                addCommonSourceSetToPlatformSourceSet(commonSourceSet)
+                addCommonSourceSetToPlatformSourceSet(commonSourceSet, platformProject)
             }
         }
     }
 
-    protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet) {
+    protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet, platformProject: Project) {
         val platformTask = platformKotlinTasksBySourceSetName[commonSourceSet.name]
         commonSourceSet.kotlin!!.srcDirs.forEach { platformTask?.source(it) }
     }
@@ -144,6 +145,20 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
                 afterEvaluate { it.fn() }
             }
         }
+    }
+}
+
+open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase("android") {
+    override fun apply(project: Project) {
+        project.applyPlugin<KotlinAndroidPluginWrapper>()
+        super.apply(project)
+    }
+
+    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet, platformProject: Project) {
+        val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
+        val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
+        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: return
+        kotlinSourceSet.kotlin.source(commonSourceSet.kotlin!!)
     }
 }
 
