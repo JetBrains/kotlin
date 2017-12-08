@@ -1,9 +1,5 @@
 apply { plugin("kotlin") }
 
-configureIntellijPlugin {
-    setPlugins("android", "coverage", "gradle", "Groovy", "junit", "maven", "properties", "testng")
-}
-
 val androidSdk by configurations.creating
 
 dependencies {
@@ -18,8 +14,17 @@ dependencies {
 
     compile(project(":js:js.frontend"))
 
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "external-system-rt", "forms_rt", "extensions", "jdom", "util") }
+    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api-3.5", "gradle", "gradle-base-services-3.5") }
+    compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
+    compileOnly(intellijPluginDep("junit")) { includeJars("idea-junit") }
+
     testCompile(projectTests(":idea"))
     testCompile(project(":idea:idea-test-framework"))
+
+    testCompile(intellijPluginDep("gradle")) { includeJars("gradle-wrapper-3.5", "gradle-base-services-3.5", "gradle-tooling-extension-impl", "gradle-tooling-api-3.5", "gradle") }
+    testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
+    testCompileOnly(intellijDep()) { includeJars("groovy-all-2.4.6", "idea_rt") }
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
@@ -30,27 +35,18 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
-    androidSdk(project(":custom-dependencies:android-sdk", configuration = "androidSdk"))
-}
+    testRuntime(intellijDep())
+    // TODO: the order of the plugins matters here, consider avoiding order-dependency
+    testRuntime(intellijPluginDep("junit"))
+    testRuntime(intellijPluginDep("testng")) { includeJars("jcommander", "resources_en") }
+    testRuntime(intellijPluginDep("properties")) { includeJars("resources_en") }
+    testRuntime(intellijPluginDep("gradle"))
+    testRuntime(intellijPluginDep("Groovy"))
+    testRuntime(intellijPluginDep("coverage")) { includeJars("jacocoant") }
+    testRuntime(intellijPluginDep("maven"))
+    testRuntime(intellijPluginDep("android"))
 
-afterEvaluate {
-    dependencies {
-        compileOnly(intellij { include("openapi.jar", "idea.jar", "external-system-rt.jar", "forms_rt.jar", "extensions.jar", "jdom.jar", "util.jar") })
-        compileOnly(intellijPlugin("gradle") { include("gradle-tooling-api-*.jar", "gradle.jar", "gradle-base-services-*.jar") })
-        compileOnly(intellijPlugin("Groovy") { include("Groovy.jar") })
-        compileOnly(intellijPlugin("junit") { include("idea-junit.jar") })
-        testCompile(intellijPlugin("gradle") { include("gradle-wrapper-*.jar", "gradle-base-services-*.jar", "gradle-tooling-extension-impl.jar", "gradle-tooling-api-*.jar", "gradle.jar") })
-        testCompileOnly(intellijPlugin("Groovy") { include("Groovy.jar") })
-        testCompileOnly(intellij { include("groovy-all-*.jar", "idea_rt.jar") })
-        testRuntime(intellij())
-        // TODO: the order of the plugins matters here, consider avoiding order-dependency
-        testRuntime(intellijPlugins("junit"))
-        testRuntime(intellijPlugin("testng") { include("jcommander.jar", "resources_en.jar") })
-        testRuntime(intellijPlugin("properties") { include("resources_en.jar") })
-        testRuntime(intellijPlugins("gradle", "Groovy"))
-        testRuntime(intellijPlugin("coverage") { include("jacocoant*.jar") })
-        testRuntime(intellijPlugins("maven", "android"))
-    }
+    androidSdk(project(":custom-dependencies:android-sdk", configuration = "androidSdk"))
 }
 
 sourceSets {

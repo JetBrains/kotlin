@@ -59,7 +59,7 @@ val copyIntellijSdkSources by tasks.creating { configureExtractFromConfiguration
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }
 
-fun writeIvyXml(moduleName: String, jarFiles: FileCollection, baseDir: File, sourcesJar: File) {
+fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, baseDir: File, sourcesJar: File) {
     with(IvyDescriptorFileGenerator(DefaultIvyPublicationIdentity(customDepsOrg, moduleName, intellijVersion))) {
         addConfiguration(DefaultIvyConfiguration("default"))
         addConfiguration(DefaultIvyConfiguration("sources"))
@@ -71,7 +71,7 @@ fun writeIvyXml(moduleName: String, jarFiles: FileCollection, baseDir: File, sou
         }
         val sourcesArtifactName = sourcesJar.name.removeSuffix(".jar").substringBefore("-")
         addArtifact(DefaultIvyArtifact(sourcesJar, sourcesArtifactName, "jar", "sources", "sources").also { it.conf = "sources" })
-        writeTo(File(customDepsRepoModulesDir, "$moduleName.ivy.xml"))
+        writeTo(File(customDepsRepoModulesDir, "$fileName.ivy.xml"))
     }
 }
 
@@ -89,15 +89,15 @@ val prepareIvyXml by tasks.creating {
 //    outputs.files("$repoDir/intellij.plugin.*.ivy.xml")
     doFirst {
         val sourcesFile = File(repoDir, "${sources.name}/${sources.singleFile.name}")
-        writeIvyXml(intellij.name,
+        writeIvyXml(intellij.name, intellij.name,
                     files("$intellijSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
                     File(intellijSdkDir, "lib"),
                     sourcesFile)
         File(intellijSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
-            writeIvyXml("intellij.plugin.${it.name}", files("$it/lib/"), File(it, "lib"), sourcesFile)
+            writeIvyXml(it.name, "intellij.plugin.${it.name}", files("$it/lib/"), File(it, "lib"), sourcesFile)
         }
         flatDeps.forEach {
-            writeIvyXml(it.name, files("$repoDir/${it.name}"), File(repoDir, it.name), sourcesFile)
+            writeIvyXml(it.name, it.name, files("$repoDir/${it.name}"), File(repoDir, it.name), sourcesFile)
         }
     }
 }

@@ -6,36 +6,6 @@ description = "Kotlin IDEA Ultimate plugin"
 
 apply {
     plugin("kotlin")
-    plugin("org.jetbrains.intellij")
-}
-
-configureIntellijPlugin {
-    version = (rootProject.extra["versions.intellij"] as String).replaceFirst("IC-", "IU-")
-    setExtraDependencies("intellij-core")
-    setPlugins("CSS",
-               "DatabaseTools",
-               "JavaEE",
-               "jsp",
-               "PersistenceSupport",
-               "Spring",
-               "properties",
-               "java-i18n",
-               "gradle",
-               "Groovy",
-               "junit",
-               "uml",
-               "JavaScriptLanguage",
-               "JavaScriptDebugger",
-               "properties",
-               "coverage",
-               "maven",
-               "android",
-               "testng",
-               "IntelliLang",
-               "testng",
-               "copyright",
-               "java-decompiler",
-               "NodeJS:${rootProject.extra["versions.idea.NodeJS"]}")
 }
 
 val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceSets["main"].output.resourcesDir
@@ -59,6 +29,23 @@ dependencies {
     compile(project(":idea:idea-core")) { isTransitive = false }
     compile(project(":idea:ide-common")) { isTransitive = false }
     compile(project(":idea:idea-gradle")) { isTransitive = false }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("annotations", "trove4j", "openapi", "idea", "util", "jdom") }
+    compileOnly(intellijPluginDep("CSS"))
+    compileOnly(intellijPluginDep("DatabaseTools"))
+    compileOnly(intellijPluginDep("JavaEE"))
+    compileOnly(intellijPluginDep("jsp"))
+    compileOnly(intellijPluginDep("PersistenceSupport"))
+    compileOnly(intellijPluginDep("Spring"))
+    compileOnly(intellijPluginDep("properties"))
+    compileOnly(intellijPluginDep("java-i18n"))
+    compileOnly(intellijPluginDep("gradle"))
+    compileOnly(intellijPluginDep("Groovy"))
+    compileOnly(intellijPluginDep("junit"))
+    compileOnly(intellijPluginDep("uml"))
+    compileOnly(intellijPluginDep("JavaScriptLanguage"))
+    compileOnly(intellijPluginDep("JavaScriptDebugger"))
+    compileOnly(intellijPluginDep("NodeJS"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
@@ -97,52 +84,31 @@ dependencies {
     springClasspath(commonDep("org.springframework", "spring-context"))
     springClasspath(commonDep("org.springframework", "spring-tx"))
     springClasspath(commonDep("org.springframework", "spring-web"))
-}
 
-afterEvaluate {
-    dependencies {
-        compileOnly(intellijCoreJar())
-        compileOnly(intellij { include("annotations.jar", "trove4j.jar", "openapi.jar", "idea.jar", "util.jar", "jdom.jar") })
-        compileOnly(intellijPlugin("CSS"))
-        compileOnly(intellijPlugin("DatabaseTools"))
-        compileOnly(intellijPlugin("JavaEE"))
-        compileOnly(intellijPlugin("jsp"))
-        compileOnly(intellijPlugin("PersistenceSupport"))
-        compileOnly(intellijPlugin("Spring"))
-        compileOnly(intellijPlugin("properties"))
-        compileOnly(intellijPlugin("java-i18n"))
-        compileOnly(intellijPlugin("gradle"))
-        compileOnly(intellijPlugin("Groovy"))
-        compileOnly(intellijPlugin("junit"))
-        compileOnly(intellijPlugin("uml"))
-        compileOnly(intellijPlugin("JavaScriptLanguage"))
-        compileOnly(intellijPlugin("JavaScriptDebugger"))
-        compileOnly(intellijPlugin("NodeJS"))
-        testCompileOnly(intellij { include("gson-*.jar", "annotations.jar", "trove4j.jar", "openapi.jar", "idea.jar", "util.jar", "jdom.jar") })
-        testRuntime(intellij())
-        testCompile(intellijPlugin("CSS"))
-        testCompile(intellijPlugin("DatabaseTools"))
-        testCompile(intellijPlugin("JavaEE"))
-        testCompile(intellijPlugin("jsp"))
-        testCompile(intellijPlugin("PersistenceSupport"))
-        testCompile(intellijPlugin("Spring"))
-        testCompile(intellijPlugin("properties"))
-        testCompile(intellijPlugin("java-i18n"))
-        testCompile(intellijPlugin("gradle"))
-        testCompile(intellijPlugin("Groovy"))
-        testCompile(intellijPlugin("junit"))
-        testCompile(intellijPlugin("uml"))
-        testCompile(intellijPlugin("JavaScriptLanguage"))
-        testCompile(intellijPlugin("JavaScriptDebugger"))
-        testCompile(intellijPlugin("NodeJS"))
-        testRuntime(intellijPlugin("coverage"))
-        testRuntime(intellijPlugin("maven"))
-        testRuntime(intellijPlugin("android"))
-        testRuntime(intellijPlugin("testng"))
-        testRuntime(intellijPlugin("IntelliLang"))
-        testRuntime(intellijPlugin("copyright"))
-        testRuntime(intellijPlugin("java-decompiler"))
-    }
+    testCompileOnly(intellijDep()) { includeJars("gson-2.5", "annotations", "trove4j", "openapi", "idea", "util", "jdom") }
+    testRuntime(intellijDep())
+    testCompile(intellijPluginDep("CSS"))
+    testCompile(intellijPluginDep("DatabaseTools"))
+    testCompile(intellijPluginDep("JavaEE"))
+    testCompile(intellijPluginDep("jsp"))
+    testCompile(intellijPluginDep("PersistenceSupport"))
+    testCompile(intellijPluginDep("Spring"))
+    testCompile(intellijPluginDep("properties"))
+    testCompile(intellijPluginDep("java-i18n"))
+    testCompile(intellijPluginDep("gradle"))
+    testCompile(intellijPluginDep("Groovy"))
+    testCompile(intellijPluginDep("junit"))
+    testCompile(intellijPluginDep("uml"))
+    testCompile(intellijPluginDep("JavaScriptLanguage"))
+    testCompile(intellijPluginDep("JavaScriptDebugger"))
+    testCompile(intellijPluginDep("NodeJS"))
+    testRuntime(intellijPluginDep("coverage"))
+    testRuntime(intellijPluginDep("maven"))
+    testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("testng"))
+    testRuntime(intellijPluginDep("IntelliLang"))
+    testRuntime(intellijPluginDep("copyright"))
+    testRuntime(intellijPluginDep("java-decompiler"))
 }
 
 val preparedResources = File(buildDir, "prepResources")

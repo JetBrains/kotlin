@@ -43,8 +43,6 @@ repositories {
         maven(url = it)
     }
     maven(url = "https://dl.bintray.com/kotlin/kotlin-dev") // for dex-method-list
-    maven(url = "https://oss.sonatype.org/content/repositories/snapshots/") // for intellij plugin
-    maven(url = "http://dl.bintray.com/jetbrains/intellij-plugin-service") // for intellij plugin
     maven(url = "https://repo.gradle.org/gradle/libs-releases-local") // for native-platform
     jcenter()
 }
@@ -58,7 +56,6 @@ dependencies {
 //    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["bootstrap_kotlin_version"]}")
     compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     compile("org.ow2.asm:asm-all:6.0_BETA")
-    compile("org.jetbrains.intellij.plugins:gradle-intellij-plugin:${property("versions.intellij-plugin")}")
 }
 
 samWithReceiver {

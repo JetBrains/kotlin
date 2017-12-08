@@ -4,7 +4,6 @@ apply { plugin("kotlin") }
 
 dependencies {
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(projectTests(":generators:test-generator"))
     testRuntime(projectDist(":kotlin-reflect"))

@@ -1,12 +1,18 @@
-import org.jetbrains.intellij.IntelliJPluginExtension
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.tasks.RunIdeTask
 
-apply { plugin("kotlin") }
-
-configureIntellijPlugin {
-    version = (rootProject.extra["versions.intellij"] as String).replaceFirst("IC-", "IU-")
+buildscript {
+    repositories {
+        maven(url = "https://oss.sonatype.org/content/repositories/snapshots/") // for intellij plugin
+        maven(url = "http://dl.bintray.com/jetbrains/intellij-plugin-service") // for intellij plugin
+        jcenter()
+    }
+    dependencies {
+        classpath("org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.3.0-SNAPSHOT")
+    }
 }
+
+apply { plugin("kotlin") }
 
 dependencies {
     compileOnly(project(":idea"))
@@ -15,12 +21,7 @@ dependencies {
     compileOnly(project(":idea:idea-jvm"))
 
     runtimeOnly(files(toolsJar()))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellij())
-    }
+    compileOnly(intellijDep())
 }
 
 afterEvaluate {
@@ -44,7 +45,7 @@ afterEvaluate {
         dependsOn(prepareSandbox)
         group = "intellij"
         description = "Runs Intellij IDEA Ultimate with installed plugin."
-        setIdeaDirectory(the<IntelliJPluginExtension>().ideaDependency.classes)
+        setIdeaDirectory(intellijRootDir())
         setConfigDirectory(File(ideaUltimateSandboxDir, "config"))
         setSystemDirectory(ideaUltimateSandboxDir)
         setPluginsDirectory(ideaUltimatePluginDir.parent)

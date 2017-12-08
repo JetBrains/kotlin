@@ -1,10 +1,5 @@
 apply { plugin("kotlin") }
 
-configureIntellijPlugin {
-    setPlugins("gradle")
-    setExtraDependencies("intellij-core")
-}
-
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compileOnly(project(":kotlin-reflect-api"))
@@ -21,14 +16,9 @@ dependencies {
     compile(project(":plugins:android-extensions-compiler"))
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellijCoreJar())
-        compileOnly(intellij { include("util.jar", "openapi.jar", "idea.jar", "asm-all.jar", "jdom.jar", "annotations.jar", "trove4j.jar", "guava-*.jar") })
-        compileOnly(intellijPlugin("gradle") { include("gradle-tooling-api-*.jar", "gradle.jar") })
-    }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("util", "openapi", "idea", "asm-all", "jdom", "annotations", "trove4j", "guava-21.0") }
+    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api-3.5", "gradle") }
 }
 
 sourceSets {

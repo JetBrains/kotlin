@@ -3,24 +3,15 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-configureIntellijPlugin {
-    setPlugins("android", "gradle")
-}
-
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":compiler:frontend"))
     compile(project(":idea")) { isTransitive = false }
     compile(project(":idea:kotlin-gradle-tooling"))
     compile(project(":kotlin-annotation-processing"))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellij { include("openapi.jar", "external-system-rt.jar", "util.jar") })
-        compileOnly(intellijPlugin("gradle") { include("gradle-core-*.jar", "gradle-tooling-api-*.jar", "gradle.jar") })
-        compileOnly(intellijPlugin("android") { include("android.jar", "android-common.jar", "sdklib.jar", "sdk-common.jar", "sdk-tools.jar") })
-    }
+    compileOnly(intellijDep()) { includeJars("openapi", "external-system-rt", "util") }
+    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-core-3.5", "gradle-tooling-api-3.5", "gradle") }
+    compileOnly(intellijPluginDep("android")) { includeJars("android", "android-common", "sdklib", "sdk-common", "sdk-tools") }
 }
 
 sourceSets {

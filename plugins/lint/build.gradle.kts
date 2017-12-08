@@ -4,31 +4,17 @@ apply {
     plugin("java")
 }
 
-repositories {
-    androidDxJarRepo(project)
-}
-
-configureIntellijPlugin {
-    setExtraDependencies("intellij-core")
-    setPlugins("android")
-}
-
 dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":idea"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:idea-android"))
     compile(project(":plugins:uast-kotlin"))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellijCoreJar())
-        compileOnly(intellij { include("util.jar", "guava-*.jar", "openapi.jar", "idea.jar", "asm-all.jar") })
-        compileOnly(intellijPlugin("android") {
-            include("android.jar", "android-common.jar", "sdklib.jar", "sdk-common.jar", "sdk-tools.jar",
-                    "repository.jar", "lombok-ast-*.jar", "layoutlib-api.jar", "kxml2-*.jar")
-        })
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("util", "guava-21.0", "openapi", "idea", "asm-all") }
+    compileOnly(intellijPluginDep("android")) {
+        includeJars("android", "android-common", "sdklib", "sdk-common", "sdk-tools",
+                    "repository", "lombok-ast-0.2.3", "layoutlib-api", "kxml2-2.3.0")
     }
 }
 

@@ -17,36 +17,30 @@ val usedIntellijPlugins = arrayOf(
         "java-i18n",
         "java-decompiler")
 
-configureIntellijPlugin {
-    setPlugins(*usedIntellijPlugins)
-    setExtraDependencies("intellij-core")
-}
-
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:util"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+
     testCompile(project(":idea"))
     testCompile(project(":idea:idea-test-framework"))
     testCompile(project(":compiler:light-classes"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
+
+    testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
-    testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellijCoreJar())
-        testRuntime(intellij())
-        testRuntime(intellijPlugins(*usedIntellijPlugins))
+    testRuntime(intellijDep())
+    usedIntellijPlugins.forEach {
+        testRuntime(intellijPluginDep(it))
     }
 }
 

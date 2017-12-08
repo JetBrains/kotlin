@@ -5,24 +5,15 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-configureIntellijPlugin {
-    setPlugins("gradle")
-}
-
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":compiler:cli-common"))
-}
-
-afterEvaluate {
-    dependencies {
-        compile(intellijPlugin("gradle") {
-            include("gradle-tooling-api-*.jar",
-                    "gradle-tooling-extension-api.jar",
-                    "gradle.jar",
-                    "gradle-core-*.jar",
-                    "gradle-base-services-groovy-*.jar")
-        })
+    compile(intellijPluginDep("gradle")) {
+        includeJars("gradle-tooling-api-3.5",
+                    "gradle-tooling-extension-api",
+                    "gradle",
+                    "gradle-core-3.5",
+                    "gradle-base-services-groovy-3.5")
     }
 }
 

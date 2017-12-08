@@ -5,10 +5,6 @@ description = "Kotlin Android Extensions Compiler"
 
 apply { plugin("kotlin") }
 
-configureIntellijPlugin {
-    setExtraDependencies("intellij-core")
-}
-
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
@@ -18,12 +14,7 @@ dependencies {
     compileOnly(project(":kotlin-android-extensions-runtime"))
     runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
     compileOnly(commonDep("com.google.android", "android"))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellijCoreJar())
-    }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {

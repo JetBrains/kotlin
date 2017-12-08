@@ -5,10 +5,6 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-configureIntellijPlugin {
-    setPlugins("gradle", "maven")
-}
-
 dependencies {
     compile(project(":kotlin-noarg-compiler-plugin"))
     compile(project(":compiler:util"))
@@ -19,15 +15,10 @@ dependencies {
     compile(project(":idea"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":plugins:annotation-based-compiler-plugins-ide-support"))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellij { include("openapi.jar", "idea.jar") })
-        compileOnly(intellijPlugin("maven") { include("maven.jar") })
-        compileOnly(intellijPlugin("gradle") { include("gradle-tooling-api-*.jar", "gradle.jar") })
+    compileOnly(intellijDep()) { includeJars("openapi.jar", "idea.jar") }
+        compileOnly(intellijPluginDep("maven")) { includeJars("maven.jar") }
+        compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api-3.5.jar", "gradle.jar") }
     }
-}
 
 sourceSets {
     "main" { projectDefault() }

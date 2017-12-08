@@ -2,15 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply { plugin("kotlin") }
 
-repositories {
-    androidDxJarRepo(project)
-}
-
-configureIntellijPlugin {
-    setPlugins("android", "copyright", "coverage", "gradle", "Groovy", "IntelliLang",
-               "java-decompiler", "java-i18n", "junit", "maven", "properties", "testng")
-}
-
 val androidSdk by configurations.creating
 
 dependencies {
@@ -27,6 +18,11 @@ dependencies {
 
     compile(androidDxJar())
 
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "util", "guava-21.0") }
+    compileOnly(intellijPluginDep("android")) {
+        includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
+    }
+
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
@@ -36,30 +32,33 @@ dependencies {
     testCompile(projectTests(":idea:idea-gradle"))
     testCompile(commonDep("junit:junit"))
 
+    testCompile(intellijDep()) { includeJars("gson-2.5") }
+    testCompile(intellijPluginDep("properties"))
+    testCompileOnly(intellijPluginDep("android")) {
+        includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
+    }
+
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":plugins:kapt3-idea"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
-    androidSdk(project(":custom-dependencies:android-sdk", configuration = "androidSdk"))
-}
 
-afterEvaluate {
-    dependencies {
-        compileOnly(intellij { include("openapi.jar", "idea.jar", "extensions.jar", "util.jar", "guava-*.jar") })
-        compileOnly(intellijPlugin("android") {
-            include("android.jar", "android-common.jar", "sdk-common.jar", "sdklib.jar", "sdk-tools.jar", "layoutlib-api.jar")
-        })
-        testCompile(intellij { include("gson-*.jar") })
-        testCompile(intellijPlugin("properties"))
-        testCompileOnly(intellijPlugin("android") {
-            include("android.jar", "android-common.jar", "sdk-common.jar", "sdklib.jar", "sdk-tools.jar", "layoutlib-api.jar")
-        })
-        testRuntime(intellij())
-        testRuntime(intellijPlugins("android", "copyright", "coverage", "gradle", "Groovy", "IntelliLang",
-                                    "java-decompiler", "java-i18n", "junit", "maven", "testng"))
-    }
+    testRuntime(intellijDep())
+    testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("copyright"))
+    testRuntime(intellijPluginDep("coverage"))
+    testRuntime(intellijPluginDep("gradle"))
+    testRuntime(intellijPluginDep("Groovy"))
+    testRuntime(intellijPluginDep("IntelliLang"))
+    testRuntime(intellijPluginDep("java-decompiler"))
+    testRuntime(intellijPluginDep("java-i18n"))
+    testRuntime(intellijPluginDep("junit"))
+    testRuntime(intellijPluginDep("maven"))
+    testRuntime(intellijPluginDep("testng"))
+
+    androidSdk(project(":custom-dependencies:android-sdk", configuration = "androidSdk"))
 }
 
 sourceSets {

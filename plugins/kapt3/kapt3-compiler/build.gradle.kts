@@ -3,10 +3,6 @@ description = "Annotation Processor for Kotlin"
 
 apply { plugin("kotlin") }
 
-configureIntellijPlugin {
-    setExtraDependencies("intellij-core")
-}
-
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
@@ -14,23 +10,16 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:plugin-api"))
+    compileOnly(project(":kotlin-annotation-processing-runtime"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("asm-all") }
 
     testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
-
-    compileOnly(project(":kotlin-annotation-processing-runtime"))
-
     testCompile(commonDep("junit:junit"))
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(intellijDep()) { includeJars("idea", "idea_rt", "openapi") }
     testCompile(project(":kotlin-annotation-processing-runtime"))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellijCoreJar())
-        compileOnly(intellij { include("asm-all.jar") })
-        testCompile(intellijCoreJar())
-        testCompile(intellij { include("idea.jar", "idea_rt.jar", "openapi.jar") })
-    }
 }
 
 sourceSets {

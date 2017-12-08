@@ -1,10 +1,6 @@
 
 apply { plugin("kotlin") }
 
-configureIntellijPlugin {
-    setExtraDependencies("jps-build-test")
-}
-
 dependencies {
     compile(protobufFull())
     compile(project(":idea"))
@@ -40,19 +36,16 @@ dependencies {
     compile(projectTests(":plugins:uast-kotlin"))
     compile(projectTests(":js:js.tests"))
     compile(projectTests(":generators:test-generator"))
+    compileOnly(intellijDep("jps-build-test"))
     compileOnly(project(":kotlin-reflect-api"))
+
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":compiler:incremental-compilation-impl"))
     testCompile(commonDep("junit:junit"))
-    testRuntime(projectDist(":kotlin-reflect"))
-}
+    testCompile(intellijDep("jps-build-test"))
 
-afterEvaluate {
-    dependencies {
-        compileOnly(intellijExtra("jps-build-test"))
-        testCompile(intellijExtra("jps-build-test"))
-        testRuntime(intellij { include("idea_rt.jar") })
-    }
+    testRuntime(intellijDep()) { includeJars("idea_rt") }
+    testRuntime(projectDist(":kotlin-reflect"))
 }
 
 sourceSets {

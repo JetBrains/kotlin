@@ -51,10 +51,6 @@ val compiledModulesSources = compilerModules.map {
     project(it).the<JavaPluginConvention>().sourceSets.getByName("main").allSource
 }
 
-configureIntellijPlugin {
-    setExtraDependencies("intellij-core", "jps-standalone")
-}
-
 dependencies {
     compilerModules.forEach {
         fatJarContents(project(it)) { isTransitive = false }
@@ -82,16 +78,11 @@ dependencies {
     compile(project(":kotlin-stdlib"))
     compile(project(":kotlin-script-runtime"))
     compile(project(":kotlin-reflect"))
-}
-
-afterEvaluate {
-    dependencies {
-        fatJarContents(intellijCoreJar())
-        fatJarContents(intellijCoreJarDependencies { exclude("jdom.jar", "log4j.jar") })
-        fatJarContents(intellij { include("jna-platform.jar") })
-        fatJarContentsStripServices(intellijExtra("jps-standalone") { include("jps-model.jar") })
-        fatJarContentsStripMetadata(intellij { include("oromatcher.jar", "jdom.jar", "log4j.jar") })
-    }
+    fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
+    fatJarContents(intellijDep()) { includeIntellijCoreJarDependencies(project, { !(it.startsWith("jdom") || it.startsWith("log4j")) }) }
+    fatJarContents(intellijDep()) { includeJars("jna-platform") }
+    fatJarContentsStripServices(intellijDep("jps-standalone")) { includeJars("jps-model") }
+    fatJarContentsStripMetadata(intellijDep()) { includeJars("oromatcher", "jdom", "log4j") }
 }
 
 

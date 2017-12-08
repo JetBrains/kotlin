@@ -1,10 +1,6 @@
 
 apply { plugin("kotlin") }
 
-configureIntellijPlugin {
-    setPlugins("junit", "gradle", "Groovy", "properties")
-}
-
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":core:util.runtime"))
@@ -12,12 +8,16 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "util", "extensions", "asm-all") }
+
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":idea:idea-test-framework"))
+    testCompileOnly(intellijDep()) { includeJars("idea_rt") }
+
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":idea:idea-gradle"))
@@ -26,16 +26,12 @@ dependencies {
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":plugins:android-extensions-ide"))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellij { include("openapi.jar", "idea.jar", "util.jar", "extensions.jar", "asm-all.jar") })
-        testCompileOnly(intellij { include("idea_rt.jar") })
-        testRuntime(project(":plugins:kapt3-idea"))
-        testRuntime(intellij())
-        testRuntime(intellijPlugins("junit", "gradle", "Groovy", "properties"))
-    }
+    testRuntime(project(":plugins:kapt3-idea"))
+    testRuntime(intellijDep())
+    testRuntime(intellijPluginDep("junit"))
+    testRuntime(intellijPluginDep("gradle"))
+    testRuntime(intellijPluginDep("Groovy"))
+    testRuntime(intellijPluginDep("properties"))
 }
 
 sourceSets {

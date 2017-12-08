@@ -3,19 +3,12 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-configureIntellijPlugin()
-
 dependencies {
+    compile(intellijDep()) { includeJars("util") }
     testCompile(project(":core:util.runtime"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectDist(":kotlin-stdlib"))
     testCompile(commonDep("junit:junit"))
-}
-
-afterEvaluate {
-    dependencies {
-        compile(intellij { include("util.jar") })
-    }
 }
 
 sourceSets {
