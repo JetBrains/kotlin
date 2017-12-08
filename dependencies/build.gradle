@@ -201,7 +201,7 @@ class HelperNativeDep extends TgzNativeDep {
 
     @TaskAction
     public void downloadAndExtract() {
-        def downloader = new DependencyProcessor(baseOutDir, konanProperties, [baseName], baseUrl)
+        def downloader = new DependencyProcessor(baseOutDir, konanProperties, [baseName], baseUrl, false)
         downloader.showInfo = false
         downloader.run()
     }

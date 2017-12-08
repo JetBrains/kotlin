@@ -65,7 +65,8 @@ class DependencyProcessor(dependenciesRoot: File,
                           val airplaneMode: Boolean = false,
                           maxAttempts: Int = DependencyDownloader.DEFAULT_MAX_ATTEMPTS,
                           attemptIntervalMs: Long = DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS,
-                          customProgressCallback: ProgressCallback? = null) {
+                          customProgressCallback: ProgressCallback? = null,
+                          val keepUnstable:Boolean = true) {
 
     val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
     val cacheDirectory = System.getProperty("user.home")?.let {
@@ -85,22 +86,26 @@ class DependencyProcessor(dependenciesRoot: File,
 
     constructor(dependenciesRoot: File,
                 properties: KonanProperties,
-                dependenciesUrl: String = properties.dependenciesUrl) : this(
+                dependenciesUrl: String = properties.dependenciesUrl,
+                keepUnstable:Boolean = true) : this(
             dependenciesRoot,
             properties.properties,
             properties.dependencies,
-            dependenciesUrl)
+            dependenciesUrl,
+            keepUnstable = keepUnstable)
 
     constructor(dependenciesRoot: File,
                 properties: Properties,
                 dependencies: List<String>,
-                dependenciesUrl: String = properties.dependenciesUrl) : this(
+                dependenciesUrl: String = properties.dependenciesUrl,
+                keepUnstable:Boolean = true) : this(
             dependenciesRoot,
             dependenciesUrl,
             dependencies,
             airplaneMode = properties.airplaneMode,
             maxAttempts = properties.downloadingAttempts,
-            attemptIntervalMs = properties.downloadingAttemptIntervalMs)
+            attemptIntervalMs = properties.downloadingAttemptIntervalMs,
+            keepUnstable = keepUnstable)
 
 
     class DependencyFile(directory: File, fileName: String) {
@@ -146,7 +151,7 @@ class DependencyProcessor(dependenciesRoot: File,
             depDir.isDirectory &&
             depDir.list().isNotEmpty()) {
 
-            if (depDir.list().contains(".unstable")) {
+            if (!keepUnstable && depDir.list().contains(".unstable")) {
                 // The downloaded version of the dependency is unstable -> redownload it.
                 depDir.deleteRecursively()
                 archive.delete()
