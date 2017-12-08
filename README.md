@@ -11,7 +11,8 @@ or where a developer is willing to produce a reasonably-sized self-contained pro
 without the need to ship an additional execution runtime.
 
 Prerequisites:
-	install JDK for your platform, instead of JRE. The build requires ```tools.jar```, which is not included in JRE.
+*   install JDK for your platform, instead of JRE. The build requires ```tools.jar```, which is not included in JRE;
+*   on macOS install Xcode 9.2
 
 To compile from sources use following steps:
 

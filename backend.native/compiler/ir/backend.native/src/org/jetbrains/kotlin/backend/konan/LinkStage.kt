@@ -121,8 +121,7 @@ internal open class AndroidPlatform(distribution: Distribution)
 internal open class MacOSBasedPlatform(distribution: Distribution)
     : PlatformFlags(distribution.targetProperties) {
 
-    // TODO: move 'ld' out of the host sysroot, as it doesn't belong here.
-    private val linker = "${distribution.hostSysRoot}/usr/bin/ld"
+    private val linker = "$targetToolchain/usr/bin/ld"
     internal val dsymutil = "${distribution.llvmBin}/llvm-dsymutil"
     internal val libLTO = distribution.libLTO
 

@@ -22,6 +22,7 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     ttyent.h \
     unwind.h util.h utmpx.h vis.h wordexp.h xattr_flags.h \
     bank/bank_types.h \
+    bsm/audit.h \
     os/activity.h os/availability.h os/base.h os/lock.h \
     os/object.h os/overflow.h os/trace.h
 #    simd/simd.h

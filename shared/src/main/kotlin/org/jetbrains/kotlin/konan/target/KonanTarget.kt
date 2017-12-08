@@ -185,7 +185,7 @@ class TargetManager(val userRequest: String? = null) {
                 KonanTarget.MACBOOK -> {
                     KonanTarget.MACBOOK.enabled = true
                     KonanTarget.IPHONE.enabled = true
-                    //KonanTarget.IPHONE_SIM.enabled = true
+                    KonanTarget.IPHONE_SIM.enabled = true
                     KonanTarget.ANDROID_ARM32.enabled = true
                     KonanTarget.ANDROID_ARM64.enabled = true
                     KonanTarget.WASM32.enabled = true

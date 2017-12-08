@@ -1,6 +1,6 @@
 apply plugin: 'konan'
 
-konan.targets = ['macbook', 'linux', 'iphone', 'raspberrypi']
+konan.targets = ['macbook', 'linux', 'raspberrypi']
 
 konanArtifacts {
 
@@ -17,10 +17,6 @@ konanArtifacts {
 
         target 'linux', {
             includeDirs '/usr/include/SDL2'
-        }
-
-        target 'iphone', {
-            includeDirs "${System.getProperty("user.home")}/.konan/dependencies/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers"
         }
 
         target 'raspberrypi', {
@@ -41,13 +37,6 @@ konanArtifacts {
 
         target 'linux', {
             linkerOpts '-L/usr/lib/x86_64-linux-gnu -lSDL2'
-        }
-
-        target 'iphone', {
-            linkerOpts '-framework SDL2 -framework AVFoundation -framework CoreGraphics -framework CoreMotion ' +
-                    '-framework Foundation -framework GameController -framework AudioToolbox -framework OpenGLES ' +
-                    '-framework QuartzCore -framework UIKit'
-            noMain true
         }
 
         target 'raspberrypi', {

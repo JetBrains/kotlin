@@ -48,7 +48,7 @@ private class MyAppDelegate() : NSObject(), NSApplicationDelegateProtocol {
             releasedWhenClosed = false
 
             delegate = object : NSObject(), NSWindowDelegateProtocol {
-                override fun windowShouldClose(sender: ObjCObject): Boolean {
+                override fun windowShouldClose(sender: NSWindow): Boolean {
                     NSApplication.sharedApplication().stop(this)
                     return true
                 }

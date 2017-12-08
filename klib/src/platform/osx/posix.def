@@ -9,7 +9,7 @@ headers = alloca.h ar.h assert.h complex.h dirent.h dlfcn.h err.h errno.h fcntl.
     net/ethernet.h net/if.h net/if_arp.h net/route.h \
     netinet/icmp6.h netinet/if_ether.h netinet/in.h netinet/in_systm.h \
     netinet/ip.h netinet/ip6.h netinet/ip_icmp.h netinet/tcp.h netinet/udp.h \
-    sys/ioctl.h sys/ipc.h sys/mman.h sys/poll.h sys/ptrace.h \
+    sys/acl.h sys/ioctl.h sys/ipc.h sys/mman.h sys/poll.h sys/ptrace.h \
     sys/queue.h sys/select.h sys/shm.h sys/socket.h sys/stat.h \
     sys/syslimits.h sys/time.h sys/times.h sys/utsname.h sys/wait.h
 
@@ -19,7 +19,7 @@ excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN add_profil         
                     addrsel_policy_init                                             \
 		    in6addr_linklocal_allv2routers                                  \
 		    pfctlinput regwnexec_l res_send_setqhook res_send_setrhook      \
-		    unwhiteout zopen profil openat
+		    unwhiteout zopen profil openat acl_valid_link_np
 linkerOpts = -ldl -lresolv
 
 ---

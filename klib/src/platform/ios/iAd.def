@@ -1,4 +1,4 @@
-depends = AVFoundation AVKit CFNetwork CoreFoundation CoreGraphics CoreImage CoreMedia CoreText CoreVideo EAGL Foundation MediaPlayer Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+depends = AVFoundation AVKit AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaPlayer MediaToolbox Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.iAd
 headers = iAd/iAd.h

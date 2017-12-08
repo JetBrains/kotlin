@@ -1,4 +1,4 @@
-depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreLocation CoreText CoreVideo EAGL Foundation MapKit Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreLocation CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MapKit Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.WatchKit
 headers = WatchKit/WatchKit.h

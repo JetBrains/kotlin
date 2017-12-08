@@ -1,7 +1,7 @@
 depends = CoreFoundation darwin posix
 language = Objective-C
 package = platform.Security
-headers = Security/Security.h Security/SecurityFeatures.h Security/SecureTransport.h
+headers = Security/Security.h Security/SecureTransport.h
 
 headerFilter = Security/**
 

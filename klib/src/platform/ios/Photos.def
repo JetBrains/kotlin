@@ -1,4 +1,4 @@
-depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreImage CoreLocation CoreMIDI CoreMedia CoreText CoreVideo EAGL Foundation ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreImage CoreLocation CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
 language = Objective-C
 package = platform.Photos
 headers = Photos/Photos.h

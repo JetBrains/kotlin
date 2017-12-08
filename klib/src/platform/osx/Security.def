@@ -1,7 +1,7 @@
 depends = CoreFoundation osx posix
 language = Objective-C
 package = platform.Security
-headers = Security/Security.h Security/SecurityFeatures.h Security/SecureTransport.h
+headers = Security/Security.h Security/SecureTransport.h
 
 headerFilter = Security/**
 excludedFunctions = CSSMOID_APPLE_EXTENSION_DEVELOPER_AUTHENTICATION CSSMOID_APPLE_EXTENSION_PROVISIONING_PROFILE_SIGNING \

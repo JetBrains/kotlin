@@ -19,12 +19,6 @@ CFLAGS_linux=-I/usr/include/SDL2
 LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lSDL2"
 COMPILER_ARGS_linux=
 
-CFLAGS_iphone=-I$DEPS/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers
-LINKER_ARGS_iphone="-framework SDL2 \
--framework AVFoundation -framework CoreGraphics -framework CoreMotion -framework Foundation -framework GameController \
--framework AudioToolbox -framework OpenGLES -framework QuartzCore -framework UIKit"
-COMPILER_ARGS_iphone=-nomain
-
 CFLAGS_raspberrypi=-I$DEPS/target-sysroot-1-raspberrypi/usr/include/SDL2
 LINKER_ARGS_raspberrypi="-lSDL2"
 COMPILER_ARGS_raspberrypi=

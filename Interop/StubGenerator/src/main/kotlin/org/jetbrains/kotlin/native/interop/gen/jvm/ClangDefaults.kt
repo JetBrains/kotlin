@@ -48,7 +48,7 @@ fun KonanProperties.defaultCompilerOpts(): List<String> {
         MACBOOK -> {
             val osVersionMinFlag = targetString("osVersionMinFlagClang")
             val osVersionMinValue = targetString("osVersionMin")
-            listOf("-B$targetToolchain/bin") +
+            listOf("-B$targetToolchain/usr/bin") +
                     (if (osVersionMinFlag != null && osVersionMinValue != null)
                         listOf("$osVersionMinFlag=$osVersionMinValue") else emptyList())
         }

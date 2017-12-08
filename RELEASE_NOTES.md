@@ -39,6 +39,8 @@ the following platforms:
 To run _Kotlin/Native_ JDK8 for the host platform has to be installed.
 Note that Java 9 not yet supported.
 
+On macOS it also requires Xcode 9.2 or newer.
+
 The language and library version supported by this EAP release mostly match Kotlin 1.2.
 However, there are certain limitations, see section [Known Limitations](#limitations).
 

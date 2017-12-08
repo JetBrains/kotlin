@@ -106,7 +106,7 @@ class ClangHostArgs(val hostProperties: KonanProperties) {
     val binDir = when(TargetManager.host) {
         KonanTarget.LINUX -> "$targetToolchain/bin"
         KonanTarget.MINGW -> "$sysRoot/bin"
-        KonanTarget.MACBOOK -> "$sysRoot/usr/bin"
+        KonanTarget.MACBOOK -> "$targetToolchain/usr/bin"
         else -> throw TargetSupportException("Unexpected host platform")
     }
 
