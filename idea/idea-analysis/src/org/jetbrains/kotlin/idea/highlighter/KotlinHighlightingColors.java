@@ -42,6 +42,8 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey DOUBLE_COLON = createTextAttributesKey("KOTLIN_DOUBLE_COLON");
     public static final TextAttributesKey DOT = createTextAttributesKey("KOTLIN_DOT", DefaultLanguageHighlighterColors.DOT);
     public static final TextAttributesKey SAFE_ACCESS = createTextAttributesKey("KOTLIN_SAFE_ACCESS", DefaultLanguageHighlighterColors.DOT);
+    public static final TextAttributesKey QUEST = createTextAttributesKey("KOTLIN_QUEST");
+    public static final TextAttributesKey EXCLEXCL = createTextAttributesKey("KOTLIN_EXCLEXCL");
     public static final TextAttributesKey ARROW = createTextAttributesKey("KOTLIN_ARROW", PARENTHESIS);
     public static final TextAttributesKey LINE_COMMENT = createTextAttributesKey("KOTLIN_LINE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
     public static final TextAttributesKey BLOCK_COMMENT = createTextAttributesKey("KOTLIN_BLOCK_COMMENT", DefaultLanguageHighlighterColors.BLOCK_COMMENT);
