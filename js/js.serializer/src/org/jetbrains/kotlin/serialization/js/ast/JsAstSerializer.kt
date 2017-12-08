@@ -196,6 +196,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
                 switchBuilder.expression = serialize(x.expression)
                 for (case in x.cases) {
                     val entryBuilder = SwitchEntry.newBuilder()
+                    withLocation(case, { entryBuilder.fileId = it }, { entryBuilder.location = it }) {}
                     if (case is JsCase) {
                         entryBuilder.label = serialize(case.caseExpression)
                     }
@@ -263,7 +264,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
             }
         }
 
-        withLocation(statement, { visitor.builder.fileId = it }, {visitor.builder.location = it }) {
+        withLocation(statement, { visitor.builder.fileId = it }, { visitor.builder.location = it }) {
             statement.accept(visitor)
         }
 
