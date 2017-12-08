@@ -284,6 +284,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ElvisWrap.after.kt")
+        public void testElvisWrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ElvisWrap.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("EmptyLineAfterObjectDeclaration.after.kt")
         public void testEmptyLineAfterObjectDeclaration() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineAfterObjectDeclaration.after.kt");

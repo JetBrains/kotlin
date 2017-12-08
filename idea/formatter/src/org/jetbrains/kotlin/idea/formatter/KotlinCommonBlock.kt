@@ -439,6 +439,16 @@ abstract class KotlinCommonBlock(
                         }
                     }
                 }
+                if (nodePsi.operationToken == KtTokens.ELVIS) {
+                    return object : WrappingStrategy {
+                        override fun getWrap(childElement: ASTNode): Wrap? {
+                            if (childElement.elementType == KtNodeTypes.OPERATION_REFERENCE) {
+                                return Wrap.createWrap(settings.kotlinCustomSettings.WRAP_ELVIS_EXPRESSIONS, true)
+                            }
+                            return null
+                        }
+                    }
+                }
                 return WrappingStrategy.NoWrapping
             }
         }
