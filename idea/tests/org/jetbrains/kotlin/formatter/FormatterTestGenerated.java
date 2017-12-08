@@ -662,6 +662,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PropertyInitializerLineBreak.after.kt")
+        public void testPropertyInitializerLineBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyInitializerLineBreak.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PropertyTypeParameterList.after.kt")
         public void testPropertyTypeParameterList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyTypeParameterList.after.kt");
