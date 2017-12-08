@@ -1,21 +1,10 @@
 
-plugins {
-    id 'org.jetbrains.intellij'
-}
-
 apply plugin: 'kotlin'
 apply plugin: 'maven'
 
 repositories {
     mavenLocal()
     jcenter()
-}
-
-intellij {
-    version = rootProject.ext["versions.intellij"]
-    instrumentCode = false
-    configureDefaultDependencies = false
-    extraDependencies = ['intellij-core']
 }
 
 dependencies {
@@ -34,8 +23,10 @@ dependencies {
     compileOnly gradleApi()
 }
 
-afterEvaluate {
-    dependencies {
-        compileOnly intellijExtra('intellij-core')
+    compileOnly("kotlin.build.custom.deps:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
+        artifact {
+            name = 'intellij-core'
+            extension = 'jar'
+        }
     }
 }

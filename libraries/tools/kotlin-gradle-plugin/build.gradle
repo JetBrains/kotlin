@@ -13,10 +13,6 @@ buildscript {
     }
 }
 
-plugins {
-    id 'org.jetbrains.intellij'
-}
-
 configureJvmProject(project)
 configurePublishing(project)
 
@@ -24,13 +20,6 @@ repositories {
     jcenter()
     mavenLocal()
     maven { url 'https://maven.google.com' }
-}
-
-intellij {
-    version = rootProject.ext["versions.intellij"]
-    instrumentCode = false
-    configureDefaultDependencies = false
-    extraDependencies = ['intellij-core']
 }
 
 configurations {
@@ -54,6 +43,13 @@ dependencies {
     compileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
     compileOnly gradleApi()
 
+    compileOnly("kotlin.build.custom.deps:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
+        artifact {
+            name = 'intellij-core'
+            extension = 'jar'
+        }
+    }
+
     runtime project(path: ':kotlin-compiler-embeddable', configuration: "runtimeJar")
     runtime project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
     runtime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
@@ -74,12 +70,6 @@ dependencies {
     testCompileOnly project(':kotlin-reflect-api')
     testCompileOnly project(':kotlin-annotation-processing')
     testCompileOnly project(':kotlin-annotation-processing-gradle')
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly intellijExtra('intellij-core')
-    }
 }
 
 tasks.withType(project.compileKotlin.class) {
