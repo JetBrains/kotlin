@@ -122,7 +122,7 @@ open class KotlinJvmReplService(
 
     fun createRemoteState(port: Int = portForServers): RemoteReplStateFacadeServer = statesLock.write {
         val id = getValidId(stateIdCounter) { id -> states.none { it.key.getId() == id} }
-        val stateFacade = RemoteReplStateFacadeServer(id, createState().asState(GenericReplCompilerState::class.java), port)
+        val stateFacade = RemoteReplStateFacadeServer(id, createState().asState(), port)
         states.put(stateFacade, true)
         stateFacade
     }

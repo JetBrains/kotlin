@@ -71,7 +71,7 @@ open class GenericReplCompiler(disposable: Disposable,
 
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
         state.lock.write {
-            val compilerState = state.asState(GenericReplCompilerState::class.java)
+            val compilerState = state.asState<GenericReplCompilerState>()
 
             val (psiFile, errorHolder) = run {
                 if (compilerState.lastLineState == null || compilerState.lastLineState!!.codeLine != codeLine) {

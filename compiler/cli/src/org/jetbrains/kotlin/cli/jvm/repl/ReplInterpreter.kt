@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl
 
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.Disposable
+import com.intellij.psi.PsiCompiledElement
+import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -28,8 +31,12 @@ import org.jetbrains.kotlin.cli.jvm.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -39,6 +46,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import java.io.File
 import java.io.PrintWriter
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -57,6 +65,11 @@ class ReplInterpreter(
             is JvmClasspathRoot -> root.file
             else -> null
         }
+    }
+
+    private val classpathRootsWithSources by lazy {
+        // This is lazy because compiler configuration is not yet set up propertly when the class is initiated
+        classpathRoots.let { it + LibrarySourcesSearcher(configuration).findAdditionalSourceJars(it) }
     }
 
     private val messageCollector = object : MessageCollector {
@@ -92,6 +105,10 @@ class ReplInterpreter(
         GenericReplCompilingEvaluator(scriptCompiler, classpathRoots, null, null, ReplRepeatingMode.REPEAT_ANY_PREVIOUS)
     }
 
+    private val docProvider by lazy {
+        LibraryDocInfoProvider(evalState.asState<GenericReplCompilerState>().analyzerEngine.project)
+    }
+
     private val evalState by lazy { scriptEvaluator.createState() }
 
     fun eval(line: String): ReplEvalResult {
@@ -118,14 +135,13 @@ class ReplInterpreter(
     }
 
     fun doc(rawFqName: String): String? {
-        val compilerState = evalState.asState(GenericReplCompilerState::class.java)
+        val compilerState = evalState.asState<GenericReplCompilerState>()
         val bindingContext = compilerState.analyzerEngine.trace.bindingContext
         val moduleDescriptor = compilerState.analyzerEngine.module
         val qualifiedExpressionResolver = compilerState.analyzerEngine.qualifiedExpressionResolver
 
         val codeFragment = KtPsiFactory(compilerState.analyzerEngine.project).createExpressionCodeFragment(rawFqName, null)
         compilerState.analyzerEngine.setDelegateFactory(codeFragment.containingKtFile)
-
 
         val targetExpression = codeFragment.findElementAt(codeFragment.textLength - 1)?.let {
             it.getStrictParentOfType<KtQualifiedExpression>()
@@ -147,15 +163,16 @@ class ReplInterpreter(
                 when (memberName) {
                     null -> listOf(containingDescriptor)
                     else -> {
-                        val memberScope = when (containingDescriptor) {
-                            is PackageViewDescriptor -> containingDescriptor.memberScope
-                            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope()
-                            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope
-                            is TypeAliasDescriptor -> containingDescriptor.classDescriptor?.unsubstitutedMemberScope
+                        val scopes = when (containingDescriptor) {
+                            is PackageViewDescriptor -> listOf(containingDescriptor.memberScope)
+                            is PackageFragmentDescriptor -> listOf(containingDescriptor.getMemberScope())
+                            is ClassDescriptor -> listOf(containingDescriptor.unsubstitutedMemberScope, containingDescriptor.staticScope)
+                            is TypeAliasDescriptor -> listOfNotNull(containingDescriptor.classDescriptor?.unsubstitutedMemberScope)
                             else -> null
                         } ?: return null
 
-                        memberScope.getContributedDescriptors(CALLABLES_AND_CLASSIFIERS) { it == memberName }
+                        scopes.flatMap { it.getContributedDescriptors(CALLABLES_AND_CLASSIFIERS) { it == memberName } }
+                              .filter { it.name == memberName }
                     }
                 }
             }
@@ -168,24 +185,56 @@ class ReplInterpreter(
             else -> return null
         }.takeIf { it.isNotEmpty() } ?: return null
 
+        val libraries = classpathRoots
+
         return descriptors.joinToString(LINE_SEPARATOR + LINE_SEPARATOR) { descriptor ->
             val fqName = descriptor.fqNameSafe
-            val documentation = findDocumentation(descriptor)
+            val documentation = findDocumentation(libraries, descriptor)
             fqName.asString() + LINE_SEPARATOR + documentation.lines().joinToString(LINE_SEPARATOR) { "    " + it }
         }
     }
 
-    private fun findDocumentation(descriptor: DeclarationDescriptor): String {
+    private fun findDocumentation(libraries: List<File>, descriptor: DeclarationDescriptor): String {
         if (descriptor is DeclarationDescriptorWithSource) {
             val psi = descriptor.source.getPsi()
-            if (psi != null) {
+
+            // REPL declaration
+            if (psi != null && psi !is PsiCompiledElement) {
                 return psi.getChildrenOfType<KDoc>()
                         .flatMap { it.getChildrenOfType<KDocSection>().asList() }
                         .joinToString(LINE_SEPARATOR + LINE_SEPARATOR) { it.text.trim() }
             }
+
+            // Library declaration
+            val (packageName, declarationName) = splitPackageDeclarationNames(descriptor)
+
+            val language = when (descriptor) {
+                is JavaClassDescriptor, is JvmDescriptorWithExtraFlags, is JavaCallableMemberDescriptor -> JavaLanguage.INSTANCE
+                else -> KotlinLanguage.INSTANCE
+            }
+
+            docProvider.getDoc(language, libraries, packageName, declarationName)?.let { return it }
         }
 
         return "No documentation found."
+    }
+
+    private fun splitPackageDeclarationNames(descriptor: DeclarationDescriptor): Pair<String, String> {
+        fun getPackageName(descriptor: DeclarationDescriptor): FqName = when (descriptor) {
+            is PackageFragmentDescriptor -> descriptor.fqName
+            is PackageViewDescriptor -> descriptor.fqName
+            else -> getPackageName(descriptor.containingDeclaration ?: error("$descriptor is outside any package"))
+        }
+
+        val fqName = descriptor.fqNameSafe.asString()
+        val packageName = getPackageName(descriptor).asString()
+
+        if (packageName.isEmpty()) {
+            return Pair("", fqName)
+        }
+
+        assert(fqName.startsWith(packageName + "."))
+        return Pair(packageName, fqName.drop(packageName.length + 1))
     }
 
     private fun concatWithPreviousLines(line: String) = (previousIncompleteLines + line).joinToString(separator = "\n")

@@ -73,6 +73,9 @@ interface IReplStageState<T> {
     }
 }
 
+inline fun <reified StateT : IReplStageState<*>> IReplStageState<*>.asState(): StateT {
+    return asState(StateT::class.java)
+}
 
 fun <T> IReplStageHistory<T>.firstMismatch(other: Sequence<ILineId>): Pair<ReplHistoryRecord<T>?, ILineId?>? = lock.read {
             iterator().asSequence()

@@ -37,7 +37,7 @@ open class GenericReplEvaluator(
                       scriptArgs: ScriptArgsWithTypes?,
                       invokeWrapper: InvokeWrapper?): ReplEvalResult {
         state.lock.write {
-            val evalState = state.asState(GenericReplEvaluatorState::class.java)
+            val evalState = state.asState<GenericReplEvaluatorState>()
             val historyActor = when (repeatingMode) {
                 ReplRepeatingMode.NONE -> HistoryActionsForNoRepeat(evalState)
                 ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT -> {

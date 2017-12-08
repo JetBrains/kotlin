@@ -32,7 +32,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
     val state: IReplStageState<*> // The Invokable interface do not allow Context/Bindings substitution, so state is supplied via property
 
     private fun prioritizedHistory(receiverClass: KClass<*>?, receiverInstance: Any?): List<EvalClassWithInstanceAndLoader> {
-        val evalState = state.asState(GenericReplEvaluatorState::class.java)
+        val evalState = state.asState<GenericReplEvaluatorState>()
         return evalState.history.map { it.item }.filter { it.instance != null }.reversed().ensureNotEmpty("no script ").let { history ->
             if (receiverInstance != null) {
                 val receiverKlass = receiverClass ?: receiverInstance::class
