@@ -1,15 +1,6 @@
 
 apply { plugin("kotlin") }
 
-//configureIntellijPlugin {
-//    setExtraDependencies("intellij-core")
-//}
-
-repositories {
-    intellijSdkRepo(project)
-    androidDxJarRepo(project)
-}
-
 dependencies {
     testCompile(project(":core:descriptors"))
     testCompile(project(":core:descriptors.jvm"))

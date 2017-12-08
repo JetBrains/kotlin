@@ -21,18 +21,21 @@ fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository =
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact].jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact](-[revision])(-[classifier]).jar")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellijSources/[artifact]-[revision]-[classifier].[ext]")
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/sources/[artifact]-[revision]-[classifier].[ext]")
 }
 
-fun Project.intellijDep() = "kotlin.build.custom.deps:intellijSdk:${rootProject.extra["versions.intellijSdk"]}"
+fun Project.intellijDep(module: String = "intellij") = "kotlin.build.custom.deps:$module:${rootProject.extra["versions.intellijSdk"]}"
 
-fun Project.intellijCoreDep() = "kotlin.build.custom.deps:intellijCore:${rootProject.extra["versions.intellijSdk"]}"
+fun Project.intellijCoreDep() = intellijDep("intellij-core")
 
 fun ModuleDependency.includeJars(vararg names: String) {
     names.forEach {
         artifact { name = it; extension = "jar" }
     }
 }
+
+fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilter: (String) -> Boolean = { true }) =
+        includeJars(*(project.rootProject.extra["IntellijCoreDependenciesJars"] as List<String>).filter { jarsFilter(it) }.toTypedArray())
 
 fun Project.configureIntellijPlugin(body: (IntelliJPluginExtension.() -> Unit) = {}) {
 

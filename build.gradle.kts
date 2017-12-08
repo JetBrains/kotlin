@@ -154,6 +154,20 @@ extra["IntellijCoreDependencies"] =
                "xpp3-1.1.4-min.jar",
                "xstream-*.jar")
 
+extra["IntellijCoreDependenciesJars"] = // TODO: rename to IntellijCoreDependencies after old usages are cleared
+        listOf("annotations",
+               "asm-all",
+               "guava-21.0",
+               "jdom",
+               "jna",
+               "log4j",
+               "picocontainer",
+               "snappy-in-java-0.5.1",
+               "streamex-0.6.2",
+               "trove4j",
+               "xpp3-1.1.4-min",
+               "xstream-1.4.8")
+
 extra["nativePlatformVariants"] =
         listOf("windows-amd64",
                "windows-i386",
@@ -288,6 +302,8 @@ allprojects {
         ivy {
             artifactPattern(rootProject.extra["markdownParserRepo"] as String)
         }
+        intellijSdkRepo(project)
+        androidDxJarRepo(project)
     }
     configureJvmProject(javaHome!!, jvmTarget!!)
 

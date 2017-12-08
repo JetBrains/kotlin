@@ -1,3 +1,4 @@
+@file:Suppress("PropertyName")
 
 import org.gradle.api.publish.ivy.internal.artifact.DefaultIvyArtifact
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyConfiguration
@@ -15,11 +16,11 @@ repositories {
     maven { setUrl("$intellijRepo/$intellijReleaseType") }
 }
 
-val intellijSdk by configurations.creating
-val intellijSources by configurations.creating
-val jpsStandalone by configurations.creating
-val jpsBuildTest by configurations.creating
-val intellijCore by configurations.creating
+val intellij by configurations.creating
+val sources by configurations.creating
+val `jps-standalone` by configurations.creating
+val `jps-build-test` by configurations.creating
+val `intellij-core` by configurations.creating
 
 val customDepsRepoDir = File(buildDir, "repo")
 val customDepsOrg: String by rootProject.extra
@@ -28,11 +29,11 @@ val customDepsRepoModulesDir = File(customDepsRepoDir, "$customDepsOrg/$customDe
 val repoDir = customDepsRepoModulesDir
 
 dependencies {
-    intellijSdk("com.jetbrains.intellij.idea:$intellijSdkDependencyName:$intellijVersion")
-    intellijSources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
-    jpsStandalone("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
-    jpsBuildTest("com.jetbrains.intellij.idea:jps-build-test:$intellijVersion")
-    intellijCore("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
+    intellij("com.jetbrains.intellij.idea:$intellijSdkDependencyName:$intellijVersion")
+    sources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
+    `jps-standalone`("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
+    `jps-build-test`("com.jetbrains.intellij.idea:jps-build-test:$intellijVersion")
+    `intellij-core`("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
 }
 
 fun Task.configureExtractFromConfigurationTask(sourceConfig: Configuration, extractor: (Configuration) -> Any) {
@@ -48,15 +49,15 @@ fun Task.configureExtractFromConfigurationTask(sourceConfig: Configuration, extr
     }
 }
 
-val unzipIntellijSdk by tasks.creating { configureExtractFromConfigurationTask(intellijSdk) { zipTree(it.singleFile) } }
+val unzipIntellijSdk by tasks.creating { configureExtractFromConfigurationTask(intellij) { zipTree(it.singleFile) } }
 
-val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(intellijCore) { zipTree(it.singleFile) } }
+val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(`intellij-core`) { zipTree(it.singleFile) } }
 
-val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(jpsStandalone) { zipTree(it.singleFile) } }
+val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(`jps-standalone`) { zipTree(it.singleFile) } }
 
-val copyIntellijSdkSources by tasks.creating { configureExtractFromConfigurationTask(intellijSources) { it.singleFile } }
+val copyIntellijSdkSources by tasks.creating { configureExtractFromConfigurationTask(sources) { it.singleFile } }
 
-val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(jpsBuildTest) { it.singleFile } }
+val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }
 
 fun writeIvyXml(moduleName: String, jarFiles: FileCollection, baseDir: File, sourcesJar: File) {
     with(IvyDescriptorFileGenerator(DefaultIvyPublicationIdentity(customDepsOrg, moduleName, intellijVersion))) {
@@ -76,19 +77,19 @@ fun writeIvyXml(moduleName: String, jarFiles: FileCollection, baseDir: File, sou
 
 val prepareIvyXml by tasks.creating {
     dependsOn(unzipIntellijSdk, unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest)
-    val intellijSdkDir = File(repoDir, intellijSdk.name)
+    val intellijSdkDir = File(repoDir, intellij.name)
     inputs.dir(intellijSdkDir)
-    outputs.file(File(repoDir, "${intellijSdk.name}.ivy.xml"))
-    val flatDeps = listOf(intellijCore, jpsStandalone, jpsBuildTest)
+    outputs.file(File(repoDir, "${intellij.name}.ivy.xml"))
+    val flatDeps = listOf(`intellij-core`, `jps-standalone`, `jps-build-test`)
     flatDeps.forEach {
         inputs.dir(File(repoDir, it.name))
         outputs.file(File(repoDir, "${it.name}.ivy.xml"))
     }
-    inputs.dir(File(repoDir, intellijSources.name))
+    inputs.dir(File(repoDir, sources.name))
 //    outputs.files("$repoDir/intellij.plugin.*.ivy.xml")
     doFirst {
-        val sourcesFile = File(repoDir, "${intellijSources.name}/${intellijSources.singleFile.name}")
-        writeIvyXml(intellijSdk.name,
+        val sourcesFile = File(repoDir, "${sources.name}/${sources.singleFile.name}")
+        writeIvyXml(intellij.name,
                     files("$intellijSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
                     File(intellijSdkDir, "lib"),
                     sourcesFile)
