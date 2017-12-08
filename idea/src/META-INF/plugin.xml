@@ -2703,12 +2703,13 @@
 
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SortModifiersInspection"
-                     displayName="Sort modifiers"
+                     displayName="Non-canonical modifier order"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
+                     cleanupTool="true"
     />
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
