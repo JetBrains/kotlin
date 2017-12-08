@@ -46,10 +46,7 @@ import org.jetbrains.kotlin.js.dce.InputFile
 import org.jetbrains.kotlin.js.dce.InputResource
 import org.jetbrains.kotlin.js.facade.*
 import org.jetbrains.kotlin.js.parser.parse
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapLocationRemapper
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
+import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.test.utils.*
@@ -355,7 +352,16 @@ abstract class BasicBoxTest(
         val originalSourceMap = FileUtil.loadFile(File(outputFile.parentFile, outputFile.name + ".map"))
         val recompiledSourceMap = removeRecompiledSuffix(
                 FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.name + ".map")))
-        assertEquals("Source map file changed after recompilation", originalSourceMap, recompiledSourceMap)
+        if (originalSourceMap != recompiledSourceMap) {
+            val originalSourceMapParse = SourceMapParser.parse(StringReader(originalSourceMap))
+            val recompiledSourceMapParse = SourceMapParser.parse(StringReader(recompiledSourceMap))
+            if (originalSourceMapParse is SourceMapSuccess && recompiledSourceMapParse is SourceMapSuccess) {
+                assertEquals("Source map file changed after recompilation",
+                             originalSourceMapParse.toDebugString(),
+                             recompiledSourceMapParse.toDebugString())
+            }
+            assertEquals("Source map file changed after recompilation", originalSourceMap, recompiledSourceMap)
+        }
 
         if (multiModule) {
             val originalMetadata = FileUtil.loadFile(File(outputFile.parentFile, outputFile.nameWithoutExtension + ".meta.js"))
@@ -365,6 +371,12 @@ abstract class BasicBoxTest(
                                   metadataAsString(originalMetadata, module.name),
                                   metadataAsString(recompiledMetadata, module.name))
         }
+    }
+
+    private fun SourceMapSuccess.toDebugString(): String {
+        val out = ByteArrayOutputStream()
+        PrintStream(out).use { value.debug(it) }
+        return String(out.toByteArray(), Charset.forName("UTF-8"))
     }
 
     private fun metadataAsString(metadata: String, moduleName: String): String {
