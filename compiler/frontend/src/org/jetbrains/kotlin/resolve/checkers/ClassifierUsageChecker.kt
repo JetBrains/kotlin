@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -77,8 +74,9 @@ fun checkClassifierUsages(
         }
 
         private fun getReferencedClassifier(expression: KtReferenceExpression): ClassifierDescriptor? {
-            val target = context.trace.get(BindingContext.REFERENCE_TARGET, expression) as? ClassifierDescriptor
-            if (target != null) return target
+            val target = context.trace.get(BindingContext.REFERENCE_TARGET, expression)
+            if (target is ClassifierDescriptor) return target
+            if (target is ClassConstructorDescriptor) return target.constructedClass
 
             // "Comparable" in "import java.lang.Comparable" references both a class and a SAM constructor and prevents
             // REFERENCE_TARGET from being recorded in favor of AMBIGUOUS_REFERENCE_TARGET. But we must still run checkers

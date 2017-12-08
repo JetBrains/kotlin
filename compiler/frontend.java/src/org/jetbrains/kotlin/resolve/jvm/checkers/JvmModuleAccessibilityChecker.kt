@@ -46,6 +46,9 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.resultingDescriptor
 
+        // Do not check constructors, because the containing class will be checked in [ClassifierUsage]
+        if (descriptor is ClassConstructorDescriptor) return
+
         // javac seems to check only the containing class of the member being called. Note that it's fine to call, for example,
         // members with parameter types or return type from an unexported package
         val targetDescriptor = DescriptorUtils.getParentOfType(descriptor, ClassOrPackageFragmentDescriptor::class.java) ?: return
