@@ -197,6 +197,11 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             before(COMMA).spaceIf(kotlinCommonSettings.SPACE_BEFORE_COMMA)
             after(COMMA).spaceIf(kotlinCommonSettings.SPACE_AFTER_COMMA)
 
+
+            val spacesAroundAssignment = if (kotlinCommonSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS) 1 else 0
+            beforeInside(EQ, PROPERTY).spacing(spacesAroundAssignment, spacesAroundAssignment, 0, false, 0)
+            beforeInside(EQ, FUN).spacing(spacesAroundAssignment, spacesAroundAssignment, 0, false, 0)
+
             around(TokenSet.create(EQ, MULTEQ, DIVEQ, PLUSEQ, MINUSEQ, PERCEQ)).spaceIf(kotlinCommonSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS)
             around(TokenSet.create(ANDAND, OROR)).spaceIf(kotlinCommonSettings.SPACE_AROUND_LOGICAL_OPERATORS)
             around(TokenSet.create(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ)).spaceIf(kotlinCommonSettings.SPACE_AROUND_EQUALITY_OPERATORS)
