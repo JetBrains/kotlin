@@ -529,6 +529,18 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 }
                 .set(Indent.getNormalIndent()),
 
+        strategy("Property initializer")
+                .within(KtNodeTypes.PROPERTY)
+                .forElement {
+                    it.psi is KtExpression
+                }
+                .set { settings ->
+                    if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES)
+                        Indent.getContinuationWithoutFirstIndent()
+                    else
+                        Indent.getNormalIndent()
+                },
+
         strategy("Indent for parts")
                 .within(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
                 .notForType(KtNodeTypes.BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, CONSTRUCTOR_KEYWORD, KtTokens.RPAR)
