@@ -415,10 +415,32 @@ abstract class KotlinCommonBlock(
                 }
 
             nodePsi is KtProperty ->
-                return wrapAfterAnnotation(if (nodePsi.isLocal)
-                                               commonSettings.VARIABLE_ANNOTATION_WRAP
-                                           else
-                                               commonSettings.FIELD_ANNOTATION_WRAP)
+                return object : WrappingStrategy {
+                    override fun getWrap(childElement: ASTNode): Wrap? {
+                        val wrapSetting = if (nodePsi.isLocal) commonSettings.VARIABLE_ANNOTATION_WRAP else commonSettings.FIELD_ANNOTATION_WRAP
+                        getWrapAfterAnnotation(childElement, wrapSetting)?.let {
+                            return it
+                        }
+                        if (getPrevWithoutWhitespaceAndComments(childElement)?.elementType == KtTokens.EQ) {
+                            return Wrap.createWrap(settings.kotlinCommonSettings.ASSIGNMENT_WRAP, true)
+                        }
+                        return null
+                    }
+                }
+
+            nodePsi is KtBinaryExpression -> {
+                if (nodePsi.operationToken == KtTokens.EQ) {
+                    return object : WrappingStrategy {
+                        override fun getWrap(childElement: ASTNode): Wrap? {
+                            if (getPrevWithoutWhitespaceAndComments(childElement)?.elementType == KtNodeTypes.OPERATION_REFERENCE) {
+                                return Wrap.createWrap(settings.kotlinCommonSettings.ASSIGNMENT_WRAP, true)
+                            }
+                            return null
+                        }
+                    }
+                }
+                return WrappingStrategy.NoWrapping
+            }
         }
 
         return WrappingStrategy.NoWrapping

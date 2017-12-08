@@ -260,7 +260,8 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "CALL_PARAMETERS_RPAREN_ON_NEXT_LINE",
                         "ENUM_CONSTANTS_WRAP",
                         "METHOD_CALL_CHAIN_WRAP",
-                        "WRAP_FIRST_METHOD_IN_CALL_CHAIN"
+                        "WRAP_FIRST_METHOD_IN_CALL_CHAIN",
+                        "ASSIGNMENT_WRAP"
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
                 consumer.renameStandardOption("FIELD_ANNOTATION_WRAP", "Property annotations")
