@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.addRemoveModifier.sortModifiers
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 
-class SortModifiersInspection : AbstractKotlinInspection() {
+class SortModifiersInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
@@ -40,7 +40,7 @@ class SortModifiersInspection : AbstractKotlinInspection() {
                 if (modifiers == sortedModifiers) return
 
                 holder.registerProblem(list,
-                                       "Sort modifiers",
+                                       "Non-canonical modifiers order",
                                        ProblemHighlightType.WEAK_WARNING,
                                        SortModifiersFix(sortedModifiers)
                 )
