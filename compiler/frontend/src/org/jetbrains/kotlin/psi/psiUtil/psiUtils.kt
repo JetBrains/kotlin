@@ -66,6 +66,13 @@ val PsiElement.parentsWithSelf: Sequence<PsiElement>
 val PsiElement.parents: Sequence<PsiElement>
     get() = parentsWithSelf.drop(1)
 
+fun PsiElement.matchParents(vararg parentClasses: Class<out PsiElement>): Boolean {
+    return this.parents.zip(sequenceOf(*parentClasses)).all {
+        val (elem, clazz) = it
+        clazz.isAssignableFrom(elem.javaClass)
+    }
+}
+
 fun PsiElement.prevLeaf(skipEmptyElements: Boolean = false): PsiElement?
         = PsiTreeUtil.prevLeaf(this, skipEmptyElements)
 

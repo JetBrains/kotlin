@@ -600,6 +600,79 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         )
     }
 
+    fun testConvertToBody() {
+        doCharTypeTest(
+                '\n',
+                """fun school(): Int = {<caret>239""",
+                """
+                |fun school(): Int {
+                |    <caret>239
+                |}
+                """
+        )
+    }
+
+    fun testNotToConvertNoReturnType() {
+        doCharTypeTest(
+                '\n',
+                """fun school() = {<caret>239""",
+                """
+                |fun school() = {
+                |    <caret>239
+                |}
+                """
+        )
+    }
+
+    fun testNotConvertToBodyForLambda() {
+        doCharTypeTest(
+                '\n',
+                """fun lambda(): (Int) -> Int = {<caret>}""",
+                """
+                |fun lambda(): (Int) -> Int = {
+                |    <caret>
+                |}
+                """
+        )
+    }
+
+    fun testNotConvertToBodyForLambda2() {
+        doCharTypeTest(
+                '\n',
+                """
+                |fun lambda(): (Int) -> Int = { foo -><caret>
+                |fun second(): Int = 123
+                """,
+                """
+                |fun lambda(): (Int) -> Int = { foo ->
+                |    <caret>
+                |fun second(): Int = 123
+                """
+        )
+    }
+
+    fun testPropertiesConvertToBody() {
+        doCharTypeTest(
+                '\n',
+                """
+                |class A {
+                |    fun size(): Int = 0
+                |    val isEmpty: Boolean
+                |        get() = {<caret>this.size() == 0
+                |}
+                """,
+                """
+                |class A {
+                |    fun size(): Int = 0
+                |    val isEmpty: Boolean
+                |        get() {
+                |            <caret>this.size() == 0
+                |        }
+                |}
+                """
+        )
+    }
+
     fun testIndentOnFinishedVariableEndAfterEquals() {
         doCharTypeTest(
                 '\n',
