@@ -55,10 +55,12 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
 
                    fun multilineMethod(
                            foo: String,
-                           bar: String
+                           bar: String?,
+                           x: Int?
                        ) {
                        foo.toUpperCase().trim()
                            .length
+                       val barLen = bar?.length() ?: x ?: -1
                    }
                }
 
@@ -299,6 +301,11 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES,
                         "Use continuation indent",
                         "Expression body functions"
+                )
+                showCustomOption(
+                        KotlinCodeStyleSettings::WRAP_ELVIS_EXPRESSIONS,
+                        "Elvis expressions",
+                        options = *arrayOf(CodeStyleSettingsCustomizable.WRAP_OPTIONS_FOR_SINGLETON, CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON)
                 )
             }
             LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS -> {
