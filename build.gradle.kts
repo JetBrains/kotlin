@@ -143,7 +143,7 @@ extra["markdownParserRepo"] = "https://teamcity.jetbrains.com/guestAuth/reposito
 extra["IntellijCoreDependencies"] =
         listOf("annotations.jar",
                "asm-all.jar",
-               "guava-*.jar",
+               "guava-21.0.jar",
                "jdom.jar",
                "jna.jar",
                "log4j.jar",

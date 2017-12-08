@@ -3,10 +3,6 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-configureIntellijPlugin {
-    setExtraDependencies("intellij-core")
-}
-
 val jflexPath by configurations.creating
 
 dependencies {
@@ -17,14 +13,9 @@ dependencies {
     compile(project(":compiler:resolution"))
     compile(projectDist(":kotlin-script-runtime"))
     compile(commonDep("io.javaslang","javaslang"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("annotations", "trove4j", "guava-21.0") }
     jflexPath(commonDep("org.jetbrains.intellij.deps.jflex", "jflex"))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellijCoreJar())
-        compileOnly(intellij { include("annotations.jar", "trove4j.jar", "guava-*.jar") })
-    }
 }
 
 sourceSets {

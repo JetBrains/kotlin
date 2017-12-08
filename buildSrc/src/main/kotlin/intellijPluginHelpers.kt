@@ -30,7 +30,10 @@ fun Project.intellijCoreDep() = intellijDep("intellij-core")
 
 fun ModuleDependency.includeJars(vararg names: String) {
     names.forEach {
-        artifact { name = it; extension = "jar" }
+        artifact {
+            name = it.removeSuffix(".jar")
+            extension = "jar"
+        }
     }
 }
 

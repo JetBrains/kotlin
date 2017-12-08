@@ -5,12 +5,8 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-configureIntellijPlugin()
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellij { include("asm-all.jar") })
-    }
+dependencies {
+    compileOnly(intellijDep()) { includeJars("asm-all") }
 }
 
 sourceSets {

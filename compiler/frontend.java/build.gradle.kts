@@ -3,22 +3,13 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-configureIntellijPlugin {
-    setExtraDependencies("intellij-core")
-}
-
 dependencies {
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellijCoreJar())
-        compileOnly(intellij { include("annotations.jar", "asm-all.jar", "trove4j.jar", "guava-*.jar") })
-    }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("annotations", "asm-all", "trove4j", "guava-21.0") }
 }
 
 sourceSets {

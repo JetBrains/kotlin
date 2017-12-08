@@ -7,10 +7,6 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-configureIntellijPlugin {
-    setExtraDependencies("intellij-core")
-}
-
 dependencies {
     compile(project(":kotlin-build-common"))
     compileOnly(project(":compiler:cli-common"))
@@ -19,13 +15,8 @@ dependencies {
     compileOnly(project(":compiler:daemon-common"))
     compile(project(":kotlin-daemon-client"))
     compileOnly(project(":compiler:util"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     runtimeOnly(projectRuntimeJar(":kotlin-compiler-embeddable"))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellijCoreJar())
-    }
 }
 
 sourceSets {

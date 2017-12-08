@@ -3,10 +3,6 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
-configureIntellijPlugin {
-    setExtraDependencies("jps-standalone", "jps-build-test")
-}
-
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
@@ -14,6 +10,7 @@ dependencies {
     compile(project(":compiler:backend"))
     compile(projectTests(":compiler:tests-common"))
     compile(commonDep("junit:junit"))
+    compileOnly(intellijDep()) { includeJars("openapi") }
 
     testCompile(project(":compiler:incremental-compilation-impl"))
     testCompile(project(":core:descriptors"))
@@ -21,15 +18,9 @@ dependencies {
     testCompile(project(":compiler:frontend.java"))
     testCompile(projectTests(":jps-plugin"))
     testCompile(commonDep("junit:junit"))
-}
-
-afterEvaluate {
-    dependencies {
-        compileOnly(intellij { include("openapi.jar") })
-        testCompile(intellij { include("openapi.jar", "idea.jar", "idea_rt.jar", "groovy-all-*.jar", "jps-builders.jar") })
-        testCompile(intellijExtra("jps-standalone") { include("jps-model.jar") })
-        testCompile(intellijExtra("jps-build-test"))
-    }
+    testCompile(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "groovy-all-2.4.6", "jps-builders") }
+    testCompile(intellijDep("jps-standalone")) { includeJars("jps-model") }
+    testCompile(intellijDep("jps-build-test"))
 }
 
 sourceSets {
