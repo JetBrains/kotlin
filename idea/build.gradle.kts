@@ -1,5 +1,3 @@
-
-
 import org.gradle.jvm.tasks.Jar
 
 apply { plugin("kotlin") }
@@ -105,6 +103,11 @@ sourceSets {
                      "idea-completion/tests",
                      "idea-live-templates/tests")
     }
+}
+
+val jar: Jar by tasks
+jar.from("../compiler/cli/src") {
+    include("META-INF/extensions/compiler.xml")
 }
 
 projectTest {

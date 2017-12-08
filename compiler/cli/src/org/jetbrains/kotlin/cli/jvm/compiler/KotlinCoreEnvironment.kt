@@ -509,7 +509,6 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
-
             fun File.hasConfigFile(configFile: String): Boolean =
                     if (isDirectory) File(this, "META-INF" + File.separator + configFile).exists()
                     else try {
@@ -524,9 +523,9 @@ class KotlinCoreEnvironment private constructor(
             val pluginRoot =
                     configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
                     ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
-                    ?: PathUtil.pathUtilJar.takeIf { it.hasConfigFile(configFilePath) }
+                    ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
                     // hack for load extensions when compiler run directly from project directory (e.g. in tests)
-                    ?: File("idea/src").takeIf { it.hasConfigFile(configFilePath) }
+                    ?: File("compiler/cli/src").takeIf { it.hasConfigFile(configFilePath) }
                     ?: throw IllegalStateException("Unable to find extension point configuration $configFilePath")
 
             CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
