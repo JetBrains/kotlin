@@ -314,6 +314,9 @@ message Switch {
 message SwitchEntry {
     optional Expression label = 1;
     repeated Statement statement = 2;
+
+    optional int32 fileId = 3;
+    optional Location location = 4;
 }
 
 message While {
