@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.*
 open class NotificationMessageCollector(private val project: Project,
                                         private val groupDisplayId: String,
                                         private val title: String) {
-    private val messages = ArrayList<String>()
+    private val messages: ArrayList<String> = ArrayList<String>()
 
     fun addMessage(message: String): NotificationMessageCollector {
         messages.add(message)
@@ -33,7 +33,7 @@ open class NotificationMessageCollector(private val project: Project,
     }
 
     fun showNotification() {
-        if (messages.isEmpty()) return
+//        if (messages.isEmpty()) return
         Notifications.Bus.notify(Notification(groupDisplayId, title, resultMessage, NotificationType.INFORMATION), project)
     }
 
@@ -41,7 +41,8 @@ open class NotificationMessageCollector(private val project: Project,
         val singleMessage = messages.singleOrNull()
         if (singleMessage != null) return singleMessage
 
-        return messages.joinToString(separator = "<br/><br/>")
+        return ""
+//        return messages.joinToString(separator = "<br/><br/>")
     }
 }
 

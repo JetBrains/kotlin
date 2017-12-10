@@ -706,7 +706,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             receiverParameter,
             paramsInfo.typeParameters.sortedBy { it.originalDeclaration.name!! },
             paramsInfo.replacementMap,
-            if (messages.isEmpty()) controlFlow else controlFlow.toDefault(),
+//            if (messages.isEmpty()) controlFlow else controlFlow.toDefault(),
+            if (true) controlFlow else controlFlow.toDefault(),
             returnType,
             emptyList()
     )
@@ -723,7 +724,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     return AnalysisResult(
             descriptor,
-            if (messages.isEmpty()) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
+//            if (messages.isEmpty()) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
+            if (true) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
             messages
     )
 }

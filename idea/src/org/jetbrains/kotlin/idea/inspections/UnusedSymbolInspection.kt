@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,6 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -279,7 +278,9 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             return false
         }
 
-        val referenceUsed: Boolean by lazy { !ReferencesSearch.search(declaration, useScope).forEach(::checkReference) }
+        val referenceUsed: Boolean by lazy {
+             ReferencesSearch.search(declaration, useScope).any { checkReference(it) }
+        }
 
         if (descriptor is FunctionDescriptor &&
             DescriptorUtils.getAnnotationByFqName(descriptor.annotations, JvmFileClassUtil.JVM_NAME) != null) {
@@ -290,7 +291,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
                 return lightMethods.any { method ->
-                    !MethodReferencesSearch.search(method).forEach(::checkReference)
+                    MethodReferencesSearch.search(method).any { checkReference(it) }
                 }
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,10 +112,12 @@ internal fun createExpressionSelector(
         typePredicate: ((KotlinType) -> Boolean)? = null
 ): PostfixTemplateExpressionSelector {
     val predicate: ((KtExpression, BindingContext) -> Boolean)? =
-            if (typePredicate != null) { expression, bindingContext ->
+            if (typePredicate != null) {
+                { expression: KtExpression, bindingContext: BindingContext ->
                     expression.getType(bindingContext)?.let(typePredicate) ?: false
+                } as ((KtExpression, BindingContext) -> Boolean)?
             }
-            else null
+            else null as ((KtExpression, BindingContext) -> Boolean)?
     return createExpressionSelectorWithComplexFilter(checkCanBeUsedAsValue, statementsOnly, predicate)
 }
 

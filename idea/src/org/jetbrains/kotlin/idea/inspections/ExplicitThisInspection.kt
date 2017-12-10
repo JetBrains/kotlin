@@ -21,12 +21,15 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType.LIKE_UNUSED_SYMBOL
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import kotlin.reflect.KFunction2
 
 class ExplicitThisInspection : AbstractKotlinInspection() {
 
@@ -42,7 +45,7 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
                                       ?: selectorExpression.getChildOfType()
                                       ?: return
 
-            val scopeFunction = when (selectorExpression) {
+            val scopeFunction: KFunction2<LexicalScope, Name, Collection<CallableDescriptor>> = when (selectorExpression) {
                 is KtNameReferenceExpression -> LexicalScope::getAllAccessibleVariables
                 is KtCallExpression -> LexicalScope::getAllAccessibleFunctions
                 else -> return

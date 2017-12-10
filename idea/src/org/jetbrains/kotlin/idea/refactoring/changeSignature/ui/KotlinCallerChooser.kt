@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,11 +70,11 @@ class KotlinCallerChooser(
 
 class KotlinMethodNode(
         method: PsiElement?,
-        called: HashSet<PsiElement>,
+        called: HashSet<PsiElement?>,
         project: Project,
         cancelCallback: Runnable
-): MethodNodeBase<PsiElement>(method?.namedUnwrappedElement ?: method, called, project, cancelCallback) {
-    override fun createNode(caller: PsiElement, called: HashSet<PsiElement>) =
+): MethodNodeBase<PsiElement?>(method?.namedUnwrappedElement ?: method, called, project, cancelCallback) {
+    override fun createNode(caller: PsiElement?, called: HashSet<PsiElement?>) =
             KotlinMethodNode(caller, called, myProject, myCancelCallback)
 
     override fun customizeRendererText(renderer: ColoredTreeCellRenderer) {
@@ -82,7 +82,7 @@ class KotlinMethodNode(
             is KtFunction -> myMethod.unsafeResolveToDescriptor() as FunctionDescriptor
             is KtClass -> (myMethod.unsafeResolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor ?: return
             is PsiMethod -> myMethod.getJavaMethodDescriptor() ?: return
-            else -> throw AssertionError("Invalid declaration: ${myMethod.getElementTextWithContext()}")
+            else -> throw AssertionError("Invalid declaration: ${myMethod?.getElementTextWithContext()}")
         }
         val containerName = generateSequence<DeclarationDescriptor>(descriptor) { it.containingDeclaration }
                 .firstOrNull { it is ClassDescriptor }

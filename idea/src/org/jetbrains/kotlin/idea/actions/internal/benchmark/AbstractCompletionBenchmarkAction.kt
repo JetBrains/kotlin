@@ -134,6 +134,8 @@ internal abstract class AbstractCompletionBenchmarkScenario(
                 append(first)
                 append(", ")
                 append(full)
+
+                Unit
             }
         }
 
@@ -143,6 +145,8 @@ internal abstract class AbstractCompletionBenchmarkScenario(
                 append(", ")
                 append(", ")
                 append(", ")
+
+                Unit
             }
         }
     }

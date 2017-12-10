@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
         override fun toParameter() = originalParameter.copy(name, type)
     }
 
-    override fun createTableModel(): AbstractParameterTablePanel<Parameter, ParameterInfo>.TableModelBase = MyTableModel()
+    override fun createTableModel(): AbstractParameterTablePanel<Parameter, ParameterInfo>.TableModelBase = TODO()
 
     override fun createAdditionalColumns() {
         with(table.columnModel.getColumn(PARAMETER_TYPE_COLUMN)) {
@@ -96,33 +96,33 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
         super.init()
     }
 
-    private inner class MyTableModel : AbstractParameterTablePanel<Parameter, ParameterInfo>.TableModelBase() {
-        override fun getColumnCount() = 3
-
-        override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
-            if (columnIndex == PARAMETER_TYPE_COLUMN) return parameterInfos[rowIndex].type
-            return super.getValueAt(rowIndex, columnIndex)
-        }
-
-        override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
-            if (columnIndex == PARAMETER_TYPE_COLUMN) {
-                parameterInfos[rowIndex].type = aValue as KotlinType
-                updateSignature()
-                return
-            }
-
-            super.setValueAt(aValue, rowIndex, columnIndex)
-        }
-
-        override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
-            val info = parameterInfos[rowIndex]
-            return when (columnIndex) {
-                AbstractParameterTablePanel.PARAMETER_NAME_COLUMN -> super.isCellEditable(rowIndex, columnIndex) && !info.isReceiver
-                PARAMETER_TYPE_COLUMN -> isEnabled && info.isEnabled && info.originalParameter.getParameterTypeCandidates(false).size > 1
-                else -> super.isCellEditable(rowIndex, columnIndex)
-            }
-        }
-    }
+//    private inner class MyTableModel : AbstractParameterTablePanel<Parameter, ParameterInfo>.TableModelBase() {
+//        override fun getColumnCount() = 3
+//
+//        override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
+//            if (columnIndex == PARAMETER_TYPE_COLUMN) return parameterInfos[rowIndex].type
+//            return super.getValueAt(rowIndex, columnIndex)
+//        }
+//
+//        override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
+//            if (columnIndex == PARAMETER_TYPE_COLUMN) {
+//                parameterInfos[rowIndex].type = aValue as KotlinType
+//                updateSignature()
+//                return
+//            }
+//
+//            super.setValueAt(aValue, rowIndex, columnIndex)
+//        }
+//
+//        override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
+//            val info = parameterInfos[rowIndex]
+//            return when (columnIndex) {
+//                AbstractParameterTablePanel.PARAMETER_NAME_COLUMN -> super.isCellEditable(rowIndex, columnIndex) && !info.isReceiver
+//                PARAMETER_TYPE_COLUMN -> isEnabled && info.isEnabled && info.originalParameter.getParameterTypeCandidates(false).size > 1
+//                else -> super.isCellEditable(rowIndex, columnIndex)
+//            }
+//        }
+//    }
 
     val selectedReceiverInfo: ParameterInfo?
         get() = parameterInfos.singleOrNull { it.isEnabled && it.isReceiver }

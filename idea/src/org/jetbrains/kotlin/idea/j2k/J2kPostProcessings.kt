@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,12 +123,13 @@ object J2KPostProcessingRegistrar {
             element: KtSimpleNameExpression, _: Diagnostic ->
             val property = element.mainReference.resolve() as? KtProperty
             if (property == null) {
-                null
+                null as (() -> Unit)?
             }
             else {
                 {
-                    if (!property.isVar) {
-                        property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
+                    ->
+                    if (!property!!.isVar) {
+                        property!!.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
                     }
                 }
             }

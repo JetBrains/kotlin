@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,12 +67,12 @@ abstract class KotlinFileIndexBase<T>(classOfIndex: Class<T>) : ScalarIndexExten
                         Collections.singletonMap<FqName, Void>(fqName, null)
                     }
                     else {
-                        emptyMap()
+                        emptyMap<FqName, Void>()
                     }
                 }
                 catch (e: Throwable) {
                     LOG.warn("Error while indexing file " + it.fileName, e)
-                    emptyMap()
+                    emptyMap<FqName, Void>()
                 }
             }
 }

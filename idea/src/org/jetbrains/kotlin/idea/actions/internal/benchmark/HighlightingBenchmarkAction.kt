@@ -144,6 +144,8 @@ class HighlightingBenchmarkAction : AnAction() {
                 append(status)
                 append(", ")
                 append(time)
+
+                Unit
             }
         }
 
@@ -155,6 +157,8 @@ class HighlightingBenchmarkAction : AnAction() {
                 append(", fail: ")
                 append(reason)
                 append(", ")
+
+                Unit
             }
         }
     }
