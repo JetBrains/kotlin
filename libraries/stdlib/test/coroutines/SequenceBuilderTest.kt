@@ -16,9 +16,9 @@
 
 package test.coroutines
 
-import kotlin.test.*
-import kotlin.coroutines.experimental.buildSequence
 import kotlin.coroutines.experimental.buildIterator
+import kotlin.coroutines.experimental.buildSequence
+import kotlin.test.*
 
 class SequenceBuilderTest {
     @Test
@@ -268,7 +268,7 @@ class SequenceBuilderTest {
 
         for (res in result) {
             effects.add("(") // marks step start
-            effects.add(res)
+//            effects.add(res)
             effects.add(")") // marks step end
         }
         assertEquals(
@@ -297,7 +297,7 @@ class SequenceBuilderTest {
 
         var sum = 0
         repeat(10) {
-            sum += values.next() //.also(::println)
+//            sum += values.next() //.also(::println)
         }
         assertEquals(30, sum)
     }

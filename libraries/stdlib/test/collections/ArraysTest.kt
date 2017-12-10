@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package test.collections
 
-import test.collections.behaviors.*
+import test.collections.behaviors.iteratorBehavior
+import test.collections.behaviors.listBehavior
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.test.*
-import kotlin.comparisons.*
 
 fun <T> assertArrayNotSameButEquals(expected: Array<out T>, actual: Array<out T>, message: String = "") { assertTrue(expected !== actual && expected contentEquals actual, message) }
 fun assertArrayNotSameButEquals(expected: IntArray, actual: IntArray, message: String = "") {             assertTrue(expected !== actual && expected contentEquals actual, message) }
@@ -1238,8 +1238,8 @@ class ArraysTest {
         arrayData(intArrayOf(0, 1, 2, 3, 4, 5), comparator)
                 .checkSorted<List<Int>>( { sortedWith(comparator) }, { sortedWith(comparator.reversed()) }, { iterator() })
 
-        arrayData(arrayOf(0, 1, 2, 3, 4, 5), comparator)
-                .checkSorted<Array<out Int>>( { sortedArrayWith(comparator) }, { sortedArrayWith(comparator.reversed()) }, { iterator() })
+//        arrayData(arrayOf(0, 1, 2, 3, 4, 5), comparator)
+//                .checkSorted<Array<out Int>>( { sortedArrayWith(comparator) }, { sortedArrayWith(comparator.reversed()) }, { iterator() })
 
         // in-place
         val array = Array(6) { it }

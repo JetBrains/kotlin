@@ -104,7 +104,8 @@ class KotlinAndroidLineMarkerProvider : LineMarkerProvider {
             }
         })
 
-        return resources.map { GotoRelatedLayoutItem(it) }
+//        return resources.map { GotoRelatedLayoutItem(it) }
+        return emptyList()
     }
 
     private fun KtClass.collectGoToRelatedManifestItems(manifest: Manifest): List<GotoRelatedItem> =

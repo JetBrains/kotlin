@@ -133,7 +133,7 @@ object GeneratePrimitiveVsObjectEqualityTestData {
 
     private fun generatePrimitiveVsObjectTest(type: String, x: String, y: String, header: String = "") {
         PrintWriter(File(GENERATED_DIR, "primitiveEqObject$type.kt")).use {
-            if (header.isNotBlank()) it.println(header)
+            it.println(header)
             it.generatePrimitiveVsObjectTestBody(type, x, y)
         }
     }

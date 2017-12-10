@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
-import junit.framework.TestCase
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.BuildResult
@@ -57,7 +56,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -82,7 +80,6 @@ import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KProperty1
 
 class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     var isICEnabledBackup: Boolean = false
@@ -872,7 +869,8 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                     }
                 }
 
-                checkFromIndex = messages.size
+//                checkFromIndex = messages.size
+                checkFromIndex = 0
                 return false
             }
         }
