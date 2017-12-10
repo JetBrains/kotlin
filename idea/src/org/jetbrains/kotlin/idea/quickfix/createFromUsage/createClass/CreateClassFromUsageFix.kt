@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.*
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
-import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtElement
@@ -148,25 +148,25 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
 
     private fun doInvoke(selectedParent: PsiElement, editor: Editor, file: KtFile) {
         runWriteAction {
-            with(classInfo) {
-                val targetParent =
-                        when (selectedParent) {
-                            is KtElement, is PsiClass -> selectedParent
-                            is PsiPackage -> createFileByPackage(selectedParent, editor, file)
-                            else -> throw AssertionError("Unexpected element: " + selectedParent.text)
-                        } ?: return@runWriteAction
-                val constructorInfo = PrimaryConstructorInfo(classInfo, expectedTypeInfo)
-                val builder = CallableBuilderConfiguration(
-                        Collections.singletonList(constructorInfo),
-                        element as KtElement,
-                        file,
-                        editor,
-                        false,
-                        kind == PLAIN_CLASS || kind == INTERFACE
-                ).createBuilder()
-                builder.placement = CallablePlacement.NoReceiver(targetParent)
-                file.project.executeCommand(text) { builder.build() }
-            }
+//            with(classInfo) {
+//                val targetParent =
+//                        when (selectedParent) {
+//                            is KtElement, is PsiClass -> selectedParent
+//                            is PsiPackage -> createFileByPackage(selectedParent, editor, file)
+//                            else -> throw AssertionError("Unexpected element: " + selectedParent.text)
+//                        } ?: return@runWriteAction
+//                val constructorInfo = PrimaryConstructorInfo(classInfo, expectedTypeInfo)
+//                val builder = CallableBuilderConfiguration(
+//                        Collections.singletonList(constructorInfo),
+//                        element as KtElement,
+//                        file,
+//                        editor,
+//                        false,
+//                        kind == PLAIN_CLASS || kind == INTERFACE
+//                ).createBuilder()
+//                builder.placement = CallablePlacement.NoReceiver(targetParent)
+//                file.project.executeCommand(text) { builder.build() }
+//            }
         }
     }
 

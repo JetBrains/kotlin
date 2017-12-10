@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,17 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.CodeInsightBundle
-import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.generation.OverrideImplementUtil
 import com.intellij.ide.util.PsiClassListCellRenderer
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.ui.popup.PopupChooserBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.ui.components.JBList
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -45,8 +41,6 @@ import org.jetbrains.kotlin.idea.refactoring.isAbstract
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
-import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -137,25 +131,25 @@ abstract class ImplementAbstractMemberIntentionBase :
 
     private fun implementInClass(member: KtNamedDeclaration, targetClasses: List<PsiElement>) {
         val project = member.project
-        project.executeCommand(CodeInsightBundle.message("intention.implement.abstract.method.command.name")) {
-            if (!FileModificationService.getInstance().preparePsiElementsForWrite(targetClasses)) return@executeCommand
-            runWriteAction {
-                for (targetClass in targetClasses) {
-                    try {
-                        val descriptor = OpenFileDescriptor(project, targetClass.containingFile.virtualFile)
-                        val targetEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true)!!
-                        when (targetClass) {
-                            is KtLightClass -> targetClass.kotlinOrigin?.let { implementInKotlinClass(targetEditor, member, it) }
-                            is KtEnumEntry -> implementInKotlinClass(targetEditor, member, targetClass)
-                            is PsiClass -> implementInJavaClass(member, targetClass)
-                        }
-                    }
-                    catch(e: IncorrectOperationException) {
-                        LOG.error(e)
-                    }
-                }
-            }
-        }
+//        project.executeCommand(CodeInsightBundle.message("intention.implement.abstract.method.command.name")) {
+//            if (!FileModificationService.getInstance().preparePsiElementsForWrite(targetClasses)) return@executeCommand
+//            runWriteAction {
+//                for (targetClass in targetClasses) {
+//                    try {
+//                        val descriptor = OpenFileDescriptor(project, targetClass.containingFile.virtualFile)
+//                        val targetEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true)!!
+//                        when (targetClass) {
+//                            is KtLightClass -> targetClass.kotlinOrigin?.let { implementInKotlinClass(targetEditor, member, it) }
+//                            is KtEnumEntry -> implementInKotlinClass(targetEditor, member, targetClass)
+//                            is PsiClass -> implementInJavaClass(member, targetClass)
+//                        }
+//                    }
+//                    catch(e: IncorrectOperationException) {
+//                        LOG.error(e)
+//                    }
+//                }
+//            }
+//        }
     }
 
     private class ClassRenderer : PsiElementListCellRenderer<PsiElement>() {
