@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.copy
 
-import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -26,28 +25,20 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
-import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
 import com.intellij.refactoring.copy.CopyHandlerDelegateBase
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
-import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinDirectoryMoveTarget
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveConflictChecker
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
-import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.sourceRoot
@@ -244,69 +235,69 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         fun doRefactor() {
             val restoredInternalUsages = ArrayList<UsageInfo>()
 
-            project.executeCommand(commandName) {
-                try {
-                    val targetDirectory = runWriteAction { targetDirWrapper.getOrCreateDirectory(initialTargetDirectory) }
-                    val targetFileName = if (newName?.contains(".") ?: false) newName!! else newName + "." + originalFile.virtualFile.extension
-
-                    val oldToNewElementsMapping = HashMap<PsiElement, PsiElement>()
-
-                    val fileToCopy = when {
-                        singleElementToCopy is KtFile -> singleElementToCopy
-                        isSingleDeclarationInFile -> originalFile
-                        else -> null
-                    }
-
-                    val targetFile: KtFile
-                    val copiedDeclaration: KtNamedDeclaration?
-                    if (fileToCopy != null) {
-                        targetFile = runWriteAction {
-                            val copiedFile = targetDirectory.copyFileFrom(targetFileName, fileToCopy) as KtFile
-                            if (fileToCopy.packageMatchesDirectory()) {
-                                targetDirectory.getPackage()?.qualifiedName?.let { copiedFile.packageFqName = FqName(it) }
-                            }
-                            performDelayedRefactoringRequests(project)
-                            copiedFile
-                        }
-                        copiedDeclaration = if (isSingleDeclarationInFile) targetFile.declarations.singleOrNull() as? KtNamedDeclaration else null
-                    }
-                    else {
-                        targetFile = getOrCreateTargetFile(originalFile, targetDirectory, targetFileName, commandName) ?: return@executeCommand
-                        runWriteAction {
-                            val newElements = elementsToCopy.map { targetFile.add(it.copy()) as KtNamedDeclaration }
-                            elementsToCopy.zip(newElements).toMap(oldToNewElementsMapping)
-                            oldToNewElementsMapping[originalFile] = targetFile
-
-                            for (newElement in oldToNewElementsMapping.values) {
-                                restoredInternalUsages += restoreInternalUsages(newElement as KtElement, oldToNewElementsMapping, true)
-                                postProcessMoveUsages(restoredInternalUsages, oldToNewElementsMapping)
-                            }
-
-                            performDelayedRefactoringRequests(project)
-                        }
-                        copiedDeclaration = oldToNewElementsMapping.values.filterIsInstance<KtNamedDeclaration>().singleOrNull()
-                    }
-
-                    copiedDeclaration?.let { newDeclaration ->
-                        if (newName == newDeclaration.name) return@let
-                        val selfReferences = ReferencesSearch.search(newDeclaration, LocalSearchScope(newDeclaration)).findAll()
-                        runWriteAction {
-                            selfReferences.forEach { it.handleElementRename(newName!!) }
-                            newDeclaration.setName(newName!!)
-                        }
-                    }
-
-                    if (openInEditor) {
-                        EditorHelper.openFilesInEditor(arrayOf(targetFile))
-                    }
-                }
-                catch (e: IncorrectOperationException) {
-                    Messages.showMessageDialog(project, e.message, RefactoringBundle.message("error.title"), Messages.getErrorIcon())
-                }
-                finally {
-                    cleanUpInternalUsages(internalUsages + restoredInternalUsages)
-                }
-            }
+//            project.executeCommand(commandName) {
+//                try {
+//                    val targetDirectory = runWriteAction { targetDirWrapper.getOrCreateDirectory(initialTargetDirectory) }
+//                    val targetFileName = if (newName?.contains(".") ?: false) newName!! else newName + "." + originalFile.virtualFile.extension
+//
+//                    val oldToNewElementsMapping = HashMap<PsiElement, PsiElement>()
+//
+//                    val fileToCopy = when {
+//                        singleElementToCopy is KtFile -> singleElementToCopy
+//                        isSingleDeclarationInFile -> originalFile
+//                        else -> null
+//                    }
+//
+//                    val targetFile: KtFile
+//                    val copiedDeclaration: KtNamedDeclaration?
+//                    if (fileToCopy != null) {
+//                        targetFile = runWriteAction {
+//                            val copiedFile = targetDirectory.copyFileFrom(targetFileName, fileToCopy) as KtFile
+//                            if (fileToCopy.packageMatchesDirectory()) {
+//                                targetDirectory.getPackage()?.qualifiedName?.let { copiedFile.packageFqName = FqName(it) }
+//                            }
+//                            performDelayedRefactoringRequests(project)
+//                            copiedFile
+//                        }
+//                        copiedDeclaration = if (isSingleDeclarationInFile) targetFile.declarations.singleOrNull() as? KtNamedDeclaration else null
+//                    }
+//                    else {
+//                        targetFile = getOrCreateTargetFile(originalFile, targetDirectory, targetFileName, commandName) ?: return@executeCommand
+//                        runWriteAction {
+//                            val newElements = elementsToCopy.map { targetFile.add(it.copy()) as KtNamedDeclaration }
+//                            elementsToCopy.zip(newElements).toMap(oldToNewElementsMapping)
+//                            oldToNewElementsMapping[originalFile] = targetFile
+//
+//                            for (newElement in oldToNewElementsMapping.values) {
+//                                restoredInternalUsages += restoreInternalUsages(newElement as KtElement, oldToNewElementsMapping, true)
+//                                postProcessMoveUsages(restoredInternalUsages, oldToNewElementsMapping)
+//                            }
+//
+//                            performDelayedRefactoringRequests(project)
+//                        }
+//                        copiedDeclaration = oldToNewElementsMapping.values.filterIsInstance<KtNamedDeclaration>().singleOrNull()
+//                    }
+//
+//                    copiedDeclaration?.let { newDeclaration ->
+//                        if (newName == newDeclaration.name) return@let
+//                        val selfReferences = ReferencesSearch.search(newDeclaration, LocalSearchScope(newDeclaration)).findAll()
+//                        runWriteAction {
+//                            selfReferences.forEach { it.handleElementRename(newName!!) }
+//                            newDeclaration.setName(newName!!)
+//                        }
+//                    }
+//
+//                    if (openInEditor) {
+//                        EditorHelper.openFilesInEditor(arrayOf(targetFile))
+//                    }
+//                }
+//                catch (e: IncorrectOperationException) {
+//                    Messages.showMessageDialog(project, e.message, RefactoringBundle.message("error.title"), Messages.getErrorIcon())
+//                }
+//                finally {
+//                    cleanUpInternalUsages(internalUsages + restoredInternalUsages)
+//                }
+//            }
         }
 
         val conflicts = MultiMap<PsiElement, String>()
