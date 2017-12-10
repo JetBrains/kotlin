@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,6 +82,7 @@ object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmM
             version = JvmMetadataVersion.INVALID_VERSION
         }
 
-        if (version != null) mapOf(version!! to null) else mapOf()
+//        if (version != null) mapOf(version!! to null) else mapOf()
+        mapOf()
     }
 }
