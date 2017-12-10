@@ -21,6 +21,8 @@ import java.lang.ProcessBuilder.Redirect
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.backend.konan.util.listConstructor
+import org.jetbrains.kotlin.backend.konan.util.If
 
 typealias BitcodeFile = String
 typealias ObjectFile = String
@@ -36,7 +38,7 @@ internal abstract class PlatformFlags(val properties: KonanProperties) {
     val entrySelector = properties.entrySelector
     val linkerOptimizationFlags = properties.linkerOptimizationFlags
     val linkerKonanFlags = properties.linkerKonanFlags
-    val linkerDebugFlags = properties.linkerDebugFlags
+    val linkerNoDebugFlags = properties.linkerNoDebugFlags
     val linkerDynamicFlags = properties.linkerDynamicFlags
     val llvmDebugOptFlags = properties.llvmDebugOptFlags
     val s2wasmFlags = properties.s2wasmFlags
@@ -89,7 +91,7 @@ internal open class AndroidPlatform(distribution: Distribution)
             add("-llog")
             addAll(objectFiles)
             if (optimize) addAll(linkerOptimizationFlags)
-            if (!debug) addAll(linkerDebugFlags)
+            if (!debug) addAll(linkerNoDebugFlags)
             if (dynamic) addAll(linkerDynamicFlags)
             addAll(linkerKonanFlags)
         }
@@ -122,7 +124,7 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
             addAll(listOf("-syslibroot", targetSysRoot, "-o", executable))
             addAll(objectFiles)
             if (optimize) addAll(linkerOptimizationFlags)
-            if (!debug) addAll(linkerDebugFlags)
+            if (!debug) addAll(linkerNoDebugFlags)
             if (dynamic) addAll(linkerDynamicFlags)
             addAll(linkerKonanFlags)
             add("-lSystem")
@@ -134,7 +136,6 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
     open fun dsymutilDryRunVerboseCommand(executable: ExecutableFile): List<String> =
             listOf(dsymutil, "-dump-debug-map" ,executable)
 }
-
 internal open class LinuxBasedPlatform(val distribution: Distribution)
     : PlatformFlags(distribution.targetProperties) {
 
@@ -149,30 +150,46 @@ internal open class LinuxBasedPlatform(val distribution: Distribution)
         = binaries.filter { it.isUnixStaticLib }
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
+        val isMips = (distribution.target == KonanTarget.LINUX_MIPS32 ||
+                      distribution.target == KonanTarget.LINUX_MIPSEL32)
         // TODO: Can we extract more to the konan.properties?
-        return mutableListOf(linker).apply {
-            addAll(listOf("--sysroot=${targetSysRoot}",
-                    "-export-dynamic", "-z", "relro",
-                    "--build-id", "--eh-frame-hdr", // "-m", "elf_x86_64",
-                    "-dynamic-linker", propertyTargetString("dynamicLinker"),
-                    "-o", executable,
-                    "${targetSysRoot}/usr/lib64/crt1.o",
-                    "${targetSysRoot}/usr/lib64/crti.o", "${libGcc}/crtbegin.o",
-                    "-L${llvmLib}", "-L${libGcc}"))
-            if (distribution.target != KonanTarget.LINUX_MIPS32 && distribution.target != KonanTarget.LINUX_MIPSEL32) add("--hash-style=gnu") // MIPS doesn't support hash-style=gnu
-            addAll(specificLibs)
-            addAll(listOf("-L${targetSysRoot}/../lib", "-L${targetSysRoot}/lib", "-L${targetSysRoot}/usr/lib"))
-            if (optimize) addAll(listOf("-plugin", "$llvmLib/LLVMgold.so") + pluginOptimizationFlags)
-            addAll(objectFiles)
-            if (optimize) addAll(linkerOptimizationFlags)
-            if (!debug) addAll(linkerDebugFlags)
-            if (dynamic) addAll(linkerDynamicFlags)
-            addAll(linkerKonanFlags)
-            addAll(listOf("-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
-                    "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
-                    "${libGcc}/crtend.o",
-                    "${targetSysRoot}/usr/lib64/crtn.o"))
-        }
+        return listConstructor(
+            linker,
+            "--sysroot=${targetSysRoot}",
+            "-export-dynamic", "-z", "relro",
+            "--build-id", "--eh-frame-hdr", // "-m", "elf_x86_64",
+            "-dynamic-linker", propertyTargetString("dynamicLinker"),
+            "-o", executable,
+            If (!dynamic, 
+                "${targetSysRoot}/usr/lib64/crt1.o"),
+            "${targetSysRoot}/usr/lib64/crti.o", 
+            if (dynamic)
+                "${libGcc}/crtbeginS.o"
+            else
+                "${libGcc}/crtbegin.o",
+            "-L${llvmLib}", "-L${libGcc}",
+            If (!isMips,    // MIPS doesn't support hash-style=gnu
+                "--hash-style=gnu"),
+            specificLibs,
+            "-L${targetSysRoot}/../lib", "-L${targetSysRoot}/lib", "-L${targetSysRoot}/usr/lib",
+            If (optimize,
+                "-plugin", "$llvmLib/LLVMgold.so",
+                pluginOptimizationFlags,
+                linkerOptimizationFlags),
+            If (!debug, 
+                linkerNoDebugFlags),
+            If (dynamic, 
+                linkerDynamicFlags),
+            objectFiles,
+            linkerKonanFlags,
+            "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
+            "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
+            if (dynamic)
+                "${libGcc}/crtendS.o"
+            else
+                "${libGcc}/crtend.o",
+            "${targetSysRoot}/usr/lib64/crtn.o"
+        )
     }
 }
 
@@ -187,13 +204,17 @@ internal open class MingwPlatform(distribution: Distribution)
         = binaries.filter { it.isWindowsStaticLib || it.isUnixStaticLib }
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
-        return mutableListOf(linker).apply {
-            addAll(listOf("-o", executable))
-            addAll(objectFiles)
-            if (optimize) addAll(linkerOptimizationFlags)
-            if (!debug) addAll(linkerDebugFlags)
-            if (dynamic) addAll(linkerDynamicFlags)
-        }
+        return listConstructor(
+            linker,
+            "-o", executable,
+            objectFiles,
+            If (optimize, 
+                linkerOptimizationFlags),
+            If (!debug, 
+                linkerNoDebugFlags),
+            If (dynamic, 
+                linkerDynamicFlags)
+        )
     }
 
     override fun linkCommandSuffix() = linkerKonanFlags
