@@ -347,12 +347,6 @@ private fun ExtractionData.analyzeControlFlow(
 
         val boxerFactory: (List<OutputValue>) -> OutputValueBoxer = when {
             outputValues.size > 3 -> {
-                if (!options.enableListBoxing) {
-                    val outValuesStr =
-                            (outParameters.map { it.originalDescriptor.renderForMessage() }
-                             + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sorted()
-                    return controlFlow to ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
-                }
                 { outputValues -> OutputValueBoxer.AsList(outputValues) } // KT-8596
             }
 
