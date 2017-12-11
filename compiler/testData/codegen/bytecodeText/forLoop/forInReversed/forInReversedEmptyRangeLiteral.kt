@@ -14,6 +14,8 @@ fun box(): String {
 }
 
 // 0 reversed
+// 0 getStart
+// 0 getEnd
 // 0 getFirst
 // 0 getLast
 // 0 getStep

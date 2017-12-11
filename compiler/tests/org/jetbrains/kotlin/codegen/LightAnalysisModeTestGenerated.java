@@ -15247,9 +15247,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("forInReversedEmptyRangeLiteralWithNonConstBounds.kt")
+            public void testForInReversedEmptyRangeLiteralWithNonConstBounds() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedEmptyRangeLiteralWithNonConstBounds.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInReversedRangeLiteral.kt")
             public void testForInReversedRangeLiteral() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedRangeLiteral.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInReversedRangeLiteralWithNonConstBounds.kt")
+            public void testForInReversedRangeLiteralWithNonConstBounds() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedRangeLiteralWithNonConstBounds.kt");
                 doTest(fileName);
             }
         }
