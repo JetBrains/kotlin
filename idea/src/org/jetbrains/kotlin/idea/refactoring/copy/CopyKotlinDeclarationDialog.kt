@@ -86,7 +86,7 @@ class CopyKotlinDeclarationDialog(
                 Pass { setErrorText(it, destinationComboBox) },
                 packageNameField.childComponent
         )
-        classNameField.text = UsageViewUtil.getShortName(declaration)
+        classNameField.setText(UsageViewUtil.getShortName(declaration))
         classNameField.selectAll()
     }
 
