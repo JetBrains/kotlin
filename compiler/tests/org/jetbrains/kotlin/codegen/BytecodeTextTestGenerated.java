@@ -1426,6 +1426,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("forInReversedDownTo.kt")
+            public void testForInReversedDownTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInReversed/forInReversedDownTo.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInReversedEmptyRangeLiteral.kt")
             public void testForInReversedEmptyRangeLiteral() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInReversed/forInReversedEmptyRangeLiteral.kt");

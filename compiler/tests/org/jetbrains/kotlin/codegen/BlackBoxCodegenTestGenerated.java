@@ -15259,6 +15259,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("forInReversedDownTo.kt")
+            public void testForInReversedDownTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedDownTo.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInReversedEmptyRange.kt")
             public void testForInReversedEmptyRange() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedEmptyRange.kt");
