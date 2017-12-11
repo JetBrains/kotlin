@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class PrimitiveNumberRangeLiteralRangeValue(
         rangeCall: ResolvedCall<out CallableDescriptor>
-): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+) : PrimitiveNumberRangeIntrinsicRangeValue(rangeCall),
+        ReversableRangeValue {
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
             SimpleBoundedValue(codegen, rangeCall)
@@ -41,6 +42,10 @@ class PrimitiveNumberRangeLiteralRangeValue(
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator =
             getConstRangeForInRangeLiteralGenerator(codegen, forExpression) ?:
             ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
+
+    override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator =
+            // TODO const-bounded version
+            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(codegen, forExpression, getBoundedValue(codegen))
 
     private fun getConstRangeForInRangeLiteralGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator? {
         val rhsExpression = rangeCall.valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() } ?: return null

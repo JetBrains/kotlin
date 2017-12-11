@@ -32,6 +32,11 @@ interface RangeValue {
 }
 
 
+interface ReversableRangeValue : RangeValue {
+    fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator
+}
+
+
 interface BoundedValue {
     val instanceType: Type
 
