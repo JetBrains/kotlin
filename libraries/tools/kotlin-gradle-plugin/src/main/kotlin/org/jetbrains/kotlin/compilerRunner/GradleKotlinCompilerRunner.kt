@@ -98,7 +98,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 friendDirs = args.friendPaths?.map(::File) ?: emptyList())
         args.buildFile = buildFile.absolutePath
 
-        if (environment !is GradleIncrementalCompilerEnvironment) {
+        if (environment !is GradleIncrementalCompilerEnvironment || kotlinCompilerExecutionStrategy != "daemon") {
             args.destination = null
         }
 
@@ -151,7 +151,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             kotlinDebug { "Kotlin compiler args: ${argsArray.joinToString(" ")}" }
         }
 
-        val executionStrategy = System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
+        val executionStrategy = kotlinCompilerExecutionStrategy
         if (executionStrategy == DAEMON_EXECUTION_STRATEGY) {
             val daemonExitCode = compileWithDaemon(compilerClassName, compilerArgs, environment)
 
@@ -171,6 +171,9 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             compileOutOfProcess(argsArray, compilerClassName, environment)
         }
     }
+
+    private val kotlinCompilerExecutionStrategy: String
+        get() = System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
 
     override fun compileWithDaemon(compilerClassName: String, compilerArgs: CommonCompilerArguments, environment: GradleCompilerEnvironment): ExitCode? {
         val connection =
