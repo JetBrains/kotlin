@@ -1414,6 +1414,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("forInReversedCharSequenceIndices.kt")
+            public void testForInReversedCharSequenceIndices() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInReversed/forInReversedCharSequenceIndices.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInReversedCollectionIndices.kt")
             public void testForInReversedCollectionIndices() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInReversed/forInReversedCollectionIndices.kt");
