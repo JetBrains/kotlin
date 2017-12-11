@@ -12422,6 +12422,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("returnInsideTwoLambdas.kt")
+        public void testReturnInsideTwoLambdas() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nonLocalReturns/returnInsideTwoLambdas.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("use.kt")
         public void testUse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nonLocalReturns/use.kt");

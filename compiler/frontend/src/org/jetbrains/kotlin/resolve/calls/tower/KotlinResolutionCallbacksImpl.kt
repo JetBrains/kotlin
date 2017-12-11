@@ -123,17 +123,16 @@ class KotlinResolutionCallbacksImpl(
             }
         }
 
-        if (!hasReturnWithoutExpression) {
-            val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
-                if (expectedReturnType?.isUnit() == true) return@let null // coercion to Unit
+        val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
+            if (expectedReturnType?.isUnit() == true) return@let null // coercion to Unit
 
-                // todo lastExpression can be if without else
-                val lastExpressionType = trace.getType(lastExpression)
-                val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, lambdaInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
-                createCallArgument(lastExpression, lastExpressionTypeInfo)
-            }
-            returnArguments.addIfNotNull(lastExpressionArgument)
+            // todo lastExpression can be if without else
+            val lastExpressionType = if (hasReturnWithoutExpression) null else trace.getType(lastExpression)
+            val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, lambdaInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
+            createCallArgument(lastExpression, lastExpressionTypeInfo)
         }
+
+        returnArguments.addIfNotNull(lastExpressionArgument)
 
         return returnArguments
     }
