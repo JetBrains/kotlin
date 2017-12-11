@@ -20,9 +20,11 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
 import org.jetbrains.kotlin.codegen.generateCallSingleArgument
+import org.jetbrains.kotlin.codegen.range.forLoop.ForInDefinitelySafeSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.ByteValue
@@ -52,54 +54,57 @@ class PrimitiveNumberRangeLiteralRangeValue(
             codegen: ExpressionCodegen,
             forExpression: KtForExpression
     ): ForLoopGenerator? {
-        val rhsExpression = rangeCall.valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() } ?: return null
-        val constValue = codegen.getCompileTimeConstant(rhsExpression).safeAs<IntegerValueConstant<*>>() ?: return null
-        val untilValue = when (constValue) {
-            is ByteValue -> constValue.value + 1
-            is ShortValue -> constValue.value + 1
-            is IntValue -> constValue.value + 1
-            else -> Int.MIN_VALUE
-        }
-
-        // Watch out for integer overflow
-        return if (untilValue == Int.MIN_VALUE)
-            null
-        else
-            ForInSimpleProgressionLoopGenerator(
-                    codegen, forExpression,
-                    startValue = codegen.generateCallReceiver(rangeCall),
-                    isStartInclusive = true,
-                    endValue = StackValue.integerConstant(untilValue, asmElementType),
-                    isEndInclusive = false,
-                    step = 1
-            )
+        val endExpression = rangeCall.valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() } ?: return null
+        return createConstBoundedForLoopGenerator(
+                codegen, forExpression,
+                codegen.generateCallReceiver(rangeCall),
+                endExpression,
+                1
+        )
     }
 
     private fun createConstBoundedRangeForInReversedRangeLiteralGenerator(
             codegen: ExpressionCodegen,
             forExpression: KtForExpression
     ): ForLoopGenerator? {
-        val lhsExpression = rangeCall.extensionReceiver.safeAs<ExpressionReceiver>()?.expression ?: return null
-        val constValue = codegen.getCompileTimeConstant(lhsExpression).safeAs<IntegerValueConstant<*>>() ?: return null
-        val untilValue = when (constValue) {
-            is ByteValue -> constValue.value - 1
-            is ShortValue -> constValue.value - 1
-            is IntValue -> constValue.value - 1
-            else -> Int.MAX_VALUE
+        val endExpression = rangeCall.extensionReceiver.safeAs<ExpressionReceiver>()?.expression ?: return null
+        return createConstBoundedForLoopGenerator(
+                codegen, forExpression,
+                codegen.generateCallSingleArgument(rangeCall),
+                endExpression,
+                -1
+        )
+    }
+
+    private fun createConstBoundedForLoopGenerator(
+            codegen: ExpressionCodegen,
+            forExpression: KtForExpression,
+            startValue: StackValue,
+            endExpression: KtExpression,
+            step: Int
+    ) : ForLoopGenerator? {
+        val endConstValue = codegen.getCompileTimeConstant(endExpression).safeAs<IntegerValueConstant<*>>() ?: return null
+        val endIntValue = when (endConstValue) {
+            is ByteValue -> endConstValue.value.toInt()
+            is ShortValue -> endConstValue.value.toInt()
+            is IntValue -> endConstValue.value
+            else -> return null
         }
 
-        // Watch out for integer overflow
-        return if (untilValue == Int.MAX_VALUE)
+        return if (isProhibitedIntConstEndValue(step, endIntValue))
             null
         else
-            ForInSimpleProgressionLoopGenerator(
+            ForInDefinitelySafeSimpleProgressionLoopGenerator(
                     codegen, forExpression,
-                    startValue = codegen.generateCallSingleArgument(rangeCall),
+                    startValue = startValue,
                     isStartInclusive = true,
-                    endValue = StackValue.integerConstant(untilValue, asmElementType),
-                    isEndInclusive = false,
-                    step = -1
+                    endValue = StackValue.integerConstant(endIntValue, asmElementType),
+                    isEndInclusive = true,
+                    step = step
             )
     }
+
+    private fun isProhibitedIntConstEndValue(step: Int, endValue: Int) =
+            endValue == if (step == 1) Int.MAX_VALUE else Int.MIN_VALUE
 
 }
