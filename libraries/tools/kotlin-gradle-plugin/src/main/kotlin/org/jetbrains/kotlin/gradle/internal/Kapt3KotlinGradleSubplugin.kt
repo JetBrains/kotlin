@@ -375,7 +375,7 @@ internal fun checkAndroidAnnotationProcessorDependencyUsage(project: Project) {
         val artifactsRendered = androidAPDependencies.joinToString { "'${it.group}:${it.name}:${it.version}'" }
         val andApplyKapt = if (isKapt3Enabled) "" else " and apply the kapt plugin: \"apply plugin: 'kotlin-kapt'\""
         project.logger.warn("${project.name}: " +
-                "'androidProcessor' dependencies won't be recognized as kapt annotation processors. " +
+                "'annotationProcessor' dependencies won't be recognized as kapt annotation processors. " +
                 "Please change the configuration name to 'kapt' for these artifacts: $artifactsRendered$andApplyKapt.")
     }
 }
