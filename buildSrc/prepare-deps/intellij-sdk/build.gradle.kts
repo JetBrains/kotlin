@@ -86,7 +86,6 @@ val prepareIvyXml by tasks.creating {
         outputs.file(File(repoDir, "${it.name}.ivy.xml"))
     }
     inputs.dir(File(repoDir, sources.name))
-//    outputs.files("$repoDir/intellij.plugin.*.ivy.xml")
     doFirst {
         val sourcesFile = File(repoDir, "${sources.name}/${sources.singleFile.name}")
         writeIvyXml(intellij.name, intellij.name,

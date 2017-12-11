@@ -30,6 +30,7 @@ fun ModuleDependency.includeJars(vararg names: String) {
     names.forEach {
         artifact {
             name = it.removeSuffix(".jar")
+            type = "jar"
             extension = "jar"
         }
     }

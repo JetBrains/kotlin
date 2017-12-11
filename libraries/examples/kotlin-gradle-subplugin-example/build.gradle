@@ -26,6 +26,7 @@ dependencies {
     compileOnly("kotlin.build.custom.deps:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
         artifact {
             name = 'intellij-core'
+            type = 'jar'
             extension = 'jar'
         }
     }
