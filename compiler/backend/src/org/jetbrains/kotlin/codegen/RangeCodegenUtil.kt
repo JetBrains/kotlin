@@ -188,6 +188,14 @@ fun isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(descriptor: CallableD
     return true
 }
 
+fun isPrimitiveProgressionReverse(descriptor: CallableDescriptor): Boolean {
+    if (!isTopLevelInPackage(descriptor, "reversed", "kotlin.ranges")) return false
+    if (descriptor.valueParameters.isNotEmpty()) return false
+    val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return false
+    if (!isPrimitiveProgression(extensionReceiverType)) return false
+    return true
+}
+
 private fun isPrimitiveNumberType(type: KotlinType) =
         KotlinBuiltIns.isByte(type) ||
         KotlinBuiltIns.isShort(type) ||
