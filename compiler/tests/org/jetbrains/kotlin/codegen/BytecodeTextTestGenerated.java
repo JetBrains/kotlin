@@ -1289,9 +1289,21 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forInRangeToCharConst.kt")
+        public void testForInRangeToCharConst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInRangeToCharConst.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forInRangeToConst.kt")
         public void testForInRangeToConst() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInRangeToConst.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forInRangeToLongConst.kt")
+        public void testForInRangeToLongConst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInRangeToLongConst.kt");
             doTest(fileName);
         }
 

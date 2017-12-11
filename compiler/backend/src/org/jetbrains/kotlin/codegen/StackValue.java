@@ -187,6 +187,9 @@ public abstract class StackValue {
         else if (type == Type.BYTE_TYPE || type == Type.SHORT_TYPE || type == Type.INT_TYPE) {
             return constant(Integer.valueOf(value), type);
         }
+        else if (type == Type.CHAR_TYPE) {
+            return constant(Character.valueOf((char) value), type);
+        }
         else {
             throw new AssertionError("Unexpected integer type: " + type);
         }

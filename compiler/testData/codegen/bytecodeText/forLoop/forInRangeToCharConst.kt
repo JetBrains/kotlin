@@ -1,9 +1,9 @@
-const val N = 42
+const val N = 'Z'
 
 fun test(): Int {
     var sum = 0
-    for (i in 1 .. N) {
-        sum += i
+    for (i in 'A' .. N) {
+        sum += i.toInt()
     }
     return sum
 }

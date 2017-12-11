@@ -14594,12 +14594,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
-        @TestMetadata("forInRangeToConstWithOverflow.kt")
-        public void testForInRangeToConstWithOverflow() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInRangeToConstWithOverflow.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("forInRangeWithImplicitReceiver.kt")
         public void testForInRangeWithImplicitReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInRangeWithImplicitReceiver.kt");
@@ -15373,6 +15367,33 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("forIntInIntUntilSmartcastInt.kt")
             public void testForIntInIntUntilSmartcastInt() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInUntil/forIntInIntUntilSmartcastInt.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ForWithPossibleOverflow extends AbstractLightAnalysisModeTest {
+            public void testAllFilesPresentInForWithPossibleOverflow() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/forWithPossibleOverflow"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("forInRangeToCharMaxValue.kt")
+            public void testForInRangeToCharMaxValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInRangeToCharMaxValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInRangeToIntMaxValue.kt")
+            public void testForInRangeToIntMaxValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInRangeToIntMaxValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInRangeToLongMaxValue.kt")
+            public void testForInRangeToLongMaxValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInRangeToLongMaxValue.kt");
                 doTest(fileName);
             }
         }
