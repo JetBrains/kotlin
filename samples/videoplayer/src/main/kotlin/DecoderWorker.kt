@@ -393,9 +393,9 @@ class DecodeWorker {
 
     fun nextAudioFrame(size: Int) = decodeWorker.schedule(
             TransferMode.CHECKED,
-            { size as Int? }) { input -> state!!.nextAudioFrame(input!!) }.result()
+            { size }) { input -> state!!.nextAudioFrame(input) }.result()
 
     fun audioVideoSynced() = decodeWorker.schedule(
             TransferMode.CHECKED,
-            { null }) { _ -> state!!.audioVideoSynced() as Boolean? }.consume { it -> it!! }
+            { null }) { _ -> state!!.audioVideoSynced() }.result()
 }

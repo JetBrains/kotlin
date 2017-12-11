@@ -45,6 +45,24 @@ void InitOrDeinitGlobalVariables(int initialize) {
 
 THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = nullptr;
 
+RuntimeState* initRuntime() {
+  SetKonanTerminateHandler();
+  RuntimeState* result = konanConstructInstance<RuntimeState>();
+  if (!result) return nullptr;
+  result->memoryState = InitMemory();
+  // Keep global variables in state as well.
+  InitOrDeinitGlobalVariables(true);
+  konan::consoleInit();
+  return result;
+}
+
+void deinitRuntime(RuntimeState* state) {
+  if (state != nullptr) {
+    InitOrDeinitGlobalVariables(false);
+    DeinitMemory(state->memoryState);
+    konanDestructInstance(state);
+  }
+}
 }  // namespace
 
 extern "C" {
@@ -59,29 +77,9 @@ void AppendToInitializersTail(InitNode *next) {
   initTailNode = next;
 }
 
-// TODO: properly use RuntimeState.
-RuntimeState* InitRuntime() {
-  SetKonanTerminateHandler();
-  RuntimeState* result = konanConstructInstance<RuntimeState>();
-  result->memoryState = InitMemory();
-  // Keep global variables in state as well.
-  InitOrDeinitGlobalVariables(true);
-  konan::consoleInit();
-  runtimeState = result;
-  return result;
-}
-
-void DeinitRuntime(RuntimeState* state) {
-  if (state != nullptr) {
-    InitOrDeinitGlobalVariables(false);
-    DeinitMemory(state->memoryState);
-    konanDestructInstance(state);
-  }
-}
-
 void Kotlin_initRuntimeIfNeeded() {
   if (runtimeState == nullptr) {
-    runtimeState = InitRuntime();
+    runtimeState = initRuntime();
     // Register runtime deinit function at thread cleanup.
     konan::onThreadExit(Kotlin_deinitRuntimeIfNeeded);
 #ifndef KONAN_WASM
@@ -98,7 +96,7 @@ void Kotlin_initRuntimeIfNeeded() {
 
 void Kotlin_deinitRuntimeIfNeeded() {
   if (runtimeState != nullptr) {
-     DeinitRuntime(runtimeState);
+     deinitRuntime(runtimeState);
      runtimeState = nullptr;
   }
 }

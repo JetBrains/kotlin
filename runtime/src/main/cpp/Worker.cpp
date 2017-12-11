@@ -364,7 +364,7 @@ extern "C" void ReportUnhandledException(KRef e);
 void* workerRoutine(void* argument) {
   Worker* worker = reinterpret_cast<Worker*>(argument);
 
-  RuntimeState* state = InitRuntime();
+  Kotlin_initRuntimeIfNeeded();
   while (true) {
     Job job = worker->getJob();
     if (job.function == nullptr) {
@@ -391,7 +391,7 @@ void* workerRoutine(void* argument) {
     job.future->storeResultUnlocked(result);
   }
 
-  DeinitRuntime(state);
+  Kotlin_deinitRuntimeIfNeeded();
 
   konanDestructInstance(worker);
 

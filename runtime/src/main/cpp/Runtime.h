@@ -24,8 +24,6 @@ struct InitNode;
 extern "C" {
 #endif
 
-RuntimeState* InitRuntime();
-void DeinitRuntime(RuntimeState* state);
 void Kotlin_initRuntimeIfNeeded();
 void Kotlin_deinitRuntimeIfNeeded();
 

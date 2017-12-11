@@ -45,15 +45,11 @@ extern "C" KInt Konan_run_start(int argc, const char** argv) {
 }
 
 extern "C" RUNTIME_USED int Konan_main(int argc, const char** argv) {
-  RuntimeState* state = InitRuntime();
-
-  if (state == nullptr) {
-    return 2;
-  }
+  Kotlin_initRuntimeIfNeeded();
 
   KInt exitStatus = Konan_run_start(argc, argv);
 
-  DeinitRuntime(state);
+  Kotlin_deinitRuntimeIfNeeded();
 
   return exitStatus;
 }
