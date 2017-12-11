@@ -830,7 +830,7 @@ internal class SubpluginEnvironment(
     }
 }
 
-private val fileOptionsPathSensitivity = PathSensitivity.ABSOLUTE
+private val fileOptionsPathSensitivity = PathSensitivity.RELATIVE
 
 internal fun Task.registerSubpluginOptionAsInput(subpluginId: String, option: SubpluginOption) {
     when (option) {

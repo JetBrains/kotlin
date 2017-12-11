@@ -63,7 +63,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCo
     var compilerClasspath: List<File>? = null
 
     @InputFiles
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @PathSensitive(PathSensitivity.RELATIVE)
     override fun getSource() = super.getSource()
 
     @get:Classpath @get:InputFiles
@@ -473,7 +473,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
 
     @get:InputFiles
     @get:Optional
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val friendDependency
         get() = friendTaskName
                 ?.let { project.getTasksByName(it, false).singleOrNull() as? Kotlin2JsCompile }
