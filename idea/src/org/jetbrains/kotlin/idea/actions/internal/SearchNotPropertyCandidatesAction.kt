@@ -54,7 +54,7 @@ class SearchNotPropertyCandidatesAction : AnAction() {
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
                 {
                     runReadAction {
-                        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+                        ProgressManager.getInstance().progressIndicator!!.isIndeterminate = true
                         processAllDescriptors(packageDesc, project)
                     }
                 },
