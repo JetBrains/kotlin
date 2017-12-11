@@ -38,10 +38,6 @@ while [ $# -gt 0 ]; do
       java_args=("${java_args[@]}" "${1:2}")
       shift
       ;;
-    -X*)
-      echo "TODO: need to pass arguments to all the tools somehow."
-      shift
-      ;;
     --time)
       konan_args=("${konan_args[@]}" --time)
       java_args=("${java_args[@]}" -agentlib:hprof=cpu=samples -Dkonan.profile=true)
