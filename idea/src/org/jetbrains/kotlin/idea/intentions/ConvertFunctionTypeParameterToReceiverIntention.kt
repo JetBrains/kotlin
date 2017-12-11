@@ -186,7 +186,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                 runReadAction {
                     val progressStep = 1.0/callables.size
                     for ((i, callable) in callables.withIndex()) {
-                        ProgressManager.getInstance().progressIndicator.fraction = (i + 1) * progressStep
+                        ProgressManager.getInstance().progressIndicator!!.fraction = (i + 1) * progressStep
 
                         if (callable !is PsiNamedElement) continue
 
