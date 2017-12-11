@@ -93,7 +93,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                 semaphore.down()
                 val nameRef = AtomicReference<KotlinType>()
                 val worker = object : KotlinRuntimeTypeEvaluator(
-                    null, expression, debuggerContext, ProgressManager.getInstance().progressIndicator
+                    null, expression, debuggerContext, ProgressManager.getInstance().progressIndicator!!
                 ) {
                     override fun typeCalculationFinished(type: KotlinType?) {
                         nameRef.set(type)
