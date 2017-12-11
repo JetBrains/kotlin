@@ -134,6 +134,8 @@ open class GradleKotlinJSFrameworkSupportProvider(frameworkTypeId: String = "KOT
 
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_JS_STDLIB_ID)
 
+    override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
+
     override fun getDescription() = "A Kotlin library or application targeting JavaScript"
 }
 
@@ -160,5 +162,4 @@ class GradleKotlinMPPJSFrameworkSupportProvider
 
     override fun getPluginId() = "kotlin-platform-js"
     override fun getDescription() = "JavaScript-specific code for a Kotlin multiplatform project"
-    override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
 }
