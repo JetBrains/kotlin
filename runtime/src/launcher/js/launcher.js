@@ -199,7 +199,7 @@ function invokeModule(inst, args) {
     try {
         runGlobalInitializers(instance.exports);
         if (isBrowser()) {
-            instance.memoryState = instance.exports.InitRuntime();
+            instance.exports.Kotlin_initRuntimeIfNeeded();
         }
         exit_status = instance.exports.Konan_js_main(args.length, isBrowser() ? 0 : 1);
         // TODO: so when should we deinit runtime?
