@@ -98,7 +98,7 @@ class JavaToKotlinAction : AnAction() {
             var converterResult: JavaToKotlinConverter.FilesResult? = null
             fun convert() {
                 val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
-                converterResult = converter.filesToKotlin(javaFiles, J2kPostProcessor(formatCode = true), ProgressManager.getInstance().progressIndicator)
+                converterResult = converter.filesToKotlin(javaFiles, J2kPostProcessor(formatCode = true), ProgressManager.getInstance().progressIndicator!!)
             }
 
 
@@ -117,7 +117,7 @@ class JavaToKotlinAction : AnAction() {
                     ProgressManager.getInstance().runProcessWithProgressSynchronously(
                             {
                                 runReadAction {
-                                    externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(ProgressManager.getInstance().progressIndicator)
+                                    externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(ProgressManager.getInstance().progressIndicator!!)
                                 }
                             },
                             title,
