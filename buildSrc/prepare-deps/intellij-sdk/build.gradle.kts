@@ -7,9 +7,9 @@ import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
 import java.io.File
 import org.gradle.internal.os.OperatingSystem
 
-val intellijRepo = "https://www.jetbrains.com/intellij-repository"
-val intellijReleaseType = "releases" // or "snapshots"
-val intellijSdkDependencyName = "ideaIC" // or "ideaIU"
+val intellijRepo: String by rootProject.extra
+val intellijReleaseType: String by rootProject.extra
+val intellijSdkDependencyName: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
 
 repositories {
