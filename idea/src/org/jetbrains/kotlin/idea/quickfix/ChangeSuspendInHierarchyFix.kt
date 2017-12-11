@@ -49,20 +49,9 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.ArrayList
-import kotlin.collections.Collection
 import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashSet
-import kotlin.collections.List
-import kotlin.collections.Set
-import kotlin.collections.emptyList
-import kotlin.collections.emptySet
 import kotlin.collections.filter
-import kotlin.collections.flatMap
-import kotlin.collections.forEach
-import kotlin.collections.getOrPut
-import kotlin.collections.listOf
-import kotlin.collections.mapNotNullTo
-import kotlin.collections.plus
 
 class ChangeSuspendInHierarchyFix(
         element: KtNamedFunction,
@@ -83,7 +72,7 @@ class ChangeSuspendInHierarchyFix(
     private fun findAllFunctionToProcess(project: Project): Set<KtNamedFunction> {
         val result = LinkedHashSet<KtNamedFunction>()
 
-        val progressIndicator = ProgressManager.getInstance().progressIndicator
+        val progressIndicator = ProgressManager.getInstance().progressIndicator!!
 
         val function = element ?: return emptySet()
         val functionDescriptor = function.unsafeResolveToDescriptor() as FunctionDescriptor
