@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-class DownToProgressionRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+class DownToProgressionRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>) :
+        PrimitiveNumberRangeIntrinsicRangeValue(rangeCall), ReversableRangeValue {
+
     override fun getBoundedValue(codegen: ExpressionCodegen) =
             SimpleBoundedValue(
                     codegen, rangeCall,
@@ -34,4 +36,7 @@ class DownToProgressionRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(codegen, forExpression, getBoundedValue(codegen))
+
+    override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
+            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
 }
