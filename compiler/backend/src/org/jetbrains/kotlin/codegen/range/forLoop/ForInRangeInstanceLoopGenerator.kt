@@ -17,21 +17,30 @@
 package org.jetbrains.kotlin.codegen.range.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 
 class ForInRangeInstanceLoopGenerator(
         codegen: ExpressionCodegen,
-        forExpression: KtForExpression
-) : AbstractForInRangeLoopGenerator(codegen, forExpression) {
+        forExpression: KtForExpression,
+        private val rangeExpression: KtExpression,
+        private val reversed: Boolean
+) : AbstractForInRangeLoopGenerator(codegen, forExpression, if (reversed) -1 else 1) {
 
     override fun storeRangeStartAndEnd() {
-        val loopRangeType = codegen.bindingContext.getType(forExpression.loopRange!!)!!
+        val loopRangeType = codegen.bindingContext.getType(rangeExpression)!!
         val asmLoopRangeType = codegen.asmType(loopRangeType)
-        codegen.gen(forExpression.loopRange, asmLoopRangeType)
+        codegen.gen(rangeExpression, asmLoopRangeType)
         v.dup()
 
         // ranges inherit first and last from corresponding progressions
-        generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar)
-        generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar)
+        if (reversed) {
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, loopParameterType, loopParameterVar)
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, asmElementType, endVar)
+        }
+        else {
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar)
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar)
+        }
     }
 }

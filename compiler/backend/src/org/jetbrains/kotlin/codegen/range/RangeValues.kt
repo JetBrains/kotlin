@@ -59,9 +59,9 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
         }
 
         isPrimitiveRange(rangeType) ->
-            PrimitiveRangeRangeValue()
+            PrimitiveRangeRangeValue(rangeExpression)
         isPrimitiveProgression(rangeType) ->
-            PrimitiveProgressionRangeValue()
+            PrimitiveProgressionRangeValue(rangeExpression)
         isSubtypeOfString(rangeType, builtIns) ->
             CharSequenceRangeValue(true, AsmTypes.JAVA_STRING_TYPE)
         isSubtypeOfCharSequence(rangeType, builtIns) ->

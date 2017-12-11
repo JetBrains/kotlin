@@ -18,15 +18,21 @@ package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInRangeInstanceLoopGenerator
+import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.CallBasedInExpressionGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-class PrimitiveRangeRangeValue : RangeValue {
+class PrimitiveRangeRangeValue(private val rangeExpression: KtExpression) : ReversableRangeValue {
+
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            ForInRangeInstanceLoopGenerator(codegen, forExpression)
+            ForInRangeInstanceLoopGenerator(codegen, forExpression, rangeExpression, reversed = false)
 
     override fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
             CallBasedInExpressionGenerator(codegen, operatorReference)
+
+    override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator =
+            ForInRangeInstanceLoopGenerator(codegen, forExpression, rangeExpression, reversed = true)
 }
