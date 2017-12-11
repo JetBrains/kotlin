@@ -65,7 +65,7 @@ open class KaptTask : ConventionTask(), CompilerArgumentAware<K2JVMCompilerArgum
     @get:Classpath @get:InputFiles
     internal val pluginClasspath get() = pluginOptions.classpath
 
-    @get:InputFiles @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
     val source: FileCollection
         get() {
             val sourcesFromKotlinTask = kotlinCompileTask.source
