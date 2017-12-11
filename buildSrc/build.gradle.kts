@@ -31,9 +31,9 @@ plugins {
     `kotlin-dsl`
 }
 
+extra["intellijUltimateEnabled"] = true
 extra["intellijRepo"] = "https://www.jetbrains.com/intellij-repository"
 extra["intellijReleaseType"] = "releases" // or "snapshots"
-extra["intellijSdkDependencyName"] = "ideaIC" // "ideaIC" or "ideaIU
 extra["versions.intellijSdk"] = "172.4343.14"
 extra["versions.androidBuildTools"] = "r23.0.1"
 extra["versions.androidDxSources"] = "5.0.0_r2"

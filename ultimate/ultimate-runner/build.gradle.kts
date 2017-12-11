@@ -21,7 +21,7 @@ dependencies {
     compileOnly(project(":idea:idea-jvm"))
 
     runtimeOnly(files(toolsJar()))
-    compileOnly(intellijDep())
+    compileOnly(intellijUltimateDep())
 }
 
 afterEvaluate {
