@@ -405,7 +405,7 @@ class StubGenerator(
 
                     out("var ${field.name.asSimpleName()}: $kotlinType")
 
-                    val signed = field.type.getUnderlyingIntegerType().isSigned
+                    val signed = field.type.isIntegerTypeSigned()
 
                     val readBitsExpr =
                             "readBits(this.rawPtr, ${field.offset}, ${field.size}, $signed).${rawType.convertor!!}()"
@@ -422,10 +422,11 @@ class StubGenerator(
         }
     }
 
-    private tailrec fun Type.getUnderlyingIntegerType(): IntegerType = when (this) {
-        is IntegerType -> this
-        is EnumType -> this.def.baseType.getUnderlyingIntegerType()
-        is Typedef -> this.def.aliased.getUnderlyingIntegerType()
+    private tailrec fun Type.isIntegerTypeSigned(): Boolean = when (this) {
+        is IntegerType -> this.isSigned
+        is BoolType -> false
+        is EnumType -> this.def.baseType.isIntegerTypeSigned()
+        is Typedef -> this.def.aliased.isIntegerTypeSigned()
         else -> error(this)
     }
 
