@@ -7,6 +7,11 @@ lands.
 
 To build and run the sample do the following:
 
+*   Install Python with development headers, i.e.
+    ```
+    sudo apt install python-dev
+    ```
+
 *   Run `build.sh`, it will ask for superuser password to install Python extension
 *   On macOS copy Kotlin binary to extension's directory and change install name with
     `install_name_tool` tool, i.e.
@@ -14,6 +19,15 @@ To build and run the sample do the following:
     sudo cp libserver.dylib  /Library/Python/2.7/site-packages/
     sudo install_name_tool /Library/Python/2.7/site-packages/kotlin_bridge.so \
           -change libserver.dylib @loader_path/libserver.dylib
+    ```
+*   On Linux copy Kotlin binary in some place where libraries could be loaded from, i.e.
+    ```
+    cp libserver.so /usr/local/lib/
+    ldconfig
+    ```
+    or modify dynamic loader search path with
+    ```
+    export LD_LIBRARY_PATH=`pwd`
     ```
 
 *   run Python code using Kotlin functionality with

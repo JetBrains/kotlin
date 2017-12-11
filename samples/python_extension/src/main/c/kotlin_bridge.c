@@ -23,9 +23,9 @@
 
 // Note, that as we cache this in the global, and Kotlin/Native object references
 // are currently thread local, we make this global a TLS variable.
-__thread static server_kref_demo_Server server = { 0 };
+static __thread server_kref_demo_Server server = { 0 };
 
-static T_(Server) getServer() {
+static T_(Server) getServer(void) {
   if (!server.pinned) {
     server = __ kotlin.demo.Server.Server("the server");
   }
