@@ -29,5 +29,4 @@ fun box(): String {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 2 IF_ICMPEQ
-// ^ 1 for char progression, 1 for long progression
+// 0 IF_ICMPEQ
