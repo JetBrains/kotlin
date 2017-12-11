@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
 private val QUALIFIED_EXPRESSIONS = TokenSet.create(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
+private val ELVIS_SET = TokenSet.create(KtTokens.ELVIS)
+
 private val KDOC_COMMENT_INDENT = 1
 
 private val BINARY_EXPRESSIONS = TokenSet.create(KtNodeTypes.BINARY_EXPRESSION, KtNodeTypes.BINARY_WITH_TYPE, KtNodeTypes.IS_EXPRESSION)
@@ -95,35 +97,50 @@ abstract class KotlinCommonBlock(
         var nodeSubBlocks = buildSubBlocks()
 
         if (node.elementType in QUALIFIED_EXPRESSIONS) {
-            val operationBlockIndex = findNodeBlockIndex(nodeSubBlocks, QUALIFIED_OPERATION)
-            if (operationBlockIndex != -1) {
-                // Create fake ".something" or "?.something" block here, so child indentation will be
-                // relative to it when it starts from new line (see Indent javadoc).
-
-                val operationBlock = nodeSubBlocks[operationBlockIndex]
-                val indent = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
-                    Indent.getContinuationWithoutFirstIndent()
-                else
-                    Indent.getNormalIndent()
-                val isNonFirstChainedCall = operationBlockIndex > 0 && isCallBlock(nodeSubBlocks[operationBlockIndex - 1])
-                val wrap = if ((settings.kotlinCommonSettings.WRAP_FIRST_METHOD_IN_CALL_CHAIN || isNonFirstChainedCall) &&
-                               canWrapCallChain(node))
-                    Wrap.createWrap(settings.kotlinCommonSettings.METHOD_CALL_CHAIN_WRAP, true)
-                else
-                    null
-
-                val operationSyntheticBlock = SyntheticKotlinBlock(
-                        operationBlock.node,
-                        nodeSubBlocks.subList(operationBlockIndex, nodeSubBlocks.size),
-                        null, indent, wrap, spacingBuilder) { createSyntheticSpacingNodeBlock(it) }
-
-                nodeSubBlocks = nodeSubBlocks.subList(0, operationBlockIndex) + operationSyntheticBlock
+            nodeSubBlocks = splitSubBlocksOnDot(nodeSubBlocks)
+        }
+        else {
+            val psi = node.psi
+            if (psi is KtBinaryExpression && psi.operationToken == KtTokens.ELVIS) {
+                nodeSubBlocks = splitSubBlocksOnElvis(nodeSubBlocks)
             }
         }
 
         mySubBlocks = nodeSubBlocks
 
         return nodeSubBlocks
+    }
+
+    private fun splitSubBlocksOnDot(nodeSubBlocks: List<ASTBlock>): List<ASTBlock> {
+        val operationBlockIndex = nodeSubBlocks.indexOfBlockWithType(QUALIFIED_OPERATION)
+        if (operationBlockIndex != -1) {
+            // Create fake ".something" or "?.something" block here, so child indentation will be
+            // relative to it when it starts from new line (see Indent javadoc).
+
+            val indent = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
+                Indent.getContinuationWithoutFirstIndent()
+            else
+                Indent.getNormalIndent()
+            val isNonFirstChainedCall = operationBlockIndex > 0 && isCallBlock(nodeSubBlocks[operationBlockIndex - 1])
+            val wrap = if ((settings.kotlinCommonSettings.WRAP_FIRST_METHOD_IN_CALL_CHAIN || isNonFirstChainedCall) &&
+                           canWrapCallChain(node))
+                Wrap.createWrap(settings.kotlinCommonSettings.METHOD_CALL_CHAIN_WRAP, true)
+            else
+                null
+
+            return nodeSubBlocks.splitAtIndex(operationBlockIndex, indent, wrap)
+        }
+        return nodeSubBlocks
+    }
+
+    private fun List<ASTBlock>.splitAtIndex(index: Int, indent: Indent?, wrap: Wrap?): List<ASTBlock> {
+        val operationBlock = this[index]
+        val operationSyntheticBlock = SyntheticKotlinBlock(
+                operationBlock.node,
+                subList(index, size),
+                null, indent, wrap, spacingBuilder) { createSyntheticSpacingNodeBlock(it) }
+
+        return subList(0, index) + operationSyntheticBlock
     }
 
     private fun isCallBlock(astBlock: ASTBlock): Boolean {
@@ -138,6 +155,18 @@ abstract class KotlinCommonBlock(
                (callChainParent.elementType == KtNodeTypes.BINARY_EXPRESSION &&
                 (callChainParent.psi as KtBinaryExpression).operationToken in KtTokens.ALL_ASSIGNMENTS) ||
                callChainParent.elementType == KtNodeTypes.RETURN
+    }
+
+    private fun splitSubBlocksOnElvis(nodeSubBlocks: List<ASTBlock>): List<ASTBlock> {
+        val elvisIndex = nodeSubBlocks.indexOfBlockWithType(ELVIS_SET)
+        if (elvisIndex >= 0) {
+            return nodeSubBlocks.splitAtIndex(
+                    elvisIndex,
+                    Indent.getContinuationIndent(),
+                    null
+            )
+        }
+        return nodeSubBlocks
     }
 
     fun createChildIndent(child: ASTNode): Indent? {
@@ -703,6 +732,6 @@ private fun getWrappingStrategyForItemList(wrapType: Int, itemTypes: TokenSet, w
     }
 }
 
-private fun findNodeBlockIndex(blocks: List<ASTBlock>, tokenSet: TokenSet): Int {
-    return blocks.indexOfFirst { block -> block.node?.elementType in tokenSet }
+private fun List<ASTBlock>.indexOfBlockWithType(tokenSet: TokenSet): Int {
+    return indexOfFirst { block -> block.node?.elementType in tokenSet }
 }
