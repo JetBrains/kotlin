@@ -79,7 +79,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         content = normalizePath(content, testDataDir, "[TestData]");
         content = normalizePath(content, tmpdir, "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
-        content = normalizePath(content, getKotlinProjectHome(), "[KotlinProjectHome]");
+        content = normalizePath(content, new File(KotlinTestUtils.getHomeDirectory()), "[KotlinProjectHome]");
         content = content.replaceAll(Pattern.quote(KotlinCompilerVersion.VERSION), "[KotlinVersion]");
         content = content.replaceAll("\\(JRE .+\\)", "(JRE [JREVersion])");
         content = StringUtil.convertLineSeparators(content);
@@ -137,11 +137,6 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         File file = PathUtil.getKotlinPathsForDistDirectory().getLibPath().getAbsoluteFile();
         assertTrue("Lib directory doesn't exist. Run 'ant dist'", file.isDirectory());
         return file;
-    }
-
-    protected static File getKotlinProjectHome() {
-        // assuming that tests are always run from the project's root
-        return new File(System.getProperty("user.dir"));
     }
 
     private static class OutputListener extends ProcessAdapter {

@@ -14,7 +14,6 @@ buildscript {
     val repos = listOfNotNull(
             bootstrapKotlinRepo,
             "https://jcenter.bintray.com/",
-            "https://plugins.gradle.org/m2")
             "https://plugins.gradle.org/m2",
             "http://dl.bintray.com/kotlin/kotlinx",
             "https://repo.gradle.org/gradle/libs-releases-local", // for native-platform

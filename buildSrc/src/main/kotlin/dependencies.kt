@@ -2,12 +2,9 @@
 
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
@@ -23,8 +20,10 @@ fun Project.commonDep(coord: String): String {
     }
 }
 
-fun Project.commonDep(group: String, artifact: String, vararg suffixesAndClassifiers: String): String =
-        "$group:$artifact${suffixesAndClassifiers.filterNot { it.startsWith(':') }.joinToString("")}:${commonVer(group, artifact)}${suffixesAndClassifiers.filter { it.startsWith(':') }.joinToString("")}"
+fun Project.commonDep(group: String, artifact: String, vararg suffixesAndClassifiers: String): String {
+    val (classifiers, artifactSuffixes) = suffixesAndClassifiers.partition { it.startsWith(':') }
+    return "$group:$artifact${artifactSuffixes.joinToString("")}:${commonVer(group, artifact)}${classifiers.joinToString("")}"
+}
 
 fun Project.commonVer(group: String, artifact: String) =
         when {

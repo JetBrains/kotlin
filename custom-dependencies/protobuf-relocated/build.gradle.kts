@@ -37,7 +37,6 @@ val prepare by task<ShadowJar> {
     from(baseProtobuf.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath)
 
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" ) {
-        // TODO: remove "it." after #KT-12848 get addressed
         exclude("META-INF/maven/com.google.protobuf/protobuf-java/pom.properties")
     }
     addArtifact("archives", this, this)

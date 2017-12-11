@@ -41,7 +41,6 @@ afterEvaluate {
     }
 
     task<RunIdeTask>("runIde") {
-        dependsOn(":dist", ":prepare:idea-plugin:idea-plugin", ":ideaPlugin")
         dependsOn(prepareSandbox)
         group = "intellij"
         description = "Runs Intellij IDEA with installed plugin."
@@ -59,7 +58,8 @@ afterEvaluate {
                 "-Dapple.laf.useScreenMenuBar=true",
                 "-Dapple.awt.graphics.UseQuartz=true",
                 "-Dsun.io.useCanonCaches=false",
-                "-Dkotlin.internal.mode.enabled=true"
+                "-Dkotlin.internal.mode.enabled=true",
+                "-Didea.ProcessCanceledException=disabled"
         )
     }
 }

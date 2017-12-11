@@ -34,7 +34,7 @@
     </macrodef>
 
     <target name="check-idea-flex.skeleton.exists">
-        <available file="${builddir}/idea-flex.skeleton" property="skjeleton.exisits"/>
+        <available file="${builddir}/idea-flex.skeleton" property="skeleton.exists"/>
     </target>
 
     <target name="get-idea-flex.skeleton.if.not.exists" depends="check-idea-flex.skeleton.exists" unless="skjeleton.exisits">
