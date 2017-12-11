@@ -77,10 +77,20 @@ class ForInSimpleProgressionLoopGenerator(
             v.load(endVar, asmElementType)
             if (asmElementType.sort == Type.LONG) {
                 v.lcmp()
-                v.ifge(loopExit)
+                if (step > 0) {
+                    v.ifge(loopExit)
+                }
+                else {
+                    v.ifle(loopExit)
+                }
             }
             else {
-                v.ificmpge(loopExit)
+                if (step > 0) {
+                    v.ificmpge(loopExit)
+                }
+                else {
+                    v.ificmple(loopExit)
+                }
             }
         }
     }
