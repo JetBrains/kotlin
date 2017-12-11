@@ -20,12 +20,14 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInProgressionExpressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.CallBasedInExpressionGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-class PrimitiveProgressionRangeValue : RangeValue {
+class PrimitiveProgressionRangeValue(private val rangeExpression: KtExpression) : RangeValue {
+
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            ForInProgressionExpressionLoopGenerator(codegen, forExpression)
+            ForInProgressionExpressionLoopGenerator(codegen, forExpression, rangeExpression)
 
     override fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
             CallBasedInExpressionGenerator(codegen, operatorReference)

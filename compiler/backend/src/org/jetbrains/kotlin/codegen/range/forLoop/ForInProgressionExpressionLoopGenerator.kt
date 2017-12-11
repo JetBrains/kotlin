@@ -17,13 +17,16 @@
 package org.jetbrains.kotlin.codegen.range.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 
-class ForInProgressionExpressionLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression)
-    : AbstractForInProgressionLoopGenerator(codegen, forExpression)
-{
+class ForInProgressionExpressionLoopGenerator(
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression,
+        private val rangeExpression: KtExpression
+) : AbstractForInProgressionLoopGenerator(codegen, forExpression) {
     override fun storeProgressionParametersToLocalVars() {
-        codegen.gen(forExpression.loopRange, asmLoopRangeType)
+        codegen.gen(rangeExpression, asmLoopRangeType)
         v.dup()
         v.dup()
 

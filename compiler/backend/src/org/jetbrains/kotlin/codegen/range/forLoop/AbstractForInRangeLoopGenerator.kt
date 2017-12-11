@@ -24,15 +24,11 @@ import org.jetbrains.kotlin.codegen.AsmUtil.genIncrement
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 
-abstract class AbstractForInRangeLoopGenerator : AbstractForInProgressionOrRangeLoopGenerator {
-    protected val step: Int
-
-    constructor(codegen: ExpressionCodegen, forExpression: KtForExpression, step: Int) : super(codegen, forExpression) {
-        assert(step == 1 || step == -1) { "'step' should be either 1 or -1: " + step }
-        this.step = step        
-    }
-
-    constructor(codegen: ExpressionCodegen, forExpression: KtForExpression) : this(codegen, forExpression, 1)
+abstract class AbstractForInRangeLoopGenerator(
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression,
+        protected val step: Int
+) : AbstractForInProgressionOrRangeLoopGenerator(codegen, forExpression) {
 
     override fun beforeLoop() {
         super.beforeLoop()
@@ -82,5 +78,9 @@ abstract class AbstractForInRangeLoopGenerator : AbstractForInProgressionOrRange
             genIncrement(asmElementType, step, v)
             loopParameter.store(StackValue.onStack(asmElementType), v)
         }
+    }
+
+    init {
+        assert(step == 1 || step == -1) { "'step' should be either 1 or -1: " + step }
     }
 }

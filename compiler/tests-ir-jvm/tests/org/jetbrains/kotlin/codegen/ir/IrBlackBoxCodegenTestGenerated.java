@@ -15241,6 +15241,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInReversed"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("forInReversedEmptyRange.kt")
+            public void testForInReversedEmptyRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedEmptyRange.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInReversedEmptyRangeLiteral.kt")
             public void testForInReversedEmptyRangeLiteral() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedEmptyRangeLiteral.kt");
@@ -15253,6 +15259,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("forInReversedRange.kt")
+            public void testForInReversedRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedRange.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInReversedRangeLiteral.kt")
             public void testForInReversedRangeLiteral() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedRangeLiteral.kt");
@@ -15262,6 +15274,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("forInReversedRangeLiteralWithNonConstBounds.kt")
             public void testForInReversedRangeLiteralWithNonConstBounds() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedRangeLiteralWithNonConstBounds.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ForInReversedReversedRange.kt")
+            public void testForInReversedReversedRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/ForInReversedReversedRange.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInReversedReversedReversedRange.kt")
+            public void testForInReversedReversedReversedRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedReversedReversedRange.kt");
                 doTest(fileName);
             }
         }
