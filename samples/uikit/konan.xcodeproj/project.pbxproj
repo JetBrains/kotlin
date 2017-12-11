@@ -169,7 +169,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp \"$SRCROOT/build/konan/bin/iphone/app.kexe\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"";
+			shellScript = "cp \"$SRCROOT/build/konan/bin/xcode/app.kexe\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"";
 		};
 		2C901F991F59928A004412FA /* Build Binary From Kotlin Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -183,7 +183,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "$SRCROOT/../gradlew -p $SRCROOT compileKonanApp";
+			shellScript = "case \"$PLATFORM_NAME\" in\n    iphoneos)\n        TARGET=iphone\n        TASK=compileKonanAppIphone\n        ;;\n    iphonesimulator)\n        TARGET=iphone_sim\n        TASK=compileKonanAppIphone_sim\n        ;;\n    *)\n        echo \"Unknown platform: $PLATFORN_NAME\"\n        exit 1\n        ;;\nesac\n\nmkdir -p \"$SRCROOT/build/konan/bin/\"\nrm -f \"$SRCROOT/build/konan/bin/xcode\"\nln -s \"$TARGET\" \"$SRCROOT/build/konan/bin/xcode\"\n\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$TASK\"";
 		};
 		2C901F9C1F5D7074004412FA /* Remove Original Binary */ = {
 			isa = PBXShellScriptBuildPhase;

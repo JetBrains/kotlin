@@ -38,7 +38,7 @@
 		2C3F384B1FD1738300151601 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2C3F384E1FD1738300151601 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2C3F38501FD1738300151601 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C3F385A1FD1760A00151601 /* KotlinArithmeticParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KotlinArithmeticParser.framework; path = build/konan/bin/iphone/KotlinArithmeticParser.framework; sourceTree = "<group>"; };
+		2C3F385A1FD1760A00151601 /* KotlinArithmeticParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KotlinArithmeticParser.framework; path = build/konan/bin/xcode/KotlinArithmeticParser.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,7 +165,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "$SRCROOT/../gradlew -p $SRCROOT compileKonanKotlinArithmeticParser";
+			shellScript = "case \"$PLATFORM_NAME\" in\n    iphoneos)\n        TARGET=iphone\n        TASK=compileKonanKotlinArithmeticParserIphone\n        ;;\n    iphonesimulator)\n        TARGET=iphone_sim\n        TASK=compileKonanKotlinArithmeticParserIphone_sim\n        ;;\n    *)\n        echo \"Unknown platform: $PLATFORN_NAME\"\n        exit 1\n        ;;\nesac\n\nmkdir -p \"$SRCROOT/build/konan/bin/\"\nrm -f \"$SRCROOT/build/konan/bin/xcode\"\nln -s \"$TARGET\" \"$SRCROOT/build/konan/bin/xcode\"\n\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$TASK\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -317,7 +317,7 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/build/konan/bin/iphone",
+					"$(PROJECT_DIR)/build/konan/bin/xcode",
 				);
 				INFOPLIST_FILE = calculator/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
@@ -338,7 +338,7 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/build/konan/bin/iphone",
+					"$(PROJECT_DIR)/build/konan/bin/xcode",
 				);
 				INFOPLIST_FILE = calculator/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;

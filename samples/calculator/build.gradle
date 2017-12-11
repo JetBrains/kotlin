@@ -18,7 +18,7 @@ dependencies {
 
 apply plugin: 'konan'
 
-konan.targets = ['iphone']
+konan.targets = ['iphone', 'iphone_sim']
 
 konanArtifacts {
     framework('KotlinArithmeticParser')
