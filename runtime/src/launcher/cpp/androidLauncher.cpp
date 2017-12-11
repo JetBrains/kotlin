@@ -71,11 +71,7 @@ extern "C" void notifySysEventProcessed() {
 namespace {
 
 void launchMain() {
-  RuntimeState* state = InitRuntime();
-  if (state == nullptr) {
-    LOGE("Unable to init runtime\n");
-    return;
-  }
+  Kotlin_initRuntimeIfNeeded();
 
   {
     ObjHolder args;
@@ -83,7 +79,7 @@ void launchMain() {
     Konan_start(args.obj());
   }
 
-  DeinitRuntime(state);
+  Kotlin_deinitRuntimeIfNeeded();
 }
 
 void* entry(void* param) {
