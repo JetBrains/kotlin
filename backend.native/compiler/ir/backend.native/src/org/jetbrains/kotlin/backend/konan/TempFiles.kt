@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.file.*
 class TempFiles(val outputName: String) {
     val nativeBinaryFile    by lazy { File("${outputName}.kt.bc") }
     val cAdapterHeader      by lazy { File("${outputName}_api.h") }
+    val cAdapterDef         by lazy { File("${outputName}_symbols.def") }
     val cAdapterCpp         by lazy { createTempFile("api", ".cpp").deleteOnExit() }
     val cAdapterBitcode     by lazy { createTempFile("api", ".bc").deleteOnExit() }
 

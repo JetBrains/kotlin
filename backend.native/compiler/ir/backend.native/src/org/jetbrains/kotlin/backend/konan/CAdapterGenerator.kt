@@ -292,7 +292,7 @@ private class ExportedElement(val kind: ElementKind,
 internal class CAdapterGenerator(val context: Context,
                                  internal val codegen: CodeGenerator) : IrElementVisitorVoid {
     private val scopes = mutableListOf<ExportedElementScope>()
-    internal val prefix: String = context.config.outputName
+    internal val prefix: String = context.config.moduleId
     private lateinit var outputStreamWriter: PrintWriter
 
     override fun visitElement(element: IrElement) {
