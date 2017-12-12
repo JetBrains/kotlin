@@ -29,4 +29,7 @@ fun box(): String {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
+// 0 IFEQ
 // 0 IF_ICMPEQ
+// 2 IF_ICMPLT
+// 1 LCMP

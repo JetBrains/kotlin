@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGene
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class PrimitiveNumberRangeLiteralRangeValue(
         rangeCall: ResolvedCall<out CallableDescriptor>
@@ -47,7 +47,7 @@ class PrimitiveNumberRangeLiteralRangeValue(
             codegen: ExpressionCodegen,
             forExpression: KtForExpression
     ): ForLoopGenerator? {
-        val endExpression = rangeCall.valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() } ?: return null
+        val endExpression = rangeCall.getFirstArgumentExpression() ?: return null
         return createConstBoundedForLoopGeneratorOrNull(
                 codegen, forExpression,
                 codegen.generateCallReceiver(rangeCall),
@@ -60,7 +60,7 @@ class PrimitiveNumberRangeLiteralRangeValue(
             codegen: ExpressionCodegen,
             forExpression: KtForExpression
     ): ForLoopGenerator? {
-        val endExpression = rangeCall.extensionReceiver.safeAs<ExpressionReceiver>()?.expression ?: return null
+        val endExpression = rangeCall.getReceiverExpression() ?: return null
         return createConstBoundedForLoopGeneratorOrNull(
                 codegen, forExpression,
                 codegen.generateCallSingleArgument(rangeCall),
