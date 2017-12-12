@@ -238,6 +238,9 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, FqName> ILLEGAL_KOTLIN_VERSION_STRING_VALUE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> NEWER_VERSION_IN_SINCE_KOTLIN = DiagnosticFactory1.create(WARNING);
 
+    DiagnosticFactory2<PsiElement, FqName, Boolean> EXPERIMENTAL_API_USAGE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, FqName, Boolean> EXPERIMENTAL_API_USAGE_ERROR = DiagnosticFactory2.create(ERROR);
+
     // Const
     DiagnosticFactory0<PsiElement> CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CONST_VAL_WITH_GETTER = DiagnosticFactory0.create(ERROR);

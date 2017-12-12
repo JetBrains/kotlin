@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.AddToStdlibKt;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -148,6 +150,17 @@ public class DefaultErrorMessages {
 
         MAP.put(ILLEGAL_KOTLIN_VERSION_STRING_VALUE, "Invalid @{0} annotation value (should be ''major.minor'' or ''major.minor.patch'')", TO_STRING);
         MAP.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", STRING);
+
+        RenderingContext.Key<FqName> getExperimentalFqName = new RenderingContext.Key<FqName>("getExperimentalFqName") {
+            @Override
+            public FqName compute(@NotNull Collection<?> objectsToRender) {
+                return (FqName) CollectionsKt.first(objectsToRender);
+            }
+        };
+        DiagnosticParameterRenderer<Boolean> renderUseExperimental = (useExperimentalAllowed, c) ->
+                useExperimentalAllowed ? " or ''@UseExperimental(" + c.get(getExperimentalFqName) + "::class)''" : "";
+        MAP.put(EXPERIMENTAL_API_USAGE, "This declaration is experimental and its usage should be marked with ''@{0}''{1}", TO_STRING, renderUseExperimental);
+        MAP.put(EXPERIMENTAL_API_USAGE_ERROR, "This declaration is experimental and its usage must be marked with ''@{0}''{1}", TO_STRING, renderUseExperimental);
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members");

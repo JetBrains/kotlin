@@ -1,0 +1,32 @@
+package
+
+package api {
+    @api.CompilationExperimentalAPI public fun compilation(): kotlin.Unit
+    @api.RuntimeExperimentalAPI public fun runtime(): kotlin.Unit
+
+    @kotlin.Experimental(changesMayBreak = {Impact.COMPILATION}, level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class CompilationExperimentalAPI : kotlin.Annotation {
+        public constructor CompilationExperimentalAPI()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.Experimental(changesMayBreak = {Impact.RUNTIME}, level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class RuntimeExperimentalAPI : kotlin.Annotation {
+        public constructor RuntimeExperimentalAPI()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package usage {
+    public fun use(): kotlin.Unit
+
+    public final class Use {
+        public constructor Use()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun use(): kotlin.Unit
+    }
+}
