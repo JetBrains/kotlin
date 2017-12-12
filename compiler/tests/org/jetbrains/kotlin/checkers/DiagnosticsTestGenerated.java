@@ -10827,6 +10827,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("operationsOnIntegerValueTypes.kt")
+                public void testOperationsOnIntegerValueTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/operationsOnIntegerValueTypes.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("subtypeConstraintOnNullableType.kt")
                 public void testSubtypeConstraintOnNullableType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/subtypeConstraintOnNullableType.kt");

@@ -1,0 +1,12 @@
+package
+
+public fun </*0*/ T> generateException(/*0*/ a: T, /*1*/ next: (T) -> T): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public final class Data</*0*/ out K> {
+    public constructor Data</*0*/ out K>(/*0*/ x: K)
+    public final val x: K
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
