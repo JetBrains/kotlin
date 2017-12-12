@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.generateCallSingleArgument
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
+import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 class PrimitiveNumberUntilRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>) :
@@ -32,5 +35,20 @@ class PrimitiveNumberUntilRangeValue(rangeCall: ResolvedCall<out CallableDescrip
             ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
 
     override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
+            createConstBoundedForInReversedUntilGenerator(codegen, forExpression) ?:
             ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(codegen, forExpression, getBoundedValue(codegen))
+
+    private fun createConstBoundedForInReversedUntilGenerator(
+            codegen: ExpressionCodegen,
+            forExpression: KtForExpression
+    ): ForLoopGenerator? {
+        val endExpression = rangeCall.getReceiverExpression() ?: return null
+        return createConstBoundedForLoopGeneratorOrNull(
+                codegen, forExpression,
+                codegen.generateCallSingleArgument(rangeCall),
+                endExpression,
+                step = -1,
+                isStartInclusive = false
+        )
+    }
 }
