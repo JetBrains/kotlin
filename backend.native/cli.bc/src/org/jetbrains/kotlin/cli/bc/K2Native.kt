@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.config.kotlinSourceRoots
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.TargetManager
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -158,7 +159,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     companion object {
         @JvmStatic fun main(args: Array<String>) {
             profile("Total compiler main()") {
-                CLITool.doMain(K2Native(), args)
+                val options = args.flatMap {
+                    if (it.startsWith('@')) {
+                        File(it.substring(1)).readStrings()
+                    }
+                    else listOf(it)
+                }
+                CLITool.doMain(K2Native(), options.toTypedArray())
             }
         }
     }
