@@ -52,13 +52,12 @@ class KotlinJsDcePlugin : Plugin<Project> {
             val outputDir = File(File(project.buildDir, DEFAULT_OUT_DIR), sourceSet.name)
 
             val configuration = project.configurations.findByName(sourceSet.compileConfigurationName)!!
-            val dceInputTrees = listOf(project.fileTree(kotlinTask.outputFile)) + configuration.map { project.fileTree(it) }
-            val dceInputFiles = dceInputTrees.reduce { acc: FileTree, tree -> acc + tree }
+            val dceInputTree = project.fileTree(kotlinTask.outputFile)
 
             with (dceTask) {
-                classpath = sourceSet.compileClasspath
+                classpath = configuration
                 destinationDir = dceTask.dceOptions.outputDirectory?.let { File(it) } ?: outputDir
-                source(dceInputFiles)
+                source(dceInputTree)
             }
         }
     }
