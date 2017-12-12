@@ -2683,6 +2683,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceToWithInfixFormInspection"
+                     displayName="Replace ’to’ with infix form"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplacePutWithAssignmentInspection"
                      displayName="map.put() can be converted to assignment"
                      groupPath="Kotlin"
@@ -2700,8 +2709,7 @@
                      level="WARNING"
                      language="kotlin"
     />
-
-
+    
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SortModifiersInspection"
                      displayName="Non-canonical modifier order"
                      groupPath="Kotlin"
