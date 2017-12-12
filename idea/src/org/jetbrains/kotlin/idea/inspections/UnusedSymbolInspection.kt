@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -206,7 +207,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
 
         val useScope = declaration.useScope
-        if (useScope is GlobalSearchScope) {
+        val restrictedScope = if (useScope is GlobalSearchScope) {
             var zeroOccurrences = true
 
             for (name in listOf(declaration.name) + declaration.getAccessorNames() + listOfNotNull(declaration.getClassNameForCompanionObject())) {
@@ -226,13 +227,15 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                     return false
                 }
             }
+            KotlinSourceFilterScope.projectSources(useScope, declaration.project)
         }
+        else useScope
 
         return (declaration is KtObjectDeclaration && declaration.isCompanion() &&
                 declaration.getBody()?.declarations?.isNotEmpty() == true) ||
-               hasReferences(declaration, descriptor, useScope) ||
-               hasOverrides(declaration, useScope) ||
-               hasFakeOverrides(declaration, useScope) ||
+               hasReferences(declaration, descriptor, restrictedScope) ||
+               hasOverrides(declaration, restrictedScope) ||
+               hasFakeOverrides(declaration, restrictedScope) ||
                isPlatformImplementation(declaration) ||
                hasPlatformImplementations(declaration, descriptor)
     }
