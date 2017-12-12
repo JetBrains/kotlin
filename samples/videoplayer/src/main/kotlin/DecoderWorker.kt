@@ -43,7 +43,7 @@ private fun Int.checkError() {
     if (this != 0) {
         val buffer = ByteArray(1024)
         av_strerror(this, buffer.refTo(0), buffer.size.signExtend())
-        throw Error("AVError: ${kotlin.text.fromUtf8Array(buffer, 0, buffer.size)}")
+        throw Error("AVError: ${buffer.stringFromUtf8()}")
     }
 }
 

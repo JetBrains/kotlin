@@ -150,7 +150,7 @@ namespace internal
 
     /// get_sequence_x functions decode utf-8 sequences of the length x
     template <typename octet_iterator>
-    utf_error get_sequence_1(octet_iterator& it, octet_iterator end, uint32_t& code_point)
+    utf_error get_sequence_1(octet_iterator& it, const octet_iterator end, uint32_t& code_point)
     {
         if (it == end)
             return NOT_ENOUGH_ROOM;
@@ -161,7 +161,7 @@ namespace internal
     }
 
     template <typename octet_iterator>
-    utf_error get_sequence_2(octet_iterator& it, octet_iterator end, uint32_t& code_point)
+    utf_error get_sequence_2(octet_iterator& it, const octet_iterator end, uint32_t& code_point)
     {
         if (it == end) 
             return NOT_ENOUGH_ROOM;
@@ -176,7 +176,7 @@ namespace internal
     }
 
     template <typename octet_iterator>
-    utf_error get_sequence_3(octet_iterator& it, octet_iterator end, uint32_t& code_point)
+    utf_error get_sequence_3(octet_iterator& it, const octet_iterator end, uint32_t& code_point)
     {
         if (it == end)
             return NOT_ENOUGH_ROOM;
@@ -195,7 +195,7 @@ namespace internal
     }
 
     template <typename octet_iterator>
-    utf_error get_sequence_4(octet_iterator& it, octet_iterator end, uint32_t& code_point)
+    utf_error get_sequence_4(octet_iterator& it, const octet_iterator end, uint32_t& code_point)
     {
         if (it == end)
            return NOT_ENOUGH_ROOM;
@@ -220,7 +220,7 @@ namespace internal
     #undef UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR
 
     template <typename octet_iterator>
-    utf_error validate_next(octet_iterator& it, octet_iterator end, uint32_t& code_point)
+    utf_error validate_next(octet_iterator& it, const octet_iterator end, uint32_t& code_point)
     {
         // Save the original value of it so we can go back in case of failure
         // Of course, it does not make much sense with i.e. stream iterators

@@ -116,6 +116,20 @@ namespace utf8
                 utf8::unchecked::next(it);
         }
 
+        /**
+         * Calculates a count of characters needed to represent the string from first to last in UTF-16
+         * taking into account surrogate symbols. Doesn't validate the input.
+         */
+        template<typename octet_iterator>
+        uint32_t utf16_length(octet_iterator first, const octet_iterator last) {
+            uint32_t dist = 0;
+            while (first < last) {
+                uint32_t cp = utf8::unchecked::next(first);
+                dist += (cp > 0xffff) ? 2 : 1;
+            }
+            return dist;
+        }
+
         template <typename octet_iterator>
         typename std::iterator_traits<octet_iterator>::difference_type
         distance (octet_iterator first, octet_iterator last)
@@ -127,7 +141,7 @@ namespace utf8
         }
 
         template <typename u16bit_iterator, typename octet_iterator>
-        octet_iterator utf16to8 (u16bit_iterator start, u16bit_iterator end, octet_iterator result)
+        octet_iterator utf16to8 (u16bit_iterator start, const u16bit_iterator end, octet_iterator result)
         {       
             while (start != end) {
                 uint32_t cp = utf8::internal::mask16(*start++);
@@ -142,7 +156,7 @@ namespace utf8
         }
 
         template <typename u16bit_iterator, typename octet_iterator>
-        u16bit_iterator utf8to16 (octet_iterator start, octet_iterator end, u16bit_iterator result)
+        u16bit_iterator utf8to16 (octet_iterator start, const octet_iterator end, u16bit_iterator result)
         {
             while (start < end) {
                 uint32_t cp = utf8::unchecked::next(start);

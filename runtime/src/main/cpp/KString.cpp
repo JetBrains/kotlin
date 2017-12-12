@@ -37,15 +37,54 @@
 
 namespace {
 
-OBJ_GETTER(utf8ToUtf16, const char* rawString, size_t rawStringLength) {
-  uint32_t charCount = utf8::unchecked::distance(rawString, rawString + rawStringLength);
-  ArrayHeader* result = AllocArrayInstance(
-    theStringTypeInfo, charCount, OBJ_RESULT)->array();
+typedef std::back_insert_iterator<KStdString> KStdStringInserter;
+typedef KChar* utf8to16(const char*, const char*, KChar*);
+typedef KStdStringInserter utf16to8(const KChar*,const KChar*, KStdStringInserter);
+
+KStdStringInserter utf16toUtf8OrThrow(const KChar* start, const KChar* end, KStdStringInserter result) {
+  TRY_CATCH(result = utf8::utf16to8(start, end, result),
+            result = utf8::unchecked::utf16to8(start, end, result),
+            ThrowIllegalCharacterConversionException());
+  return result;
+}
+
+template<utf8to16 conversion>
+OBJ_GETTER(utf8ToUtf16Impl, const char* rawString, const char* end, uint32_t charCount) {
+  ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, charCount, OBJ_RESULT)->array();
   KChar* rawResult = CharArrayAddressOfElementAt(result, 0);
-  auto convertResult =
-      utf8::unchecked::utf8to16(rawString, rawString + rawStringLength, rawResult);
+  auto convertResult = conversion(rawString, end, rawResult);
   RETURN_OBJ(result->obj());
 }
+
+template<utf16to8 conversion>
+OBJ_GETTER(utf16ToUtf8Impl, KString thiz, KInt start, KInt size) {
+  RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
+  if (start < 0 || size < 0 || size > thiz->count_ - start) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+  const KChar* utf16 = CharArrayAddressOfElementAt(thiz, start);
+  KStdString utf8;
+  conversion(utf16, utf16 + size, back_inserter(utf8));
+  ArrayHeader* result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size(), OBJ_RESULT)->array();
+  ::memcpy(ByteArrayAddressOfElementAt(result, 0), utf8.c_str(), utf8.size());
+  RETURN_OBJ(result->obj());
+}
+
+OBJ_GETTER(utf8ToUtf16OrThrow, const char* rawString, size_t rawStringLength) {
+  const char* end = rawString + rawStringLength;
+  uint32_t charCount;
+  TRY_CATCH(charCount = utf8::utf16_length(rawString, end),
+            charCount = utf8::unchecked::utf16_length(rawString, end),
+            ThrowIllegalCharacterConversionException());
+  RETURN_RESULT_OF(utf8ToUtf16Impl<utf8::unchecked::utf8to16>, rawString, end, charCount);
+}
+
+OBJ_GETTER(utf8ToUtf16, const char* rawString, size_t rawStringLength) {
+  const char* end = rawString + rawStringLength;
+  uint32_t charCount = utf8::with_replacement::utf16_length(rawString, end);
+  RETURN_RESULT_OF(utf8ToUtf16Impl<utf8::with_replacement::utf8to16>, rawString, end, charCount);
+}
+
 
 // Case conversion is derived work from Apache Harmony.
 // Unicode 3.0.1 (same as Unicode 3.0.0)
@@ -731,32 +770,37 @@ KInt Kotlin_String_getStringLength(KString thiz) {
   return thiz->count_;
 }
 
-OBJ_GETTER(Kotlin_String_fromUtf8Array, KConstRef thiz, KInt start, KInt size) {
+const char* byteArrayAsCString(KConstRef thiz, KInt start, KInt size) {
   const ArrayHeader* array = thiz->array();
   RuntimeAssert(array->type_info() == theByteArrayTypeInfo, "Must use a byte array");
   if (start < 0 || size < 0 || size > array->count_ - start) {
     ThrowArrayIndexOutOfBoundsException();
   }
+  return reinterpret_cast<const char*>(ByteArrayAddressOfElementAt(array, start));
+}
+
+OBJ_GETTER(Kotlin_ByteArray_stringFromUtf8OrThrow, KConstRef thiz, KInt start, KInt size) {
+  const char* rawString = byteArrayAsCString(thiz, start, size);
   if (size == 0) {
     RETURN_RESULT_OF0(TheEmptyString);
   }
-  const char* rawString =
-    reinterpret_cast<const char*>(ByteArrayAddressOfElementAt(array, start));
+  RETURN_RESULT_OF(utf8ToUtf16OrThrow, rawString, size);
+}
+
+OBJ_GETTER(Kotlin_ByteArray_stringFromUtf8, KConstRef thiz, KInt start, KInt size) {
+  const char* rawString = byteArrayAsCString(thiz, start, size);
+  if (size == 0) {
+    RETURN_RESULT_OF0(TheEmptyString);
+  }
   RETURN_RESULT_OF(utf8ToUtf16, rawString, size);
 }
 
-OBJ_GETTER(Kotlin_String_toUtf8Array, KString thiz, KInt start, KInt size) {
-  RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
-  if (start < 0 || size < 0 || size > thiz->count_ - start) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  const KChar* utf16 = CharArrayAddressOfElementAt(thiz, start);
-  KStdString utf8;
-  utf8::unchecked::utf16to8(utf16, utf16 + size, back_inserter(utf8));
-  ArrayHeader* result = AllocArrayInstance(
-      theByteArrayTypeInfo, utf8.size(), OBJ_RESULT)->array();
-  ::memcpy(ByteArrayAddressOfElementAt(result, 0), utf8.c_str(), utf8.size());
-  RETURN_OBJ(result->obj());
+OBJ_GETTER(Kotlin_String_toUtf8, KString thiz, KInt start, KInt size) {
+  RETURN_RESULT_OF(utf16ToUtf8Impl<utf8::with_replacement::utf16to8>, thiz, start, size);
+}
+
+OBJ_GETTER(Kotlin_String_toUtf8OrThrow, KString thiz, KInt start, KInt size) {
+  RETURN_RESULT_OF(utf16ToUtf8Impl<utf16toUtf8OrThrow>, thiz, start, size);
 }
 
 OBJ_GETTER(Kotlin_String_fromCharArray, KConstRef thiz, KInt start, KInt size) {

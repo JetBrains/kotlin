@@ -1520,6 +1520,13 @@ task chars0(type: RunKonanTest) {
     expectedExitStatus = 0
 }
 
+
+task utf8(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    goldValue = "Hello\nПривет\n\uD800\uDC00\n\n\uFFFD\uFFFD\n\uFFFD12\n\uFFFD12\n12\uFFFD\n\uD83D\uDE25\n"
+    source = "runtime/text/utf8.kt"
+}
+
 task catch1(type: RunKonanTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "Before\nCaught Throwable\nDone\n"

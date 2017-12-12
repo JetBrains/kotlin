@@ -52,6 +52,16 @@ uint64_t getTimeMillis();
 uint64_t getTimeMicros();
 uint64_t getTimeNanos();
 
+#if KONAN_NO_EXCEPTIONS
+#define TRY_CATCH(tryAction, actionWithoutExceptions, catchAction) actionWithoutExceptions;
+#else
+#define TRY_CATCH(tryAction, actionWithoutExceptions, catchAction) \
+do {                          \
+  try { tryAction; }          \
+  catch(...) { catchAction; } \
+} while(0)
+#endif
+
 }  // namespace konan
 
 #endif  // RUNTIME_PORTING_H

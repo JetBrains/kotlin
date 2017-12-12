@@ -31,7 +31,7 @@ fun main(args: Array<String>) {
     memScoped {
 
         val buffer = ByteArray(1024)
-        val prefixBuffer = kotlin.text.toUtf8Array("echo: ", 0, 6)
+        val prefixBuffer = "echo: ".toUtf8()
         val serverAddr = alloc<sockaddr_in>()
 
         val listenFd = socket(AF_INET, SOCK_STREAM, 0)

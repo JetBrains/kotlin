@@ -217,3 +217,8 @@ public open class NumberFormatException : IllegalArgumentException {
 
     constructor(s: String) : super(s) {}
 }
+
+public open class IllegalCharacterConversionException : IllegalArgumentException {
+    constructor(): super()
+    constructor(s: String) : super(s)
+}
