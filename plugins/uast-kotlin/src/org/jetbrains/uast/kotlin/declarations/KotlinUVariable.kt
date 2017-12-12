@@ -79,12 +79,15 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
 
     override val annotations by lz {
         val sourcePsi = sourcePsi ?: return@lz psi.annotations.map { WrappedUAnnotation(it, this) }
-        SmartList<UAnnotation>(KotlinNullabilityUAnnotation(sourcePsi, this)).also { annotations ->
-            (sourcePsi as? KtModifierListOwner)?.annotationEntries?.
-                    filter { acceptsAnnotationTarget(it.useSiteTarget?.getAnnotationUseSiteTarget()) }?.
+        val annotations = SmartList<UAnnotation>(KotlinNullabilityUAnnotation(sourcePsi, this))
+        if (sourcePsi is KtModifierListOwner) {
+            sourcePsi.annotationEntries.
+                    filter { acceptsAnnotationTarget(it.useSiteTarget?.getAnnotationUseSiteTarget()) }.
                     mapTo(annotations) { KotlinUAnnotation(it, this) }
         }
+        annotations
     }
+
 
     abstract protected fun acceptsAnnotationTarget(target: AnnotationUseSiteTarget?): Boolean
 
@@ -168,7 +171,7 @@ open class KotlinUParameter(
 
     private val isLightConstructorParam by lz { psi.getParentOfType<PsiMethod>(true)?.isConstructor }
 
-    private val isKtConstructorParam by lz { sourcePsi?.getParentOfType<KtCallableDeclaration>(true)?.let { it is KtPrimaryConstructor } }
+    private val isKtConstructorParam by lz { sourcePsi?.getParentOfType<KtCallableDeclaration>(true)?.let { it is KtConstructor<*> } }
 
     override fun acceptsAnnotationTarget(target: AnnotationUseSiteTarget?): Boolean {
         if (sourcePsi !is KtParameter) return false
@@ -227,7 +230,7 @@ class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override va
         get() = when (nullability) {
             TypeNullability.NOT_NULL -> NotNull::class.qualifiedName
             TypeNullability.NULLABLE -> Nullable::class.qualifiedName
-            TypeNullability.FLEXIBLE -> "FlexibleNullability"
+            TypeNullability.FLEXIBLE -> null
             null -> null
         }
 
