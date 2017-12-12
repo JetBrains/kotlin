@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
@@ -370,8 +371,15 @@ abstract class KotlinCommonBlock(
         val nodePsi = node.psi
 
         when {
-            elementType === KtNodeTypes.VALUE_ARGUMENT_LIST ->
-                return getWrappingStrategyForItemList(commonSettings.CALL_PARAMETERS_WRAP, KtNodeTypes.VALUE_ARGUMENT)
+            elementType === KtNodeTypes.VALUE_ARGUMENT_LIST -> {
+                val wrapSetting = commonSettings.CALL_PARAMETERS_WRAP
+                if ((wrapSetting == CommonCodeStyleSettings.WRAP_AS_NEEDED || wrapSetting == CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM) &&
+                    !needWrapArgumentList(nodePsi)
+                ) {
+                    return WrappingStrategy.NoWrapping
+                }
+                return getWrappingStrategyForItemList(wrapSetting, KtNodeTypes.VALUE_ARGUMENT)
+            }
 
             elementType === KtNodeTypes.VALUE_PARAMETER_LIST -> {
                 if (parentElementType === KtNodeTypes.FUN ||
@@ -510,6 +518,11 @@ private fun getWrapAfterAnnotation(childElement: ASTNode, wrapType: Int): Wrap? 
         }
     }
     return null
+}
+
+fun needWrapArgumentList(psi: PsiElement): Boolean {
+    val args = (psi as? KtValueArgumentList)?.arguments
+    return args?.singleOrNull()?.getArgumentExpression() !is KtObjectLiteralExpression
 }
 
 private val INDENT_RULES = arrayOf<NodeIndentStrategy>(

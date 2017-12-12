@@ -159,6 +159,17 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                                                  false, 0)
             }
 
+            inPosition(parent = VALUE_ARGUMENT_LIST, left = LPAR).customRule { parent, _, _ ->
+                if (kotlinCommonSettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE && needWrapArgumentList(parent.node.psi)) {
+                    Spacing.createDependentLFSpacing(0, 0,
+                                                     parent.textRange,
+                                                     commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                                                     commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+                }
+                else {
+                    createSpacing(0)
+                }
+            }
         }
 
         simple {
@@ -277,7 +288,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             beforeInside(RPAR, VALUE_PARAMETER_LIST).spaces(0, kotlinCommonSettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE)
             afterInside(LT, TYPE_PARAMETER_LIST).spaces(0)
             beforeInside(GT, TYPE_PARAMETER_LIST).spaces(0)
-            afterInside(LPAR, VALUE_ARGUMENT_LIST).spaces(0, kotlinCommonSettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE)
             beforeInside(RPAR, VALUE_ARGUMENT_LIST).spaces(0, kotlinCommonSettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE)
             afterInside(LT, TYPE_ARGUMENT_LIST).spaces(0)
             beforeInside(GT, TYPE_ARGUMENT_LIST).spaces(0)
