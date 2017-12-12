@@ -123,12 +123,6 @@ val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
             .toMap()
 }
 
-private fun Module.findImplementedModuleName(modelsProvider: IdeModifiableModelsProvider): String? {
-    val facetModel = modelsProvider.getModifiableFacetModel(this)
-    val facet = facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
-    return facet?.configuration?.settings?.implementedModuleName
-}
-
 private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider): List<Module> {
     return modelsProvider.modules.filter { module ->
         module.findImplementedModuleName(modelsProvider) == name
@@ -144,11 +138,11 @@ val Module.implementingModules: List<Module>
     })
 
 private fun Module.getModuleInfo(baseModuleSourceInfo: ModuleSourceInfo): ModuleSourceInfo? =
-        when (baseModuleSourceInfo) {
-            is ModuleProductionSourceInfo -> productionSourceInfo()
-            is ModuleTestSourceInfo -> testSourceInfo()
-            else -> null
-        }
+    when (baseModuleSourceInfo) {
+        is ModuleProductionSourceInfo -> productionSourceInfo()
+        is ModuleTestSourceInfo -> testSourceInfo()
+        else -> null
+    }
 
 private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInfo): List<ModuleSourceInfo> {
     val modelsProvider = IdeModifiableModelsProviderImpl(project)
@@ -176,14 +170,11 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
 val ModuleDescriptor.implementedDescriptor: ModuleDescriptor?
     get() {
         val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return null
-        val module = moduleSourceInfo.module
 
-        val modelsProvider = IdeModifiableModelsProviderImpl(module.project)
-        val implementedModuleName = module.findImplementedModuleName(modelsProvider)
-        val implementedModule = implementedModuleName?.let { modelsProvider.findIdeModule(it) }
-        val implementedModuleInfo = implementedModule?.getModuleInfo(moduleSourceInfo)
+        val implementedModuleInfo = moduleSourceInfo.expectedBy
         return implementedModuleInfo?.let {
-            KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
+            KotlinCacheService.getInstance(moduleSourceInfo.module.project)
+                .getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
         }
     }
 

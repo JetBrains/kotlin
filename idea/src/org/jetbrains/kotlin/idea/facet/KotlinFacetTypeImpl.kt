@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.facet.Facet
-import com.intellij.facet.FacetType
-import com.intellij.facet.FacetTypeId
-import com.intellij.facet.FacetTypeRegistry
 import com.intellij.facet.ui.FacetEditor
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
@@ -28,21 +25,13 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinIcons
 import javax.swing.Icon
 
-class KotlinFacetType : FacetType<KotlinFacet, KotlinFacetConfiguration>(TYPE_ID, ID, NAME) {
-    companion object {
-        val TYPE_ID = FacetTypeId<KotlinFacet>("kotlin-language")
-        val ID = "kotlin-language"
-        val NAME = "Kotlin"
-
-        val INSTANCE: KotlinFacetType
-            get() = FacetTypeRegistry.getInstance().findFacetType(TYPE_ID) as KotlinFacetType
-    }
+class KotlinFacetTypeImpl : KotlinFacetType<KotlinFacetConfiguration>() {
 
     override fun isSuitableModuleType(moduleType: ModuleType<*>) = moduleType is JavaModuleType
 
     override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
 
-    override fun createDefaultConfiguration() = KotlinFacetConfiguration()
+    override fun createDefaultConfiguration() = KotlinFacetConfigurationImpl()
 
     override fun createFacet(
             module: Module,

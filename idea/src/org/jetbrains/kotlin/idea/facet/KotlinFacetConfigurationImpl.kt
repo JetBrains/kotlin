@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.facet
 
-import com.intellij.facet.FacetConfiguration
 import com.intellij.facet.ui.FacetEditorContext
 import com.intellij.facet.ui.FacetEditorTab
 import com.intellij.facet.ui.FacetValidatorsManager
@@ -25,8 +24,8 @@ import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.deserializeFacetSettings
 import org.jetbrains.kotlin.config.serializeFacetSettings
 
-class KotlinFacetConfiguration : FacetConfiguration {
-    var settings = KotlinFacetSettings()
+class KotlinFacetConfigurationImpl : KotlinFacetConfiguration {
+    override var settings = KotlinFacetSettings()
         private set
 
     @Suppress("OverridingDeprecatedMember")
