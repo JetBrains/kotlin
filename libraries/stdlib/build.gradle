@@ -63,11 +63,6 @@ configurations {
     builtins
 }
 
-task originalStdlibJar(type: Jar) {
-    baseName = 'original-kotlin-stdlib'
-    from sourceSets.main.output
-}
-
 jar {
     manifestAttributes(manifest, project, 'Main', true)
     from("${rootDir}/dist/builtins")
