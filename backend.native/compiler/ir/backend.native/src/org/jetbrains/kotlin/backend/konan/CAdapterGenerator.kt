@@ -317,10 +317,10 @@ internal class CAdapterGenerator(val context: Context,
         ExportedElement(ElementKind.PROPERTY, scopes.last(), declaration.descriptor, this)
     }
 
-    override fun visitFunction(function: IrFunction) {
-        val descriptor = function.descriptor
+    override fun visitFunction(declaration: IrFunction) {
+        val descriptor = declaration.descriptor
         if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal) return
-        ExportedElement(ElementKind.FUNCTION, scopes.last(), function.descriptor, this)
+        ExportedElement(ElementKind.FUNCTION, scopes.last(), declaration.descriptor, this)
     }
 
     override fun visitClass(declaration: IrClass) {

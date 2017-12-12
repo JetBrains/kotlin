@@ -22,8 +22,6 @@ import java.lang.ProcessBuilder.Redirect
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.backend.konan.util.listConstructor
-import org.jetbrains.kotlin.backend.konan.util.If
 
 typealias BitcodeFile = String
 typealias ObjectFile = String
@@ -268,8 +266,6 @@ internal open class WasmPlatform(distribution: Distribution)
 
             private fun javaScriptLink(jsFiles: List<String>, executable: String): String {
                 val linkedJavaScript = File("$executable.js")
-
-                val jsLibsExceptLauncher = jsFiles.filter { it != "launcher.js" }.map { it.removeSuffix(".js") }
 
                 val linkerStub = "var konan = { libraries: [] };\n"
 

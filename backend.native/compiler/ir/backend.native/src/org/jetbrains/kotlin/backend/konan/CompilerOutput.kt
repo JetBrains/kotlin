@@ -38,7 +38,6 @@ internal fun produceOutput(context: Context) {
         CompilerOutputKind.DYNAMIC,
         CompilerOutputKind.FRAMEWORK,
         CompilerOutputKind.PROGRAM -> {
-            val program = context.config.outputName
             val output = tempFiles.nativeBinaryFileName
             context.bitcodeFileName = output
 
@@ -46,7 +45,6 @@ internal fun produceOutput(context: Context) {
                 if (produce == CompilerOutputKind.DYNAMIC) {
                     produceCAdapterBitcode(
                         context.config.clang, 
-                        tempFiles.cAdapterHeaderName,
                         tempFiles.cAdapterCppName, 
                         tempFiles.cAdapterBitcodeName)
                     listOf(tempFiles.cAdapterBitcodeName)

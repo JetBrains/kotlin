@@ -1009,7 +1009,7 @@ internal class IrDeserializer(val context: Context,
         return  IrWhenImpl(start, end, type, null, branches)
     }
 
-    fun deserializeLoop(proto: KonanIr.Loop, start: Int, end: Int, type: KotlinType, loop: IrLoopBase): IrLoopBase {
+    fun deserializeLoop(proto: KonanIr.Loop, loop: IrLoopBase): IrLoopBase {
         val loopId = proto.getLoopId()
         loopIndex.getOrPut(loopId){loop}
 
@@ -1028,7 +1028,7 @@ internal class IrDeserializer(val context: Context,
         // we create the loop before deserializing the body, so that 
         // IrBreak statements have something to put into 'loop' field.
         val loop = IrDoWhileLoopImpl(start, end, type, null)
-        deserializeLoop(proto.loop, start, end, type, loop)
+        deserializeLoop(proto.loop, loop)
         return loop
     }
 
@@ -1036,7 +1036,7 @@ internal class IrDeserializer(val context: Context,
         // we create the loop before deserializing the body, so that 
         // IrBreak statements have something to put into 'loop' field.
         val loop = IrWhileLoopImpl(start, end, type, null)
-        deserializeLoop(proto.loop, start, end, type, loop)
+        deserializeLoop(proto.loop, loop)
         return loop
     }
 

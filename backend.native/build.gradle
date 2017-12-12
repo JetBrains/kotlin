@@ -92,7 +92,7 @@ task renamePackage(type: Copy) {
     from 'build/generated/source/proto/compiler/java'
     into 'build/renamed/source/proto/compiler/java'
     filter {line -> line.replaceAll("com.google.protobuf", "org.jetbrains.kotlin.protobuf")}
-    outputs.files('build/renamed')
+    outputs.dir('build/renamed')
 }
 
 kotlinNativeInterop {
@@ -197,7 +197,7 @@ targetList.each { target ->
         inputs.dir(project(':runtime').file('src/main/kotlin'))
         inputs.dir(project(':Interop:Runtime').file('src/main/kotlin'))
         inputs.dir(project(':Interop:Runtime').file('src/native/kotlin'))
-        outputs.file(project(':runtime').file("build/${target}Stdlib"))
+        outputs.dir(project(':runtime').file("build/${target}Stdlib"))
 
         dependsOn ":runtime:${target}Runtime"
     }
@@ -212,7 +212,7 @@ targetList.each { target ->
                 project(':runtime').file('src/launcher/kotlin')]
 
         inputs.dir(project(':runtime').file('src/launcher/kotlin'))
-        outputs.file(project(':runtime').file("build/${target}Start"))
+        outputs.dir(project(':runtime').file("build/${target}Start"))
 
         dependsOn ":runtime:${target}Runtime", "${target}Stdlib"
     }
