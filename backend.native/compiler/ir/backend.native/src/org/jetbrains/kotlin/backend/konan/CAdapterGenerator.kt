@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.konan.file.*
+import org.jetbrains.kotlin.konan.target.*
 
 private enum class ScopeKind {
     TOP,
@@ -292,7 +293,7 @@ private class ExportedElement(val kind: ElementKind,
 internal class CAdapterGenerator(val context: Context,
                                  internal val codegen: CodeGenerator) : IrElementVisitorVoid {
     private val scopes = mutableListOf<ExportedElementScope>()
-    internal val prefix: String = context.config.moduleId
+    internal val prefix = context.config.moduleId
     private lateinit var outputStreamWriter: PrintWriter
 
     override fun visitElement(element: IrElement) {
@@ -429,6 +430,8 @@ internal class CAdapterGenerator(val context: Context,
         val headerFile = context.config.tempFiles.cAdapterHeader
         outputStreamWriter = headerFile.printWriter()
 
+        val exportedSymbol = "${prefix}_symbols"
+
         output("#ifndef KONAN_${prefix.toUpperCase()}_H")
         output("#define KONAN_${prefix.toUpperCase()}_H")
         // TODO: use namespace for C++ case?
@@ -463,7 +466,7 @@ internal class CAdapterGenerator(val context: Context,
         makeScopeDefinitions(top, DefinitionKind.C_HEADER_STRUCT, 1)
         output("} ${prefix}_ExportedSymbols;")
 
-        output("extern ${prefix}_ExportedSymbols* ${prefix}_symbols(void);")
+        output("extern ${prefix}_ExportedSymbols* $exportedSymbol(void);")
         output("""
         #ifdef __cplusplus
         }  /* extern "C" */
@@ -536,8 +539,17 @@ internal class CAdapterGenerator(val context: Context,
         output(".IsInstance = IsInstanceImpl,", 1)
         makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, 1)
         output("};")
-        output("RUNTIME_USED ${prefix}_ExportedSymbols* ${prefix}_symbols(void) { return &__konan_symbols;}")
+        output("RUNTIME_USED ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
         outputStreamWriter.close()
+
+        if (context.config.targetManager.target.family == Family.WINDOWS) {
+            outputStreamWriter = context.config.tempFiles
+                .cAdapterDef
+                .printWriter()
+            output("EXPORTS")
+            output(exportedSymbol)
+            outputStreamWriter.close()
+        }
     }
 
     private val simpleNameMapping = mapOf(
