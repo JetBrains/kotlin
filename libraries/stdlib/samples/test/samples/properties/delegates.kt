@@ -20,48 +20,48 @@ import samples.*
 import kotlin.test.*
 
 class Delegates {
-	@Sample
-	fun vetoableDelegate() {
-		var max: Int by Delegates.vetoable(0) {
-	        property, oldValue, newValue -> newValue > oldValue
-	    }
+    @Sample
+    fun vetoableDelegate() {
+        var max: Int by Delegates.vetoable(0) { property, oldValue, newValue ->
+            newValue > oldValue
+        }
 
-	    assertPrints(max, "0")
-	    
-	    max = 10
-	    assertPrints(max, "10")
-	    
-	    max = 5
-		assertPrints(max, "10")
-	}
+        assertPrints(max, "0")
 
-	@Sample
-	fun notNullDelegate() {
-		var max: Int by Delegates.notNull()
+        max = 10
+        assertPrints(max, "10")
 
-		max = 10
-		assertPrints(10, max)
-	}
+        max = 5
+        assertPrints(max, "10")
+    }
 
-	@Sample
-	fun notNullAccessError() {
-		var max: Int by Delegates.notNull()
+    @Sample
+    fun notNullDelegate() {
+        var max: Int by Delegates.notNull()
 
-		assertFailsWith<IllegalStateException> {  println(max) }
-	}
+        max = 10
+        assertPrints(10, max)
+    }
 
-	@Sample
-	fun observableDelegate() {
-		var observed: Boolean = false
-		var max: Int by Delegates.observable(0) {
-			property, oldValue, newValue -> observed = true
-		}
+    @Sample
+    fun notNullAccessError() {
+        var max: Int by Delegates.notNull()
 
-		assertPrints(max, "0")
-		assertPrints(observed, "false")
+        assertFailsWith<IllegalStateException> { println(max) }
+    }
 
-		max = 10
-		assertPrints(max, "10")
-		assertPrints(observed, "true")
-	}
+    @Sample
+    fun observableDelegate() {
+        var observed: Boolean = false
+        var max: Int by Delegates.observable(0) { property, oldValue, newValue ->
+            observed = true
+        }
+
+        assertPrints(max, "0")
+        assertPrints(observed, "false")
+
+        max = 10
+        assertPrints(max, "10")
+        assertPrints(observed, "true")
+    }
 }
