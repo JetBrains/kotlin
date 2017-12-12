@@ -671,6 +671,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
                     iv.areturn(componentType);
                 }
+
+                @Override
+                public boolean skipNotNullAssertionsForParameters() {
+                    return false;
+                }
             });
         }
 
@@ -717,6 +722,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorAsmMethod.getDescriptor(), false);
 
                     iv.areturn(thisDescriptorType);
+                }
+
+                @Override
+                public boolean skipNotNullAssertionsForParameters() {
+                    return false;
                 }
 
                 private void pushCapturedFieldsOnStack(InstructionAdapter iv, MutableClosure closure) {

@@ -558,7 +558,7 @@ public class FunctionCodegen {
             mv.visitLabel(methodEntry);
             context.setMethodStartLabel(methodEntry);
 
-            if (!KotlinTypeMapper.isAccessor(functionDescriptor)) {
+            if (!strategy.skipNotNullAssertionsForParameters()) {
                 genNotNullAssertionsForParameters(new InstructionAdapter(mv), parentCodegen.state, functionDescriptor, frameMap);
             }
 
@@ -1382,6 +1382,11 @@ public class FunctionCodegen {
                         stackValue.put(delegateMethod.getReturnType(), iv);
 
                         iv.areturn(delegateMethod.getReturnType());
+                    }
+
+                    @Override
+                    public boolean skipNotNullAssertionsForParameters() {
+                        return false;
                     }
                 }
         );

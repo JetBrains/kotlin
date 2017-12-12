@@ -34,6 +34,8 @@ public abstract class FunctionGenerationStrategy {
             @NotNull MemberCodegen<?> parentCodegen
     );
 
+    public abstract boolean skipNotNullAssertionsForParameters();
+
     public MethodVisitor wrapMethodVisitor(@NotNull MethodVisitor mv, int access, @NotNull String name, @NotNull String desc) {
         return mv;
     }
@@ -74,6 +76,12 @@ public abstract class FunctionGenerationStrategy {
         ) {
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, signature.getReturnType(), context, state, parentCodegen);
             doGenerateBody(codegen, signature);
+        }
+
+        @Override
+        public boolean skipNotNullAssertionsForParameters() {
+            // Assume the strategy injects non-null checks for parameters by default
+            return false;
         }
 
         public abstract void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature);
