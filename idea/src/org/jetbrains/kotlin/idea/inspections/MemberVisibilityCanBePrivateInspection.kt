@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -97,18 +98,18 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
         val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
         val useScope = declaration.useScope
         val name = declaration.name ?: return false
-        if (useScope is GlobalSearchScope) {
+        val restrictedScope = if (useScope is GlobalSearchScope) {
             when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope, null, null)) {
                 PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES -> return false
                 PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES -> return false
-                PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES -> {
-                }
+                PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES -> KotlinSourceFilterScope.projectSources(useScope, declaration.project)
             }
         }
+        else useScope
 
         var otherUsageFound = false
         var inClassUsageFound = false
-        ReferencesSearch.search(declaration, useScope).forEach(Processor<PsiReference> {
+        ReferencesSearch.search(declaration, restrictedScope).forEach(Processor<PsiReference> {
             val usage = it.element
             if (classOrObject != usage.getParentOfType<KtClassOrObject>(false)) {
                 otherUsageFound = true
