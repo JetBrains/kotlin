@@ -156,7 +156,7 @@ clauses. For example:
 
 ```
 staticLibraries = libfoo.a 
-libraryPath = /opt/local/lib /usr/local/opt/curl/lib
+libraryPaths = /opt/local/lib /usr/local/opt/curl/lib
 ```
 
 When given the above snippet the `cinterop` tool will search `libfoo.a` in 
