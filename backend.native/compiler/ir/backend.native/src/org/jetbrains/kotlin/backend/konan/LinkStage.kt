@@ -231,11 +231,12 @@ internal open class WasmPlatform(distribution: Distribution)
         = emptyList<String>()
 
     override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
-
         // No link stage for WASM yet, just give '.wasm' as output.
-        return mutableListOf(
-          *(if (TargetManager.host == KonanTarget.MINGW) arrayOf("${System.getenv("SystemRoot")}/System32/cmd.exe", "/c", "copy") else arrayOf("/bin/cp")),
-          objectFiles.single(), executable)
+        val src = File(objectFiles.single())
+        val dst = File(executable)
+        src.recursiveCopyTo(dst)
+
+        return listOf()
     }
 }
 
@@ -372,7 +373,15 @@ internal class LinkStage(val context: Context) {
             executable = dylibPath.absolutePath
         }
 
-        val linkCommand = platform.linkCommand(objectFiles, executable, optimize, debug, dynamic) +
+        // Hack that removes using OS command line environment for copying files.
+        val toolExecution = platform.linkCommand(objectFiles, executable, optimize, debug, dynamic)
+        if (toolExecution.isEmpty() && platform is WasmPlatform) {
+            JavaScriptLinker(includedBinaries.filter{it.isJavaScript}, executable)
+            return executable
+        }
+
+        assert(toolExecution.isNotEmpty())
+        val linkCommand = toolExecution +
                 platform.targetLibffi +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                 entryPointSelector +
@@ -391,9 +400,6 @@ internal class LinkStage(val context: Context) {
             if (context.phase?.verbose ?: false)
                 runTool(*platform.dsymutilDryRunVerboseCommand(executable).toTypedArray())
             runTool(*platform.dsymutilCommand(executable).toTypedArray())
-        }
-        if (platform is WasmPlatform) {
-            JavaScriptLinker(includedBinaries.filter{it.isJavaScript}, executable)
         }
         return executable
     }
