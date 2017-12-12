@@ -85,6 +85,12 @@ public class ErrorUtils {
                 return emptyList();
             }
 
+            @Nullable
+            @Override
+            public ModuleDescriptor getExpectedByModule() {
+                return null;
+            }
+
             @Override
             public <R, D> R accept(@NotNull DeclarationDescriptorVisitor<R, D> visitor, D data) {
                 return null;

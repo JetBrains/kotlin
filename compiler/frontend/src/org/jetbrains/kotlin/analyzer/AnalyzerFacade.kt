@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 import java.util.*
 import kotlin.coroutines.experimental.buildSequence
 
@@ -306,6 +307,10 @@ class LazyModuleDependencies<M : ModuleInfo>(
     }
 
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
+
+    override val expectedByDependency by storageManager.createNullableLazyValue {
+        module.expectedBy?.let { resolverForProject.descriptorForModule(it as M) }
+    }
 
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
         get() =
