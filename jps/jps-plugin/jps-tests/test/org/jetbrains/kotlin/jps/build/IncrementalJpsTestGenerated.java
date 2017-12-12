@@ -293,12 +293,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("classRedeclaration")
-        public void testClassRedeclaration() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/classRedeclaration/");
-            doTest(fileName);
-        }
-
         @TestMetadata("classSignatureChanged")
         public void testClassSignatureChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/classSignatureChanged/");
@@ -1201,6 +1195,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             @TestMetadata("allKotlinFilesRemovedThenNewAdded")
             public void testAllKotlinFilesRemovedThenNewAdded() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/allKotlinFilesRemovedThenNewAdded/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("classRedeclaration")
+            public void testClassRedeclaration() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/other/classRedeclaration/");
                 doTest(fileName);
             }
 
