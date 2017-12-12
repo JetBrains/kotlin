@@ -100,7 +100,27 @@ open class A {
 
         project.build("build") {
             assertSuccessful()
-            val affectedSources = project.projectDir.getFilesByNames("JavaClassChild.kt", "useJavaClass.kt")
+            val affectedSources = project.projectDir.getFilesByNames("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths, weakTesting = false)
+        }
+    }
+
+    @Test
+    fun testModifyTrackedJavaClassInLib() {
+        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val javaClassJava = project.projectDir.getFileByName("TrackedJavaClass.java")
+        javaClassJava.modify { it.replace("String getString", "Object getString") }
+
+        project.build("build") {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames(
+                    "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassSameModule.kt"
+            )
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths, weakTesting = false)
         }
