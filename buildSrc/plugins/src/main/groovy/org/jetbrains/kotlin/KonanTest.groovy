@@ -99,8 +99,13 @@ abstract class KonanTest extends JavaExec {
             jvmArgs "-Dkonan.home=${dist.canonicalPath}",
                     "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
             enableAssertions = true
+            def sources = File.createTempFile(name,".lst")
+            sources.deleteOnExit()
+            def sourcesWriter = sources.newWriter()
+            filesToCompile.each {sourcesWriter << "$it\n"}
+            sourcesWriter.close()
             args = ["-output", output,
-                    *filesToCompile,
+                    "@${sources.absolutePath}",
                     *moreArgs,
                     *project.globalTestArgs]
             if (project.testTarget) {
