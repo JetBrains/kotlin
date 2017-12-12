@@ -282,6 +282,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kt7188.kt")
+    public void testKt7188() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/kt7188.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("kt7769.kt")
     public void testKt7769() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/kt7769.kt");

@@ -312,6 +312,10 @@ class MultifileClassCodegenImpl(
     }
 
     object DelegateToCompiledMemberGenerationStrategy : FunctionGenerationStrategy() {
+        override fun skipNotNullAssertionsForParameters(): kotlin.Boolean {
+            throw IllegalStateException("shouldn't be called")
+        }
+
         override fun generateBody(mv: MethodVisitor, frameMap: FrameMap, signature: JvmMethodSignature, context: MethodContext, parentCodegen: MemberCodegen<*>) {
             throw IllegalStateException("shouldn't be called")
         }
