@@ -2,6 +2,8 @@
 @file:kotlin.jvm.JvmVersion
 package kotlin.system
 
+import kotlin.*
+
 /**
  * Terminates the currently running Java Virtual Machine. The
  * argument serves as a status code; by convention, a nonzero status

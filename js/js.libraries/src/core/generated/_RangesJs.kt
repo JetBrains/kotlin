@@ -9,6 +9,8 @@ package kotlin.ranges
 //
 
 import kotlin.js.*
+import kotlin.*
+import kotlin.text.*
 import kotlin.comparisons.*
 
 /**

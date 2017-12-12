@@ -9,6 +9,8 @@ package kotlin.sequences
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.*
+import kotlin.text.*
 import kotlin.comparisons.*
 import kotlin.coroutines.experimental.*
 

@@ -5,6 +5,8 @@ package kotlin.io
 
 import java.io.*
 import java.util.*
+import kotlin.*
+import kotlin.text.*
 import kotlin.comparisons.*
 
 /**

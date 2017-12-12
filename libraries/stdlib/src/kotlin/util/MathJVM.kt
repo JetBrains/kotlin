@@ -19,6 +19,7 @@
 
 package kotlin.math
 
+import kotlin.*
 import kotlin.internal.InlineOnly
 import java.lang.Math as nativeMath
 

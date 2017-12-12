@@ -17,6 +17,7 @@
 package kotlin.coroutines.experimental
 
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+import kotlin.*
 import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 
 @PublishedApi

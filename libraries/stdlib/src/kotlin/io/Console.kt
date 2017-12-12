@@ -3,6 +3,7 @@
 
 package kotlin.io
 
+import kotlin.text.*
 import java.io.InputStream
 import java.nio.Buffer
 import java.nio.ByteBuffer

@@ -1,7 +1,7 @@
 @file:JvmVersion
 package kotlin.internal
 
-import java.io.Closeable
+import kotlin.*
 import java.util.regex.MatchResult
 
 internal open class PlatformImplementations {

@@ -20,6 +20,8 @@
 
 package kotlin.text
 
+import kotlin.*
+
 /**
  * Returns `true` if this character (Unicode code point) is defined in Unicode.
  */

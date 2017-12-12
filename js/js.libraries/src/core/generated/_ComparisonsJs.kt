@@ -9,6 +9,8 @@ package kotlin.comparisons
 //
 
 import kotlin.js.*
+import kotlin.*
+import kotlin.text.*
 import kotlin.comparisons.*
 
 /**

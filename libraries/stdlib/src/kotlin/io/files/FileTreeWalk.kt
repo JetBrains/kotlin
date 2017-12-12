@@ -3,6 +3,7 @@
 @file:JvmName("FilesKt")
 package kotlin.io
 
+import kotlin.*
 import java.io.File
 import java.io.IOException
 import java.util.Stack

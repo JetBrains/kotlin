@@ -18,6 +18,8 @@
 
 package kotlin.collections
 
+import kotlin.*
+
 
 private open class ReversedListReadOnly<out T>(private val delegate: List<T>) : AbstractList<T>() {
     override val size: Int get() = delegate.size

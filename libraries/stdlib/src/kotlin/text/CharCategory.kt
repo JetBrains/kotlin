@@ -1,6 +1,8 @@
 @file:JvmVersion
 package kotlin.text
 
+import kotlin.*
+
 /**
  * Represents the character general category in the Unicode specification.
  */
