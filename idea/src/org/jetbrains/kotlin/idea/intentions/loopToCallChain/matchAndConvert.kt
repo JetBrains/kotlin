@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
@@ -244,19 +245,27 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchRe
     val bindingContext = loop.analyze(BodyResolveMode.FULL)
 
     // we declare these keys locally to avoid possible race-condition problems if this code is executed in 2 threads simultaneously
-    val SMARTCAST_KEY = Key<ExplicitSmartCasts>("SMARTCAST_KEY")
-    val IMPLICIT_RECEIVER_SMARTCAST_KEY = Key<ImplicitSmartCasts>("IMPLICIT_RECEIVER_SMARTCAST")
+    val SMARTCAST_KEY = Key<Ref<ExplicitSmartCasts>>("SMARTCAST_KEY")
+    val IMPLICIT_RECEIVER_SMARTCAST_KEY = Key<Ref<ImplicitSmartCasts>>("IMPLICIT_RECEIVER_SMARTCAST")
+
+    val storedUserData = mutableListOf<Ref<*>>()
 
     var smartCastCount = 0
     try {
         loop.forEachDescendantOfType<KtExpression> { expression ->
-            bindingContext[BindingContext.SMARTCAST, expression]?.let {
-                expression.putCopyableUserData(SMARTCAST_KEY, it)
+            bindingContext[BindingContext.SMARTCAST, expression]?.let { explicitSmartCasts ->
+                Ref(explicitSmartCasts).apply {
+                    expression.putCopyableUserData(SMARTCAST_KEY, this)
+                    storedUserData += this
+                }
                 smartCastCount++
             }
 
-            bindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression]?.let {
-                expression.putCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY, it)
+            bindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression]?.let { implicitSmartCasts ->
+                Ref(implicitSmartCasts).apply {
+                    expression.putCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY, this)
+                    storedUserData += this
+                }
                 smartCastCount++
             }
         }
@@ -269,14 +278,14 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchRe
 
         var preservedSmartCastCount = 0
         callChain.forEachDescendantOfType<KtExpression> { expression ->
-            val smartCastType = expression.getCopyableUserData(SMARTCAST_KEY)
+            val smartCastType = expression.getCopyableUserData(SMARTCAST_KEY)?.get()
             if (smartCastType != null) {
                 if (newBindingContext[BindingContext.SMARTCAST, expression] == smartCastType || newBindingContext.getType(expression) == smartCastType) {
                     preservedSmartCastCount++
                 }
             }
 
-            val implicitReceiverSmartCastType = expression.getCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY)
+            val implicitReceiverSmartCastType = expression.getCopyableUserData(IMPLICIT_RECEIVER_SMARTCAST_KEY)?.get()
             if (implicitReceiverSmartCastType != null) {
                 if (newBindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression] == implicitReceiverSmartCastType) {
                     preservedSmartCastCount++
@@ -293,6 +302,7 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchRe
         return true
     }
     finally {
+        storedUserData.forEach { it.set(null) }
         if (smartCastCount > 0) {
             loop.forEachDescendantOfType<KtExpression> {
                 it.putCopyableUserData(SMARTCAST_KEY, null)
