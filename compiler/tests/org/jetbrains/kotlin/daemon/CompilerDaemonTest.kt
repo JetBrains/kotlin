@@ -499,16 +499,20 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    private val PARALLEL_THREADS_TO_START = 8
+    private object ParallelStartParams {
+        const val threads = 32
+        const val performCompilation = false
+        const val connectionFailedErr = -100
+    }
 
     fun testParallelDaemonStart() {
 
-        val doneLatch = CountDownLatch(PARALLEL_THREADS_TO_START)
+        val doneLatch = CountDownLatch(ParallelStartParams.threads)
 
-        val resultCodes = arrayOfNulls<Int>(PARALLEL_THREADS_TO_START)
-        val outStreams = Array(PARALLEL_THREADS_TO_START, { ByteArrayOutputStream() })
-        val logFiles = arrayOfNulls<File>(PARALLEL_THREADS_TO_START)
-        val daemonInfos = arrayOfNulls<Pair<CompileService.CallResult<String>?, Int?>>(PARALLEL_THREADS_TO_START)
+        val resultCodes = arrayOfNulls<Int>(ParallelStartParams.threads)
+        val outStreams = Array(ParallelStartParams.threads, { ByteArrayOutputStream() })
+        val logFiles = arrayOfNulls<File>(ParallelStartParams.threads)
+        val daemonInfos = arrayOfNulls<Pair<CompileService.CallResult<String>?, Int?>>(ParallelStartParams.threads)
 
         val daemonOptions = makeTestDaemonOptions(getTestName(true), 100)
 
@@ -522,17 +526,23 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                 KotlinCompilerClient.connectAndLease(compilerId, flagFile, daemonJVMOptions, daemonOptions,
                                                                      DaemonReportingTargets(out = PrintStream(outStreams[threadNo])), autostart = true,
                                                                      leaseSession = true)
-                        assertNotNull("failed to connect daemon", compileServiceSession?.compileService)
                         daemonInfos[threadNo] = compileServiceSession?.compileService?.getDaemonInfo() to compileServiceSession?.sessionId
-                        val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
-                        val res = KotlinCompilerClient.compile(
-                                compileServiceSession!!.compileService,
-                                compileServiceSession.sessionId,
-                                CompileService.TargetPlatform.JVM,
-                                arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
-                                PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true))
-                        resultCodes[threadNo] = res
-                        assertEquals("Compilation on thread $threadNo failed", 0, res)
+
+                        resultCodes[threadNo] = when {
+                            compileServiceSession?.compileService == null -> {
+                                ParallelStartParams.connectionFailedErr
+                            }
+                            ParallelStartParams.performCompilation -> {
+                                val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
+                                KotlinCompilerClient.compile(
+                                        compileServiceSession!!.compileService,
+                                        compileServiceSession.sessionId,
+                                        CompileService.TargetPlatform.JVM,
+                                        arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                                        PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true))
+                            }
+                            else -> 0 // compilation skipped, assuming - successful
+                        }
                     }
                 }
             }
@@ -545,7 +555,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         System.setProperty(COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY, "100000")
 
         val succeeded = try {
-            (1..PARALLEL_THREADS_TO_START).forEach { connectThread(it - 1) }
+            (1..ParallelStartParams.threads).forEach { connectThread(it - 1) }
             doneLatch.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
         }
         finally {
@@ -553,25 +563,23 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             System.clearProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)
         }
 
-        assertTrue("parallel daemons start failed to complete in $PARALLEL_WAIT_TIMEOUT_S s, ${doneLatch.count} unfinished threads", succeeded)
-
         Thread.sleep(100) // Wait for processes to finish and close log files
 
-        val electionLogs = arrayOfNulls<String>(PARALLEL_THREADS_TO_START)
-        val port2logs = arrayOfNulls<Pair<Int?, File?>>(PARALLEL_THREADS_TO_START)
+        val electionLogs = arrayOfNulls<String>(ParallelStartParams.threads)
+        val port2logs = arrayOfNulls<Pair<Int?, File?>>(ParallelStartParams.threads)
 
-        for (i in 0..(PARALLEL_THREADS_TO_START - 1)) {
+        for (i in 0..(ParallelStartParams.threads - 1)) {
             val logContents = logFiles[i]?.readLines()
             port2logs[i] = logContents?.find { it.contains("daemon is listening on port") }?.split(" ")?.last()?.toIntOrNull() to logFiles[i]
             electionLogs[i] = logContents?.find { it.contains(LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE) }
         }
 
         val electionsSuccess = electionLogs.any { it != null && (it.contains("lower prio") || it.contains("equal prio")) }
-        val resultsSuccess = resultCodes.all { it == 0 }
+        val resultsFailures = resultCodes.count { it != null && it == 0 }
 
-        if (!electionsSuccess || !resultsSuccess) {
+        if (!succeeded || !electionsSuccess || resultsFailures > 0) {
             val msg = buildString {
-                for (i in 0..PARALLEL_THREADS_TO_START - 1) {
+                for (i in 0..ParallelStartParams.threads - 1) {
                     val daemonInfoRes = daemonInfos[i]?.first
                     val daemonInfo = when (daemonInfoRes) {
                         is CompileService.CallResult.Good -> daemonInfoRes.get()
@@ -590,8 +598,9 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     }
                 }
             }
+            assertTrue("parallel daemons start failed to complete in $PARALLEL_WAIT_TIMEOUT_S s, ${doneLatch.count} unfinished threads:\n\n$msg", succeeded)
             assertTrue("No daemon elected:\n\n$msg\n--- elections:\n${electionLogs.joinToString("\n")}\n---", electionsSuccess)
-            assertTrue("Some compilations failed:\n\nmsg", resultsSuccess)
+            assertTrue("Compilations failed: $resultsFailures of ${ParallelStartParams.threads}:\n\n$msg", resultsFailures > 0)
         }
     }
 
