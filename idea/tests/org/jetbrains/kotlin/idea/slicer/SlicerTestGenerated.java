@@ -600,6 +600,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("outflow/usagesInLoopRange.kt")
+    public void testOutflow_UsagesInLoopRange() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/usagesInLoopRange.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/usagesInTemplates.kt")
+    public void testOutflow_UsagesInTemplates() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/usagesInTemplates.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outflow/valParameter.kt")
     public void testOutflow_ValParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/valParameter.kt");
@@ -615,18 +627,6 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("outflow/whenExpression.kt")
     public void testOutflow_WhenExpression() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/whenExpression.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("outflow/usagesInTemplates.kt")
-    public void testOutflow_UsagesInTemplates() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/usagesInTemplates.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("outflow/usagesInLoopRange.kt")
-    public void testOutflow_UsagesInLoopRange() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/usagesInLoopRange.kt");
         doTest(fileName);
     }
 }
