@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -46,6 +43,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+
 
 //-----------------------------------------------------------------------------//
 
@@ -238,8 +236,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
 
         val needsEvaluation : Boolean
             get() {
-                if (parameterDescriptor.isNoinline()) return true
-                if (argumentExpression.isLambda())    return false
+                if (parameterDescriptor.isNoinline())     return true
+                if (argumentExpression.isInlinableBody()) return false
                 return true                                                                 // The expression must be evaluated.
             }
 
@@ -253,17 +251,17 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
 
         //-------------------------------------------------------------------------//
 
-        fun IrExpression.isLambda(): Boolean {
-            if (this !is IrBlock)                                     return false          // Lambda must be represented with IrBlock.
-            if (this.origin != IrStatementOrigin.LAMBDA &&                                  // Origin must be LAMBDA or ANONYMOUS.
-                this.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)  return false
+        private fun isAnonymousFunction(descriptor: DeclarationDescriptor): Boolean {
+            return descriptor is SimpleFunctionDescriptor && descriptor.name.asString().contains("<anonymous>")
+        }
 
-            val statements          = this.statements
-            val irFunction          = statements[0]                                         // Lambda function declaration.
-            val irCallableReference = statements[1]                                         // Lambda callable reference.
-            if (irFunction !is IrFunction)                   return false                   // First statement of the block must be lambda declaration.
-            if (irCallableReference !is IrCallableReference) return false                   // Second statement of the block must be CallableReference.
-            return true
+        //-------------------------------------------------------------------------//
+
+        fun IrExpression.isInlinableBody(): Boolean {
+            if (this !is IrBlock) return false                                              // Lambda must be represented with IrBlock.
+            val lastStatement = statements.last()
+            if (lastStatement !is IrCallableReference) return false                         // Second statement of the lambda block must be CallableReference.
+            return isAnonymousFunction(lastStatement.descriptor)
         }
     }
 
