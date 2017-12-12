@@ -10,6 +10,9 @@ public object Delegates {
      * Returns a property delegate for a read/write property with a non-`null` value that is initialized not during
      * object construction time but at a later time. Trying to read the property before the initial value has been
      * assigned results in an exception.
+     *
+     * @sample samples.properties.Delegates.notNullDelegate
+     * @sample samples.properties.Delegates.notNullAccessError
      */
     public fun <T: Any> notNull(): ReadWriteProperty<Any?, T> = NotNullVar()
 
@@ -18,6 +21,8 @@ public object Delegates {
      * @param initialValue the initial value of the property.
      * @param onChange the callback which is called after the change of the property is made. The value of the property
      *  has already been changed when this callback is invoked.
+     *
+     *  @sample samples.properties.Delegates.observableDelegate
      */
     public inline fun <T> observable(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Unit):
         ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
@@ -32,6 +37,8 @@ public object Delegates {
      *  The value of the property hasn't been changed yet, when this callback is invoked.
      *  If the callback returns `true` the value of the property is being set to the new value,
      *  and if the callback returns `false` the new value is discarded and the property remains its old value.
+     *
+     *  @sample samples.properties.Delegates.vetoableDelegate
      */
     public inline fun <T> vetoable(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean):
         ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
