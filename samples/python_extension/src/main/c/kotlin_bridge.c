@@ -23,7 +23,13 @@
 
 // Note, that as we cache this in the global, and Kotlin/Native object references
 // are currently thread local, we make this global a TLS variable.
-static __thread server_kref_demo_Server server = { 0 };
+#ifdef _MSC_VER
+#define TLSVAR __declspec(thread)
+#else
+#define TLSVAR __thread
+#endif
+
+static TLSVAR server_kref_demo_Server server = { 0 };
 
 static T_(Server) getServer(void) {
   if (!server.pinned) {
@@ -32,7 +38,7 @@ static T_(Server) getServer(void) {
   return server;
 }
 
-static server_kref_demo_Session getSession(PyObject* args) {
+static T_(Session) getSession(PyObject* args) {
    T_(Session) result = { 0 };
    long long pinned;
    if (PyArg_ParseTuple(args, "L", &pinned)) {
@@ -46,7 +52,7 @@ static PyObject* open_session(PyObject* self, PyObject* args) {
     char* string_arg = NULL;
     int int_arg = 0;
     if (PyArg_ParseTuple(args, "is", &int_arg, &string_arg)) {
-        server_kref_demo_Session session = __ kotlin.demo.Session.Session(string_arg, int_arg);
+        T_(Session) session = __ kotlin.demo.Session.Session(string_arg, int_arg);
         result = Py_BuildValue("L", session.pinned);
     }
     return result;

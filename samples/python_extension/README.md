@@ -3,16 +3,17 @@
 This example shows how to use Kotlin/Native programs from other execution environments, such as Python.
 Python has C native interface, which could be used to organize a bridge with the
 Kotlin/Native application. File `kotlin_bridge.c` contains translation code between Kotlin and Python
-lands.
+lands. This demo works on Linux, Windows (64-bit) or macOS hosts.
 
 To build and run the sample do the following:
 
-*   Install Python with development headers, i.e.
+*   Install Python with development headers, i.e. on Linux
     ```
     sudo apt install python-dev
     ```
 
-*   Run `build.sh`, it will ask for superuser password to install Python extension
+*   Run `build.sh`, it will ask for superuser password to install Python extension.
+    Use build.bat on Windows.
 *   On macOS copy Kotlin binary to extension's directory and change install name with
     `install_name_tool` tool, i.e.
     ```
@@ -39,7 +40,7 @@ To build and run the sample do the following:
 
  The example works as following. Kotlin/Native API is implemented in `Server.kt`, and we run Kotlin/Native compiler
  with `-produce dynamic` option. Compiler produces two artifacts: `server_api.h` which is C language API
- to all public functions and classes available in the application. `libserver.dylib` or `libserver.so`
+ to all public functions and classes available in the application. `libserver.dylib` or `libserver.so` or `server.dll`
  shared object contains C bridge to all above APIs.
 
   This C bridge looks like a C struct, reflecting all scopes in program, with operations available. For example,
