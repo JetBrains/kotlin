@@ -76,7 +76,8 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             forExpression: KtForExpression,
             startValue: StackValue,
             endExpression: KtExpression,
-            step: Int
+            step: Int,
+            isStartInclusive: Boolean = true
     ): ForLoopGenerator? {
         val endConstValue = codegen.getCompileTimeConstant(endExpression).safeAs<IntegerValueConstant<*>>() ?: return null
 
@@ -86,7 +87,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
                 if (isProhibitedIntConstEndValue(step, endIntValue))
                     null
                 else
-                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endIntValue, step)
+                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endIntValue, step, isStartInclusive)
             }
 
             is ShortValue -> {
@@ -94,7 +95,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
                 if (isProhibitedIntConstEndValue(step, endIntValue))
                     null
                 else
-                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endIntValue, step)
+                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endIntValue, step, isStartInclusive)
             }
 
             is IntValue -> {
@@ -102,7 +103,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
                 if (isProhibitedIntConstEndValue(step, endIntValue))
                     null
                 else
-                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endIntValue, step)
+                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endIntValue, step, isStartInclusive)
             }
 
             is CharValue -> {
@@ -110,7 +111,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
                 if (isProhibitedCharConstEndValue(step, endCharValue))
                     null
                 else
-                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endCharValue.toInt(), step)
+                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endCharValue.toInt(), step, isStartInclusive)
             }
 
             is LongValue -> {
@@ -118,7 +119,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
                 if (isProhibitedLongConstEndValue(step, endLongValue))
                     null
                 else
-                    createConstBoundedLongForLoopGenerator(codegen, forExpression, startValue, endLongValue, step)
+                    createConstBoundedLongForLoopGenerator(codegen, forExpression, startValue, endLongValue, step, isStartInclusive)
             }
 
             else -> null
@@ -130,12 +131,13 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             forExpression: KtForExpression,
             startValue: StackValue,
             endIntValue: Int,
-            step: Int
+            step: Int,
+            isStartInclusive: Boolean
     ): ForLoopGenerator? =
             ForInDefinitelySafeSimpleProgressionLoopGenerator(
                     codegen, forExpression,
                     startValue = startValue,
-                    isStartInclusive = true,
+                    isStartInclusive = isStartInclusive,
                     endValue = StackValue.integerConstant(endIntValue, asmElementType),
                     isEndInclusive = true,
                     step = step
@@ -146,12 +148,13 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             forExpression: KtForExpression,
             startValue: StackValue,
             endLongValue: Long,
-            step: Int
+            step: Int,
+            isStartInclusive: Boolean
     ): ForLoopGenerator? =
             ForInDefinitelySafeSimpleProgressionLoopGenerator(
                     codegen, forExpression,
                     startValue = startValue,
-                    isStartInclusive = true,
+                    isStartInclusive = isStartInclusive,
                     endValue = StackValue.constant(endLongValue, asmElementType),
                     isEndInclusive = true,
                     step = step

@@ -15318,6 +15318,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedUntil.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("forInReversedUntilWithNonConstBounds.kt")
+            public void testForInReversedUntilWithNonConstBounds() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedUntilWithNonConstBounds.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/ranges/forInUntil")
