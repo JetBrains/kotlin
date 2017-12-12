@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
 // resolved call
@@ -256,3 +258,10 @@ fun Call.createLookupLocation(): KotlinLookupLocation {
             else callElement
     return KotlinLookupLocation(element)
 }
+
+fun ResolvedCall<*>.getFirstArgumentExpression(): KtExpression? =
+        valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() }
+
+fun ResolvedCall<*>.getReceiverExpression(): KtExpression? =
+        extensionReceiver.safeAs<ExpressionReceiver>()?.expression ?:
+        dispatchReceiver.safeAs<ExpressionReceiver>()?.expression

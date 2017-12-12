@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -420,11 +421,11 @@ fun extractReificationArgument(type: KotlinType): Pair<TypeParameterDescriptor, 
 fun unwrapInitialSignatureDescriptor(function: FunctionDescriptor): FunctionDescriptor =
         function.initialSignatureDescriptor ?: function
 
-fun ExpressionCodegen.generateCallReceiver(rangeCall: ResolvedCall<out CallableDescriptor>): StackValue =
-        generateReceiverValue(rangeCall.extensionReceiver ?: rangeCall.dispatchReceiver!!, false)
+fun ExpressionCodegen.generateCallReceiver(call: ResolvedCall<out CallableDescriptor>): StackValue =
+        generateReceiverValue(call.extensionReceiver ?: call.dispatchReceiver!!, false)
 
-fun ExpressionCodegen.generateCallSingleArgument(rangeCall: ResolvedCall<out CallableDescriptor>): StackValue =
-        gen(ExpressionCodegen.getSingleArgumentExpression(rangeCall)!!)
+fun ExpressionCodegen.generateCallSingleArgument(call: ResolvedCall<out CallableDescriptor>): StackValue =
+        gen(call.getFirstArgumentExpression()!!)
 
 fun ClassDescriptor.isPossiblyUninitializedSingleton() =
         DescriptorUtils.isEnumEntry(this) ||

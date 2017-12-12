@@ -15103,6 +15103,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("forIntInDownToWithNonConstBounds.kt")
+            public void testForIntInDownToWithNonConstBounds() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInDownTo/forIntInDownToWithNonConstBounds.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forIntInNonOptimizedDownTo.kt")
             public void testForIntInNonOptimizedDownTo() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInDownTo/forIntInNonOptimizedDownTo.kt");
@@ -15377,6 +15383,24 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public static class ForWithPossibleOverflow extends AbstractLightAnalysisModeTest {
             public void testAllFilesPresentInForWithPossibleOverflow() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/forWithPossibleOverflow"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("forInDownToCharMinValue.kt")
+            public void testForInDownToCharMinValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInDownToCharMinValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInDownToIntMinValue.kt")
+            public void testForInDownToIntMinValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInDownToIntMinValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInDownToLongMinValue.kt")
+            public void testForInDownToLongMinValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInDownToLongMinValue.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("forInRangeToCharMaxValue.kt")
