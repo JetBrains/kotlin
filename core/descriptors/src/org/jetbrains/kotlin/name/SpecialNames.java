@@ -31,6 +31,9 @@ public class SpecialNames {
     // The name contains a GUID to avoid clashes, if a clash happens, it's not a big deal: the code does not compile anyway
     public static final Name SAFE_IDENTIFIER_FOR_NO_NAME = Name.identifier("no_name_in_PSI_3d19d79d_1ba9_4cd0_b7f5_b46aa3cd5d40");
 
+    public static final String ANONYMOUS = "<anonymous>";
+    public static final Name ANONYMOUS_FUNCTION = Name.special(ANONYMOUS);
+
     @NotNull
     public static Name safeIdentifier(@Nullable Name name) {
         return name != null && !name.isSpecial() ? name : SAFE_IDENTIFIER_FOR_NO_NAME;
