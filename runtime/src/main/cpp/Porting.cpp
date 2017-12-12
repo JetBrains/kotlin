@@ -127,7 +127,7 @@ void onThreadExit(void (*destructor)()) {
 #ifdef KONAN_WASM
   // No way to do that.
 #else
-  ::atexit(destructor);
+#error "How to do onThreadExit()?"
 #endif
 #else  // !KONAN_NO_THREADS
   // We cannot use pthread_cleanup_push() as it is lexical scope bound.
