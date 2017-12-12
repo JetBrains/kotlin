@@ -87,6 +87,8 @@ open class IncrementalJvmCache(
         }
     }
 
+    fun isTrackedFile(file: File) = sourceToClassesMap.contains(file)
+
     // used in gradle
     @Suppress("unused")
     fun classesBySources(sources: Iterable<File>): Iterable<JvmClassName> =
@@ -335,7 +337,10 @@ open class IncrementalJvmCache(
             val oldData = storage[key]
             storage[key] = newData
 
-            changesCollector.collectProtoChanges(oldData?.toProtoData(), newData.toProtoData())
+            changesCollector.collectProtoChanges(
+                    oldData?.toProtoData(), newData.toProtoData(),
+                    collectAllMembersForNewClass = true
+            )
         }
 
         fun remove(className: JvmClassName, changesCollector: ChangesCollector) {
@@ -453,6 +458,8 @@ open class IncrementalJvmCache(
         fun add(sourceFile: File, className: JvmClassName) {
             storage.append(sourceFile.absolutePath, className.internalName)
         }
+
+        fun contains(sourceFile: File) = sourceFile.absolutePath in storage
 
         operator fun get(sourceFile: File): Collection<JvmClassName> =
                 storage[sourceFile.absolutePath].orEmpty().map { JvmClassName.byInternalName(it) }

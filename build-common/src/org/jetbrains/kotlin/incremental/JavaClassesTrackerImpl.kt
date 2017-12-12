@@ -41,7 +41,10 @@ import java.io.File
 
 val CONVERTING_JAVA_CLASSES_TO_PROTO = PerformanceCounter.create("Converting Java sources to proto")
 
-class JavaClassesTrackerImpl(private val cache: IncrementalJvmCache) : JavaClassesTracker {
+class JavaClassesTrackerImpl(
+        private val cache: IncrementalJvmCache,
+        private val untrackedJavaClasses: Set<ClassId>
+) : JavaClassesTracker {
     private val classToSourceSerialized: MutableMap<ClassId, SerializedJavaClassWithSource> = hashMapOf()
 
     val javaClassesUpdates: Collection<SerializedJavaClassWithSource>
@@ -57,7 +60,7 @@ class JavaClassesTrackerImpl(private val cache: IncrementalJvmCache) : JavaClass
     }
 
     override fun onCompletedAnalysis(module: ModuleDescriptor) {
-        for (classId in cache.getObsoleteJavaClasses()) {
+        for (classId in cache.getObsoleteJavaClasses() + untrackedJavaClasses) {
             // Just force the loading obsolete classes
             // We assume here that whenever an LazyJavaClassDescriptor instances is created
             // it's being passed to JavaClassesTracker::reportClass
@@ -66,7 +69,7 @@ class JavaClassesTrackerImpl(private val cache: IncrementalJvmCache) : JavaClass
 
         for (classDescriptor in classDescriptors.toList()) {
             val classId = classDescriptor.classId!!
-            if (cache.isJavaClassAlreadyInCache(classId) || classDescriptor.wasContentRequested()) {
+            if (cache.isJavaClassAlreadyInCache(classId) || classId in untrackedJavaClasses || classDescriptor.wasContentRequested()) {
                 assert(classId !in classToSourceSerialized) {
                     "Duplicated JavaClassDescriptor $classId reported to IC"
                 }

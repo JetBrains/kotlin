@@ -16,7 +16,13 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
@@ -25,7 +31,10 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -35,7 +44,9 @@ import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import java.io.File
 
 fun makeIncrementally(
@@ -108,6 +119,16 @@ class IncrementalJvmCompilerRunner(
     override fun destinationDir(args: K2JVMCompilerArguments): File =
             args.destinationAsFile
 
+    private val psiFileFactory: PsiFileFactory by lazy {
+        val rootDisposable = Disposer.newDisposable()
+        val configuration = CompilerConfiguration()
+        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val project = environment.project
+        PsiFileFactory.getInstance(project)
+    }
+
+    private val changedUntrackedJavaClasses = mutableSetOf<ClassId>()
+
     override fun calculateSourcesToCompile(caches: IncrementalJvmCachesManager, changedFiles: ChangedFiles.Known, args: K2JVMCompilerArguments): CompilationMode {
         val dirtyFiles = getDirtyFiles(changedFiles)
 
@@ -166,7 +187,9 @@ class IncrementalJvmCompilerRunner(
             return CompilationMode.Rebuild { "could not get changes from modified classpath entries: ${reporter.pathsAsString(modifiedClasspathEntries)}" }
         }
 
-        processChangedJava(changedFiles, caches)
+        if (!processChangedJava(changedFiles, caches)) {
+            return CompilationMode.Rebuild { "Could not get changes for java files" }
+        }
 
         if ((changedFiles.modified + changedFiles.removed).any { it.extension.toLowerCase() == "xml" }) {
             return CompilationMode.Rebuild { "XML resource files were changed" }
@@ -178,8 +201,42 @@ class IncrementalJvmCompilerRunner(
         return CompilationMode.Incremental(dirtyFiles)
     }
 
-    private fun processChangedJava(changedFiles: ChangedFiles.Known, caches: IncrementalJvmCachesManager) {
-        caches.platformCache.markDirty((changedFiles.modified + changedFiles.removed).filter(File::isJavaFile))
+    private fun processChangedJava(changedFiles: ChangedFiles.Known, caches: IncrementalJvmCachesManager): Boolean {
+        val javaFiles = (changedFiles.modified + changedFiles.removed).filter(File::isJavaFile)
+
+        for (javaFile in javaFiles) {
+            if (!caches.platformCache.isTrackedFile(javaFile)) {
+                val psiFile = javaFile.psiFile()
+                if (psiFile !is PsiJavaFile) {
+                    reporter.report { "[Precise Java tracking] Expected PsiJavaFile, got ${psiFile?.javaClass}" }
+                    return false
+                }
+
+                for (psiClass in psiFile.classes) {
+                    val qualifiedName = psiClass.qualifiedName
+                    if (qualifiedName == null) {
+                        reporter.report { "[Precise Java tracking] Class with unknown qualified name in $javaFile" }
+                        return false
+                    }
+
+                    processChangedUntrackedJavaClass(psiClass, ClassId.topLevel(FqName(qualifiedName)))
+                }
+            }
+        }
+
+        caches.platformCache.markDirty(javaFiles)
+        return true
+    }
+
+    private fun File.psiFile(): PsiFile? =
+            psiFileFactory.createFileFromText(nameWithoutExtension, JavaLanguage.INSTANCE, readText())
+
+    private fun processChangedUntrackedJavaClass(psiClass: PsiClass, classId: ClassId) {
+        changedUntrackedJavaClasses.add(classId)
+        for (innerClass in psiClass.innerClasses) {
+            val name = innerClass.name ?: continue
+            processChangedUntrackedJavaClass(innerClass, classId.createNestedClassId(Name.identifier(name)))
+        }
     }
 
     private fun getClasspathChanges(
@@ -251,7 +308,7 @@ class IncrementalJvmCompilerRunner(
     }
 
     override fun runWithNoDirtyKotlinSources(caches: IncrementalJvmCachesManager): Boolean =
-            caches.platformCache.getObsoleteJavaClasses().isNotEmpty()
+            caches.platformCache.getObsoleteJavaClasses().isNotEmpty() || changedUntrackedJavaClasses.isNotEmpty()
 
     override fun additionalDirtyFiles(
             caches: IncrementalJvmCachesManager,
@@ -321,7 +378,8 @@ class IncrementalJvmCompilerRunner(
             val targetToCache = mapOf(targetId to caches.platformCache)
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
             register(IncrementalCompilationComponents::class.java, incrementalComponents)
-            val changesTracker = JavaClassesTrackerImpl(caches.platformCache)
+            val changesTracker = JavaClassesTrackerImpl(caches.platformCache, changedUntrackedJavaClasses.toSet())
+            changedUntrackedJavaClasses.clear()
             register(JavaClassesTracker::class.java, changesTracker)
         }
 
