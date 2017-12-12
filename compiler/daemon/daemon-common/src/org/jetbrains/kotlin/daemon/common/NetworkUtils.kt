@@ -30,16 +30,18 @@ import java.rmi.server.RMIServerSocketFactory
 import java.util.*
 
 
-val SOCKET_ANY_FREE_PORT  = 0
-val JAVA_RMI_SERVER_HOSTNAME = "java.rmi.server.hostname"
+const val SOCKET_ANY_FREE_PORT  = 0
+const val JAVA_RMI_SERVER_HOSTNAME = "java.rmi.server.hostname"
+const val DAEMON_RMI_SOCKET_BACKLOG_SIZE_PROPERTY = "kotlin.daemon.socket.backlog.size"
 
 object LoopbackNetworkInterface {
 
-    val IPV4_LOOPBACK_INET_ADDRESS = "127.0.0.1"
-    val IPV6_LOOPBACK_INET_ADDRESS = "::1"
+    const val IPV4_LOOPBACK_INET_ADDRESS = "127.0.0.1"
+    const val IPV6_LOOPBACK_INET_ADDRESS = "::1"
 
-    val SERVER_SOCKET_BACKLOG_SIZE = 10 // size of the requests queue for daemon services, so far seems that we don't need any big numbers here
-                                        // but if we'll start getting "connection refused" errors, that could be the first place to try to fix it
+    // size of the requests queue for daemon services, so far seems that we don't need any big numbers here
+    // but if we'll start getting "connection refused" errors, that could be the first place to try to fix it
+    val SERVER_SOCKET_BACKLOG_SIZE by lazy { System.getProperty(DAEMON_RMI_SOCKET_BACKLOG_SIZE_PROPERTY)?.toIntOrNull() ?: 50 }
 
     val serverLoopbackSocketFactory by lazy { ServerLoopbackSocketFactory() }
     val clientLoopbackSocketFactory by lazy { ClientLoopbackSocketFactory() }
