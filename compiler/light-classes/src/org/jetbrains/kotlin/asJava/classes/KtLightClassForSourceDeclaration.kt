@@ -22,6 +22,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSubstitutorImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
@@ -468,6 +469,27 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             return clsDelegate.hasModifierProperty(PsiModifier.FINAL)
         }
     }
+
+    override fun <T : Any?> putUserData(key: Key<T>, value: T?) = classOrObject.putUserData(key, value)
+
+    override fun <T : Any?> getUserData(key: Key<T>): T? = classOrObject.getUserData(key)
+
+    override fun <T : Any?> putUserDataIfAbsent(key: Key<T>, value: T): T = classOrObject.putUserDataIfAbsent(key, value)
+
+    override fun <T : Any?> replace(key: Key<T>, oldValue: T?, newValue: T?): Boolean = classOrObject.replace(key, oldValue, newValue)
+
+    override fun <T : Any?> putCopyableUserData(key: Key<T>, value: T?) = classOrObject.putCopyableUserData(key, value)
+
+    override fun getUserDataString(): String = classOrObject.getUserDataString()
+
+    override fun copyCopyableDataTo(clone: UserDataHolderBase) = classOrObject.copyCopyableDataTo(clone)
+
+    override fun copyUserDataTo(other: UserDataHolderBase) = classOrObject.copyUserDataTo(other)
+
+    override fun <T : Any?> getCopyableUserData(key: Key<T>): T? = classOrObject.getCopyableUserData(key)
+
+    override fun isUserDataEmpty(): Boolean = classOrObject.isUserDataEmpty()
+
 }
 
 fun KtLightClassForSourceDeclaration.isPossiblyAffectedByAllOpen() = !isAnnotationType && !isInterface && kotlinOrigin.annotationEntries.isNotEmpty()
