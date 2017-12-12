@@ -65,7 +65,7 @@ dependencies {
     sideJars(commonDep("javax.inject"))
     sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
-    sideJars("teamcity:markdown")
+    sideJars(commonDep("org.jetbrains", "markdown"))
 }
 
 val jar = runtimeJar(task<ShadowJar>("shadowJar")) {

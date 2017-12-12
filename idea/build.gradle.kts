@@ -35,7 +35,7 @@ dependencies {
     compile(project(":kotlin-script-util")) { isTransitive = false }
 
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    compile("teamcity:markdown")
+    compile(commonDep("org.jetbrains", "markdown"))
 
     compileOnly(project(":kotlin-daemon-client"))
 
