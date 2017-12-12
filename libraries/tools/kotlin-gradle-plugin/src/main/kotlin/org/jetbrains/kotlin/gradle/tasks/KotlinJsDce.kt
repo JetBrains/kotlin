@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
-import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinLogger
 import org.jetbrains.kotlin.compilerRunner.createLoggingMessageCollector
 import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
@@ -61,7 +61,9 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
     @TaskAction
     fun performDce() {
-        val inputFiles = getSource().files.map { it.path }
+        val inputFiles = (listOf(getSource()) + classpath.map { project.fileTree(it) })
+                .reduce(FileTree::plus)
+                .files.map { it.path }
 
         val outputDirArgs = arrayOf("-output-dir", destinationDir.path)
 
