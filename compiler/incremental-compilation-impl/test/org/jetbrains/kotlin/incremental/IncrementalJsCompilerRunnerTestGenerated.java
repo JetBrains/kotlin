@@ -122,12 +122,6 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
             doTest(fileName);
         }
 
-        @TestMetadata("classRedeclaration")
-        public void testClassRedeclaration() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/classRedeclaration/");
-            doTest(fileName);
-        }
-
         @TestMetadata("classSignatureChanged")
         public void testClassSignatureChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/classSignatureChanged/");
