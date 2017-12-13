@@ -2093,6 +2093,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("emptyLiteral.kt")
+        public void testEmptyLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/emptyLiteral.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("floatArrayOf.kt")
         public void testFloatArrayOf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/floatArrayOf.kt");
@@ -2102,6 +2108,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("intArrayOf.kt")
         public void testIntArrayOf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("literal.kt")
+        public void testLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/literal.kt");
             doTest(fileName);
         }
 
