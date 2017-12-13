@@ -416,7 +416,8 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
 
         add("@interface $kotlinAnyName : NSObject")
         add("-(instancetype) init __attribute__((unavailable));")
-        add("+(void)initialize;")
+        add("+(instancetype) new __attribute__((unavailable));")
+        add("+(void)initialize __attribute__((objc_requires_super));")
         add("@end;")
         add("")
 
