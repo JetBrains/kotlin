@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.konan.exec.runTool
 import java.lang.ProcessBuilder
 import java.lang.ProcessBuilder.Redirect
 import org.jetbrains.kotlin.konan.file.*
@@ -50,7 +51,7 @@ internal abstract class PlatformFlags(val properties: KonanProperties) {
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
     abstract fun linkCommand(objectFiles: List<ObjectFile>,
-        executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String>
+                             executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): Command
 
     open fun linkCommandSuffix(): List<String> = emptyList()
 
@@ -69,6 +70,25 @@ internal abstract class PlatformFlags(val properties: KonanProperties) {
 
 }
 
+internal open class Command(tool:String) {
+    private val opts = mutableListOf(tool)
+    val libs = mutableListOf<String>()
+    operator fun String.unaryPlus():Command {
+        opts += this
+        return this@Command
+    }
+
+    operator fun List<String>.unaryPlus():Command {
+        opts.addAll(this)
+        return this@Command
+    }
+
+    open fun execute() = runTool(*opts.toTypedArray())
+
+    fun externalLibraries(deps: List<String>) {
+        libs.addAll(deps)
+    }
+}
 
 internal open class AndroidPlatform(distribution: Distribution)
     : PlatformFlags(distribution.targetProperties) {
@@ -81,19 +101,19 @@ internal open class AndroidPlatform(distribution: Distribution)
     override fun filterStaticLibraries(binaries: List<String>) 
         = binaries.filter { it.isUnixStaticLib }
 
-    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): Command {
         // liblog.so must be linked in, as we use its functionality in runtime.
-        return mutableListOf(clang).apply{
-            add("-o")
-            add(executable)
-            add("-fPIC")
-            add("-shared")
-            add("-llog")
-            addAll(objectFiles)
-            if (optimize) addAll(linkerOptimizationFlags)
-            if (!debug) addAll(linkerNoDebugFlags)
-            if (dynamic) addAll(linkerDynamicFlags)
-            addAll(linkerKonanFlags)
+        return Command(clang).apply {
+            + "-o"
+            + executable
+            + "-fPIC"
+            + "-shared"
+            + "-llog"
+            + objectFiles
+            if (optimize) + linkerOptimizationFlags
+            if (!debug) + linkerNoDebugFlags
+            if (dynamic) + linkerDynamicFlags
+            + linkerKonanFlags
         }
     }
 }
@@ -115,19 +135,24 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
     override fun filterStaticLibraries(binaries: List<String>) 
         = binaries.filter { it.isUnixStaticLib }
 
-    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
-        return mutableListOf(linker).apply {
-            add("-demangle")
-            addAll(listOf("-object_path_lto", "temporary.o", "-lto_library", libLTO))
-            addAll(listOf("-dynamic", "-arch", propertyTargetString("arch")))
-            addAll(osVersionMin)
-            addAll(listOf("-syslibroot", targetSysRoot, "-o", executable))
-            addAll(objectFiles)
-            if (optimize) addAll(linkerOptimizationFlags)
-            if (!debug) addAll(linkerNoDebugFlags)
-            if (dynamic) addAll(linkerDynamicFlags)
-            addAll(linkerKonanFlags)
-            add("-lSystem")
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): Command {
+        return object : Command(linker){
+            override fun execute() {
+                super.execute()
+                runTool(*dsymutilCommand(executable).toTypedArray())
+            }
+        }.apply {
+            + "-demangle"
+            + listOf("-object_path_lto", "temporary.o", "-lto_library", libLTO)
+            + listOf("-dynamic", "-arch", propertyTargetString("arch"))
+            + osVersionMin
+            + listOf("-syslibroot", targetSysRoot, "-o", executable)
+            + objectFiles
+            if (optimize) + linkerOptimizationFlags
+            if (!debug) + linkerNoDebugFlags
+            if (dynamic) + linkerDynamicFlags
+            + linkerKonanFlags
+            + "-lSystem"
         }
     }
 
@@ -136,6 +161,7 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
     open fun dsymutilDryRunVerboseCommand(executable: ExecutableFile): List<String> =
             listOf(dsymutil, "-dump-debug-map" ,executable)
 }
+
 internal open class LinuxBasedPlatform(val distribution: Distribution)
     : PlatformFlags(distribution.targetProperties) {
 
@@ -149,47 +175,52 @@ internal open class LinuxBasedPlatform(val distribution: Distribution)
     override fun filterStaticLibraries(binaries: List<String>) 
         = binaries.filter { it.isUnixStaticLib }
 
-    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): Command {
         val isMips = (distribution.target == KonanTarget.LINUX_MIPS32 ||
-                      distribution.target == KonanTarget.LINUX_MIPSEL32)
+                distribution.target == KonanTarget.LINUX_MIPSEL32)
         // TODO: Can we extract more to the konan.properties?
-        return listConstructor(
-            linker,
-            "--sysroot=${targetSysRoot}",
-            "-export-dynamic", "-z", "relro",
-            "--build-id", "--eh-frame-hdr", // "-m", "elf_x86_64",
-            "-dynamic-linker", propertyTargetString("dynamicLinker"),
-            "-o", executable,
-            If (!dynamic, 
-                "${targetSysRoot}/usr/lib64/crt1.o"),
-            "${targetSysRoot}/usr/lib64/crti.o", 
+        return Command(linker).apply {
+            + "--sysroot=${targetSysRoot}"
+            + "-export-dynamic"
+            + "-z"
+            + "relro"
+            + "--build-id"
+            + "--eh-frame-hdr"
+            // + "-m"
+            // + "elf_x86_64",
+            + "-dynamic-linker"
+            + propertyTargetString("dynamicLinker")
+            + "-o"
+            + executable
+            if (!dynamic) + "$targetSysRoot/usr/lib64/crt1.o"
+            + "$targetSysRoot/usr/lib64/crti.o"
             if (dynamic)
-                "${libGcc}/crtbeginS.o"
+                + "$libGcc/crtbeginS.o"
             else
-                "${libGcc}/crtbegin.o",
-            "-L${llvmLib}", "-L${libGcc}",
-            If (!isMips,    // MIPS doesn't support hash-style=gnu
-                "--hash-style=gnu"),
-            specificLibs,
-            "-L${targetSysRoot}/../lib", "-L${targetSysRoot}/lib", "-L${targetSysRoot}/usr/lib",
-            If (optimize,
-                "-plugin", "$llvmLib/LLVMgold.so",
-                pluginOptimizationFlags,
-                linkerOptimizationFlags),
-            If (!debug, 
-                linkerNoDebugFlags),
-            If (dynamic, 
-                linkerDynamicFlags),
-            objectFiles,
-            linkerKonanFlags,
-            "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
-            "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
+                + "$libGcc/crtbegin.o"
+            + "-L$llvmLib"
+            + "-L$libGcc"
+            if (!isMips) + "--hash-style=gnu" // MIPS doesn't support hash-style=gnu
+            + specificLibs
+            + listOf("-L$targetSysRoot/../lib", "-L$targetSysRoot/lib", "-L$targetSysRoot/usr/lib")
+            if (optimize) {
+                + "-plugin"
+                +"$llvmLib/LLVMgold.so"
+                + pluginOptimizationFlags
+            }
+            if (optimize) + linkerOptimizationFlags
+            if (!debug) + linkerNoDebugFlags
+            if (dynamic) + linkerDynamicFlags
+            + objectFiles
+            + linkerKonanFlags
+            + listOf("-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
+                    "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed")
             if (dynamic)
-                "${libGcc}/crtendS.o"
+                + "$libGcc/crtendS.o"
             else
-                "${libGcc}/crtend.o",
-            "${targetSysRoot}/usr/lib64/crtn.o"
-        )
+                + "$libGcc/crtend.o"
+            + "$targetSysRoot/usr/lib64/crtn.o"
+        }
     }
 }
 
@@ -203,18 +234,14 @@ internal open class MingwPlatform(distribution: Distribution)
     override fun filterStaticLibraries(binaries: List<String>) 
         = binaries.filter { it.isWindowsStaticLib || it.isUnixStaticLib }
 
-    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
-        return listConstructor(
-            linker,
-            "-o", executable,
-            objectFiles,
-            If (optimize, 
-                linkerOptimizationFlags),
-            If (!debug, 
-                linkerNoDebugFlags),
-            If (dynamic, 
-                linkerDynamicFlags)
-        )
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): Command {
+        return Command(linker).apply {
+            + listOf("-o", executable)
+            + objectFiles
+            if (optimize) + linkerOptimizationFlags
+            if (!debug)  + linkerNoDebugFlags
+            if (dynamic) + linkerDynamicFlags
+        }
     }
 
     override fun linkCommandSuffix() = linkerKonanFlags
@@ -230,13 +257,30 @@ internal open class WasmPlatform(distribution: Distribution)
     override fun filterStaticLibraries(binaries: List<String>) 
         = emptyList<String>()
 
-    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): List<String> {
-        // No link stage for WASM yet, just give '.wasm' as output.
-        val src = File(objectFiles.single())
-        val dst = File(executable)
-        src.recursiveCopyTo(dst)
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): Command {
+        return object: Command("") {
+            override fun execute() {
+                val src = File(objectFiles.single())
+                val dst = File(executable)
+                src.recursiveCopyTo(dst)
+                javaScriptLink(libs.filter{it.isJavaScript}, executable)
+            }
 
-        return listOf()
+            private fun javaScriptLink(jsFiles: List<String>, executable: String): String {
+                val linkedJavaScript = File("$executable.js")
+
+                val jsLibsExceptLauncher = jsFiles.filter { it != "launcher.js" }.map { it.removeSuffix(".js") }
+
+                val linkerStub = "var konan = { libraries: [] };\n"
+
+                linkedJavaScript.writeBytes(linkerStub.toByteArray());
+
+                jsFiles.forEach {
+                    linkedJavaScript.appendBytes(File(it).readBytes())
+                }
+                return linkedJavaScript.name
+            }
+        }
     }
 }
 
@@ -373,50 +417,22 @@ internal class LinkStage(val context: Context) {
             executable = dylibPath.absolutePath
         }
 
-        // Hack that removes using OS command line environment for copying files.
-        val toolExecution = platform.linkCommand(objectFiles, executable, optimize, debug, dynamic)
-        if (toolExecution.isEmpty() && platform is WasmPlatform) {
-            JavaScriptLinker(includedBinaries.filter{it.isJavaScript}, executable)
-            return executable
-        }
-
-        assert(toolExecution.isNotEmpty())
-        val linkCommand = toolExecution +
-                platform.targetLibffi +
-                asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
-                entryPointSelector +
-                frameworkLinkerArgs +
-                platform.linkCommandSuffix() +
-                platform.linkStaticLibraries(includedBinaries) +
-                libraryProvidedLinkerFlags
-
         try {
-            runTool(*linkCommand.toTypedArray())
+            platform.linkCommand(objectFiles, executable, optimize, debug, dynamic).apply {
+                + platform.targetLibffi
+                + asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS))
+                + entryPointSelector
+                + frameworkLinkerArgs
+                + platform.linkCommandSuffix()
+                + platform.linkStaticLibraries(includedBinaries)
+                + libraryProvidedLinkerFlags
+                externalLibraries(includedBinaries)
+            }.execute()
         } catch (e: KonanExternalToolFailure) {
             context.reportCompilationError("linker invocation reported errors")
             return null
         }
-        if (platform is MacOSBasedPlatform && context.shouldContainDebugInfo()) {
-            if (context.phase?.verbose ?: false)
-                runTool(*platform.dsymutilDryRunVerboseCommand(executable).toTypedArray())
-            runTool(*platform.dsymutilCommand(executable).toTypedArray())
-        }
         return executable
-    }
-
-    private fun JavaScriptLinker(jsFiles: List<String>, executable: String): String {
-        val linkedJavaScript = File("$executable.js")
-
-        val jsLibsExceptLauncher = jsFiles.filter { it != "launcher.js" }.map { it.removeSuffix(".js") }
-
-        val linkerStub = "var konan = { libraries: [] };\n"
-
-        linkedJavaScript.writeBytes(linkerStub.toByteArray());
-
-        jsFiles.forEach {
-            linkedJavaScript.appendBytes(File(it).readBytes())
-        }
-        return linkedJavaScript.name
     }
 
     private fun executeCommand(vararg command: String): Int {
