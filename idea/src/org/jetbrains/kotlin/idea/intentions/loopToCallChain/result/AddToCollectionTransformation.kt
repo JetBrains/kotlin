@@ -34,7 +34,7 @@ class AddToCollectionTransformation(
         private val targetCollection: KtExpression
 ) : ReplaceLoopResultTransformation(loop) {
 
-    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation, reformat: Boolean): ResultTransformation? {
         return when (previousTransformation) {
             is FilterTransformation -> {
                 FilterToTransformation.create(
@@ -72,7 +72,10 @@ class AddToCollectionTransformation(
         get() = 0
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        return KtPsiFactory(loop).createExpressionByPattern("$0 += $1", targetCollection, chainedCallGenerator.receiver)
+        return KtPsiFactory(loop).createExpressionByPattern(
+                "$0 += $1", targetCollection, chainedCallGenerator.receiver,
+                reformat = chainedCallGenerator.reformat
+        )
     }
 
     /**
@@ -219,10 +222,11 @@ class FilterToTransformation private constructor(
         get() = "$functionName(){}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val reformat = chainedCallGenerator.reformat
         val lambda = if (indexVariable != null)
-            generateLambda(inputVariable, indexVariable, effectiveCondition.asExpression())
+            generateLambda(inputVariable, indexVariable, effectiveCondition.asExpression(reformat), reformat)
         else
-            generateLambda(inputVariable, if (isFilterNot) effectiveCondition.asNegatedExpression() else effectiveCondition.asExpression())
+            generateLambda(inputVariable, if (isFilterNot) effectiveCondition.asNegatedExpression(reformat) else effectiveCondition.asExpression(reformat), reformat)
         return chainedCallGenerator.generate("$functionName($0) $1:'{}'", targetCollection, lambda)
     }
 
@@ -294,7 +298,7 @@ class MapToTransformation private constructor(
         get() = "$functionName(){}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(inputVariable, indexVariable, mapping)
+        val lambda = generateLambda(inputVariable, indexVariable, mapping, chainedCallGenerator.reformat)
         return chainedCallGenerator.generate("$functionName($0) $1:'{}'", targetCollection, lambda)
     }
 
@@ -330,7 +334,7 @@ class FlatMapToTransformation private constructor(
         get() = "flatMapTo(){}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(inputVariable, transform)
+        val lambda = generateLambda(inputVariable, transform, chainedCallGenerator.reformat)
         return chainedCallGenerator.generate("flatMapTo($0) $1:'{}'", targetCollection, lambda)
     }
 
@@ -367,7 +371,7 @@ class AssignToListTransformation(
     override val presentation: String
         get() = "toList()"
 
-    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation, reformat: Boolean): ResultTransformation? {
         if (lazySequence) return null // toList() is necessary if the result is Sequence
         //TODO: can be any SequenceTransformation's that return not List<T>?
         return AssignSequenceResultTransformation(previousTransformation, initialization)

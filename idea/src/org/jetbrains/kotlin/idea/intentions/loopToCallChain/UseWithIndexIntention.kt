@@ -32,11 +32,11 @@ class UseWithIndexIntention : SelfTargetingRangeIntention<KtForExpression>(
         "Use withIndex() instead of manual index increment"
 ) {
     override fun applicabilityRange(element: KtForExpression): TextRange? {
-        return if (matchIndexToIntroduce(element) != null) element.forKeyword.textRange else null
+        return if (matchIndexToIntroduce(element, reformat = false) != null) element.forKeyword.textRange else null
     }
 
     override fun applyTo(element: KtForExpression, editor: Editor?) {
-        val (indexVariable, initializationStatement, incrementExpression) = matchIndexToIntroduce(element)!!
+        val (indexVariable, initializationStatement, incrementExpression) = matchIndexToIntroduce(element, reformat = true)!!
 
         val factory = KtPsiFactory(element)
         val loopRange = element.loopRange!!
@@ -53,7 +53,7 @@ class UseWithIndexIntention : SelfTargetingRangeIntention<KtForExpression>(
             incrementExpression.delete()
         }
         else {
-            removePlusPlus(incrementExpression)
+            removePlusPlus(incrementExpression, true)
         }
     }
 }

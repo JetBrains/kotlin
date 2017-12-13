@@ -119,14 +119,14 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
     }
 
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
-        applyTo(element, detectPropertyNameToUse(element)!!)
+        applyTo(element, detectPropertyNameToUse(element)!!, reformat = true)
     }
 
-    fun applyTo(element: KtCallExpression, propertyName: Name): KtExpression {
+    fun applyTo(element: KtCallExpression, propertyName: Name, reformat: Boolean): KtExpression {
         val arguments = element.valueArguments
         return when (arguments.size) {
             0 -> replaceWithPropertyGet(element, propertyName)
-            1 -> replaceWithPropertySet(element, propertyName)
+            1 -> replaceWithPropertySet(element, propertyName, reformat)
             else -> error("More than one argument in call to accessor")
         }
     }
@@ -168,7 +168,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         if (isSetUsage && property.type != function.valueParameters.single().type) {
             val qualifiedExpressionCopy = qualifiedExpression.copied()
             val callExpressionCopy = ((qualifiedExpressionCopy as? KtQualifiedExpression)?.selectorExpression ?: qualifiedExpressionCopy) as KtCallExpression
-            val newExpression = applyTo(callExpressionCopy, property.name)
+            val newExpression = applyTo(callExpressionCopy, property.name, reformat = false)
             val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
             val newBindingContext = newExpression.analyzeInContext(
                     resolutionScope,
@@ -195,7 +195,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
     ): Boolean {
         val project = resolvedCall.call.callElement.project
         val newCall = object : DelegatingCall(resolvedCall.call) {
-            private val newCallee = KtPsiFactory(project).createExpressionByPattern("$0", property.name)
+            private val newCallee = KtPsiFactory(project).createExpressionByPattern("$0", property.name, reformat = false)
 
             override fun getCalleeExpression() = newCallee
             override fun getValueArgumentList(): KtValueArgumentList? = null
@@ -227,7 +227,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         return callExpression.replaced(newExpression)
     }
 
-    private fun replaceWithPropertySet(callExpression: KtCallExpression, propertyName: Name): KtExpression {
+    private fun replaceWithPropertySet(callExpression: KtCallExpression, propertyName: Name, reformat: Boolean): KtExpression {
         val call = callExpression.getQualifiedExpressionForSelector() ?: callExpression
         val callParent = call.parent
         var callToConvert = callExpression
@@ -251,7 +251,8 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
                     pattern,
                     qualifiedExpression.receiverExpression,
                     propertyName,
-                    argument.getArgumentExpression()!!
+                    argument.getArgumentExpression()!!,
+                    reformat = reformat
             )
             return qualifiedExpression.replaced(newExpression)
         }
