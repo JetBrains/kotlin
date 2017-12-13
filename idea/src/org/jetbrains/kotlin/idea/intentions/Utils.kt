@@ -118,10 +118,10 @@ fun KtQualifiedExpression.isReceiverExpressionWithValue(): Boolean {
     return analyze().getType(receiver) != null
 }
 
-fun KtExpression.negate(): KtExpression {
-    val specialNegation = specialNegation()
+fun KtExpression.negate(reformat: Boolean = true): KtExpression {
+    val specialNegation = specialNegation(reformat)
     if (specialNegation != null) return specialNegation
-    return KtPsiFactory(this).createExpressionByPattern("!$0", this)
+    return KtPsiFactory(this).createExpressionByPattern("!$0", this, reformat = reformat)
 }
 
 fun KtExpression.resultingWhens(): List<KtWhenExpression> = when (this) {
@@ -142,7 +142,7 @@ fun KtExpression?.hasResultingIfWithoutElse(): Boolean = when (this) {
     else -> false
 }
 
-private fun KtExpression.specialNegation(): KtExpression? {
+private fun KtExpression.specialNegation(reformat: Boolean): KtExpression? {
     val factory = KtPsiFactory(this)
     when (this) {
         is KtPrefixExpression -> {
@@ -163,14 +163,18 @@ private fun KtExpression.specialNegation(): KtExpression? {
             if (operator !in NEGATABLE_OPERATORS) return null
             val left = left ?: return null
             val right = right ?: return null
-            return factory.createExpressionByPattern("$0 $1 $2", left, getNegatedOperatorText(operator), right)
+            return factory.createExpressionByPattern(
+                    "$0 $1 $2", left, getNegatedOperatorText(operator), right,
+                    reformat = reformat
+            )
         }
 
         is KtIsExpression -> {
             return factory.createExpressionByPattern("$0 $1 $2",
                                                      leftHandSide,
                                                      if (isNegated) "is" else "!is",
-                                                     typeReference ?: return null)
+                                                     typeReference ?: return null,
+                                                     reformat = reformat)
         }
 
         is KtConstantExpression -> {

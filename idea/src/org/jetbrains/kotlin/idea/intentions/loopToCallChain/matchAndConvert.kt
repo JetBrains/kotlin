@@ -59,10 +59,10 @@ data class MatchResult(
 )
 
 //TODO: loop which is already over Sequence
-fun match(loop: KtForExpression, useLazySequence: Boolean): MatchResult? {
+fun match(loop: KtForExpression, useLazySequence: Boolean, reformat: Boolean): MatchResult? {
     val (inputVariable, indexVariable, sequenceExpression) = extractLoopData(loop) ?: return null
 
-    var state = createInitialMatchingState(loop, inputVariable, indexVariable, useLazySequence) ?: return null
+    var state = createInitialMatchingState(loop, inputVariable, indexVariable, useLazySequence, reformat) ?: return null
 
     // used just as optimization to avoid unnecessary checks
     val loopContainsEmbeddedBreakOrContinue = loop.containsEmbeddedBreakOrContinue()
@@ -123,7 +123,7 @@ fun match(loop: KtForExpression, useLazySequence: Boolean): MatchResult? {
                         state.previousTransformations += match.sequenceTransformations
 
                         var result = TransformationMatch.Result(match.resultTransformation, state.previousTransformations)
-                        result = mergeTransformations(result)
+                        result = mergeTransformations(result, reformat)
 
                         if (useLazySequence) {
                             val sequenceTransformations = result.sequenceTransformations
@@ -157,7 +157,7 @@ fun convertLoop(loop: KtForExpression, matchResult: MatchResult): KtExpression {
 
     matchResult.initializationStatementsToDelete.forEach { commentSavingRangeHolder.add(it) }
 
-    val callChain = matchResult.generateCallChain(loop)
+    val callChain = matchResult.generateCallChain(loop, true)
 
     commentSavingRangeHolder.remove(loop.unwrapIfLabeled()) // loop will be deleted in all cases
     val result = resultTransformation.convertLoop(callChain, commentSavingRangeHolder)
@@ -204,7 +204,8 @@ private fun createInitialMatchingState(
         loop: KtForExpression,
         inputVariable: KtCallableDeclaration,
         indexVariable: KtCallableDeclaration?,
-        useLazySequence: Boolean
+        useLazySequence: Boolean,
+        reformat: Boolean
 ): MatchingState? {
 
     val pseudocodeProvider: () -> Pseudocode = object : () -> Pseudocode {
@@ -224,7 +225,8 @@ private fun createInitialMatchingState(
             inputVariable = inputVariable,
             indexVariable = indexVariable,
             lazySequence = useLazySequence,
-            pseudocodeProvider = pseudocodeProvider
+            pseudocodeProvider = pseudocodeProvider,
+            reformat = reformat
     )
 }
 
@@ -272,7 +274,7 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchRe
 
         if (smartCastCount == 0) return true // optimization
 
-        val callChain = matchResult.generateCallChain(loop)
+        val callChain = matchResult.generateCallChain(loop, false)
 
         val newBindingContext = callChain.analyzeAsReplacement(loop, bindingContext)
 
@@ -312,12 +314,12 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchRe
     }
 }
 
-private fun MatchResult.generateCallChain(loop: KtForExpression): KtExpression {
+private fun MatchResult.generateCallChain(loop: KtForExpression, reformat: Boolean): KtExpression {
     var sequenceTransformations = transformationMatch.sequenceTransformations
     var resultTransformation = transformationMatch.resultTransformation
     while(true) {
         val last = sequenceTransformations.lastOrNull() ?: break
-        resultTransformation = resultTransformation.mergeWithPrevious(last) ?: break
+        resultTransformation = resultTransformation.mergeWithPrevious(last, reformat) ?: break
         sequenceTransformations = sequenceTransformations.dropLast(1)
     }
 
@@ -331,10 +333,13 @@ private fun MatchResult.generateCallChain(loop: KtForExpression): KtExpression {
         override val receiver: KtExpression
             get() = callChain
 
+        override val reformat: Boolean
+            get() = reformat
+
         override fun generate(pattern: String, vararg args: Any, receiver: KtExpression, safeCall: Boolean): KtExpression {
             val dot = if (safeCall) "?." else "."
             val newPattern = "$" + args.size + lineBreak + dot + pattern
-            return psiFactory.createExpressionByPattern(newPattern, *args, receiver)
+            return psiFactory.createExpressionByPattern(newPattern, *args, receiver, reformat = reformat)
         }
     }
 
@@ -346,7 +351,7 @@ private fun MatchResult.generateCallChain(loop: KtForExpression): KtExpression {
     return callChain
 }
 
-private fun mergeTransformations(match: TransformationMatch.Result): TransformationMatch.Result {
+private fun mergeTransformations(match: TransformationMatch.Result, reformat: Boolean): TransformationMatch.Result {
     val transformations = (match.sequenceTransformations + match.resultTransformation).toMutableList()
 
     var anyChange: Boolean
@@ -355,7 +360,7 @@ private fun mergeTransformations(match: TransformationMatch.Result): Transformat
         for (index in 0..transformations.lastIndex - 1) {
             val transformation = transformations[index] as SequenceTransformation
             val next = transformations[index + 1]
-            val merged = next.mergeWithPrevious(transformation) ?: continue
+            val merged = next.mergeWithPrevious(transformation, reformat) ?: continue
             transformations[index] = merged
             transformations.removeAt(index + 1)
             anyChange = true
@@ -373,11 +378,11 @@ data class IntroduceIndexData(
         val incrementExpression: KtUnaryExpression
 )
 
-fun matchIndexToIntroduce(loop: KtForExpression): IntroduceIndexData? {
+fun matchIndexToIntroduce(loop: KtForExpression, reformat: Boolean): IntroduceIndexData? {
     val (inputVariable, indexVariable) = extractLoopData(loop) ?: return null
     if (indexVariable != null) return null // loop is already with "withIndex"
 
-    val state = createInitialMatchingState(loop, inputVariable, indexVariable, useLazySequence = false)?.unwrapBlock() ?: return null
+    val state = createInitialMatchingState(loop, inputVariable, indexVariable, useLazySequence = false, reformat = reformat)?.unwrapBlock() ?: return null
 
     val match = IntroduceIndexMatcher.match(state) ?: return null
     assert(match.sequenceTransformations.isEmpty())

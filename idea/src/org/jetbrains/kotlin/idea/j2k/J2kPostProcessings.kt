@@ -252,7 +252,7 @@ object J2KPostProcessingRegistrar {
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtCallExpression) return null
             val propertyName = intention.detectPropertyNameToUse(element) ?: return null
-            return { intention.applyTo(element, propertyName) }
+            return { intention.applyTo(element, propertyName, reformat = true) }
         }
     }
 
