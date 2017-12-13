@@ -15430,9 +15430,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("forInDownToCharMinValueReversed.kt")
+            public void testForInDownToCharMinValueReversed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInDownToCharMinValueReversed.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInDownToIntMinValue.kt")
             public void testForInDownToIntMinValue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInDownToIntMinValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInDownToIntMinValueReversed.kt")
+            public void testForInDownToIntMinValueReversed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInDownToIntMinValueReversed.kt");
                 doTest(fileName);
             }
 
@@ -15442,9 +15454,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("forInDownToLongMinValueReversed.kt")
+            public void testForInDownToLongMinValueReversed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInDownToLongMinValueReversed.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInRangeToCharMaxValue.kt")
             public void testForInRangeToCharMaxValue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInRangeToCharMaxValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInRangeToCharMaxValueReversed.kt")
+            public void testForInRangeToCharMaxValueReversed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInRangeToCharMaxValueReversed.kt");
                 doTest(fileName);
             }
 
@@ -15454,9 +15478,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("forInRangeToIntMaxValueReversed.kt")
+            public void testForInRangeToIntMaxValueReversed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInRangeToIntMaxValueReversed.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forInRangeToLongMaxValue.kt")
             public void testForInRangeToLongMaxValue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInRangeToLongMaxValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInRangeToLongMaxValueReversed.kt")
+            public void testForInRangeToLongMaxValueReversed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow/forInRangeToLongMaxValueReversed.kt");
                 doTest(fileName);
             }
 
