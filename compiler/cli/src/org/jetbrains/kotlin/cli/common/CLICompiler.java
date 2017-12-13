@@ -44,6 +44,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
 import static org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback;
@@ -239,11 +240,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         // do nothing
     }
 
+    private static final String kotlinHomeEnvVar = System.getenv(KOTLIN_HOME_ENV_VAR);
+
     @Nullable
     private static KotlinPaths computeKotlinPaths(@NotNull MessageCollector messageCollector, @NotNull CommonCompilerArguments arguments) {
         KotlinPaths paths;
         String kotlinHomeProperty = System.getProperty(KOTLIN_HOME_PROPERTY);
-        String kotlinHomeEnvVar = System.getenv(KOTLIN_HOME_ENV_VAR);
         File kotlinHome =
                 arguments.getKotlinHome() != null ? new File(arguments.getKotlinHome()) :
                 kotlinHomeProperty != null        ? new File(kotlinHomeProperty) :
