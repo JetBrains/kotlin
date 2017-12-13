@@ -398,10 +398,7 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
     }
 
     fun build(): List<String> = mutableListOf<String>().apply {
-        add("#import <stdint.h>")
-        add("#import <objc/NSObject.h>")
-        add("#import <CoreFoundation/CFBase.h>")
-        add("#import <Foundation/NSObjCRuntime.h>")
+        add("#import <Foundation/Foundation.h>")
         add("")
 
         if (classToName.isNotEmpty()) {
