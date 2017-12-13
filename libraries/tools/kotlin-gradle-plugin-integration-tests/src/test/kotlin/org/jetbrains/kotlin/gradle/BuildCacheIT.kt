@@ -164,51 +164,12 @@ class BuildCacheIT : BaseGradleIT() {
             assertContains(":kaptKotlin FROM-CACHE")
         }
     }
+}
 
-    @Test
-    fun testCacheSameFiles() = testSameFiles(listOf(
-            Project("simpleProject", GRADLE_VERSION),
-            Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2").apply {
-                setupWorkingDir()
-                File(projectDir, "build.gradle").appendText("\nafterEvaluate { kaptKotlin.useBuildCache = true }")
-            }))
-
-    private fun testSameFiles(projects: List<Project>) {
-        projects.forEach { project ->
-            try {
-                project.prepareLocalBuildCache()
-
-                lateinit var nonCacheOutputHashes: Map<File, Int>
-
-                project.build("build") {
-                    assertSuccessful()
-                    nonCacheOutputHashes = getOutputFiles(File(project.projectDir, "build"))
-
-                }
-
-                project.build("clean", "build") {
-                    assertSuccessful()
-                    val outputFromCacheHashes = getOutputFiles(File(project.projectDir, "build"))
-                    assertEquals(nonCacheOutputHashes, outputFromCacheHashes)
-                }
-            }
-            catch (e: AssertionError) {
-                throw AssertionError("Failed for project ${project.projectName}", e)
-            }
-        }
+fun BaseGradleIT.Project.prepareLocalBuildCache(directory: File = Files.createTempDirectory("GradleTestBuildCache").toFile()): File {
+    if (!projectDir.exists()) {
+        setupWorkingDir()
     }
-
-    private fun Project.prepareLocalBuildCache() {
-        if (!projectDir.exists()) {
-            setupWorkingDir()
-        }
-        val newCacheDirPath = Files.createTempDirectory("GradleTestBuildCache").toFile().absolutePath.replace("\\", "/")
-        File(projectDir, "settings.gradle").appendText("\nbuildCache.local.directory = '$newCacheDirPath'")
-    }
-
-    private val outputExtensions = setOf("java", "kt", "class", "kotlin_module")
-
-    private fun getOutputFiles(directory: File) = directory.walkTopDown()
-            .filter { it.extension in outputExtensions }
-            .associate { it to it.readBytes().contentHashCode() }
+    File(projectDir, "settings.gradle").appendText("\nbuildCache.local.directory = '${directory.absolutePath.replace("\\", "/")}'")
+    return directory
 }
