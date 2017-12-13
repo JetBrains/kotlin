@@ -525,6 +525,21 @@ fun needWrapArgumentList(psi: PsiElement): Boolean {
     return args?.singleOrNull()?.getArgumentExpression() !is KtObjectLiteralExpression
 }
 
+fun NodeIndentStrategy.PositionStrategy.continuationIf(
+        option: (KotlinCodeStyleSettings) -> Boolean,
+        indentFirst: Boolean = false
+): NodeIndentStrategy {
+    return set { settings ->
+        if (option(settings.kotlinCustomSettings)) {
+            if (indentFirst)
+                Indent.getContinuationIndent()
+            else
+                Indent.getContinuationWithoutFirstIndent()
+        } else
+            Indent.getNormalIndent()
+    }
+}
+
 private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
         strategy("No indent for braces in blocks")
                 .within(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
@@ -557,12 +572,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .forElement {
                     it.psi is KtExpression && it.psi !is KtBlockExpression
                 }
-                .set { settings ->
-                    if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES)
-                        Indent.getContinuationIndent()
-                    else
-                        Indent.getNormalIndent()
-                },
+                .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES, indentFirst = true),
 
         strategy("Property accessor expression body")
                 .within(KtNodeTypes.PROPERTY_ACCESSOR)
@@ -576,12 +586,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .forElement {
                     it.psi is KtExpression
                 }
-                .set { settings ->
-                    if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES)
-                        Indent.getContinuationWithoutFirstIndent()
-                    else
-                        Indent.getNormalIndent()
-                },
+                .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES),
 
         strategy("Indent for parts")
                 .within(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
@@ -592,12 +597,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .within(QUALIFIED_EXPRESSIONS)
                 .notForType(KtTokens.DOT, KtTokens.SAFE_ACCESS)
                 .forElement { it.treeParent.firstChildNode != it }
-                .set { settings ->
-                    if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
-                        Indent.getContinuationWithoutFirstIndent()
-                    else
-                        Indent.getNormalIndent()
-                },
+                .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_CHAINED_CALLS),
 
         strategy("Colon of delegation list")
                 .within(KtNodeTypes.CLASS, KtNodeTypes.OBJECT_DECLARATION)
@@ -606,12 +606,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
 
         strategy("Delegation list")
                 .within(KtNodeTypes.SUPER_TYPE_LIST, KtNodeTypes.INITIALIZER_LIST)
-                .set { settings ->
-                    if (settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_SUPERTYPE_LISTS)
-                        Indent.getContinuationIndent(false)
-                    else
-                        Indent.getNormalIndent()
-                },
+                .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_SUPERTYPE_LISTS, indentFirst = true),
 
         strategy("Indices")
                 .within(KtNodeTypes.INDICES)
@@ -655,12 +650,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
         strategy("Parameter list")
                 .within(KtNodeTypes.VALUE_PARAMETER_LIST)
                 .forElement { it.elementType == KtNodeTypes.VALUE_PARAMETER && it.psi.prevSibling != null }
-                .set { settings ->
-                    if (settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
-                        Indent.getContinuationIndent()
-                    else
-                        Indent.getNormalIndent()
-                },
+                .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_PARAMETER_LISTS, indentFirst = true),
 
         strategy("Where clause")
                 .within(KtNodeTypes.CLASS, KtNodeTypes.FUN, KtNodeTypes.PROPERTY)
