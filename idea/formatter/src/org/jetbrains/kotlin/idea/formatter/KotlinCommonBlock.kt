@@ -358,10 +358,30 @@ abstract class KotlinCommonBlock(
         val childrenAlignmentStrategy = getChildrenAlignmentStrategy()
         val wrappingStrategy = getWrappingStrategy()
 
-        return node.children()
+        val childNodes = if (node.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+            val binaryExpressionChildren = mutableListOf<ASTNode>()
+            collectBinaryExpressionChildren(node, binaryExpressionChildren)
+            binaryExpressionChildren.asSequence()
+        }
+        else {
+            node.children()
+        }
+
+        return childNodes
                 .filter { it.textRange.length > 0 && it.elementType != TokenType.WHITE_SPACE }
                 .map { buildSubBlock(it, childrenAlignmentStrategy, wrappingStrategy ) }
                 .toList()
+    }
+
+    private fun collectBinaryExpressionChildren(node: ASTNode, result: MutableList<ASTNode>) {
+        for (child in node.children()) {
+            if (child.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+                collectBinaryExpressionChildren(child, result)
+            }
+            else {
+                result.add(child)
+            }
+        }
     }
 
     private fun getWrappingStrategy(): WrappingStrategy {
@@ -574,6 +594,16 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 }
                 .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES, indentFirst = true),
 
+        strategy("If condition")
+                .within(KtNodeTypes.CONDITION)
+                .set { settings ->
+                    val indentType = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_IF_CONDITIONS)
+                        Indent.Type.CONTINUATION
+                    else
+                        Indent.Type.NORMAL
+                    Indent.getIndent(indentType, false, true)
+                },
+
         strategy("Property accessor expression body")
                 .within(KtNodeTypes.PROPERTY_ACCESSOR)
                 .forElement {
@@ -614,6 +644,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
 
         strategy("Binary expressions")
                 .within(BINARY_EXPRESSIONS)
+                .forElement { node -> !node.suppressBinaryExpressionIndent() }
                 .set(Indent.getContinuationWithoutFirstIndent(false)),
 
         strategy("Parenthesized expression")
@@ -676,6 +707,18 @@ private fun hasErrorElementBefore(node: ASTNode): Boolean {
     if (prevSibling.elementType == TokenType.ERROR_ELEMENT) return true
     val lastChild = TreeUtil.getLastChild(prevSibling)
     return lastChild?.elementType == TokenType.ERROR_ELEMENT
+}
+
+/**
+ * Suppress indent for binary expressions when there is a block higher in the tree that forces
+ * its indent to children ('if' condition or elvis).
+ */
+private fun ASTNode.suppressBinaryExpressionIndent(): Boolean {
+    var psi = psi.parent as? KtBinaryExpression ?: return false
+    while (psi.parent is KtBinaryExpression) {
+        psi = psi.parent as KtBinaryExpression
+    }
+    return psi.parent?.node?.elementType == KtNodeTypes.CONDITION || psi.operationToken == KtTokens.ELVIS
 }
 
 private fun getAlignmentForChildInParenthesis(
