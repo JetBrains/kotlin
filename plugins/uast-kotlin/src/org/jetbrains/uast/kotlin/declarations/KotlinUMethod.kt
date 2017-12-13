@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 import org.jetbrains.uast.kotlin.*
@@ -59,8 +60,17 @@ open class KotlinUMethod(
                 .map { KotlinUAnnotation(it, this) }
     }
 
+    private val receiver by lz { (sourcePsi as? KtCallableDeclaration)?.receiverTypeReference }
+
     override val uastParameters by lz {
-        psi.parameterList.parameters.map { KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this) }
+        val lightParams = psi.parameterList.parameters
+        val receiver = receiver ?: return@lz lightParams.map {
+            KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this)
+        }
+        val receiverLight = lightParams.firstOrNull() ?: return@lz emptyList<UParameter>()
+        val uParameters = SmartList<UParameter>(KotlinReceiverUParameter(receiverLight, receiver, this))
+        lightParams.drop(1).mapTo(uParameters) { KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this) }
+        uParameters
     }
 
     override val uastAnchor: UElement
