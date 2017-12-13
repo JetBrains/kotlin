@@ -470,6 +470,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("IfConditionIndent.after.kt")
+        public void testIfConditionIndent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfConditionIndent.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IfElseRemoveLineBreak.after.kt")
         public void testIfElseRemoveLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfElseRemoveLineBreak.after.kt");
@@ -1313,6 +1319,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("FunctionalType.after.inv.kt")
         public void testFunctionalType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionalType.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("IfConditionIndent.after.inv.kt")
+        public void testIfConditionIndent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfConditionIndent.after.inv.kt");
             doTestInverted(fileName);
         }
 
