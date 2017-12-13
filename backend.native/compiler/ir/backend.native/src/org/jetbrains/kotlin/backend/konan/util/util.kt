@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.util
 
 import kotlin.system.measureTimeMillis
+import org.jetbrains.kotlin.konan.file.*
 
 fun printMillisec(message: String, body: () -> Unit) {
     val msec = measureTimeMillis{
@@ -38,6 +39,13 @@ fun nTabs(amount: Int): String {
 
 fun String.prefixIfNot(prefix: String) =
     if (this.startsWith(prefix)) this else "$prefix$this"
+
+fun String.prefixBaseNameIfNot(prefix: String): String {
+    val file = File(this)
+    val name = file.name
+    val directory = file.parent
+    return "$directory/${name.prefixIfNot(prefix)}"
+}
 
 fun String.suffixIfNot(suffix: String) =
     if (this.endsWith(suffix)) this else "$this$suffix"

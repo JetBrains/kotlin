@@ -492,14 +492,45 @@ class LinkKonanTest extends KonanTest {
     protected String lib
 
     void compileTest(List<String> filesToCompile, String exe) {
-        def libDir = project.file(lib).absolutePath
-        def libBc = "${libDir}.bc"
+        def libname = "testklib"
+        def klib = "$outputDirectory/$libname"
 
-        runCompiler(lib, libBc, ['-produce', 'library'] + ((flags != null) ? flags :[]))
-        runCompiler(filesToCompile, exe, ['-library', libBc] + ((flags != null) ? flags :[]))
+        runCompiler(lib, klib, ['-produce', 'library'] + ((flags != null) ? flags :[]))
+        runCompiler(filesToCompile, exe, ['-library', klib] + ((flags != null) ? flags :[]))
     }
 }
 
+class DynamicKonanTest extends KonanTest {
+    protected String cSource
+
+    void compileTest(List<String> filesToCompile, String exe) {
+        def libname = "testlib"
+        def dylib = "$outputDirectory/$libname"
+        def realExe = "${exe}.${targetManager.target.family.exeSuffix}"
+
+        runCompiler(filesToCompile, dylib, ['-produce', 'dynamic'] + ((flags != null) ? flags :[]))
+        runClang([cSource], realExe, ['-I', outputDirectory, '-L', outputDirectory, '-l', libname])
+    }
+
+    void runClang(List<String> cSources, String output, List<String> moreArgs) {
+        def log = new ByteArrayOutputStream()
+        project.execKonanClang(project.testTarget) {
+            workingDir outputDirectory
+
+            executable "clang"
+            args cSources
+            args '-o', output
+            args moreArgs
+            args "-Wl,-rpath,$outputDirectory"
+
+            standardOutput = log
+            errorOutput = log
+        }
+        def logString = log.toString("UTF-8")
+        project.file("${output}.compilation.log").write(logString)
+        println(logString)
+    }
+}
 class RunExternalTestGroup extends RunStandaloneKonanTest {
 
     def groupDirectory = "."

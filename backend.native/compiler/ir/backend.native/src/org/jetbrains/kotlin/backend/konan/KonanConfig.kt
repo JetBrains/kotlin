@@ -71,7 +71,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val suffix = produce.suffix(target)
     val outputName = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(suffix) ?: produce.name.toLowerCase()
     val outputFile = outputName
-        .prefixIfNot(prefix)
+        .prefixBaseNameIfNot(prefix)
         .suffixIfNot(suffix)
 
     val tempFiles = TempFiles(outputName)
