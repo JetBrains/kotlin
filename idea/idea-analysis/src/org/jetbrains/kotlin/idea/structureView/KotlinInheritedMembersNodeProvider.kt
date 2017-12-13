@@ -55,6 +55,8 @@ class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeEleme
                         children.add(KotlinStructureViewElement(superTypeMember, memberDescriptor, true))
                     }
                 }
+                CallableMemberDescriptor.Kind.DECLARATION -> Unit /* Don't show */
+                CallableMemberDescriptor.Kind.SYNTHESIZED -> Unit /* Don't show */
             }
         }
 
