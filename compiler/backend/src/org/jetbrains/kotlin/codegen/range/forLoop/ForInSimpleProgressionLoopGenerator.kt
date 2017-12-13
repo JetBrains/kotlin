@@ -30,6 +30,7 @@ class ForInSimpleProgressionLoopGenerator(
         private val isStartInclusive: Boolean,
         private val endValue: StackValue,
         private val isEndInclusive: Boolean,
+        private val inverseBoundsEvaluationOrder: Boolean,
         step: Int
 ) : AbstractForInRangeLoopGenerator(codegen, forExpression, step) {
 
@@ -37,6 +38,7 @@ class ForInSimpleProgressionLoopGenerator(
             codegen: ExpressionCodegen,
             forExpression: KtForExpression,
             boundedValue: SimpleBoundedValue,
+            inverseBoundsEvaluationOrder: Boolean,
             step: Int
     ) : this(
             codegen, forExpression,
@@ -44,23 +46,40 @@ class ForInSimpleProgressionLoopGenerator(
             isStartInclusive = if (step == 1) boundedValue.isLowInclusive else boundedValue.isHighInclusive,
             endValue = if (step == 1) boundedValue.highBound else boundedValue.lowBound,
             isEndInclusive = if (step == 1) boundedValue.isHighInclusive else boundedValue.isLowInclusive,
+            inverseBoundsEvaluationOrder = inverseBoundsEvaluationOrder,
             step = step
     )
 
     companion object {
-        fun fromBoundedValueWithStep1(codegen: ExpressionCodegen, forExpression: KtForExpression, boundedValue: SimpleBoundedValue) =
-                ForInSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, 1)
+        fun fromBoundedValueWithStep1(
+                codegen: ExpressionCodegen,
+                forExpression: KtForExpression,
+                boundedValue: SimpleBoundedValue,
+                inverseBoundsEvaluationOrder: Boolean = false
+        ) =
+                ForInSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, inverseBoundsEvaluationOrder, 1)
 
-        fun fromBoundedValueWithStepMinus1(codegen: ExpressionCodegen, forExpression: KtForExpression, boundedValue: SimpleBoundedValue) =
-                ForInSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, -1)
+        fun fromBoundedValueWithStepMinus1(
+                codegen: ExpressionCodegen,
+                forExpression: KtForExpression,
+                boundedValue: SimpleBoundedValue,
+                inverseBoundsEvaluationOrder: Boolean = false
+        ) =
+                ForInSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, inverseBoundsEvaluationOrder, -1)
     }
 
     override fun storeRangeStartAndEnd() {
-        loopParameter().store(startValue, v)
+        if (inverseBoundsEvaluationOrder) {
+            StackValue.local(endVar, asmElementType).store(endValue, v)
+            loopParameter().store(startValue, v)
+        }
+        else {
+            loopParameter().store(startValue, v)
+            StackValue.local(endVar, asmElementType).store(endValue, v)
+        }
+
         // Skip 1st element if start is not inclusive.
         if (!isStartInclusive) incrementLoopVariable()
-
-        StackValue.local(endVar, asmElementType).store(endValue, v)
     }
 
     override fun checkEmptyLoop(loopExit: Label) {
