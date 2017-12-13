@@ -2225,6 +2225,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unnamedVararg.kt")
+        public void testUnnamedVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/unnamedVararg.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("vararg.kt")
         public void testVararg() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/vararg.kt");
