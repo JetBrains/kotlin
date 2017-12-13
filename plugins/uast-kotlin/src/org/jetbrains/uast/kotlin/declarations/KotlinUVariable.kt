@@ -17,6 +17,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -256,7 +257,10 @@ class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override va
 
     override fun findDeclaredAttributeValue(name: String?): UExpression? = null
 
-    override fun resolve(): PsiClass? = null
+    override fun resolve(): PsiClass? = qualifiedName?.let {
+        val project = annotatedElement.project
+        JavaPsiFacade.getInstance(project).findClass(it, GlobalSearchScope.allScope(project))
+    }
 
 }
 
