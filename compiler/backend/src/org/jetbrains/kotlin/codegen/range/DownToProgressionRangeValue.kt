@@ -43,7 +43,10 @@ class DownToProgressionRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
 
     override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             createConstBoundedForInReversedDownToGenerator(codegen, forExpression) ?:
-            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
+            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(
+                    codegen, forExpression, getBoundedValue(codegen),
+                    inverseBoundsEvaluationOrder = true
+            )
 
     private fun createConstBoundedForInDownToGenerator(
             codegen: ExpressionCodegen,

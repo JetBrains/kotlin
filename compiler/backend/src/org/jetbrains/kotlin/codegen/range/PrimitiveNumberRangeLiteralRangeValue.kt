@@ -41,7 +41,10 @@ class PrimitiveNumberRangeLiteralRangeValue(
 
     override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator =
             createConstBoundedRangeForInReversedRangeLiteralGenerator(codegen, forExpression) ?:
-            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(codegen, forExpression, getBoundedValue(codegen))
+            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
+                    codegen, forExpression, getBoundedValue(codegen),
+                    inverseBoundsEvaluationOrder = true
+            )
 
     private fun createConstBoundedForInRangeLiteralGenerator(
             codegen: ExpressionCodegen,

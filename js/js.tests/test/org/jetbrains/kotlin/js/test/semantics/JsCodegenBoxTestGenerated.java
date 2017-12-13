@@ -16740,6 +16740,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/forInReversedUntilWithNonConstBounds.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/codegen/box/ranges/forInReversed/evaluationOrder")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class EvaluationOrder extends AbstractJsCodegenBoxTest {
+                public void testAllFilesPresentInEvaluationOrder() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInReversed/evaluationOrder"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                }
+
+                @TestMetadata("forInReversedDownToEvaluationOrder.kt")
+                public void testForInReversedDownToEvaluationOrder() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/evaluationOrder/forInReversedDownToEvaluationOrder.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("forInReversedRangeLiteralEvaluationOrder.kt")
+                public void testForInReversedRangeLiteralEvaluationOrder() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/evaluationOrder/forInReversedRangeLiteralEvaluationOrder.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("forInReversedUntilEvaluationOrder.kt")
+                public void testForInReversedUntilEvaluationOrder() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInReversed/evaluationOrder/forInReversedUntilEvaluationOrder.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/ranges/forInUntil")

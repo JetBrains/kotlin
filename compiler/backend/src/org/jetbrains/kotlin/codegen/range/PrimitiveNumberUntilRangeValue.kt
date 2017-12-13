@@ -36,7 +36,10 @@ class PrimitiveNumberUntilRangeValue(rangeCall: ResolvedCall<out CallableDescrip
 
     override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
             createConstBoundedForInReversedUntilGenerator(codegen, forExpression) ?:
-            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(codegen, forExpression, getBoundedValue(codegen))
+            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
+                    codegen, forExpression, getBoundedValue(codegen),
+                    inverseBoundsEvaluationOrder = true
+            )
 
     private fun createConstBoundedForInReversedUntilGenerator(
             codegen: ExpressionCodegen,
