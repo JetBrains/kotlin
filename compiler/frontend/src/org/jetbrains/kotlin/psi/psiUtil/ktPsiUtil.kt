@@ -411,18 +411,24 @@ fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name
 fun KtExpression.asAssignment(): KtBinaryExpression? =
         if (KtPsiUtil.isAssignment(this)) this as KtBinaryExpression else null
 
-private fun KtDeclaration.modifierFromTokenSet(set: TokenSet): PsiElement? {
-    val modifierList = modifierList ?: return null
+private fun KtModifierList.modifierFromTokenSet(set: TokenSet): PsiElement? {
     return set.types
             .asSequence()
-            .map { modifierList.getModifier(it as KtModifierKeywordToken) }
+            .map { getModifier(it as KtModifierKeywordToken) }
             .firstOrNull { it != null }
 
 }
 
-fun KtDeclaration.visibilityModifier() = modifierFromTokenSet(KtTokens.VISIBILITY_MODIFIERS)
+private fun KtModifierListOwner.modifierFromTokenSet(set: TokenSet) = modifierList?.modifierFromTokenSet(set)
 
-fun KtDeclaration.visibilityModifierType(): KtModifierKeywordToken?
+fun KtModifierList.visibilityModifier() = modifierFromTokenSet(KtTokens.VISIBILITY_MODIFIERS)
+
+fun KtModifierList.visibilityModifierType(): KtModifierKeywordToken?
+        = visibilityModifier()?.node?.elementType as KtModifierKeywordToken?
+
+fun KtModifierListOwner.visibilityModifier() = modifierList?.modifierFromTokenSet(KtTokens.VISIBILITY_MODIFIERS)
+
+fun KtModifierListOwner.visibilityModifierType(): KtModifierKeywordToken?
         = visibilityModifier()?.node?.elementType as KtModifierKeywordToken?
 
 private val MODALITY_MODIFIERS = TokenSet.create(

@@ -3467,6 +3467,15 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/fromJava")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FromJava extends AbstractQuickFixTest {
+                public void testAllFilesPresentInFromJava() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/fromJava"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                }
+            }
+
             @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/delegateAccessors")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
