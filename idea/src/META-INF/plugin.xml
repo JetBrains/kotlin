@@ -4,7 +4,7 @@
   <name>Kotlin</name>
   <description>Kotlin language support</description>
   <version>@snapshot@</version>
-  <vendor url="http://www.jetbrains.com">JetBrains s.r.o.</vendor>
+  <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
   <idea-version since-build="172.1" until-build="172.*"/>
 
