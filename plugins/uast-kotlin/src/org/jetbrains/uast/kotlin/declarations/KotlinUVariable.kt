@@ -272,6 +272,7 @@ open class KotlinUField(
 
     override fun acceptsAnnotationTarget(target: AnnotationUseSiteTarget?): Boolean =
             target == AnnotationUseSiteTarget.FIELD ||
+            target == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD ||
             (sourcePsi is KtProperty) && (target == null || target == AnnotationUseSiteTarget.PROPERTY)
 
     override fun getInitializer(): PsiExpression? {
