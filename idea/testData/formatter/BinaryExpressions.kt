@@ -12,4 +12,3 @@ fun test() {
 }
 
 // SET_TRUE: ALIGN_MULTILINE_BINARY_OPERATION
-// Strage behaviour for disabled alignment is same to Java
