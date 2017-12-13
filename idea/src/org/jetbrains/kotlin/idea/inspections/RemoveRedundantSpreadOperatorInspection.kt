@@ -34,22 +34,31 @@ class RemoveRedundantSpreadOperatorInspection : AbstractKotlinInspection() {
         return object : KtVisitorVoid() {
             override fun visitArgument(argument: KtValueArgument) {
                 super.visitArgument(argument)
+
                 val spreadElement = argument.getSpreadElement() ?: return
                 if (argument.isNamed()) return
-                val argumentExpression = argument.getArgumentExpression() as? KtCallExpression ?: return
-                if (argumentExpression.isArrayOfMethod()) {
-                    val argumentOffset = argument.startOffset
-                    val problemDescriptor = holder.manager.createProblemDescriptor(
-                            argument,
-                            TextRange(spreadElement.startOffset - argumentOffset,
-                                      argumentExpression.calleeExpression!!.endOffset - argumentOffset),
-                            "Remove redundant spread operator",
-                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                            isOnTheFly,
-                            RemoveRedundantSpreadOperatorQuickfix()
-                    )
-                    holder.registerProblem(problemDescriptor)
-                }
+                val argumentExpression = argument.getArgumentExpression() ?: return
+                val argumentOffset = argument.startOffset
+                val startOffset = spreadElement.startOffset - argumentOffset
+                val endOffset =
+                        when (argumentExpression) {
+                            is KtCallExpression -> {
+                                if (!argumentExpression.isArrayOfMethod()) return
+                                argumentExpression.calleeExpression!!.endOffset - argumentOffset
+                            }
+                            is KtCollectionLiteralExpression -> startOffset + 1
+                            else -> return
+                        }
+
+                val problemDescriptor = holder.manager.createProblemDescriptor(
+                        argument,
+                        TextRange(startOffset, endOffset),
+                        "Remove redundant spread operator",
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        isOnTheFly,
+                        RemoveRedundantSpreadOperatorQuickfix()
+                )
+                holder.registerProblem(problemDescriptor)
             }
         }
     }
@@ -61,16 +70,20 @@ class RemoveRedundantSpreadOperatorQuickfix : LocalQuickFix {
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val arrayOfValueArgument = descriptor.psiElement as? KtValueArgument ?: return
-        val arrayOfArgumentExpression = arrayOfValueArgument.getArgumentExpression() as? KtCallExpression ?: return
-        val arrayOfArgumentList = arrayOfArgumentExpression.valueArgumentList ?: return
+        // Argument & expression under *
+        val spreadValueArgument = descriptor.psiElement as? KtValueArgument ?: return
+        val spreadArgumentExpression = spreadValueArgument.getArgumentExpression() ?: return
+        val outerArgumentList = spreadValueArgument.getStrictParentOfType<KtValueArgumentList>() ?: return
+        // Arguments under arrayOf or []
+        val innerArgumentExpressions =
+                when (spreadArgumentExpression) {
+                    is KtCallExpression -> spreadArgumentExpression.valueArgumentList?.arguments?.map { it.getArgumentExpression() }
+                    is KtCollectionLiteralExpression -> spreadArgumentExpression.getInnerExpressions()
+                    else -> null
+                } ?: return
+
         val factory = KtPsiFactory(project)
-        arrayOfValueArgument.getStrictParentOfType<KtValueArgumentList>()?.let { outerArgumentList ->
-            arrayOfArgumentList.arguments.reversed().forEach { argument ->
-                val newValueArgument = factory.createArgument(argument.getArgumentExpression())
-                outerArgumentList.addArgumentAfter(newValueArgument, arrayOfValueArgument)
-            }
-            outerArgumentList.removeArgument(arrayOfValueArgument)
-        }
+        innerArgumentExpressions.reversed().forEach { outerArgumentList.addArgumentAfter(factory.createArgument(it), spreadValueArgument) }
+        outerArgumentList.removeArgument(spreadValueArgument)
     }
 }
