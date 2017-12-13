@@ -42,6 +42,7 @@ sourceSets {
 }
 
 projectTest {
+    dependsOn(":kotlin-compiler:dist")
     workingDir = rootDir
 }
 
