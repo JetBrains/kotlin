@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.modules;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,17 +27,15 @@ import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiJavaModule;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.light.LightJavaModule;
-import com.intellij.psi.search.FilenameIndex;
+import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.stream.Collectors;
 
 import static com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE;
 
@@ -81,11 +80,12 @@ public class ModuleHighlightUtil2 {
             Module module = index.getModuleForFile(file);
             if (module != null) {
                 boolean isTest = index.isInTestSourceContent(file);
-                List<VirtualFile> files = FilenameIndex.getVirtualFilesByName(project, MODULE_INFO_FILE, module.getModuleScope()).stream()
-                        .filter(f -> index.isInTestSourceContent(f) == isTest)
-                        .collect(Collectors.toList());
-                if (files.size() == 1) {
-                    PsiFile psiFile = PsiManager.getInstance(project).findFile(files.get(0));
+                VirtualFile modularRoot = ArraysKt.singleOrNull(ModuleRootManager.getInstance(module).getSourceRoots(isTest),
+                                                                root -> root.findChild(MODULE_INFO_FILE) != null);
+                if (modularRoot != null) {
+                    VirtualFile moduleInfo = modularRoot.findChild(MODULE_INFO_FILE);
+                    assert moduleInfo != null : modularRoot;
+                    PsiFile psiFile = PsiManager.getInstance(project).findFile(moduleInfo);
                     if (psiFile instanceof PsiJavaFile) {
                         return ((PsiJavaFile) psiFile).getModuleDeclaration();
                     }

@@ -1301,6 +1301,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forInStringSpecialized.kt")
+        public void testForInStringSpecialized() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInStringSpecialized.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forInUntil.kt")
         public void testForInUntil() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInUntil.kt");

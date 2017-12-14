@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
@@ -211,6 +212,32 @@ fun getSomething() = 10
             assertSuccessful()
         }
     }
+
+    @Test
+    fun testAndroidExtensionsIncremental() {
+        val project = Project("AndroidExtensionsProject", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames(
+                    "MyActivity.kt", "noLayoutUsages.kt"
+            )
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
+        }
+
+        val activityLayout = project.projectFile("activity_main.xml")
+        activityLayout.modify { it.replace("textView", "newTextView") }
+
+        project.build("assembleDebug", options = options) {
+            assertFailed()
+            val affectedSources = project.projectDir.getFilesByNames("MyActivity.kt")
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
+        }
+    }
+
 
     @Test
     fun testAndroidExtensionsManyVariants() {

@@ -21,13 +21,11 @@ import gnu.trove.TObjectIntHashMap;
 import kotlin.io.TextStreamsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.parser.sourcemaps.*;
 import org.jetbrains.kotlin.js.util.TextOutput;
-import org.json.JSONWriter;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -72,44 +70,31 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
     @Override
     public String build() {
-        try {
-            StringWriter stringWriter = new StringWriter();
-            JSONWriter writer = new JSONWriter(stringWriter);
-            writer.object();
-            writer.key("version").value(3);
-            writer.key("file").value(generatedFile.getName());
-
-            appendSources(writer);
-            appendSourcesContent(writer);
-
-            writer.key("names").array().endArray();
-            writer.key("mappings").value(out.toString());
-
-            writer.endObject();
-            stringWriter.close();
-
-            return stringWriter.toString();
-        }
-        catch (IOException e) {
-            throw new AssertionError("This exception should have not been thrown from StringWriter", e);
-        }
+        JsonObject json = new JsonObject();
+        json.getProperties().put("version", new JsonNumber(3));
+        json.getProperties().put("file", new JsonString(generatedFile.getName()));
+        appendSources(json);
+        appendSourcesContent(json);
+        json.getProperties().put("names", new JsonArray());
+        json.getProperties().put("mappings", new JsonString(out.toString()));
+        return json.toString();
     }
 
-    private void appendSources(JSONWriter writer) {
-        writer.key("sources").array();
+    private void appendSources(JsonObject json) {
+        JsonArray array = new JsonArray();
         for (String source : orderedSources) {
-            writer.value(pathPrefix + source);
+            array.getElements().add(new JsonString(pathPrefix + source));
         }
-        writer.endArray();
+        json.getProperties().put("sources", array);
     }
 
-    private void appendSourcesContent(JSONWriter writer) {
-        writer.key("sourcesContent").array();
+    private void appendSourcesContent(JsonObject json) {
+        JsonArray array = new JsonArray();
         for (Supplier<Reader> contentSupplier : orderedSourceContentSuppliers) {
             Reader reader = contentSupplier.get();
-            writer.value(reader != null ? TextStreamsKt.readText(reader) : null);
+            array.getElements().add(reader != null ? new JsonString(TextStreamsKt.readText(reader)) : JsonNull.INSTANCE);
         }
-        writer.endArray();
+        json.getProperties().put("sourcesContent", array);
     }
 
     @Override

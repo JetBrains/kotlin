@@ -84,6 +84,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("copySamOnInline.kt")
+    public void testCopySamOnInline() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/copySamOnInline.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("coroutinesBinary.kt")
     public void testCoroutinesBinary() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt");

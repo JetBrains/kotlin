@@ -469,15 +469,14 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     override fun shouldGenerateScript(script: KtScript) = false
                 }
 
-                val state = GenerationState(
+                val state = GenerationState.Builder(
                         fileForDebugger.project,
                         if (!DEBUG_MODE) ClassBuilderFactories.binaries(false) else ClassBuilderFactories.TEST,
                         moduleDescriptor,
                         bindingContext,
                         files,
-                        CompilerConfiguration.EMPTY,
-                        generateClassFilter
-                )
+                        CompilerConfiguration.EMPTY
+                ).generateDeclaredClassFilter(generateClassFilter).build()
 
                 val frameVisitor = FrameVisitor(context)
 

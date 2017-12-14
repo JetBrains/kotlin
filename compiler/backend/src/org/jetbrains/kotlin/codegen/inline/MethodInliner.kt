@@ -180,7 +180,7 @@ class MethodInliner(
             }
 
             override fun anew(type: Type) {
-                if (isAnonymousClass(type.internalName)) {
+                if (isSamWrapper(type.internalName) || isAnonymousClass(type.internalName)) {
                     handleAnonymousObjectRegeneration()
                 }
 
@@ -430,12 +430,15 @@ class MethodInliner(
                         val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, true, instructions, sources, toDelete)
                         invokeCalls.add(InvokeCall(lambdaInfo, currentFinallyDeep))
                     }
+                    else if (isSamWrapperConstructorCall(owner, name)) {
+                        transformations.add(SamWrapperTransformationInfo(owner, inliningContext, isAlreadyRegenerated(owner)))
+                    }
                     else if (isAnonymousConstructorCall(owner, name)) {
                         val lambdaMapping = HashMap<Int, LambdaInfo>()
 
                         var offset = 0
                         var capturesAnonymousObjectThatMustBeRegenerated = false
-                        for (i in 0..paramCount - 1) {
+                        for (i in 0 until paramCount) {
                             val sourceValue = frame.getStack(firstParameterIndex + i)
                             val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, false, instructions, sources, toDelete
                             )

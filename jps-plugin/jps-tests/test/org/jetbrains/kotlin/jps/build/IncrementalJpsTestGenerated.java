@@ -949,15 +949,39 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("changeFieldType")
+            public void testChangeFieldType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType/");
+                doTest(fileName);
+            }
+
             @TestMetadata("changeNotUsedSignature")
             public void testChangeNotUsedSignature() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeNotUsedSignature/");
                 doTest(fileName);
             }
 
+            @TestMetadata("changePropertyOverrideType")
+            public void testChangePropertyOverrideType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changePropertyOverrideType/");
+                doTest(fileName);
+            }
+
             @TestMetadata("changeSignature")
             public void testChangeSignature() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignature/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("changeSignaturePackagePrivate")
+            public void testChangeSignaturePackagePrivate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignaturePackagePrivate/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("changeSignatureStatic")
+            public void testChangeSignatureStatic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignatureStatic/");
                 doTest(fileName);
             }
 
@@ -1021,6 +1045,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("mixedInheritance")
+            public void testMixedInheritance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/mixedInheritance/");
+                doTest(fileName);
+            }
+
             @TestMetadata("notChangeSignature")
             public void testNotChangeSignature() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/notChangeSignature/");
@@ -1041,9 +1071,21 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("methodAddedSamAdapter")
+                public void testMethodAddedSamAdapter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddedSamAdapter/");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("methodSignatureChanged")
                 public void testMethodSignatureChanged() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChanged/");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("methodSignatureChangedSamAdapter")
+                public void testMethodSignatureChangedSamAdapter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChangedSamAdapter/");
                     doTest(fileName);
                 }
             }

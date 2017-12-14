@@ -71,7 +71,7 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
         Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();
         libraryModel.addRoot(jarUrl, OrderRootType.CLASSES);
-        if (withRuntime) {
+        if (withRuntime && !isJsLibrary) {
             libraryModel.addRoot(getJarUrl(PathUtil.getKotlinPathsForDistDirectory().getStdlibPath()), OrderRootType.CLASSES);
         }
         if (withSources) {
@@ -79,6 +79,10 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
         }
 
         libraryModel.commit();
+
+        if (withRuntime && isJsLibrary) {
+            KotlinStdJSProjectDescriptor.INSTANCE.configureModule(module, model);
+        }
     }
 
     @NotNull

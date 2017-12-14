@@ -16,10 +16,6 @@
 
 package org.jetbrains.kotlin.js.parser.sourcemaps
 
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
-import org.json.JSONTokener
 import java.io.IOException
 import java.io.Reader
 import java.io.StringReader
@@ -28,57 +24,68 @@ object SourceMapParser {
     @Throws(IOException::class)
     fun parse(reader: Reader): SourceMapParseResult {
         val jsonObject = try {
-            JSONObject(JSONTokener(reader))
+            parseJson(reader)
         }
-        catch (e: JSONException) {
+        catch (e: JsonSyntaxException) {
             return SourceMapError(e.message ?: "parse error")
         }
 
-        if (!jsonObject.has("version")) return SourceMapError("Version not defined")
-        jsonObject.get("version").let {
-            if (it != 3) return SourceMapError("Unsupported version: $it")
+        if (jsonObject !is JsonObject) return SourceMapError("Top-level object expected")
+
+        val version = jsonObject.properties["version"] ?: return SourceMapError("Version not defined")
+        version.let {
+            if (version !is JsonNumber || version.value != 3.0) return SourceMapError("Unsupported version: $it")
         }
 
-        val sourceRoot = if (jsonObject.has("sourceRoot")) {
-            jsonObject.get("sourceRoot") as? String ?: return SourceMapError("'sourceRoot' property is not of string type")
-        }
-        else {
-            ""
-        }
-
-        val sources = if (jsonObject.has("sources")) {
-            val sourcesProperty = jsonObject.get("sources") as? JSONArray ?:
-                                  return SourceMapError("'sources' property is not of array type")
-            sourcesProperty.map {
-                it as? String ?: return SourceMapError("'sources' array must contain strings")
+        val sourceRoot = jsonObject.properties["sourceRoot"].let {
+            if (it != null) {
+                (it as? JsonString ?: return SourceMapError("'sourceRoot' property is not of string type")).value
+            }
+            else {
+                ""
             }
         }
-        else {
-            emptyList()
+
+        val sources = jsonObject.properties["sources"].let {
+            if (it != null) {
+                val sourcesProperty = it as? JsonArray ?:
+                                      return SourceMapError("'sources' property is not of array type")
+                sourcesProperty.elements.map {
+                    (it as? JsonString ?: return SourceMapError("'sources' array must contain strings")).value
+                }
+            }
+            else {
+                emptyList()
+            }
         }
 
-        val sourcesContent: List<String?> = if (jsonObject.has("sourcesContent")) {
-            val sourcesContentProperty = jsonObject.get("sourcesContent") as? JSONArray ?:
-                                         return SourceMapError("'sourcesContent' property is not of array type")
-            if (sourcesContentProperty.any { it != JSONObject.NULL && it !is String? }) {
-                return SourceMapError("'sources' array must contain strings")
+        val sourcesContent: List<String?> = jsonObject.properties["sourcesContent"].let {
+            if (it != null) {
+                val sourcesContentProperty = it as? JsonArray ?:
+                                             return SourceMapError("'sourcesContent' property is not of array type")
+                sourcesContentProperty.elements.map {
+                    when (it) {
+                        is JsonNull -> null
+                        is JsonString -> it.value
+                        else -> return SourceMapError("'sources' array must contain strings")
+                    }
+                }
             }
-            sourcesContentProperty.map { if (it == JSONObject.NULL) null else it as String? }
-        }
-        else {
-            emptyList()
+            else {
+                emptyList()
+            }
         }
 
         val sourcePathToContent = sources.zip(sourcesContent).associate { it }
 
-        if (!jsonObject.has("mappings")) return SourceMapError("'mappings' property not found")
-        val mappings = jsonObject.get("mappings") as? String ?: return SourceMapError("'mappings' property is not of string type")
+        val mappings = jsonObject.properties["mappings"] ?: return SourceMapError("'mappings' property not found")
+        if (mappings !is JsonString) return SourceMapError("'mappings' property is not of string type")
 
         var jsColumn = 0
         var sourceLine = 0
         var sourceColumn = 0
         var sourceIndex = 0
-        val stream = MappingStream(mappings)
+        val stream = MappingStream(mappings.value)
         val sourceMap = SourceMap { sourcePathToContent[it]?.let { StringReader(it) } }
         var currentGroup = SourceMapGroup().also { sourceMap.groups += it }
 

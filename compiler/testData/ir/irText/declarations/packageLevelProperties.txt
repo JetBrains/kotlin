@@ -87,8 +87,9 @@ FILE /packageLevelProperties.kt
     FUN DELEGATED_PROPERTY_ACCESSOR public fun <get-test8>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test8>(): Int'
-          CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int origin=null
+          CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Int>: Int' type=kotlin.Int origin=null
             <V>: Int
+            <V1 : V>: Int
             $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
             thisRef: CONST Null type=kotlin.Nothing? value='null'
             property: PROPERTY_REFERENCE 'test8: Int' field=null getter='<get-test8>(): Int' setter='<set-test8>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE

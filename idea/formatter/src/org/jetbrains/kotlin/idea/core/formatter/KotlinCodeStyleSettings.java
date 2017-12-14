@@ -41,9 +41,13 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public int NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 3;
     public boolean IMPORT_NESTED_CLASSES = false;
     public boolean CONTINUATION_INDENT_IN_PARAMETER_LISTS = true;
+    public boolean CONTINUATION_INDENT_IN_ARGUMENT_LISTS = true;
     public boolean CONTINUATION_INDENT_FOR_EXPRESSION_BODIES = true;
     public boolean CONTINUATION_INDENT_FOR_CHAINED_CALLS = true;
+    public boolean CONTINUATION_INDENT_IN_SUPERTYPE_LISTS = true;
     public int BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES = 0;
+    public int WRAP_EXPRESSION_BODY_FUNCTIONS = 0;
+    public int WRAP_ELVIS_EXPRESSIONS = 1;
 
     public KotlinCodeStyleSettings(CodeStyleSettings container) {
         super("JetCodeStyleSettings", container);

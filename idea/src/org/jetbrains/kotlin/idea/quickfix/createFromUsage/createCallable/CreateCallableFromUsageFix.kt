@@ -80,6 +80,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
 
     override fun getText(): String {
         val element = element ?: return ""
+        val receiverTypeInfo = callableInfos.first().receiverTypeInfo
         val renderedCallables = callableInfos.map {
             buildString {
                 if (it.isAbstract) {
@@ -97,13 +98,15 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                 if (it.name.isNotEmpty()) {
                     append(" '")
 
-                    val callableBuilder =
-                            CallableBuilderConfiguration(callableInfos, element, isExtension = isExtension)
-                                    .createBuilder()
-                    val receiverType = callableBuilder
-                            .computeTypeCandidates(callableInfos.first().receiverTypeInfo)
-                            .firstOrNull()
-                            ?.theType
+                    val receiverType = if (!receiverTypeInfo.isOfThis) {
+                        CallableBuilderConfiguration(callableInfos, element, isExtension = isExtension)
+                                .createBuilder()
+                                .computeTypeCandidates(receiverTypeInfo)
+                                .firstOrNull()
+                                ?.theType
+                    }
+                    else null
+
                     if (receiverType != null) {
                         if (isExtension) {
                             val receiverTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
@@ -125,7 +128,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         return StringBuilder().apply {
             append("Create ")
 
-            val receiverInfo = callableInfos.first().receiverTypeInfo
+            val receiverInfo = receiverTypeInfo
             if (!callableInfos.any { it.isAbstract }) {
                 if (isExtension) {
                     append("extension ")

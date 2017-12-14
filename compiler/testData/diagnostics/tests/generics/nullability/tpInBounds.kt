@@ -30,7 +30,7 @@ class A<T : CharSequence?, E1 : T, E2: T?> {
         t = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>y<!>
 
         if (y != null) {
-            t = <!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>y<!>
+            t = <!DEBUG_INFO_SMARTCAST!>y<!>
         }
 
         if (tN != null) {

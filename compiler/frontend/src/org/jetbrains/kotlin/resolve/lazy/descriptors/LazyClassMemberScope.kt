@@ -88,6 +88,37 @@ open class LazyClassMemberScope(
         return result
     }
 
+    private val _variableNames: MutableSet<Name>
+        by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            mutableSetOf<Name>().apply {
+                addAll(declarationProvider.getDeclarationNames())
+                thisDescriptor.typeConstructor.supertypes.flatMapTo(this) {
+                    it.memberScope.getVariableNames()
+                }
+            }
+        }
+
+    private val _functionNames: MutableSet<Name>
+            by lazy(LazyThreadSafetyMode.PUBLICATION) {
+                mutableSetOf<Name>().apply {
+                    addAll(declarationProvider.getDeclarationNames())
+                    thisDescriptor.typeConstructor.supertypes.flatMapTo(this) {
+                        it.memberScope.getFunctionNames()
+                    }
+
+                    addAll(getDataClassRelatedFunctionNames())
+                }
+            }
+
+    private fun getDataClassRelatedFunctionNames(): Collection<Name> {
+        val declarations = mutableListOf<DeclarationDescriptor>()
+        addDataClassMethods(declarations, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
+        return declarations.map { it.name }
+    }
+
+    override fun getVariableNames() = _variableNames
+    override fun getFunctionNames() = _functionNames
+
     private interface MemberExtractor<out T : CallableMemberDescriptor> {
         fun extract(extractFrom: KotlinType, name: Name): Collection<T>
     }

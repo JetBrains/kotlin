@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 abstract class IncrementalCompilerRunner<
     Args : CommonCompilerArguments,
@@ -132,10 +131,6 @@ abstract class IncrementalCompilerRunner<
         }
     }
 
-    protected open fun markDirty(caches: CacheManager, dirtySources: List<File>) {
-        caches.platformCache.markDirty(dirtySources)
-    }
-
     protected abstract fun updateCaches(
             services: Services,
             caches: CacheManager,
@@ -147,6 +142,7 @@ abstract class IncrementalCompilerRunner<
     protected open fun postCompilationHook(exitCode: ExitCode) {}
     protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>): Iterable<File> =
             emptyList()
+
     protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
             emptyList()
 
@@ -191,7 +187,7 @@ abstract class IncrementalCompilerRunner<
         var exitCode = ExitCode.OK
         val allGeneratedFiles = hashSetOf<GeneratedFile>()
 
-        while (dirtySources.any()) {
+        while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
 
@@ -265,6 +261,8 @@ abstract class IncrementalCompilerRunner<
 
         return exitCode
     }
+
+    open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 
     protected open fun processChangesAfterBuild(compilationMode: CompilationMode, currentBuildInfo: BuildInfo, dirtyData: DirtyData) {
         if (changesRegistry == null) return

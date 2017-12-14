@@ -74,16 +74,17 @@ interface NewTypeSubstitutor {
         if (typeConstructor is NewCapturedTypeConstructor) {
             if (!runCapturedChecks) return null
 
-            assert(type is NewCapturedType) { // KT-16147
+            assert(type is NewCapturedType || (type is DefinitelyNotNullType && type.original is NewCapturedType)) { // KT-16147
                 "Type is inconsistent -- somewhere we create type with typeConstructor = $typeConstructor " +
                 "and class: ${type::class.java.canonicalName}. type.toString() = $type"
             }
-            val lower = (type as NewCapturedType).lowerType?.let { substitute(it, keepAnnotation, runCapturedChecks = false) }
+            val capturedType = if (type is DefinitelyNotNullType) type.original as NewCapturedType else type as NewCapturedType
+            val lower = capturedType.lowerType?.let { substitute(it, keepAnnotation, runCapturedChecks = false) }
             if (lower != null) throw IllegalStateException("Illegal type substitutor: $this, " +
                                                            "because for captured type '$type' lower type approximation should be null, but it is: '$lower'," +
-                                                           "original lower type: '${type.lowerType}")
+                                                           "original lower type: '${capturedType.lowerType}")
 
-            type.constructor.supertypes.forEach { supertype ->
+            typeConstructor.supertypes.forEach { supertype ->
                 substitute(supertype, keepAnnotation, runCapturedChecks = false)?.let {
                     throw IllegalStateException("Illegal type substitutor: $this, " +
                                                 "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
@@ -110,6 +111,9 @@ interface NewTypeSubstitutor {
         }
         if (type.isMarkedNullable) {
             replacement = replacement.makeNullableAsSpecified(true)
+        }
+        if (type.isDefinitelyNotNullType) {
+            replacement = replacement.makeDefinitelyNotNullOrNotNull()
         }
 
         return replacement

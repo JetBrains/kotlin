@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
-import kotlin.reflect.KMutableProperty1
 
 fun mapKotlinTaskProperties(project: Project, task: AbstractKotlinCompile<*>) {
     PropertiesProvider(project).apply {
@@ -30,6 +29,9 @@ fun mapKotlinTaskProperties(project: Project, task: AbstractKotlinCompile<*>) {
 
         if (task is KotlinCompile) {
             incrementalJvm?.let { task.incremental = it }
+            usePreciseJavaTracking?.let {
+                task.usePreciseJavaTracking = it
+            }
         }
 
         if (task is Kotlin2JsCompile) {
@@ -61,6 +63,9 @@ internal class PropertiesProvider(private val project: Project) {
 
     val incrementalMultiplatform: Boolean?
         get() = booleanProperty("kotlin.incremental.multiplatform")
+
+    val usePreciseJavaTracking: Boolean?
+        get() = booleanProperty("kotlin.incremental.usePreciseJavaTracking")
 
     private fun booleanProperty(propName: String): Boolean? =
             property(propName)?.toBoolean()

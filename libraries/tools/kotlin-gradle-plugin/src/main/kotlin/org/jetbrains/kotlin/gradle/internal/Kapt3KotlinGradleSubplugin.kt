@@ -30,13 +30,13 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.ObjectOutputStream
-import javax.xml.bind.DatatypeConverter.printBase64Binary
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
+import java.util.*
 
 // apply plugin: 'kotlin-kapt'
 class Kapt3GradleSubplugin : Plugin<Project> {
@@ -234,9 +234,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 androidPlugin
         ) + androidOptions + mapOf("kapt.kotlin.generated" to kotlinSourcesOutputDir.absolutePath)
 
-        pluginOptions += SubpluginOption("apoptions", encodeOptions(apOptions))
+        pluginOptions += SubpluginOption("apoptions", encodeList(apOptions))
 
-        pluginOptions += SubpluginOption("javacArguments", encodeOptions(kaptExtension.getJavacOptions()))
+        pluginOptions += SubpluginOption("javacArguments", encodeList(kaptExtension.getJavacOptions()))
 
         addMiscOptions(pluginOptions)
 
@@ -245,23 +245,23 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private fun Kapt3SubpluginContext.buildAndAddOptionsTo(container: CompilerPluginOptions, aptMode: String) {
         val compilerPluginId = getCompilerPluginId()
-        for (option in buildOptions(aptMode)) {
+        for (option in wrapPluginOptions(buildOptions(aptMode), "configuration")) {
             container.addPluginArgument(compilerPluginId, option.key, option.value)
         }
     }
 
-    fun encodeOptions(options: Map<String, String>): String {
+    private fun encodeList(options: Map<String, String>): String {
         val os = ByteArrayOutputStream()
         val oos = ObjectOutputStream(os)
 
         oos.writeInt(options.size)
-        for ((k, v) in options.entries) {
-            oos.writeUTF(k)
-            oos.writeUTF(v)
+        for ((key, value) in options.entries) {
+            oos.writeUTF(key)
+            oos.writeUTF(value)
         }
 
         oos.flush()
-        return printBase64Binary(os.toByteArray())
+        return Base64.getEncoder().encodeToString(os.toByteArray())
     }
 
     private fun Kapt3SubpluginContext.addMiscOptions(pluginOptions: MutableList<SubpluginOption>) {
@@ -303,7 +303,10 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             registerGeneratedJavaSource(kaptTask, javaCompile)
         }
 
+        kaptTask.kaptClasspath = kaptClasspath
+
         buildAndAddOptionsTo(kaptTask.pluginOptions, aptMode = "apt")
+
         return kaptTask
     }
 
@@ -321,6 +324,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.generatedSourcesDir = sourcesOutputDir
         mapKotlinTaskProperties(project, kaptTask)
 
+        kaptTask.kaptClasspath = kaptClasspath
         buildAndAddOptionsTo(kaptTask.pluginOptions, aptMode = "stubs")
 
         return kaptTask

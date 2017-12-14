@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
 import org.jetbrains.kotlin.gradle.KotlinGradleModel
 import org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
 import org.jetbrains.kotlin.idea.inspections.gradle.getDependencyModules
-import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
-import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
+import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
 import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.FileCollectionDependency
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
@@ -40,19 +40,21 @@ import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
 import java.util.*
 
 var DataNode<ModuleData>.isResolved
-        by NotNullableUserDataProperty(Key.create<Boolean>("IS_RESOLVED"), false)
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("IS_RESOLVED"), false)
 var DataNode<ModuleData>.hasKotlinPlugin
-        by NotNullableUserDataProperty(Key.create<Boolean>("HAS_KOTLIN_PLUGIN"), false)
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("HAS_KOTLIN_PLUGIN"), false)
 var DataNode<ModuleData>.compilerArgumentsBySourceSet
-        by UserDataProperty(Key.create<CompilerArgumentsBySourceSet>("CURRENT_COMPILER_ARGUMENTS"))
+        by CopyableDataNodeUserDataProperty(Key.create<CompilerArgumentsBySourceSet>("CURRENT_COMPILER_ARGUMENTS"))
 var DataNode<ModuleData>.coroutines
-        by UserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
+        by CopyableDataNodeUserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
 var DataNode<ModuleData>.platformPluginId
-        by UserDataProperty(Key.create<String>("PLATFORM_PLUGIN_ID"))
+        by CopyableDataNodeUserDataProperty(Key.create<String>("PLATFORM_PLUGIN_ID"))
 var DataNode<out ModuleData>.implementedModuleName
-        by UserDataProperty(Key.create<String>("IMPLEMENTED_MODULE_NAME"))
+        by CopyableDataNodeUserDataProperty(Key.create<String>("IMPLEMENTED_MODULE_NAME"))
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
+    val isAndroidProjectKey = Key.findKeyByName("IS_ANDROID_PROJECT_KEY")
+
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
         return setOf(KotlinGradleModelBuilder::class.java, Unit::class.java)
     }
@@ -63,7 +65,6 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
     private fun useModulePerSourceSet(): Boolean {
         // See AndroidGradleProjectResolver
-        val isAndroidProjectKey = Key.findKeyByName("IS_ANDROID_PROJECT_KEY")
         if (isAndroidProjectKey != null && resolverCtx.getUserData(isAndroidProjectKey) == true) {
             return false
         }

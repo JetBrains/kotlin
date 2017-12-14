@@ -1,6 +1,6 @@
 package
 
-public fun test(/*0*/ tr: Tr): Tr
+public fun test(/*0*/ tr: Tr): [ERROR : G]
 
 public interface G</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

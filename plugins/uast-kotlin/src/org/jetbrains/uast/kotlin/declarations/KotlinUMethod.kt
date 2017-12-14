@@ -16,13 +16,17 @@
 
 package org.jetbrains.uast.kotlin.declarations
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiCodeBlock
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isGetter
 import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.annotations
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
@@ -84,6 +88,14 @@ open class KotlinUMethod(
     override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
 
     companion object {
-        fun create(psi: KtLightMethod, containingElement: UElement?) = KotlinUMethod(psi, containingElement)
+        fun create(psi: KtLightMethod, containingElement: UElement?) =
+                if (psi.kotlinOrigin is KtConstructor<*>) {
+                    KotlinConstructorUMethod(
+                            psi.kotlinOrigin?.containingClassOrObject,
+                            psi, containingElement
+                    )
+                }
+                else
+                    KotlinUMethod(psi, containingElement)
     }
 }

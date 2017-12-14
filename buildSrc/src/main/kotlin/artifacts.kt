@@ -36,10 +36,12 @@ fun Project.classesDirsArtifact(): FileCollection {
     return classesDirs
 }
 
+private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
+
 fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testCompile"])
 
-    return task<Jar>("testsJar") {
+    return task<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
         dependsOn("testClasses")
         pluginManager.withPlugin("java") {
             from(project.the<JavaPluginConvention>().sourceSets.getByName("test").output)

@@ -19,8 +19,8 @@ public open class MyClass {
 
 public final class MyDerived : MyClass {
     public constructor MyDerived()
-    public final val test4: [ERROR : Type for MyAlias(1)]
-    public final val test4a: [ERROR : Type for MyClass(1)]
+    public final val test4: MyAlias /* = MyClass */
+    public final val test4a: MyClass
     public final val test5: MyAlias /* = MyClass */
     public final val test5a: MyClass
     public final val test6: MyAlias /* = MyClass */

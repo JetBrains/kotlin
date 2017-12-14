@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -277,7 +278,12 @@ fun Collection<VariableDescriptor>.filterOutDescriptorsWithSpecialNames() = filt
 
 class TypeAndNullability(@JvmField val type: Type, @JvmField val isNullable: Boolean)
 
-fun calcTypeForIEEE754ArithmeticIfNeeded(expression: KtExpression?, bindingContext: BindingContext, descriptor: DeclarationDescriptor): TypeAndNullability? {
+fun calcTypeForIEEE754ArithmeticIfNeeded(
+        expression: KtExpression?,
+        bindingContext: BindingContext,
+        descriptor: DeclarationDescriptor,
+        languageVersionSettings: LanguageVersionSettings
+): TypeAndNullability? {
     val ktType = expression.kotlinType(bindingContext) ?: return null
 
     if (KotlinBuiltIns.isDoubleOrNullableDouble(ktType)) {
@@ -289,7 +295,7 @@ fun calcTypeForIEEE754ArithmeticIfNeeded(expression: KtExpression?, bindingConte
     }
 
     val dataFlow = DataFlowValueFactory.createDataFlowValue(expression!!, ktType, bindingContext, descriptor)
-    val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow)
+    val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow, languageVersionSettings)
     return stableTypes.firstNotNullResult {
         when {
             KotlinBuiltIns.isDoubleOrNullableDouble(it) -> TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(it))

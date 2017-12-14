@@ -17,22 +17,30 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.range.forLoop.ForInRangeLiteralLoopGenerator
-import org.jetbrains.kotlin.codegen.range.forLoop.ForInUntilConstantRangeLoopGenerator
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.generateCallReceiver
+import org.jetbrains.kotlin.codegen.generateCallSingleArgument
+import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.constants.ByteValue
+import org.jetbrains.kotlin.resolve.constants.IntValue
+import org.jetbrains.kotlin.resolve.constants.IntegerValueConstant
+import org.jetbrains.kotlin.resolve.constants.ShortValue
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class PrimitiveNumberRangeLiteralRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+class PrimitiveNumberRangeLiteralRangeValue(
+        rangeCall: ResolvedCall<out CallableDescriptor>
+): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+
     override fun getBoundedValue(codegen: ExpressionCodegen) =
             SimpleBoundedValue(codegen, rangeCall)
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator =
             getConstRangeForInRangeLiteralGenerator(codegen, forExpression) ?:
-            ForInRangeLiteralLoopGenerator(codegen, forExpression, rangeCall)
+            ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
 
     private fun getConstRangeForInRangeLiteralGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator? {
         val rhsExpression = rangeCall.valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() } ?: return null
@@ -43,8 +51,18 @@ class PrimitiveNumberRangeLiteralRangeValue(rangeCall: ResolvedCall<out Callable
             is IntValue -> constValue.value + 1
             else -> return null
         }
+
         // Watch out for integer overflow
-        if (untilValue == Int.MIN_VALUE) return null
-        return ForInUntilConstantRangeLoopGenerator(codegen, forExpression, rangeCall, untilValue)
+        return if (untilValue == Int.MIN_VALUE)
+            null
+        else
+            ForInSimpleProgressionLoopGenerator(
+                    codegen, forExpression,
+                    startValue = codegen.generateCallReceiver(rangeCall),
+                    isStartInclusive = true,
+                    endValue = StackValue.integerConstant(untilValue, asmElementType),
+                    isEndInclusive = false,
+                    step = 1
+            )
     }
 }

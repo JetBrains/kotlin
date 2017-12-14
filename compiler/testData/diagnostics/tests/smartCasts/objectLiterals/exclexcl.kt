@@ -16,7 +16,7 @@ fun foo(): Int {
         k.run()
         val d: Int = <!DEBUG_INFO_SMARTCAST!>c<!>
         // a is not null because of k constructor, but we do not know it
-        return a <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;UNSAFE_OPERATOR_CALL!>+<!> d
+        return a <!UNSAFE_OPERATOR_CALL!>+<!> d
     }
     else return -1
 }

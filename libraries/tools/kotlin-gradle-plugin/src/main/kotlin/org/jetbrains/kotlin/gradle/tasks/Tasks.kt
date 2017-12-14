@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Input
@@ -250,6 +249,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     internal var artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null
     internal var artifactFile: File? = null
 
+    @get:Input
+    var usePreciseJavaTracking: Boolean = false
+        set(value) {
+            field = value
+            logger.kotlinDebug { "Set $this.usePreciseJavaTracking=$value" }
+        }
+
     init {
         incremental = true
     }
@@ -314,7 +320,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                         artifactDifferenceRegistryProvider,
                         artifactFile = artifactFile,
                         buildHistoryFile = buildHistoryFile,
-                        friendBuildHistoryFile = friendTask?.buildHistoryFile)
+                        friendBuildHistoryFile = friendTask?.buildHistoryFile,
+                        usePreciseJavaTracking = usePreciseJavaTracking
+                )
             }
         }
 

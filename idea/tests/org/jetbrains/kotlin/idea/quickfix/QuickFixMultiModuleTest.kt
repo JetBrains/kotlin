@@ -249,4 +249,13 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     @Test
     fun testAddActualToTopLevelMember() = doMultiPlatformTest()
+
+    @Test
+    fun testCreateFunInExpectClass() = doMultiPlatformTest()
+
+    @Test
+    fun testCreateValInExpectClass() = doMultiPlatformTest()
+
+    @Test
+    fun testCreateVarInExpectClass() = doMultiPlatformTest()
 }

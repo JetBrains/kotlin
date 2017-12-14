@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
@@ -86,6 +85,7 @@ object JvmAnalyzerFacade : AnalyzerFacade() {
 
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
 
+        val lookupTracker = LookupTracker.DO_NOTHING
         val container = createContainerForLazyResolveWithJava(
                 moduleContext,
                 trace,
@@ -93,7 +93,7 @@ object JvmAnalyzerFacade : AnalyzerFacade() {
                 moduleContentScope,
                 moduleClassResolver,
                 targetEnvironment,
-                LookupTracker.DO_NOTHING,
+                lookupTracker,
                 packagePartProvider,
                 jvmTarget,
                 languageVersionSettings,
@@ -107,8 +107,13 @@ object JvmAnalyzerFacade : AnalyzerFacade() {
                 resolveSession.packageFragmentProvider,
                 javaDescriptorResolver.packageFragmentProvider)
 
-        providersForModule += PackageFragmentProviderExtension.getInstances(project)
-                .mapNotNull { it.getPackageFragmentProvider(project, moduleDescriptor, moduleContext.storageManager, trace, moduleInfo) }
+        providersForModule +=
+                PackageFragmentProviderExtension.getInstances(project)
+                        .mapNotNull {
+                            it.getPackageFragmentProvider(
+                                    project, moduleDescriptor, moduleContext.storageManager, trace, moduleInfo, lookupTracker
+                            )
+                        }
 
         return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
     }

@@ -38,6 +38,7 @@ import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
@@ -154,6 +155,7 @@ class KotlinLanguageInjector(
                ?: injectWithCall(place)
                ?: injectWithReceiver(place)
                ?: injectWithVariableUsage(place, originalHost)
+               ?: injectWithAnnotationEntry(place)
     }
 
     private fun injectWithExplicitCodeInstruction(host: KtElement): InjectionInfo? {
@@ -301,6 +303,29 @@ class KotlinLanguageInjector(
 
         val languageId = injectAnnotation.argumentValue("value") as? String ?: return null
         return InjectionInfo(languageId, null, null)
+    }
+
+    private fun injectWithAnnotationEntry(host: KtElement): InjectionInfo? {
+        val argument = host.parent as? KtValueArgument ?: return null
+        val annotationEntry = PsiTreeUtil.getParentOfType(host, KtAnnotationEntry::class.java) ?: return null
+        if (isAnalyzeOff(host.project)) return null
+
+        val calleeReference = annotationEntry.calleeExpression?.constructorReferenceExpression?.mainReference
+        val callee = calleeReference?.resolve()
+        return when (callee) {
+            is KtFunction -> injectionForKotlinCall(argument, callee, calleeReference)
+            is PsiClass -> {
+                // Look for java injections for the PsiAnnotationMethod.
+                (argument.reference ?: argument.getArgumentName()?.referenceExpression?.mainReference)
+                        ?.let { it.resolve() as? PsiMethod }
+                        ?.let { findInjection(it, Configuration.getInstance().getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID)) }
+                        ?.takeIf { injectionInfo ->
+                            // Temporary forbid injection for SpEL because of inspections that gives warnings when host language is not Java.
+                            injectionInfo.languageId != "SpEL"
+                        }
+            }
+            else -> null
+        }
     }
 
     private fun findInjection(element: PsiElement?, injections: List<BaseInjection>): InjectionInfo? {

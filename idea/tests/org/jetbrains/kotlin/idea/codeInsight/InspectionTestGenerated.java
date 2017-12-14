@@ -323,6 +323,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("redundantSuspendModifier/inspectionData/inspections.test")
+        public void testRedundantSuspendModifier_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantSuspendModifier/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("redundantUnitReturnType/inspectionData/inspections.test")
         public void testRedundantUnitReturnType_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantUnitReturnType/inspectionData/inspections.test");

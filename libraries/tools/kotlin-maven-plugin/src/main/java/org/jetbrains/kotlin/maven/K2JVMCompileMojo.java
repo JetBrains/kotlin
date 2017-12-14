@@ -132,6 +132,10 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         return paths;
     }
 
+    protected List<String> getClasspath() {
+        return filterClassPath(project.getBasedir(), classpath);
+    }
+
     @NotNull
     protected String getSourceSetName() {
         return AnnotationProcessingManager.COMPILE_SOURCE_SET_NAME;
@@ -150,7 +154,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             getLog().warn("Parameters module and testModule are deprecated and ignored, they will be removed in further release.");
         }
 
-        List<String> classpathList = filterClassPath(project.getBasedir(), classpath);
+        List<String> classpathList = getClasspath();
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);

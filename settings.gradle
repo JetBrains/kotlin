@@ -88,7 +88,6 @@ include ":kotlin-build-common",
         ":plugins:uast-kotlin",
         ":plugins:uast-kotlin-idea",
         ":plugins:annotation-based-compiler-plugins-ide-support",
-        ":plugins:plugins-tests",
         ":kotlin-script-runtime",
         ":kotlin-runtime",
         ":kotlin-test",
@@ -136,6 +135,7 @@ include ":kotlin-build-common",
         ":examples:annotation-processor-example",
         ":kotlin-script-util",
         ":kotlin-annotation-processing",
+        ":kotlin-annotation-processing-runtime",
         ":kotlin-annotation-processing-gradle",
         ":kotlin-annotation-processing-embeddable",
         ":examples:kotlin-jsr223-local-example",
@@ -216,7 +216,9 @@ project(':examples:annotation-processor-example').projectDir = "$rootDir/librari
 project(':kotlin-script-util').projectDir = "$rootDir/libraries/tools/kotlin-script-util" as File
 project(':kotlin-annotation-processing-gradle').projectDir = "$rootDir/libraries/tools/kotlin-annotation-processing" as File
 project(':kotlin-annotation-processing-embeddable').projectDir = "$rootDir/prepare/kotlin-annotation-processing-embeddable" as File
-project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3" as File
+project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3/kapt3-compiler" as File
+project(':kotlin-annotation-processing-runtime').projectDir = "$rootDir/plugins/kapt3/kapt3-runtime" as File
+project(':plugins:kapt3-idea').projectDir = "$rootDir/plugins/kapt3/kapt3-idea" as File
 project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-local-example" as File
 project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File

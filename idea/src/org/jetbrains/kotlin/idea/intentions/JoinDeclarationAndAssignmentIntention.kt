@@ -78,6 +78,8 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
         val initializer = assignment.right ?: return
         val newInitializer = element.setInitializer(initializer)!!
 
+        if (element.hasModifier(KtTokens.LATEINIT_KEYWORD)) element.removeModifier(KtTokens.LATEINIT_KEYWORD)
+
         val initializerBlock = assignment.parent.parent as? KtAnonymousInitializer
         assignment.delete()
         if (initializerBlock != null && (initializerBlock.body as? KtBlockExpression)?.isEmpty() == true) {

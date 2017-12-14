@@ -5243,12 +5243,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
-        @TestMetadata("forIntArray.kt")
-        public void testForIntArray() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forIntArray.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("forLoopMemberExtensionAll.kt")
         public void testForLoopMemberExtensionAll() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forLoopMemberExtensionAll.kt");
@@ -5271,18 +5265,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 return;
             }
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
-        }
-
-        @TestMetadata("forNullableIntArray.kt")
-        public void testForNullableIntArray() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forNullableIntArray.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("forPrimitiveIntArray.kt")
-        public void testForPrimitiveIntArray() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forPrimitiveIntArray.kt");
-            doTest(fileName);
         }
 
         @TestMetadata("forUserType.kt")
@@ -5710,6 +5692,69 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("whileTrueBreak.kt")
             public void testWhileTrueBreak() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/whileTrueBreak.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArray")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ForInArray extends AbstractJsCodegenBoxTest {
+            public void testAllFilesPresentInForInArray() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArray"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("forInArrayWithArrayPropertyUpdatedInLoopBody.kt")
+            public void testForInArrayWithArrayPropertyUpdatedInLoopBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInArrayWithArrayPropertyUpdatedInLoopBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInArrayWithArrayVarUpdatedInLoopBody12.kt")
+            public void testForInArrayWithArrayVarUpdatedInLoopBody12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInArrayWithArrayVarUpdatedInLoopBody12.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("forInArrayWithArrayVarUpdatedInLoopBody13.kt")
+            public void testForInArrayWithArrayVarUpdatedInLoopBody13() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInArrayWithArrayVarUpdatedInLoopBody13.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInDelegatedPropertyUpdatedInLoopBody.kt")
+            public void testForInDelegatedPropertyUpdatedInLoopBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInDelegatedPropertyUpdatedInLoopBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInFieldUpdatedInLoopBody.kt")
+            public void testForInFieldUpdatedInLoopBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInFieldUpdatedInLoopBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forIntArray.kt")
+            public void testForIntArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forIntArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forNullableIntArray.kt")
+            public void testForNullableIntArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forNullableIntArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forPrimitiveIntArray.kt")
+            public void testForPrimitiveIntArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forPrimitiveIntArray.kt");
                 doTest(fileName);
             }
         }
@@ -9143,6 +9188,24 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testConstructorWithVararg() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/constructorWithVararg.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("entryClassConstructorWithDefaultArguments.kt")
+            public void testEntryClassConstructorWithDefaultArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/entryClassConstructorWithDefaultArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("entryClassConstructorWithVarargs.kt")
+            public void testEntryClassConstructorWithVarargs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/entryClassConstructorWithVarargs.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
 
             @TestMetadata("secondaryConstructorWithDefaultArguments.kt")
@@ -15818,6 +15881,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("forInRangeWithImplicitReceiver.kt")
         public void testForInRangeWithImplicitReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInRangeWithImplicitReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forInStringVarUpdatedInLoopBody.kt")
+        public void testForInStringVarUpdatedInLoopBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInStringVarUpdatedInLoopBody.kt");
             doTest(fileName);
         }
 

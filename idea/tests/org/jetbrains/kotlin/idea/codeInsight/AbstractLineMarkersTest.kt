@@ -50,8 +50,8 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
     }
 
     fun doTest(path: String) {
+        val fileText = FileUtil.loadFile(File(path))
         try {
-            val fileText = FileUtil.loadFile(File(path))
             ConfigLibraryUtil.configureLibrariesByDirective(myFixture.module, PlatformTestUtil.getCommunityPath(), fileText)
 
             myFixture.configureByFile(path)
@@ -95,6 +95,9 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
         }
         catch (exc: Exception) {
             throw RuntimeException(exc)
+        }
+        finally {
+            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
         }
 
     }

@@ -29,11 +29,9 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Contract
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils
@@ -111,6 +109,11 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         }
 
         configureKotlinSettings(modulesToConfigure)
+
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
+            languageVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
+            apiVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
+        }
 
         collector.showNotification()
     }

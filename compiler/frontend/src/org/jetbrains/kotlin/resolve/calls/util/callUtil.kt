@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.calls.callUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -237,14 +236,12 @@ val KtElement.isFakeElement: Boolean
 fun Call.isSafeCall(): Boolean {
     if (this is CallTransformer.CallForImplicitInvoke) {
         //implicit safe 'invoke'
-        if (outerCall.isExplicitSafeCall()) {
+        if (outerCall.isSemanticallyEquivalentToSafeCall) {
             return true
         }
     }
-    return isExplicitSafeCall()
+    return isSemanticallyEquivalentToSafeCall
 }
-
-fun Call.isExplicitSafeCall(): Boolean = callOperationNode?.elementType == KtTokens.SAFE_ACCESS
 
 fun Call.isCallableReference(): Boolean {
     val callElement = callElement

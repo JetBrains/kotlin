@@ -100,16 +100,20 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     override fun getLanguagePlaceholderText(node: ASTNode, range: TextRange): String = when {
         node.elementType == KtTokens.BLOCK_COMMENT -> "/${getFirstLineOfComment(node)}.../"
         node.elementType == KDocTokens.KDOC -> "/**${getFirstLineOfComment(node)}...*/"
-        node.elementType == KtNodeTypes.STRING_TEMPLATE -> "\"\"\"${getFirstLineOfString(node)}...\"\"\""
+        node.elementType == KtNodeTypes.STRING_TEMPLATE -> "\"\"\"${getTrimmedFirstLineOfString(node).addSpaceIfNeeded()}...\"\"\""
         node.psi is KtImportList -> "..."
         else ->  "{...}"
     }
 
-    private fun getFirstLineOfString(node: ASTNode): String {
-        val targetStringLine = node.text.split("\n").asSequence().map {
-            it.replace("\"\"\"", "")
-        }.firstOrNull(String::isNotBlank) ?: return ""
-        return " ${targetStringLine.replace("\"\"\"", "").trim()} "
+    private fun getTrimmedFirstLineOfString(node: ASTNode): String {
+        val lines = node.text.split("\n")
+        val firstLine = lines.asSequence().map { it.replace("\"\"\"", "").trim() }.firstOrNull(String::isNotEmpty)
+        return firstLine ?: ""
+    }
+
+    private fun String.addSpaceIfNeeded(): String {
+        if (isEmpty() || endsWith(" ")) return this
+        return this + " "
     }
 
     private fun getFirstLineOfComment(node: ASTNode): String {

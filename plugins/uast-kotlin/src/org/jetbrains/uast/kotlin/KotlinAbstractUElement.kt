@@ -66,6 +66,10 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
             parent = parent.parent
         }
 
+        if (psi is KtSuperTypeCallEntry) {
+            parent = parent?.parent
+        }
+
         val result = doConvertParent(this, parent)
         if (result == this) {
             throw IllegalStateException("Loop in parent structure when converting a $psi of type ${psi?.javaClass} with parent $parent of type ${parent?.javaClass} text: [${parent?.text}]")
@@ -103,7 +107,7 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         val containingClass = parent.containingClassOrObject
         if (containingClass != null) {
             val containingUClass = KotlinUastLanguagePlugin().convertElementWithParent(containingClass, null) as? KotlinUClass
-            containingUClass?.methods?.filterIsInstance<KotlinPrimaryConstructorUMethod>()?.firstOrNull()?.let {
+            containingUClass?.methods?.filterIsInstance<KotlinConstructorUMethod>()?.firstOrNull { it.isPrimary }?.let {
                 return it.uastBody
             }
         }

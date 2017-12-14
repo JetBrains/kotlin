@@ -3,6 +3,8 @@ description = "Kotlin Android Extensions IDEA"
 
 apply { plugin("kotlin") }
 
+jvmTarget = "1.6"
+
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:light-classes"))
@@ -12,6 +14,9 @@ dependencies {
     compile(project(":plugins:android-extensions-compiler"))
     compile(ideaPluginDeps("android", "android-common", "sdk-tools", "sdk-common", plugin = "android"))
     compile(ideaPluginDeps("Groovy", plugin = "Groovy"))
+    compileOnly(project(":kotlin-android-extensions-runtime"))
+
+    testCompile(project(":compiler:tests-common"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(project(":idea:idea-test-framework")) { isTransitive = false }

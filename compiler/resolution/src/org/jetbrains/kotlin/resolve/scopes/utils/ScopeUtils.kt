@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.SmartList
@@ -245,31 +246,37 @@ fun chainImportingScopes(scopes: List<ImportingScope>, tail: ImportingScope? = n
             }
 }
 
-class ThrowingLexicalScope : LexicalScope {
-    override val parent: HierarchicalScope
-        get() = throw IllegalStateException()
+class ErrorLexicalScope : LexicalScope {
+    override val parent: HierarchicalScope = object : HierarchicalScope {
+        override val parent: HierarchicalScope? = null
 
-    override val ownerDescriptor: DeclarationDescriptor
-        get() = throw IllegalStateException()
-    override val isOwnerDescriptorAccessibleByLabel: Boolean
-        get() = throw IllegalStateException()
-    override val implicitReceiver: ReceiverParameterDescriptor?
-        get() = throw IllegalStateException()
-    override val kind: LexicalScopeKind
-        get() = LexicalScopeKind.THROWING
+        override fun printStructure(p: Printer) {
+            p.print("<FAKE PARENT FOR ERROR LEXICAL SCOPE>")
+        }
 
-    override fun printStructure(p: Printer) =
-            throw IllegalStateException()
+        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
-            throw IllegalStateException()
+        override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptySet()
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> =
-            throw IllegalStateException()
+        override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptySet()
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> =
-            throw IllegalStateException()
+        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = emptySet()
+    }
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> =
-            throw IllegalStateException()
+    override fun printStructure(p: Printer) {
+        p.print("<ERROR_SCOPE>")
+    }
+
+    override val ownerDescriptor: DeclarationDescriptor = ErrorUtils.createErrorClass("<ERROR CLASS FOR ERROR SCOPE>")
+    override val isOwnerDescriptorAccessibleByLabel: Boolean = false
+    override val implicitReceiver: ReceiverParameterDescriptor? = null
+    override val kind: LexicalScopeKind = LexicalScopeKind.THROWING
+
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptySet()
+
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptySet()
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = emptySet()
 }

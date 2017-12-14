@@ -1,18 +1,18 @@
 package
 
 package a {
-    public val foo: kotlin.Any?
+    public val foo: [ERROR : Error function type]
     public fun bar(): [ERROR : Error function type]
 }
 
 package b {
     public fun bar(): [ERROR : Error function type]
-    public fun foo(): kotlin.Any?
+    public fun foo(): [ERROR : Error function type]
 }
 
 package c {
-    public fun bar(): kotlin.Any?
-    public fun bazz(): kotlin.Any?
+    public fun bar(): [ERROR : Error function type]
+    public fun bazz(): [ERROR : Error function type]
     public fun foo(): [ERROR : Error function type]
 }
 

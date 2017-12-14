@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
@@ -54,6 +55,7 @@ open class IncrementalJvmCache(
         private val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
         private val INLINE_FUNCTIONS = "inline-functions"
         private val INTERNAL_NAME_TO_SOURCE = "internal-name-to-source"
+        private val JAVA_SOURCES_PROTO_MAP = "java-sources-proto-map"
 
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
@@ -68,6 +70,7 @@ open class IncrementalJvmCache(
     private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
     // todo: try to use internal names only?
     private val internalNameToSource = registerMap(InternalNameToSourcesMap(INTERNAL_NAME_TO_SOURCE.storageFile))
+    private val javaSourcesProtoMap = registerMap(JavaSourcesProtoMap(JAVA_SOURCES_PROTO_MAP.storageFile))
 
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory" } }
 
@@ -83,6 +86,8 @@ open class IncrementalJvmCache(
             sourceToClassesMap.clearOutputsForSource(sourceFile)
         }
     }
+
+    fun isTrackedFile(file: File) = sourceToClassesMap.contains(file)
 
     // used in gradle
     @Suppress("unused")
@@ -169,6 +174,33 @@ open class IncrementalJvmCache(
         }
     }
 
+    fun saveJavaClassProto(source: File, serializedJavaClass: SerializedJavaClass, collector: ChangesCollector) {
+        val jvmClassName = JvmClassName.byClassId(serializedJavaClass.classId)
+        javaSourcesProtoMap.process(jvmClassName, serializedJavaClass, collector)
+        sourceToClassesMap.add(source, jvmClassName)
+        val (proto, nameResolver) = serializedJavaClass.toProtoData()
+        addToClassStorage(proto, nameResolver, source)
+
+        dirtyOutputClassesMap.notDirty(jvmClassName.internalName)
+    }
+
+    fun getObsoleteJavaClasses(): Collection<ClassId> =
+            dirtyOutputClassesMap.getDirtyOutputClasses()
+                    .mapNotNull {
+                        javaSourcesProtoMap[it]?.classId
+                    }
+
+    fun isJavaClassToTrack(classId: ClassId): Boolean {
+        val jvmClassName = JvmClassName.byClassId(classId)
+        return dirtyOutputClassesMap.isDirty(jvmClassName.internalName) ||
+               javaSourcesProtoMap[jvmClassName.internalName] == null
+    }
+
+    fun isJavaClassAlreadyInCache(classId: ClassId): Boolean {
+        val jvmClassName = JvmClassName.byClassId(classId)
+        return javaSourcesProtoMap[jvmClassName.internalName] != null
+    }
+
     fun clearCacheForRemovedClasses(changesCollector: ChangesCollector) {
         val dirtyClasses = dirtyOutputClassesMap
                                 .getDirtyOutputClasses()
@@ -203,6 +235,7 @@ open class IncrementalJvmCache(
             constantsMap.remove(it)
             inlineFunctionsMap.remove(it)
             internalNameToSource.remove(it.internalName)
+            javaSourcesProtoMap.remove(it, changesCollector)
         }
 
         removeAllFromClassStorage(dirtyClasses.map { it.fqNameForClassNameWithoutDollars })
@@ -296,6 +329,32 @@ open class IncrementalJvmCache(
         override fun dumpValue(value: ProtoMapValue): String {
             return (if (value.isPackageFacade) "1" else "0") + java.lang.Long.toHexString(value.bytes.md5())
         }
+    }
+
+    private inner class JavaSourcesProtoMap(storageFile: File) : BasicStringMap<SerializedJavaClass>(storageFile, JavaClassProtoMapValueExternalizer) {
+        fun process(jvmClassName: JvmClassName, newData: SerializedJavaClass, changesCollector: ChangesCollector) {
+            val key = jvmClassName.internalName
+            val oldData = storage[key]
+            storage[key] = newData
+
+            changesCollector.collectProtoChanges(
+                    oldData?.toProtoData(), newData.toProtoData(),
+                    collectAllMembersForNewClass = true
+            )
+        }
+
+        fun remove(className: JvmClassName, changesCollector: ChangesCollector) {
+            val key = className.internalName
+            val oldValue = storage[key] ?: return
+            storage.remove(key)
+
+            changesCollector.collectProtoChanges(oldValue.toProtoData(), newData = null)
+        }
+
+        operator fun get(internalName: String) = storage[internalName]
+
+        override fun dumpValue(value: SerializedJavaClass): String =
+                java.lang.Long.toHexString(value.proto.toByteArray().md5())
     }
 
     // todo: reuse code with InlineFunctionsMap?
@@ -399,6 +458,8 @@ open class IncrementalJvmCache(
         fun add(sourceFile: File, className: JvmClassName) {
             storage.append(sourceFile.absolutePath, className.internalName)
         }
+
+        fun contains(sourceFile: File) = sourceFile.absolutePath in storage
 
         operator fun get(sourceFile: File): Collection<JvmClassName> =
                 storage[sourceFile.absolutePath].orEmpty().map { JvmClassName.byInternalName(it) }

@@ -4721,12 +4721,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("forIntArray.kt")
-        public void testForIntArray() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forIntArray.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("forLoopMemberExtensionAll.kt")
         public void testForLoopMemberExtensionAll() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forLoopMemberExtensionAll.kt");
@@ -4742,18 +4736,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("forLoopMemberExtensionNext.kt")
         public void testForLoopMemberExtensionNext() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forLoopMemberExtensionNext.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("forNullableIntArray.kt")
-        public void testForNullableIntArray() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forNullableIntArray.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("forPrimitiveIntArray.kt")
-        public void testForPrimitiveIntArray() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forPrimitiveIntArray.kt");
             doTest(fileName);
         }
 
@@ -5140,6 +5122,63 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("whileTrueBreak.kt")
             public void testWhileTrueBreak() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/whileTrueBreak.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArray")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ForInArray extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInForInArray() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArray"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("forInArrayWithArrayPropertyUpdatedInLoopBody.kt")
+            public void testForInArrayWithArrayPropertyUpdatedInLoopBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInArrayWithArrayPropertyUpdatedInLoopBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInArrayWithArrayVarUpdatedInLoopBody12.kt")
+            public void testForInArrayWithArrayVarUpdatedInLoopBody12() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInArrayWithArrayVarUpdatedInLoopBody12.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInArrayWithArrayVarUpdatedInLoopBody13.kt")
+            public void testForInArrayWithArrayVarUpdatedInLoopBody13() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInArrayWithArrayVarUpdatedInLoopBody13.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInDelegatedPropertyUpdatedInLoopBody.kt")
+            public void testForInDelegatedPropertyUpdatedInLoopBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInDelegatedPropertyUpdatedInLoopBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forInFieldUpdatedInLoopBody.kt")
+            public void testForInFieldUpdatedInLoopBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forInFieldUpdatedInLoopBody.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forIntArray.kt")
+            public void testForIntArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forIntArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forNullableIntArray.kt")
+            public void testForNullableIntArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forNullableIntArray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forPrimitiveIntArray.kt")
+            public void testForPrimitiveIntArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInArray/forPrimitiveIntArray.kt");
                 doTest(fileName);
             }
         }
@@ -8470,6 +8509,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("constructorWithVararg.kt")
             public void testConstructorWithVararg() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/constructorWithVararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("entryClassConstructorWithDefaultArguments.kt")
+            public void testEntryClassConstructorWithDefaultArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/entryClassConstructorWithDefaultArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("entryClassConstructorWithVarargs.kt")
+            public void testEntryClassConstructorWithVarargs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/entryClassConstructorWithVarargs.kt");
                 doTest(fileName);
             }
 
@@ -14552,6 +14603,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("forInRangeWithImplicitReceiver.kt")
         public void testForInRangeWithImplicitReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInRangeWithImplicitReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forInStringVarUpdatedInLoopBody.kt")
+        public void testForInStringVarUpdatedInLoopBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInStringVarUpdatedInLoopBody.kt");
             doTest(fileName);
         }
 

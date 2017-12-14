@@ -187,14 +187,14 @@ class KotlinDebuggerCaches(project: Project) {
                 }
 
         private fun createTypeMapper(file: KtFile, analysisResult: AnalysisResult): KotlinTypeMapper {
-            val state = GenerationState(
+            val state = GenerationState.Builder(
                     file.project,
                     ClassBuilderFactories.THROW_EXCEPTION,
                     analysisResult.moduleDescriptor,
                     analysisResult.bindingContext,
                     listOf(file),
                     CompilerConfiguration.EMPTY
-            )
+            ).build()
             state.beforeCompile()
             return state.typeMapper
         }

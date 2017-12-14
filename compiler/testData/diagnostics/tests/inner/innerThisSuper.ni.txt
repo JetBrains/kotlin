@@ -18,16 +18,16 @@ public final class Outer : Trait {
 
     public final class Nested {
         public constructor Nested()
-        public final val s: kotlin.Any?
-        public final val t: kotlin.Any?
+        public final val s: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+        public final val t: [ERROR : <ERROR FUNCTION RETURN TYPE>]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         public final inner class NestedInner {
             public constructor NestedInner()
-            public final val s: kotlin.Any?
-            public final val t: kotlin.Any?
+            public final val s: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+            public final val t: [ERROR : <ERROR FUNCTION RETURN TYPE>]
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

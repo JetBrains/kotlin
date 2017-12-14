@@ -12,7 +12,7 @@ internal class A {
 
     fun <K, V> getMap2(k: K, v: V): Map<K, V> {
         val map = HashMap<K, V>()
-        map.put(k, v)
+        map[k] = v
         return map
     }
 }

@@ -48,25 +48,69 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 
-class GenerationState @JvmOverloads constructor(
+class GenerationState private constructor(
         val project: Project,
         builderFactory: ClassBuilderFactory,
         val module: ModuleDescriptor,
         bindingContext: BindingContext,
         val files: List<KtFile>,
         val configuration: CompilerConfiguration,
-        val generateDeclaredClassFilter: GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
-        val codegenFactory: CodegenFactory = DefaultCodegenFactory,
-        // For incremental compilation
-        val targetId: TargetId? = null,
-        moduleName: String? = configuration.get(CommonConfigurationKeys.MODULE_NAME),
+        val generateDeclaredClassFilter: GenerateClassFilter,
+        val codegenFactory: CodegenFactory,
+        val targetId: TargetId?,
+        moduleName: String?,
+        val outDirectory: File?,
+        private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
+        wantsDiagnostics: Boolean
+) {
+
+    class Builder(
+            private val project: Project,
+            private val builderFactory: ClassBuilderFactory,
+            private val module: ModuleDescriptor,
+            private val bindingContext: BindingContext,
+            private val files: List<KtFile>,
+            private val configuration: CompilerConfiguration
+    ) {
+        private var generateDeclaredClassFilter: GenerateClassFilter = GenerateClassFilter.GENERATE_ALL
+        fun generateDeclaredClassFilter(v: GenerateClassFilter) =
+                apply { generateDeclaredClassFilter = v }
+
+        private var codegenFactory: CodegenFactory = DefaultCodegenFactory
+        fun codegenFactory(v: CodegenFactory) =
+                apply { codegenFactory = v }
+
+        private var targetId: TargetId? = null
+        fun targetId(v: TargetId?) =
+                apply { targetId = v }
+
+        private var moduleName: String? = configuration[CommonConfigurationKeys.MODULE_NAME]
+        fun moduleName(v: String?) =
+                apply { moduleName = v }
+
         // 'outDirectory' is a hack to correctly determine if a compiled class is from the same module as the callee during
         // partial compilation. Module chunks are treated as a single module.
         // TODO: get rid of it with the proper module infrastructure
-        val outDirectory: File? = null,
-        private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING,
-        wantsDiagnostics: Boolean = true
-) {
+        private var outDirectory: File? = null
+        fun outDirectory(v: File?) =
+                apply { outDirectory = v }
+
+        private var onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING
+        fun onIndependentPartCompilationEnd(v: GenerationStateEventCallback) =
+                apply { onIndependentPartCompilationEnd = v }
+
+        private var wantsDiagnostics: Boolean = true
+        fun wantsDiagnostics(v: Boolean) =
+                apply { wantsDiagnostics = v }
+
+        fun build() =
+                GenerationState(
+                        project, builderFactory, module, bindingContext, files, configuration,
+                        generateDeclaredClassFilter, codegenFactory, targetId,
+                        moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics
+                )
+    }
+
     abstract class GenerateClassFilter {
         abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
         abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.application.options.IndentOptionsEditor
+import com.intellij.application.options.SmartIndentOptionsEditor
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
@@ -51,6 +52,16 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     param2: String) {
                        @Deprecated val foo = 1
                    }
+
+                   fun multilineMethod(
+                           foo: String,
+                           bar: String?,
+                           x: Int?
+                       ) {
+                       foo.toUpperCase().trim()
+                           .length
+                       val barLen = bar?.length() ?: x ?: -1
+                   }
                }
 
                @Deprecated val bar = 1
@@ -58,6 +69,8 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                enum class Enumeration {
                    A, B
                }
+
+               fun veryLongExpressionBodyMethod() = "abc"
             """.trimIndent()
 
         LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS ->
@@ -159,8 +172,8 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
     override fun getLanguageName(): String = KotlinLanguage.NAME
 
     override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: LanguageCodeStyleSettingsProvider.SettingsType) {
-        fun showCustomOption(field: KProperty<*>, title: String, groupName: String? = null) {
-            consumer.showCustomOption(KotlinCodeStyleSettings::class.java, field.name, title, groupName)
+        fun showCustomOption(field: KProperty<*>, title: String, groupName: String? = null, vararg options: Any) {
+            consumer.showCustomOption(KotlinCodeStyleSettings::class.java, field.name, title, groupName, *options)
         }
 
         when (settingsType) {
@@ -247,7 +260,10 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         "METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE",
                         "CALL_PARAMETERS_LPAREN_ON_NEXT_LINE",
                         "CALL_PARAMETERS_RPAREN_ON_NEXT_LINE",
-                        "ENUM_CONSTANTS_WRAP"
+                        "ENUM_CONSTANTS_WRAP",
+                        "METHOD_CALL_CHAIN_WRAP",
+                        "WRAP_FIRST_METHOD_IN_CALL_CHAIN",
+                        "ASSIGNMENT_WRAP"
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
                 consumer.renameStandardOption("FIELD_ANNOTATION_WRAP", "Property annotations")
@@ -258,6 +274,39 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                 showCustomOption(KotlinCodeStyleSettings::LBRACE_ON_NEXT_LINE,
                                 "Put left brace on new line",
                                  CodeStyleSettingsCustomizable.WRAPPING_BRACES)
+
+                showCustomOption(
+                        KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_PARAMETER_LISTS,
+                        "Use continuation indent",
+                        CodeStyleSettingsCustomizable.WRAPPING_METHOD_PARAMETERS)
+                showCustomOption(
+                        KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_ARGUMENT_LISTS,
+                        "Use continuation indent",
+                        CodeStyleSettingsCustomizable.WRAPPING_METHOD_ARGUMENTS_WRAPPING)
+                showCustomOption(
+                        KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_CHAINED_CALLS,
+                        "Use continuation indent",
+                        CodeStyleSettingsCustomizable.WRAPPING_CALL_CHAIN)
+                showCustomOption(
+                        KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_SUPERTYPE_LISTS,
+                        "Use continuation indent",
+                        CodeStyleSettingsCustomizable.WRAPPING_EXTENDS_LIST)
+
+                showCustomOption(
+                        KotlinCodeStyleSettings::WRAP_EXPRESSION_BODY_FUNCTIONS,
+                        "Expression body functions",
+                        options = *arrayOf(CodeStyleSettingsCustomizable.WRAP_OPTIONS_FOR_SINGLETON, CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON)
+                )
+                showCustomOption(
+                        KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES,
+                        "Use continuation indent",
+                        "Expression body functions"
+                )
+                showCustomOption(
+                        KotlinCodeStyleSettings::WRAP_ELVIS_EXPRESSIONS,
+                        "Elvis expressions",
+                        options = *arrayOf(CodeStyleSettingsCustomizable.WRAP_OPTIONS_FOR_SINGLETON, CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON)
+                )
             }
             LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS -> {
                 consumer.showStandardOptions(
@@ -274,7 +323,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
         }
     }
 
-    override fun getIndentOptionsEditor(): IndentOptionsEditor = KotlinIndentOptionsEditor()
+    override fun getIndentOptionsEditor(): IndentOptionsEditor = SmartIndentOptionsEditor()
 
     override fun getDefaultCommonSettings(): CommonCodeStyleSettings =
         CommonCodeStyleSettings(language).apply {

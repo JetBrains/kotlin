@@ -51,4 +51,9 @@ public class KtImportsFactory {
     public Collection<KtImportDirective> createImportDirectives(@NotNull Collection<ImportPath> importPaths) {
         return CollectionsKt.map(importPaths, this::createImportDirective);
     }
+
+    @NotNull
+    public Collection<KtImportDirective> createImportDirectivesNotCached(@NotNull Collection<ImportPath> importPaths) {
+        return KtPsiFactoryKt.KtPsiFactory(project, false).createImportDirectives(importPaths);
+    }
 }

@@ -33,9 +33,6 @@ object CommonConfigurationKeys {
 
     @JvmField
     val LOOKUP_TRACKER = CompilerConfigurationKey.create<LookupTracker>("lookup tracker")
-
-    @JvmField
-    val USE_NEW_INFERENCE = CompilerConfigurationKey.create<Boolean>("use new inference")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

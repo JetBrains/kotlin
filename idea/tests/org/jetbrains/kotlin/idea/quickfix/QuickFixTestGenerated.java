@@ -1043,6 +1043,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("annotationWithVarargDoubleArray.kt")
+        public void testAnnotationWithVarargDoubleArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addTypeAnnotationToValueParameter/annotationWithVarargDoubleArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("annotationWithVarargIntArray.kt")
+        public void testAnnotationWithVarargIntArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addTypeAnnotationToValueParameter/annotationWithVarargIntArray.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noDefaultValue.kt")
         public void testNoDefaultValue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addTypeAnnotationToValueParameter/noDefaultValue.kt");
@@ -3224,9 +3236,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                         doTest(fileName);
                     }
 
+                    @TestMetadata("inAbstractSuperclass.kt")
+                    public void testInAbstractSuperclass() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/inAbstractSuperclass.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("inBaseInterface.kt")
+                    public void testInBaseInterface() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/inBaseInterface.kt");
+                        doTest(fileName);
+                    }
+
                     @TestMetadata("interfaceNoExplicitReceiver.kt")
                     public void testInterfaceNoExplicitReceiver() throws Exception {
                         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/interfaceNoExplicitReceiver.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("noAbstractSuperclass.kt")
+                    public void testNoAbstractSuperclass() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/noAbstractSuperclass.kt");
                         doTest(fileName);
                     }
 
@@ -4248,6 +4278,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("dataClassPropertyByNamedArgument.kt")
+                public void testDataClassPropertyByNamedArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/dataClassPropertyByNamedArgument.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inAccessorInClass.kt")
                 public void testInAccessorInClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inAccessorInClass.kt");
@@ -5195,6 +5231,36 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("parameters.kt")
         public void testParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/parameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAssignment.kt")
+        public void testPropertyAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAssignmentDefaultSetter.kt")
+        public void testPropertyAssignmentDefaultSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyAssignmentDefaultSetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAssignmentNoReceiver.kt")
+        public void testPropertyAssignmentNoReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyAssignmentNoReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAssignmentNoSetter.kt")
+        public void testPropertyAssignmentNoSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyAssignmentNoSetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyModification.kt")
+        public void testPropertyModification() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyModification.kt");
             doTest(fileName);
         }
 

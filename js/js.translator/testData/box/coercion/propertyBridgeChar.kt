@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1039
+// EXPECTED_REACHABLE_NODES: 1145
 open class A {
     val foo: Char
         get() = 'X'
