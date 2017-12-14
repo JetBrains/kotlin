@@ -28,7 +28,6 @@ interface KonanLibraryReader {
     val linkerOpts: List<String>
     val unresolvedDependencies: List<String>
     val dataFlowGraph: ByteArray?
-    val escapeAnalysis: ByteArray?
     val isDefaultLibrary: Boolean get() = false
     val isNeededForLink: Boolean get() = true
     val manifestProperties: Properties

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.llvm.symbolName
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
@@ -96,7 +99,7 @@ internal object DataFlowIR {
     }
 
     abstract class FunctionSymbol(val numberOfParameters: Int, val name: String?) {
-        class External(val hash: Long, numberOfParameters: Int, name: String? = null)
+        class External(val hash: Long, numberOfParameters: Int, val escapes: Int?, val pointsTo: IntArray?, name: String? = null)
             : FunctionSymbol(numberOfParameters, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -110,7 +113,7 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "ExternalFunction(hash='$hash', name='$name')"
+                return "ExternalFunction(hash='$hash', name='$name', escapes='$escapes', pointsTo='${pointsTo?.contentToString()}')"
             }
         }
 
@@ -211,109 +214,8 @@ internal object DataFlowIR {
                    val body: FunctionBody) {
 
 
-        fun printNode(node: Node, ids: Map<Node, Int>) {
-            when (node) {
-                is Node.Const ->
-                    println("        CONST ${node.type}")
-
-                is Node.Parameter ->
-                    println("        PARAM ${node.index}")
-
-                is Node.Singleton ->
-                    println("        SINGLETON ${node.type}")
-
-                is Node.StaticCall -> {
-                    println("        STATIC CALL ${node.callee}")
-                    node.arguments.forEach {
-                        print("            ARG #${ids[it.node]!!}")
-                        if (it.castToType == null)
-                            println()
-                        else
-                            println(" CASTED TO ${it.castToType}")
-                    }
-                }
-
-                is Node.VtableCall -> {
-                    println("        VIRTUAL CALL ${node.callee}")
-                    println("            RECEIVER: ${node.receiverType}")
-                    println("            VTABLE INDEX: ${node.calleeVtableIndex}")
-                    node.arguments.forEach {
-                        print("            ARG #${ids[it.node]!!}")
-                        if (it.castToType == null)
-                            println()
-                        else
-                            println(" CASTED TO ${it.castToType}")
-                    }
-                }
-
-                is Node.ItableCall -> {
-                    println("        INTERFACE CALL ${node.callee}")
-                    println("            RECEIVER: ${node.receiverType}")
-                    println("            METHOD HASH: ${node.calleeHash}")
-                    node.arguments.forEach {
-                        print("            ARG #${ids[it.node]!!}")
-                        if (it.castToType == null)
-                            println()
-                        else
-                            println(" CASTED TO ${it.castToType}")
-                    }
-                }
-
-                is Node.NewObject -> {
-                    println("        NEW OBJECT ${node.callee}")
-                    println("        TYPE ${node.returnType}")
-                    node.arguments.forEach {
-                        print("            ARG #${ids[it.node]!!}")
-                        if (it.castToType == null)
-                            println()
-                        else
-                            println(" CASTED TO ${it.castToType}")
-                    }
-                }
-
-                is Node.FieldRead -> {
-                    println("        FIELD READ ${node.field}")
-                    print("            RECEIVER #${node.receiver?.node?.let { ids[it]!! } ?: "null"}")
-                    if (node.receiver?.castToType == null)
-                        println()
-                    else
-                        println(" CASTED TO ${node.receiver.castToType}")
-                }
-
-                is Node.FieldWrite -> {
-                    println("        FIELD WRITE ${node.field}")
-                    print("            RECEIVER #${node.receiver?.node?.let { ids[it]!! } ?: "null"}")
-                    if (node.receiver?.castToType == null)
-                        println()
-                    else
-                        println(" CASTED TO ${node.receiver.castToType}")
-                    print("            VALUE #${ids[node.value.node]!!}")
-                    if (node.value.castToType == null)
-                        println()
-                    else
-                        println(" CASTED TO ${node.value.castToType}")
-                }
-
-                is Node.Variable -> {
-                    println("        ${if (node.temp) "TEMP VAR" else "VARIABLE"} ")
-                    node.values.forEach {
-                        print("            VAL #${ids[it.node]!!}")
-                        if (it.castToType == null)
-                            println()
-                        else
-                            println(" CASTED TO ${it.castToType}")
-                    }
-
-                }
-
-                else -> {
-                    println("        UNKNOWN: ${node::class.java}")
-                }
-            }
-        }
-
         fun debugOutput() {
-            println("FUNCTION TEMPLATE $symbol")
+            println("FUNCTION $symbol")
             println("Params: $numberOfParameters")
             val ids = body.nodes.withIndex().associateBy({ it.value }, { it.index })
             body.nodes.forEach {
@@ -322,6 +224,122 @@ internal object DataFlowIR {
             }
             println("    RETURNS")
             printNode(body.returns, ids)
+        }
+
+        companion object {
+            fun printNode(node: Node, ids: Map<Node, Int>) = print(nodeToString(node, ids))
+
+            fun nodeToString(node: Node, ids: Map<Node, Int>) = when (node) {
+                is Node.Const ->
+                    "        CONST ${node.type}\n"
+
+                is Node.Parameter ->
+                    "        PARAM ${node.index}\n"
+
+                is Node.Singleton ->
+                    "        SINGLETON ${node.type}\n"
+
+                is Node.StaticCall -> {
+                    val result = StringBuilder()
+                    result.appendln("        STATIC CALL ${node.callee}")
+                    node.arguments.forEach {
+                        result.append("            ARG #${ids[it.node]!!}")
+                        if (it.castToType == null)
+                            result.appendln()
+                        else
+                            result.appendln(" CASTED TO ${it.castToType}")
+                    }
+                    result.toString()
+                }
+
+                is Node.VtableCall -> {
+                    val result = StringBuilder()
+                    result.appendln("        VIRTUAL CALL ${node.callee}")
+                    result.appendln("            RECEIVER: ${node.receiverType}")
+                    result.appendln("            VTABLE INDEX: ${node.calleeVtableIndex}")
+                    node.arguments.forEach {
+                        result.append("            ARG #${ids[it.node]!!}")
+                        if (it.castToType == null)
+                            result.appendln()
+                        else
+                            result.appendln(" CASTED TO ${it.castToType}")
+                    }
+                    result.toString()
+                }
+
+                is Node.ItableCall -> {
+                    val result = StringBuilder()
+                    result.appendln("        INTERFACE CALL ${node.callee}")
+                    result.appendln("            RECEIVER: ${node.receiverType}")
+                    result.appendln("            METHOD HASH: ${node.calleeHash}")
+                    node.arguments.forEach {
+                        result.append("            ARG #${ids[it.node]!!}")
+                        if (it.castToType == null)
+                            result.appendln()
+                        else
+                            result.appendln(" CASTED TO ${it.castToType}")
+                    }
+                    result.toString()
+                }
+
+                is Node.NewObject -> {
+                    val result = StringBuilder()
+                    result.appendln("        NEW OBJECT ${node.callee}")
+                    result.appendln("        TYPE ${node.returnType}")
+                    node.arguments.forEach {
+                        result.append("            ARG #${ids[it.node]!!}")
+                        if (it.castToType == null)
+                            result.appendln()
+                        else
+                            result.appendln(" CASTED TO ${it.castToType}")
+                    }
+                    result.toString()
+                }
+
+                is Node.FieldRead -> {
+                    val result = StringBuilder()
+                    result.appendln("        FIELD READ ${node.field}")
+                    result.append("            RECEIVER #${node.receiver?.node?.let { ids[it]!! } ?: "null"}")
+                    if (node.receiver?.castToType == null)
+                        result.appendln()
+                    else
+                        result.appendln(" CASTED TO ${node.receiver.castToType}")
+                    result.toString()
+                }
+
+                is Node.FieldWrite -> {
+                    val result = StringBuilder()
+                    result.appendln("        FIELD WRITE ${node.field}")
+                    result.append("            RECEIVER #${node.receiver?.node?.let { ids[it]!! } ?: "null"}")
+                    if (node.receiver?.castToType == null)
+                        result.appendln()
+                    else
+                        result.appendln(" CASTED TO ${node.receiver.castToType}")
+                    print("            VALUE #${ids[node.value.node]!!}")
+                    if (node.value.castToType == null)
+                        result.appendln()
+                    else
+                        result.appendln(" CASTED TO ${node.value.castToType}")
+                    result.toString()
+                }
+
+                is Node.Variable -> {
+                    val result = StringBuilder()
+                    result.appendln("        ${if (node.temp) "TEMP VAR" else "VARIABLE"} ")
+                    node.values.forEach {
+                        result.append("            VAL #${ids[it.node]!!}")
+                        if (it.castToType == null)
+                            result.appendln()
+                        else
+                            result.appendln(" CASTED TO ${it.castToType}")
+                    }
+                    result.toString()
+                }
+
+                else -> {
+                    "        UNKNOWN: ${node::class.java}\n"
+                }
+            }
         }
     }
 
@@ -333,6 +351,21 @@ internal object DataFlowIR {
 
         val classMap = mutableMapOf<ClassDescriptor, Type>()
         val functionMap = mutableMapOf<CallableDescriptor, FunctionSymbol>()
+
+        private val NAME_ESCAPES = Name.identifier("Escapes")
+        private val NAME_POINTS_TO = Name.identifier("PointsTo")
+        private val FQ_NAME_KONAN = FqName.fromSegments(listOf("konan"))
+
+        private val FQ_NAME_ESCAPES = FQ_NAME_KONAN.child(NAME_ESCAPES)
+        private val FQ_NAME_POINTS_TO = FQ_NAME_KONAN.child(NAME_POINTS_TO)
+
+        private val konanPackage = context.builtIns.builtInsModule.getPackage(FQ_NAME_KONAN).memberScope
+        private val escapesAnnotationDescriptor = konanPackage.getContributedClassifier(
+                NAME_ESCAPES, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+        private val escapesWhoDescriptor = escapesAnnotationDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters.single()
+        private val pointsToAnnotationDescriptor = konanPackage.getContributedClassifier(
+                NAME_POINTS_TO, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+        private val pointsToOnWhomDescriptor = pointsToAnnotationDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters.single()
 
         var privateTypeIndex = 0
         var privateFunIndex = 0
@@ -427,9 +460,16 @@ internal object DataFlowIR {
                     is FunctionDescriptor -> {
                         val name = if (it.isExported()) it.symbolName else it.internalName
                         val numberOfParameters = it.allParameters.size + if (it.isSuspend) 1 else 0
-                        if (it.module != irModule.descriptor || it.externalOrIntrinsic())
-                            FunctionSymbol.External(name.localHash.value, numberOfParameters, takeName { name })
-                        else {
+                        if (it.module != irModule.descriptor || it.externalOrIntrinsic()) {
+                            val escapesAnnotation = it.annotations.findAnnotation(FQ_NAME_ESCAPES)
+                            val pointsToAnnotation = it.annotations.findAnnotation(FQ_NAME_POINTS_TO)
+                            @Suppress("UNCHECKED_CAST")
+                            val escapesBitMask = (escapesAnnotation?.allValueArguments?.get(escapesWhoDescriptor.name) as? ConstantValue<Int>)?.value
+                            @Suppress("UNCHECKED_CAST")
+                            val pointsToBitMask = (pointsToAnnotation?.allValueArguments?.get(pointsToOnWhomDescriptor.name) as? ConstantValue<List<IntValue>>)?.value
+                            FunctionSymbol.External(name.localHash.value, numberOfParameters, escapesBitMask,
+                                    pointsToBitMask?.let { it.map { it.value }.toIntArray() }, takeName { name })
+                        } else {
                             val isAbstract = it.modality == Modality.ABSTRACT
                             val classDescriptor = it.containingDeclaration as? ClassDescriptor
                             val placeToFunctionsTable = !isAbstract && it !is ConstructorDescriptor && classDescriptor != null

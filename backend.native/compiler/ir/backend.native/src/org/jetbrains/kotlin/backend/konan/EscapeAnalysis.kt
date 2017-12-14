@@ -16,37 +16,10 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
-import org.jetbrains.kotlin.backend.common.descriptors.allParameters
-import org.jetbrains.kotlin.ir.util.getArguments
-import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
-import org.jetbrains.kotlin.backend.common.peek
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.descriptors.target
-import org.jetbrains.kotlin.backend.konan.ir.IrSuspendableExpression
-import org.jetbrains.kotlin.backend.konan.ir.IrSuspensionPoint
-import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.lower.isInlineConstructor
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
+import org.jetbrains.kotlin.backend.konan.optimizations.*
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.IntValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.*
 
 internal object EscapeAnalysis {
 
@@ -92,17 +65,13 @@ internal object EscapeAnalysis {
         WRITTEN_TO_GLOBAL
     }
 
-    private class RoleInfoEntry(val data: Any? = null)
+    private class RoleInfoEntry(val data: DataFlowIR.Node? = null)
 
     private open class RoleInfo {
         val entries = mutableListOf<RoleInfoEntry>()
 
         open fun add(entry: RoleInfoEntry) = entries.add(entry)
     }
-
-    // TODO: Seems like overhead to analyze value types but they might be boxed, think how to optimize this.
-    private fun RuntimeAware.isInteresting(type: KotlinType?): Boolean =
-            type != null && !type.isUnit() && !type.isNothing()/* && isObjectType(type)*/
 
     private class Roles {
         val data = HashMap<Role, RoleInfo>()
@@ -120,454 +89,80 @@ internal object EscapeAnalysis {
                 data.keys.joinToString(separator = "; ", prefix = "Roles: ") { it.toString() }
     }
 
-    private class VariableValues {
-        val elementData = HashMap<VariableDescriptor, MutableSet<IrExpression>>()
+    private class FunctionAnalysisResult(val function: DataFlowIR.Function,
+                                         val nodesRoles: Map<DataFlowIR.Node, Roles>)
 
-        fun addEmpty(variable: VariableDescriptor) =
-                elementData.getOrPut(variable, { mutableSetOf() })
+    private class IntraproceduralAnalysis(val functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
+                                          val callGraph: CallGraph) {
 
-        fun add(variable: VariableDescriptor, element: IrExpression) =
-                elementData[variable]?.add(element)
+        fun analyze(): Map<DataFlowIR.FunctionSymbol, FunctionAnalysisResult> {
+            return callGraph.nodes.associateBy({ it.symbol }) {
+                val function = functions[it.symbol]!!
+                val body = function.body
+                val nodesRoles = body.nodes.associate { it to Roles() }
 
-        fun get(variable: VariableDescriptor): Set<IrExpression>? =
-                elementData[variable]
-
-        fun computeClosure() {
-            elementData.forEach { key, value ->
-                value.addAll(computeValueClosure(key))
-            }
-        }
-
-        // Computes closure of all possible values for given variable.
-        private fun computeValueClosure(value: VariableDescriptor): Set<IrExpression> {
-            val result = mutableSetOf<IrExpression>()
-            val seen = mutableSetOf<VariableDescriptor>()
-            dfs(value, seen, result)
-            return result
-        }
-
-        private fun dfs(value: VariableDescriptor, seen: MutableSet<VariableDescriptor>, result: MutableSet<IrExpression>) {
-            seen += value
-            val elements = elementData[value]
-                    ?: return
-            for (element in elements) {
-                if (element !is IrGetValue)
-                    result += element
-                else {
-                    val descriptor = element.descriptor
-                    if (descriptor is VariableDescriptor && !seen.contains(descriptor))
-                        dfs(descriptor, seen, result)
-                }
-            }
-        }
-    }
-
-    private class ParameterRoles {
-        val elementData = HashMap<ParameterDescriptor, Roles>()
-
-        fun addParameter(parameter: ParameterDescriptor) {
-            elementData.getOrPut(parameter) { Roles() }
-        }
-
-        fun add(parameter: ParameterDescriptor, role: Role, roleInfoEntry: RoleInfoEntry?) {
-            val roles = elementData.getOrPut(parameter, { Roles() })
-            roles.add(role, roleInfoEntry)
-        }
-    }
-
-    private class ExpressionValuesExtractor(val returnableBlockValues: Map<IrReturnableBlock, List<IrExpression>>,
-                                            val suspendableExpressionValues: Map<IrSuspendableExpression, List<IrSuspensionPoint>>) {
-
-        fun forEachValue(expression: IrExpression, block: (IrExpression) -> Unit) {
-            if (expression.type.isUnit() || expression.type.isNothing()) return
-            when (expression) {
-                is IrReturnableBlock -> returnableBlockValues[expression]!!.forEach { forEachValue(it, block) }
-
-                is IrSuspendableExpression ->
-                    (suspendableExpressionValues[expression]!! + expression.result).forEach { forEachValue(it, block) }
-
-                is IrSuspensionPoint -> {
-                    forEachValue(expression.result, block)
-                    forEachValue(expression.resumeResult, block)
+                fun assignRole(node: DataFlowIR.Node, role: Role, infoEntry: RoleInfoEntry?) {
+                    nodesRoles[node]!!.add(role, infoEntry)
                 }
 
-                is IrContainerExpression -> forEachValue(expression.statements.last() as IrExpression, block)
+                body.returns.values.forEach { assignRole(it.node, Role.RETURN_VALUE, null /* TODO */) }
+                body.throws.values.forEach  { assignRole(it.node, Role.THROW_VALUE,  null /* TODO */) }
+                for (node in body.nodes) {
+                    when (node) {
+                        is DataFlowIR.Node.FieldWrite -> {
+                            val receiver = node.receiver
+                            if (receiver == null) {
+                                // Global field.
+                                assignRole(node.value.node, Role.WRITTEN_TO_GLOBAL, null /* TODO */)
+                            } else {
+                                assignRole(receiver.node, Role.FIELD_WRITTEN, RoleInfoEntry(node.value.node))
 
-                is IrWhen -> expression.branches.forEach { forEachValue(it.result, block) }
-
-                is IrMemberAccessExpression -> block(expression)
-
-                is IrGetValue -> block(expression)
-
-                is IrGetField -> block(expression)
-
-                is IrVararg -> /* Sometimes, we keep vararg till codegen phase (for constant arrays). */
-                    block(expression)
-
-                // If constant plays certain role - this information is useless.
-                is IrConst<*> -> { }
-
-                is IrTypeOperatorCall -> {
-                    when (expression.operator) {
-                        IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.CAST, IrTypeOperator.SAFE_CAST,
-                        IrTypeOperator.IMPLICIT_INTEGER_COERCION, IrTypeOperator.IMPLICIT_NOTNULL ->
-                            forEachValue(expression.argument, block)
-
-                        // No info from those ones.
-                        IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF,
-                        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> { }
-                    }
-                }
-
-                is IrTry -> {
-                    forEachValue(expression.tryResult, block)
-                    expression.catches.forEach { forEachValue(it.result, block) }
-                }
-
-                is IrGetObjectValue -> { /* Shall we do anything here? */
-                    block(expression)
-                }
-
-                else -> error("Unexpected expression: ${ir2stringWhole(expression)}")
-            }
-        }
-    }
-
-    private fun ExpressionValuesExtractor.extractNodesUsingVariableValues(expression: IrExpression,
-                                                                          variableValues: VariableValues?): List<Any> {
-        val values = mutableListOf<Any>()
-        forEachValue(expression) {
-            if (it !is IrGetValue)
-                values += it
-            else {
-                val descriptor = it.descriptor
-                if (descriptor is ParameterDescriptor)
-                    values += it.descriptor
-                else {
-                    descriptor as VariableDescriptor
-                    variableValues?.get(descriptor)?.forEach {
-                        if (it !is IrGetValue)
-                            values += it
-                        else if (it.descriptor is ParameterDescriptor) {
-                            values += it.descriptor
-                        }
-                    }
-                }
-            }
-        }
-        return values
-    }
-
-    private class FunctionAnalysisResult(val function: IrFunction,
-                                         val expressionToRoles: Map<IrExpression, Roles>,
-                                         val variableValues: VariableValues,
-                                         val parameterRoles: ParameterRoles)
-
-    private class IntraproceduralAnalysisResult(val functionAnalysisResults: Map<FunctionDescriptor, FunctionAnalysisResult>,
-                                                val expressionValuesExtractor: ExpressionValuesExtractor)
-
-    private class IntraproceduralAnalysis(val context: RuntimeAware) {
-
-        // Possible values of a returnable block.
-        private val returnableBlockValues = mutableMapOf<IrReturnableBlock, MutableList<IrExpression>>()
-
-        // All suspension points within specified suspendable expression.
-        private val suspendableExpressionValues = mutableMapOf<IrSuspendableExpression, MutableList<IrSuspensionPoint>>()
-
-        private val expressionValuesExtractor = ExpressionValuesExtractor(returnableBlockValues, suspendableExpressionValues)
-
-        private fun isInteresting(expression: IrExpression) =
-                (expression is IrMemberAccessExpression && context.isInteresting(expression.type))
-                        || (expression is IrGetValue && context.isInteresting(expression.type))
-                        || (expression is IrGetField && context.isInteresting(expression.type))
-                        || expression is IrGetObjectValue
-
-        private fun isInteresting(variable: ValueDescriptor) = context.isInteresting(variable.type)
-
-        fun analyze(irModule: IrModuleFragment): IntraproceduralAnalysisResult {
-            val result = mutableMapOf<FunctionDescriptor, FunctionAnalysisResult>()
-            irModule.accept(object : IrElementVisitorVoid {
-
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitFunction(declaration: IrFunction) {
-                    val body = declaration.body
-                            ?: return
-
-                    DEBUG_OUTPUT(1) {
-                        println("Analysing function ${declaration.descriptor}")
-                        println("IR: ${ir2stringWhole(declaration, true)}")
-                    }
-
-                    // Find all interesting expressions, variables and functions.
-                    val parameterRoles = ParameterRoles()
-                    declaration.descriptor.allParameters.forEach {
-                        if (isInteresting(it))
-                            parameterRoles.addParameter(it)
-                    }
-                    val visitor = ElementFinderVisitor()
-                    declaration.acceptVoid(visitor)
-                    val functionAnalysisResult = FunctionAnalysisResult(declaration, visitor.expressionToRoles,
-                            visitor.variableValues, parameterRoles)
-                    result.put(declaration.descriptor, functionAnalysisResult)
-
-                    // On this pass, we collect all possible variable values and assign roles to expressions.
-                    body.acceptVoid(RoleAssignerVisitor(declaration.descriptor, functionAnalysisResult, false))
-
-                    DEBUG_OUTPUT(1) {
-                        println("FIRST PHASE")
-                        functionAnalysisResult.parameterRoles.elementData.forEach { t, u ->
-                            println("PARAM $t: $u")
-                        }
-                        functionAnalysisResult.variableValues.elementData.forEach { t, u ->
-                            println("VAR $t:")
-                            u.forEach {
-                                println("    ${ir2stringWhole(it)}")
+                                // TODO: make more precise analysis and differentiate fields from receivers.
+                                // See test escape2.kt, why we need these edges.
+                                assignRole(node.value.node, Role.FIELD_WRITTEN, RoleInfoEntry(receiver.node))
                             }
                         }
-                        functionAnalysisResult.expressionToRoles.forEach { t, u ->
-                            println("EXP ${ir2stringWhole(t)}")
-                            println("    :$u")
-                        }
-                    }
 
-                    // Compute transitive closure of possible values for variables.
-                    functionAnalysisResult.variableValues.computeClosure()
-
-                    DEBUG_OUTPUT(1) {
-                        println("SECOND PHASE")
-                        functionAnalysisResult.parameterRoles.elementData.forEach { t, u ->
-                            println("PARAM $t: $u")
+                        is DataFlowIR.Node.Singleton -> {
+                            assignRole(node, Role.WRITTEN_TO_GLOBAL, null /* TODO */)
                         }
-                        functionAnalysisResult.variableValues.elementData.forEach { t, u ->
-                            println("VAR $t:")
-                            u.forEach {
-                                println("    ${ir2stringWhole(it)}")
+
+                        is DataFlowIR.Node.FieldRead -> {
+                            val receiver = node.receiver
+                            if (receiver == null) {
+                                // Global field.
+                                assignRole(node, Role.WRITTEN_TO_GLOBAL, null /* TODO */)
+                            } else {
+                                // Receiver holds reference to all its fields.
+                                assignRole(receiver.node, Role.FIELD_WRITTEN, RoleInfoEntry(node))
+
+                                /*
+                                 * The opposite (a field points to its receiver) is also kind of true.
+                                 * Here is an example why we need these edges:
+                                 *
+                                 * class B
+                                 * class A { val b = B() }
+                                 * fun foo(): B {
+                                 *     val a = A() <- here [a] is created and so does [a.b], therefore they have the same lifetime.
+                                 *     return a.b  <- a.b escapes to return value. If there were no edge from [a.b] to [a],
+                                 *                    then [a] would've been considered local and since [a.b] has the same lifetime as [a],
+                                 *                    [a.b] would be local as well.
+                                 * }
+                                 *
+                                 */
+                                assignRole(node, Role.FIELD_WRITTEN, RoleInfoEntry(receiver.node))
+                            }
+                        }
+
+                        is DataFlowIR.Node.Variable -> {
+                            for (value in node.values) {
+                                assignRole(node, Role.FIELD_WRITTEN, RoleInfoEntry(value.node))
+                                assignRole(value.node, Role.FIELD_WRITTEN, RoleInfoEntry(node))
                             }
                         }
                     }
-
-                    // On this pass, we use possible variable values to assign roles to expressions.
-                    body.acceptVoid(RoleAssignerVisitor(declaration.descriptor, functionAnalysisResult, true))
-
-                    DEBUG_OUTPUT(1) {
-                        println("THIRD PHASE")
-                        functionAnalysisResult.parameterRoles.elementData.forEach { t, u ->
-                            println("PARAM $t: $u")
-                        }
-                        functionAnalysisResult.expressionToRoles.forEach { t, u ->
-                            println("EXP ${ir2stringWhole(t)}")
-                            println("    :$u")
-                        }
-                    }
                 }
-            }, data = null)
-
-            return IntraproceduralAnalysisResult(result, expressionValuesExtractor)
-        }
-
-        private inner class ElementFinderVisitor : IrElementVisitorVoid {
-
-            val expressionToRoles = mutableMapOf<IrExpression, Roles>()
-            val variableValues = VariableValues()
-
-            private val returnableBlocksStack = mutableListOf<IrReturnableBlock>()
-            private val suspendableExpressionsStack = mutableListOf<IrSuspendableExpression>()
-
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitExpression(expression: IrExpression) {
-                if (isInteresting(expression)) {
-                    expressionToRoles[expression] = Roles()
-                }
-                if (expression is IrReturnableBlock) {
-                    returnableBlocksStack.push(expression)
-                    returnableBlockValues.put(expression, mutableListOf())
-                }
-                if (expression is IrSuspendableExpression) {
-                    suspendableExpressionsStack.push(expression)
-                    suspendableExpressionValues.put(expression, mutableListOf())
-                }
-                if (expression is IrSuspensionPoint)
-                    suspendableExpressionValues[suspendableExpressionsStack.peek()!!]!!.add(expression)
-                super.visitExpression(expression)
-                if (expression is IrReturnableBlock)
-                    returnableBlocksStack.pop()
-                if (expression is IrSuspendableExpression)
-                    suspendableExpressionsStack.pop()
-            }
-
-            override fun visitReturn(expression: IrReturn) {
-                val returnableBlock = returnableBlocksStack.lastOrNull { it.descriptor == expression.returnTarget }
-                if (returnableBlock != null) {
-                    returnableBlockValues[returnableBlock]!!.add(expression.value)
-                }
-                super.visitReturn(expression)
-            }
-
-            override fun visitVariable(declaration: IrVariable) {
-                if (isInteresting(declaration.descriptor))
-                    variableValues.addEmpty(declaration.descriptor)
-                super.visitVariable(declaration)
-            }
-        }
-
-        //
-        // elementToRoles is filled with all possible roles given element can play.
-        // varValues is filled with all possible elements that could be stored in a variable.
-        //
-        private inner class RoleAssignerVisitor(val functionDescriptor: FunctionDescriptor,
-                                                functionAnalysisResult: FunctionAnalysisResult,
-                                                val useVarValues: Boolean) : IrElementVisitorVoid {
-
-            private val expressionRoles = functionAnalysisResult.expressionToRoles
-            private val variableValues = functionAnalysisResult.variableValues
-            private val parameterRoles = functionAnalysisResult.parameterRoles
-
-            // Here we handle variable assignment.
-            private fun assignVariable(variable: VariableDescriptor, value: IrExpression) {
-                if (useVarValues) return
-                expressionValuesExtractor.forEachValue(value) {
-                    variableValues.add(variable, it)
-                }
-            }
-
-            // Here we assign a role to expression's value.
-            private fun assignRole(expression: IrExpression, role: Role, infoEntry: RoleInfoEntry?) {
-                if (!useVarValues) return
-                expressionValuesExtractor.extractNodesUsingVariableValues(
-                        expression     = expression,
-                        variableValues = variableValues
-                ).forEach {
-                    if (it is ParameterDescriptor) {
-                        if (isInteresting(it))
-                            parameterRoles.add(it, role, infoEntry)
-                    } else {
-                        expressionRoles[it as IrExpression]?.add(role, infoEntry)
-                    }
-                }
-            }
-
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitSetField(expression: IrSetField) {
-                val receiver = expression.receiver
-                if (receiver == null)
-                    assignRole(expression.value, Role.WRITTEN_TO_GLOBAL, RoleInfoEntry(expression))
-                else {
-                    val nodes = expressionValuesExtractor.extractNodesUsingVariableValues(
-                            expression     = expression.value,
-                            variableValues = if (useVarValues) variableValues else null
-                    )
-                    nodes.forEach { assignRole(receiver, Role.FIELD_WRITTEN, RoleInfoEntry(it)) }
-
-                    // TODO: make more precise analysis and differentiate fields from receivers.
-                    // See test escape2.kt, why we need these edges.
-                    val receiverNodes = expressionValuesExtractor.extractNodesUsingVariableValues(
-                            expression     = receiver,
-                            variableValues = if (useVarValues) variableValues else null
-                    )
-                    receiverNodes.forEach { assignRole(expression.value, Role.FIELD_WRITTEN, RoleInfoEntry(it)) }
-                }
-                super.visitSetField(expression)
-            }
-
-            override fun visitGetObjectValue(expression: IrGetObjectValue) {
-                assignRole(expression, Role.WRITTEN_TO_GLOBAL, RoleInfoEntry(expression))
-                super.visitGetObjectValue(expression)
-            }
-
-            override fun visitGetField(expression: IrGetField) {
-                val receiver = expression.receiver
-                if (receiver == null)
-                    assignRole(expression, Role.WRITTEN_TO_GLOBAL, RoleInfoEntry(expression))
-                else {
-                    // Receiver holds reference to all its fields.
-                    assignRole(receiver, Role.FIELD_WRITTEN, RoleInfoEntry(expression))
-
-                    /*
-                     * The opposite (a field points to its receiver) is also kind of true.
-                     * Here is an example why we need these edges:
-                     *
-                     * class B
-                     * class A { val b = B() }
-                     * fun foo(): B {
-                     *     val a = A() <- here [a] is created and so does [a.b], therefore they have the same lifetime.
-                     *     return a.b  <- a.b escapes to return value. If there were no edge from [a.b] to [a],
-                     *                    then [a] would've been considered local and since [a.b] has the same lifetime as [a],
-                     *                    [a.b] would be local as well.
-                     * }
-                     *
-                     */
-                    val nodes = expressionValuesExtractor.extractNodesUsingVariableValues(
-                            expression     = receiver,
-                            variableValues = if (useVarValues) variableValues else null
-                    )
-                    nodes.forEach { assignRole(expression, Role.FIELD_WRITTEN, RoleInfoEntry(it)) }
-                }
-                super.visitGetField(expression)
-            }
-
-            override fun visitField(declaration: IrField) {
-                val initializer = declaration.initializer
-                if (initializer != null) {
-                    assert(declaration.descriptor.dispatchReceiverParameter == null,
-                            { "Instance field initializers should've been lowered" })
-                    assignRole(initializer.expression, Role.WRITTEN_TO_GLOBAL, RoleInfoEntry(declaration))
-                }
-                super.visitField(declaration)
-            }
-
-            override fun visitSetVariable(expression: IrSetVariable) {
-                assignVariable(expression.descriptor, expression.value)
-                super.visitSetVariable(expression)
-            }
-
-            override fun visitVariable(declaration: IrVariable) {
-                declaration.initializer?.let { assignVariable(declaration.descriptor, it) }
-                super.visitVariable(declaration)
-            }
-
-            // TODO: hack to overcome bad code in InlineConstructorsTransformation.
-            override fun visitReturn(expression: IrReturn) {
-                if (expression.returnTarget == functionDescriptor // Non-local return.
-                        && !functionDescriptor.isInlineConstructor) // Not inline constructor.
-                    assignRole(expression.value, Role.RETURN_VALUE, RoleInfoEntry(expression))
-                super.visitReturn(expression)
-            }
-
-            override fun visitThrow(expression: IrThrow) {
-                assignRole(expression.value, Role.THROW_VALUE, RoleInfoEntry(expression))
-                super.visitThrow(expression)
-            }
-
-            override fun visitVararg(expression: IrVararg) {
-                expression.elements.forEach {
-                    when (it) {
-                        is IrExpression -> {
-                            val nodes = expressionValuesExtractor.extractNodesUsingVariableValues(
-                                    expression     = it,
-                                    variableValues = if (useVarValues) variableValues else null
-                            )
-                            nodes.forEach { assignRole(expression, Role.FIELD_WRITTEN, RoleInfoEntry(it)) }
-                        }
-                        is IrSpreadElement -> {
-                            val nodes = expressionValuesExtractor.extractNodesUsingVariableValues(
-                                    expression     = it.expression,
-                                    variableValues = if (useVarValues) variableValues else null
-                            )
-                            nodes.forEach { assignRole(expression, Role.FIELD_WRITTEN, RoleInfoEntry(it)) }
-                        }
-                        else -> error("Unsupported vararg element")
-                    }
-                }
-                super.visitVararg(expression)
+                FunctionAnalysisResult(function, nodesRoles)
             }
         }
     }
@@ -630,19 +225,13 @@ internal object EscapeAnalysis {
         }
     }
 
-    private class InterproceduralAnalysisResult(val functionEscapeAnalysisResults: Map<FunctionDescriptor, FunctionEscapeAnalysisResult>)
-
-    private class InterproceduralAnalysis(val context: Context,
-                                          val runtimeAware: RuntimeAware,
-                                          val externalFunctionEscapeAnalysisResults: Map<String, FunctionEscapeAnalysisResult>,
-                                          val intraproceduralAnalysisResult: IntraproceduralAnalysisResult,
+    private class InterproceduralAnalysis(val callGraph: CallGraph,
+                                          val intraproceduralAnalysisResult: Map<DataFlowIR.FunctionSymbol, FunctionAnalysisResult>,
                                           val lifetimes: MutableMap<IrElement, Lifetime>) {
 
-        private val expressionValuesExtractor = intraproceduralAnalysisResult.expressionValuesExtractor
+        val escapeAnalysisResults = mutableMapOf<DataFlowIR.FunctionSymbol, FunctionEscapeAnalysisResult>()
 
-        fun analyze(irModule: IrModuleFragment): InterproceduralAnalysisResult {
-            val callGraph = buildCallGraph(irModule)
-
+        fun analyze() {
             DEBUG_OUTPUT(0) {
                 println("CALL GRAPH")
                 callGraph.directEdges.forEach { t, u ->
@@ -657,7 +246,7 @@ internal object EscapeAnalysis {
                 }
             }
 
-            val condensation = callGraph.buildCondensation()
+            val condensation = DirectedGraphCondensationBuilder(callGraph).build()
 
             DEBUG_OUTPUT(0) {
                 println("CONDENSATION")
@@ -675,142 +264,35 @@ internal object EscapeAnalysis {
                 }
             }
 
-            callGraph.directEdges.forEach { function, node ->
-                val parameters = function.allParameters
-                node.escapeAnalysisResult = FunctionEscapeAnalysisResult(
+            for (functionSymbol in callGraph.directEdges.keys) {
+                val numberOfParameters = intraproceduralAnalysisResult[functionSymbol]!!.function.numberOfParameters
+                escapeAnalysisResults[functionSymbol] = FunctionEscapeAnalysisResult(
                         // Assume no edges at the beginning.
                         // Then iteratively add needed.
-                        (parameters.map { ParameterEscapeAnalysisResult(false, IntArray(0)) }
-                                + ParameterEscapeAnalysisResult(false, IntArray(0))
-                                ).toTypedArray()
+                        Array(numberOfParameters + 1) { ParameterEscapeAnalysisResult(false, IntArray(0)) }
                 )
             }
 
             for (multiNode in condensation.topologicalOrder)
                 analyze(callGraph, multiNode)
-
-            return InterproceduralAnalysisResult(callGraph.directEdges.entries.associateBy(
-                    { it.key },
-                    { it.value.escapeAnalysisResult })
-            )
         }
 
-        private class CallSite(val expression: IrMemberAccessExpression, val actualCallee: FunctionDescriptor)
-
-        private class CallGraphNode(val graph: CallGraph, val descriptor: FunctionDescriptor): DirectedGraphNode<FunctionDescriptor> {
-            override val key: FunctionDescriptor
-                get() = descriptor
-
-            override val directEdges: List<FunctionDescriptor> by lazy {
-                graph.directEdges[descriptor]!!.callSites
-                        .map { it.actualCallee }
-                        .filter { graph.reversedEdges.containsKey(it) }
-            }
-
-            override val reversedEdges: List<FunctionDescriptor> by lazy {
-                graph.reversedEdges[descriptor]!!
-            }
-
-            val callSites = mutableListOf<CallSite>()
-            lateinit var escapeAnalysisResult: FunctionEscapeAnalysisResult
-        }
-
-        private class CallGraph(val directEdges: Map<FunctionDescriptor, CallGraphNode>,
-                                val reversedEdges: Map<FunctionDescriptor, MutableList<FunctionDescriptor>>)
-            : DirectedGraph<FunctionDescriptor, CallGraphNode> {
-
-            override val nodes: Collection<CallGraphNode>
-                get() = directEdges.values
-
-            override fun get(key: FunctionDescriptor) = directEdges[key]!!
-
-            fun addEdge(caller: FunctionDescriptor, callSite: CallSite) {
-                directEdges[caller]!!.callSites += callSite
-                reversedEdges[callSite.actualCallee]?.add(caller)
-            }
-
-            fun buildCondensation() = DirectedGraphCondensationBuilder(this).build()
-        }
-
-        private fun buildCallGraph(element: IrElement): CallGraph {
-            val directEdges = mutableMapOf<FunctionDescriptor, CallGraphNode>()
-            val reversedEdges = mutableMapOf<FunctionDescriptor, MutableList<FunctionDescriptor>>()
-            val callGraph = CallGraph(directEdges, reversedEdges)
-            intraproceduralAnalysisResult.functionAnalysisResults.keys.forEach {
-                directEdges.put(it, CallGraphNode(callGraph, it))
-                reversedEdges.put(it, mutableListOf())
-            }
-            element.acceptVoid(object : IrElementVisitorVoidWithContext() {
-
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitCall(expression: IrCall) {
-                    addEdge(expression)
-                    super.visitCall(expression)
-                }
-
-                override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-                    addEdge(expression)
-                    super.visitDelegatingConstructorCall(expression)
-                }
-
-                private fun addEdge(expression: IrMemberAccessExpression) {
-                    val caller = currentFunction?.scope?.scopeOwner
-                    if (caller != null) {
-                        caller as FunctionDescriptor
-                        val callee = (expression.descriptor as FunctionDescriptor).target
-
-                        if (!callee.isOverridable || expression !is IrCall || expression.superQualifier != null) {
-                            val superQualifier = (expression as? IrCall)?.superQualifier
-                            if (superQualifier == null)
-                                callGraph.addEdge(caller, CallSite(expression, callee))
-                            else {
-                                val actualCallee = superQualifier.unsubstitutedMemberScope.getOverridingOf(callee)?.target ?: callee
-                                callGraph.addEdge(caller, CallSite(expression, actualCallee))
-                            }
-                        } else {
-                            DEBUG_OUTPUT(0) { println("A virtual call") }
-
-                            // TODO: Devirtualize.
-                            callGraph.addEdge(caller, CallSite(expression, callee))
-                        }
-                    }
-                }
-
-                private fun MemberScope.getOverridingOf(function: FunctionDescriptor) = when (function) {
-                    is PropertyGetterDescriptor ->
-                        this.getContributedVariables(function.correspondingProperty.name, NoLookupLocation.FROM_BACKEND)
-                                .firstOrNull { OverridingUtil.overrides(it, function.correspondingProperty) }?.getter
-
-                    is PropertySetterDescriptor ->
-                        this.getContributedVariables(function.correspondingProperty.name, NoLookupLocation.FROM_BACKEND)
-                                .firstOrNull { OverridingUtil.overrides(it, function.correspondingProperty) }?.setter
-
-                    else -> this.getContributedFunctions(function.name, NoLookupLocation.FROM_BACKEND)
-                            .firstOrNull { OverridingUtil.overrides(it, function) }
-                }
-            })
-            return callGraph
-        }
-
-        private fun analyze(callGraph: CallGraph, multiNode: DirectedGraphMultiNode<FunctionDescriptor>) {
+        private fun analyze(callGraph: CallGraph, multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol>) {
             DEBUG_OUTPUT(0) {
                 println("Analyzing multiNode:\n    ${multiNode.nodes.joinToString("\n   ") { it.toString() }}")
                 multiNode.nodes.forEach { from ->
-                    println("IR")
-                    println(ir2stringWhole(intraproceduralAnalysisResult.functionAnalysisResults[from]!!.function))
+                    println("DataFlowIR")
+                    intraproceduralAnalysisResult[from]!!.function.debugOutput()
                     callGraph.directEdges[from]!!.callSites.forEach { to ->
                         println("CALL")
                         println("   from $from")
-                        println("   to ${ir2stringWhole(to.expression)}")
+                        println("   to ${to.actualCallee}")
                     }
                 }
             }
 
             val pointsToGraphs = multiNode.nodes.associateBy({ it }, { PointsToGraph(it) })
-            val toAnalyze = mutableSetOf<FunctionDescriptor>()
+            val toAnalyze = mutableSetOf<DataFlowIR.FunctionSymbol>()
             toAnalyze.addAll(multiNode.nodes)
             while (toAnalyze.isNotEmpty()) {
                 val function = toAnalyze.first()
@@ -818,12 +300,12 @@ internal object EscapeAnalysis {
 
                 DEBUG_OUTPUT(0) { println("Processing function $function") }
 
-                val startResult = callGraph.directEdges[function]!!.escapeAnalysisResult
+                val startResult = escapeAnalysisResults[callGraph.directEdges[function]!!.symbol]!!
 
                 DEBUG_OUTPUT(0) { println("Start escape analysis result:\n$startResult") }
 
                 analyze(callGraph, pointsToGraphs[function]!!, function)
-                val endResult = callGraph.directEdges[function]!!.escapeAnalysisResult
+                val endResult = escapeAnalysisResults[callGraph.directEdges[function]!!.symbol]!!
                 if (startResult == endResult) {
                     DEBUG_OUTPUT(0) { println("Escape analysis is not changed") }
                 } else {
@@ -835,14 +317,14 @@ internal object EscapeAnalysis {
                     }
                 }
             }
-            pointsToGraphs.values.forEach { graph ->
+            for (graph in pointsToGraphs.values) {
                 graph.nodes.keys
-                        .filterIsInstance<IrExpression>()
-                        .forEach { lifetimes.put(it, graph.lifetimeOf(it)) }
+                        .filterIsInstance<DataFlowIR.Node.Call>()
+                        .forEach { call -> call.callSite?.let { lifetimes.put(it, graph.lifetimeOf(call)) } }
             }
         }
 
-        private fun analyze(callGraph: CallGraph, pointsToGraph: PointsToGraph, function: FunctionDescriptor) {
+        private fun analyze(callGraph: CallGraph, pointsToGraph: PointsToGraph, function: DataFlowIR.FunctionSymbol) {
             DEBUG_OUTPUT(0) {
                 println("Before calls analysis")
                 pointsToGraph.print()
@@ -850,8 +332,9 @@ internal object EscapeAnalysis {
 
             callGraph.directEdges[function]!!.callSites.forEach {
                 val callee = it.actualCallee
-                val calleeEAResult = callGraph.directEdges[callee]?.escapeAnalysisResult ?: getExternalFunctionEAResult(it)
-                pointsToGraph.processCall(it, calleeEAResult)
+                val calleeEAResult = callGraph.directEdges[callee]?.let { escapeAnalysisResults[it.symbol]!! }
+                        ?: getExternalFunctionEAResult(it)
+                pointsToGraph.processCall(it.call, calleeEAResult)
             }
 
             DEBUG_OUTPUT(0) {
@@ -867,55 +350,36 @@ internal object EscapeAnalysis {
                 pointsToGraph.print()
             }
 
-            callGraph.directEdges[function]!!.escapeAnalysisResult = eaResult
+            escapeAnalysisResults[callGraph.directEdges[function]!!.symbol] = eaResult
         }
 
-        private val NAME_ESCAPES = Name.identifier("Escapes")
-        private val NAME_POINTS_TO = Name.identifier("PointsTo")
-        private val FQ_NAME_KONAN = FqName.fromSegments(listOf("konan"))
-
-        private val FQ_NAME_ESCAPES = FQ_NAME_KONAN.child(NAME_ESCAPES)
-        private val FQ_NAME_POINTS_TO = FQ_NAME_KONAN.child(NAME_POINTS_TO)
-
-        private val konanPackage = context.builtIns.builtInsModule.getPackage(FQ_NAME_KONAN).memberScope
-        private val escapesAnnotationDescriptor = konanPackage.getContributedClassifier(
-                NAME_ESCAPES, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-        private val escapesWhoDescriptor = escapesAnnotationDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters.single()
-        private val pointsToAnnotationDescriptor = konanPackage.getContributedClassifier(
-                NAME_POINTS_TO, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-        private val pointsToOnWhomDescriptor = pointsToAnnotationDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters.single()
-
-        private fun getConservativeFunctionEAResult(descriptor: FunctionDescriptor): FunctionEscapeAnalysisResult {
-            val parameters = descriptor.allParameters
-            return FunctionEscapeAnalysisResult((0..parameters.size).map {
-                val type = if (it < parameters.size)
-                    parameters[it].type
-                else {
-                    if (descriptor is ConstructorDescriptor)
-                        context.builtIns.unitType
-                    else descriptor.returnType
-                }
+        private fun getConservativeFunctionEAResult(symbol: DataFlowIR.FunctionSymbol): FunctionEscapeAnalysisResult {
+            val numberOfParameters = symbol.numberOfParameters
+            return FunctionEscapeAnalysisResult((0..numberOfParameters).map {
                 ParameterEscapeAnalysisResult(
-                        escapes  = runtimeAware.isInteresting(type), // Conservatively assume all references escape.
+                        escapes = true,
                         pointsTo = IntArray(0)
                 )
             }.toTypedArray())
         }
 
-        private fun getExternalFunctionEAResult(callSite: CallSite): FunctionEscapeAnalysisResult {
+        private fun getExternalFunctionEAResult(callSite: CallGraphNode.CallSite): FunctionEscapeAnalysisResult {
             val callee = callSite.actualCallee
 
-            DEBUG_OUTPUT(0) { println("External callee: $callee") }
+            val calleeEAResult = if (callSite.call is DataFlowIR.Node.VirtualCall) {
 
-            val staticCall = !callee.isOverridable || callSite.expression !is IrCall || callSite.expression.superQualifier != null
-            val calleeEAResult =
-                    if (staticCall) {
-                        getExternalFunctionEAResult(callee)
-                    } else {
-                        DEBUG_OUTPUT(0) { println(if (staticCall) "Unknown function from module ${callee.module}" else "A virtual call") }
+                DEBUG_OUTPUT(0) { println("A virtual call: $callee") }
 
-                        getConservativeFunctionEAResult(callee)
-                    }
+                getConservativeFunctionEAResult(callee)
+            } else {
+                callSite.call as DataFlowIR.Node.StaticCall
+                callee as DataFlowIR.FunctionSymbol.External
+
+                FunctionEscapeAnalysisResult.fromBits(
+                        callee.escapes ?: 0,
+                        (0..callee.numberOfParameters).map { callee.pointsTo?.elementAtOrNull(it) ?: 0 }
+                )
+            }
 
             DEBUG_OUTPUT(0) {
                 println("Escape analysis result")
@@ -926,45 +390,6 @@ internal object EscapeAnalysis {
             return calleeEAResult
         }
 
-        private fun parseEAResultFromAnnotations(function: FunctionDescriptor): FunctionEscapeAnalysisResult {
-            DEBUG_OUTPUT(0) { println("Parsing from annotations, function: $function") }
-
-            val escapesAnnotation = function.annotations.findAnnotation(FQ_NAME_ESCAPES)
-            val pointsToAnnotation = function.annotations.findAnnotation(FQ_NAME_POINTS_TO)
-            @Suppress("UNCHECKED_CAST")
-            val escapesBitMask = (escapesAnnotation?.allValueArguments?.get(escapesWhoDescriptor.name) as? ConstantValue<Int>)?.value
-            @Suppress("UNCHECKED_CAST")
-            val pointsToBitMask = (pointsToAnnotation?.allValueArguments?.get(pointsToOnWhomDescriptor.name) as? ConstantValue<List<IntValue>>)?.value
-            return if (escapesBitMask == null)
-                       getConservativeFunctionEAResult(function)
-                   else FunctionEscapeAnalysisResult.fromBits(
-                           escapesBitMask,
-                           (0..function.allParameters.size).map { pointsToBitMask?.elementAtOrNull(it)?.value ?: 0 }
-            )
-        }
-
-        private fun tryGetFromExternalEAResults(function: FunctionDescriptor): FunctionEscapeAnalysisResult? {
-            if (!function.isExported()) return null
-            val symbolName = function.symbolName
-
-            DEBUG_OUTPUT(0) { println("Trying get external results for function: $symbolName") }
-
-            return externalFunctionEscapeAnalysisResults[symbolName]
-        }
-
-        private fun getExternalFunctionEAResult(function: FunctionDescriptor): FunctionEscapeAnalysisResult {
-            DEBUG_OUTPUT(0) { println("External function: $function") }
-
-            val functionEAResult = tryGetFromExternalEAResults(function) ?: parseEAResultFromAnnotations(function)
-
-            DEBUG_OUTPUT(0) {
-                println("Escape analysis result")
-                println(functionEAResult.toString())
-            }
-
-            return functionEAResult
-        }
-
         private enum class PointsToGraphNodeKind(val weight: Int) {
             LOCAL(0),
             RETURN_VALUE(1),
@@ -972,8 +397,7 @@ internal object EscapeAnalysis {
         }
 
         private class PointsToGraphNode(roles: Roles) {
-            // TODO: replace Any with sealed class.
-            val edges = mutableSetOf<Any>()
+            val edges = mutableSetOf<DataFlowIR.Node>()
 
             var kind = when {
                 roles.escapes() -> PointsToGraphNodeKind.ESCAPES
@@ -984,45 +408,45 @@ internal object EscapeAnalysis {
             val beingReturned = roles.has(Role.RETURN_VALUE)
 
             var parameterPointingOnUs: Int? = null
+            var pointsMoreThanOneParameter = false
 
             fun addIncomingParameter(parameter: Int) {
-                if (kind == PointsToGraphNodeKind.ESCAPES)
-                    return
-                if (kind == PointsToGraphNodeKind.RETURN_VALUE) {
-                    kind = PointsToGraphNodeKind.ESCAPES
-                    parameterPointingOnUs = null
-                    return
-                }
+                if (pointsMoreThanOneParameter) return
                 if (parameterPointingOnUs == null)
                     parameterPointingOnUs = parameter
-                else {
-                    parameterPointingOnUs = null
-                    kind = PointsToGraphNodeKind.ESCAPES
-                }
+                else pointsMoreThanOneParameter = true
             }
         }
 
-        private inner class PointsToGraph(val function: FunctionDescriptor) {
+        private inner class PointsToGraph(val functionSymbol: DataFlowIR.FunctionSymbol) {
 
-            val nodes = mutableMapOf<Any, PointsToGraphNode>()
+            val functionAnalysisResult = intraproceduralAnalysisResult[functionSymbol]!!
+            val nodes = mutableMapOf<DataFlowIR.Node, PointsToGraphNode>()
 
-            fun lifetimeOf(node: Any?) = nodes[node]!!.let {
+            val ids = if (DEBUG > 0) functionAnalysisResult.function.body.nodes.withIndex().associateBy({ it.value }, { it.index }) else null
+
+            fun lifetimeOf(node: DataFlowIR.Node) = nodes[node]!!.let {
                 when (it.kind) {
                     PointsToGraphNodeKind.ESCAPES -> Lifetime.GLOBAL
 
                     PointsToGraphNodeKind.LOCAL -> {
-                        val parameterPointingOnUs = it.parameterPointingOnUs
-                        if (parameterPointingOnUs != null)
-                            // A value is stored into a parameter field.
-                            Lifetime.PARAMETER_FIELD(parameterPointingOnUs)
-                        else
-                            // A value is neither stored into a global nor into any parameter nor into the return value -
-                            // it can be allocated locally.
-                            Lifetime.LOCAL
+                        if (it.pointsMoreThanOneParameter)
+                            Lifetime.GLOBAL
+                        else {
+                            val parameterPointingOnUs = it.parameterPointingOnUs
+                            if (parameterPointingOnUs != null)
+                                // A value is stored into a parameter field.
+                                Lifetime.PARAMETER_FIELD(parameterPointingOnUs)
+                            else
+                                // A value is neither stored into a global nor into any parameter nor into the return value -
+                                // it can be allocated locally.
+                                Lifetime.LOCAL
+                        }
                     }
 
                     PointsToGraphNodeKind.RETURN_VALUE -> {
                         when {
+                            it.parameterPointingOnUs != null -> Lifetime.GLOBAL
                             // If a value is explicitly returned.
                             returnValues.contains(node) -> Lifetime.RETURN_VALUE
                             // A value is stored into a field of the return value.
@@ -1033,28 +457,19 @@ internal object EscapeAnalysis {
             }
 
             init {
-                val functionAnalysisResult = intraproceduralAnalysisResult.functionAnalysisResults[function]!!
-
                 DEBUG_OUTPUT(0) {
-                    println("Building points-to graph for function $function")
+                    println("Building points-to graph for function $functionSymbol")
                     println("Results of preliminary function analysis")
                 }
 
-                functionAnalysisResult.parameterRoles.elementData.forEach { parameter, roles ->
-                    DEBUG_OUTPUT(0) { println("PARAM $parameter: $roles") }
+                functionAnalysisResult.nodesRoles.forEach { node, roles ->
+                    DEBUG_OUTPUT(0) { println("NODE ${nodeToString(node)}: $roles") }
 
-                    nodes.put(parameter, PointsToGraphNode(roles))
+                    nodes.put(node, PointsToGraphNode(roles))
                 }
-                functionAnalysisResult.expressionToRoles.forEach { expression, roles ->
-                    DEBUG_OUTPUT(0) { println("EXPRESSION ${ir2stringWhole(expression)}: $roles") }
 
-                    nodes.put(expression, PointsToGraphNode(roles))
-                }
-                functionAnalysisResult.expressionToRoles.forEach { expression, roles ->
-                    addEdges(expression, roles)
-                }
-                functionAnalysisResult.parameterRoles.elementData.forEach { parameter, roles ->
-                    addEdges(parameter, roles)
+                functionAnalysisResult.nodesRoles.forEach { node, roles ->
+                    addEdges(node, roles)
                 }
             }
 
@@ -1062,30 +477,33 @@ internal object EscapeAnalysis {
                                             .map { it.key }
                                             .toSet()
 
-            private fun addEdges(from: Any, roles: Roles) {
+            private fun addEdges(from: DataFlowIR.Node, roles: Roles) {
                 val pointsToEdge = roles.data[Role.FIELD_WRITTEN]
                         ?: return
                 pointsToEdge.entries.forEach {
                     val to = it.data!!
                     if (nodes.containsKey(to)) {
-                        nodes[from]!!.edges.add(it.data)
+                        nodes[from]!!.edges.add(to)
 
                         DEBUG_OUTPUT(0) {
                             println("EDGE: ")
                             println("    FROM: ${nodeToString(from)}")
-                            println("    TO: ${nodeToString(it.data)}")
+                            println("    TO: ${nodeToString(to)}")
                         }
                     }
                 }
             }
 
-            private fun nodeToString(node: Any) = if (node is IrExpression) ir2stringWhole(node) else node.toString()
+            private fun nodeToStringWhole(node: DataFlowIR.Node) = DataFlowIR.Function.nodeToString(node, ids!!)
+
+            private fun nodeToString(node: DataFlowIR.Node) = ids!![node]
 
             fun print() {
                 println("POINTS-TO GRAPH")
                 println("NODES")
                 nodes.forEach { t, _ ->
                     println("    ${lifetimeOf(t)} ${nodeToString(t)}")
+                    print(nodeToStringWhole(t))
                 }
                 println("EDGES")
                 nodes.forEach { t, u ->
@@ -1096,104 +514,55 @@ internal object EscapeAnalysis {
                 }
             }
 
-            fun processCall(callSite: CallSite, calleeEscapeAnalysisResult: FunctionEscapeAnalysisResult) {
+            fun processCall(callSite: DataFlowIR.Node.Call, calleeEscapeAnalysisResult: FunctionEscapeAnalysisResult) {
                 DEBUG_OUTPUT(0) {
-                    println("Processing callSite: ${ir2stringWhole(callSite.expression)}")
-                    println("Callee: ${callSite.actualCallee}")
+                    println("Processing callSite")
+                    println(nodeToStringWhole(callSite))
                     println("Callee escape analysis result:")
                     println(calleeEscapeAnalysisResult.toString())
                 }
 
-                val callee = callSite.actualCallee
-                val callResult = callSite.expression
-                val arguments = callResult.getArguments()
-                val possibleArgumentValues = if (callee is ConstructorDescriptor) {
-                    // Constructor returns nothing.
-                    if (callResult is IrDelegatingConstructorCall) {
-                        // For a delegating constructor call add implicit this as a parameter.
-                        (0..arguments.size).map {
-                            val thiz = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                    (function as ConstructorDescriptor).constructedClass.thisAsReceiverParameter)
-                            expressionValuesExtractor.extractNodesUsingVariableValues(
-                                    expression     = if (it == 0) thiz else arguments[it - 1].second,
-                                    variableValues = intraproceduralAnalysisResult.functionAnalysisResults[function]!!.variableValues
-                            )
-                        }
-                    } else {
-                        // For a constructor call add implicit this - it is the result of a call actually.
-                        (0..arguments.size).map {
-                            expressionValuesExtractor.extractNodesUsingVariableValues(
-                                    expression     = if (it == 0) callResult else arguments[it - 1].second,
-                                    variableValues = intraproceduralAnalysisResult.functionAnalysisResults[function]!!.variableValues
-                            )
-                        }
-                    }
-                } else {
-                    (0..arguments.size).map {
-                        expressionValuesExtractor.extractNodesUsingVariableValues(
-                                expression     = if (it < arguments.size) arguments[it].second else callResult,
-                                variableValues = intraproceduralAnalysisResult.functionAnalysisResults[function]!!.variableValues
-                        )
-                    }
-                }
-
-                DEBUG_OUTPUT(0) {
-                    println("Possible values:")
-                    possibleArgumentValues.forEachIndexed { index, list ->
-                        println("    PARAM#$index")
-                        list.forEach {
-                            println("        ${nodeToString(it)}")
-                        }
-                    }
-                }
-
-                for (index in 0..callee.allParameters.size) {
-                    val parameterEAResult = calleeEscapeAnalysisResult.parameters[index]
-                    if (parameterEAResult.escapes) {
-                        DEBUG_OUTPUT(0) {
-                            if (possibleArgumentValues[index].isEmpty()) {
-                                println("WARNING: There are no arguments for PARAM#$index")
-                            }
-                        }
-
-                        possibleArgumentValues[index].forEach {
-                            nodes[it]?.kind = PointsToGraphNodeKind.ESCAPES
-
-                            DEBUG_OUTPUT(0) { nodes[it]?.let { _ -> println("Node ${nodeToString(it)} escapes") } }
-                        }
-                    }
-                    parameterEAResult.pointsTo.forEach { toIndex ->
-                        DEBUG_OUTPUT(0) {
-                            if (possibleArgumentValues[index].isEmpty()) {
-                                println("WARNING: There are no arguments for PARAM#$index")
-                            }
-                        }
-
-                        possibleArgumentValues[index].forEach { from ->
-                            val nodeFrom = nodes[from]
-                            if (nodeFrom == null) {
-                                DEBUG_OUTPUT(0) {
-                                    println("WARNING: There is no node")
-                                    println("    FROM ${nodeToString(from)}")
-                                }
-                            } else {
-                                possibleArgumentValues[toIndex].forEach { to ->
-                                    val nodeTo = nodes[to]
-                                    if (nodeTo == null) {
-                                        DEBUG_OUTPUT(0) {
-                                            println("WARNING: There is no node")
-                                            println("    TO ${nodeToString(to)}")
-                                        }
-                                    } else {
-                                        DEBUG_OUTPUT(0) {
-                                            println("Adding edge")
-                                            println("    FROM ${nodeToString(from)}")
-                                            println("    TO ${nodeToString(to)}")
-                                        }
-
-                                        nodeFrom.edges.add(to)
+                val arguments = if (callSite is DataFlowIR.Node.NewObject) {
+                                    (0..callSite.arguments.size).map {
+                                        if (it == 0) callSite else callSite.arguments[it - 1].node
+                                    }
+                                } else {
+                                    (0..callSite.arguments.size).map {
+                                        if (it < callSite.arguments.size) callSite.arguments[it].node else callSite
                                     }
                                 }
+
+                for (index in 0..callSite.arguments.size) {
+                    val parameterEAResult = calleeEscapeAnalysisResult.parameters[index]
+                    val from = arguments[index]
+                    if (parameterEAResult.escapes) {
+                        nodes[from]!!.kind = PointsToGraphNodeKind.ESCAPES
+
+                        DEBUG_OUTPUT(0) { println("Node ${nodeToString(from)} escapes") }
+                    }
+                    parameterEAResult.pointsTo.forEach { toIndex ->
+                        val nodeFrom = nodes[from]
+                        if (nodeFrom == null) {
+                            DEBUG_OUTPUT(0) {
+                                println("WARNING: There is no node")
+                                println("    FROM ${nodeToString(from)}")
+                            }
+                        } else {
+                            val to = arguments[toIndex]
+                            val nodeTo = nodes[to]
+                            if (nodeTo == null) {
+                                DEBUG_OUTPUT(0) {
+                                    println("WARNING: There is no node")
+                                    println("    TO ${nodeToString(to)}")
+                                }
+                            } else {
+                                DEBUG_OUTPUT(0) {
+                                    println("Adding edge")
+                                    println("    FROM ${nodeToString(from)}")
+                                    println("    TO ${nodeToString(to)}")
+                                }
+
+                                nodeFrom.edges.add(to)
                             }
                         }
                     }
@@ -1201,7 +570,7 @@ internal object EscapeAnalysis {
             }
 
             fun buildClosure(): FunctionEscapeAnalysisResult {
-                val parameters = function.allParameters.withIndex().toList()
+                val parameters = functionAnalysisResult.function.body.nodes.filterIsInstance<DataFlowIR.Node.Parameter>()
                 val reachabilities = mutableListOf<IntArray>()
 
                 DEBUG_OUTPUT(0) {
@@ -1213,22 +582,22 @@ internal object EscapeAnalysis {
                 }
 
                 parameters.forEach {
-                    val visited = mutableSetOf<Any>()
-                    if (nodes[it.value] != null)
-                        findReachable(it.value, visited)
-                    visited -= it.value
+                    val visited = mutableSetOf<DataFlowIR.Node>()
+                    if (nodes[it] != null)
+                        findReachable(it, visited)
+                    visited -= it
 
                     DEBUG_OUTPUT(0) {
-                        println("Reachable from ${it.value}")
+                        println("Reachable from ${nodeToString(it)}")
                         visited.forEach {
                             println("    ${nodeToString(it)}")
                         }
                     }
 
                     val reachable = mutableListOf<Int>()
-                    parameters.forEach { (index, parameter) ->
-                        if (visited.contains(parameter))
-                            reachable += index
+                    parameters.forEach {
+                        if (visited.contains(it))
+                            reachable += it.index
                     }
                     if (returnValues.any { visited.contains(it) })
                         reachable += parameters.size
@@ -1238,14 +607,14 @@ internal object EscapeAnalysis {
                             nodes[node]!!.addIncomingParameter(it.index)
                     }
                 }
-                val visitedFromReturnValues = mutableSetOf<Any>()
+                val visitedFromReturnValues = mutableSetOf<DataFlowIR.Node>()
                 returnValues.forEach {
                     if (!visitedFromReturnValues.contains(it)) {
                         findReachable(it, visitedFromReturnValues)
                     }
                 }
                 reachabilities.add(
-                        parameters.filter { visitedFromReturnValues.contains(it.value) }
+                        parameters.filter { visitedFromReturnValues.contains(it) }
                                 .map { it.index }.toIntArray()
                 )
 
@@ -1257,14 +626,14 @@ internal object EscapeAnalysis {
                             if (index == parameters.size) // Return value.
                                 returnValues.any { nodes[it]!!.kind == PointsToGraphNodeKind.ESCAPES }
                             else {
-                                runtimeAware.isInteresting(parameters[index].value.type)
-                                        && nodes[parameters[index].value]!!.kind == PointsToGraphNodeKind.ESCAPES
+                                /*runtimeAware.isInteresting(parameters[index].value.type) TODO: is it really needed?
+                                        && */nodes[parameters[index]]!!.kind == PointsToGraphNodeKind.ESCAPES
                             }
                     ParameterEscapeAnalysisResult(escapes, reachability)
                 }.toTypedArray())
             }
 
-            private fun findReachable(node: Any, visited: MutableSet<Any>) {
+            private fun findReachable(node: DataFlowIR.Node, visited: MutableSet<DataFlowIR.Node>) {
                 visited += node
                 nodes[node]!!.edges.forEach {
                     if (!visited.contains(it)) {
@@ -1274,12 +643,12 @@ internal object EscapeAnalysis {
             }
 
             private fun propagate(kind: PointsToGraphNodeKind) {
-                val visited = mutableSetOf<Any>()
+                val visited = mutableSetOf<DataFlowIR.Node>()
                 nodes.filter { it.value.kind == kind }
                         .forEach { node, _ -> propagate(node, kind, visited) }
             }
 
-            private fun propagate(node: Any, kind: PointsToGraphNodeKind, visited: MutableSet<Any>) {
+            private fun propagate(node: DataFlowIR.Node, kind: PointsToGraphNodeKind, visited: MutableSet<DataFlowIR.Node>) {
                 if (visited.contains(node)) return
                 visited.add(node)
                 val nodeInfo = nodes[node]!!
@@ -1290,52 +659,12 @@ internal object EscapeAnalysis {
         }
     }
 
-    internal fun computeLifetimes(irModule: IrModuleFragment, context: Context, runtimeAware: RuntimeAware,
-                                  lifetimes: MutableMap<IrElement, Lifetime>) {
+    fun computeLifetimes(moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG,
+                         callGraph: CallGraph, lifetimes: MutableMap<IrElement, Lifetime>) {
         assert(lifetimes.isEmpty())
 
-        val isStdlib = context.config.configuration[KonanConfigKeys.NOSTDLIB] == true
-
-        val externalFunctionEAResults = mutableMapOf<String, FunctionEscapeAnalysisResult>()
-        context.librariesWithDependencies.forEach { library ->
-            val libraryEscapeAnalysis = library.escapeAnalysis
-            if (libraryEscapeAnalysis != null) {
-                DEBUG_OUTPUT(0) {
-                    println("Escape analysis size for lib '${library.libraryName}': ${libraryEscapeAnalysis.size}")
-                }
-
-                val moduleEAResult = ModuleEscapeAnalysisResult.ModuleEAResult.parseFrom(libraryEscapeAnalysis)
-                moduleEAResult.functionEAResultsList.forEach {
-                    externalFunctionEAResults.put(it.fqName, FunctionEscapeAnalysisResult.fromBits(it.escapes, it.pointsToList))
-                }
-
-                DEBUG_OUTPUT(0) {
-                    println("Escape analysis results count for lib '${library.libraryName}': ${moduleEAResult.functionEAResultsList.size}")
-                }
-            }
-        }
-        val intraproceduralAnalysisResult = IntraproceduralAnalysis(runtimeAware).analyze(irModule)
-        val interproceduralAnalysisResult = InterproceduralAnalysis(context, runtimeAware,
-                externalFunctionEAResults, intraproceduralAnalysisResult, lifetimes).analyze(irModule)
-        if (isStdlib) { // Save only for stdlib for now.
-            interproceduralAnalysisResult.functionEscapeAnalysisResults
-                    .filter { it.key.isExported() }
-                    .forEach { functionDescriptor, functionEAResult ->
-                        val functionEAResultBuilder = ModuleEscapeAnalysisResult.FunctionEAResult.newBuilder()
-                        functionEAResultBuilder.fqName = functionDescriptor.symbolName
-                        var escapes = 0
-                        functionEAResult.parameters.forEachIndexed { index, parameterEAResult ->
-                            if (parameterEAResult.escapes)
-                                escapes = escapes or (1 shl index)
-                            var pointsToMask = 0
-                            parameterEAResult.pointsTo.forEach {
-                                pointsToMask = pointsToMask or (1 shl it)
-                            }
-                            functionEAResultBuilder.addPointsTo(pointsToMask)
-                        }
-                        functionEAResultBuilder.escapes = escapes
-                        context.escapeAnalysisResult.value.addFunctionEAResults(functionEAResultBuilder)
-                    }
-        }
+        val intraproceduralAnalysisResult =
+                IntraproceduralAnalysis(moduleDFG.functions + externalModulesDFG.functionDFGs, callGraph).analyze()
+        InterproceduralAnalysis(callGraph, intraproceduralAnalysisResult, lifetimes).analyze()
     }
 }

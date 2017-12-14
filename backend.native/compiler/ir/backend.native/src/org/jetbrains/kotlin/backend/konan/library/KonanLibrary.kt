@@ -44,8 +44,6 @@ interface KonanLibraryLayout {
         get() = File(libDir, "linkdata")
     val moduleHeaderFile 
         get() = File(linkdataDir, "module")
-    val escapeAnalysisFile
-        get() = File(linkdataDir, "module_escape_analysis")
     val dataFlowGraphFile
         get() = File(linkdataDir, "module_data_flow_graph")
     fun packageFile(packageName: String)

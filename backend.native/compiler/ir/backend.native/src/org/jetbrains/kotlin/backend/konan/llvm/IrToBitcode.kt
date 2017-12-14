@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
-import org.jetbrains.kotlin.backend.konan.util.getValueOrNull
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -94,7 +92,8 @@ internal fun emitLLVM(context: Context) {
         val lifetimes = mutableMapOf<IrElement, Lifetime>()
         val codegenVisitor = CodeGeneratorVisitor(context, lifetimes)
         phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
-            EscapeAnalysis.computeLifetimes(irModule, context, codegenVisitor.codegen, lifetimes)
+            val callGraph = CallGraphBuilder(context, moduleDFG!!, externalModulesDFG!!).build()
+            EscapeAnalysis.computeLifetimes(moduleDFG!!, externalModulesDFG!!, callGraph, lifetimes)
         }
 
         phaser.phase(KonanPhase.CODEGEN) {

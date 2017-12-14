@@ -31,7 +31,7 @@ internal class DirectedGraphMultiNode<out K>(val nodes: Set<K>)
 
 internal class DirectedGraphCondensation<out K>(val topologicalOrder: List<DirectedGraphMultiNode<K>>)
 
-internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(val graph: DirectedGraph<K, N>) {
+internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(private val graph: DirectedGraph<K, N>) {
     private val visited = mutableSetOf<K>()
     private val order = mutableListOf<N>()
     private val nodeToMultiNodeMap = mutableMapOf<N, DirectedGraphMultiNode<K>>()

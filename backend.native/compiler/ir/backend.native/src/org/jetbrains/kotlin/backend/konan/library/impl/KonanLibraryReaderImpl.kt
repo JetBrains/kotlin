@@ -51,7 +51,6 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
         }
 
     val targetList = inPlace.targetsDir.listFiles.map{it.name}
-    override val escapeAnalysis by lazy { inPlace.escapeAnalysisFile.let { if (it.exists) it.readBytes() else null } }
     override val dataFlowGraph by lazy { inPlace.dataFlowGraphFile.let { if (it.exists) it.readBytes() else null } }
 
     override val libraryName 
