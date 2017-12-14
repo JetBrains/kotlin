@@ -72,17 +72,16 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
     }
 
     override fun getChildrenBase(): Collection<StructureViewTreeElement> {
-        return childrenDeclarations.map { KotlinStructureViewElement(it, false) }
-    }
-
-    private val childrenDeclarations: List<KtDeclaration>
-        get() = when (element) {
+        val children = when (element) {
             is KtFile -> element.declarations
             is KtClass -> element.getStructureDeclarations()
             is KtClassOrObject -> element.declarations
             is KtFunction, is KtClassInitializer, is KtProperty -> element.collectLocalDeclarations()
             else -> emptyList()
         }
+
+        return children.map { KotlinStructureViewElement(it, false) }
+    }
 
     private fun PsiElement.collectLocalDeclarations(): List<KtDeclaration> {
         val result = mutableListOf<KtDeclaration>()
@@ -103,20 +102,14 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
     private fun isPublic(descriptor: DeclarationDescriptor?) =
             (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
 
-    private fun countDescriptor(): DeclarationDescriptor? {
-        if (!(element.isValid && element is KtDeclaration)) {
-            return null
-        }
-
-        if (element is KtAnonymousInitializer) {
-            return null
-        }
-
-        return runReadAction {
+    private fun countDescriptor(): DeclarationDescriptor? = when {
+        !element.isValid -> null
+        element !is KtDeclaration -> null
+        element is KtAnonymousInitializer -> null
+        else -> runReadAction {
             if (!DumbService.isDumb(element.getProject())) {
-                return@runReadAction element.resolveToDescriptorIfAny()
-            }
-            null
+                element.resolveToDescriptorIfAny()
+            } else null
         }
     }
 }
