@@ -150,9 +150,9 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
             ""
         } else buildString {
             append(" <")
-            interfaces.forEach {
+            interfaces.joinTo(this) {
                 translateInterface(it)
-                append(translateClassName(it))
+                translateClassName(it)
             }
             append(">")
         }
