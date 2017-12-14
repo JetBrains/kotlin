@@ -31,52 +31,35 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import javax.swing.Icon
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 class KotlinStructureViewElement(val element: NavigatablePsiElement,
                                  private val isInherited: Boolean = false) : PsiTreeElementBase<NavigatablePsiElement>(element), Queryable {
-    private var _presentation: KotlinStructureElementPresentation? = null
-        get() {
-            if (field == null) {
-                field = KotlinStructureElementPresentation(isInherited, element, _descriptor)
-            }
 
-            return field
+    private var kotlinPresentation
+        by AssignableLazyProperty {
+            KotlinStructureElementPresentation(isInherited, element, countDescriptor())
         }
 
-    private val _descriptor: DeclarationDescriptor?
-        get() {
-            if (!(element.isValid && element is KtDeclaration)) {
-                return null
-            }
-
-            if (element is KtAnonymousInitializer) {
-                return null
-            }
-
-            return runReadAction {
-                if (!DumbService.isDumb(element.getProject())) {
-                    return@runReadAction element.resolveToDescriptorIfAny()
-                }
-                null
-            }
+    var isPublic
+        by AssignableLazyProperty {
+            isPublic(countDescriptor())
         }
-
-    val isPublic: Boolean
-        get() {
-            return (_descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
-        }
+        private set
 
     constructor(element: NavigatablePsiElement, descriptor: DeclarationDescriptor, isInherited: Boolean) : this(element, isInherited){
         if (element !is KtElement) {
             // Avoid storing descriptor in fields
-            _presentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
+            kotlinPresentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
+            isPublic = isPublic(descriptor)
         }
     }
 
-    override fun getPresentation(): ItemPresentation = _presentation!!
-    override fun getLocationString(): String? = _presentation!!.locationString
-    override fun getIcon(open: Boolean): Icon? = _presentation!!.getIcon(open)
-    override fun getPresentableText(): String? = _presentation!!.presentableText
+    override fun getPresentation(): ItemPresentation = kotlinPresentation
+    override fun getLocationString(): String? = kotlinPresentation.locationString
+    override fun getIcon(open: Boolean): Icon? = kotlinPresentation.getIcon(open)
+    override fun getPresentableText(): String? = kotlinPresentation.presentableText
 
     @TestOnly
     override fun putInfo(info: MutableMap<String, String?>) {
@@ -115,6 +98,38 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
         })
 
         return result
+    }
+
+    private fun isPublic(descriptor: DeclarationDescriptor?) =
+            (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
+
+    private fun countDescriptor(): DeclarationDescriptor? {
+        if (!(element.isValid && element is KtDeclaration)) {
+            return null
+        }
+
+        if (element is KtAnonymousInitializer) {
+            return null
+        }
+
+        return runReadAction {
+            if (!DumbService.isDumb(element.getProject())) {
+                return@runReadAction element.resolveToDescriptorIfAny()
+            }
+            null
+        }
+    }
+}
+
+private class AssignableLazyProperty<in R, T : Any>(val init: () -> T) : ReadWriteProperty<R, T> {
+    private var _value: T? = null
+
+    override fun getValue(thisRef: R, property: KProperty<*>): T {
+        return _value ?: init().also { _value = it }
+    }
+
+    override fun setValue(thisRef: R, property: KProperty<*>, value: T) {
+        _value = value
     }
 }
 
