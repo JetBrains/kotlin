@@ -139,7 +139,8 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
         return object : Command(linker){
             override fun execute() {
                 super.execute()
-                runTool(*dsymutilCommand(executable).toTypedArray())
+                if (debug)
+                    runTool(*dsymutilCommand(executable).toTypedArray())
             }
         }.apply {
             + "-demangle"
