@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
+import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
