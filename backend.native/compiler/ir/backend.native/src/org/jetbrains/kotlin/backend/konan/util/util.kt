@@ -41,7 +41,7 @@ fun String.prefixIfNot(prefix: String) =
     if (this.startsWith(prefix)) this else "$prefix$this"
 
 fun String.prefixBaseNameIfNot(prefix: String): String {
-    val file = File(this)
+    val file = File(this).absoluteFile
     val name = file.name
     val directory = file.parent
     return "$directory/${name.prefixIfNot(prefix)}"

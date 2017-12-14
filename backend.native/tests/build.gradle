@@ -2337,6 +2337,7 @@ if (isMac()) {
 }
 
 task produce_dynamic(type: DynamicKonanTest) {
+    disabled = (project.testTarget != null && project.testTarget != project.hostName)
     source = "produce_dynamic/simple/hello.kt"
     cSource = "$projectDir/produce_dynamic/simple/main.c"
     goldValue = "Hello, dynamic!\n"
