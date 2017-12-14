@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.config;
 
+import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -23,9 +24,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.SmartList;
 import com.intellij.util.io.URLUtil;
-import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.*;
@@ -157,13 +156,12 @@ public class JsConfig {
     }
 
     public boolean checkLibFilesAndReportErrors(@NotNull JsConfig.Reporter report) {
-        return checkLibFilesAndReportErrors(getLibraries(), report, null);
+        return checkLibFilesAndReportErrors(getLibraries(), report);
     }
 
     private boolean checkLibFilesAndReportErrors(
             @NotNull Collection<String> libraries,
-            @NotNull JsConfig.Reporter report,
-            @Nullable Function1<List<KotlinJavascriptMetadata>, Unit> action
+            @NotNull JsConfig.Reporter report
     ) {
         if (libraries.isEmpty()) {
             return false;
@@ -217,11 +215,14 @@ public class JsConfig {
                 }
             }
 
-            if (action != null) {
-                action.invoke(metadataList);
+            Set<String> friendLibsSet = new HashSet<>(getFriends());
+            metadata.addAll(metadataList);
+            if (friendLibsSet.contains(path)){
+                friends.addAll(metadataList);
             }
         }
 
+        initialized = true;
         return false;
     }
 
@@ -287,9 +288,7 @@ public class JsConfig {
     }
 
     private void init() {
-        if (initialized) return;
-
-        if (!getLibraries().isEmpty()) {
+        if (!initialized) {
             JsConfig.Reporter reporter = new Reporter() {
                 @Override
                 public void error(@NotNull String message) {
@@ -297,24 +296,8 @@ public class JsConfig {
                 }
             };
 
-            boolean hasErrors = checkLibFilesAndReportErrors(getFriends(), reporter, metaList -> {
-                metadata.addAll(metaList);
-                friends.addAll(metaList);
-
-                return Unit.INSTANCE;
-            });
-
-
-            hasErrors |= checkLibFilesAndReportErrors(CollectionsKt.subtract(getLibraries(), getFriends()), reporter, metaList -> {
-                metadata.addAll(metaList);
-
-                return Unit.INSTANCE;
-            });
-
-            assert !hasErrors : "hasErrors should be false";
+            checkLibFilesAndReportErrors(reporter);
         }
-
-        initialized = true;
     }
 
     private final IdentityHashMap<KotlinJavascriptMetadata, JsModuleDescriptor<ModuleDescriptorImpl>> factoryMap = new IdentityHashMap<>();
