@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.getImportTag;
+import static org.jetbrains.kotlin.js.inline.util.CollectionUtilsKt.IdentitySet;
 import static org.jetbrains.kotlin.js.translate.declaration.InlineCoroutineUtilKt.transformSpecialFunctionsToCoroutineMetadata;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
@@ -51,6 +52,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     private final JsConfig config;
     private final Map<JsName, FunctionWithWrapper> functions;
+    private final Set<JsFunction> namedFunctionsSet;
     private final Map<String, FunctionWithWrapper> accessors;
     private final Stack<JsInliningContext> inliningContexts = new Stack<>();
     private final Set<JsFunction> processedFunctions = CollectionUtilsKt.IdentitySet();
@@ -129,6 +131,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
     ) {
         this.config = config;
         this.functions = functions;
+        this.namedFunctionsSet = IdentitySet();
+        for (FunctionWithWrapper functionWithWrapper : functions.values()) {
+            namedFunctionsSet.add(functionWithWrapper.getFunction());
+        }
         this.accessors = accessors;
         this.functionReader = functionReader;
         this.trace = trace;
@@ -182,7 +188,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         assert !inProcessFunctions.contains(function): "Inliner has revisited function";
         inProcessFunctions.add(function);
 
-        if (functions.values().stream().anyMatch(namedFunction -> namedFunction.getFunction().equals(function))) {
+        if (namedFunctionsSet.contains(function)) {
             namedFunctionsStack.push(function);
         }
     }
