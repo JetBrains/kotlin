@@ -35,8 +35,8 @@ import javax.swing.Icon
 class KotlinIconProvider : IconProvider(), DumbAware {
     override fun getIcon(psiElement: PsiElement, flags: Int): Icon? {
         if (psiElement is KtFile) {
-            val mainClass = getMainClass(psiElement)
-            return if (mainClass != null && psiElement.declarations.size == 1) getIcon(mainClass, flags) else KotlinIcons.FILE
+            val mainClass = getSingleClass(psiElement)
+            return if (mainClass != null) getIcon(mainClass, flags) else KotlinIcons.FILE
         }
 
         val result = psiElement.getBaseIcon()
@@ -48,8 +48,12 @@ class KotlinIconProvider : IconProvider(), DumbAware {
     }
 
     companion object {
-
         var INSTANCE = KotlinIconProvider()
+
+        fun getSingleClass(file: KtFile): KtClassOrObject? {
+            val mainClass = getMainClass(file)
+            return if (mainClass != null && file.declarations.size == 1) mainClass else null
+        }
 
         fun getMainClass(file: KtFile): KtClassOrObject? {
             val classes = file.declarations.filterIsInstance<KtClassOrObject>()
