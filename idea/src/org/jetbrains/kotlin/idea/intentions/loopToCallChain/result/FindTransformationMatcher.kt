@@ -189,6 +189,11 @@ object FindTransformationMatcher : TransformationMatcher {
         }
     }
 
+    private class NegatingFindOpetationGenerator(val generator: FindOperationGenerator) : FindOperationGenerator(generator) {
+        override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression =
+                generator.generate(chainedCallGenerator).negate()
+    }
+
     private fun generateChainedCall(
             stdlibFunName: String,
             chainedCallGenerator: ChainedCallGenerator,
@@ -347,19 +352,11 @@ object FindTransformationMatcher : TransformationMatcher {
         val containsArgument = filterExpression.isFilterForContainsOperation(inputVariable, loop)
         if (containsArgument != null) {
             val generator = SimpleGenerator("contains", inputVariable, null, containsArgument)
-            return if (negated) {
-                object : FindOperationGenerator(generator) {
-                    override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression =
-                            generator.generate(chainedCallGenerator).negate()
-                }
-            }
-            else {
-                generator
-            }
+            return if (negated) NegatingFindOpetationGenerator(generator) else generator
         }
 
-        if (filterExpression is KtPrefixExpression && filterExpression.operationToken == KtTokens.EXCL) {
-            return SimpleGenerator(if (negated) "any" else "none", inputVariable, filter.asNegatedExpression(reformat))
+        if (filterExpression is KtPrefixExpression && filterExpression.operationToken == KtTokens.EXCL && negated) {
+            return SimpleGenerator("all", inputVariable, filter.asNegatedExpression(reformat))
         }
 
         return SimpleGenerator(if (negated) "none" else "any", inputVariable, filterExpression)
