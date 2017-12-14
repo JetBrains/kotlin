@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
@@ -112,9 +113,13 @@ class AddToCollectionTransformation(
                 TransformationMatch.Result(AddToCollectionTransformation(state.outerLoop, targetCollection))
             }
             else {
-                //TODO: recognize "?: continue" in the argument
-                TransformationMatch.Result(MapToTransformation.create(
-                        state.outerLoop, state.inputVariable, state.indexVariable, targetCollection, argumentValue, mapNotNull = false))
+                if (state.outerLoop.loopRange.isRangeLiteral())
+                    null
+                else {
+                    //TODO: recognize "?: continue" in the argument
+                    TransformationMatch.Result(MapToTransformation.create(
+                            state.outerLoop, state.inputVariable, state.indexVariable, targetCollection, argumentValue, mapNotNull = false))
+                }
             }
         }
 
@@ -196,6 +201,8 @@ class AddToCollectionTransformation(
         }
     }
 }
+
+private fun KtExpression?.isRangeLiteral() = this is KtBinaryExpression && operationToken == KtTokens.RANGE
 
 class FilterToTransformation private constructor(
         loop: KtForExpression,

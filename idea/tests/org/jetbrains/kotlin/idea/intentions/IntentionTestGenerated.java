@@ -10924,6 +10924,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("KT18816.kt")
+            public void testKT18816() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/map/KT18816.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("map.kt")
             public void testMap() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/map/map.kt");
