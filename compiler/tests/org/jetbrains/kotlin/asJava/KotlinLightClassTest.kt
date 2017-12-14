@@ -24,20 +24,35 @@ import java.io.File
 
 class KotlinLightClassTest : KotlinAsJavaTestBase() {
     override fun getKotlinSourceRoots(): List<File> = listOf(
-            File("compiler/testData/asJava/lightClassStructure/ClassObject.kt")
+            File("compiler/testData/asJava/lightClassStructure/ClassObject.kt"),
+            File("compiler/testData/asJava/lightClasses/ideRegression/ImplementingMap.kt")
     )
 
     private val key = Key.create<String>("testKey")
 
-    fun testInterchangeability() {
+    fun testClassInterchangeability() {
         val lightClass = finder.findClass("test.WithClassObject", GlobalSearchScope.allScope(project)) as KtLightClass
         val kotlinOrigin = lightClass.kotlinOrigin ?: throw AssertionError("no kotlinOrigin")
         val testValue = "some data"
         lightClass.putUserData(key, testValue)
         val anotherLightClass = kotlinOrigin.toLightClass() ?: throw AssertionError("cant get light class second time")
         TestCase.assertEquals(testValue, anotherLightClass.getUserData(key))
-        TestCase.assertNotSame(lightClass, anotherLightClass)
         TestCase.assertEquals(lightClass, anotherLightClass)
+    }
+
+    fun testMethodInterchangeability() {
+        val lightClass = finder.findClass("p1.TypeHierarchyMap", GlobalSearchScope.allScope(project)) as KtLightClass
+        val kotlinOrigin = lightClass.kotlinOrigin ?: throw AssertionError("no kotlinOrigin")
+
+        val anotherLightClass = kotlinOrigin.toLightClass() ?: throw AssertionError("cant get light class second time")
+
+        val lightMethod1 = lightClass.methods.first { it.name == "containsKey" }
+
+        val testValue = "some data"
+        lightMethod1.putUserData(key, testValue)
+        val lightMethod2 = anotherLightClass.methods.first { it.name == "containsKey" }
+        TestCase.assertEquals(testValue, lightMethod2.getUserData(key))
+        TestCase.assertEquals(lightMethod1, lightMethod2)
     }
 
 }

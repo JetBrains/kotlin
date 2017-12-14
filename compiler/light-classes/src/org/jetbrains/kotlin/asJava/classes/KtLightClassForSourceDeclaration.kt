@@ -31,7 +31,9 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
@@ -331,7 +333,13 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                 FINAL_KEYWORD to PsiModifier.FINAL)
 
 
-        fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
+        fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? =
+                CachedValuesManager.getCachedValue(classOrObject) {
+                    CachedValueProvider.Result
+                            .create(createNoCache(classOrObject), OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                }
+
+        private fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
             if (classOrObject.hasExpectModifier()) {
                 return null
             }
@@ -468,7 +476,6 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             return clsDelegate.hasModifierProperty(PsiModifier.FINAL)
         }
     }
-
 }
 
 fun KtLightClassForSourceDeclaration.isPossiblyAffectedByAllOpen() = !isAnnotationType && !isInterface && kotlinOrigin.annotationEntries.isNotEmpty()
