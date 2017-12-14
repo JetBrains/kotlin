@@ -17,6 +17,8 @@ dependencies {
     testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
+
+    testRuntime(ideaSdkDeps("*.jar"))
 }
 
 sourceSets {
