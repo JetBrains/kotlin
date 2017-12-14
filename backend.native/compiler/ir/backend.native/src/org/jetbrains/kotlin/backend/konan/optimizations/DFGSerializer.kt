@@ -864,7 +864,8 @@ internal object DFGSerializer {
                         DataFlowIR.Node.Call(
                                 functionSymbols[call.callee],
                                 call.arguments.map { deserializeEdge(it) },
-                                types[call.returnType]
+                                types[call.returnType],
+                                null
                         )
 
                 fun deserializeVirtualCall(virtualCall: VirtualCall): DataFlowIR.Node.VirtualCall {
@@ -894,12 +895,12 @@ internal object DFGSerializer {
                                 val staticCall = it.staticCall!!
                                 val call = deserializeCall(staticCall.call)
                                 val receiverType = staticCall.receiverType?.let { types[it] }
-                                DataFlowIR.Node.StaticCall(call.callee, call.arguments, call.returnType, receiverType)
+                                DataFlowIR.Node.StaticCall(call.callee, call.arguments, call.returnType, receiverType, null)
                             }
 
                             NodeType.NEW_OBJECT -> {
                                 val call = deserializeCall(it.newObject!!.call)
-                                DataFlowIR.Node.NewObject(call.callee, call.arguments, call.returnType)
+                                DataFlowIR.Node.NewObject(call.callee, call.arguments, call.returnType, null)
                             }
 
                             NodeType.VTABLE_CALL -> {

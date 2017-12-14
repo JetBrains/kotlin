@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -169,15 +170,19 @@ internal object DataFlowIR {
 
         class Const(val type: Type) : Node()
 
-        open class Call(val callee: FunctionSymbol, val arguments: List<Edge>, val returnType: Type) : Node()
+        open class Call(val callee: FunctionSymbol, val arguments: List<Edge>, val returnType: Type,
+                        open val callSite: IrFunctionAccessExpression?) : Node()
 
         class StaticCall(callee: FunctionSymbol, arguments: List<Edge>, returnType: Type,
-                         val receiverType: Type?) : Call(callee, arguments, returnType)
+                         val receiverType: Type?, callSite: IrFunctionAccessExpression?)
+            : Call(callee, arguments, returnType, callSite)
 
-        class NewObject(constructor: FunctionSymbol, arguments: List<Edge>, type: Type) : Call(constructor, arguments, type)
+        class NewObject(constructor: FunctionSymbol, arguments: List<Edge>, type: Type, override val callSite: IrCall?)
+            : Call(constructor, arguments, type, callSite)
 
         open class VirtualCall(callee: FunctionSymbol, arguments: List<Edge>, returnType: Type,
-                                   val receiverType: Type, val callSite: IrCall?) : Call(callee, arguments, returnType)
+                                   val receiverType: Type, override val callSite: IrCall?)
+            : Call(callee, arguments, returnType, callSite)
 
         class VtableCall(callee: FunctionSymbol, receiverType: Type, val calleeVtableIndex: Int,
                          arguments: List<Edge>, returnType: Type, callSite: IrCall?)

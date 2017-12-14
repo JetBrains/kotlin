@@ -499,7 +499,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                         DataFlowIR.Node.NewObject(
                                                 symbolTable.mapFunction(callee),
                                                 arguments,
-                                                symbolTable.mapClass(callee.constructedClass)
+                                                symbolTable.mapClass(callee.constructedClass),
+                                                value
                                         )
                                     } else {
                                         if (callee.isOverridable && value.superQualifier == null) {
@@ -532,7 +533,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                     symbolTable.mapFunction(actualCallee),
                                                     arguments,
                                                     symbolTable.mapType(actualCallee.returnType!!),
-                                                    actualCallee.dispatchReceiverParameter?.let { symbolTable.mapType(it.type) }
+                                                    actualCallee.dispatchReceiverParameter?.let { symbolTable.mapType(it.type) },
+                                                    value
                                             )
                                         }
                                     }
@@ -547,7 +549,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                         symbolTable.mapFunction(value.descriptor),
                                         arguments.map { expressionToEdge(it) },
                                         symbolTable.mapClass(context.builtIns.unit),
-                                        symbolTable.mapType(thiz.type)
+                                        symbolTable.mapType(thiz.type),
+                                        value
                                 )
                             }
 
