@@ -1337,6 +1337,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/unresolvedReferenceInCall.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("idea/testData/quickfix/autoImports/kt21515")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Kt21515 extends AbstractQuickFixTest {
+            public void testAllFilesPresentInKt21515() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports/kt21515"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("callableReferenceFromDeprecated.kt")
+            public void testCallableReferenceFromDeprecated() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/kt21515/callableReferenceFromDeprecated.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("classifierFromCompanionObjectDeprecationEnabled.kt")
+            public void testClassifierFromCompanionObjectDeprecationEnabled() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/kt21515/classifierFromCompanionObjectDeprecationEnabled.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructorFromDeprecated.kt")
+            public void testConstructorFromDeprecated() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/kt21515/constructorFromDeprecated.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/canBeParameter")
@@ -2330,6 +2357,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 public void testTraitWithQualifier() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/traitWithQualifier.kt");
                     doTest(fileName);
+                }
+
+                @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/kt21515")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Kt21515 extends AbstractQuickFixTest {
+                    public void testAllFilesPresentInKt21515() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/importDirective/kt21515"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("callableReferenceOnClass.kt")
+                    public void testCallableReferenceOnClass() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/kt21515/callableReferenceOnClass.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("callableReferenceOnClassWithCompanion.kt")
+                    public void testCallableReferenceOnClassWithCompanion() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/kt21515/callableReferenceOnClassWithCompanion.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("callableReferenceOnObject.kt")
+                    public void testCallableReferenceOnObject() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/kt21515/callableReferenceOnObject.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("constructor.kt")
+                    public void testConstructor() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/kt21515/constructor.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("typeReference.kt")
+                    public void testTypeReference() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/kt21515/typeReference.kt");
+                        doTest(fileName);
+                    }
                 }
             }
 

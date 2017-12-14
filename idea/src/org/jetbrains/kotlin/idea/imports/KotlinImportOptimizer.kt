@@ -128,6 +128,7 @@ class KotlinImportOptimizer : ImportOptimizer {
 
                     is ClassDescriptor ->
                         scope.findClassifier(target.name, NoLookupLocation.FROM_IDE) == target
+                            && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     else -> false
                 }

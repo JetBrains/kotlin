@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findFirstClassifierWithDeprecationStatus
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.lang.IllegalStateException
@@ -369,12 +369,20 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             val scope = element.getResolutionScope(bindingContext, resolutionFacade)
             val name = target.name
-            val targetByName = if (target is ClassifierDescriptor)
-                scope.findClassifier(name, NoLookupLocation.FROM_IDE)
-            else
-                scope.findPackage(name)
 
-            val canShortenNow = targetByName?.asString() == target.asString()
+            val targetByName: DeclarationDescriptor?
+            val isDeprecated: Boolean
+
+            if (target is ClassifierDescriptor) {
+                val classifierWithDeprecation = scope.findFirstClassifierWithDeprecationStatus(name, NoLookupLocation.FROM_IDE)
+                targetByName = classifierWithDeprecation?.descriptor
+                isDeprecated = classifierWithDeprecation?.isDeprecated ?: false
+            } else {
+                targetByName = scope.findPackage(name)
+                isDeprecated = false
+            }
+
+            val canShortenNow = targetByName?.asString() == target.asString() && !isDeprecated
             return if (canShortenNow) AnalyzeQualifiedElementResult.ShortenNow else AnalyzeQualifiedElementResult.ImportDescriptors(
                 listOfNotNull(target)
             )
@@ -461,6 +469,9 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                             resolvedCallWhenShort is VariableAsFunctionResolvedCall? &&
                                     resolvedCallsMatch(resolvedCall, resolvedCallWhenShort)))
 
+            // Don't shorten references if it will result to call to deprecated classifier by short name
+            val isShortenedReferenceResolvesToDeprecated = newContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, newCallee] == true
+            if (isShortenedReferenceResolvesToDeprecated) return AnalyzeQualifiedElementResult.Skip
 
             // If before and after shorten call can be resolved unambiguously, then preform comparing of such calls,
             // if it matches, then we can preform shortening

@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -45,11 +42,14 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.*
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.scopes.utils.canBeResolvedWithoutDeprecation
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -287,14 +287,53 @@ class NewResolutionOldInference(
                                 error.message
                             )
                         )
+
                         is NestedClassViaInstanceReference -> tracing.nestedClassAccessViaInstanceReference(
                             resolvedCall.trace,
                             error.classDescriptor,
                             resolvedCall.explicitReceiverKind
                         )
+
                         is ErrorDescriptorDiagnostic -> {
                             // todo
                             //  return@map null
+                        }
+
+                        is ResolvedUsingDeprecatedVisbility -> {
+                            resolvedCall.trace.record(
+                                BindingContext.DEPRECATED_SHORT_NAME_ACCESS,
+                                resolvedCall.call.calleeExpression
+                            )
+
+                            val candidateDescriptor = resolvedCall.candidateDescriptor
+                            val descriptorToLookup: DeclarationDescriptor = when (candidateDescriptor) {
+                                is ClassConstructorDescriptor -> candidateDescriptor.containingDeclaration
+                                is FakeCallableDescriptorForObject -> candidateDescriptor.classDescriptor
+                                else -> error(
+                                    "Unexpected candidate descriptor of resolved call with " +
+                                            "ResolvedUsingDeprecatedVisibility-diagnostic: $candidateDescriptor\n" +
+                                            "Call context: ${resolvedCall.call.callElement.parent?.text}"
+                                )
+                            }
+
+                            // If this descriptor was resolved from HierarchicalScope, then there can be another, non-deprecated path
+                            // in parents of base scope
+                            val sourceScope = error.baseSourceScope
+                            val canBeResolvedWithoutDeprecation = if (sourceScope is HierarchicalScope) {
+                                descriptorToLookup.canBeResolvedWithoutDeprecation(
+                                    sourceScope,
+                                    error.lookupLocation
+                                )
+                            } else {
+                                // Normally, that should be unreachable, but instead of asserting that, we will report diagnostic
+                                false
+                            }
+
+                            if (!canBeResolvedWithoutDeprecation) {
+                                resolvedCall.trace.report(
+                                    Errors.DEPRECATED_ACCESS_BY_SHORT_NAME.on(resolvedCall.call.callElement, resolvedCall.resultingDescriptor)
+                                )
+                            }
                         }
                     }
                 }

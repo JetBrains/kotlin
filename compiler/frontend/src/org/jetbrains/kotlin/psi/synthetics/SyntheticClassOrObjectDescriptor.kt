@@ -50,7 +50,7 @@ class SyntheticClassOrObjectDescriptor(
 
     private val thisDescriptor: SyntheticClassOrObjectDescriptor get() = this // code readability
     private val typeConstructor = SyntheticTypeConstructor(c.storageManager)
-    private val resolutionScopesSupport = ClassResolutionScopesSupport(thisDescriptor, c.storageManager, { outerScope })
+    private val resolutionScopesSupport = ClassResolutionScopesSupport(thisDescriptor, c.storageManager, c.languageVersionSettings, { outerScope })
     private val syntheticSupertypes =
         mutableListOf<KotlinType>().apply { c.syntheticResolveExtension.addSyntheticSupertypes(thisDescriptor, this) }
     private val unsubstitutedMemberScope =

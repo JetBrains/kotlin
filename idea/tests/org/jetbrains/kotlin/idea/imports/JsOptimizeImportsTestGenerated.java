@@ -185,5 +185,44 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/TypeAliasUsage.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("idea/testData/editor/optimizeImports/common/kt21515")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Kt21515 extends AbstractJsOptimizeImportsTest {
+            public void testAllFilesPresentInKt21515() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/common/kt21515"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("callableReferenceOnClass.kt")
+            public void testCallableReferenceOnClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/kt21515/callableReferenceOnClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("callableReferenceOnClassWithCompanion.kt")
+            public void testCallableReferenceOnClassWithCompanion() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/kt21515/callableReferenceOnClassWithCompanion.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("callableReferenceOnObject.kt")
+            public void testCallableReferenceOnObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/kt21515/callableReferenceOnObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructor.kt")
+            public void testConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/kt21515/constructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeReference.kt")
+            public void testTypeReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/common/kt21515/typeReference.kt");
+                doTest(fileName);
+            }
+        }
     }
 }

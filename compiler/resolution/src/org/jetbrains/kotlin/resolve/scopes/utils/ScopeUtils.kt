@@ -81,6 +81,22 @@ fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
 fun HierarchicalScope.findClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
     findFirstFromMeAndParent { it.getContributedClassifier(name, location) }
 
+fun DeclarationDescriptor.canBeResolvedWithoutDeprecation(
+    scopeForResolution: HierarchicalScope,
+    location: LookupLocation
+): Boolean {
+    for (scope in scopeForResolution.parentsWithSelf) {
+        val (descriptorFromCurrentScope, isDeprecated) = scope.getContributedClassifierIncludeDeprecated(name, location) ?: continue
+        if (descriptorFromCurrentScope == this && !isDeprecated) return true
+    }
+
+    return false
+}
+
+fun HierarchicalScope.findFirstClassifierWithDeprecationStatus(name: Name, location: LookupLocation): DescriptorWithDeprecation<ClassifierDescriptor>? {
+    return findFirstFromMeAndParent { it.getContributedClassifierIncludeDeprecated(name, location) }
+}
+
 fun HierarchicalScope.findPackage(name: Name): PackageViewDescriptor? = findFirstFromImportingScopes { it.getContributedPackage(name) }
 
 fun HierarchicalScope.collectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> =
