@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.externalOrIntrinsic
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
@@ -93,8 +94,9 @@ internal object DataFlowIR {
         var numberOfFunctions = 0
     }
 
-    abstract class FunctionSymbol {
-        class External(val hash: Long, val name: String? = null) : FunctionSymbol() {
+    abstract class FunctionSymbol(val numberOfParameters: Int, val name: String?) {
+        class External(val hash: Long, numberOfParameters: Int, name: String? = null)
+            : FunctionSymbol(numberOfParameters, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is External) return false
@@ -111,9 +113,11 @@ internal object DataFlowIR {
             }
         }
 
-        abstract class Declared(val module: Module, val symbolTableIndex: Int) : FunctionSymbol()
+        abstract class Declared(numberOfParameters: Int, val module: Module, val symbolTableIndex: Int, name: String?)
+            : FunctionSymbol(numberOfParameters, name)
 
-        class Public(val hash: Long, module: Module, symbolTableIndex: Int, val name: String? = null) : Declared(module, symbolTableIndex) {
+        class Public(val hash: Long, numberOfParameters: Int, module: Module, symbolTableIndex: Int, name: String? = null)
+            : Declared(numberOfParameters, module, symbolTableIndex, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -130,7 +134,8 @@ internal object DataFlowIR {
             }
         }
 
-        class Private(val index: Int, module: Module, symbolTableIndex: Int, val name: String? = null) : Declared(module, symbolTableIndex) {
+        class Private(val index: Int, numberOfParameters: Int, module: Module, symbolTableIndex: Int, name: String? = null)
+            : Declared(numberOfParameters, module, symbolTableIndex, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -412,12 +417,13 @@ internal object DataFlowIR {
             functionMap.getOrPut(it) {
                 when (it) {
                     is PropertyDescriptor ->
-                        FunctionSymbol.Private(privateFunIndex++, module, -1, takeName { "${it.symbolName}_init" })
+                        FunctionSymbol.Private(privateFunIndex++, 0, module, -1, takeName { "${it.symbolName}_init" })
 
                     is FunctionDescriptor -> {
                         val name = if (it.isExported()) it.symbolName else it.internalName
+                        val numberOfParameters = it.allParameters.size + if (it.isSuspend) 1 else 0
                         if (it.module != irModule.descriptor || it.externalOrIntrinsic())
-                            FunctionSymbol.External(name.localHash.value, takeName { name })
+                            FunctionSymbol.External(name.localHash.value, numberOfParameters, takeName { name })
                         else {
                             val isAbstract = it.modality == Modality.ABSTRACT
                             val classDescriptor = it.containingDeclaration as? ClassDescriptor
@@ -428,9 +434,9 @@ internal object DataFlowIR {
                                 ++module.numberOfFunctions
                             val symbolTableIndex = if (!placeToFunctionsTable) -1 else couldBeCalledVirtuallyIndex++
                             if (it.isExported())
-                                FunctionSymbol.Public(name.localHash.value, module, symbolTableIndex, takeName { name })
+                                FunctionSymbol.Public(name.localHash.value, numberOfParameters, module, symbolTableIndex, takeName { name })
                             else
-                                FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, takeName { name })
+                                FunctionSymbol.Private(privateFunIndex++, numberOfParameters, module, symbolTableIndex, takeName { name })
                         }
                     }
 
