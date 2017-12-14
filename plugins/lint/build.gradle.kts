@@ -10,7 +10,7 @@ dependencies {
     compile(project(":idea:idea-core"))
     compile(project(":idea:idea-android"))
     compile(project(":plugins:uast-kotlin"))
-    compile(ideaPluginDeps("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "repository", "lombok-ast", "kxml2", plugin = "android"))
+    compile(ideaPluginDeps("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "repository", "kxml2", plugin = "android"))
     compile(ideaSdkCoreDeps("intellij-core", "util"))
     compile(ideaSdkDeps("guava"))
 }
