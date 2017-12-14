@@ -39,8 +39,6 @@ internal object DFGSerializer {
             index += 4
         }
 
-        fun writeNullableInt(value: Int?) = writeNullable(value) { this.writeInt(it) }
-
         fun writeLong(value: Long) {
             ensureSize(8)
             theUnsafe.putLong(array, byteArrayDataOffset + index, value)
@@ -52,6 +50,16 @@ internal object DFGSerializer {
             theUnsafe.putBoolean(array, byteArrayDataOffset + index, value)
             index++
         }
+
+        inline fun <T> writeNullable(value: T?, valueWriter: ArraySlice.(T) -> Unit) {
+            writeBoolean(value != null)
+            if (value != null)
+                this.valueWriter(value)
+        }
+
+        fun writeNullableInt(value: Int?) = writeNullable(value) { this.writeInt(it) }
+
+        fun writeNullableString(s: String?) = writeNullable(s) { writeString(it) }
 
         //------------Read------------------------------------------------------------------//
 
@@ -65,8 +73,6 @@ internal object DFGSerializer {
             return theUnsafe.getInt(array, byteArrayDataOffset + index).also { index += 4 }
         }
 
-        fun readNullableInt() = readNullable { this.readInt() }
-
         fun readLong(): Long {
             checkSize(8)
             return theUnsafe.getLong(array, byteArrayDataOffset + index).also { index += 8 }
@@ -76,6 +82,13 @@ internal object DFGSerializer {
             checkSize(1)
             return theUnsafe.getBoolean(array, byteArrayDataOffset + index).also { index++ }
         }
+
+        inline fun <T> readNullable(valueReader: ArraySlice.() -> T) =
+                if (readBoolean()) this.valueReader() else null
+
+        fun readNullableInt() = readNullable { this.readInt() }
+
+        fun readNullableString() = readNullable { readString() }
 
         //------------Write arrays------------------------------------------------------------------//
 
@@ -96,7 +109,10 @@ internal object DFGSerializer {
             index += dataSize
         }
 
-        fun writeNullableString(s: String?) = writeNullable(s) { writeString(it) }
+        inline fun <reified T> writeArray(array: Array<T>, itemWriter: ArraySlice.(T) -> Unit) {
+            writeInt(array.size)
+            array.forEach { this.itemWriter(it) }
+        }
 
         //------------Read arrays------------------------------------------------------------------//
 
@@ -122,24 +138,10 @@ internal object DFGSerializer {
             return str
         }
 
-        fun readNullableString() = readNullable { readString() }
-
         inline fun <reified T> readArray(itemReader: ArraySlice.() -> T) =
                 Array(readInt()) { this.itemReader() }
 
-        inline fun <reified T> writeArray(array: Array<T>, itemWriter: ArraySlice.(T) -> Unit) {
-            writeInt(array.size)
-            array.forEach { this.itemWriter(it) }
-        }
-
-        inline fun <T> readNullable(valueReader: ArraySlice.() -> T) =
-                if (readBoolean()) this.valueReader() else null
-
-        inline fun <T> writeNullable(value: T?, valueWriter: ArraySlice.(T) -> Unit) {
-            writeBoolean(value != null)
-            if (value != null)
-                this.valueWriter(value)
-        }
+        //------------Resizing------------------------------------------------------------------//
 
         fun trim() {
             if (array.size > index) {
@@ -229,9 +231,9 @@ internal object DFGSerializer {
             result.writeByte(
                     when {
                         external != null -> 1
-                        public != null -> 2
-                        private != null -> 3
-                        else -> 0
+                        public   != null -> 2
+                        private  != null -> 3
+                        else             -> 0
                     }.toByte()
             )
             external?.write(result)
@@ -251,9 +253,9 @@ internal object DFGSerializer {
             fun read(data: ArraySlice): Type {
                 val tag = data.readByte().toInt()
                 return when (tag) {
-                    1 -> Type(ExternalType(data), null, null, false)
-                    2 -> Type(null, PublicType(data), null, false)
-                    3 -> Type(null, null, PrivateType(data), false)
+                    1    -> Type(ExternalType(data), null, null, false)
+                    2    -> Type(null, PublicType(data), null, false)
+                    3    -> Type(null, null, PrivateType(data), false)
                     else -> Type(null, null, null, true)
                 }
             }
@@ -300,9 +302,9 @@ internal object DFGSerializer {
             result.writeByte(
                     when {
                         external != null -> 1
-                        public != null -> 2
-                        private != null -> 3
-                        else -> 0
+                        public   != null -> 2
+                        private  != null -> 3
+                        else             -> 0
                     }.toByte()
             )
             external?.write(result)
@@ -323,9 +325,9 @@ internal object DFGSerializer {
             fun read(data: ArraySlice): FunctionSymbol {
                 val tag = data.readByte().toInt()
                 return when (tag) {
-                    1 -> FunctionSymbol(ExternalFunctionSymbol(data), null, null)
-                    2 -> FunctionSymbol(null, PublicFunctionSymbol(data), null)
-                    3 -> FunctionSymbol(null, null, PrivateFunctionSymbol(data))
+                    1    -> FunctionSymbol(ExternalFunctionSymbol(data), null, null)
+                    2    -> FunctionSymbol(null, PublicFunctionSymbol(data), null)
+                    3    -> FunctionSymbol(null, null, PrivateFunctionSymbol(data))
                     else -> FunctionSymbol(null, null, null)
                 }
             }
@@ -497,43 +499,43 @@ internal object DFGSerializer {
     }
 
     class Node {
-        var parameter   : Parameter?    = null
-        var const       : Const?        = null
-        var staticCall  : StaticCall?   = null
-        var newObject   : NewObject?    = null
-        var vtableCall  : VtableCall?   = null
-        var itableCall  : ItableCall?   = null
-        var singleton   : Singleton?    = null
-        var fieldRead   : FieldRead?    = null
-        var fieldWrite  : FieldWrite?   = null
-        var variable    : Variable?     = null
+        var parameter  : Parameter?  = null
+        var const      : Const?      = null
+        var staticCall : StaticCall? = null
+        var newObject  : NewObject?  = null
+        var vtableCall : VtableCall? = null
+        var itableCall : ItableCall? = null
+        var singleton  : Singleton?  = null
+        var fieldRead  : FieldRead?  = null
+        var fieldWrite : FieldWrite? = null
+        var variable   : Variable?   = null
 
         val type get() = when {
-            parameter    != null -> NodeType.PARAMETER
-            const        != null -> NodeType.CONST
-            staticCall   != null -> NodeType.STATIC_CALL
-            newObject    != null -> NodeType.NEW_OBJECT
-            vtableCall   != null -> NodeType.VTABLE_CALL
-            itableCall   != null -> NodeType.ITABLE_CALL
-            singleton    != null -> NodeType.SINGLETON
-            fieldRead    != null -> NodeType.FIELD_READ
-            fieldWrite   != null -> NodeType.FIELD_WRITE
-            variable     != null -> NodeType.VARIABLE
-            else                 -> NodeType.UNKNOWN
+            parameter  != null -> NodeType.PARAMETER
+            const      != null -> NodeType.CONST
+            staticCall != null -> NodeType.STATIC_CALL
+            newObject  != null -> NodeType.NEW_OBJECT
+            vtableCall != null -> NodeType.VTABLE_CALL
+            itableCall != null -> NodeType.ITABLE_CALL
+            singleton  != null -> NodeType.SINGLETON
+            fieldRead  != null -> NodeType.FIELD_READ
+            fieldWrite != null -> NodeType.FIELD_WRITE
+            variable   != null -> NodeType.VARIABLE
+            else               -> NodeType.UNKNOWN
         }
 
         fun write(result: ArraySlice) {
             result.writeByte(type.ordinal.toByte())
-            parameter   ?.write(result)
-            const       ?.write(result)
-            staticCall  ?.write(result)
-            newObject   ?.write(result)
-            vtableCall  ?.write(result)
-            itableCall  ?.write(result)
-            singleton   ?.write(result)
-            fieldRead   ?.write(result)
-            fieldWrite  ?.write(result)
-            variable    ?.write(result)
+            parameter ?.write(result)
+            const     ?.write(result)
+            staticCall?.write(result)
+            newObject ?.write(result)
+            vtableCall?.write(result)
+            itableCall?.write(result)
+            singleton ?.write(result)
+            fieldRead ?.write(result)
+            fieldWrite?.write(result)
+            variable  ?.write(result)
         }
 
         companion object {
@@ -571,17 +573,17 @@ internal object DFGSerializer {
                 val type = enumValues<NodeType>()[data.readByte().toInt()]
                 val result = Node()
                 when (type) {
-                    NodeType.PARAMETER     -> result.parameter    = Parameter   (data)
-                    NodeType.CONST         -> result.const        = Const       (data)
-                    NodeType.STATIC_CALL   -> result.staticCall   = StaticCall  (data)
-                    NodeType.NEW_OBJECT    -> result.newObject    = NewObject   (data)
-                    NodeType.VTABLE_CALL   -> result.vtableCall   = VtableCall  (data)
-                    NodeType.ITABLE_CALL   -> result.itableCall   = ItableCall  (data)
-                    NodeType.SINGLETON     -> result.singleton    = Singleton   (data)
-                    NodeType.FIELD_READ    -> result.fieldRead    = FieldRead   (data)
-                    NodeType.FIELD_WRITE   -> result.fieldWrite   = FieldWrite  (data)
-                    NodeType.VARIABLE      -> result.variable     = Variable    (data)
-                    else                   -> { }
+                    NodeType.PARAMETER   -> result.parameter  = Parameter (data)
+                    NodeType.CONST       -> result.const      = Const     (data)
+                    NodeType.STATIC_CALL -> result.staticCall = StaticCall(data)
+                    NodeType.NEW_OBJECT  -> result.newObject  = NewObject (data)
+                    NodeType.VTABLE_CALL -> result.vtableCall = VtableCall(data)
+                    NodeType.ITABLE_CALL -> result.itableCall = ItableCall(data)
+                    NodeType.SINGLETON   -> result.singleton  = Singleton (data)
+                    NodeType.FIELD_READ  -> result.fieldRead  = FieldRead (data)
+                    NodeType.FIELD_WRITE -> result.fieldWrite = FieldWrite(data)
+                    NodeType.VARIABLE    -> result.variable   = Variable  (data)
+                    else                 -> { }
                 }
                 return result
             }
