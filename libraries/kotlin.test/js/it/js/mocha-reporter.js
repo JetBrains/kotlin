@@ -5,7 +5,7 @@ var expectedOutcomes = require('./expected-outcomes');
 module.exports = function (runner) {
     mocha.reporters.Base.call(this, runner);
 
-    var tester = new Tester(expectedOutcomes);
+    var tester = new Tester(expectedOutcomes, 'mocha');
 
     runner.on('pass', function (test) {
         tester.passed(test.fullTitle().trim());

@@ -1,5 +1,5 @@
 var Tester = require('./test-result-checker');
-var tester = new Tester(require('./expected-outcomes'));
+var tester = new Tester(require('./expected-outcomes'), 'qunit');
 
 QUnit.testDone(function (details) {
     var testName = (details.module.replace('> ', '') + ' ' + details.name).trim();
