@@ -1550,6 +1550,12 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
             doTest(fileName);
         }
 
+        @TestMetadata("KT18881.kt")
+        public void testKT18881() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toCollection/KT18881.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("resultCollectionUsedInsideLoop.kt")
         public void testResultCollectionUsedInsideLoop() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toCollection/resultCollectionUsedInsideLoop.kt");
