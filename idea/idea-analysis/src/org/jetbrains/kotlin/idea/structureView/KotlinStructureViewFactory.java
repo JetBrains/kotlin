@@ -28,19 +28,18 @@ import org.jetbrains.kotlin.psi.KtFile;
 
 public class KotlinStructureViewFactory implements PsiStructureViewFactory {
     @Override
-    public StructureViewBuilder getStructureViewBuilder(PsiFile psiFile) {
-        if (psiFile instanceof KtFile) {
-            final KtFile file = (KtFile) psiFile;
-
-            return new TreeBasedStructureViewBuilder() {
-                @NotNull
-                @Override
-                public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-                    return new KotlinStructureViewModel(file, editor);
-                }
-            };
+    public StructureViewBuilder getStructureViewBuilder(@NotNull PsiFile psiFile) {
+        if (!(psiFile instanceof KtFile)) {
+            return null;
         }
 
-        return null;
+        KtFile file = (KtFile) psiFile;
+        return new TreeBasedStructureViewBuilder() {
+            @NotNull
+            @Override
+            public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+                return new KotlinStructureViewModel(file, editor);
+            }
+        };
     }
 }
