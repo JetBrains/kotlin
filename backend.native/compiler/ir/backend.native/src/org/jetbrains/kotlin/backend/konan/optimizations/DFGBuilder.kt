@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -236,7 +237,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         println("Analysing global field ${declaration.descriptor}")
                         println("IR: ${ir2stringWhole(declaration)}")
                     }
-                    analyze(declaration.descriptor, it)
+                    analyze(declaration.descriptor, IrSetFieldImpl(it.startOffset, it.endOffset, declaration.symbol, null, it.expression))
                 }
             }
 
