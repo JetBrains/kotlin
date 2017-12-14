@@ -25,10 +25,8 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
@@ -71,14 +69,7 @@ class SerializableJsTranslator(val declaration: KtPureClassOrObject,
                     JsThrow(JsNew(missingExceptionClassRef, listOf(JsStringLiteral(prop.name))))
                 }
                 // (seen & 1 << i == 0) -- not seen
-                val notSeenTest = JsAstUtils.equality(
-                        JsBinaryOperation(
-                                JsBinaryOperator.BIT_AND,
-                                seenVar,
-                                JsIntLiteral(1 shl (index % 32))
-                        ),
-                        JsIntLiteral(0)
-                )
+                val notSeenTest = propNotSeenTest(seenVar, index)
                 +JsIf(notSeenTest, ifNotSeenStmt, assignParamStmt)
             }
 

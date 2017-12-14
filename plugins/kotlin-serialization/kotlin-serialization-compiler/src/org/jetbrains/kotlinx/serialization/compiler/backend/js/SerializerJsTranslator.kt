@@ -266,7 +266,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                         // input.readXxxElementValue
                         val sti = getSerialTypeInfo(property)
                         val innerSerial = serializerInstance(sti.serializer, property.module, property.type, property.genericIndex)
-                        val call = if (innerSerial == null) {
+                        val call: JsExpression = if (innerSerial == null) {
                             val unknownSer = (sti.elementMethodPrefix.isEmpty())
                             val readFunc =
                                     inputClass.getFuncDesc("read${sti.elementMethodPrefix}ElementValue")
@@ -278,13 +278,25 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                             JsInvocation(JsNameRef(readFunc, inputVar), readArgs)
                         }
                         else {
+                            val notSeenTest = propNotSeenTest(bitMasks[i / 32], i)
                             val readFunc =
                                     inputClass.getFuncDesc("read${sti.elementMethodPrefix}SerializableElementValue").single()
                                             .let { context.getNameForDescriptor(it) }
-                            JsInvocation(JsNameRef(readFunc, inputVar),
-                                         serialClassDescRef,
-                                         JsIntLiteral(i),
-                                         innerSerial)
+                            val updateFunc =
+                                    inputClass.getFuncDesc("update${sti.elementMethodPrefix}SerializableElementValue").single()
+                                            .let { context.getNameForDescriptor(it) }
+                            JsConditional(notSeenTest,
+                                          JsInvocation(JsNameRef(readFunc, inputVar),
+                                                       serialClassDescRef,
+                                                       JsIntLiteral(i),
+                                                       innerSerial),
+                                          JsInvocation(JsNameRef(updateFunc, inputVar),
+                                                       serialClassDescRef,
+                                                       JsIntLiteral(i),
+                                                       innerSerial,
+                                                       localProps[i]
+                                          )
+                            )
                         }
                         // localPropI = ...
                         +JsAstUtils.assignment(
