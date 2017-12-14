@@ -36,6 +36,12 @@ public class MultiFileInspectionTestGenerated extends AbstractMultiFileInspectio
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileInspections"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
+    @TestMetadata("fakeJvmFieldConstant/fakeJvmFieldConstant.test")
+    public void testFakeJvmFieldConstant_FakeJvmFieldConstant() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileInspections/fakeJvmFieldConstant/fakeJvmFieldConstant.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("invalidBundleOrProperty/invalidBundleOrProperty.test")
     public void testInvalidBundleOrProperty_InvalidBundleOrProperty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileInspections/invalidBundleOrProperty/invalidBundleOrProperty.test");

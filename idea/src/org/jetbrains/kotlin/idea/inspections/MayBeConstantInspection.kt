@@ -22,6 +22,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.*
 import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
@@ -35,34 +36,55 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class MayBeConstantInspection : AbstractKotlinInspection() {
+    enum class Status {
+        NONE,
+        MIGHT_BE_CONST,
+        JVM_FIELD_MIGHT_BE_CONST,
+        JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitProperty(property: KtProperty) {
                 super.visitProperty(property)
+                val status = property.getStatus()
+                when (status) {
+                    NONE, JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER -> return
+                    else -> {
+                        holder.registerProblem(
+                                property.nameIdentifier ?: property,
+                                if (status == JVM_FIELD_MIGHT_BE_CONST) "'const' might be used instead of '@JvmField'" else "Might be 'const'",
+                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                IntentionWrapper(AddConstModifierFix(property), property.containingFile)
+                        )
+                    }
+                }
+            }
+        }
+    }
 
-                if (property.isLocal || property.isVar) return
-                val initializer = property.initializer ?: return
-                if (property.hasModifier(KtTokens.CONST_KEYWORD)) return
-                // Top-level or object only
-                if (property.containingClassOrObject is KtClass) return
+    companion object {
+        fun KtProperty.getStatus(): Status {
+            if (isLocal || isVar || hasModifier(KtTokens.CONST_KEYWORD) || containingClassOrObject is KtClass) {
+                return NONE
+            }
+            val initializer = initializer
 
-                // For some reason constant evaluation does not work for property.analyze()
-                val context = initializer.analyze(BodyResolveMode.PARTIAL)
-                val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptor ?: return
-                val withJvmField = propertyDescriptor.hasJvmFieldAnnotation()
-                if (property.annotationEntries.isNotEmpty() && !withJvmField) return
+            // For some reason constant evaluation does not work for property.analyze()
+            val context = (initializer ?: this).analyze(BodyResolveMode.PARTIAL)
+            val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? VariableDescriptor ?: return NONE
+            val withJvmField = propertyDescriptor.hasJvmFieldAnnotation()
+            if (annotationEntries.isNotEmpty() && !withJvmField) return NONE
 
-                val initializerValue = ConstantExpressionEvaluator.getConstant(
-                        initializer, context
-                )?.toConstantValue(propertyDescriptor.type) ?: return
-                if (initializerValue.isStandaloneOnlyConstant()) return
-
-                holder.registerProblem(
-                        property.nameIdentifier ?: property,
-                        if (withJvmField) "'const' might be used instead of '@JvmField'" else "Might be 'const'",
-                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                        IntentionWrapper(AddConstModifierFix(property), property.containingFile)
-                )
+            return when {
+                initializer != null -> {
+                    ConstantExpressionEvaluator.getConstant(
+                            initializer, context
+                    )?.toConstantValue(propertyDescriptor.type)?.takeIf { !it.isStandaloneOnlyConstant() } ?: return NONE
+                    if (withJvmField) JVM_FIELD_MIGHT_BE_CONST else MIGHT_BE_CONST
+                }
+                withJvmField -> JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER
+                else -> NONE
             }
         }
     }
