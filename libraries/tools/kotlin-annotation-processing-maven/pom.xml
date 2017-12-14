@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <maven.version>3.0.4</maven.version>
-        <annotation-processing.src>${basedir}/../../../plugins/kapt3/src</annotation-processing.src>
+        <annotation-processing.src>${basedir}/../../../plugins/kapt3/kapt3-compiler/src</annotation-processing.src>
         <annotation-processing.target-src>${basedir}/target/src/main/kotlin</annotation-processing.target-src>
         <annotation-processing.target-src-test>${basedir}/target/src/test/kotlin</annotation-processing.target-src-test>
         <annotation-processing.target-resource>${basedir}/target/resource</annotation-processing.target-resource>
