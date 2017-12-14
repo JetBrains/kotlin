@@ -20,17 +20,21 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.callExpression
-import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
+import org.jetbrains.kotlin.idea.quickfix.checkUpdateRuntime
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
@@ -40,43 +44,49 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
                 super.visitDotQualifiedExpression(expression)
 
                 val callExpression = expression.callExpression ?: return
-                val context = callExpression.analyze(BodyResolveMode.PARTIAL)
-                val resolvedCall = callExpression.getResolvedCall(context) ?: return
+                val args = callExpression.valueArguments
+                val firstArg = args.firstOrNull() ?: return
+                val context = expression.analyze(BodyResolveMode.PARTIAL)
+                if (KotlinBuiltIns.FQ_NAMES.mutableList !=
+                        firstArg.getArgumentExpression()?.getType(context)?.constructor?.declarationDescriptor?.fqNameSafe) return
+
+                val resolvedCall = expression.getResolvedCall(context) ?: return
                 val descriptor = resolvedCall.resultingDescriptor as? JavaMethodDescriptor ?: return
                 val fqName = descriptor.importableFqName?.asString() ?: return
-                if (!canReplaceWithStdLib(fqName, callExpression, context)) return
+                if (!canReplaceWithStdLib(expression, fqName, args)) return
 
+                val methodName = fqName.split(".").last()
                 holder.registerProblem(expression,
                                        "Java Collections static method call can be replaced with Kotlin stdlib",
                                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                       ReplaceWithSortFix(fqName))
+                                       ReplaceWithStdLibFix(methodName, firstArg.text))
             }
         }
     }
 
-    private fun canReplaceWithStdLib(fqName: String, callExpression: KtCallExpression, context: BindingContext): Boolean {
+    private fun canReplaceWithStdLib(expression: KtDotQualifiedExpression, fqName: String, args: List<KtValueArgument>): Boolean {
         if (!fqName.startsWith("java.util.Collections.")) return false
-        val valueArgs = callExpression.valueArguments
-        val valueArgsSize = valueArgs.size
-        if (valueArgsSize < 1) return false
-        if (!isMutableList(valueArgs[0], context)) return false
+        val size = args.size
         return when (fqName) {
-            "java.util.Collections.fill" -> valueArgsSize == 2
-            "java.util.Collections.reverse" -> valueArgsSize == 1
-            "java.util.Collections.shuffle" -> valueArgsSize == 1 || valueArgsSize == 2
-            "java.util.Collections.sort" -> valueArgsSize == 1 || valueArgsSize == 2
+            "java.util.Collections.fill" -> checkApiVersion(ApiVersion.KOTLIN_1_2, expression) && size == 2
+            "java.util.Collections.reverse" -> size == 1
+            "java.util.Collections.shuffle" -> checkApiVersion(ApiVersion.KOTLIN_1_2, expression) && (size == 1 || size == 2)
+            "java.util.Collections.sort" -> size == 1 || size == 2
             else -> false
         }
     }
 
-    private fun isMutableList(arg: KtValueArgument?, context: BindingContext): Boolean {
-        val expression = arg?.getArgumentExpression() ?: return false
-        return expression.getType(context)?.nameIfStandardType?.asString() == "MutableList"
+    private fun checkApiVersion(requiredVersion: ApiVersion, expression: KtDotQualifiedExpression): Boolean {
+        val module = ModuleUtilCore.findModuleForPsiElement(expression) ?: return true
+        val version = getRuntimeLibraryVersion(module) ?: return true
+        val apiVersion = ApiVersion.parse(version.substringBefore("-")) ?: return true
+        return apiVersion >= requiredVersion
     }
+
 }
 
-private class ReplaceWithSortFix(private val fqName: String) : LocalQuickFix {
-    override fun getName() = "Replace with stdlib"
+private class ReplaceWithStdLibFix(private val methodName: String, private val receiver: String) : LocalQuickFix {
+    override fun getName() = "Replace with $receiver.$methodName"
 
     override fun getFamilyName() = name
 
@@ -87,21 +97,21 @@ private class ReplaceWithSortFix(private val fqName: String) : LocalQuickFix {
         val arg1 = valueArguments.getOrNull(0)?.getArgumentExpression()
         val arg2 = valueArguments.getOrNull(1)?.getArgumentExpression()
         val factory = KtPsiFactory(project)
-        val newExpression = when (fqName) {
-            "java.util.Collections.fill" -> when {
+        val newExpression = when (methodName) {
+            "fill" -> when {
                 arg1 != null && arg2 != null -> factory.createExpressionByPattern("$0.fill($1)", arg1, arg2)
                 else -> null
             }
-            "java.util.Collections.reverse" -> when {
+            "reverse" -> when {
                 arg1 != null -> factory.createExpressionByPattern("$0.reverse()", arg1)
                 else -> null
             }
-            "java.util.Collections.shuffle" -> when {
+            "shuffle" -> when {
                 arg1 != null && arg2 != null -> factory.createExpressionByPattern("$0.shuffle($1)", arg1, arg2)
                 arg1 != null -> factory.createExpressionByPattern("$0.shuffle()", arg1)
                 else -> null
             }
-            "java.util.Collections.sort" -> when {
+            "sort" -> when {
                 arg1 != null && arg2 != null -> factory.createExpressionByPattern("$0.sortWith(Comparator $1)", arg1, arg2.text)
                 arg1 != null -> factory.createExpressionByPattern("$0.sort()", arg1)
                 else -> null

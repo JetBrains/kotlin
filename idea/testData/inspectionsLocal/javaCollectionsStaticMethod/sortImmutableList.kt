@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// RUNTIME_WITH_FULL_JDK
 // PROBLEM: none
 import java.util.Collections
 
