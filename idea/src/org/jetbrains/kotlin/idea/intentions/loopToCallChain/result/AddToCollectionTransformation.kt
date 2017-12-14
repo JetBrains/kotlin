@@ -17,18 +17,23 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.*
+import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
 
 class AddToCollectionTransformation(
         loop: KtForExpression,
@@ -96,8 +101,11 @@ class AddToCollectionTransformation(
             val qualifiedExpression = statement as? KtDotQualifiedExpression ?: return null
             val targetCollection = qualifiedExpression.receiverExpression
             val callExpression = qualifiedExpression.selectorExpression as? KtCallExpression ?: return null
-            if (callExpression.getCallNameExpression()?.getReferencedName() != "add") return null
-            //TODO: check that it's MutableCollection's add
+            val callNameExpression = callExpression.getCallNameExpression() ?: return null
+            if (callNameExpression.getReferencedName() != "add") return null
+            val calleeMethodDescriptors = callNameExpression.resolveMainReferenceToDescriptors()
+            if (calleeMethodDescriptors.none { it.isCollectionAdd() }) return null
+
             val argument = callExpression.valueArguments.singleOrNull() ?: return null
             val argumentValue = argument.getArgumentExpression() ?: return null
 
@@ -203,6 +211,17 @@ class AddToCollectionTransformation(
 }
 
 private fun KtExpression?.isRangeLiteral() = this is KtBinaryExpression && operationToken == KtTokens.RANGE
+
+private fun DeclarationDescriptor.isCollectionAdd(): Boolean {
+    if ((containingDeclaration as? ClassDescriptor)?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.mutableCollection) {
+        return true
+    }
+
+    val overrides = (this as? CallableDescriptor)?.overriddenTreeUniqueAsSequence(true) ?: return false
+    return overrides.any {
+        (it.containingDeclaration as? ClassDescriptor)?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.mutableCollection
+    }
+}
 
 class FilterToTransformation private constructor(
         loop: KtForExpression,
