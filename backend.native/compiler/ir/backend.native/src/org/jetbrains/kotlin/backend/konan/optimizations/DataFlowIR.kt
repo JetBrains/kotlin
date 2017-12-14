@@ -193,7 +193,7 @@ internal object DataFlowIR {
         }
     }
 
-    class FunctionBody(val nodes: List<Node>, val returns: Node.Variable)
+    class FunctionBody(val nodes: List<Node>, val returns: Node.Variable, val throws: Node.Variable)
 
     class Function(val symbol: FunctionSymbol,
                    val isGlobalInitializer: Boolean,

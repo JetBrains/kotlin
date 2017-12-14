@@ -582,13 +582,14 @@ internal object DFGSerializer {
         }
     }
 
-    class FunctionBody(val nodes: Array<Node>, val returns: Int) {
+    class FunctionBody(val nodes: Array<Node>, val returns: Int, val throws: Int) {
 
-        constructor(data: ArraySlice) : this(data.readArray { Node.read(this) }, data.readInt())
+        constructor(data: ArraySlice) : this(data.readArray { Node.read(this) }, data.readInt(), data.readInt())
 
         fun write(result: ArraySlice) {
             result.writeArray(nodes) { it.write(this) }
             result.writeInt(returns)
+            result.writeInt(throws)
         }
     }
 
@@ -737,7 +738,7 @@ internal object DFGSerializer {
                             functionSymbolMap[function.symbol]!!,
                             function.isGlobalInitializer,
                             function.numberOfParameters,
-                            FunctionBody(nodes, nodeMap[body.returns]!!)
+                            FunctionBody(nodes, nodeMap[body.returns]!!, nodeMap[body.throws]!!)
                     )
                 }
                 .toTypedArray()
@@ -985,7 +986,7 @@ internal object DFGSerializer {
                             else -> { }
                         }
                     }
-                    return DataFlowIR.FunctionBody(nodes, nodes[body.returns] as DataFlowIR.Node.Variable)
+                    return DataFlowIR.FunctionBody(nodes, nodes[body.returns] as DataFlowIR.Node.Variable, nodes[body.throws] as DataFlowIR.Node.Variable)
                 }
 
                 moduleDataFlowGraph.functions.forEach {

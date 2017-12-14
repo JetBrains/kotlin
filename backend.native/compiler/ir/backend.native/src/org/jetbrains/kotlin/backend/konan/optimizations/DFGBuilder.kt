@@ -272,7 +272,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 }
 
                 val function = FunctionDFGBuilder(expressionValuesExtractor, visitor.variableValues,
-                        descriptor, visitor.expressions, visitor.returnValues).build()
+                        descriptor, visitor.expressions, visitor.returnValues, visitor.thrownValues).build()
 
                 DEBUG_OUTPUT(1) {
                     function.debugOutput()
@@ -306,6 +306,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         val expressions = mutableListOf<IrExpression>()
         val variableValues = VariableValues()
         val returnValues = mutableListOf<IrExpression>()
+        val thrownValues = mutableListOf<IrExpression>()
 
         private val returnableBlocks = mutableMapOf<FunctionDescriptor, IrReturnableBlock>()
         private val suspendableExpressionStack = mutableListOf<IrSuspendableExpression>()
@@ -369,6 +370,11 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             super.visitReturn(expression)
         }
 
+        override fun visitThrow(expression: IrThrow) {
+            thrownValues += expression.value
+            super.visitThrow(expression)
+        }
+
         override fun visitSetVariable(expression: IrSetVariable) {
             super.visitSetVariable(expression)
             assignVariable(expression.descriptor, expression.value)
@@ -389,7 +395,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                            val variableValues: VariableValues,
                                            val descriptor: CallableDescriptor,
                                            val expressions: List<IrExpression>,
-                                           val returnValues: List<IrExpression>) {
+                                           val returnValues: List<IrExpression>,
+                                           val thrownValues: List<IrExpression>) {
 
         private val allParameters = (descriptor as? FunctionDescriptor)?.allParameters ?: emptyList()
         private val templateParameters = allParameters.withIndex().associateBy({ it.value }, { DataFlowIR.Node.Parameter(it.index) })
@@ -414,19 +421,20 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         fun build(): DataFlowIR.Function {
             expressions.forEach { getNode(it) }
             val returnsNode = DataFlowIR.Node.Variable(returnValues.map { expressionToEdge(it) }, true)
+            val throwsNode = DataFlowIR.Node.Variable(thrownValues.map { expressionToEdge(it) }, true)
             variables.forEach { descriptor, node ->
                 variableValues.elementData[descriptor]!!.forEach {
                     node.values += expressionToEdge(it)
                 }
             }
-            val allNodes = nodes.values + variables.values + templateParameters.values + returnsNode +
+            val allNodes = nodes.values + variables.values + templateParameters.values + returnsNode + throwsNode +
                     (if (descriptor.isSuspend) listOf(continuationParameter!!) else emptyList())
 
             return DataFlowIR.Function(
                     symbol              = symbolTable.mapFunction(descriptor),
                     isGlobalInitializer = descriptor is PropertyDescriptor,
                     numberOfParameters  = templateParameters.size + if (descriptor.isSuspend) 1 else 0,
-                    body                = DataFlowIR.FunctionBody(allNodes.distinct().toList(), returnsNode)
+                    body                = DataFlowIR.FunctionBody(allNodes.distinct().toList(), returnsNode, throwsNode)
             )
         }
 
