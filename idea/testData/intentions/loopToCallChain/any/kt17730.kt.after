@@ -2,6 +2,6 @@
 // INTENTION_TEXT: "Replace with 'all{}'"
 // IS_APPLICABLE_2: false
 fun foo(): Boolean {
-    val foo = listOf(true, true)
-    return foo.all { it }
+    val list = listOf(1, 2, 3, 4, 5)
+    return list.all { it <= 3 }
 }
