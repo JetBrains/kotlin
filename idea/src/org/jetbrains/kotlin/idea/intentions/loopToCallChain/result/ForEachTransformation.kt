@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
@@ -62,6 +59,7 @@ class ForEachTransformation(
             if (state.previousTransformations.isEmpty()) return null // do not suggest conversion to just ".forEach{}" or ".forEachIndexed{}"
 
             val statement = state.statements.singleOrNull() ?: return null
+            if (statement is KtReturnExpression) return null
 
             if (!state.lazySequence) {
                 // check if it changes any variable that has other usages in the loop - then only lazy sequence is correct

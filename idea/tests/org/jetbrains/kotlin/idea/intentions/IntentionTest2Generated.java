@@ -860,6 +860,12 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
             doTest(fileName);
         }
 
+        @TestMetadata("KT21083.kt")
+        public void testKT21083() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/forEach/KT21083.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notAvailable.kt")
         public void testNotAvailable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/forEach/notAvailable.kt");
