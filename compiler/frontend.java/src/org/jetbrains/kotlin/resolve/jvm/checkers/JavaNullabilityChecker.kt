@@ -109,8 +109,9 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
         }
 
         if (safeAccess) {
+            val safeAccessElement = c.call.callOperationNode?.psi ?: return
             doIfNotNull(receiverArgument.type, { dataFlowValue }, c) {
-                c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(c.call.callOperationNode!!.psi, receiverArgument.type))
+                c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(safeAccessElement, receiverArgument.type))
             }
 
             return
