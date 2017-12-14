@@ -29,7 +29,7 @@ task generatePom(type: DefaultTask) {
     inputs.file(originalPom)
 
     def (_, artifactIdString, versionString) = gradle.startParameter.projectProperties.module.tokenize(':')
-    def versionPath =  "${versionString.tokenize('-')[0]}-SNAPSHOT"
+    def versionPath =  versionString //"${versionString.tokenize('-')[0]}-SNAPSHOT"
 
     def newPom = file("${temporaryDir.canonicalPath}/$artifactIdString-${versionString}.pom")
     outputs.file(newPom)
@@ -69,7 +69,7 @@ bintray {
         def (groupId, artifactId, version) = gradle.startParameter.projectProperties.module.tokenize(':')
         def groupPath = groupId.replace('.', '/')
         def artifactPath = artifactId
-        def versionPath = "${version.tokenize('-')[0]}-SNAPSHOT"
+        def versionPath = version // for sonatype "${version.tokenize('-')[0]}-SNAPSHOT"
         from project.files(gradle.startParameter.projectProperties.jar)
         from project.files(gradle.startParameter.projectProperties.src)
         from project.files(gradle.startParameter.projectProperties.doc)
