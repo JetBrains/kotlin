@@ -752,6 +752,7 @@
     <target name="fetch-annotations"/>
 
     <target name="get_android_studio">
+        <!--
         <condition property="android.os.tag" value="windows">
             <os family="windows"/>
         </condition>
@@ -778,6 +779,9 @@
                 </not>
             </and>
         </condition>
+        -->
+        <property name="android.os.tag" value="mac"/>
+        <property name="strip.dirs.count" value="2"/>
 
         <local name="have.android.studio.version"/>
         <condition property="have.android.studio.version">
@@ -787,6 +791,7 @@
             </and>
         </condition>
 
+        <!--
         <sequential unless:set="have.android.studio.version">
             <loadresource property="android.studio.version">
                 <url url="https://developer.android.com/studio/preview/index.html"/>
@@ -813,10 +818,11 @@
         </sequential>
 
         <echo message="Download android studio: ${android.studio.version} ${android.studio.build.number}"/>
+        -->
 
-        <property name="android.file.name" value="android-studio-ide-${android.studio.build.number}-${android.os.tag}.zip"/>
+        <property name="android.file.name" value="android-studio-SNAPSHOT.mac.zip"/>
         <property name="android.studio.url"
-                  value="http://dl.google.com/dl/android/studio/ide-zips/${android.studio.version}/${android.file.name}"/>
+                  value="http://download.jetbrains.com/kotlin/${android.file.name}"/>
         <property name="android.download.dir" value="${dependencies}/android-studio"/>
         <property name="android.destination.dir" value="ideaSDK"/>
 
