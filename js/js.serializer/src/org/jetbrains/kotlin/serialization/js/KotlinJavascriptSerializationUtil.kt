@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
@@ -151,7 +152,7 @@ object KotlinJavascriptSerializationUtil {
         val serializerExtension = KotlinJavascriptSerializerExtension(fileRegistry)
         val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
 
-        val classDescriptors = DescriptorSerializer.sort(scope).filterIsInstance<ClassDescriptor>()
+        val classDescriptors = scope.filterIsInstance<ClassDescriptor>().sortedBy { it.fqNameSafe.asString() }
 
         fun serializeClasses(descriptors: Collection<DeclarationDescriptor>) {
             fun serializeClass(classDescriptor: ClassDescriptor) {
