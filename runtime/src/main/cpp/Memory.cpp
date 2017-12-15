@@ -84,6 +84,12 @@ struct FrameOverlay {
   ArenaContainer* arena;
 };
 
+// A little hack that allows to enable -O2 optimizations
+// Prevents clang from replacing FrameOverlay struct
+// with single pointer.
+// Can be removed when FrameOverlay will become more complex
+FrameOverlay exportFrameOverlay;
+
 // Current number of allocated containers.
 int allocCount = 0;
 int aliveMemoryStatesCount = 0;
