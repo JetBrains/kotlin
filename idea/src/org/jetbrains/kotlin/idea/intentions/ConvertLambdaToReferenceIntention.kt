@@ -77,7 +77,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
         // No references to Java synthetic properties
         if (calleeDescriptor is SyntheticJavaPropertyDescriptor) return false
         // No suspend functions
-        if ((calleeDescriptor as? FunctionDescriptor)?.isSuspend ?: false) return false
+        if ((calleeDescriptor as? FunctionDescriptor)?.isSuspend == true) return false
 
         val descriptorHasReceiver = with(calleeDescriptor) {
             // No references to both member / extension
