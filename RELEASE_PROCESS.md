@@ -14,7 +14,7 @@
 
 ### Build for all supported platforms ###
 
-Repeat those steps for Mac OS X, Linux x86-64 and Windows x64 machines/VMs:
+Repeat those steps for macOS, Linux x86-64 and Windows x64 machines/VMs:
 
     git pull
     git checkout -b v0.X-fixes origin/v0.X-fixes
@@ -42,7 +42,7 @@ in few minutes after upload.
 
 ### Blog post ###
  
- Notify #kotlin-native channel on public slack.
+ Notify #kotlin-native channel on public Slack.
  
  Write a meaningfully sized blog post describing new release at https://blog.jetbrains.com.
 Login at https://blog.jetbrains.com/kotlin/wp-login.php. Synchronize with @abreslav and @yole.

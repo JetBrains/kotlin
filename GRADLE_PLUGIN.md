@@ -16,7 +16,7 @@ You may use the Gradle plugin to build _Kotlin/Native_ projects. To use it you n
        }
 
        dependencies {
-           classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.3.4"
+           classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:*"
        }
     }
 
@@ -30,7 +30,7 @@ project property:
 If you already downloaded the compiler manually you may specify the path to its root directory using `konan.home`
 project property (e.g. in `gradle.properties`). Note: the plugin ignores the `konan.version` property in this case.
 
-    konan.home=/home/user/kotlin-native-0.3
+    konan.home=/home/user/kotlin-native-0.5
 
 In this case the compiler will not be downloaded by the plugin.
 

@@ -102,7 +102,7 @@ path elements, e.g. `time.h` or `curl/curl.h`. So if the library is usually
 included with `#include <SomeLbrary/Header.h>`, then it would probably be
 correct to filter headers with
 ```
-headerFilter = SomeLbrary/**
+headerFilter = SomeLibrary/**
 ```
 
 If `headerFilter` is not specified, then all headers are included.

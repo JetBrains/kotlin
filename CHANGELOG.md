@@ -1,6 +1,16 @@
+## v0.5 (Dec 2017)
+  * Reverse interop allowing to call Kotlin/Native code compiled as framework from Objective-C/Swift programs
+  * Reverse interop allowing to call Kotlin/Native code compiled as shared object from C/C++ programs
+  * Support generation of shared objects and DLLs by the compiler
+  * Migration to LLVM 5.0
+  * Support WebAssembly target on Linux and Windows hosts
+  * Make string conversions more robust
+  * Support kotlin.math package
+  * Refine workers and string conversion APIs
+
 ## v0.4 (Nov 2017) ##
-  * Objective-C frameworks interop for iOS and OSX targets
-  * Platform API libraries for Linux, iOS, OSX and Windows
+  * Objective-C frameworks interop for iOS and macOS targets
+  * Platform API libraries for Linux, iOS, macOS and Windows
   * Kotlin 1.2 supported
   * `val` and function parameters can be inspected in debugger
   * Experimental support for WebAssembly (wasm32 target)

@@ -20,16 +20,17 @@ basic runtime shipped along with the translator, we only support a subset of all
 target platforms. Currently _Kotlin/Native_ is being shipped and tested with support for
 the following platforms:
 
- * Mac OS X 10.11 and later (x86-64), host and target (`-target macbook`, default on OSX hosts)
+ * Mac OS X 10.11 and later (x86-64), host and target (`-target macbook`, default on macOS hosts)
  * Ubuntu Linux x86-64 (14.04, 16.04 and later), other Linux flavours may work as well, host and target
    (`-target linux`, default on Linux hosts)
  * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target (`-target mingw`,
    default on Windows hosts)
- * Apple iOS (arm64), cross-compiled target (`-target iphone`), hosted on OS X
+ * Apple iOS (arm64), cross-compiled target (`-target iphone`), hosted on macOS
  * Linux arm32 hardfp, Raspberry Pi, cross-compiled target (`-target raspberrypi`), hosted on Linux
  * Linux mips big endian, cross-compiled target (`-target mips`), hosted on Linux
  * Linux mips little endian, cross-compiled target (`-target mipsel`), hosted on Linux
- * Android arm32 and arm64 (`-target android_arm32` and `-target android_arm64`), target, hosted on Linux or OS X
+ * Android arm32 and arm64 (`-target android_arm32` and `-target android_arm64`) target, hosted on Linux or macOS
+ * WebAssembly (`-target wasm32`) target, hosted on Linux, Windows or macOS
 
  Adding support for other target platforms shouldn't be too hard, if LLVM support is available.
 
