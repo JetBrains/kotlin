@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 class NoArgMavenProjectImportHandler : AbstractMavenImportHandler() {
     private companion object {
         val ANNOTATATION_PARAMETER_PREFIX = "no-arg:${NoArgCommandLineProcessor.ANNOTATION_OPTION.name}="
+        val INVOKEINITIALIZERS_PARAMETER_PREFIX = "no-arg:${NoArgCommandLineProcessor.INVOKE_INITIALIZERS_OPTION.name}="
     }
 
     override val compilerPluginId = NoArgCommandLineProcessor.PLUGIN_ID
@@ -48,6 +49,16 @@ class NoArgMavenProjectImportHandler : AbstractMavenImportHandler() {
             text.substring(ANNOTATATION_PARAMETER_PREFIX.length)
         })
 
-        return annotations.mapTo(mutableListOf()) { PluginOption(NoArgCommandLineProcessor.ANNOTATION_OPTION.name, it) }
+        val options = annotations.mapTo(mutableListOf()) { PluginOption(NoArgCommandLineProcessor.ANNOTATION_OPTION.name, it) }
+
+        val invokeInitializerOptionValue = compilerPluginOptions
+                .firstOrNull { it.startsWith(INVOKEINITIALIZERS_PARAMETER_PREFIX) }
+                ?.drop(INVOKEINITIALIZERS_PARAMETER_PREFIX.length) == "true"
+
+        if (invokeInitializerOptionValue) {
+            options.add(PluginOption(NoArgCommandLineProcessor.INVOKE_INITIALIZERS_OPTION.name, "true"))
+        }
+
+        return options
     }
 }
