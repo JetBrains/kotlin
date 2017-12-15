@@ -5120,6 +5120,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("extentionOuterScope.kt")
+        public void testExtentionOuterScope() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/extentionOuterScope.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fqNameForReceiver.kt")
         public void testFqNameForReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/fqNameForReceiver.kt");
@@ -5195,6 +5201,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("memberInLambdaArgument.kt")
         public void testMemberInLambdaArgument() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/memberInLambdaArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberOuterScope.kt")
+        public void testMemberOuterScope() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/memberOuterScope.kt");
             doTest(fileName);
         }
 
