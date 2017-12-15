@@ -20153,6 +20153,18 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("kt21258_indirect.kt")
+        public void testKt21258_indirect() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/syntheticAccessors/kt21258_indirect.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt21258_simple.kt")
+        public void testKt21258_simple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/syntheticAccessors/kt21258_simple.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt9717.kt")
         public void testKt9717() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/syntheticAccessors/kt9717.kt");
