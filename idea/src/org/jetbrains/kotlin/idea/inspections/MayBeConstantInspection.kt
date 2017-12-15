@@ -65,7 +65,7 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
 
     companion object {
         fun KtProperty.getStatus(): Status {
-            if (isLocal || isVar || hasModifier(KtTokens.CONST_KEYWORD) || containingClassOrObject is KtClass) {
+            if (isLocal || isVar || hasModifier(KtTokens.CONST_KEYWORD) || containingClassOrObject is KtClass || getter != null) {
                 return NONE
             }
             val initializer = initializer
