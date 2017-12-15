@@ -95,11 +95,6 @@ public class ParcelDetector extends Detector implements Detector.UastScanner {
             return;
         }
 
-        // Do not report errors on our Android Extensions-improved Parcelables
-        if (declaration.findAnnotation(Parcelize.class.getName()) != null) {
-            return;
-        }
-
         PsiField field = declaration.findFieldByName("CREATOR", false);
         if (field == null) {
             Location location = context.getUastNameLocation(declaration);

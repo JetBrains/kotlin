@@ -19,7 +19,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
 }
 
 public final class User : AbstractUser {
-    public final static User$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     private final int age
 
