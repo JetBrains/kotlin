@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.konan.util.UserNamed
+import org.jetbrains.kotlin.konan.util.VisibleNamed
 
-enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSuffix: String) : UserNamed {
+enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSuffix: String) : VisibleNamed {
     OSX     ("kexe", "lib", "dylib"),
     IOS     ("kexe", "lib", "dylib"),
     LINUX   ("kexe", "lib", "so"   ),
@@ -27,7 +27,7 @@ enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSu
     WASM    ("wasm", ""   , "wasm" )
 }
 
-enum class Architecture(val bitness: Int) : UserNamed {
+enum class Architecture(val bitness: Int) : VisibleNamed {
     X64(64),
     ARM64(64),
     ARM32(32),
@@ -36,7 +36,7 @@ enum class Architecture(val bitness: Int) : UserNamed {
     WASM32(32);
 }
 
-enum class KonanTarget(val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) : UserNamed {
+enum class KonanTarget(val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) : VisibleNamed {
     ANDROID_ARM32(  Family.ANDROID,     Architecture.ARM32,     "android_arm32"),
     ANDROID_ARM64(  Family.ANDROID,     Architecture.ARM64,     "android_arm64"),
     IPHONE(         Family.IOS,         Architecture.ARM64,     "ios"),
@@ -53,7 +53,7 @@ enum class KonanTarget(val family: Family, val architecture: Architecture, val d
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
     if (target == host) host.detailedName else "${host.detailedName}-${target.detailedName}"
 
-enum class CompilerOutputKind: UserNamed {
+enum class CompilerOutputKind: VisibleNamed {
     PROGRAM {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.exeSuffix}"
     },
@@ -76,10 +76,10 @@ enum class CompilerOutputKind: UserNamed {
 }
 
 class TargetManager(val userRequest: String? = null) {
-    val targets = KonanTarget.values().associate{ it.userName to it }
+    val targets = KonanTarget.values().associate{ it.visibleName to it }
     val target = determineCurrent()
     val targetName
-        get() = target.userName
+        get() = target.visibleName
 
 
     fun known(name: String): String {
@@ -162,7 +162,7 @@ class TargetManager(val userRequest: String? = null) {
 
         val hostSuffix get() = host.detailedName
         @JvmStatic
-        val hostName get() = host.userName
+        val hostName get() = host.visibleName
 
         init {
             when (host) {

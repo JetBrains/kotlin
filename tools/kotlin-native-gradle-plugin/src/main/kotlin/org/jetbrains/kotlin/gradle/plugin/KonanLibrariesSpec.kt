@@ -69,7 +69,7 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
         }
 
         val libraryTask = lib[target] ?:
-            throw InvalidUserDataException("Library ${lib.name} has no target ${target.userName}")
+            throw InvalidUserDataException("Library ${lib.name} has no target ${target.visibleName}")
 
         if (libraryTask == task) {
             throw InvalidUserDataException("Attempt to use a library as its own dependency: " +

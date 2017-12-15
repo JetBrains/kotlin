@@ -65,7 +65,7 @@ allprojects {
 
 void setupHostAndTarget() {
     ext.hostName = TargetManager.hostName
-    ext.targetList = TargetManager.enabled*.userName as List
+    ext.targetList = TargetManager.enabled*.visibleName as List
 }
 
 void setupClang(Project project) {
@@ -337,7 +337,7 @@ private ArrayList<DefFile> targetDefFiles(String target) {
 }
 
 private String targetToPlatform(String target) {
-    new TargetManager(target).target.family.userName
+    new TargetManager(target).target.family.visibleName
 }
 
 private String targetToOs(String target) {

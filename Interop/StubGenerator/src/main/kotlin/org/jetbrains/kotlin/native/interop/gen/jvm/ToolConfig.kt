@@ -38,7 +38,7 @@ class ToolConfig(userProvidedTargetName: String?, userProvidedKonanProperties: S
 
     val substitutions = mapOf<String, String> (
         "target" to target.detailedName,
-        "arch" to target.architecture.userName)
+        "arch" to target.architecture.visibleName)
 
     fun downloadDependencies() = targetProperties.downloadDependencies()
 

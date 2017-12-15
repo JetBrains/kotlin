@@ -218,7 +218,7 @@ enum DependencyKind {
     DependencyKind(String name,
             @ClosureParams(value = FromString.class, options = "KonanProperties") Closure<String> dirGetter,
             @ClosureParams(value = FromString.class, options = "KonanTarget") Closure<String> propertyNameGetter =
-                           {target -> "${target.userName}${name.capitalize()}Dir"}) {
+                           {target -> "${target.visibleName}${name.capitalize()}Dir"}) {
         this.name = name
         this.dirGetter = dirGetter
         this.propertyNameGetter = propertyNameGetter

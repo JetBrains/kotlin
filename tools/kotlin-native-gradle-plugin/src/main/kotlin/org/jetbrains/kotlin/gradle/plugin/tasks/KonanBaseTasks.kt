@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.konan.target.TargetManager
 import java.io.File
 
 internal val Project.host
-    get() = TargetManager.host.userName
+    get() = TargetManager.host.visibleName
 
 internal val Project.simpleOsName
     get() = TargetManager.simpleOsName()
@@ -54,7 +54,7 @@ abstract class KonanTargetableTask: DefaultTask() {
         @Internal get() = (konanTarget != TargetManager.host)
 
     val target: String
-        @Internal get() = konanTarget.userName
+        @Internal get() = konanTarget.visibleName
 }
 
 /** A task building an artifact. */

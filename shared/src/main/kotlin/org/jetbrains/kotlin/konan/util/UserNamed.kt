@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.konan.util
 
 // This interface is good for Enums to make enum members available to users
 // as low case words.
-interface UserNamed {
+interface VisibleNamed {
     val name: String
-    val userName get() = name.toLowerCase() 
+    val visibleName get() = name.toLowerCase() 
 }

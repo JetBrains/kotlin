@@ -32,7 +32,7 @@ interface KonanLibraryLayout {
     val targetsDir
         get() = File(libDir, "targets")
     val targetDir 
-        get() = File(targetsDir, target!!.userName)
+        get() = File(targetsDir, target!!.visibleName)
     val kotlinDir 
         get() = File(targetDir, "kotlin")
     val nativeDir 

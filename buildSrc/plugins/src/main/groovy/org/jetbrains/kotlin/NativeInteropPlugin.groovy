@@ -146,7 +146,7 @@ class NamedNativeInteropConfig implements Named {
     }
 
     File getNativeLibsDir() {
-        def target = new TargetManager(target).target.userName
+        def target = new TargetManager(target).target.visibleName
         return new File(project.buildDir, "nativelibs/$target")
     }
 

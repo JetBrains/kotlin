@@ -36,7 +36,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
                                                          type: Class<T>,
                                                          val project: ProjectInternal,
                                                          instantiator: Instantiator)
-    : KonanBuildingSpec, Named, DefaultNamedDomainObjectSet<T>(type, instantiator, { it.konanTarget.userName }) {
+    : KonanBuildingSpec, Named, DefaultNamedDomainObjectSet<T>(type, instantiator, { it.konanTarget.visibleName }) {
 
     override fun getName() = name_
 
@@ -51,7 +51,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
             if (it.enabled) {
                 super.add(createTask(it))
             } else {
-                project.logger.warn("The target is not enabled on the current host: ${it.userName}")
+                project.logger.warn("The target is not enabled on the current host: ${it.visibleName}")
             }
         }
         aggregateBuildTask = createAggregateTask()
@@ -59,7 +59,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     }
 
     protected open fun generateTaskName(target: KonanTarget) =
-            "compileKonan${name.capitalize()}${target.userName.capitalize()}"
+            "compileKonan${name.capitalize()}${target.visibleName.capitalize()}"
 
     protected open fun generateAggregateTaskName() =
             "compileKonan${name.capitalize()}"
@@ -85,7 +85,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
                 it.init(defaultBaseDir.targetSubdir(target), name, target)
                 it.group = BasePlugin.BUILD_GROUP
                 it.description = generateTaskDescription(it)
-            } ?: throw Exception("Cannot create task for target: ${target.userName}")
+            } ?: throw Exception("Cannot create task for target: ${target.visibleName}")
 
     protected fun createAggregateTask(): Task =
             project.tasks.create(generateAggregateTaskName()) { task ->

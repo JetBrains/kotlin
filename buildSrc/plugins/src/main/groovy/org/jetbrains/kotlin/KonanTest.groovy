@@ -109,7 +109,7 @@ abstract class KonanTest extends JavaExec {
                     *moreArgs,
                     *project.globalTestArgs]
             if (project.testTarget) {
-                args "-target", target.userName
+                args "-target", target.visibleName
             }
             if (enableKonanAssertions) {
                 args "-ea"
@@ -447,7 +447,7 @@ class RunDriverKonanTest extends KonanTest {
                     *moreArgs,
                     *project.globalTestArgs]
             if (project.testTarget) {
-                args "-target", target.userName
+                args "-target", target.visibleName
             }
             if (enableKonanAssertions) {
                 args "-ea"
@@ -469,7 +469,7 @@ class RunInteropKonanTest extends KonanTest {
     void setInterop(String value) {
         this.interop = value
         this.interopConf = project.kotlinNativeInterop[value]
-        this.interopConf.target = target.userName
+        this.interopConf.target = target.visibleName
         this.dependsOn(this.interopConf.genTask)
     }
 

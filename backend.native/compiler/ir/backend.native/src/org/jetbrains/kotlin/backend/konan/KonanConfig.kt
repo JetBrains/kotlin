@@ -69,7 +69,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
     private val prefix = produce.prefix(target)
     private val suffix = produce.suffix(target)
-    val outputName = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(suffix) ?: produce.userName
+    val outputName = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(suffix) ?: produce.visibleName
     val outputFile = outputName
         .prefixBaseNameIfNot(prefix)
         .suffixIfNot(suffix)

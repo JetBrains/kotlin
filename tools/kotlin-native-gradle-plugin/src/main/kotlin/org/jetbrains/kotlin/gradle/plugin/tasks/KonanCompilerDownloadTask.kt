@@ -75,7 +75,7 @@ open class KonanCompilerDownloadTask : DefaultTask() {
         if (downloadDependencies) {
             val runner = KonanCompilerRunner(project)
             project.konanExtension.konanTargets.forEach {
-                runner.run("--check_dependencies", "-target", it.userName)
+                runner.run("--check_dependencies", "-target", it.visibleName)
             }
         }
     }

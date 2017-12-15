@@ -89,7 +89,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
         addListArg("-linkerOpts", linkerOpts)
 
-        addArgIfNotNull("-target", konanTarget.userName)
+        addArgIfNotNull("-target", konanTarget.visibleName)
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
         addArgIfNotNull("-entry", entryPoint)
