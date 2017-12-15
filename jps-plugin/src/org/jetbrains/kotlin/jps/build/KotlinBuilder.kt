@@ -746,9 +746,15 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                                 + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
                                 + " in " + filesToCompile.keySet().joinToString { it.presentableName })
 
-        val compilerRunner = JpsKotlinCompilerRunner()
-        compilerRunner.runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, environment, moduleFile)
-        moduleFile.delete()
+        try {
+            val compilerRunner = JpsKotlinCompilerRunner()
+            compilerRunner.runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, environment, moduleFile)
+        }
+        finally {
+            if (System.getProperty("kotlin.jps.delete.module.file.after.build") != "false") {
+                moduleFile.delete()
+            }
+        }
 
         return environment.outputItemsCollector
     }
