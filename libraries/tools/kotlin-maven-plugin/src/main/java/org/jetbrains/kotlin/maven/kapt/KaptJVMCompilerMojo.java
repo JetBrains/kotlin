@@ -276,8 +276,12 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         }
 
         for (String option : rawOptions) {
+            if (option.isEmpty()) {
+                continue;
+            }
+
             int equalsIndex = option.indexOf("=");
-            if (equalsIndex < 0 && equalsIndex < (option.length() - 1)) {
+            if (equalsIndex < 0) {
                 map.put(option, "");
             }
             else {
