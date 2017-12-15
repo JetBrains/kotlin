@@ -50,6 +50,8 @@ class KotlinIconProvider : IconProvider(), DumbAware {
     companion object {
         var INSTANCE = KotlinIconProvider()
 
+        fun isSingleClassFile(file: KtFile) = getSingleClass(file) != null
+
         fun getSingleClass(file: KtFile): KtClassOrObject? {
             val mainClass = getMainClass(file)
             return if (mainClass != null && file.declarations.size == 1) mainClass else null
