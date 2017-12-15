@@ -303,6 +303,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
                 oos.writeUTF(entry.getValue());
             }
 
+            oos.flush();
             return Base64.getEncoder().encodeToString(os.toByteArray());
         } catch (IOException e) {
             // Should not occur
