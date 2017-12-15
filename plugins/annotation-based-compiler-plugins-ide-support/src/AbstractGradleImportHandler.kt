@@ -21,6 +21,7 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.task.TaskData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedCompilerPluginSetup.PluginOption
 import org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
@@ -40,15 +41,13 @@ abstract class AbstractGradleImportHandler : GradleProjectImportHandler {
     override fun importBySourceSet(facet: KotlinFacet, sourceSetNode: DataNode<GradleSourceSetData>) {
         modifyCompilerArgumentsForPlugin(facet, getPluginSetupBySourceSet(sourceSetNode),
                                          compilerPluginId = compilerPluginId,
-                                         pluginName = pluginName,
-                                         annotationOptionName = annotationOptionName)
+                                         pluginName = pluginName)
     }
 
     override fun importByModule(facet: KotlinFacet, moduleNode: DataNode<ModuleData>) {
         modifyCompilerArgumentsForPlugin(facet, getPluginSetupByModule(moduleNode),
                                          compilerPluginId = compilerPluginId,
-                                         pluginName = pluginName,
-                                         annotationOptionName = annotationOptionName)
+                                         pluginName = pluginName)
     }
 
     protected open fun getAnnotationsForPreset(presetName: String): List<String> = emptyList()
@@ -66,12 +65,13 @@ abstract class AbstractGradleImportHandler : GradleProjectImportHandler {
         val (annotationFqNamesList, presets) = matchResult
 
         val annotationFqNames = annotationFqNamesList.split(',') + presets.split(',').flatMap { getAnnotationsForPreset(it) }
+        val options = annotationFqNames.map { PluginOption(annotationOptionName, it) }
 
         // For now we can't use plugins from Gradle cause they're shaded and may have an incompatible version.
         // So we use ones from the IDEA plugin.
         val classpath = listOf(pluginJarFileFromIdea.absolutePath)
 
-        return AnnotationBasedCompilerPluginSetup(annotationFqNames, classpath)
+        return AnnotationBasedCompilerPluginSetup(options, classpath)
     }
 
     private fun getPluginSetupBySourceSet(sourceSetNode: DataNode<GradleSourceSetData>) =
