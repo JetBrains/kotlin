@@ -92,43 +92,88 @@ object KotlinJavascriptSerializationUtil {
     }
 
     fun serializeMetadata(
-            bindingContext: BindingContext,
-            module: ModuleDescriptor,
-            moduleKind: ModuleKind,
-            importedModules: List<String>
-    ): JsProtoBuf.Library {
-        val builder = JsProtoBuf.Library.newBuilder()
-
-        val moduleProtoKind = when (moduleKind) {
-            ModuleKind.PLAIN -> JsProtoBuf.Library.Kind.PLAIN
-            ModuleKind.AMD -> JsProtoBuf.Library.Kind.AMD
-            ModuleKind.COMMON_JS -> JsProtoBuf.Library.Kind.COMMON_JS
-            ModuleKind.UMD -> JsProtoBuf.Library.Kind.UMD
-        }
-        if (builder.kind != moduleProtoKind) {
-            builder.kind = moduleProtoKind
-        }
-
-        importedModules.forEach { builder.addImportedModule(it) }
+        bindingContext: BindingContext,
+        jsDescriptor: JsModuleDescriptor<ModuleDescriptor>,
+        languageVersionSettings: LanguageVersionSettings
+    ): SerializedMetadata {
+        val serializedFragments = HashMap<FqName, ProtoBuf.PackageFragment>()
+        val module = jsDescriptor.data
 
         for (fqName in getPackagesFqNames(module).sortedBy { it.asString() }) {
             val fragment = serializePackageFragment(bindingContext, module, fqName)
+
             if (!fragment.isEmpty()) {
-                builder.addPackageFragment(fragment)
+                serializedFragments[fqName] = fragment
             }
         }
 
-        return builder.build()
+        return SerializedMetadata(serializedFragments, jsDescriptor, languageVersionSettings)
     }
 
-    fun metadataAsString(
-            bindingContext: BindingContext,
-            jsDescriptor: JsModuleDescriptor<ModuleDescriptor>,
-            languageVersionSettings: LanguageVersionSettings
-    ): String = KotlinJavascriptMetadataUtils.formatMetadataAsString(
-            jsDescriptor.name,
-            jsDescriptor.serializeToBinaryMetadata(bindingContext, languageVersionSettings)
-    )
+    class SerializedMetadata(
+        private val serializedFragments: Map<FqName, ProtoBuf.PackageFragment>,
+        private val jsDescriptor: JsModuleDescriptor<ModuleDescriptor>,
+        private val languageVersionSettings: LanguageVersionSettings
+    ) {
+        fun asContentMap(): Map<String, ByteArray> {
+            val contentMap = mutableMapOf<String, ByteArray>()
+
+            for ((fqName, part) in serializedFragments) {
+                val stream = ByteArrayOutputStream()
+                with(DataOutputStream(stream)) {
+                    val version = JsMetadataVersion.INSTANCE.toArray()
+                    writeInt(version.size)
+                    version.forEach(this::writeInt)
+                }
+
+                serializeHeader(jsDescriptor.data, fqName, languageVersionSettings).writeDelimitedTo(stream)
+                part.writeTo(stream)
+
+                contentMap[JsSerializerProtocol.getKjsmFilePath(fqName)] = stream.toByteArray()
+            }
+
+            return contentMap
+        }
+
+        fun asString(): String =
+            KotlinJavascriptMetadataUtils.formatMetadataAsString(jsDescriptor.name, asByteArray())
+
+        private fun asByteArray(): ByteArray =
+            ByteArrayOutputStream().apply {
+                GZIPOutputStream(this).use { stream ->
+                    serializeHeader(
+                        jsDescriptor.data,
+                        packageFqName = null,
+                        languageVersionSettings = languageVersionSettings
+                    ).writeDelimitedTo(stream)
+                    asLibrary().writeTo(stream)
+                }
+            }.toByteArray()
+
+        private fun asLibrary(): JsProtoBuf.Library {
+            val moduleKind = jsDescriptor.kind
+            jsDescriptor.imported
+            val builder = JsProtoBuf.Library.newBuilder()
+
+            val moduleProtoKind = when (moduleKind) {
+                ModuleKind.PLAIN -> JsProtoBuf.Library.Kind.PLAIN
+                ModuleKind.AMD -> JsProtoBuf.Library.Kind.AMD
+                ModuleKind.COMMON_JS -> JsProtoBuf.Library.Kind.COMMON_JS
+                ModuleKind.UMD -> JsProtoBuf.Library.Kind.UMD
+            }
+            if (builder.kind != moduleProtoKind) {
+                builder.kind = moduleProtoKind
+            }
+
+            jsDescriptor.imported.forEach { builder.addImportedModule(it) }
+
+            for ((_, fragment) in serializedFragments.entries.sortedBy { (fqName, _) -> fqName.asString() }) {
+                builder.addPackageFragment(fragment)
+            }
+
+            return builder.build()
+        }
+    }
 
     private fun serializePackageFragment(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName): ProtoBuf.PackageFragment {
         val packageView = module.getPackage(fqName)
@@ -211,33 +256,6 @@ object KotlinJavascriptSerializationUtil {
         return filesProto.build()
     }
 
-    fun toContentMap(
-            bindingContext: BindingContext,
-            module: ModuleDescriptor,
-            languageVersionSettings: LanguageVersionSettings
-    ): Map<String, ByteArray> {
-        val contentMap = mutableMapOf<String, ByteArray>()
-
-        for (fqName in getPackagesFqNames(module)) {
-            val part = serializePackageFragment(bindingContext, module, fqName)
-            if (part.isEmpty()) continue
-
-            val stream = ByteArrayOutputStream()
-            with(DataOutputStream(stream)) {
-                val version = JsMetadataVersion.INSTANCE.toArray()
-                writeInt(version.size)
-                version.forEach(this::writeInt)
-            }
-
-            serializeHeader(module, fqName, languageVersionSettings).writeDelimitedTo(stream)
-            part.writeTo(stream)
-
-            contentMap[JsSerializerProtocol.getKjsmFilePath(fqName)] = stream.toByteArray()
-        }
-
-        return contentMap
-    }
-
     private fun ProtoBuf.PackageFragment.isEmpty(): Boolean =
             class_Count == 0 && `package`.let { it.functionCount == 0 && it.propertyCount == 0 && it.typeAliasCount == 0 }
 
@@ -291,18 +309,6 @@ object KotlinJavascriptSerializationUtil {
                 getSubPackagesFqNames(descriptor, result)
             }
         }
-    }
-
-    private fun JsModuleDescriptor<ModuleDescriptor>.serializeToBinaryMetadata(
-            bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings
-    ): ByteArray {
-        return ByteArrayOutputStream().apply {
-            GZIPOutputStream(this).use { stream ->
-                serializeHeader(data, null, languageVersionSettings).writeDelimitedTo(stream)
-                serializeMetadata(bindingContext, data, kind, imported).writeTo(stream)
-            }
-        }.toByteArray()
     }
 
     private fun ByteArray.deserializeToLibraryParts(name: String): JsModuleDescriptor<KotlinJavaScriptLibraryParts> {

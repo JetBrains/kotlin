@@ -108,12 +108,13 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                     imported = importedModules
                 )
                 val settings = config.configuration.languageVersionSettings
-                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(bindingContext, moduleDescription, settings)
+                val serializedMetadata = KotlinJavascriptSerializationUtil.serializeMetadata(bindingContext, moduleDescription, settings)
+                val metaFileContent = serializedMetadata.asString()
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
                 outputFiles.add(jsMetaFile)
 
-                KotlinJavascriptSerializationUtil.toContentMap(bindingContext, moduleDescriptor, settings).forEach {
+                serializedMetadata.asContentMap().forEach {
                     // TODO Add correct source files
                     outputFiles.add(SimpleOutputBinaryFile(emptyList(), config.moduleId + VfsUtilCore.VFS_SEPARATOR_CHAR + it.key, it.value))
                 }
