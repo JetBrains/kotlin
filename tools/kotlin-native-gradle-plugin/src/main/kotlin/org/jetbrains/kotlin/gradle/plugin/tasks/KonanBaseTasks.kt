@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.konan.target.TargetManager
 import java.io.File
 
 internal val Project.host
-    get() = TargetManager.host.name.toLowerCase()
+    get() = TargetManager.host.userName
 
 internal val Project.simpleOsName
     get() = TargetManager.simpleOsName()

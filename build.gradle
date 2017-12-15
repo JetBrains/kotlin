@@ -337,11 +337,11 @@ private ArrayList<DefFile> targetDefFiles(String target) {
 }
 
 private String targetToPlatform(String target) {
-    new TargetManager(target).target.family.name().toLowerCase()
+    new TargetManager(target).target.family.userName
 }
 
 private String targetToOs(String target) {
-    new TargetManager(target).target.detailedName.toLowerCase()
+    new TargetManager(target).target.detailedName
 }
 
 private String defFileToTaskName(String target, String name) {

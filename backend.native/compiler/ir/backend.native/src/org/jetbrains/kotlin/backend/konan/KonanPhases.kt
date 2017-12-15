@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.util.*
+import org.jetbrains.kotlin.konan.util.UserNamed
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 enum class KonanPhase(val description: String,
                       vararg prerequisite: KonanPhase,
-                      var enabled: Boolean = true, var verbose: Boolean = false) {
-
+                      var enabled: Boolean = true,
+                      var verbose: Boolean = false) : UserNamed {
     /* */ FRONTEND("Frontend builds AST"),
     /* */ PSI_TO_IR("Psi to IR conversion"),
     /* */ SERIALIZER("Serialize descriptor tree and inline IR bodies"),
@@ -73,7 +74,7 @@ enum class KonanPhase(val description: String,
 }
 
 object KonanPhases {
-    val phases = KonanPhase.values().associate { it.name.toLowerCase() to it }
+    val phases = KonanPhase.values().associate { it.userName to it }
 
     fun known(name: String): String {
         if (phases[name] == null) {

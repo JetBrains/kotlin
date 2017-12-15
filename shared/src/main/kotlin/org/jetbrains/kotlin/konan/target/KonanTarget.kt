@@ -16,28 +16,27 @@
 
 package org.jetbrains.kotlin.konan.target
 
-enum class Family(name:String, val exeSuffix:String, val dynamicPrefix: String, val dynamicSuffix: String) {
-    OSX(    "osx"    , "kexe", "lib", "dylib"),
-    IOS(    "ios"    , "kexe", "lib", "dylib"),
-    LINUX(  "linux"  , "kexe", "lib", "so"   ),
-    WINDOWS("windows", "exe" , ""   , "dll"  ),
-    ANDROID("android", "so"  , "lib", "so"   ),
-    WASM(   "wasm"   , "wasm", ""   , "wasm" )
+import org.jetbrains.kotlin.konan.util.UserNamed
+
+enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSuffix: String) : UserNamed {
+    OSX     ("kexe", "lib", "dylib"),
+    IOS     ("kexe", "lib", "dylib"),
+    LINUX   ("kexe", "lib", "so"   ),
+    WINDOWS ("exe" , ""   , "dll"  ),
+    ANDROID ("so"  , "lib", "so"   ),
+    WASM    ("wasm", ""   , "wasm" )
 }
 
-enum class Architecture(val bitness: Int) {
+enum class Architecture(val bitness: Int) : UserNamed {
     X64(64),
     ARM64(64),
     ARM32(32),
     MIPS32(32),
     MIPSEL32(32),
     WASM32(32);
-
-    val userName: String
-        get() = this.name.toLowerCase()
 }
 
-enum class KonanTarget(val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) {
+enum class KonanTarget(val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) : UserNamed {
     ANDROID_ARM32(  Family.ANDROID,     Architecture.ARM32,     "android_arm32"),
     ANDROID_ARM64(  Family.ANDROID,     Architecture.ARM64,     "android_arm64"),
     IPHONE(         Family.IOS,         Architecture.ARM64,     "ios"),
@@ -49,14 +48,12 @@ enum class KonanTarget(val family: Family, val architecture: Architecture, val d
     LINUX_MIPS32(   Family.LINUX,       Architecture.MIPS32,    "linux_mips32"),
     LINUX_MIPSEL32( Family.LINUX,       Architecture.MIPSEL32,  "linux_mipsel32"),
     WASM32(         Family.WASM,        Architecture.WASM32,    "wasm32");
-
-    val userName get() = name.toLowerCase()
 }
 
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
     if (target == host) host.detailedName else "${host.detailedName}-${target.detailedName}"
 
-enum class CompilerOutputKind {
+enum class CompilerOutputKind: UserNamed {
     PROGRAM {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.exeSuffix}"
     },
@@ -82,7 +79,7 @@ class TargetManager(val userRequest: String? = null) {
     val targets = KonanTarget.values().associate{ it.userName to it }
     val target = determineCurrent()
     val targetName
-        get() = target.name.toLowerCase()
+        get() = target.userName
 
 
     fun known(name: String): String {
@@ -165,7 +162,7 @@ class TargetManager(val userRequest: String? = null) {
 
         val hostSuffix get() = host.detailedName
         @JvmStatic
-        val hostName get() = host.name.toLowerCase()
+        val hostName get() = host.userName
 
         init {
             when (host) {
