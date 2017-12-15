@@ -145,7 +145,7 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
     }
 
     private val ClassDescriptor.superProtocolsClause: String get() {
-        val interfaces = this.getSuperInterfaces()
+        val interfaces = this.getSuperInterfaces().filter { mapper.shouldBeExposed(it) }
         return if (interfaces.isEmpty()) {
             ""
         } else buildString {
