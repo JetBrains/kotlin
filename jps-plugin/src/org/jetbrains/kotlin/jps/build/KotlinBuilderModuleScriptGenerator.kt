@@ -139,17 +139,24 @@ object KotlinBuilderModuleScriptGenerator {
                 append("-test")
             }
         }
+        val dir = System.getProperty("kotlin.jps.dir.for.module.files")?.let { File(it) }?.takeIf { it.isDirectory }
         return try {
-            File.createTempFile("kjps", readableSuffix + ".script.xml")
+            File.createTempFile("kjps", readableSuffix + ".script.xml", dir)
         }
         catch (e: IOException) {
             // sometimes files cannot be created, because file name is too long (Windows, Mac OS)
             // see https://bugs.openjdk.java.net/browse/JDK-8148023
             try {
-                File.createTempFile("kjps", ".script.xml")
+                File.createTempFile("kjps", ".script.xml", dir)
             }
             catch (e: IOException) {
-                throw RuntimeException("Could not create module file when building $chunk", e)
+                val message = buildString {
+                    append("Could not create module file when building chunk $chunk")
+                    if (dir != null) {
+                        append(" in dir $dir")
+                    }
+                }
+                throw RuntimeException(message, e)
             }
         }
     }
