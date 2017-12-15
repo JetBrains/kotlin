@@ -117,7 +117,7 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
     override fun lastIndexOf(element: E): Int = array.lastIndexOf(element)
 
     override fun toString() = arrayToString(array)
-    override fun toArray(): Array<Any?> = array.copyOf()
+    override fun toArray(): Array<Any?> = js("[]").slice.call(array)
 
 
     private fun rangeCheck(index: Int) = index.apply {
