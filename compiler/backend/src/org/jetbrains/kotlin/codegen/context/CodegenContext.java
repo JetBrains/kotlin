@@ -57,13 +57,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private static class AccessorKey {
         public final DeclarationDescriptor descriptor;
         public final ClassDescriptor superCallLabelTarget;
+        public final FieldAccessorKind fieldAccessorKind;
 
         public AccessorKey(
                 @NotNull DeclarationDescriptor descriptor,
-                @Nullable ClassDescriptor superCallLabelTarget
+                @Nullable ClassDescriptor superCallLabelTarget,
+                @NotNull FieldAccessorKind fieldAccessorKind
         ) {
             this.descriptor = descriptor;
             this.superCallLabelTarget = superCallLabelTarget;
+            this.fieldAccessorKind = fieldAccessorKind;
         }
 
         @Override
@@ -71,13 +74,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (!(obj instanceof AccessorKey)) return false;
             AccessorKey other = (AccessorKey) obj;
             return descriptor.equals(other.descriptor) &&
+                   fieldAccessorKind == other.fieldAccessorKind &&
                    (superCallLabelTarget == null ? other.superCallLabelTarget == null
                                                  : superCallLabelTarget.equals(other.superCallLabelTarget));
         }
 
         @Override
         public int hashCode() {
-            return 31 * descriptor.hashCode() + (superCallLabelTarget == null ? 0 : superCallLabelTarget.hashCode());
+            return 31 * descriptor.hashCode() +
+                   fieldAccessorKind.hashCode() +
+                   (superCallLabelTarget == null ? 0 : superCallLabelTarget.hashCode());
         }
 
         @Override
@@ -458,7 +464,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         D descriptor = (D) possiblySubstitutedDescriptor.getOriginal();
-        AccessorKey key = new AccessorKey(descriptor, superCallTarget);
+        AccessorKey key = new AccessorKey(descriptor, superCallTarget, accessorKind);
 
         // NB should check for property accessor factory first (or change property accessor tracking under propertyAccessorFactory creation)
         if (propertyAccessorFactories.containsKey(key)) {
