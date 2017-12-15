@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.stubs
 
+import com.intellij.psi.util.PsiTreeUtil
 import com.sun.tools.javac.code.BoundKind
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.METHOD_PARAM
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.RETURN_TYPE
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
@@ -124,7 +124,7 @@ class ErrorTypeCorrector(
         val arguments = type.typeArguments
         if (arguments.isEmpty()) return baseExpression
 
-        val typeReference = type.getParentOfType<KtTypeReference>(strict = true)
+        val typeReference = PsiTreeUtil.getParentOfType(type, KtTypeReference::class.java, true)
         val kotlinType = bindingContext[BindingContext.TYPE, typeReference] ?: ErrorUtils.createErrorType("Kapt error type")
 
         val typeMappingMode = when (typeKind) {
