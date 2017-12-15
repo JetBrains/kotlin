@@ -72,7 +72,7 @@ struct ObjCTypeAdapter {
 typedef id (*convertReferenceToObjC)(ObjHeader* obj);
 
 struct TypeInfoObjCExportAddition {
-  convertReferenceToObjC convert;
+  /*convertReferenceToObjC*/ void* convert;
   Class objCClass;
   const ObjCTypeAdapter* typeAdapter;
 };
@@ -100,8 +100,12 @@ inline static void SetAssociatedObject(ObjHeader* obj, id value) {
   *reinterpret_cast<id*>(GetReservedObjectTail(obj)) = value;
 }
 
-extern "C" inline id Kotlin_ObjCExport_GetAssociatedObject(ObjHeader* obj) {
+static inline id GetAssociatedObject(ObjHeader* obj) {
   return *reinterpret_cast<id*>(GetReservedObjectTail(obj));
+}
+
+extern "C" id Kotlin_ObjCExport_GetAssociatedObject(ObjHeader* obj) {
+  return GetAssociatedObject(obj);
 }
 
 inline static OBJ_GETTER(AllocInstanceWithAssociatedObject, const TypeInfo* typeInfo, id associatedObject) {
@@ -199,7 +203,7 @@ static void initializeClass(Class clazz);
 
 extern "C" void Kotlin_ObjCExport_releaseReservedObjectTail(ObjHeader* obj) {
   RuntimeAssert(HasAssociatedObjectField(obj), "");
-  id associatedObject = Kotlin_ObjCExport_GetAssociatedObject(obj);
+  id associatedObject = GetAssociatedObject(obj);
   if (associatedObject != nullptr) {
     [associatedObject releaseAsAssociatedObject];
   }
@@ -483,6 +487,8 @@ struct Block_literal_1 {
     // imported variables
 };
 
+struct Block_literal_1 exportBlockLiteral;
+
 struct Block_descriptor_1 {
     unsigned long int reserved;         // NULL
     unsigned long int size;             // sizeof(struct Block_literal_1)
@@ -571,13 +577,13 @@ extern "C" id Kotlin_ObjCExport_refToObjC(ObjHeader* obj) {
   if (obj == nullptr) return nullptr;
 
   if (HasAssociatedObjectField(obj)) {
-    id associatedObject = Kotlin_ObjCExport_GetAssociatedObject(obj);
+    id associatedObject = GetAssociatedObject(obj);
     if (associatedObject != nullptr) {
       return objc_retainAutoreleaseReturnValue(associatedObject);
     }
   }
 
-  convertReferenceToObjC converter = obj->type_info()->writableInfo_->objCExport.convert;
+  convertReferenceToObjC converter = (convertReferenceToObjC)obj->type_info()->writableInfo_->objCExport.convert;
   if (converter != nullptr) {
     return converter(obj);
   }
@@ -602,7 +608,7 @@ static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj) {
   convertReferenceToObjC converter = nullptr;
 
   for (int i = 0; i < typeInfo->implementedInterfacesCount_; ++i) {
-    converter = typeInfo->implementedInterfaces_[i]->writableInfo_->objCExport.convert;
+    converter = (convertReferenceToObjC)typeInfo->implementedInterfaces_[i]->writableInfo_->objCExport.convert;
     if (converter != nullptr) break;
   }
 
@@ -611,18 +617,18 @@ static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj) {
     converter = (typeInfo == theUnitTypeInfo) ? &Kotlin_ObjCExport_convertUnit : &convertKotlinObject;
   }
 
-  typeInfo->writableInfo_->objCExport.convert = converter;
+  typeInfo->writableInfo_->objCExport.convert = (void*)converter;
 
   return converter(obj);
 }
 
 extern "C" KInt Kotlin_NSArrayList_getSize(ObjHeader* obj) {
-  NSArray* array = (NSArray*) Kotlin_ObjCExport_GetAssociatedObject(obj);
+  NSArray* array = (NSArray*) GetAssociatedObject(obj);
   return [array count];
 }
 
 extern "C" OBJ_GETTER(Kotlin_NSArrayList_getElement, ObjHeader* obj, KInt index) {
-  NSArray* array = (NSArray*) Kotlin_ObjCExport_GetAssociatedObject(obj);
+  NSArray* array = (NSArray*) GetAssociatedObject(obj);
   id element = [array objectAtIndex:index];
   if (element == NSNull.null) RETURN_OBJ(nullptr);
   RETURN_RESULT_OF(Kotlin_ObjCExport_refFromObjC, element);

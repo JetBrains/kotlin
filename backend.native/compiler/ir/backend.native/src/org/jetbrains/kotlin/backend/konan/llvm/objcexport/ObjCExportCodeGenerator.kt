@@ -306,8 +306,12 @@ private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
         objCClass: ConstPointer? = null,
         typeAdapter: ConstPointer? = null
 ) {
+    if (converter != null) {
+        assert(converter.llvmType == pointerType(functionType(int8TypePtr, false, codegen.kObjHeaderPtr)))
+    }
+
     val objCExportAddition = Struct(runtime.typeInfoObjCExportAddition,
-            converter,
+            converter?.bitcast(int8TypePtr),
             objCClass,
             typeAdapter
     )
