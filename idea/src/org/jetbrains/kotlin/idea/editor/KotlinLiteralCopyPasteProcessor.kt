@@ -177,7 +177,8 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
     }
     else if (this.length > 1 && this[0] == '$') {
         val guessedIdentifier = substring(1)
-        KotlinLexer().apply { start(guessedIdentifier) }.tokenType == KtTokens.IDENTIFIER
+        val tokenType = KotlinLexer().apply { start(guessedIdentifier) }.tokenType
+        tokenType == KtTokens.IDENTIFIER || tokenType == KtTokens.THIS_KEYWORD
     }
     else {
         false
@@ -190,7 +191,8 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
         when (lexer.tokenType) {
             KtTokens.SHORT_TEMPLATE_ENTRY_START -> {
                 lexer.advance()
-                return if (lexer.tokenType == KtTokens.IDENTIFIER) {
+                val tokenType = lexer.tokenType
+                return if (tokenType == KtTokens.IDENTIFIER || tokenType == KtTokens.THIS_KEYWORD) {
                     from + lexer.tokenEnd - 1
                 }
                 else {

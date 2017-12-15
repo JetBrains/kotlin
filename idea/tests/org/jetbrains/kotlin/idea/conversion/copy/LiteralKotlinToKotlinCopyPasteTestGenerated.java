@@ -54,6 +54,12 @@ public class LiteralKotlinToKotlinCopyPasteTestGenerated extends AbstractLiteral
         doTest(fileName);
     }
 
+    @TestMetadata("DontEscapeThis.kt")
+    public void testDontEscapeThis() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/literal/DontEscapeThis.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DontUnescapeLiteralWIthCode.kt")
     public void testDontUnescapeLiteralWIthCode() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/literal/DontUnescapeLiteralWIthCode.kt");
