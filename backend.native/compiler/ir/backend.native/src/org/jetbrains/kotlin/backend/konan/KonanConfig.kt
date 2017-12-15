@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 

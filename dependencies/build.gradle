@@ -22,6 +22,7 @@ import groovy.transform.stc.FromString
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import static org.jetbrains.kotlin.konan.target.KonanTarget.*
+import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.*
 import org.jetbrains.kotlin.konan.properties.KonanProperties
 import org.jetbrains.kotlin.konan.properties.*
 
@@ -218,7 +219,7 @@ enum DependencyKind {
     DependencyKind(String name,
             @ClosureParams(value = FromString.class, options = "KonanProperties") Closure<String> dirGetter,
             @ClosureParams(value = FromString.class, options = "KonanTarget") Closure<String> propertyNameGetter =
-                           {target -> "${target.visibleName}${name.capitalize()}Dir"}) {
+                           {target -> "${getVisibleName(target)}${name.capitalize()}Dir"}) {
         this.name = name
         this.dirGetter = dirGetter
         this.propertyNameGetter = propertyNameGetter

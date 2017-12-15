@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.util.*
-import org.jetbrains.kotlin.konan.util.VisibleNamed
+import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 enum class KonanPhase(val description: String,
                       vararg prerequisite: KonanPhase,
                       var enabled: Boolean = true,
-                      var verbose: Boolean = false) : VisibleNamed {
+                      var verbose: Boolean = false) {
     /* */ FRONTEND("Frontend builds AST"),
     /* */ PSI_TO_IR("Psi to IR conversion"),
     /* */ SERIALIZER("Serialize descriptor tree and inline IR bodies"),

@@ -24,7 +24,7 @@ class KonanProject {
     static String DEFAULT_ARTIFACT_NAME = 'main'
     static String DEFAULT_INTEROP_NAME = "stdio"
 
-    static String HOST = TargetManager.host.visibleName
+    static String HOST = TargetManager.hostName
 
     File projectDir
     Path projectPath

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.KonanArtifactWithLibrariesSpec
 import org.jetbrains.kotlin.gradle.plugin.KonanLibrariesSpec
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
 
 internal val Project.host

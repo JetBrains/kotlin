@@ -25,6 +25,7 @@ import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanArtifactWithLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
 
 open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val project: Project) {

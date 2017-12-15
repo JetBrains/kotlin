@@ -20,6 +20,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.util.visibleName
 
 enum class Produce(val cliOption: String, val kind: CompilerOutputKind) {
     PROGRAM("program", CompilerOutputKind.PROGRAM),

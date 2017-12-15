@@ -21,8 +21,7 @@ import org.gradle.api.GradleScriptException
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
-import org.jetbrains.kotlin.konan.util.DependencySource
+import org.jetbrains.kotlin.konan.util.*
 import java.io.File
 import java.io.IOException
 

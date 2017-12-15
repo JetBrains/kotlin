@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.konan.util.VisibleNamed
+import org.jetbrains.kotlin.konan.util.visibleName
 
-enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSuffix: String) : VisibleNamed {
+enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSuffix: String) {
     OSX     ("kexe", "lib", "dylib"),
     IOS     ("kexe", "lib", "dylib"),
     LINUX   ("kexe", "lib", "so"   ),
@@ -27,7 +27,7 @@ enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSu
     WASM    ("wasm", ""   , "wasm" )
 }
 
-enum class Architecture(val bitness: Int) : VisibleNamed {
+enum class Architecture(val bitness: Int) {
     X64(64),
     ARM64(64),
     ARM32(32),
@@ -36,7 +36,7 @@ enum class Architecture(val bitness: Int) : VisibleNamed {
     WASM32(32);
 }
 
-enum class KonanTarget(val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) : VisibleNamed {
+enum class KonanTarget(val family: Family, val architecture: Architecture, val detailedName: String, var enabled: Boolean = false) {
     ANDROID_ARM32(  Family.ANDROID,     Architecture.ARM32,     "android_arm32"),
     ANDROID_ARM64(  Family.ANDROID,     Architecture.ARM64,     "android_arm64"),
     IPHONE(         Family.IOS,         Architecture.ARM64,     "ios"),
@@ -53,7 +53,7 @@ enum class KonanTarget(val family: Family, val architecture: Architecture, val d
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
     if (target == host) host.detailedName else "${host.detailedName}-${target.detailedName}"
 
-enum class CompilerOutputKind: VisibleNamed {
+enum class CompilerOutputKind {
     PROGRAM {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.exeSuffix}"
     },

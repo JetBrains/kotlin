@@ -17,6 +17,7 @@ import groovy.io.FileType
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.util.*
+import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.*
 
 defaultTasks 'clean', 'dist'
 
@@ -65,7 +66,7 @@ allprojects {
 
 void setupHostAndTarget() {
     ext.hostName = TargetManager.hostName
-    ext.targetList = TargetManager.enabled*.visibleName as List
+    ext.targetList = TargetManager.enabled.collect { getVisibleName(it) } as List
 }
 
 void setupClang(Project project) {
@@ -337,7 +338,7 @@ private ArrayList<DefFile> targetDefFiles(String target) {
 }
 
 private String targetToPlatform(String target) {
-    new TargetManager(target).target.family.visibleName
+    getVisibleName(new TargetManager(target).target.family)
 }
 
 private String targetToOs(String target) {

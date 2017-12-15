@@ -20,6 +20,7 @@ import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.model.KonanArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModel
+import org.jetbrains.kotlin.konan.util.visibleName
 
 object KonanToolingModelBuilder : ToolingModelBuilder {
     override fun canBuild(modelName: String): Boolean = KonanModel::class.java.name == modelName

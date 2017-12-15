@@ -22,6 +22,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.properties.*
+import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.*
 
 import java.util.regex.Pattern
 
@@ -109,7 +110,7 @@ abstract class KonanTest extends JavaExec {
                     *moreArgs,
                     *project.globalTestArgs]
             if (project.testTarget) {
-                args "-target", target.visibleName
+                args "-target", getVisibleName(target)
             }
             if (enableKonanAssertions) {
                 args "-ea"
@@ -447,7 +448,7 @@ class RunDriverKonanTest extends KonanTest {
                     *moreArgs,
                     *project.globalTestArgs]
             if (project.testTarget) {
-                args "-target", target.visibleName
+                args "-target", getVisibleName(target)
             }
             if (enableKonanAssertions) {
                 args "-ea"
@@ -469,7 +470,7 @@ class RunInteropKonanTest extends KonanTest {
     void setInterop(String value) {
         this.interop = value
         this.interopConf = project.kotlinNativeInterop[value]
-        this.interopConf.target = target.visibleName
+        this.interopConf.target = getVisibleName(target)
         this.dependsOn(this.interopConf.genTask)
     }
 
