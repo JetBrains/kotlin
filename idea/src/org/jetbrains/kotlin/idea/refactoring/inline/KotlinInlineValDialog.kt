@@ -18,33 +18,27 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.refactoring.JavaRefactoringSettings
-import com.intellij.refactoring.inline.InlineOptionsDialog
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtProperty
 
 class KotlinInlineValDialog(
-        private val property: KtProperty,
-        private val reference: KtSimpleNameReference?,
+        property: KtProperty,
+        reference: KtSimpleNameReference?,
         private val replacementStrategy: UsageReplacementStrategy,
         private val assignmentToDelete: KtBinaryExpression?,
         withPreview: Boolean = true
-) : InlineOptionsDialog(property.project, true, property) {
+) : AbstractKotlinInlineDialog(property, reference) {
 
-    private var occurrenceCount = initOccurrencesNumber(property)
+    private val isLocal = (callable as KtProperty).isLocal
 
-    private val kind = if (property.isLocal) "local variable" else "property"
-
-    private val refactoringName = "Inline ${StringUtil.capitalizeWords(kind, true)}"
+    private val simpleLocal = isLocal && (reference == null || occurrencesNumber == 1)
 
     init {
-        myInvokedOnReference = reference != null
-        title = refactoringName
         setPreviewResults(withPreview && shouldBeShown())
-        if (forSimpleLocal()) {
+        if (simpleLocal) {
             setDoNotAskOption(object : DialogWrapper.DoNotAskOption {
                 override fun isToBeShown() = EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog
 
@@ -62,34 +56,13 @@ class KotlinInlineValDialog(
         init()
     }
 
-    private fun forSimpleLocal() = property.isLocal && (reference == null || occurrenceCount == 1)
-
-    fun shouldBeShown() = !forSimpleLocal() || EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog
-
-    override fun allowInlineAll() = true
-
-    override fun getBorderTitle() = refactoringName
-
-    override fun getNameLabelText() = "${kind.capitalize()} ${property.name}"
-
-    private val occurrencesString get() = if (occurrenceCount >= 0) {
-        " (" + occurrenceCount + " occurrence" + (if (occurrenceCount == 1) ")" else "s)")
-    } else ""
-
-    override fun getInlineAllText() =
-            "Inline all references and remove the $kind" + occurrencesString
-
-    override fun getKeepTheDeclarationText(): String? =
-            if (property.isWritable) "Inline all references and keep the $kind" + occurrencesString
-            else super.getKeepTheDeclarationText()
+    fun shouldBeShown() = !simpleLocal || EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog
 
     override fun isInlineThis() = JavaRefactoringSettings.getInstance().INLINE_LOCAL_THIS
 
-    override fun getInlineThisText() = "Inline this occurrence and leave the $kind"
-
     public override fun doAction() {
         invokeRefactoring(
-                KotlinInlineCallableProcessor(project, replacementStrategy, property, reference,
+                KotlinInlineCallableProcessor(project, replacementStrategy, callable, reference,
                                               inlineThisOnly = isInlineThisOnly,
                                               deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration,
                                               statementToDelete = assignmentToDelete)
