@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.text.VersionComparatorUtil
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.setApiVersionToLanguageVersionIfNeeded
 import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION
 import org.jetbrains.kotlin.config.detectVersionAutoAdvance
 import org.jetbrains.kotlin.config.dropVersionsIfNecessary
@@ -41,10 +42,7 @@ class KotlinCommonCompilerArgumentsHolder(project: Project) : BaseKotlinCompiler
 
         update {
             // To fix earlier configurations with incorrect combination of language and API version
-            if (VersionComparatorUtil.compare(languageVersion, apiVersion) < 0) {
-                apiVersion = languageVersion
-            }
-
+            setApiVersionToLanguageVersionIfNeeded()
             detectVersionAutoAdvance()
         }
     }
