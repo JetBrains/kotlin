@@ -21,7 +21,7 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
 }
 
 public final class test/Foo : java/lang/Object, android/os/Parcelable {
-    public final static test.Foo$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     private final android.os.Parcelable parcelable
 
@@ -29,7 +29,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, Ltest/Foo$Creator;)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 

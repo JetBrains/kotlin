@@ -144,7 +144,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 iv.anew(creatorType)
                 iv.dup()
                 iv.invokespecial(creatorName, "<init>", "()V", false)
-                iv.putstatic(parcelableName, "CREATOR", creatorType.descriptor)
+                iv.putstatic(parcelableName, "CREATOR", "Landroid/os/Parcelable\$Creator;")
             }
 
             super.visitInsn(opcode)

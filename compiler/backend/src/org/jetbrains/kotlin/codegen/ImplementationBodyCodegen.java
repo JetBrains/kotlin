@@ -384,10 +384,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (context.closure != null)
             genClosureFields(context.closure, v, typeMapper);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
-
         for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Companion.getInstances(state.getProject())) {
-            extension.generateClassSyntheticParts(this);
+            if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES
+                || extension.getShouldGenerateClassSyntheticPartsInLightClassesMode()
+            ) {
+                extension.generateClassSyntheticParts(this);
+            }
         }
     }
 

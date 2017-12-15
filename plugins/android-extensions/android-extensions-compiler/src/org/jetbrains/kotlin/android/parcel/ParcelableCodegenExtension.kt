@@ -1,3 +1,5 @@
+
+package org.jetbrains.kotlin.android.parcel
 /*
  * Copyright 2010-2017 JetBrains s.r.o.
  *
@@ -14,10 +16,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.android.parcel
-
 import kotlinx.android.parcel.TypeParceler
 import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension.Companion.createMethod
+import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.*
 import org.jetbrains.kotlin.android.parcel.serializers.*
 import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -57,9 +58,13 @@ import java.io.FileDescriptor
 open class ParcelableCodegenExtension : ExpressionCodegenExtension {
     private companion object {
         private val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
+        private val CREATOR_NAME = Name.identifier("CREATOR")
     }
 
     protected open fun isExperimental(element: KtElement) = true
+
+    override val shouldGenerateClassSyntheticPartsInLightClassesMode: Boolean
+        get() = true
 
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {
         val parcelableClass = codegen.descriptor
@@ -68,24 +73,60 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         val sourceElement = (codegen.myClass as? KtClassOrObject) ?: return
         if (!isExperimental(sourceElement)) return
 
-        assert(parcelableClass.kind == ClassKind.CLASS || parcelableClass.kind == ClassKind.OBJECT)
+        if (parcelableClass.kind != ClassKind.CLASS && parcelableClass.kind != ClassKind.OBJECT) return
 
         val propertiesToSerialize = getPropertiesToSerialize(codegen, parcelableClass)
-
-        val parcelClassType = ParcelableResolveExtension.resolveParcelClassType(parcelableClass.module)
-        val parcelAsmType = codegen.typeMapper.mapType(parcelClassType)
 
         val parcelerObject = parcelableClass.companionObjectDescriptor?.takeIf {
             TypeUtils.getAllSupertypes(it.defaultType).any { it.isParceler }
         }
 
         with (parcelableClass) {
-            writeDescribeContentsFunction(codegen, propertiesToSerialize)
-            writeWriteToParcel(codegen, propertiesToSerialize, parcelAsmType, parcelerObject)
+            if (hasSyntheticDescribeContents()) {
+                writeDescribeContentsFunction(codegen, propertiesToSerialize)
+            }
+
+            if (hasSyntheticWriteToParcel()) {
+                writeWriteToParcel(codegen, propertiesToSerialize, PARCEL_TYPE, parcelerObject)
+            }
+
+            if (!hasCreatorField()) {
+                writeCreatorAccessField(codegen)
+            }
         }
 
-        writeCreatorAccessField(codegen, parcelableClass)
-        writeCreatorClass(codegen, parcelableClass, parcelClassType, parcelAsmType, parcelerObject, propertiesToSerialize)
+        if (codegen.state.classBuilderMode != ClassBuilderMode.LIGHT_CLASSES) {
+            val parcelClassType = ParcelableResolveExtension.resolveParcelClassType(parcelableClass.module)
+                                  ?: error("Can't resolve 'android.os.Parcel' class")
+
+            writeCreatorClass(codegen, parcelableClass, parcelClassType, PARCEL_TYPE, parcelerObject, propertiesToSerialize)
+        }
+    }
+
+    private fun ClassDescriptor.hasCreatorField(): Boolean {
+        val companionObject = companionObjectDescriptor ?: return false
+
+        if (companionObject.name == CREATOR_NAME) {
+            return true
+        }
+
+        return companionObject.unsubstitutedMemberScope
+                .getContributedVariables(CREATOR_NAME, NoLookupLocation.FROM_BACKEND)
+                .isNotEmpty()
+    }
+
+    private fun ClassDescriptor.hasSyntheticDescribeContents() = hasParcelizeSyntheticMethod(ComponentKind.DESCRIBE_CONTENTS)
+
+    private fun ClassDescriptor.hasSyntheticWriteToParcel() = hasParcelizeSyntheticMethod(ComponentKind.WRITE_TO_PARCEL)
+
+    private fun ClassDescriptor.hasParcelizeSyntheticMethod(componentKind: ParcelableSyntheticComponent.ComponentKind): Boolean {
+        val methodName = Name.identifier(componentKind.methodName)
+
+        val writeToParcelMethods = unsubstitutedMemberScope
+                .getContributedFunctions(methodName, NoLookupLocation.FROM_BACKEND)
+                .filter { it is ParcelableSyntheticComponent && it.componentKind == componentKind }
+
+        return writeToParcelMethods.size == 1
     }
 
     private fun getCompanionClassType(containerAsmType: Type, parcelerObject: ClassDescriptor): Pair<Type, String> {
@@ -166,11 +207,10 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
             codegen: ImplementationBodyCodegen,
             parcelableClass: ClassDescriptor
     ): List<PropertyToSerialize> {
-        val constructor = parcelableClass.constructors.first { it.isPrimary }
+        val constructor = parcelableClass.constructors.firstOrNull { it.isPrimary } ?: return emptyList()
 
-        val propertiesToSerialize = constructor.valueParameters.map { param ->
+        val propertiesToSerialize = constructor.valueParameters.mapNotNull { param ->
             codegen.bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, param]
-            ?: error("Value parameter should have 'val' or 'var' keyword")
         }
 
         val classParcelers = getTypeParcelers(parcelableClass.annotations)
@@ -228,12 +268,11 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         }
     }
 
-    private fun writeCreatorAccessField(codegen: ImplementationBodyCodegen, parcelableClass: ClassDescriptor) {
-        val parcelableAsmType = codegen.typeMapper.mapType(parcelableClass.defaultType)
-        val creatorAsmType = Type.getObjectType(parcelableAsmType.internalName + "\$Creator")
+    private fun writeCreatorAccessField(codegen: ImplementationBodyCodegen) {
+        val creatorType = Type.getObjectType("android/os/Parcelable\$Creator")
 
         codegen.v.newField(JvmDeclarationOrigin.NO_ORIGIN, ACC_STATIC or ACC_PUBLIC or ACC_FINAL, "CREATOR",
-                           creatorAsmType.descriptor, null, null)
+                           creatorType.descriptor, null, null)
     }
 
     private fun writeCreatorClass(

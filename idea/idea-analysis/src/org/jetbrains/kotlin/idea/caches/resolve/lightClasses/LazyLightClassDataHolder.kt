@@ -95,7 +95,7 @@ sealed class LazyLightClassDataHolder(
             if (dummyDelegate == null) return KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)
 
             return dummyDelegate!!.fields.map { dummyField ->
-                val fieldOrigin = KtLightFieldImpl.getOrigin(dummyField)!!
+                val fieldOrigin = KtLightFieldImpl.getOrigin(dummyField)
 
                 val fieldName = dummyField.name!!
                 KtLightFieldImpl.lazy(dummyField, fieldOrigin, containingClass) {

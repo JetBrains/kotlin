@@ -19,7 +19,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
-    public final static User$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     public final static User$Companion Companion
 
@@ -42,7 +42,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (User$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, LUser$Creator;)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
