@@ -539,7 +539,6 @@
                         <file file="@{download.dir.intellij-core}/annotations.jar"/>
                         <file file="@{download.dir.intellij-core}/guava-21.0.jar"/>
                         <file file="@{download.dir.intellij-core}/picocontainer.jar"/>
-                        <file file="@{download.dir.intellij-core}/trove4j.jar"/>
 
                         <file file="@{idea.dir}/lib/jdom.jar"/>
                         <file file="@{idea.dir}/lib/jna.jar"/>
@@ -549,6 +548,7 @@
                         <file file="@{idea.dir}/lib/asm-all.jar"/>
                         <file file="@{idea.dir}/lib/snappy-in-java-0.5.1.jar"/>
                         <file file="@{idea.dir}/lib/streamex-0.6.5.jar"/>
+                        <file file="@{idea.dir}/lib/trove4j.jar"/>
 
                         <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
                         <file file="@{idea.dir}/lib/util.jar"/>
@@ -568,7 +568,6 @@
                         <file file="@{download.dir.jps-standalone}/jps-model.jar"/>
                         <file file="@{download.dir.jps-standalone}/log4j.jar"/>
                         <file file="@{download.dir.jps-standalone}/nanoxml-2.2.3.jar"/>
-                        <file file="@{download.dir.jps-standalone}/trove4j.jar"/>
                         <file file="@{download.dir.jps-standalone}/ui-designer-jps-plugin.jar"/>
                         <file file="@{download.dir.jps-standalone}/util.jar"/>
                     </resources>
