@@ -1,3 +1,4 @@
 // PROBLEM: none
 
-val <caret>withGetter = 42 get() = field
+val <caret>withGetter = 42
+    get() = field
