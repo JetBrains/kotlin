@@ -111,7 +111,7 @@ object KotlinJavascriptSerializationUtil {
 
         importedModules.forEach { builder.addImportedModule(it) }
 
-        for (fqName in getPackagesFqNames(module)) {
+        for (fqName in getPackagesFqNames(module).sortedBy { it.asString() }) {
             val fragment = serializePackageFragment(bindingContext, module, fqName)
             if (!fragment.isEmpty()) {
                 builder.addPackageFragment(fragment)
