@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jps.model
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.setApiVersionToLanguageVersionIfNeeded
 import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 
@@ -26,9 +27,7 @@ internal class KotlinCommonCompilerArgumentsSerializer : BaseJpsCompilerSettings
         KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION, CommonCompilerArguments::DummyImpl
 ) {
     override fun onLoad(project: JpsProject, settings: CommonCompilerArguments.DummyImpl) {
-        if (VersionComparatorUtil.compare(settings.languageVersion, settings.apiVersion) < 0) {
-            settings.apiVersion = settings.languageVersion
-        }
+        settings.setApiVersionToLanguageVersionIfNeeded()
         JpsKotlinCompilerSettings.setCommonCompilerArguments(project, settings)
     }
 }

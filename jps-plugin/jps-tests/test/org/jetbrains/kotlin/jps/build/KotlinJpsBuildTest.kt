@@ -638,6 +638,19 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesNotExistInOutput(myProject.modules.get(0), "_DefaultPackage.class")
     }
 
+    fun testDefaultLanguageVersionCustomApiVersion() {
+        initProject(JVM_FULL_RUNTIME)
+        buildAllModules().assertFailed()
+
+        assertEquals(1, myProject.modules.size)
+        val module = myProject.modules.first()
+        val args = JpsKotlinCompilerSettings.getCommonCompilerArguments(module)
+        args.apiVersion = "1.2"
+        JpsKotlinCompilerSettings.setCommonCompilerArguments(myProject, args)
+
+        buildAllModules().assertSuccessful()
+    }
+
     fun testKotlinJavaProject() {
         doTestWithRuntime()
     }
