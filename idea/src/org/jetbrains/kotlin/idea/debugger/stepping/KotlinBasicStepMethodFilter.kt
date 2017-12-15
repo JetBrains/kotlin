@@ -22,6 +22,7 @@ import com.intellij.util.Range
 import com.intellij.util.SofterReference
 import com.sun.jdi.Location
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.codegen.SamCodegenUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -44,7 +45,9 @@ class KotlinBasicStepMethodFilter(
         else -> targetDescriptor.name.asString()
     }
 
-    private val _targetDescriptor = SofterReference(targetDescriptor)
+    private val _targetDescriptor = SofterReference(
+            (targetDescriptor as? FunctionDescriptor)?.let { SamCodegenUtil.getOriginalIfSamAdapter(it) } ?: targetDescriptor
+    )
 
     override fun getCallingExpressionLines() = myCallingExpressionLines
 

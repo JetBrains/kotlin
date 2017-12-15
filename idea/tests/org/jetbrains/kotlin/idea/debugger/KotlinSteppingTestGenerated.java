@@ -74,6 +74,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("kotlinSamFunction.kt")
+        public void testKotlinSamFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto/kotlinSamFunction.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("memberFunFromClass.kt")
         public void testMemberFunFromClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto/memberFunFromClass.kt");
@@ -170,6 +176,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("javaSamFunction.kt")
         public void testJavaSamFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto/javaSamFunction.kt");
+            doSmartStepIntoTest(fileName);
+        }
+
+        @TestMetadata("kotlinSamFunction.kt")
+        public void testKotlinSamFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto/kotlinSamFunction.kt");
             doSmartStepIntoTest(fileName);
         }
 
