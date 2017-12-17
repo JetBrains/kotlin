@@ -21,35 +21,44 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType.LIKE_UNUSED_SYMBOL
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.LanguageFeature.CallableReferencesToClassMembersWithEmptyLHS
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 
 class ExplicitThisInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : KtVisitorVoid() {
+        override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression) {
+            if (!expression.languageVersionSettings.supportsFeature(CallableReferencesToClassMembersWithEmptyLHS)) return
+
+            val thisExpression = expression.receiverExpression as? KtThisExpression ?: return
+            val selectorExpression = expression.callableReference
+
+            handle(expression, thisExpression, selectorExpression)
+        }
+
         override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
             val thisExpression = expression.receiverExpression as? KtThisExpression ?: return
+            val selectorExpression = expression.selectorExpression as? KtReferenceExpression ?: return
 
+            handle(expression, thisExpression, selectorExpression)
+        }
+
+        private fun handle(expression: KtExpression, thisExpression: KtThisExpression, reference: KtReferenceExpression) {
             val context = expression.analyze()
             val scope = expression.getResolutionScope(context) ?: return
 
-            val selectorExpression = expression.selectorExpression as? KtReferenceExpression ?: return
-            val referenceExpression = selectorExpression as? KtNameReferenceExpression
-                                      ?: selectorExpression.getChildOfType()
+            val referenceExpression = reference as? KtNameReferenceExpression
+                                      ?: reference.getChildOfType()
                                       ?: return
 
-            val scopeFunction = when (selectorExpression) {
-                is KtNameReferenceExpression -> LexicalScope::getAllAccessibleVariables
-                is KtCallExpression -> LexicalScope::getAllAccessibleFunctions
-                else -> return
-            }
-
             //we avoid overload-related problems by enforcing that there is only one candidate
-            val candidates = scopeFunction(scope, referenceExpression.getReferencedNameAsName())
+            val name = referenceExpression.getReferencedNameAsName()
+            val candidates = scope.getAllAccessibleVariables(name) + scope.getAllAccessibleFunctions(name)
             if (candidates.size != 1) return
 
 
@@ -73,8 +82,12 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val thisExpression = descriptor.psiElement as? KtThisExpression ?: return
-            val parent = thisExpression.parent as? KtDotQualifiedExpression ?: return
-            parent.replace(parent.selectorExpression ?: return)
+            val parent = thisExpression.parent
+
+            when (parent) {
+                is KtDotQualifiedExpression -> parent.replace(parent.selectorExpression ?: return)
+                is KtCallableReferenceExpression -> thisExpression.delete()
+            }
         }
     }
 }
