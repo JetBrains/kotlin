@@ -30,24 +30,37 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class ImplicitThisInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : KtVisitorVoid() {
+
+        override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression) {
+            if (expression.receiverExpression != null) return
+
+            handle(expression, expression.callableReference, ::CallableReferenceFix)
+        }
+
         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
             if (expression !is KtNameReferenceExpression) return
             if (expression.parent is KtThisExpression) return
+            if (expression.parent is KtCallableReferenceExpression) return
             if (expression.isSelectorOfDotQualifiedExpression()) return
             val parent = expression.parent
             if (parent is KtCallExpression && parent.isSelectorOfDotQualifiedExpression()) return
 
-            val context = expression.analyze()
-            val scope = expression.getResolutionScope(context) ?: return
+            handle(expression, expression, ::CallFix)
+        }
 
-            val descriptor = context[BindingContext.REFERENCE_TARGET, expression] as? CallableDescriptor ?: return
+        private fun handle(expression: KtExpression, reference: KtReferenceExpression, fixFactory: (String) -> LocalQuickFix) {
+            val context = reference.analyze()
+            val scope = reference.getResolutionScope(context) ?: return
+
+            val descriptor = context[BindingContext.REFERENCE_TARGET, reference] as? CallableDescriptor ?: return
             val receiverDescriptor = descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter ?: return
             val receiverType = receiverDescriptor.type
 
             val expressionFactory = scope.getFactoryForImplicitReceiverWithSubtypeOf(receiverType) ?: return
             val receiverText = if (expressionFactory.isImmediate) "this" else expressionFactory.expressionText
 
-            holder.registerProblem(expression, "Add explicit '$receiverText'", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, Fix(receiverText))
+            val fix = fixFactory(receiverText)
+            holder.registerProblem(expression, "Add explicit '$receiverText'", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fix)
         }
 
         private fun KtExpression.isSelectorOfDotQualifiedExpression(): Boolean {
@@ -56,7 +69,7 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class Fix(private val receiverText: String) : LocalQuickFix {
+    private class CallFix(private val receiverText: String) : LocalQuickFix {
         override fun getFamilyName() = "Add explicit '$receiverText'"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
@@ -65,6 +78,18 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
             val call = expression.parent as? KtCallExpression ?: expression
 
             call.replace(factory.createExpressionByPattern("$0.$1", receiverText, call))
+        }
+    }
+
+    private class CallableReferenceFix(private val receiverText: String) : LocalQuickFix {
+        override fun getFamilyName() = "Add explicit '$receiverText'"
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val expression = descriptor.psiElement as? KtCallableReferenceExpression ?: return
+            val factory = KtPsiFactory(project)
+            val reference = expression.callableReference
+
+            expression.replace(factory.createExpressionByPattern("$0::$1", receiverText, reference))
         }
     }
 }
