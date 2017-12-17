@@ -247,15 +247,22 @@ private fun findFilesByGlobs(roots: List<Path>, globs: List<String>): Map<Path, 
 
     val pathMatchers = globs.map { FileSystems.getDefault().getPathMatcher("glob:$it") }
 
-    roots.reversed().forEach { root ->
-        // TODO: don't scan the entire tree, skip subdirectories according to globs.
-        Files.walk(root, FileVisitOption.FOLLOW_LINKS).forEach { path ->
-            val relativePath = root.relativize(path)
-            if (!Files.isDirectory(path) && pathMatchers.any { it.matches(relativePath) }) {
-                relativeToRoot[relativePath] = root
+    roots.reversed()
+            .filter { path ->
+                return@filter when {
+                    path.toFile().exists() -> true
+                    else -> { warn("$path doesn't exist"); false }
+                }
             }
-        }
-    }
+            .forEach { root ->
+                // TODO: don't scan the entire tree, skip subdirectories according to globs.
+                Files.walk(root, FileVisitOption.FOLLOW_LINKS).forEach { path ->
+                    val relativePath = root.relativize(path)
+                    if (!Files.isDirectory(path) && pathMatchers.any { it.matches(relativePath) }) {
+                        relativeToRoot[relativePath] = root
+                    }
+                }
+            }
     return relativeToRoot
 }
 
