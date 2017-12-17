@@ -26,7 +26,8 @@ enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSu
     LINUX   ("kexe", "lib", "so"   ),
     WINDOWS ("exe" , ""   , "dll"  ),
     ANDROID ("so"  , "lib", "so"   ),
-    WASM    ("wasm", ""   , "wasm" )
+    WASM    ("wasm", ""   , "wasm" ),
+    ZEPHYR  ("o"   , "lib", "a"    )
 }
 
 enum class Architecture(val bitness: Int) {
@@ -50,6 +51,8 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
     object LINUX_MIPS32 :   KonanTarget( "linux_mips32",    Family.LINUX,       Architecture.MIPS32,    "linux_mips32")
     object LINUX_MIPSEL32 : KonanTarget( "linux_mipsel32",  Family.LINUX,       Architecture.MIPSEL32,  "linux_mipsel32")
     object WASM32 :         KonanTarget( "wasm32",          Family.WASM,        Architecture.WASM32,    "wasm32")
+    // Tunable targets
+    class ZEPHYR(val subName: String) : KonanTarget("$zephyr_$subName", Family.ZEPHYR, Architecture.ARM32, "$zephyr_$subName")
 
     companion object {
         protected val memberObjects = mutableListOf<KonanTarget>()
@@ -58,6 +61,12 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
 
     init {
        memberObjects.add(this)
+    }
+
+    fun generateZephyrTargets(subtargets: List<String>) {
+        subtargets.forEach {
+            object : ZEPHYR(it) 
+        }
     }
 }
 
@@ -179,12 +188,13 @@ class TargetManager(val userRequest: String? = null) {
             when (host) {
                 KonanTarget.LINUX   -> {
                     KonanTarget.LINUX.enabled = true
-                    KonanTarget.RASPBERRYPI.enabled = true
+                    /*KonanTarget.RASPBERRYPI.enabled = true
                     KonanTarget.LINUX_MIPS32.enabled = true
                     KonanTarget.LINUX_MIPSEL32.enabled = true
                     KonanTarget.ANDROID_ARM32.enabled = true
                     KonanTarget.ANDROID_ARM64.enabled = true
-                    KonanTarget.WASM32.enabled = true
+                    KonanTarget.WASM32.enabled = true*/
+                    KonanTarget.ZEPHYR.enabled = true
                 }
                 KonanTarget.MINGW -> {
                     KonanTarget.MINGW.enabled = true

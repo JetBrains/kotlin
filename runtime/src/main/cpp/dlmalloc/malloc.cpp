@@ -525,13 +525,13 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 
 /**** Start of Konan-specific dlmalloc configuration. ****/
 #define USE_DL_PREFIX 1
-#if KONAN_WASM
+#if KONAN_WASM || __ZEPHYR__
 #define USE_LOCKS 0
 #define LACKS_TIME_H 1
 #define NO_MALLOC_STATS 1
-#define HAVE_MMAP 0 // don't try to allocate large chunks of memory using mmap(). 
+#define HAVE_MMAP 0 // don't try to allocate large chunks of memory using mmap().
                     // It will go to malloc->calloc->sbrk->morecore chain anyways.
-#else 
+#else
 #define USE_LOCKS 1
 #endif
 #define DLMALLOC_EXPORT extern "C"

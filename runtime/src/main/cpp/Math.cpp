@@ -27,7 +27,7 @@
 #define KONAN_NEED_ASINH_ACOSH 0
 #endif
 
-#ifdef KONAN_WASM
+#if KONAN_WASM || __ZEPHYR__
 #define KONAN_NO_MATH 1
 #else
 #define KONAN_NO_MATH 0

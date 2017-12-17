@@ -285,6 +285,25 @@ open class WasmLinker(targetProperties: WasmConfigurables)
     }
 }
 
+open class ZephyrLinker(targetProperties: ZephyrConfigurables)
+    : LinkerFlags(targetProperties), ZephyrConfigurables by targetProperties {
+
+    private val linker = "$targetToolchain/bin/ld"
+
+    override val useCompilerDriverAsLinker: Boolean get() = false
+
+    override fun filterStaticLibraries(binaries: List<String>)
+        = emptyList<String>()
+
+    override fun linkCommand(objectFiles: List<ObjectFile>, executable: ExecutableFile, optimize: Boolean, debug: Boolean, dynamic: Boolean): Command {
+        return Command(linker).apply {
+            + listOf("-r", "--gc-sections", "--entry", "main")
+            + listOf("-o", executable)
+            + objectFiles
+        }
+    }
+}
+
 fun linker(configurables: Configurables): LinkerFlags  =
     when (configurables.target) {
         KonanTarget.LINUX, KonanTarget.RASPBERRYPI ->

@@ -34,7 +34,7 @@
 
 #include "Porting.h"
 
-#ifdef KONAN_WASM
+#if KONAN_WASM || __ZEPHYR__
 extern "C" void Konan_abort(const char*);
 extern "C" void Konan_exit(int32_t status);
 #endif
@@ -124,7 +124,7 @@ static void onThreadExitInit() {
 
 void onThreadExit(void (*destructor)()) {
 #if KONAN_NO_THREADS
-#ifdef KONAN_WASM
+#if KONAN_WASM || __ZEPHYR__
   // No way to do that.
 #else
 #error "How to do onThreadExit()?"
@@ -145,7 +145,7 @@ void abort() {
   ::abort();
 }
 
-#ifdef KONAN_WASM
+#if KONAN_WASM || __ZEPHYR__
 void exit(int32_t status) {
   Konan_exit(status);
 }
@@ -159,7 +159,7 @@ void exit(int32_t status) {
 // memcpy/memmove are not here intentionally, as frequently implemented/optimized
 // by C compiler.
 void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLen) {
-#if KONAN_WINDOWS || KONAN_WASM
+#if KONAN_WINDOWS || KONAN_WASM || __ZEPHYR__
   for (size_t i = 0; i + littleLen <= bigLen; ++i) {
     void* pos = ((char*)big) + i;
     if (::memcmp(little, pos, littleLen) == 0) return pos;
@@ -180,9 +180,11 @@ int snprintf(char* buffer, size_t size, const char* format, ...) {
   return rv;
 }
 
+#if !__ZEPHYR__
 size_t strnlen(const char* buffer, size_t maxSize) {
   return ::strnlen(buffer, maxSize);
 }
+#endif
 
 // Memory operations.
 #if KONAN_INTERNAL_DLMALLOC
@@ -241,7 +243,7 @@ uint64_t getTimeMicros() {
 #if KONAN_INTERNAL_DLMALLOC
 // This function is being called when memory allocator needs more RAM.
 
-#ifdef KONAN_WASM
+#if KONAN_WASM || __ZEPHYR__
 
 // This one is an interface to query module.env.memory.buffer.byteLength
 extern "C" unsigned long Konan_heap_upper();
@@ -302,7 +304,7 @@ long getpagesize() {
 }  // namespace konan
 
 extern "C" {
-#ifdef KONAN_WASM
+#if KONAN_WASM || __ZEPHYR__
 
     // TODO: get rid of these.
     void _ZNKSt3__220__vector_base_commonILb1EE20__throw_length_errorEv(void) {
@@ -399,4 +401,60 @@ extern "C" {
     }
 #endif
 
+#if __ZEPHYR__
+
+    /* Support the alias for the __aeabi_memcpy which may
+       assume memory alignment.  */
+    void __aeabi_memcpy4 (void *dest, const void *source, size_t n)
+        __attribute__ ((alias ("memcpy")));
+
+    void __aeabi_memcpy8 (void *dest, const void *source, size_t n)
+        __attribute__ ((alias ("memcpy")));
+
+    void __aeabi_memcpy (void *dest, const void *source, size_t n)
+        __attribute__ ((alias ("memcpy")));
+
+    /* Support the alias for the __aeabi_memmove which may
+       assume memory alignment.  */
+    void __aeabi_memmove4 (void *dest, const void *source, size_t n)
+        __attribute__ ((alias ("memmove")));
+
+    void __aeabi_memmove8 (void *dest, const void *source, size_t n)
+        __attribute__ ((alias ("memmove")));
+
+    void __aeabi_memmove (void *dest, const void *source, size_t n)
+        __attribute__ ((alias ("memmove")));
+
+    /* Support the alias for the __aeabi_memset which may
+       assume memory alignment.  */
+    void __aeabi_memset4 (void *dest, size_t n, int c)
+        __attribute__ ((alias ("__aeabi_memset")));
+
+    void __aeabi_memset8 (void *dest, size_t n, int c)
+        __attribute__ ((alias ("__aeabi_memset")));
+
+    /* Support the routine __aeabi_memset.  Can't alias to memset
+       because it's not defined in the same translation unit.  */
+    void __aeabi_memset (void *dest, size_t n, int c)
+    {
+      /*Note that relative to ANSI memset, __aeabi_memset hase the order
+        of its second and third arguments reversed.  */
+      memset (dest, c, n);
+    }
+
+    /* Support the alias for the __aeabi_memclr which may
+       assume memory alignment.  */
+    void __aeabi_memclr4 (void *dest, size_t n)
+        __attribute__ ((alias ("__aeabi_memclr")));
+
+    void __aeabi_memclr8 (void *dest, size_t n)
+        __attribute__ ((alias ("__aeabi_memclr")));
+
+    /* Support the routine __aeabi_memclr.  */
+    void __aeabi_memclr (void *dest, size_t n)
+    {
+      __aeabi_memset (dest, n, 0);
+    }
+
+#endif
 }

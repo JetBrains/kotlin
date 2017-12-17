@@ -19,7 +19,7 @@
 
 #include <stdlib.h>
 
-#if KONAN_WASM && !defined(assert)
+#if (KONAN_WASM || __ZEPHYR__) && !defined(assert)
 // assert() is needed by WASM STL.
 #define assert(cond) if (!(cond)) abort()
 #endif
