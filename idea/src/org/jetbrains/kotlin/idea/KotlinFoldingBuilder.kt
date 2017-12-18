@@ -82,7 +82,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         return type == KtNodeTypes.FUNCTION_LITERAL ||
                (type == KtNodeTypes.BLOCK && parentType != KtNodeTypes.FUNCTION_LITERAL) ||
                type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC ||
-               type == KtNodeTypes.STRING_TEMPLATE
+               type == KtNodeTypes.STRING_TEMPLATE || type == KtNodeTypes.PRIMARY_CONSTRUCTOR
     }
 
     private fun getRangeToFold(node: ASTNode): TextRange {
@@ -101,6 +101,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         node.elementType == KtTokens.BLOCK_COMMENT -> "/${getFirstLineOfComment(node)}.../"
         node.elementType == KDocTokens.KDOC -> "/**${getFirstLineOfComment(node)}...*/"
         node.elementType == KtNodeTypes.STRING_TEMPLATE -> "\"\"\"${getTrimmedFirstLineOfString(node).addSpaceIfNeeded()}...\"\"\""
+        node.elementType == KtNodeTypes.PRIMARY_CONSTRUCTOR -> "(...)"
         node.psi is KtImportList -> "..."
         else ->  "{...}"
     }
