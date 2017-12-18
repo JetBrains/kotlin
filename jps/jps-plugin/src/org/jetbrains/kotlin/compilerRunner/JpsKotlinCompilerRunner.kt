@@ -56,7 +56,14 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
 
         @Synchronized
         private fun getOrCreateDaemonConnection(newConnection: ()-> CompileServiceSession?): CompileServiceSession? {
-            if (_jpsCompileServiceSession == null) {
+            // TODO: consider adding state "ping" to the daemon interface
+            if (_jpsCompileServiceSession == null || _jpsCompileServiceSession!!.compileService.getDaemonOptions() !is CompileService.CallResult.Good<DaemonOptions>) {
+                _jpsCompileServiceSession?. let {
+                    try {
+                        it.compileService.releaseCompileSession(it.sessionId)
+                    }
+                    catch (_: Throwable) {}
+                }
                 _jpsCompileServiceSession = newConnection()
             }
 
