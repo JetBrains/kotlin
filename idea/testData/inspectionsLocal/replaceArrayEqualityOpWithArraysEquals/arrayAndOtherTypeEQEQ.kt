@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 
 fun foo() {
     val a = arrayOf("a", "b", "c")

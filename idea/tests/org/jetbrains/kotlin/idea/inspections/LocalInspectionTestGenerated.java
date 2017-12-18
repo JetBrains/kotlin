@@ -2379,6 +2379,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/replaceArrayEqualityOpWithArraysEquals")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceArrayEqualityOpWithArraysEquals extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInReplaceArrayEqualityOpWithArraysEquals() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceArrayEqualityOpWithArraysEquals"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("arrayAndOtherTypeEQEQ.kt")
+        public void testArrayAndOtherTypeEQEQ() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayEqualityOpWithArraysEquals/arrayAndOtherTypeEQEQ.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("arrayEQEQ.kt")
+        public void testArrayEQEQ() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayEqualityOpWithArraysEquals/arrayEQEQ.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("arrayEXCLEQ.kt")
+        public void testArrayEXCLEQ() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayEqualityOpWithArraysEquals/arrayEXCLEQ.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primitiveArrayEQEQ.kt")
+        public void testPrimitiveArrayEQEQ() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayEqualityOpWithArraysEquals/primitiveArrayEQEQ.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

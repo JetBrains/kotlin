@@ -1358,11 +1358,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceArrayEqualityOpWithArraysEqualsIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ConvertCamelCaseTestFunctionToSpacedIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -2058,7 +2053,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceArrayEqualityOpWithArraysEqualsInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceArrayEqualityOpWithArraysEqualsInspection"
                      displayName="Replace '==' with 'Arrays.equals'"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
