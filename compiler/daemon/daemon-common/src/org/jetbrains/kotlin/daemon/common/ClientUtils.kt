@@ -92,13 +92,13 @@ private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, 
         val daemon = LocateRegistry.getRegistry(LoopbackNetworkInterface.loopbackInetAddressName, port, LoopbackNetworkInterface.clientLoopbackSocketFactory)
                 ?.lookup(COMPILER_SERVICE_RMI_NAME)
         when (daemon) {
-            null -> report(DaemonReportCategory.EXCEPTION, "daemon not found")
+            null -> report(DaemonReportCategory.INFO, "daemon not found")
             is CompileService -> return daemon
-            else -> report(DaemonReportCategory.EXCEPTION, "Unable to cast compiler service, actual class received: ${daemon::class.java.name}")
+            else -> report(DaemonReportCategory.INFO, "Unable to cast compiler service, actual class received: ${daemon::class.java.name}")
         }
     }
     catch (e: Throwable) {
-        report(DaemonReportCategory.EXCEPTION, "cannot connect to registry: " + (e.cause?.message ?: e.message ?: "unknown error"))
+        report(DaemonReportCategory.INFO, "cannot connect to registry: " + (e.cause?.message ?: e.message ?: "unknown error"))
     }
     return null
 }
