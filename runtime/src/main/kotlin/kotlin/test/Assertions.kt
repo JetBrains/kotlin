@@ -22,9 +22,9 @@
 package kotlin.test
 
 import konan.FixmeMultiplatform
-import konan.FixmeReflection
 import kotlin.internal.InlineOnly
 import kotlin.internal.OnlyInputTypes
+import kotlin.reflect.KClass
 
 /**
  * Current adapter providing assertion implementations
@@ -114,29 +114,12 @@ fun assertFails(message: String?, block: () -> Unit): Throwable {
  *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
  */
 @InlineOnly
-@FixmeReflection // TODO: Implement as in Kotlin/JVM when KClass is available.
-// TODO: An incorrect llvm module is generated if this method is called. Uncomment it when
-@Suppress("UNUSED_PARAMETER")
-inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit) /*: T*/ {
-//        try {
-//            block()
-//        } catch (e: Throwable) {
-//            if (e is T) {
-//                return  e
-//            }
-//
-//            @Suppress("INVISIBLE_MEMBER")
-//            asserter.fail(messagePrefix(message) + "Unxepected exception type: $e")
-//        }
-//
-//        @Suppress("INVISIBLE_MEMBER")
-//        val msg = messagePrefix(message)
-//        asserter.fail(msg + "Expected an exception to be thrown, but was completed successfully.")
-}
+inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit) : T =
+        assertFailsWith(T::class, message, block)
 
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-//@FixmeReflection
-//fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
+fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T =
+        assertFailsWith(exceptionClass, null, block)
 
 
 // From AssertionsH.kt
@@ -151,9 +134,24 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noin
 }
 
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-//@FixmeMultiplatform
-//@FixmeReflection
-//header fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T
+@FixmeMultiplatform
+/* header */ fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
+    try {
+        block()
+    } catch (e: Throwable) {
+        if (exceptionClass.isInstance(e)) {
+            @Suppress("UNCHECKED_CAST")
+            return e as T
+        }
+
+        @Suppress("INVISIBLE_MEMBER")
+        asserter.fail(messagePrefix(message) + "Expected an exception of ${exceptionClass.qualifiedName} to be thrown, but was $e")
+    }
+
+    @Suppress("INVISIBLE_MEMBER")
+    val msg = messagePrefix(message)
+    asserter.fail(msg + "Expected an exception of ${exceptionClass.qualifiedName} to be thrown, but was completed successfully.")
+}
 
 // From Assertions.kt
 /**

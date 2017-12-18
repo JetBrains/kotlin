@@ -1,24 +1,5 @@
 package kotlin.test
 
-// TODO: Remove it when such method from library is available.
-/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-inline fun <reified T : Throwable> assertFailsWith(message: String? = null, block: () -> Unit): T {
-    try {
-        block()
-    } catch (e: Throwable) {
-        if (e is T) {
-            @Suppress("UNCHECKED_CAST")
-            return e
-        }
-
-        @Suppress("INVISIBLE_MEMBER")
-        fail(message + ". Expected an exception of type //TODO: add type!// to be thrown, but was $e")
-    }
-
-    @Suppress("INVISIBLE_MEMBER")
-    fail(message + ". Expected an exception of type //TODO: add type!//  to be thrown, but was completed successfully.")
-}
-
 @Suppress("UNUSED_PARAMETER")
 public fun assertTypeEquals(expected: Any?, actual: Any?) {
     //TODO: find analogue

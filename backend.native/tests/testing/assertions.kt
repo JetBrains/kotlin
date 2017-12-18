@@ -19,30 +19,27 @@ class BasicAssertionsTest {
         assertFailsWith<AssertionError> { throw AssertionError() }
     }
 
-// TODO: Uncomment with the catch serialization bug is fixed.
-//    @Test fun testAssertFailsWithFails() {
-//        assertTrue(true) // at least one assertion required for qunit
-//
-//        withDefaultAsserter run@ {
-//            try {
-//                assertFailsWith<IllegalStateException> { throw IllegalArgumentException() }
-//            }
-//            catch (e: AssertionError) {
-//                return@run
-//            }
-//            throw AssertionError("Expected to fail")
-//        }
-//
-//        withDefaultAsserter run@ {
-//            try {
-//                assertFailsWith<IllegalStateException> {  }
-//            }
-//            catch (e: AssertionError) {
-//                return@run
-//            }
-//            throw AssertionError("Expected to fail")
-//        }
-//    }
+   @Test
+   fun testAssertFailsWithFails() {
+       withDefaultAsserter run@ {
+           try {
+               assertFailsWith<IllegalStateException> { throw IllegalArgumentException() }
+           }
+           catch (e: AssertionError) {
+               return@run
+           }
+           throw AssertionError("Expected to fail")
+       }
+       withDefaultAsserter run@ {
+           try {
+               assertFailsWith<IllegalStateException> {  }
+           }
+           catch (e: AssertionError) {
+               return@run
+           }
+           throw AssertionError("Expected to fail")
+       }
+   }
 
     @Test
     fun testAssertFailsWithClass() {
