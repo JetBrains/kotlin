@@ -10,6 +10,7 @@ import com.intellij.util.ReflectionUtil
 import groovy.lang.Closure
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
@@ -396,10 +397,20 @@ internal abstract class AbstractKotlinPlugin(
 
     private fun configureDefaultVersionsResolutionStrategy(project: Project) {
         project.configurations.all { configuration ->
-            configuration.resolutionStrategy.eachDependency { details ->
-                val requested = details.requested
-                if (requested.group == "org.jetbrains.kotlin" && requested.version.isEmpty()) {
-                    details.useVersion(kotlinPluginVersion)
+            if (isGradleVersionAtLeast(4, 4)) {
+                // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
+                configuration.withDependencies { dependencySet ->
+                    dependencySet.filterIsInstance<ExternalDependency>()
+                            .filter { it.group == "org.jetbrains.kotlin" && it.version.isNullOrEmpty() }
+                            .forEach { it.version { constraint -> constraint.prefer(kotlinPluginVersion) } }
+                }
+            }
+            else {
+                configuration.resolutionStrategy.eachDependency { details ->
+                    val requested = details.requested
+                    if (requested.group == "org.jetbrains.kotlin" && requested.version.isEmpty()) {
+                        details.useVersion(kotlinPluginVersion)
+                    }
                 }
             }
         }
