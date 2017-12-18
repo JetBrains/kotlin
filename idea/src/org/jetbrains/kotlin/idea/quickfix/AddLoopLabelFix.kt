@@ -39,10 +39,6 @@ class AddLoopLabelFix(
     override fun getText() = description
     override fun getFamilyName() = text
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return super.isAvailable(project, editor, file)
-    }
-
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val labelName = existingLabelName ?: getUniqueLabelName(collectUsedLabels(element))

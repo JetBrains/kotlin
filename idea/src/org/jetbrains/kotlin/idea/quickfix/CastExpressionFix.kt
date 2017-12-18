@@ -18,13 +18,12 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -46,8 +45,8 @@ class CastExpressionFix(element: KtExpression, type: KotlinType) : KotlinQuickFi
     override fun getFamilyName() = "Cast expression"
     override fun getText() = element?.let { "Cast expression '${it.text}' to '$typePresentation'" } ?: ""
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
-            = upOrDownCast && super.isAvailable(project, editor, file)
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile)
+            = upOrDownCast
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
