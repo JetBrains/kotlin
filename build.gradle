@@ -297,7 +297,7 @@ targetList.each { target ->
     targetDefFiles(target).forEach{
         defFile ->
             def taskName = defFileToTaskName(target, defFile.name)
-            def jvmArgs = project.findProperty("platfromLibsJvmArgs") ?: "-Xmx3G"
+            def jvmArgs = project.findProperty("platformLibsJvmArgs") ?: "-Xmx3G"
             def suffix = null
             if (new PlatformInfo().isWindows())
                 suffix = 'bat'

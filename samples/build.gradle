@@ -18,7 +18,7 @@ task buildSh(type: Exec) {
     workingDir projectDir.canonicalPath
 }
 
-task buildSamplesWithPlatfromLibs() {
+task buildSamplesWithPlatformLibs() {
     dependsOn ':csvparser:build'
     dependsOn ':nonBlockingEchoServer:build'
     dependsOn ':objc:build'

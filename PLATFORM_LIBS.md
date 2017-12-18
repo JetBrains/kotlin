@@ -51,7 +51,7 @@ Inspect the contents of `dist/klib/platform/$target` of the distribution for the
 
   ## Availability by default
 
-The packages from platfrom libraries are available by default. No
+The packages from platform libraries are available by default. No
 special link flags need to be specified to use them. `Kotlin/Native`
 compiler automatically detects which of the platform libraries have
 been accessed and automatically links the needed libraries.

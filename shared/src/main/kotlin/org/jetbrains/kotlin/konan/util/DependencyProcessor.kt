@@ -84,8 +84,6 @@ sealed class DependencySource {
     }
 }
 
-// TODO: Try to use some dependency management system (Ivy?)
-// TODO: Maybe rename.
 /**
  * Inspects [dependencies] and downloads all the missing ones into [dependenciesDirectory] from [dependenciesUrl].
  * If [airplaneMode] is true will throw a RuntimeException instead of downloading.
@@ -110,7 +108,6 @@ class DependencyProcessor(dependenciesRoot: File,
     var showInfo = true
     private var isInfoShown = false
 
-    // TOOO: Rename pause -> interval
     private val downloader = DependencyDownloader(maxAttempts, attemptIntervalMs, customProgressCallback)
     private val extractor = DependencyExtractor()
 
