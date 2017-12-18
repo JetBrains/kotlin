@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
+import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.codeInsight.highlighting.HighlightManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -24,6 +25,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringMessageDialog
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
 import org.jetbrains.kotlin.idea.refactoring.move.processInternalReferencesToUpdateOnPackageNameChange
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -47,6 +50,7 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 fun highlightElements(project: Project, editor: Editor?, elements: List<PsiElement>) {
@@ -161,5 +165,14 @@ internal fun buildCodeToInline(
     }
     else {
         return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeBodyCopy, reformat = true)
+    }
+}
+
+internal fun Editor.findSimpleNameReference(): KtSimpleNameReference? {
+    val reference = TargetElementUtil.findReference(this, caretModel.offset)
+    return when (reference) {
+        is KtSimpleNameReference -> reference
+        is PsiMultiReference -> reference.references.firstIsInstanceOrNull()
+        else -> null
     }
 }
