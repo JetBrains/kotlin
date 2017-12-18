@@ -59,13 +59,13 @@ abstract class DeprecatedSymbolUsageFixBase(
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
-        val strategy = buildUsageReplacementStrategy(element, replaceWith, recheckAnnotation = true)
+        val strategy = buildUsageReplacementStrategy(element, replaceWith, recheckAnnotation = true, reformat = false)
         return strategy?.createReplacer(element) != null
     }
 
     final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val strategy = buildUsageReplacementStrategy(element, replaceWith, recheckAnnotation = false, editor = editor) ?: return
+        val strategy = buildUsageReplacementStrategy(element, replaceWith, recheckAnnotation = false, reformat = true, editor = editor) ?: return
         invoke(strategy, project, editor)
     }
 
@@ -120,7 +120,13 @@ abstract class DeprecatedSymbolUsageFixBase(
             return Data(nameExpression, replacement, descriptor)
         }
 
-        private fun buildUsageReplacementStrategy(element: KtSimpleNameExpression, replaceWith: ReplaceWith, recheckAnnotation: Boolean, editor: Editor? = null): UsageReplacementStrategy? {
+        private fun buildUsageReplacementStrategy(
+                element: KtSimpleNameExpression,
+                replaceWith: ReplaceWith,
+                recheckAnnotation: Boolean,
+                reformat: Boolean,
+                editor: Editor? = null
+        ): UsageReplacementStrategy? {
             val resolutionFacade = element.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
             var target = element.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return null
@@ -138,7 +144,7 @@ abstract class DeprecatedSymbolUsageFixBase(
                 is CallableDescriptor -> {
                     val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
                     if (!resolvedCall.isReallySuccess()) return null
-                    val replacement = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, target, resolutionFacade) ?: return null
+                    val replacement = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, target, resolutionFacade, reformat) ?: return null
                     return CallableUsageReplacementStrategy(replacement, inlineSetter = false)
                 }
 
@@ -171,7 +177,7 @@ abstract class DeprecatedSymbolUsageFixBase(
                         }
                         target is ClassDescriptor -> {
                             val constructor = target.unsubstitutedPrimaryConstructor ?: return null
-                            val replacementExpression = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, constructor, resolutionFacade) ?: return null
+                            val replacementExpression = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, constructor, resolutionFacade, reformat) ?: return null
                             ClassUsageReplacementStrategy(null, replacementExpression, element.project)
                         }
                         else -> null

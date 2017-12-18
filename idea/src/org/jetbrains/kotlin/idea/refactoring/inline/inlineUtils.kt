@@ -157,9 +157,9 @@ internal fun buildCodeToInline(
         }
 
         return builder.prepareCodeToInline(lastReturn?.returnedExpression,
-                                           statements.dropLast(returnStatements.size), ::analyzeBodyCopy)
+                                           statements.dropLast(returnStatements.size), ::analyzeBodyCopy, reformat = true)
     }
     else {
-        return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeBodyCopy)
+        return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeBodyCopy, reformat = true)
     }
 }
