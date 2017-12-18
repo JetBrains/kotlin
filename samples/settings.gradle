@@ -1,3 +1,5 @@
+// NOTE: If a new sample uses only platform libs,
+// please add it into the 'buildSamplesWithPlatfromLibs' task in build.gradle.
 include ':calculator'
 include ':csvparser'
 include ':gitchurn'
@@ -5,7 +7,6 @@ include ':gtk'
 include ':libcurl'
 include ':nonBlockingEchoServer'
 include ':opengl'
-include ':python_extension'
 include ':socket'
 include ':tetris'
 include ':tensorflow'
