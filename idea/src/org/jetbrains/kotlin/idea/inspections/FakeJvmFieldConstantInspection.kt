@@ -22,8 +22,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl.KtLightFieldForDeclaration
-import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.JVM_FIELD_MIGHT_BE_CONST
-import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER
+import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.*
 import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.psi.KtProperty
 
@@ -41,7 +40,8 @@ class FakeJvmFieldConstantInspection : AbstractKotlinInspection() {
                         if (resolvedProperty.annotationEntries.isEmpty()) return@with
                         val resolvedPropertyStatus = resolvedProperty.getStatus()
                         if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST ||
-                            resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER) {
+                            resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER ||
+                            resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS) {
                             val fixes = mutableListOf<LocalQuickFix>()
                             if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST) {
                                 fixes += IntentionWrapper(AddConstModifierFix(resolvedProperty), resolvedProperty.containingFile)
