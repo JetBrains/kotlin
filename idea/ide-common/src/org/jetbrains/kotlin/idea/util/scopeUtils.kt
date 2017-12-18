@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacadeBase
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -80,7 +80,7 @@ fun PsiElement.getResolutionScope(bindingContext: BindingContext): LexicalScope?
     return null
 }
 
-fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade/*TODO: get rid of this parameter*/): LexicalScope {
+fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacadeBase/*TODO: get rid of this parameter*/): LexicalScope {
     return getResolutionScope(bindingContext) ?:
            when (containingFile) {
                is KtFile -> resolutionFacade.getFileResolutionScope(containingFile as KtFile)
@@ -94,6 +94,6 @@ fun KtElement.getResolutionScope(): LexicalScope {
     return getResolutionScope(context, resolutionFacade)
 }
 
-fun ResolutionFacade.getFileResolutionScope(file: KtFile): LexicalScope {
+fun ResolutionFacadeBase.getFileResolutionScope(file: KtFile): LexicalScope {
     return frontendService<FileScopeProvider>().getFileResolutionScope(file)
 }

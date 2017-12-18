@@ -26,9 +26,22 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-interface ResolutionFacade {
+interface ResolutionFacadeBase {
     val project: Project
 
+    val moduleDescriptor: ModuleDescriptor
+
+    // get service for the module this resolution was created for
+    fun <T : Any> getFrontendService(serviceClass: Class<T>): T
+
+    // get service for the module defined by PsiElement/ModuleDescriptor passed as parameter
+    fun <T : Any> getFrontendService(element: PsiElement, serviceClass: Class<T>): T
+    fun <T : Any> tryGetFrontendService(element: PsiElement, serviceClass: Class<T>): T?
+
+    fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T
+}
+
+interface ResolutionFacade : ResolutionFacadeBase {
     fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext
     fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext
 
@@ -36,22 +49,10 @@ interface ResolutionFacade {
 
     fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): DeclarationDescriptor
 
-    val moduleDescriptor: ModuleDescriptor
-
-    // get service for the module this resolution was created for
-    fun <T : Any> getFrontendService(serviceClass: Class<T>): T
-
     fun <T : Any> getIdeService(serviceClass: Class<T>): T
-
-    // get service for the module defined by PsiElement/ModuleDescriptor passed as parameter
-    fun <T : Any> getFrontendService(element: PsiElement, serviceClass: Class<T>): T
-    fun <T : Any> tryGetFrontendService(element: PsiElement, serviceClass: Class<T>): T?
-
-    fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T
-
 }
 
-inline fun <reified T : Any> ResolutionFacade.frontendService(): T
+inline fun <reified T : Any> ResolutionFacadeBase.frontendService(): T
         = this.getFrontendService(T::class.java)
 
 inline fun <reified T : Any> ResolutionFacade.ideService(): T

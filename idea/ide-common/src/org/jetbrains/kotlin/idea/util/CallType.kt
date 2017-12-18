@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacadeBase
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -219,7 +219,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypes(
         bindingContext: BindingContext,
         contextElement: PsiElement,
         moduleDescriptor: ModuleDescriptor,
-        resolutionFacade: ResolutionFacade,
+        resolutionFacade: ResolutionFacadeBase,
         stableSmartCastsOnly: Boolean
 ): Collection<KotlinType>? {
     return receiverTypesWithIndex(bindingContext, contextElement, moduleDescriptor, resolutionFacade, stableSmartCastsOnly)?.map { it.type }
@@ -229,7 +229,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
         bindingContext: BindingContext,
         contextElement: PsiElement,
         moduleDescriptor: ModuleDescriptor,
-        resolutionFacade: ResolutionFacade,
+        resolutionFacade: ResolutionFacadeBase,
         stableSmartCastsOnly: Boolean,
         withImplicitReceiversWhenExplicitPresent: Boolean = false
 ): Collection<ReceiverType>? {

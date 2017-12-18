@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacadeBase
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -49,7 +49,7 @@ import java.util.*
 
 class ReferenceVariantsHelper(
         private val bindingContext: BindingContext,
-        private val resolutionFacade: ResolutionFacade,
+        private val resolutionFacade: ResolutionFacadeBase,
         private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean,
         private val notProperties: Set<FqNameUnsafe> = setOf()
@@ -422,7 +422,7 @@ class ReferenceVariantsHelper(
 }
 
 private fun MemberScope.collectStaticMembers(
-        resolutionFacade: ResolutionFacade,
+        resolutionFacade: ResolutionFacadeBase,
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
 ): Collection<DeclarationDescriptor> {
@@ -430,7 +430,7 @@ private fun MemberScope.collectStaticMembers(
 }
 
 fun ResolutionScope.collectSyntheticStaticMembersAndConstructors(
-        resolutionFacade: ResolutionFacade,
+        resolutionFacade: ResolutionFacadeBase,
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
 ): List<FunctionDescriptor> {

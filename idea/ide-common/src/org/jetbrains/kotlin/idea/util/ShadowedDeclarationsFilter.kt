@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.idea.util
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacadeBase
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -40,14 +39,14 @@ import java.util.*
 
 class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
-        private val resolutionFacade: ResolutionFacade,
+        private val resolutionFacade: ResolutionFacadeBase,
         private val context: PsiElement,
         private val explicitReceiverValue: ReceiverValue?
 ) {
     companion object {
         fun create(
                 bindingContext: BindingContext,
-                resolutionFacade: ResolutionFacade,
+                resolutionFacade: ResolutionFacadeBase,
                 context: PsiElement,
                 callTypeAndReceiver: CallTypeAndReceiver<*, *>
         ): ShadowedDeclarationsFilter? {
