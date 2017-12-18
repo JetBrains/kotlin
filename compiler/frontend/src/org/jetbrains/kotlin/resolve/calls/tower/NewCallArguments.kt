@@ -106,10 +106,11 @@ class LambdaKotlinCallArgumentImpl(
         dataFlowInfoBeforeThisArgument: DataFlowInfo,
         argumentName: Name?,
         val ktLambdaExpression: KtLambdaExpression,
+        val containingBlockForLambda: KtExpression,
         override val parametersTypes: Array<UnwrappedType?>?
 ) : PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
     override val ktFunction get() = ktLambdaExpression.functionLiteral
-    override val expression get() = ktLambdaExpression
+    override val expression get() = containingBlockForLambda
 }
 
 class FunctionExpressionImpl(
@@ -117,12 +118,13 @@ class FunctionExpressionImpl(
         valueArgument: ValueArgument,
         dataFlowInfoBeforeThisArgument: DataFlowInfo,
         argumentName: Name?,
+        val containingBlockForFunction: KtExpression,
         override val ktFunction: KtNamedFunction,
         override val receiverType: UnwrappedType?,
         override val parametersTypes: Array<UnwrappedType?>,
         override val returnType: UnwrappedType?
 ) : FunctionExpression, PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
-    override val expression get() = ktFunction
+    override val expression get() = containingBlockForFunction
 }
 
 class CallableReferenceKotlinCallArgumentImpl(
