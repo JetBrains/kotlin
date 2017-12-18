@@ -1858,6 +1858,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("callableReferenceAsLastExpressionInBlock.kt")
+            public void testCallableReferenceAsLastExpressionInBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/callableReferenceAsLastExpressionInBlock.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("classVsPackage.kt")
             public void testClassVsPackage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");
@@ -8419,6 +8425,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("ExpectedParametersTypesMismatch.kt")
             public void testExpectedParametersTypesMismatch() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/ExpectedParametersTypesMismatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionExpressionAsLastExpressionInBlock.kt")
+            public void testFunctionExpressionAsLastExpressionInBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/functionExpressionAsLastExpressionInBlock.kt");
                 doTest(fileName);
             }
 
