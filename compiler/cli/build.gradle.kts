@@ -23,6 +23,9 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
+    // Used in REPL code insight
+    compileOnly(project(":idea:idea-core"))
+
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:tests-common"))
