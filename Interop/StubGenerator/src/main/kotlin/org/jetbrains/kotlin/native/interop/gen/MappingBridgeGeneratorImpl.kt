@@ -38,7 +38,7 @@ class MappingBridgeGeneratorImpl(
     ): KotlinExpression {
         val bridgeArguments = mutableListOf<BridgeTypedKotlinValue>()
 
-        kotlinValues.forEachIndexed { index, (type, value) ->
+        kotlinValues.forEach { (type, value) ->
             if (type.unwrapTypedefs() is RecordType) {
                 builder.pushMemScoped()
                 val bridgeArgument = "$value.getPointer(memScope).rawValue"

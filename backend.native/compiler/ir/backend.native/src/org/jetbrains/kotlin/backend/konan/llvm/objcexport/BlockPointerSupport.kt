@@ -194,8 +194,8 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
             val blockOnStackBase = structGep(blockOnStack, 0)
             val slot = structGep(blockOnStack, 1)
 
-            listOf(bitcast(int8TypePtr, isa), flags, reserved, invoke, descriptor).forEachIndexed { index, it ->
-                storeAny(it, structGep(blockOnStackBase, index))
+            listOf(bitcast(int8TypePtr, isa), flags, reserved, invoke, descriptor).forEachIndexed { index, value ->
+                storeAny(value, structGep(blockOnStackBase, index))
             }
 
             // Note: it is the slot in the block located on stack, so no need to manage it properly:

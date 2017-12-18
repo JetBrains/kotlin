@@ -391,7 +391,7 @@ private fun processLib(args: Map<String, List<String>>,
     def.manifestAddendProperties["includedHeaders"] = nativeIndex.includedHeaders.joinToString(" ") { it.value }
 
     def.manifestAddendProperties.putAndRunOnReplace("package", outKtPkg) {
-        key, oldValue, newValue ->
+        _, oldValue, newValue ->
             warn("The package value `$oldValue` specified in .def file is overriden with explicit $newValue")
     }
 

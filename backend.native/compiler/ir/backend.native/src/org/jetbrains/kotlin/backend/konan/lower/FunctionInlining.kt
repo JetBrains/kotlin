@@ -204,7 +204,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
     //--- Helpers -------------------------------------------------------------//
 
     private fun isLambdaCall(irCall: IrCall) : Boolean {
-        if (!(irCall.descriptor as FunctionDescriptor).isFunctionInvoke) return false       // Lambda mast be called by "invoke".
+        if (!irCall.descriptor.isFunctionInvoke) return false                               // Lambda mast be called by "invoke".
         if (irCall.dispatchReceiver !is IrGetValue)                      return false       // Dispatch receiver mast be IrGetValue.
         return true                                                                         // It is lambda call.
     }

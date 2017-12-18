@@ -514,7 +514,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     }
 
                     val local = functionGenerationContext.vars.createParameter(descriptor,
-                            it.value, debugInfoIfNeeded(function, ir))
+                            debugInfoIfNeeded(function, ir))
                     functionGenerationContext.mapParameterForDebug(local, it.value)
 
                 }
@@ -1127,7 +1127,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
     private fun debugInfoIfNeeded(function: IrFunction?, element: IrElement): VariableDebugLocation? {
         if (function == null || !context.shouldContainDebugInfo()) return null
-        val functionScope = function?.scope()
+        val functionScope = function.scope()
         if (functionScope == null || !element.needDebugInfo(context)) return null
         val location = debugLocation(element)
         val file = (currentCodeContext.fileScope() as FileScope).file.file()
@@ -1159,7 +1159,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val value = variable.initializer?.let { evaluateExpression(it) }
         currentCodeContext.genDeclareVariable(
                 variable.descriptor, value, debugInfoIfNeeded(
-                (currentCodeContext.functionScope() as FunctionScope)?.declaration, variable))
+                (currentCodeContext.functionScope() as FunctionScope).declaration, variable))
     }
 
     //-------------------------------------------------------------------------//
@@ -1421,7 +1421,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             IrConstKind.Short  -> return LLVMConstInt(LLVMInt16Type(), (value.value as Short).toLong(), 1)!!
             IrConstKind.Int    -> return LLVMConstInt(LLVMInt32Type(), (value.value as Int).toLong(),   1)!!
             IrConstKind.Long   -> return LLVMConstInt(LLVMInt64Type(), value.value as Long,             1)!!
-            IrConstKind.String -> return evaluateStringConst(value as IrConst<String>)
+            IrConstKind.String -> return evaluateStringConst(@Suppress("UNCHECKED_CAST") value as IrConst<String>)
             IrConstKind.Float  -> return LLVMConstRealOfString(LLVMFloatType(), (value.value as Float).toString())!!
             IrConstKind.Double -> return LLVMConstRealOfString(LLVMDoubleType(), (value.value as Double).toString())!!
         }
@@ -1634,6 +1634,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 }
 
                 context.builtIns.immutableBinaryBlobOf -> {
+                    @Suppress("UNCHECKED_CAST")
                     val arg = expression.getValueArgument(0) as IrConst<String>
                     return context.llvm.staticData.createImmutableBinaryBlob(arg)
                 }
@@ -1666,12 +1667,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             value is IrDelegatingConstructorCall   ->
                 return delegatingConstructorCall(value.descriptor, args)
 
-            value.descriptor is FunctionDescriptor ->
-                return evaluateFunctionCall(
-                        value as IrCall, args, resultLifetime(value))
-            else -> {
-                TODO(ir2string(value))
-            }
+            else ->
+                return evaluateFunctionCall(value as IrCall, args, resultLifetime(value))
         }
     }
 

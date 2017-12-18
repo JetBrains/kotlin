@@ -1056,7 +1056,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                             result                     = irBlock(startOffset, endOffset) {
                                 if (!calledSaveState)
                                     +irCall(saveStateSymbol)
-                                +irSetVar(suspendResult, suspendCall!!)
+                                +irSetVar(suspendResult, suspendCall)
                                 +irReturnIfSuspended(suspendResult)
                                 +irGet(suspendResult)
                             },

@@ -288,7 +288,7 @@ sealed class TypeInfo {
         ): KotlinExpression {
             val mappingBridgeGenerator = scope.mappingBridgeGenerator
 
-            val funParameters = type.parameterTypes.mapIndexed { index, it ->
+            val funParameters = type.parameterTypes.mapIndexed { index, _ ->
                 "p$index" to kotlinType.parameterTypes[index]
             }.joinToString { "${it.first}: ${it.second.render(scope)}" }
 

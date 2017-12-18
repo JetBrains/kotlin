@@ -89,7 +89,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     }
 
     internal var skip = 0
-    internal fun createParameter(descriptor: ValueDescriptor, value: LLVMValueRef? = null, variableLocation: VariableDebugLocation?) : Int {
+    internal fun createParameter(descriptor: ValueDescriptor, variableLocation: VariableDebugLocation?) : Int {
         assert(!contextVariablesToIndex.contains(descriptor))
         val index = variables.size
         val type = functionGenerationContext.getLLVMType(descriptor.type)

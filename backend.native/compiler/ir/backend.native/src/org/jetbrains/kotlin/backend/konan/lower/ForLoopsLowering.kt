@@ -113,7 +113,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                                                     pkg: FqName,
                                                     filter: (SimpleFunctionDescriptor) -> Boolean): Set<IrFunctionSymbol> =
             mutableSetOf<IrFunctionSymbol>().apply {
-                progressionElementClasses.flatMapTo(this) { receiver ->
+                progressionElementClasses.flatMapTo(this) { _ /* receiver */ ->
                     context.builtIns.builtInsModule.getPackage(pkg).memberScope
                             .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
                             .filter(filter).map { symbols.symbolTable.referenceFunction(it) }
