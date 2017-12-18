@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -94,7 +95,7 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
         val parameters = mapper.objCValueParameters(method)
 
         StringBuilder().apply {
-            append(method.mangledName)
+            append(method.getMangledName(forSwift = false))
 
             parameters.forEachIndexed { index, it ->
                 val name = when {
@@ -132,7 +133,7 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
         val parameters = mapper.objCValueParameters(method)
         
         StringBuilder().apply {
-            append(method.mangledName)
+            append(method.getMangledName(forSwift = true))
             append("(")
 
             parameters.forEach {
@@ -150,13 +151,9 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
 
             append(")")
         }.mangledSequence {
-            if (parameters.isNotEmpty()) {
-                // "foo(label:)" -> "foo(label_:)"
-                insert(lastIndex - 1, '_')
-            } else {
-                // "foo()" -> "foo_()"
-                insert(lastIndex - 2, '_')
-            }
+            // "foo(label:)" -> "foo(label_:)"
+            // "foo()" -> "foo_()"
+            insert(lastIndex - 1, '_')
         }
     }
 
@@ -196,9 +193,9 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
         methodSwiftNames.forceAssign(equals, "isEqual(:)")
     }
 
-    private val FunctionDescriptor.mangledName: String get() {
+    private fun FunctionDescriptor.getMangledName(forSwift: Boolean): String {
         if (this is ConstructorDescriptor) {
-            return "init"
+            return if (this.constructedClass.isArray && !forSwift) "array" else "init"
         }
 
         val candidate = when (this) {

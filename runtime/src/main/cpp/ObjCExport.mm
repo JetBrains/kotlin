@@ -152,7 +152,7 @@ static void initializeClass(Class clazz);
 
   if (typeInfo->instanceSize_ < 0) {
     [NSException raise:NSGenericException
-          format:@"Allocating %s is not supported yet",
+          format:@"%s must be allocated and initialized with a factory method",
           class_getName(object_getClass(self))];
   }
 
