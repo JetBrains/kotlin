@@ -457,15 +457,22 @@ class KotlinGradleIT: BaseGradleIT() {
 
     @Test
     fun testOmittedStdlibVersion() {
-        val project = Project("kotlinProject", "2.3")
+        val project = Project("kotlinProject", "4.4")
         project.setupWorkingDir()
         File(project.projectDir, "build.gradle").modify {
-            it.replace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib").apply { check(!equals(it)) }
+            it.replace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib").apply { check(!equals(it)) } + "\n" + """
+            apply plugin: 'maven'
+            install.repositories { maven { url "file://${'$'}buildDir/repo" } }
+            """.trimIndent()
         }
 
-        project.build("build") {
+        project.build("build", "install") {
             assertSuccessful()
             assertContains(":compileKotlin", ":compileTestKotlin")
+            val pomLines = File(project.projectDir, "build/poms/pom-default.xml").readLines()
+            val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
+            val versionLine = pomLines[stdlibVersionLineNumber]
+            assertTrue { "<version>${defaultBuildOptions().kotlinVersion}</version>" in versionLine }
         }
     }
 
