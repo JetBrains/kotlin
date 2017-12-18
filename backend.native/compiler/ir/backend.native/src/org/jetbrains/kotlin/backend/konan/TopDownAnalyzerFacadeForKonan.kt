@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -56,8 +57,13 @@ object TopDownAnalyzerFacadeForKonan {
             config: KonanConfig
     ): AnalysisResult {
 
-        // we print out each file we compile for now
-        files.forEach{println(it)}
+        val verbose = config.configuration.get(KonanConfigKeys.VERBOSE_PHASES)
+                ?.contains(KonanPhase.FRONTEND.visibleName)
+                ?: false
+        if (verbose) {
+            // we print out each file we compile for now
+            files.forEach { println(it) }
+        }
 
         val analyzerForKonan = createTopDownAnalyzerForKonan(
                 moduleContext, trace,

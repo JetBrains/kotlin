@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -34,13 +33,15 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.KotlinPaths
-import kotlin.reflect.KFunction
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
-    override fun doExecute(@NotNull arguments: K2NativeCompilerArguments, @NotNull configuration: CompilerConfiguration, @NotNull rootDisposable: Disposable, @Nullable paths: KotlinPaths?): ExitCode {
+    override fun doExecute(@NotNull arguments: K2NativeCompilerArguments,
+                           @NotNull configuration: CompilerConfiguration,
+                           @NotNull rootDisposable: Disposable,
+                           @Nullable paths: KotlinPaths?): ExitCode {
 
         if (arguments.version) {
             println("Kotlin/Native: ${KonanVersion.CURRENT}")
@@ -60,9 +61,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             runTopLevelPhases(konanConfig, environment)
         } catch (e: KonanCompilationException) {
             return ExitCode.COMPILATION_ERROR
+        } catch (e: Throwable) {
+            configuration.report(ERROR, """
+                |Compilation failed with exception: ${e.message}, caused by ${e.cause?.message ?: ""}
+
+                |Source files: ${ environment.getSourceFiles().joinToString(transform = KtFile::getName) }
+                """.trimMargin())
+            throw e
         }
 
-        // TODO: catch Errors and IllegalStateException.
         return ExitCode.OK
     }
 

@@ -577,7 +577,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     /**
      * Binds LLVM function parameters to IR parameter descriptors.
      */
-   private fun bindParameters(descriptor: FunctionDescriptor?): Map<ParameterDescriptor, LLVMValueRef> {
+    private fun bindParameters(descriptor: FunctionDescriptor?): Map<ParameterDescriptor, LLVMValueRef> {
         if (descriptor == null) return emptyMap()
         val parameterDescriptors = descriptor.allParameters
         return parameterDescriptors.mapIndexed { i, parameterDescriptor ->
