@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.RandomAccessFile
+import java.net.InetAddress
 import java.net.URL
+import java.net.UnknownHostException
 import java.nio.file.Paths
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -72,8 +74,6 @@ private val KonanProperties.airplaneMode : Boolean              get() = properti
 private val KonanProperties.downloadingAttempts : Int           get() = properties.downloadingAttempts
 private val KonanProperties.downloadingAttemptIntervalMs : Long get() = properties.downloadingAttemptIntervalMs
 private val KonanProperties.homeDependencyCache : String        get() = properties.homeDependencyCache
-
-private val internalDependenciesUrl = "http://repo.labs.intellij.net/kotlin-native"
 
 sealed class DependencySource {
     data class Local(val path: File) : DependencySource()
@@ -219,14 +219,12 @@ class DependencyProcessor(dependenciesRoot: File,
             get() = Paths.get(System.getProperty("user.home")).resolve(".konan/dependencies").toFile()
     }
 
-    private fun internalServerIsAvailable(): Boolean = System.getenv("KONAN_USE_INTERNAL_SERVER") != null
-
     private val resolvedDependencies = dependencyToCandidates.map { (dependency, candidates) ->
         val candidate = candidates.asSequence().mapNotNull { candidate ->
             when (candidate) {
                 is DependencySource.Local -> candidate.takeIf { it.path.exists() }
                 DependencySource.Remote.Public -> candidate
-                DependencySource.Remote.Internal -> candidate.takeIf { internalServerIsAvailable() }
+                DependencySource.Remote.Internal -> candidate.takeIf { InternalServer.isAvailable }
             }
         }.firstOrNull()
 
@@ -264,13 +262,45 @@ class DependencyProcessor(dependenciesRoot: File,
                 val baseUrl = when (candidate) {
                     is DependencySource.Local -> null
                     DependencySource.Remote.Public -> dependenciesUrl
-                    DependencySource.Remote.Internal -> internalDependenciesUrl
+                    DependencySource.Remote.Internal -> InternalServer.url
                 }
                 // TODO: consider using different caches for different remotes.
                 if (baseUrl != null) {
                     downloadDependency(dependency, baseUrl)
                 }
             }
+        }
+    }
+}
+
+private object InternalServer {
+    private val host = "repo.labs.intellij.net"
+    val url = "http://$host/kotlin-native"
+
+    private val internalDomain = "labs.intellij.net"
+
+    val isAvailable by lazy {
+        val envKey = "KONAN_USE_INTERNAL_SERVER"
+        val envValue = System.getenv(envKey)
+        when (envValue) {
+            "0" -> false
+            "1" -> true
+            null -> checkAccessible()
+            else -> error("unexpected environment: $envKey=$envValue")
+        }
+    }
+
+    private fun checkAccessible(): Boolean {
+        if (!InetAddress.getLocalHost().canonicalHostName.endsWith(".$internalDomain")) {
+            // Fast path:
+            return false
+        }
+
+        try {
+            InetAddress.getByName(host)
+            return true
+        } catch (e: UnknownHostException) {
+            return false
         }
     }
 }
