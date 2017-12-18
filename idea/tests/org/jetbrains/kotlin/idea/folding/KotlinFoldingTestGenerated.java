@@ -136,5 +136,11 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/multilineStrings.kt");
             doSettingsFoldingTest(fileName);
         }
+
+        @TestMetadata("primaryConstructor.kt")
+        public void testPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/primaryConstructor.kt");
+            doSettingsFoldingTest(fileName);
+        }
     }
 }
