@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -70,9 +69,8 @@ class AddFunctionParametersFix(
             "Add parameter$subjectSuffix to $callableDescription"
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val callElement = callElement ?: return false
-        if (!super.isAvailable(project, editor, file)) return false
 
         // newParametersCnt <= 0: psi for this quickfix is no longer valid
         val newParametersCnt = callElement.valueArguments.size - functionDescriptor.valueParameters.size

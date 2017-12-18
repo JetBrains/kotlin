@@ -20,7 +20,6 @@ import com.intellij.codeInsight.hint.HintManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -58,9 +57,8 @@ abstract class DeprecatedSymbolUsageFixBase(
         val replaceWith: ReplaceWith
 ) : KotlinQuickFixAction<KtSimpleNameExpression>(element) {
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
-        if (!super.isAvailable(project, editor, file)) return false
         val strategy = buildUsageReplacementStrategy(element, replaceWith, recheckAnnotation = true)
         return strategy?.createReplacer(element) != null
     }

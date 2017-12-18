@@ -21,7 +21,6 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -50,15 +49,13 @@ abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinQuickFixAction<Ps
     override fun getFamilyName(): String = text
 
     override fun startInWriteAction(): Boolean = true
-
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) = file is KtFile
 }
 
 class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement), CleanupFix {
     override fun getText(): String = KotlinBundle.message("remove.unnecessary.non.null.assertion")
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
-        = super.isAvailable(project, editor, file) && getExclExclPostfixExpression() != null
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean =
+            getExclExclPostfixExpression() != null
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
@@ -87,9 +84,8 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
 
     override fun getText() = KotlinBundle.message("introduce.non.null.assertion")
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
-            = super.isAvailable(project, editor, file) &&
-              getExpressionForIntroduceCall() != null
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean =
+            getExpressionForIntroduceCall() != null
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return

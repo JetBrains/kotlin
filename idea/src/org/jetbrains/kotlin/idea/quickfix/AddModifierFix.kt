@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -67,9 +66,9 @@ open class AddModifierFix(
         }
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
-        return super.isAvailable(project, editor, file) && element.canRefactor()
+        return element.canRefactor()
     }
 
     companion object {

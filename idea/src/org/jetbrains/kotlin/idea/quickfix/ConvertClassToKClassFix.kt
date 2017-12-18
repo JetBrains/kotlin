@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -59,8 +58,7 @@ class ConvertClassToKClassFix(element: KtDotQualifiedExpression, type: KotlinTyp
     override fun getText() = element?.let { "Remove '.${it.children.lastOrNull()?.text}'" } ?: ""
     override fun getFamilyName() = "Remove conversion from 'KClass' to 'Class'"
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
-            = isApplicable && super.isAvailable(project, editor, file)
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = isApplicable
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

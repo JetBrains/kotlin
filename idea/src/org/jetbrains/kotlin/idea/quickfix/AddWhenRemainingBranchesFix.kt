@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.cfg.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -40,9 +39,9 @@ class AddWhenRemainingBranchesFix(
 
     override fun getText() = "Add remaining branches" + if (withImport) " with import" else ""
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
-        return super.isAvailable(project, editor, file) && element.closeBrace != null &&
+        return element.closeBrace != null &&
                with(WhenChecker.getMissingCases(element, element.analyze())) { isNotEmpty() && !hasUnknown }
     }
 

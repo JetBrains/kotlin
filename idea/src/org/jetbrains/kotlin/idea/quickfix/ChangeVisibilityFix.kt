@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -52,9 +51,9 @@ open class ChangeVisibilityFix(
     protected class ChangeToProtectedFix(element: KtModifierListOwner, elementName: String) :
             ChangeVisibilityFix(element, elementName, KtTokens.PROTECTED_KEYWORD) {
 
-        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
             val element = element ?: return false
-            return super.isAvailable(project, editor, file) && element.canBeProtected()
+            return element.canBeProtected()
         }
     }
 
@@ -64,9 +63,9 @@ open class ChangeVisibilityFix(
     protected class ChangeToPrivateFix(element: KtModifierListOwner, elementName: String) :
             ChangeVisibilityFix(element, elementName, KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
 
-        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
             val element = element ?: return false
-            return super.isAvailable(project, editor, file) && element.canBePrivate()
+            return element.canBePrivate()
         }
     }
 
