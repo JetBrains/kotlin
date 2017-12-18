@@ -91,13 +91,13 @@ public fun <T> setOf(element: T): Set<T> = java.util.Collections.singleton(eleme
  * Returns a new [SortedSet] with the given elements.
  */
 @JvmVersion
-public fun <T> sortedSetOf(vararg elements: T): TreeSet<T> = elements.toCollection(TreeSet<T>())
+public fun <T> sortedSetOf(vararg elements: T): java.util.TreeSet<T> = elements.toCollection(java.util.TreeSet<T>())
 
 /**
  * Returns a new [SortedSet] with the given [comparator] and elements.
  */
 @JvmVersion
-public fun <T> sortedSetOf(comparator: Comparator<in T>, vararg elements: T): TreeSet<T> = elements.toCollection(TreeSet<T>(comparator))
+public fun <T> sortedSetOf(comparator: Comparator<in T>, vararg elements: T): java.util.TreeSet<T> = elements.toCollection(java.util.TreeSet<T>(comparator))
 
 
 internal fun <T> Set<T>.optimizeReadOnlySet() = when (size) {

@@ -628,8 +628,8 @@ public fun CharSequence.toSet(): Set<Char> {
 /**
  * Returns a [SortedSet] of all characters.
  */
-public fun CharSequence.toSortedSet(): SortedSet<Char> {
-    return toCollection(TreeSet<Char>())
+public fun CharSequence.toSortedSet(): java.util.SortedSet<Char> {
+    return toCollection(java.util.TreeSet<Char>())
 }
 
 /**

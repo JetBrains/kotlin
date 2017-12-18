@@ -700,8 +700,8 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
  *
  * The operation is _terminal_.
  */
-public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): SortedSet<T> {
-    return toCollection(TreeSet<T>())
+public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): java.util.SortedSet<T> {
+    return toCollection(java.util.TreeSet<T>())
 }
 
 /**
@@ -711,8 +711,8 @@ public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): SortedSet<T> {
  *
  * The operation is _terminal_.
  */
-public fun <T> Sequence<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
-    return toCollection(TreeSet<T>(comparator))
+public fun <T> Sequence<T>.toSortedSet(comparator: Comparator<in T>): java.util.SortedSet<T> {
+    return toCollection(java.util.TreeSet<T>(comparator))
 }
 
 /**
