@@ -30,12 +30,11 @@ import javax.swing.JComponent
 
 class ConfigurePluginUpdatesAction : DumbAwareAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project ?: return
-        ConfigurePluginUpdatesDialog(project).show()
+        ConfigurePluginUpdatesDialog(e.project).show()
     }
 }
 
-class ConfigurePluginUpdatesDialog(project: Project) : DialogWrapper(project, false) {
+class ConfigurePluginUpdatesDialog(project: Project?) : DialogWrapper(project, false) {
     private val form = ConfigurePluginUpdatesForm()
     private val initialSelectedChannel: Int
     private var update: PluginUpdateStatus.Update? = null
