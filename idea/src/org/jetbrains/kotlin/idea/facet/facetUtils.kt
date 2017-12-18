@@ -219,9 +219,10 @@ fun KotlinFacet.configureFacet(
                 platformKind,
                 compilerVersion
         )
-        // Both apiLevel and languageLevel should be initialized in the lines above
-        if (apiLevel!! > languageLevel!!) {
-            apiLevel = languageLevel
+        val apiLevel = apiLevel
+        val languageLevel = languageLevel
+        if (languageLevel != null && apiLevel != null && apiLevel > languageLevel) {
+            this.apiLevel = languageLevel
         }
         this.coroutineSupport = coroutineSupport
     }
