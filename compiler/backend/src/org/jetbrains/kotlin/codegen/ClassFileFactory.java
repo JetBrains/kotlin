@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable;
+import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.io.File;
@@ -95,7 +95,7 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     private void writeModuleMappings() {
-        JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
+        JvmModuleProtoBuf.Module.Builder builder = JvmModuleProtoBuf.Module.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
 
         for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(partsGroupedByPackage.values(), state)) {

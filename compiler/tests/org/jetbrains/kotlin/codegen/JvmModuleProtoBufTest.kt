@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
-class JvmPackageTableTest : KtUsefulTestCase() {
+class JvmModuleProtoBufTest : KtUsefulTestCase() {
     private fun doTest(
             relativeDirectory: String,
             compileWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
@@ -67,25 +67,25 @@ class JvmPackageTableTest : KtUsefulTestCase() {
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(directory, "jvm-package-table.txt"), result)
+        KotlinTestUtils.assertEqualsToFile(File(directory, "module-proto.txt"), result)
     }
 
     fun testSimple() {
-        doTest("/jvmPackageTable/simple")
+        doTest("/moduleProtoBuf/simple")
     }
 
     fun testJvmPackageName() {
-        doTest("/jvmPackageTable/jvmPackageName",
+        doTest("/moduleProtoBuf/jvmPackageName",
                compileWith = LanguageVersion.KOTLIN_1_2, loadWith = LanguageVersion.KOTLIN_1_2)
     }
 
     fun testJvmPackageNameManyParts() {
-        doTest("/jvmPackageTable/jvmPackageNameManyParts",
+        doTest("/moduleProtoBuf/jvmPackageNameManyParts",
                compileWith = LanguageVersion.KOTLIN_1_2, loadWith = LanguageVersion.KOTLIN_1_2)
     }
 
     fun testJvmPackageNameLanguageVersion11() {
-        doTest("/jvmPackageTable/jvmPackageNameLanguageVersion11",
+        doTest("/moduleProtoBuf/jvmPackageNameLanguageVersion11",
                compileWith = LanguageVersion.KOTLIN_1_2, loadWith = LanguageVersion.KOTLIN_1_1)
     }
 }
