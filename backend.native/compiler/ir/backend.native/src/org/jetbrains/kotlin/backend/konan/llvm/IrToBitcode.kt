@@ -85,6 +85,7 @@ internal fun emitLLVM(context: Context) {
             DFGSerializer.serialize(context, moduleDFG!!)
         }
 
+        @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
         var externalModulesDFG: ExternalModulesDFG? = null
         phaser.phase(KonanPhase.DESERIALIZE_DFG) {
             externalModulesDFG = DFGSerializer.deserialize(context, moduleDFG!!.symbolTable.privateTypeIndex, moduleDFG!!.symbolTable.privateFunIndex)
@@ -1641,7 +1642,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     val callee = expression as IrCall
                     val initializer = callee.getValueArgument(1) as IrCall
                     val thiz = evaluateExpression(callee.getValueArgument(0)!!)
-                    evaluateSimpleFunctionCall(initializer.descriptor, listOf(thiz) + evaluateExplicitArgs(initializer), lifetimes[initializer]!!)
+                    evaluateSimpleFunctionCall(initializer.descriptor, listOf(thiz) + evaluateExplicitArgs(initializer), resultLifetime(initializer))
                     return codegen.theUnitInstanceRef.llvm
                 }
             }
@@ -2068,7 +2069,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 val typeParameterT = context.ir.symbols.createUninitializedInstance.descriptor.typeParameters[0]
                 val enumClass = callee.getTypeArgument(typeParameterT)!!
                 val enumClassDescriptor = enumClass.constructor.declarationDescriptor as ClassDescriptor
-                functionGenerationContext.allocInstance(typeInfoForAllocation(enumClassDescriptor), lifetimes[callee]!!)
+                functionGenerationContext.allocInstance(typeInfoForAllocation(enumClassDescriptor), resultLifetime(callee))
             }
 
             else -> TODO(callee.descriptor.original.toString())
