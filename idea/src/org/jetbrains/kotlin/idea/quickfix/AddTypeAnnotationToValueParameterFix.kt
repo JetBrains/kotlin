@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -61,7 +60,7 @@ class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFi
         typeName = type?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) }
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
         return element.typeReference == null && typeNameShort != null
     }

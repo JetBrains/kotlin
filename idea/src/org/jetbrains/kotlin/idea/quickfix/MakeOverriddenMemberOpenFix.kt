@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
@@ -74,12 +73,7 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
         return QuickFixInfo(overriddenNonOverridableMembers, containingDeclarationsNames)
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-
-        if (!super.isAvailable(project, editor, file) || file !is KtFile) {
-            return false
-        }
-
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         return overriddenNonOverridableMembers.isNotEmpty()
     }
 

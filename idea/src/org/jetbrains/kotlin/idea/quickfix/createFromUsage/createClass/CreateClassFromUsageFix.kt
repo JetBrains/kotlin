@@ -23,7 +23,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
@@ -78,8 +81,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
 ): CreateFromUsageFixBase<E>(element) {
     override fun getText() = "Create ${classInfo.kind.description} '${classInfo.name}'"
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file)) return false
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         with(classInfo) {
             if (kind == DEFAULT) return false
             if (applicableParents.isEmpty()) return false

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -77,8 +76,7 @@ class WrongPrimitiveLiteralFix(element: KtConstantExpression, type: KotlinType) 
         }
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file)) return false
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         if (constValue == null) return false
         if (expectedTypeIsFloat || expectedTypeIsDouble) return true
 
