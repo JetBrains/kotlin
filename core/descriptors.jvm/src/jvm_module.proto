@@ -1,0 +1,61 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.serialization.jvm;
+
+option java_outer_classname = "JvmModuleProtoBuf";
+option optimize_for = LITE_RUNTIME;
+
+message Module {
+  // Names of .class files for each package
+  repeated PackageParts package_parts = 1;
+
+  // Names of .kotlin_metadata files for each package
+  repeated PackageParts metadata_parts = 2;
+
+  // Values of @JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
+  // The names here are dot-separated, e.g. "org.foo.bar"
+  repeated string jvm_package_name = 3;
+}
+
+message PackageParts {
+  required string package_fq_name = 1;
+
+  // Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+  // (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
+  // Kotlin package name (i.e. it has not been changed with @JvmPackageName) are listed here.
+  repeated string short_class_name = 2;
+
+  // For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
+  // or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+  // (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+  repeated int32 multifile_facade_short_name_id = 3 [packed = true];
+
+  // Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -> facade mapping.
+  repeated string multifile_facade_short_name = 4;
+
+  // Short names of files (single file facades), whose JVM package differs from the Kotlin package because of @JvmPackageName.
+  // The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+  repeated string class_with_jvm_package_name_short_name = 5;
+
+  // For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
+  // This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
+  //
+  // If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
+  // of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
+  // when a bunch of files from the same Kotlin package have the same JVM package name.
+  repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];
+}

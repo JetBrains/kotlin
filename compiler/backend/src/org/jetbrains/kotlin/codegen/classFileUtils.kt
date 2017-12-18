@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
+import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf
 import java.io.ByteArrayOutputStream
 
 fun ClassFileFactory.getClassFiles(): Iterable<OutputFile> {
@@ -57,7 +57,7 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
             }
 }
 
-fun JvmPackageTable.PackageTable.Builder.serializeToByteArray(): ByteArray {
+fun JvmModuleProtoBuf.Module.Builder.serializeToByteArray(): ByteArray {
     val moduleMapping = ByteArrayOutputStream(4096)
     val out = DataOutputStream(moduleMapping)
     val version = JvmMetadataVersion.INSTANCE.toArray()
