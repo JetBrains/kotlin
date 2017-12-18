@@ -19,11 +19,9 @@ package org.jetbrains.kotlin.idea.filters
 import com.intellij.execution.filters.*
 import com.intellij.execution.filters.impl.HyperlinkInfoFactoryImpl
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.KotlinFileTypeFactory
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
@@ -59,8 +57,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
 
         val fileName = stackTraceElement.fileName
 
-        val extension = FileUtilRt.getExtension(fileName).toLowerCase()
-        if (extension !in KotlinFileTypeFactory.KOTLIN_EXTENSIONS) return null
+        if (!DebuggerUtils.isKotlinSourceFile(fileName)) return null
 
         // fullyQualifiedName is of format "package.Class$Inner"
         val fullyQualifiedName = stackTraceElement.className

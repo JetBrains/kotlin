@@ -77,6 +77,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) throw NoDataException.INSTANCE
 
+        val fileName = location.safeSourceName ?: throw NoDataException.INSTANCE
+        if (!DebuggerUtils.isKotlinSourceFile(fileName)) throw NoDataException.INSTANCE
+
         val psiFile = getPsiFileByLocation(location)
         if (psiFile == null) {
             val isKotlinStrataAvailable = location.declaringType().containsKotlinStrata()
@@ -184,17 +187,20 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         return null
     }
 
-    private fun getPsiFileByLocation(location: Location): PsiFile? {
-        val sourceName: String
-        try {
-            sourceName = location.sourceName()
+    private val Location.safeSourceName: String? get() {
+        return try {
+            sourceName()
         }
         catch (e: AbsentInformationException) {
-            return null
+            null
         }
         catch (e: InternalError) {
-            return null
+            null
         }
+    }
+
+    private fun getPsiFileByLocation(location: Location): PsiFile? {
+        val sourceName = location.safeSourceName ?: return null
 
         val referenceInternalName = try {
             if (location.declaringType().containsKotlinStrata()) {

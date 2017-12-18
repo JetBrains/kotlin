@@ -20,6 +20,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileTypeFactory
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -59,8 +60,7 @@ object DebuggerUtils {
             scopes: List<GlobalSearchScope>,
             className: JvmClassName,
             fileName: String): KtFile? {
-        val extension = FileUtilRt.getExtension(fileName)
-        if (extension !in KotlinFileTypeFactory.KOTLIN_EXTENSIONS) return null
+        if (!isKotlinSourceFile(fileName)) return null
         if (DumbService.getInstance(project).isDumb) return null
 
         val filesWithExactName = scopes.findFirstNotEmpty { findFilesByNameInPackage(className, fileName, project, it) } ?: return null
@@ -131,6 +131,11 @@ object DebuggerUtils {
         val analyzedElements = HashSet<KtElement>()
         analyzeElementWithInline(function.getResolutionFacade(), function, 1, analyzedElements, !analyzeInlineFunctions)
         return analyzedElements
+    }
+
+    fun isKotlinSourceFile(fileName: String): Boolean {
+        val extension = FileUtilRt.getExtension(fileName).toLowerCase()
+        return extension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS
     }
 
     private fun analyzeElementWithInline(
