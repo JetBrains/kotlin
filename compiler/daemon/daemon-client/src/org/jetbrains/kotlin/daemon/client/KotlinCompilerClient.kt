@@ -116,8 +116,9 @@ object KotlinCompilerClient {
         }
         else {
             if (!isLastAttempt && autostart) {
-                startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)
-                reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
+                if (startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)) {
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
+                }
             }
             null
         }
@@ -361,7 +362,7 @@ object KotlinCompilerClient {
     }
 
 
-    private fun startDaemon(compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, reportingTargets: DaemonReportingTargets) {
+    private fun startDaemon(compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, reportingTargets: DaemonReportingTargets): Boolean {
         val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
         val serverHostname = System.getProperty(JAVA_RMI_SERVER_HOSTNAME) ?: error("$JAVA_RMI_SERVER_HOSTNAME is not set!")
         val platformSpecificOptions = listOf(
@@ -420,14 +421,22 @@ object KotlinCompilerClient {
             } ?: DAEMON_DEFAULT_STARTUP_TIMEOUT_MS
             if (daemonOptions.runFilesPath.isNotEmpty()) {
                 val succeeded = isEchoRead.tryAcquire(daemonStartupTimeout, TimeUnit.MILLISECONDS)
-                if (!isProcessAlive(daemon))
-                    throw RuntimeException("Daemon terminated unexpectedly with error code: ${daemon.exitValue()}")
-                if (!succeeded)
-                    throw RuntimeException("Unable to get response from daemon in $daemonStartupTimeout ms")
+                return when {
+                    !isProcessAlive(daemon) -> {
+                        reportingTargets.report(DaemonReportCategory.INFO, "Daemon terminated unexpectedly with error code: ${daemon.exitValue()}")
+                        false
+                    }
+                    !succeeded -> {
+                        reportingTargets.report(DaemonReportCategory.INFO, "Unable to get response from daemon in $daemonStartupTimeout ms")
+                        false
+                    }
+                    else -> true
+                }
             }
             else
             // without startEcho defined waiting for max timeout
                 Thread.sleep(daemonStartupTimeout)
+            return true
         }
         finally {
             // assuming that all important output is already done, the rest should be routed to the log by the daemon itself
