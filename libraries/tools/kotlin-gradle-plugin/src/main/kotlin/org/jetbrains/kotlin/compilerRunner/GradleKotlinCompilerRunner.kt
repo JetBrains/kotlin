@@ -37,6 +37,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.net.URLClassLoader
+import java.rmi.RemoteException
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
 internal const val DAEMON_EXECUTION_STRATEGY = "daemon"
@@ -212,7 +213,14 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             null
         }
         // todo: can we clear cache on the end of session?
-        daemon.clearJarCache()
+        // often source of the NoSuchObjectException and UnmarshalException, probably caused by the failed/crashed/exited daemon
+        // TODO: implement a proper logic to avoid remote calls in such cases
+        try {
+            daemon.clearJarCache()
+        }
+        catch (e: RemoteException) {
+            log.warn("Unable to clear jar cache after compilation, maybe daemon is already down: $e")
+        }
         logFinish(DAEMON_EXECUTION_STRATEGY)
         return exitCode
     }
