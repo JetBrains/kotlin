@@ -321,7 +321,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractLocalInspectionTest> {
-            model("inspectionsLocal", pattern = "^([\\w\\-_]+)\\.kt$")
+            model("inspectionsLocal", pattern = "^([\\w\\-_]+)\\.(kt|kts)$")
         }
 
         testClass<AbstractHierarchyTest> {
