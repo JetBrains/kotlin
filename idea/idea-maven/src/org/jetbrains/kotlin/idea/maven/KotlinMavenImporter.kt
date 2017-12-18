@@ -207,6 +207,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         }
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
         setImplementedModuleName(kotlinFacet, mavenProject, module)
+        kotlinFacet.noVersionAutoAdvance()
     }
 
     private fun detectPlatform(mavenProject: MavenProject) = detectPlatformByExecutions(mavenProject) ?:
