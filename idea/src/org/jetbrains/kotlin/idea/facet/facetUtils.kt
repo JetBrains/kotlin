@@ -228,6 +228,13 @@ fun KotlinFacet.configureFacet(
     }
 }
 
+fun KotlinFacet.noVersionAutoAdvance() {
+    configuration.settings.compilerArguments?.let {
+        it.autoAdvanceLanguageVersion = false
+        it.autoAdvanceApiVersion = false
+    }
+}
+
 // "Primary" fields are written to argument beans directly and thus not presented in the "additional arguments" string
 // Update these lists when facet/project settings UI changes
 val commonUIExposedFields = listOf(CommonCompilerArguments::languageVersion.name,
