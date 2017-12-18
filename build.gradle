@@ -379,19 +379,29 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
         into baseName
     }
     from(project.rootDir) {
-        include 'samples/**'
         include 'INTEROP.md'
         include 'RELEASE_NOTES.md'
         include 'GRADLE_PLUGIN.md'
         include 'PLATFORM_LIBS.md'
-        exclude '**/gradle.properties'
-        exclude '**/settings.gradle'
+        include 'samples/**'
+        exclude 'samples/gradle.properties'
+        exclude 'samples/settings.gradle'
         exclude '**/build'
         exclude '**/.gradle'
         exclude 'samples/**/*.kt.bc-build'
-        rename('(.*)\\.for_bundle', '$1')
         into baseName
     }
+
+    from(project.file("samples/settings.gradle")) {
+        into "$baseName/samples"
+        filter { it.startsWith("includeBuild") ? null : it }
+    }
+
+    from(project.file("samples/gradle.properties")) {
+        into "$baseName/samples"
+        filter { it.startsWith("konan.home=") ? "konan.home=../.." : it }
+    }
+
     destinationDir = file('.')
     if (!isWindows()) {
         extension = 'tar.gz'
