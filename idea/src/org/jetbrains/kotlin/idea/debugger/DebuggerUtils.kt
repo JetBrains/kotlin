@@ -96,8 +96,10 @@ object DebuggerUtils {
         return result
     }
 
-    private fun findFilesByNameInPackage(className: JvmClassName, fileName: String, project: Project, searchScope: GlobalSearchScope)
-            = findFilesWithExactPackage(className.packageFqName, searchScope, project).filter { it.name == fileName }
+    private fun findFilesByNameInPackage(className: JvmClassName, fileName: String, project: Project, searchScope: GlobalSearchScope): List<KtFile> {
+        val files = findFilesWithExactPackage(className.packageFqName, searchScope, project).filter { it.name == fileName }
+        return files.sortedWith(JavaElementFinder.byClasspathComparator(searchScope))
+    }
 
     fun analyzeInlinedFunctions(
             resolutionFacadeForFile: ResolutionFacade,
