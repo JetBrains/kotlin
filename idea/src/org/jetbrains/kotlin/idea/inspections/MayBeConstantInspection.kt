@@ -25,11 +25,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.*
 import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.constants.ErrorValue
+import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.constants.evaluate.isStandaloneOnlyConstant
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
@@ -39,8 +41,10 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
     enum class Status {
         NONE,
         MIGHT_BE_CONST,
+        MIGHT_BE_CONST_ERRONEOUS,
         JVM_FIELD_MIGHT_BE_CONST,
-        JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER
+        JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER,
+        JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -49,8 +53,9 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
                 super.visitProperty(property)
                 val status = property.getStatus()
                 when (status) {
-                    NONE, JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER -> return
-                    else -> {
+                    NONE, JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER,
+                    MIGHT_BE_CONST_ERRONEOUS, JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS -> return
+                    MIGHT_BE_CONST, JVM_FIELD_MIGHT_BE_CONST -> {
                         holder.registerProblem(
                                 property.nameIdentifier ?: property,
                                 if (status == JVM_FIELD_MIGHT_BE_CONST) "'const' might be used instead of '@JvmField'" else "Might be 'const'",
@@ -65,11 +70,13 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
 
     companion object {
         fun KtProperty.getStatus(): Status {
-            if (isLocal || isVar || hasModifier(KtTokens.CONST_KEYWORD) || containingClassOrObject is KtClass || getter != null) {
+            if (isLocal || isVar || getter != null ||
+                hasModifier(KtTokens.CONST_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
                 return NONE
             }
-            val initializer = initializer
+            if (!isTopLevel && containingClassOrObject !is KtObjectDeclaration) return NONE
 
+            val initializer = initializer
             // For some reason constant evaluation does not work for property.analyze()
             val context = (initializer ?: this).analyze(BodyResolveMode.PARTIAL)
             val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? VariableDescriptor ?: return NONE
@@ -78,10 +85,21 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
 
             return when {
                 initializer != null -> {
-                    ConstantExpressionEvaluator.getConstant(
+                    val compileTimeConstant = ConstantExpressionEvaluator.getConstant(
                             initializer, context
-                    )?.toConstantValue(propertyDescriptor.type)?.takeIf { !it.isStandaloneOnlyConstant() } ?: return NONE
-                    if (withJvmField) JVM_FIELD_MIGHT_BE_CONST else MIGHT_BE_CONST
+                    ) ?: return NONE
+                    val erroneousConstant = compileTimeConstant.usesNonConstValAsConstant
+                    compileTimeConstant.toConstantValue(propertyDescriptor.type).takeIf {
+                        !it.isStandaloneOnlyConstant() && it !is NullValue && it !is ErrorValue
+                    } ?: return NONE
+                    when {
+                        withJvmField ->
+                            if (erroneousConstant) JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS
+                            else JVM_FIELD_MIGHT_BE_CONST
+                        else ->
+                            if (erroneousConstant) MIGHT_BE_CONST_ERRONEOUS
+                            else MIGHT_BE_CONST
+                    }
                 }
                 withJvmField -> JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER
                 else -> NONE
