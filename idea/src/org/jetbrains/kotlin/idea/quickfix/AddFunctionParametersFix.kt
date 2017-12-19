@@ -70,6 +70,7 @@ class AddFunctionParametersFix(
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
+        if (!super.isAvailable(project, editor, file)) return false
         val callElement = callElement ?: return false
 
         // newParametersCnt <= 0: psi for this quickfix is no longer valid
