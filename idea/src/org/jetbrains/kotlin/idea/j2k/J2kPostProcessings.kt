@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -162,6 +163,33 @@ object J2KPostProcessingRegistrar {
                 return {
                     if (intention.applicabilityRange(tElement) != null) { // check availability of the intention again because something could change
                         val apply = { intention.applyTo(element, null) }
+                        apply()
+                    }
+                }
+            }
+        })
+    }
+
+    private inline fun
+            <reified TElement : KtElement,
+            TInspection: AbstractApplicabilityBasedInspection<TElement>> registerInspectionBasedProcessing(
+
+            inspection: TInspection,
+            acceptInformationLevel: Boolean = false
+    ) {
+        _processings.add(object : J2kPostProcessing {
+            // Inspection can either need or not need write action
+            override val writeActionNeeded = inspection.startFixInWriteAction
+
+            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+                if (!TElement::class.java.isInstance(element)) return null
+                val tElement = element as TElement
+                if (!inspection.isApplicable(tElement)) return null
+                val highlightType = inspection.inspectionHighlightType(tElement)
+                if (!acceptInformationLevel && highlightType == ProblemHighlightType.INFORMATION) return null
+                return {
+                    if (inspection.isApplicable(tElement)) { // check availability of the intention again because something could change
+                        val apply = { inspection.applyTo(element) }
                         apply()
                     }
                 }
