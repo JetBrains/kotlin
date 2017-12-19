@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.script.jsr223
 
-import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -37,7 +36,6 @@ import kotlin.reflect.KClass
 // TODO: need to manage resources here, i.e. call replCompiler.dispose when engine is collected
 
 class KotlinJsr223JvmDaemonCompileScriptEngine(
-        disposable: Disposable,
         factory: ScriptEngineFactory,
         compilerClasspath: List<File>,
         templateClasspath: List<File>,
