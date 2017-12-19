@@ -91,7 +91,21 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
             DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
         }
 
-        val psiFile = myFixture.configureByFiles(mainFile.name).first()
+        var i = 1
+        val extraFileNames = mutableListOf<String>()
+        extraFileLoop@ while (true) {
+            for (extension in EXTENSIONS) {
+                val extraFile = File(mainFile.parent, FileUtil.getNameWithoutExtension(mainFile) + "." + i + extension)
+                if (extraFile.exists()) {
+                    extraFileNames += extraFile.name
+                    i++
+                    continue@extraFileLoop
+                }
+            }
+            break
+        }
+
+        val psiFile = myFixture.configureByFiles(*(listOf(mainFile.name) + extraFileNames).toTypedArray()).first()
 
         doTestFor(mainFile.name, psiFile.virtualFile!!, inspection, fileText)
 
@@ -168,5 +182,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
             )
         }
     }
-
+    companion object {
+        private val EXTENSIONS = arrayOf(".kt", ".kts", ".java", ".groovy")
+    }
 }

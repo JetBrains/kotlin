@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 // ERROR: 'operator' modifier is inapplicable on this function: must be a member or an extension function
 
 package p

@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 // ERROR: An argument is already passed for this parameter
 // ERROR: No value passed for parameter 'b'
 fun test() {

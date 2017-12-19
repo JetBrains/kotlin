@@ -1,9 +1,9 @@
-// IS_APPLICABLE: false
-// ERROR: Unresolved reference: got
+// FIX: Replace 'get' call with indexing operator
+
 fun test() {
     class Test{
         operator fun get(i: Int) : Int = 0
     }
     val test = Test()
-    test.g<caret>ot(0)
+    test.g<caret>et(0)
 }

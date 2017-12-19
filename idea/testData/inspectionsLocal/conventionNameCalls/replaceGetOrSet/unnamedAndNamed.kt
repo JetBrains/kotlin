@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 fun test() {
     class Test{
         operator fun get(a: Int = 0, b: Int = 1, c: Int = 2, d: Int = 3) : Int = 0

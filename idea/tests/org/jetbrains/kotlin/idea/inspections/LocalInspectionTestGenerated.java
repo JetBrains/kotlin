@@ -522,6 +522,162 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/conventionNameCalls")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConventionNameCalls extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInConventionNameCalls() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/conventionNameCalls"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReplaceGetOrSet extends AbstractLocalInspectionTest {
+            @TestMetadata("acceptableVararg.kt")
+            public void testAcceptableVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/acceptableVararg.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInReplaceGetOrSet() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("argumentAndFunction.kt")
+            public void testArgumentAndFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/argumentAndFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("duplicateArguments.kt")
+            public void testDuplicateArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/duplicateArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("extensionFunction.kt")
+            public void testExtensionFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/extensionFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionalArgument.kt")
+            public void testFunctionalArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/functionalArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("invalidArgument.kt")
+            public void testInvalidArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/invalidArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("missingDefaultArgument.kt")
+            public void testMissingDefaultArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/missingDefaultArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multiArgument.kt")
+            public void testMultiArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/multiArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noArgument.kt")
+            public void testNoArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/noArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notOperator.kt")
+            public void testNotOperator() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/notOperator.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("qualifier.kt")
+            public void testQualifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/qualifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("sanityCheck.kt")
+            public void testSanityCheck() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/sanityCheck.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/set.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("set2.kt")
+            public void testSet2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/set2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("setValueUsed.kt")
+            public void testSetValueUsed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/setValueUsed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("setWithNoParameters.kt")
+            public void testSetWithNoParameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/setWithNoParameters.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("setWithVararg.kt")
+            public void testSetWithVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/setWithVararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("singleArgument.kt")
+            public void testSingleArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/singleArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("staticMethod.kt")
+            public void testStaticMethod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/staticMethod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("super.kt")
+            public void testSuper() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/super.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelFun.kt")
+            public void testTopLevelFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/topLevelFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unacceptableVararg.kt")
+            public void testUnacceptableVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/unacceptableVararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unnamedAndNamed.kt")
+            public void testUnnamedAndNamed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/unnamedAndNamed.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/copyWithoutNamedArguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

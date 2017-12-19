@@ -1,4 +1,4 @@
-// INTENTION_TEXT: Replace 'set' call with indexing operator
+// FIX: Replace 'set' call with indexing operator
 
 class C {
     operator fun set(s: String, value: Int) {}

@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 fun foo() {
     JavaClass.<caret>get(JavaClass())
 }

@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 
 open class Base {
     open operator fun get(s: String) = ""

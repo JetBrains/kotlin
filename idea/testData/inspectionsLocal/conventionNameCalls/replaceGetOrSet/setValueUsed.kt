@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 
 class C {
     operator fun set(s: String, value: Int): Boolean = true

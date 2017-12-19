@@ -1,9 +1,9 @@
-// INTENTION_TEXT: Replace 'get' call with indexing operator
-
+// PROBLEM: none
+// ERROR: Unresolved reference: got
 fun test() {
     class Test{
         operator fun get(i: Int) : Int = 0
     }
     val test = Test()
-    test<caret>[0]
+    test.g<caret>ot(0)
 }

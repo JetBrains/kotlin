@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 package p
 
 class C

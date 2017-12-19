@@ -813,11 +813,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceContainsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1607,7 +1602,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceGetOrSetInspection"
                      displayName="Explicit 'get' or 'set' call"
                      groupPath="Kotlin"
                      groupName="Style issues"

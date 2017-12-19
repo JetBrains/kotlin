@@ -318,6 +318,7 @@ fun main(args: Array<String>) {
         testClass<AbstractInspectionTest> {
             model("intentions", pattern = "^(inspections\\.test)$", singleClass = true)
             model("inspections", pattern = "^(inspections\\.test)$", singleClass = true)
+            model("inspectionsLocal", pattern = "^(inspections\\.test)$", singleClass = true)
         }
 
         testClass<AbstractLocalInspectionTest> {

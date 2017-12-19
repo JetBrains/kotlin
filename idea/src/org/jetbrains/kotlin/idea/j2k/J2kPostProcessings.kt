@@ -27,14 +27,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.*
+import org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceGetOrSetInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
-import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetInspection
-import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
@@ -91,7 +90,7 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(IfThenToSafeAccessIntention())
         registerIntentionBasedProcessing(IfThenToElvisIntention())
         registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention())
-        registerIntentionBasedProcessing(ReplaceGetOrSetIntention(), additionalChecker = ReplaceGetOrSetInspection.additionalChecker)
+        registerInspectionBasedProcessing(ReplaceGetOrSetInspection())
         registerIntentionBasedProcessing(AddOperatorModifierIntention())
         registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention())
         registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention())
