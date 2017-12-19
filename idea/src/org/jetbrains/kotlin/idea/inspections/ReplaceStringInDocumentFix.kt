@@ -44,5 +44,5 @@ class ReplaceStringInDocumentFix(element: PsiElement, private val oldString: Str
         document.replaceString(start, end, newString)
     }
 
-    override fun getFamilyName() = "Replace '$oldString' with $newString"
+    override fun getFamilyName() = "Replace '$oldString' with '$newString'"
 }
