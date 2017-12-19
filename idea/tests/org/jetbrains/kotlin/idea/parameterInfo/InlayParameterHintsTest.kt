@@ -178,4 +178,10 @@ annotation class ManyArgs(val name: String, val surname: String)
             x.foo("123")
         }""")
     }
+
+    fun `test spread`() {
+        check("""fun foo(vararg x: Int) {
+            intArrayOf(1, 0).apply { foo(<hint text="...x:" />*this) }
+        }""")
+    }
 }
