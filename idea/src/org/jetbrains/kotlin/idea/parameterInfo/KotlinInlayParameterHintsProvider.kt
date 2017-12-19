@@ -117,7 +117,8 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
 
     override fun getSupportedOptions(): List<Option> = HintType.values().map { it.option }
 
-    override fun getDefaultBlackList(): Set<String> = setOf("*listOf", "*setOf", "*arrayOf", "*ListOf", "*SetOf", "*ArrayOf")
+    override fun getDefaultBlackList(): Set<String> =
+            setOf("*listOf", "*setOf", "*arrayOf", "*ListOf", "*SetOf", "*ArrayOf", "*assert*(*)")
 
     override fun getHintInfo(element: PsiElement): HintInfo? {
         val hintType = HintType.resolve(element) ?: return null
