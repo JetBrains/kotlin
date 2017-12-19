@@ -51,6 +51,306 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/branched")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Branched extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInBranched() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/branched"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class IfThenToSafeAccess extends AbstractLocalInspectionTest {
+            public void testAllFilesPresentInIfThenToSafeAccess() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("blockHasMoreThanOneStatement.kt")
+            public void testBlockHasMoreThanOneStatement() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/blockHasMoreThanOneStatement.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("blockUsesDifferentVar.kt")
+            public void testBlockUsesDifferentVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/blockUsesDifferentVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("conditionComparesNullWithNull.kt")
+            public void testConditionComparesNullWithNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/conditionComparesNullWithNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("conditionInvalidBinaryExp.kt")
+            public void testConditionInvalidBinaryExp() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/conditionInvalidBinaryExp.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("conditionNotBinaryExpr.kt")
+            public void testConditionNotBinaryExpr() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/conditionNotBinaryExpr.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("doesNotinlineValueIfUsedMoreThanOnce.kt")
+            public void testDoesNotinlineValueIfUsedMoreThanOnce() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/doesNotinlineValueIfUsedMoreThanOnce.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("doesNotinlineValueOutsideOfScope.kt")
+            public void testDoesNotinlineValueOutsideOfScope() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/doesNotinlineValueOutsideOfScope.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("emptyCondition.kt")
+            public void testEmptyCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/emptyCondition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("emptyElseBlock.kt")
+            public void testEmptyElseBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/emptyElseBlock.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("emptyThenBlock.kt")
+            public void testEmptyThenBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/emptyThenBlock.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ifAndElseBothInBlocks.kt")
+            public void testIfAndElseBothInBlocks() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/ifAndElseBothInBlocks.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ifAndElseNotInBlocks.kt")
+            public void testIfAndElseNotInBlocks() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/ifAndElseNotInBlocks.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ifAsExpression.kt")
+            public void testIfAsExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/ifAsExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitReceiver.kt")
+            public void testImplicitReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/implicitReceiver.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isCheckSimple.kt")
+            public void testIsCheckSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/isCheckSimple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isCheckWithSelectorChain.kt")
+            public void testIsCheckWithSelectorChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/isCheckWithSelectorChain.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isCondition.kt")
+            public void testIsCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/isCondition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isNotCondition.kt")
+            public void testIsNotCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/isNotCondition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isNotNullable.kt")
+            public void testIsNotNullable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/isNotNullable.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isNullable.kt")
+            public void testIsNullable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/isNullable.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lhsEqualsNull.kt")
+            public void testLhsEqualsNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/lhsEqualsNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lhsNotEqualsNull.kt")
+            public void testLhsNotEqualsNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/lhsNotEqualsNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("missingNecessaryElseClause.kt")
+            public void testMissingNecessaryElseClause() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/missingNecessaryElseClause.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("missingNecessaryThenClause.kt")
+            public void testMissingNecessaryThenClause() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/missingNecessaryThenClause.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noCondition.kt")
+            public void testNoCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/noCondition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noElseBlock.kt")
+            public void testNoElseBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/noElseBlock.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noElseBlockAsExpression.kt")
+            public void testNoElseBlockAsExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/noElseBlockAsExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noNullInCondition.kt")
+            public void testNoNullInCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/noNullInCondition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noNullInCondition2.kt")
+            public void testNoNullInCondition2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/noNullInCondition2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noThenBlock.kt")
+            public void testNoThenBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/noThenBlock.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notApplicableForFunction.kt")
+            public void testNotApplicableForFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/notApplicableForFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notApplicableForLocalVar.kt")
+            public void testNotApplicableForLocalVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/notApplicableForLocalVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullCheckSimple.kt")
+            public void testNullCheckSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/nullCheckSimple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullCheckWithSelectorCallChain.kt")
+            public void testNullCheckWithSelectorCallChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/nullCheckWithSelectorCallChain.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("otherBlockHasMoreThanOneStatement.kt")
+            public void testOtherBlockHasMoreThanOneStatement() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/otherBlockHasMoreThanOneStatement.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("property.kt")
+            public void testProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/property.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyNotNull.kt")
+            public void testPropertyNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/propertyNotNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyWithProperty.kt")
+            public void testPropertyWithProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/propertyWithProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("rhsEqualsNull.kt")
+            public void testRhsEqualsNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/rhsEqualsNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("rhsNotEqualsNull.kt")
+            public void testRhsNotEqualsNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/rhsNotEqualsNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("thenAndElseBothNull.kt")
+            public void testThenAndElseBothNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/thenAndElseBothNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("thenAndElseNotNull.kt")
+            public void testThenAndElseNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/thenAndElseNotNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unacceptableEmptyElseBlock.kt")
+            public void testUnacceptableEmptyElseBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/unacceptableEmptyElseBlock.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unacceptableEmptyThenBlock.kt")
+            public void testUnacceptableEmptyThenBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/unacceptableEmptyThenBlock.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unacceptableNoElseBlock.kt")
+            public void testUnacceptableNoElseBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/unacceptableNoElseBlock.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unacceptableNoThenBlock.kt")
+            public void testUnacceptableNoThenBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/unacceptableNoThenBlock.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("willNotInlineClassProperty.kt")
+            public void testWillNotInlineClassProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/willNotInlineClassProperty.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/canBeVal")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

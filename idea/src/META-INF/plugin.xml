@@ -1620,7 +1620,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToSafeAccessInspection"
                      displayName="If-Then foldable to '?.'"
                      groupPath="Kotlin"
                      groupName="Style issues"

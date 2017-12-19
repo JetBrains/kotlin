@@ -44,12 +44,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("branched/ifThenToSafeAccess/inspectionData/inspections.test")
-        public void testBranched_ifThenToSafeAccess_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/inspectionData/inspections.test");
-            doTest(fileName);
-        }
-
         @TestMetadata("convertToStringTemplate/inspectionData/inspections.test")
         public void testConvertToStringTemplate_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/inspectionData/inspections.test");
@@ -486,6 +480,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
     public static class InspectionsLocal extends AbstractInspectionTest {
         public void testAllFilesPresentInInspectionsLocal() throws Exception {
             KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/inspectionsLocal"), Pattern.compile("^(inspections\\.test)$"), TargetBackend.ANY);
+        }
+
+        @TestMetadata("branched/ifThenToSafeAccess/inspectionData/inspections.test")
+        public void testBranched_ifThenToSafeAccess_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/inspectionData/inspections.test");
+            doTest(fileName);
         }
 
         @TestMetadata("conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test")
