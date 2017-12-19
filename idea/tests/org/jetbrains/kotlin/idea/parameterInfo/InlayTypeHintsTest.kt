@@ -96,4 +96,13 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                   }
               }""")
     }
+
+    fun testAnonymousObjectNoBaseType() {
+        HintType.LOCAL_VARIABLE_HINT.option.set(true)
+        check("""fun foo() {
+                val o = object {
+                    val x: Int = 0
+                }
+              }""")
+    }
 }
