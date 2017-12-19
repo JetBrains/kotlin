@@ -188,6 +188,12 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("kt21827.kt")
+        public void testKt21827() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt21827.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noInline.kt")
         public void testNoInline() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/noInline.kt");
