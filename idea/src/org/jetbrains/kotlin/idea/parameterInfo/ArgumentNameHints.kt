@@ -54,8 +54,13 @@ fun provideArgumentNameHints(element: KtCallElement): List<InlayInfo> {
 }
 
 private fun getParameterInfoForCallCandidate(resolvedCall: ResolvedCall<out CallableDescriptor>): List<InlayInfo> {
+    val resultingDescriptor = resolvedCall.resultingDescriptor
+    if (resultingDescriptor.hasSynthesizedParameterNames() && resultingDescriptor !is FunctionInvokeDescriptor) {
+        return emptyList()
+    }
+
     return resolvedCall.valueArguments.mapNotNull { (valueParam: ValueParameterDescriptor, resolvedArg) ->
-        if (resolvedCall.resultingDescriptor is FunctionInvokeDescriptor &&
+        if (resultingDescriptor is FunctionInvokeDescriptor &&
             valueParam.type.extractParameterNameFromFunctionTypeArgument() == null) {
             return@mapNotNull null
         }
