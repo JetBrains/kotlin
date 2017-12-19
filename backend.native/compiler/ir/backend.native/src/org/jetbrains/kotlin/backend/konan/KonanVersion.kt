@@ -30,7 +30,7 @@ enum class MetaVersion {
 
 class KonanVersion(val meta: MetaVersion?, val major: Int, val minor: Int, val maintenance: Int, val build:Int) {
     companion object {
-        val CURRENT = KonanVersion(MetaVersion.EAP, 0, 1, 0, 0)
+        val CURRENT = KonanVersion(MetaVersion.EAP, 0, 6, 0, 0)
     }
     override fun toString() = if (meta != null) "$meta $major.$minor.$maintenance.$build" else "$major.$minor.$maintenance.$build"
 }

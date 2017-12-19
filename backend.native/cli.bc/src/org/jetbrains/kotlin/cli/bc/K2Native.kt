@@ -42,6 +42,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     override fun doExecute(@NotNull arguments: K2NativeCompilerArguments, @NotNull configuration: CompilerConfiguration, @NotNull rootDisposable: Disposable, @Nullable paths: KotlinPaths?): ExitCode {
 
+        if (arguments.version) {
+            println("Kotlin/Native: ${KonanVersion.CURRENT}")
+            return ExitCode.OK
+        }
+
         if (arguments.freeArgs.isEmpty() && !arguments.isUsefulWithoutFreeArgs) {
             configuration.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
         }
