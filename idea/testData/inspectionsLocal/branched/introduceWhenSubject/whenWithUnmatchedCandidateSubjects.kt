@@ -1,4 +1,4 @@
-//IS_APPLICABLE: false
+// PROBLEM: none
 fun test(n: Int): String {
     return <caret>when {
         n in 0..10 -> "n is small"
