@@ -4,7 +4,7 @@ package com.intellij.debugger.streams.kotlin.psi.impl
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinSequenceChainBuilder : KotlinChainBuilderBase(TODO("transmit here a correct transformer")) {
+class KotlinSequenceChainBuilder : KotlinChainBuilderBase(KotlinChainTransformerImpl(TODO())) {
   override fun createChainsBuilder(): ChainBuilder {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
