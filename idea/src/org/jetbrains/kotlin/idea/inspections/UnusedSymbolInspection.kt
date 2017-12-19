@@ -85,11 +85,8 @@ import javax.swing.JPanel
 class UnusedSymbolInspection : AbstractKotlinInspection() {
     companion object {
         private val javaInspection = UnusedDeclarationInspection()
-        private val MAIN_NAMES = setOf("main", "premain", "agentmain")
 
         fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
-            if (declaration.annotationEntries.isEmpty() && declaration.name !in MAIN_NAMES) return false
-
             val lightElement: PsiElement? = when (declaration) {
                 is KtClassOrObject -> declaration.toLightClass()
                 is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)
