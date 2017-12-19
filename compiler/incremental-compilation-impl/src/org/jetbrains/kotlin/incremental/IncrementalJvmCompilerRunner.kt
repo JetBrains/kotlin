@@ -224,6 +224,12 @@ class IncrementalJvmCompilerRunner(
 
         for (javaFile in javaFiles) {
             if (!caches.platformCache.isTrackedFile(javaFile)) {
+                if (!javaFile.exists()) {
+                    // todo: can we do this more optimal?
+                    reporter.report { "Could not get changed for untracked removed java file $javaFile" }
+                    return false
+                }
+
                 val psiFile = javaFile.psiFile()
                 if (psiFile !is PsiJavaFile) {
                     reporter.report { "[Precise Java tracking] Expected PsiJavaFile, got ${psiFile?.javaClass}" }
