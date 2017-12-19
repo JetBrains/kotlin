@@ -1,8 +1,8 @@
-LineBreakpoint created at Simple.kt:5
+LineBreakpoint created at Simple.kt:3
 Run Java
 Connected to the target VM
-Simple.kt:5
-Stream.of(1, 2, 3)
+Simple.kt:3
+listOf(1, 2, 3).stream()
 .toArray()
 toArray
     before: 1,2,3
