@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
+import com.intellij.psi.PsiBinaryExpression.BOOLEAN_OPERATION_TOKENS
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.MethodSignature
@@ -118,9 +119,9 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         val expectedNullability = if (operationTokenType in NON_NULL_OPERAND_OPS) Nullability.NotNull else null
 
-        val leftOperandExpectedType = getOperandExpectedType(left, right, operationTokenType)
-        val leftConverted = codeConverter.convertExpression(left, leftOperandExpectedType, expectedNullability)
-        val expectedType = if (leftOperandExpectedType == null) getOperandExpectedType(right, left, operationTokenType) else null
+        val expectedType = getOperandExpectedType(operationTokenType, left.type, right?.type)
+
+        val leftConverted = codeConverter.convertExpression(left, expectedType, expectedNullability)
         val rightConverted = codeConverter.convertExpression(right, expectedType, expectedNullability)
 
         val op = operator(left, operationTokenType, right).assignPrototype(expression.operationSign)
@@ -130,58 +131,54 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
     }
 
-    private fun operator(left: PsiExpression, op: IElementType, right: PsiExpression?): Operator =
-            if ((op != JavaTokenType.EQEQ && op != JavaTokenType.NE) || canKeepEqEq(left, right))
-                Operator(op)
-            else if (op == JavaTokenType.EQEQ)
-                Operator(KtTokens.EQEQEQ)
-            else
-                Operator(KtTokens.EXCLEQEQEQ)
-
-    private fun getOperandExpectedType(current: PsiExpression?, other: PsiExpression?, operationTokenType: IElementType): PsiType? {
-        val currentType = current?.type
-        val otherType = other?.type
-        if (currentType !is PsiPrimitiveType || otherType !is PsiPrimitiveType) return null
-        if (currentType == PsiType.BOOLEAN || otherType == PsiType.BOOLEAN) return null
-
-        if (operationTokenType == JavaTokenType.EQEQ
-            || operationTokenType == JavaTokenType.NE
-            || currentType == PsiType.CHAR) {
-            if (currentType < otherType) return otherType
-        }
-
-        return null
+    private fun operator(left: PsiExpression, op: IElementType, right: PsiExpression?): Operator = when {
+        (op != JavaTokenType.EQEQ && op != JavaTokenType.NE) || canKeepEqEq(left, right) -> Operator(op)
+        op == JavaTokenType.EQEQ -> Operator(KtTokens.EQEQEQ)
+        else -> Operator(KtTokens.EXCLEQEQEQ)
     }
 
-    infix operator fun PsiPrimitiveType.compareTo(other: PsiPrimitiveType): Int {
-        return when (this) {
-            other -> 0
-            PsiType.BYTE -> when (other) {
-                PsiType.CHAR -> 1
-                else -> -1
+    private fun getOperandExpectedType(op: IElementType, currentType: PsiType?, otherType: PsiType?): PsiType? = when {
+        currentType !is PsiPrimitiveType || currentType == PsiType.BOOLEAN
+        || otherType !is PsiPrimitiveType || otherType == PsiType.BOOLEAN -> null
+
+        op in BOOLEAN_OPERATION_TOKENS -> maxOf(currentType, otherType)
+
+        currentType == PsiType.CHAR && otherType == PsiType.CHAR -> PsiType.INT
+        currentType == PsiType.CHAR -> otherType
+        otherType == PsiType.CHAR -> currentType
+
+        else -> null
+    }
+
+    private fun maxOf(a: PsiPrimitiveType, b: PsiPrimitiveType): PsiPrimitiveType {
+        return when (a) {
+            b -> a
+            PsiType.BYTE -> when (b) {
+                PsiType.CHAR -> a
+                else -> b
             }
-            PsiType.SHORT -> when (other) {
+            PsiType.SHORT -> when (b) {
                 PsiType.CHAR,
-                PsiType.BYTE -> 1
-                else -> -1
+                PsiType.BYTE -> a
+                else -> b
             }
-            PsiType.INT -> when (other) {
+            PsiType.INT -> when (b) {
                 PsiType.BYTE,
                 PsiType.SHORT,
-                PsiType.CHAR -> 1
-                else -> -1
+                PsiType.CHAR -> a
+                else -> b
             }
-            PsiType.LONG -> when (other) {
+            PsiType.LONG -> when (b) {
                 PsiType.DOUBLE,
-                PsiType.FLOAT -> -1
-                else -> 1
+                PsiType.FLOAT -> b
+                else -> a
             }
-            PsiType.FLOAT -> when (other) {
-                PsiType.DOUBLE -> -1
-                else -> 1
+            PsiType.FLOAT -> when (b) {
+                PsiType.DOUBLE -> b
+                else -> a
             }
-            PsiType.DOUBLE -> 1
-            PsiType.CHAR -> -1
+            PsiType.DOUBLE -> a
+            PsiType.CHAR -> b
             else -> throw AssertionError("Unknown primitive type $this")
         }
     }
@@ -319,13 +316,6 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 text = text.replace("\\\\([0-3]?[0-7]{1,2})".toRegex()) {
                     String.format("\\u%04x", Integer.parseInt(it.groupValues[1], 8))
                 }
-                val parent = expression.parent
-                if (parent is PsiBinaryExpression) {
-                    val castNeeded = (parent.operationTokenType !in COMPARISON_OPS) || !isChar(parent.rOperand)
-                    if (castNeeded) {
-                        text += ".${Char::toInt.name}()"
-                    }
-                }
             }
 
             if (typeStr == "java.lang.String") {
@@ -345,10 +335,6 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         result = LiteralExpression(text)
     }
-
-    private val COMPARISON_OPS = setOf(JavaTokenType.EQEQ, JavaTokenType.NE, JavaTokenType.GT, JavaTokenType.LT, JavaTokenType.GE, JavaTokenType.LE)
-
-    private fun isChar(operand: PsiExpression?) = operand?.type?.isAssignableFrom(PsiType.CHAR) ?: false
 
     override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
         val methodExpr = expression.methodExpression
