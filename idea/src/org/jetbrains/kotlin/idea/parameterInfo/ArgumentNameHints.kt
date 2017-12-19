@@ -69,7 +69,8 @@ private fun getParameterInfoForCallCandidate(resolvedCall: ResolvedCall<out Call
             arg.getArgumentExpression()?.let { argExp ->
                 if (!arg.isNamed() && !valueParam.name.isSpecial && argExp.isUnclearExpression()) {
                     val prefix = if (valueParam.varargElementType != null) "..." else ""
-                    return@mapNotNull InlayInfo(prefix + valueParam.name.identifier, argExp.startOffset)
+                    return@mapNotNull InlayInfo(prefix + valueParam.name.identifier,
+                                                arg.getSpreadElement()?.startOffset ?: argExp.startOffset)
                 }
             }
         }
