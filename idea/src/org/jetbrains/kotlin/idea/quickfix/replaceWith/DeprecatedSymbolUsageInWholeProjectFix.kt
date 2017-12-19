@@ -43,6 +43,7 @@ class DeprecatedSymbolUsageInWholeProjectFix(
     override fun startInWriteAction() = false
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
+        if (!super.isAvailable(project, editor, file)) return false
         return targetPsiElement() != null
     }
 
