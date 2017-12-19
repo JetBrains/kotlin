@@ -53,7 +53,7 @@ enum class HintType(desc: String, enabled: Boolean) {
 
         override fun isApplicable(elem: PsiElement): Boolean = (elem is KtProperty && elem.getReturnTypeReference() == null && elem.isLocal) ||
                                                                (elem is KtParameter && elem.isLoopParameter && elem.typeReference == null) ||
-                                                               (elem is KtDestructuringDeclarationEntry)
+                                                               (elem is KtDestructuringDeclarationEntry && elem.getReturnTypeReference() == null)
     },
 
     FUNCTION_HINT("Show function return type hints", false) {
