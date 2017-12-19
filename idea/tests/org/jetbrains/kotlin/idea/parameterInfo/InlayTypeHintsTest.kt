@@ -105,4 +105,15 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                 }
               }""")
     }
+
+    fun testDestructuring() {
+        HintType.LOCAL_VARIABLE_HINT.option.set(true)
+        check("""fun main(args: Array<String>) {
+                val (a: String, b: String, c: String) = x()
+            }
+
+            fun x() :Triple<String, String,String> {
+                return Triple(<hint text="first:" />"A", <hint text="second:" />"B", <hint text="third:" />"C")
+            }""")
+    }
 }
