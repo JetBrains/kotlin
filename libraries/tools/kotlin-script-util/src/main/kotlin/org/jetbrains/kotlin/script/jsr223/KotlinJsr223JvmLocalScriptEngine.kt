@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.script.jsr223
 
-import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -35,7 +34,6 @@ import javax.script.ScriptEngineFactory
 import kotlin.reflect.KClass
 
 class KotlinJsr223JvmLocalScriptEngine(
-        disposable: Disposable,
         factory: ScriptEngineFactory,
         val templateClasspath: List<File>,
         templateClassName: String,
@@ -45,7 +43,6 @@ class KotlinJsr223JvmLocalScriptEngine(
 
     override val replCompiler: ReplCompiler by lazy {
        GenericReplCompiler(
-               disposable,
                makeScriptDefinition(templateClasspath, templateClassName),
                makeCompilerConfiguration(),
                PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
