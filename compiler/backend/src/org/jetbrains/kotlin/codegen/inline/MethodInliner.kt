@@ -220,15 +220,19 @@ class MethodInliner(
                     setLambdaInlining(true)
                     val lambdaSMAP = info.node.classSMAP
 
-                    val sourceMapper = if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
-                        NestedSourceMapper(sourceMapper, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
-                    else
-                        InlineLambdaSourceMapper(sourceMapper.parent!!, info.node)
+                    val childSourceMapper =
+                            if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
+                                NestedSourceMapper(sourceMapper, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
+                            else if (info is DefaultLambda) {
+                                NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
+                            }
+                            else InlineLambdaSourceMapper(sourceMapper.parent!!, info.node)
+
                     val inliner = MethodInliner(
                             info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
                             newCapturedRemapper, true /*cause all calls in same module as lambda*/,
                             "Lambda inlining " + info.lambdaClassType.internalName,
-                            sourceMapper, inlineCallSiteInfo, null
+                            childSourceMapper, inlineCallSiteInfo, null
                     )
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
@@ -242,7 +246,7 @@ class MethodInliner(
                     StackValue.onStack(info.invokeMethod.returnType).put(bridge.returnType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
-                    sourceMapper.endMapping()
+                    childSourceMapper.endMapping()
                     inlineOnlySmapSkipper?.markCallSiteLineNumber(remappingMethodAdapter)
                 }
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
