@@ -1,3 +1,4 @@
+// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.debugger.streams.kotlin.trace.impl.interpret
 
 import com.intellij.debugger.streams.trace.CallTraceInterpreter
@@ -40,10 +41,10 @@ class FilterTraceInterpreter(private val predicateValueToAccept: Boolean) : Call
   private fun resolveValuesAfter(before: Map<Int, TraceElement>, filteringMap: Value): Map<Int, TraceElement> {
     val predicateValues = extractPredicateValues(filteringMap)
     val result = linkedMapOf<Int, TraceElement>()
-    for ((beforeTime, value) in before) {
+    for ((beforeTime, element) in before) {
       val predicateValue = predicateValues[beforeTime]
       if (predicateValue == predicateValueToAccept) {
-        result[beforeTime + 1] = value
+        result[beforeTime + 1] = TraceElementImpl(beforeTime + 1, element.value)
       }
     }
 
