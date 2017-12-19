@@ -3,7 +3,7 @@ package com.intellij.debugger.streams.kotlin.psi.java
 
 import com.intellij.debugger.streams.kotlin.KotlinPsiChainBuilderTestCase
 import com.intellij.debugger.streams.kotlin.LibraryUtil
-import com.intellij.debugger.streams.kotlin.lib.StreamExLibrarySupportProvider
+import com.intellij.debugger.streams.kotlin.lib.java.StreamExLibrarySupportProvider
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess

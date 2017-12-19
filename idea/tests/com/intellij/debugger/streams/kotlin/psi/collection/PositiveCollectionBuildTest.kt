@@ -2,7 +2,7 @@
 package com.intellij.debugger.streams.kotlin.psi.collection
 
 import com.intellij.debugger.streams.kotlin.KotlinPsiChainBuilderTestCase
-import com.intellij.debugger.streams.kotlin.lib.KotlinCollectionSupportProvider
+import com.intellij.debugger.streams.kotlin.lib.collections.KotlinCollectionSupportProvider
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 
 /**

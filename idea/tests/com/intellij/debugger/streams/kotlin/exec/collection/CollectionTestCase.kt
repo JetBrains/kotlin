@@ -2,7 +2,7 @@
 package com.intellij.debugger.streams.kotlin.exec.collection
 
 import com.intellij.debugger.streams.kotlin.exec.KotlinTraceEvaluationTestCase
-import com.intellij.debugger.streams.kotlin.lib.KotlinCollectionSupportProvider
+import com.intellij.debugger.streams.kotlin.lib.collections.KotlinCollectionSupportProvider
 import com.intellij.debugger.streams.lib.LibrarySupportProvider
 
 /**

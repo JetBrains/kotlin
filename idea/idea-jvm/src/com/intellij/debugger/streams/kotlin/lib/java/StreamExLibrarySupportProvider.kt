@@ -1,7 +1,8 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.lib
+package com.intellij.debugger.streams.kotlin.lib.java
 
-import com.intellij.debugger.streams.kotlin.psi.impl.KotlinJavaStreamChainBuilder
+import com.intellij.debugger.streams.kotlin.lib.LibraryUtil
+import com.intellij.debugger.streams.kotlin.psi.java.KotlinJavaStreamChainBuilder
 import com.intellij.debugger.streams.kotlin.psi.impl.PackageBasedCallChecker
 import com.intellij.debugger.streams.kotlin.trace.dsl.JavaPeekCallFactory
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinStatementFactory

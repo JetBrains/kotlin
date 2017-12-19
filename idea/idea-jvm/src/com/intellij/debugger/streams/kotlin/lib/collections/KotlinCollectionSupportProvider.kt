@@ -1,7 +1,8 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.lib
+package com.intellij.debugger.streams.kotlin.lib.collections
 
-import com.intellij.debugger.streams.kotlin.psi.impl.KotlinSequenceChainBuilder
+import com.intellij.debugger.streams.kotlin.lib.LibraryUtil
+import com.intellij.debugger.streams.kotlin.psi.collections.KotlinCollectionChainBuilder
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinCollectionsPeekCallFactory
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinStatementFactory
 import com.intellij.debugger.streams.kotlin.trace.impl.KotlinTraceExpressionBuilder
@@ -15,20 +16,19 @@ import com.intellij.openapi.project.Project
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinSequenceSupportProvider : LibrarySupportProvider {
-  override fun getLanguageId(): String = LibraryUtil.KOTLIN_LANGUAGE_ID
-
+class KotlinCollectionSupportProvider : LibrarySupportProvider {
   private companion object {
-    val builder: StreamChainBuilder = KotlinSequenceChainBuilder()
-    val support = KotlinSequencesSupport()
+    val builder: StreamChainBuilder = KotlinCollectionChainBuilder()
+    val support: LibrarySupport = KotlinCollectionLibrarySupport()
     val dsl = DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory()))
-    val expressionBuilder = KotlinTraceExpressionBuilder(dsl, support.createHandlerFactory(dsl))
   }
+
+  override fun getLanguageId(): String = LibraryUtil.KOTLIN_LANGUAGE_ID
 
   override fun getChainBuilder(): StreamChainBuilder = builder
 
   override fun getLibrarySupport(): LibrarySupport = support
 
-  override fun getExpressionBuilder(project: Project): TraceExpressionBuilder = expressionBuilder
-
+  override fun getExpressionBuilder(project: Project): TraceExpressionBuilder
+      = KotlinTraceExpressionBuilder(dsl, support.createHandlerFactory(dsl))
 }
