@@ -40,7 +40,7 @@ class ReplaceToWithInfixFormInspection : AbstractKotlinInspection() {
                 if (expression.callExpression?.valueArguments?.size != 1) return
                 if (expression.calleeName !in compatibleNames) return
 
-                val context = expression.analyze(BodyResolveMode.FULL)
+                val context = expression.analyze(BodyResolveMode.PARTIAL)
                 val resolvedCall = expression.getResolvedCall(context) ?: return
                 val function = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
 
@@ -49,7 +49,7 @@ class ReplaceToWithInfixFormInspection : AbstractKotlinInspection() {
                 holder.registerProblem(
                     expression,
                     "Replace 'to' with infix form",
-                    ProblemHighlightType.WEAK_WARNING,
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     ReplaceToWithInfixFormQuickfix()
                 )
             }
