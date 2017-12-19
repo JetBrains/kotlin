@@ -36,7 +36,7 @@ abstract class HighlightingVisitor protected constructor(
             holder.createInfoAnnotation(textRange, message)
 
     protected fun highlightName(element: PsiElement, attributesKey: TextAttributesKey, message: String? = null) {
-        if (NameHighlighter.namesHighlightingEnabled) {
+        if (NameHighlighter.namesHighlightingEnabled && !element.textRange.isEmpty) {
             createInfoAnnotation(element, message).textAttributes = attributesKey
         }
     }
