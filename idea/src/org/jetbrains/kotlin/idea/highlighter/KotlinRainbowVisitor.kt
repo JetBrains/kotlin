@@ -91,7 +91,9 @@ class KotlinRainbowVisitor : RainbowVisitor() {
             return
         }
 
-        val context = target.getStrictParentOfType<KtDeclarationWithBody>() ?: return
+        val context = target.getStrictParentOfType<KtDeclarationWithBody>()
+                ?: target.getStrictParentOfType<KtAnonymousInitializer>()
+                ?: return
         addInfo(getInfo(context, rainbowElement, rainbowElement.text, attributesKeyToUse))
     }
 

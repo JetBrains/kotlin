@@ -83,6 +83,24 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
         """)
     }
 
+    fun testInitBlock() {
+        checkRainbow("""
+            class Some {
+                init {
+                    val <rainbow color='ff000004'>x</rainbow> = 128
+                    println(<rainbow color='ff000004'>x</rainbow>)
+
+                    run {
+                        println(<rainbow color='ff000004'>x</rainbow>)
+                    }
+                    fun some() {
+                        val <rainbow color='ff000003'>b</rainbow> = 299
+                        println(<rainbow color='ff000003'>b</rainbow> + <rainbow color='ff000004'>x</rainbow>)
+                    }
+                }
+            }""")
+    }
+
     private fun checkRainbow(code: String) {
         myFixture.testRainbow("rainbow.kt", code, true, true)
     }
