@@ -90,6 +90,17 @@ internal class Test {
         i(i shr '0'.toInt())
         i(i ushr '0'.toInt())
 
+        i(c.toInt() + '0'.toInt())
+        i(c.toInt() - '0'.toInt())
+        i(c.toInt() / '0'.toInt())
+        i(c.toInt() * '0'.toInt())
+        i(c.toInt() % '0'.toInt())
+        i(c.toInt() or '0'.toInt())
+        i(c.toInt() and '0'.toInt())
+        i(c.toInt() shl '0'.toInt())
+        i(c.toInt() shr '0'.toInt())
+        i(c.toInt() ushr '0'.toInt())
+
         i('0'.toInt() + i)
         i('0'.toInt() - i)
         i('0'.toInt() / i)
@@ -100,6 +111,17 @@ internal class Test {
         i('0'.toInt() shl i)
         i('0'.toInt() shr i)
         i('0'.toInt() ushr i)
+
+        i('0'.toInt() + c.toInt())
+        i('0'.toInt() - c.toInt())
+        i('0'.toInt() / c.toInt())
+        i('0'.toInt() * c.toInt())
+        i('0'.toInt() % c.toInt())
+        i('0'.toInt() or c.toInt())
+        i('0'.toInt() and c.toInt())
+        i('0'.toInt() shl c.toInt())
+        i('0'.toInt() shr c.toInt())
+        i('0'.toInt() ushr c.toInt())
 
         // TODO i(~'0');
         // TODO i(-'0');
