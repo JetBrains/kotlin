@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
@@ -91,7 +91,7 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     private fun updateDefinitions() {
         definitions = definitionsByContributor.values.flattenTo(mutableListOf())
         // TODO: clear by script type/definition
-        project.service<ScriptDependenciesUpdater>().clear()
+        ServiceManager.getService(project, ScriptDependenciesUpdater::class.java).clear()
     }
 
     private fun ScriptDefinitionContributor.safeGetDefinitions(): List<KotlinScriptDefinition> {
@@ -106,7 +106,7 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     }
 
     companion object {
-        fun getInstance(project: Project): ScriptDefinitionsManager = project.service<ScriptDefinitionProvider>() as ScriptDefinitionsManager
+        fun getInstance(project: Project): ScriptDefinitionsManager = ServiceManager.getService(project, ScriptDefinitionProvider::class.java) as ScriptDefinitionsManager
     }
 }
 

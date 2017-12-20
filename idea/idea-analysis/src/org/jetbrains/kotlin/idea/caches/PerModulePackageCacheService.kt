@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.caches
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -61,7 +61,7 @@ class KotlinPackageContentModificationListener(
 
             fun onEvents(events: List<VFileEvent>) {
 
-                val service = project.service<PerModulePackageCacheService>()
+                val service = ServiceManager.getService(project, PerModulePackageCacheService::class.java)
                 if (events.size >= FULL_DROP_THRESHOLD) {
                     service.onTooComplexChange()
                 }
@@ -90,12 +90,12 @@ class KotlinPackageStatementPsiTreeChangePreprocessor(private val project: Proje
             PsiTreeChangeEventImpl.PsiEventType.CHILD_REMOVED -> {
                 val child = event.child ?: return
                 if (child.getParentOfType<KtPackageDirective>(false) != null)
-                    project.service<PerModulePackageCacheService>().notifyPackageChange(file)
+                    ServiceManager.getService(project, PerModulePackageCacheService::class.java).notifyPackageChange(file)
             }
             PsiTreeChangeEventImpl.PsiEventType.CHILDREN_CHANGED -> {
                 val parent = event.parent ?: return
                 if (parent.getChildrenOfType<KtPackageDirective>().any())
-                    project.service<PerModulePackageCacheService>().notifyPackageChange(file)
+                    ServiceManager.getService(project, PerModulePackageCacheService::class.java).notifyPackageChange(file)
             }
             else -> {
             }

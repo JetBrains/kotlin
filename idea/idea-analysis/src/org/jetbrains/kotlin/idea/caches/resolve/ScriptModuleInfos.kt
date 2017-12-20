@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
@@ -87,7 +87,7 @@ class ScriptDependenciesModuleInfo(
                     ScriptDependenciesManager.getInstance(project).getAllScriptsClasspathScope(), project
             )
         }
-        return project.service<ScriptBinariesScopeCache>().get(scriptModuleInfo.externalDependencies)
+        return ServiceManager.getService(project, ScriptBinariesScopeCache::class.java).get(scriptModuleInfo.externalDependencies)
     }
 
     // NOTE: intentionally not taking corresponding script info into account

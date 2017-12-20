@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.PackageOracle
@@ -46,13 +46,13 @@ class IdePackageOracleFactory(val project: Project) : PackageOracleFactory {
 
     private class JavaPackagesOracle(moduleInfo: IdeaModuleInfo, project: Project) : PackageOracle {
         private val scope = moduleInfo.contentScope()
-        private val facade = project.service<KotlinJavaPsiFacade>()
+        private val facade = ServiceManager.getService(project, KotlinJavaPsiFacade::class.java)
 
         override fun packageExists(fqName: FqName) = facade.findPackage(fqName.asString(), scope) != null
     }
 
     private class KotlinSourceFilesOracle(private val moduleInfo: ModuleSourceInfo) : PackageOracle {
-        private val cacheService = moduleInfo.module.project.service<PerModulePackageCacheService>()
+        private val cacheService = ServiceManager.getService(moduleInfo.module.project, PerModulePackageCacheService::class.java)
 
         override fun packageExists(fqName: FqName): Boolean {
             return cacheService.packageExists(fqName, moduleInfo)
