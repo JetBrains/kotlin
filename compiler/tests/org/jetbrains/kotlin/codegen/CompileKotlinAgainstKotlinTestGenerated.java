@@ -102,6 +102,18 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("defaultLambdaRegeneration.kt")
+    public void testDefaultLambdaRegeneration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/defaultLambdaRegeneration.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("defaultLambdaRegeneration2.kt")
+    public void testDefaultLambdaRegeneration2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/defaultLambdaRegeneration2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("doublyNestedClass.kt")
     public void testDoublyNestedClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/doublyNestedClass.kt");
