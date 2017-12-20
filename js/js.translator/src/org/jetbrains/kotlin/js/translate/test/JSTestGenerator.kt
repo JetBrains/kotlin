@@ -58,20 +58,21 @@ class JSTestGenerator(val context: TranslationContext) {
     }
 
     private fun generateTestFunctions(classDescriptor: ClassDescriptor, parentFun: JsFunction) {
-        if (classDescriptor.modality === Modality.ABSTRACT) return
+        if (classDescriptor.modality === Modality.ABSTRACT || classDescriptor.isExpect) return
 
         val suiteFunction = JsFunction(context.scope(), JsBlock(), "suite function")
 
         val descriptors = classDescriptor.unsubstitutedMemberScope
                 .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS, MemberScope.ALL_NAME_FILTER)
-                .filterIsInstance<FunctionDescriptor>()
 
-        val beforeFunctions = descriptors.filter { it.isBefore }
-        val afterFunctions = descriptors.filter { it.isAfter }
+        val beforeFunctions = descriptors.filterIsInstance<FunctionDescriptor>().filter { it.isBefore }
+        val afterFunctions = descriptors.filterIsInstance<FunctionDescriptor>().filter { it.isAfter }
 
         descriptors.forEach {
-            if (it.isTest) {
-                generateCodeForTestMethod(it, beforeFunctions, afterFunctions, classDescriptor, suiteFunction)
+            when {
+                it is ClassDescriptor -> generateTestFunctions(it, suiteFunction)
+                it is FunctionDescriptor && it.isTest ->
+                    generateCodeForTestMethod(it, beforeFunctions, afterFunctions, classDescriptor, suiteFunction)
             }
         }
 
