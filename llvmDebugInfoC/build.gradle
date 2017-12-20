@@ -25,12 +25,23 @@ model {
         binaries.withType(StaticLibraryBinarySpec) { binary ->
           if (!project.parent.convention.plugins.platformInfo.isWindows())
              cppCompiler.args "-fPIC"
-          cppCompiler.args "--std=c++11", "-g", "-I${llvmDir}/include", "-I${projectDir}/src/main/include"
+          cppCompiler.args "--std=c++11", "-I${llvmDir}/include", "-I${projectDir}/src/main/include"
           linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport"
         }
         binaries.withType(SharedLibraryBinarySpec) { binary ->
             buildable = false
         }
+    }
+  }
+
+  /* HACK over gradle 4.4, it adds /usr/include, that affects our --sysroot flag */
+  toolChains {
+    clang(Clang) {
+      eachPlatform {
+        cppCompiler.withArguments { args ->
+          args.remove "/usr/include"
+        }
+      }
     }
   }
 }
