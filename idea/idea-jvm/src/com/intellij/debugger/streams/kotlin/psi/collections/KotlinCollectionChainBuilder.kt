@@ -3,7 +3,6 @@ package com.intellij.debugger.streams.kotlin.psi.collections
 
 import com.intellij.debugger.streams.kotlin.psi.KotlinPsiUtil
 import com.intellij.debugger.streams.kotlin.psi.impl.KotlinChainBuilderBase
-import com.intellij.debugger.streams.kotlin.psi.impl.KotlinChainTransformerImpl
 import com.intellij.debugger.streams.kotlin.psi.previousCall
 import com.intellij.debugger.streams.kotlin.psi.receiverType
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -14,7 +13,7 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
  * @author Vitaliy.Bibaev
  */
 class KotlinCollectionChainBuilder
-  : KotlinChainBuilderBase(KotlinChainTransformerImpl(KotlinCollectionsTypeExtractor())) {
+  : KotlinChainBuilderBase(CollectionChainTransformer()) {
   private companion object {
     // TODO: Avoid enumeration of all available types
     val SUPPORTED_RECEIVERS = setOf("kotlin.collections.Iterable", "kotlin.CharSequence", "kotlin.Array",

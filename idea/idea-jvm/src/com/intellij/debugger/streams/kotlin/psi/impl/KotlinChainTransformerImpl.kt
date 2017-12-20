@@ -14,14 +14,12 @@ import com.intellij.debugger.streams.wrapper.StreamChain
 import com.intellij.debugger.streams.wrapper.impl.*
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * @author Vitaliy.Bibaev
@@ -65,25 +63,7 @@ class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) :
     val parent = expression.parent as? KtDotQualifiedExpression
         ?: return QualifierExpressionImpl("", TextRange.EMPTY_RANGE, typeAfter)
     val receiver = parent.receiverExpression
-    val qualifier = QualifierExpressionImpl(receiver.text, receiver.textRange, typeAfter)
-    if (receiver.resolveType().isArray) {
-      return WrappedQualifier(qualifier)
-    }
 
-    return qualifier
+    return QualifierExpressionImpl(receiver.text, receiver.textRange, typeAfter)
   }
-
-  /**
-   * Kotlin arrays has not {@code onEach} extension. But current implementation uses onEach to increment a time counter.
-   * We use asIterable to avoid further issues with the transformed expression evaluation
-   * TODO: Avoid showing "asIterable()" in the tab name in trace window
-   */
-  private class WrappedQualifier(private val qualifierExpression: QualifierExpression)
-    : QualifierExpression by qualifierExpression {
-    override val text: String
-      get() = qualifierExpression.text + ".asIterable()"
-  }
-
-  private val KotlinType.isArray: Boolean
-    get() = KotlinBuiltIns.isArray(this) || KotlinBuiltIns.isPrimitiveArray(this)
 }
