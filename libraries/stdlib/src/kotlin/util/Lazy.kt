@@ -174,7 +174,7 @@ private class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>, Seria
 
 @kotlin.jvm.JvmVersion
 private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
-    private var initializer: (() -> T)? = initializer
+    @Volatile private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
     // this final field is required to enable safe publication of constructed instance
     private val final: Any = UNINITIALIZED_VALUE
