@@ -237,6 +237,13 @@ abstract class KotlinCommonBlock(
             }
         }
 
+        if (newChildIndex > 0) {
+            val prevBlock = mySubBlocks?.get(newChildIndex - 1)
+            if (prevBlock?.node?.elementType == KtNodeTypes.MODIFIER_LIST) {
+                return ChildAttributes(Indent.getNoneIndent(), null)
+            }
+        }
+
         return when (type) {
             in CODE_BLOCKS, KtNodeTypes.WHEN, KtNodeTypes.IF, KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> ChildAttributes(Indent.getNormalIndent(), null)
 
