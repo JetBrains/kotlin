@@ -41,20 +41,20 @@ import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 object ExperimentalUsageChecker : CallChecker {
-    private val EXPERIMENTAL_FQ_NAME = FqName("kotlin.Experimental")
-    private val USE_EXPERIMENTAL_FQ_NAME = FqName("kotlin.UseExperimental")
-    private val USE_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
+    internal val EXPERIMENTAL_FQ_NAME = FqName("kotlin.Experimental")
+    internal val USE_EXPERIMENTAL_FQ_NAME = FqName("kotlin.UseExperimental")
+    internal val USE_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
 
     private val LEVEL = Name.identifier("level")
     private val WARNING_LEVEL = Name.identifier("WARNING")
     private val ERROR_LEVEL = Name.identifier("ERROR")
 
-    private val IMPACT = Name.identifier("changesMayBreak")
+    internal val IMPACT = Name.identifier("changesMayBreak")
     private val COMPILATION_IMPACT = Name.identifier("COMPILATION")
     private val LINKAGE_IMPACT = Name.identifier("LINKAGE")
     private val RUNTIME_IMPACT = Name.identifier("RUNTIME")
 
-    private data class Experimentality(val annotationFqName: FqName, val severity: Severity, val impact: List<Impact>) {
+    internal data class Experimentality(val annotationFqName: FqName, val severity: Severity, private val impact: List<Impact>) {
         val isCompilationOnly: Boolean get() = impact.all(Impact.COMPILATION::equals)
 
         enum class Severity { WARNING, ERROR }
@@ -72,7 +72,7 @@ object ExperimentalUsageChecker : CallChecker {
 
     private fun checkExperimental(descriptor: DeclarationDescriptor, element: PsiElement, trace: BindingTrace) {
         for (experimentality in descriptor.loadExperimentalities()) {
-            val (annotationFqName, severity, impact) = experimentality
+            val (annotationFqName, severity) = experimentality
             val isBodyUsageOfCompilationExperimentality =
                 experimentality.isCompilationOnly && element.isBodyUsage()
 
@@ -95,22 +95,21 @@ object ExperimentalUsageChecker : CallChecker {
         val result = SmartSet.create<Experimentality>()
 
         for (annotation in annotations) {
-            result.addIfNotNull(annotation.loadExperimentalityForMarkerAnnotation())
+            result.addIfNotNull(annotation.annotationClass?.loadExperimentalityForMarkerAnnotation())
         }
 
         val container = containingDeclaration
         if (container is ClassDescriptor && this !is ConstructorDescriptor) {
             for (annotation in container.annotations) {
-                result.addIfNotNull(annotation.loadExperimentalityForMarkerAnnotation())
+                result.addIfNotNull(annotation.annotationClass?.loadExperimentalityForMarkerAnnotation())
             }
         }
 
         return result
     }
 
-    private fun AnnotationDescriptor.loadExperimentalityForMarkerAnnotation(): Experimentality? {
-        val experimental = annotationClass?.annotations?.findAnnotation(EXPERIMENTAL_FQ_NAME) ?: return null
-        val annotationFqName = fqName ?: return null
+    internal fun ClassDescriptor.loadExperimentalityForMarkerAnnotation(): Experimentality? {
+        val experimental = annotations.findAnnotation(EXPERIMENTAL_FQ_NAME) ?: return null
 
         val severity = when ((experimental.allValueArguments[LEVEL] as? EnumValue)?.enumEntryName) {
             WARNING_LEVEL -> Experimentality.Severity.WARNING
@@ -126,7 +125,7 @@ object ExperimentalUsageChecker : CallChecker {
             }
         } ?: Experimentality.DEFAULT_IMPACT
 
-        return Experimentality(annotationFqName, severity, impact)
+        return Experimentality(fqNameSafe, severity, impact)
     }
 
     // Returns true if this element appears in the body of some function and is not visible in any non-local declaration signature.
@@ -189,4 +188,5 @@ object ExperimentalUsageChecker : CallChecker {
             checkExperimental(targetDescriptor, element, context.trace)
         }
     }
+
 }
