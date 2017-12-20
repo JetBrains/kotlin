@@ -30,7 +30,6 @@ import org.jetbrains.uast.*
 import org.junit.Assert
 
 class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
-
     fun testMakeNotFinal() {
         myFixture.configureByText("foo.kt", """
         class Foo {
@@ -38,7 +37,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         }
         """)
 
-        myFixture.launchAction(codeModifications.createChangeModifierAction(atCaret<UDeclaration>(myFixture), PsiModifier.FINAL, false)!!)
+        myFixture.launchAction(
+                codeModifications
+                        .createChangeModifierAction(atCaret(myFixture), PsiModifier.FINAL, false)!!
+                        .ensureHasText("Make 'bar' open")
+        )
         myFixture.checkResult("""
         class Foo {
             open fun bar(){}
@@ -53,7 +56,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         }
         """)
 
-        myFixture.launchAction(codeModifications.createChangeModifierAction(atCaret<UDeclaration>(myFixture), PsiModifier.PRIVATE, true)!!)
+        myFixture.launchAction(
+                codeModifications
+                        .createChangeModifierAction(atCaret(myFixture), PsiModifier.PRIVATE, true)!!
+                        .ensureHasText("Make 'Foo' private")
+        )
         myFixture.checkResult("""
         private class Foo {
             fun bar(){}
@@ -68,7 +75,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         }
         """.trim())
 
-        myFixture.launchAction(codeModifications.createChangeModifierAction(atCaret<UDeclaration>(myFixture), PsiModifier.PRIVATE, false)!!)
+        myFixture.launchAction(
+                codeModifications
+                        .createChangeModifierAction(atCaret(myFixture), PsiModifier.PRIVATE, false)!!
+                        .ensureHasText("Remove 'private' modifier")
+        )
         myFixture.checkResult("""
         class Foo {
             fun bar(){}
@@ -82,7 +93,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
             fun bar<caret>(){}
         }
         """.trim())
-        Assert.assertNull(codeModifications.createChangeModifierAction(atCaret<UDeclaration>(myFixture), PsiModifier.FINAL, false))
+        Assert.assertNull(codeModifications.createChangeModifierAction(atCaret(myFixture), PsiModifier.FINAL, false))
     }
 
     fun testAddVoidVoidMethod() {
@@ -92,8 +103,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.simpleMethodInfo(
-                atCaret<UClass>(myFixture), "baz", PsiModifier.PRIVATE, PsiType.VOID, emptyList())).first())
+        myFixture.launchAction(
+                codeModifications.createAddCallableMemberActions(
+                        MethodInsertionInfo.simpleMethodInfo(atCaret(myFixture), "baz", PsiModifier.PRIVATE, PsiType.VOID, emptyList())
+                ).findWithText("Add method 'baz' to 'Foo'")
+        )
         myFixture.checkResult("""
         |class Foo {
         |    fun bar() {}
@@ -111,8 +125,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.simpleMethodInfo(
-                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.INT, makeParams(PsiType.INT))).first())
+        myFixture.launchAction(
+                codeModifications.createAddCallableMemberActions(
+                        MethodInsertionInfo.simpleMethodInfo(atCaret(myFixture), "baz", PsiModifier.PUBLIC, PsiType.INT, makeParams(PsiType.INT))
+                ).findWithText("Add method 'baz' to 'Foo'")
+        )
         myFixture.checkResult("""
         |class Foo {
         |    fun bar() {}
@@ -129,8 +146,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.constructorInfo(
-                atCaret<UClass>(myFixture), makeParams(PsiType.INT))).findWithText("Add primary constructor to 'Foo'"))
+        myFixture.launchAction(
+                codeModifications.createAddCallableMemberActions(
+                        MethodInsertionInfo.constructorInfo(atCaret(myFixture), makeParams(PsiType.INT))
+                ).findWithText("Add primary constructor to 'Foo'")
+        )
         myFixture.checkResult("""
         |class Foo(param0: Int) {
         |}
@@ -143,8 +163,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.constructorInfo(
-                atCaret<UClass>(myFixture), makeParams(PsiType.INT))).findWithText("Add secondary constructor to 'Foo'"))
+        myFixture.launchAction(
+                codeModifications.createAddCallableMemberActions(
+                        MethodInsertionInfo.constructorInfo(atCaret(myFixture), makeParams(PsiType.INT))
+                ).findWithText("Add secondary constructor to 'Foo'")
+        )
         myFixture.checkResult("""
         |class Foo() {
         |    constructor(param0: Int) {
@@ -160,8 +183,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.constructorInfo(
-                atCaret<UClass>(myFixture), makeParams(PsiType.INT))).findWithText("Add 'int' as 1st parameter to method 'Foo'"))
+        myFixture.launchAction(
+                codeModifications.createAddCallableMemberActions(
+                        MethodInsertionInfo.constructorInfo(atCaret(myFixture), makeParams(PsiType.INT))
+                ).findWithText("Add 'int' as 1st parameter to method 'Foo'")
+        )
         myFixture.checkResult("""
         |class Foo(param0: Int) {
         |}
@@ -174,8 +200,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.constructorInfo(
-                atCaret<UClass>(myFixture), makeParams())).findWithText("Remove 1st parameter from method 'Foo'"))
+        myFixture.launchAction(
+                codeModifications.createAddCallableMemberActions(
+                        MethodInsertionInfo.constructorInfo(atCaret(myFixture), makeParams())
+                ).findWithText("Remove 1st parameter from method 'Foo'")
+        )
         myFixture.checkResult("""
         |class Foo() {
         |}
@@ -189,9 +218,16 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddBeanPropertyActions(
-                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), true, true)
-                                       .findWithText("Add 'var' property 'baz' to 'Foo'"))
+        myFixture.launchAction(
+                codeModifications.createAddBeanPropertyActions(
+                        atCaret(myFixture),
+                        "baz",
+                        PsiModifier.PUBLIC,
+                        PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)),
+                        true,
+                        true
+                ).findWithText("Add 'var' property 'baz' to 'Foo'")
+        )
         myFixture.checkResult("""
         |class Foo {
         |    var baz: String = TODO("initialize me")
@@ -208,7 +244,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(codeModifications.createAddBeanPropertyActions(
-                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), true, true)
+                atCaret(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), true, true)
                                        .findWithText("Add 'lateinit var' property 'baz' to 'Foo'"))
         myFixture.checkResult("""
         |class Foo {
@@ -225,8 +261,16 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddBeanPropertyActions(
-                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), false, true).first())
+        myFixture.launchAction(
+                codeModifications.createAddBeanPropertyActions(
+                        atCaret(myFixture),
+                        "baz",
+                        PsiModifier.PUBLIC,
+                        PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)),
+                        false,
+                        true
+                ).findWithText("Add 'val' property 'baz' to 'Foo'")
+        )
         myFixture.checkResult("""
         |class Foo {
         |    val baz: String = TODO("initialize me")
@@ -248,12 +292,13 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
     }
 
     @Suppress("CAST_NEVER_SUCCEEDS")
-    private fun Array<IntentionAction>.findWithText(text: String): IntentionAction = this.asList().findWithText(text)
-
-    @Suppress("CAST_NEVER_SUCCEEDS")
     private fun List<IntentionAction>.findWithText(text: String): IntentionAction =
             this.firstOrNull { it.text == text } ?:
             Assert.fail("intention with text '$text' was not found, only ${this.joinToString { "\"${it.text}\"" }} available") as Nothing
+
+    @Suppress("CAST_NEVER_SUCCEEDS")
+    private fun IntentionAction.ensureHasText(text: String): IntentionAction =
+            if (this.text == text) this else Assert.fail("intention with text '$text' was not found, only \"${this.text}\" available") as Nothing
 
     private val codeModifications: JvmCommonIntentionActionsFactory
         get() = JvmCommonIntentionActionsFactory.forLanguage(Language.findLanguageByID("kotlin")!!)!!
