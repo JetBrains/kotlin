@@ -2,7 +2,10 @@
 package com.intellij.debugger.streams.kotlin.lib.sequence
 
 import com.intellij.debugger.streams.kotlin.lib.LibraryUtil
-import com.intellij.debugger.streams.kotlin.psi.sequence.KotlinSequenceChainBuilder
+import com.intellij.debugger.streams.kotlin.psi.impl.KotlinChainTransformerImpl
+import com.intellij.debugger.streams.kotlin.psi.impl.TerminatedChainBuilder
+import com.intellij.debugger.streams.kotlin.psi.sequence.SequenceCallChecker
+import com.intellij.debugger.streams.kotlin.psi.sequence.SequenceTypeExtractor
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinCollectionsPeekCallFactory
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinStatementFactory
 import com.intellij.debugger.streams.kotlin.trace.impl.KotlinTraceExpressionBuilder
@@ -20,7 +23,9 @@ class KotlinSequenceSupportProvider : LibrarySupportProvider {
   override fun getLanguageId(): String = LibraryUtil.KOTLIN_LANGUAGE_ID
 
   private companion object {
-    val builder: StreamChainBuilder = KotlinSequenceChainBuilder()
+    val builder: StreamChainBuilder = TerminatedChainBuilder(
+        KotlinChainTransformerImpl(SequenceTypeExtractor()),
+        SequenceCallChecker())
     val support = KotlinSequencesSupport()
     val dsl = DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory()))
     val expressionBuilder = KotlinTraceExpressionBuilder(dsl, support.createHandlerFactory(dsl))
