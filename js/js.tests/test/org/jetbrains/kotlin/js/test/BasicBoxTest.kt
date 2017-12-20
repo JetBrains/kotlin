@@ -114,6 +114,7 @@ abstract class BasicBoxTest(
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
                 generateJavaScriptFile(file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
+                                       ENABLE_MULTIPLATFORM.matcher(fileContent).find(),
                                        outputPrefixFile, outputPostfixFile, mainCallParameters)
 
                 if (!module.name.endsWith(OLD_MODULE_SUFFIX)) Pair(outputFileName, module) else null
@@ -280,6 +281,7 @@ abstract class BasicBoxTest(
             dependencies: List<String>,
             friends: List<String>,
             multiModule: Boolean,
+            multiplatform: Boolean,
             outputPrefixFile: File?,
             outputPostfixFile: File?,
             mainCallParameters: MainCallParameters
@@ -298,7 +300,7 @@ abstract class BasicBoxTest(
         val psiFiles = createPsiFiles(allSourceFiles.sortedBy { it.canonicalPath }.map { it.canonicalPath })
 
         val sourceDirs = (testFiles + additionalFiles).map { File(it).parent }.distinct()
-        val config = createConfig(sourceDirs, module, dependencies, friends, multiModule, incrementalData = null)
+        val config = createConfig(sourceDirs, module, dependencies, friends, multiModule, multiplatform, incrementalData = null)
         val outputFile = File(outputFileName)
 
         val incrementalData = IncrementalData()
@@ -306,7 +308,7 @@ abstract class BasicBoxTest(
                        mainCallParameters, incrementalData)
 
         if (module.hasFilesToRecompile) {
-            checkIncrementalCompilation(sourceDirs, module, kotlinFiles, dependencies, friends, multiModule, outputFile,
+            checkIncrementalCompilation(sourceDirs, module, kotlinFiles, dependencies, friends, multiModule, multiplatform, outputFile,
                                         outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData)
         }
     }
@@ -318,6 +320,7 @@ abstract class BasicBoxTest(
             dependencies: List<String>,
             friends: List<String>,
             multiModule: Boolean,
+            multiplatform: Boolean,
             outputFile: File,
             outputPrefixFile: File?,
             outputPostfixFile: File?,
@@ -339,7 +342,7 @@ abstract class BasicBoxTest(
                 .sortedBy { it.canonicalPath }
                 .map { sourceToTranslationUnit[it]!! }
 
-        val recompiledConfig = createConfig(sourceDirs, module, dependencies, friends, multiModule, incrementalData)
+        val recompiledConfig = createConfig(sourceDirs, module, dependencies, friends, multiModule, multiplatform, incrementalData)
         val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
 
         translateFiles(translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
@@ -516,7 +519,7 @@ abstract class BasicBoxTest(
 
     private fun createConfig(
             sourceDirs: List<String>,module: TestModule, dependencies: List<String>, friends: List<String>,
-            multiModule: Boolean, incrementalData: IncrementalData?
+            multiModule: Boolean, multiplatform: Boolean, incrementalData: IncrementalData?
     ): JsConfig {
         val configuration = environment.configuration.copy()
 
@@ -549,6 +552,15 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, module.sourceMapSourceEmbedding)
 
         configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, typedArraysEnabled)
+
+        if (multiplatform) {
+            val defaultLanguageVersionSettings = configuration.languageVersionSettings
+            configuration.languageVersionSettings = object : LanguageVersionSettings by defaultLanguageVersionSettings {
+                override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
+                        if (feature == LanguageFeature.MultiPlatformProjects) LanguageFeature.State.ENABLED
+                        else defaultLanguageVersionSettings.getFeatureSupport(feature)
+            }
+        }
 
         return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }
@@ -699,6 +711,7 @@ abstract class BasicBoxTest(
         private val EXPECTED_REACHABLE_NODES = Pattern.compile("^// *$EXPECTED_REACHABLE_NODES_DIRECTIVE: *([0-9]+) *$", Pattern.MULTILINE)
         private val RECOMPILE_PATTERN = Pattern.compile("^// *RECOMPILE *$", Pattern.MULTILINE)
         private val SOURCE_MAP_SOURCE_EMBEDDING = Regex("^// *SOURCE_MAP_EMBED_SOURCES: ([A-Z]+)*\$", RegexOption.MULTILINE)
+        private val ENABLE_MULTIPLATFORM = Pattern.compile("^// *MULTIPLATFORM *$", Pattern.MULTILINE)
 
         val TEST_MODULE = "JS_TESTS"
         private val DEFAULT_MODULE = "main"

@@ -58,20 +58,21 @@ class JSTestGenerator(val context: TranslationContext) {
     }
 
     private fun generateTestFunctions(classDescriptor: ClassDescriptor, parentFun: JsFunction) {
-        if (classDescriptor.modality === Modality.ABSTRACT) return
+        if (classDescriptor.modality === Modality.ABSTRACT || classDescriptor.isExpect) return
 
         val suiteFunction = JsFunction(context.scope(), JsBlock(), "suite function")
 
         val descriptors = classDescriptor.unsubstitutedMemberScope
                 .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS, MemberScope.ALL_NAME_FILTER)
-                .filterIsInstance<FunctionDescriptor>()
 
-        val beforeFunctions = descriptors.filter { it.isBefore }
-        val afterFunctions = descriptors.filter { it.isAfter }
+        val beforeFunctions = descriptors.filterIsInstance<FunctionDescriptor>().filter { it.isBefore }
+        val afterFunctions = descriptors.filterIsInstance<FunctionDescriptor>().filter { it.isAfter }
 
         descriptors.forEach {
-            if (it.isTest) {
-                generateCodeForTestMethod(it, beforeFunctions, afterFunctions, classDescriptor, suiteFunction)
+            when {
+                it is ClassDescriptor -> generateTestFunctions(it, suiteFunction)
+                it is FunctionDescriptor && it.isTest ->
+                    generateCodeForTestMethod(it, beforeFunctions, afterFunctions, classDescriptor, suiteFunction)
             }
         }
 
@@ -101,9 +102,7 @@ class JSTestGenerator(val context: TranslationContext) {
         val functionToTest = JsFunction(scope, JsBlock(), "test function")
         val innerContext = context.contextWithScope(functionToTest)
 
-        val expression = ReferenceTranslator.translateAsTypeReference(classDescriptor, innerContext)
-        val testClass = JsNew(expression)
-        val classVal = innerContext.defineTemporary(testClass)
+        val classVal = innerContext.defineTemporary(classDescriptor.instance(innerContext))
 
         fun FunctionDescriptor.buildCall() = CallTranslator.buildCall(context, this, emptyList(), classVal).makeStmt()
 
@@ -117,6 +116,16 @@ class JSTestGenerator(val context: TranslationContext) {
         }
 
         return functionToTest
+    }
+
+    private fun ClassDescriptor.instance(context: TranslationContext): JsExpression {
+        return if (kind == ClassKind.OBJECT) {
+            ReferenceTranslator.translateAsValueReference(this, context)
+        }
+        else {
+            val args = if (isInner) listOf((containingDeclaration as ClassDescriptor).instance(context)) else emptyList()
+            JsNew(ReferenceTranslator.translateAsTypeReference(this, context), args)
+        }
     }
 
     private val suiteRef: JsExpression by lazy { findFunction("suite") }
