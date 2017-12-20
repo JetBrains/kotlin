@@ -2676,8 +2676,6 @@
     <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptResolveScopeProvider"/>
     <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesResolveScopeProvider"/>
 
-    <codeInsight.intention.jvmCommonIntentionActionsFactory language="kotlin" implementationClass="org.jetbrains.kotlin.idea.intentions.KotlinCommonIntentionActionsFactory"/>
-
     <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService"
                   serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>
   </extensions>
