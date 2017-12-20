@@ -702,7 +702,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
 
 private fun getOperationType(node: ASTNode): IElementType? = node.findChildByType(KtNodeTypes.OPERATION_REFERENCE)?.firstChildNode?.elementType
 
-private fun hasErrorElementBefore(node: ASTNode): Boolean {
+fun hasErrorElementBefore(node: ASTNode): Boolean {
     val prevSibling = getPrevWithoutWhitespace(node) ?: return false
     if (prevSibling.elementType == TokenType.ERROR_ELEMENT) return true
     val lastChild = TreeUtil.getLastChild(prevSibling)
