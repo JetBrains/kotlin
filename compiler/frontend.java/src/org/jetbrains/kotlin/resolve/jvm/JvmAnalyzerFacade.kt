@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.JvmTarget
@@ -72,7 +71,6 @@ object JvmAnalyzerFacade : AnalyzerFacade() {
             val resolverForReferencedModule = referencedClassModule?.let { resolverForProject.tryGetResolverForModule(it as M) }
 
             val resolverForModule = resolverForReferencedModule ?: run {
-                LOG.warn("Java referenced $referencedClassModule from $moduleInfo\nReferenced class was: $javaClass\n")
                 // in case referenced class lies outside of our resolver, resolve the class as if it is inside our module
                 // this leads to java class being resolved several times
                 resolverForProject.resolverForModule(moduleInfo)
@@ -120,6 +118,4 @@ object JvmAnalyzerFacade : AnalyzerFacade() {
 
     override val targetPlatform: TargetPlatform
         get() = JvmPlatform
-
-    private val LOG = Logger.getInstance(JvmAnalyzerFacade::class.java)
 }
