@@ -78,7 +78,7 @@ object J2KPostProcessingRegistrar {
         _processings.add(UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing())
         _processings.add(RemoveRedundantSamAdaptersProcessing())
         _processings.add(RemoveRedundantCastToNullableProcessing())
-        _processings.add(ReplacePutWithAssignmentProcessing())
+        registerInspectionBasedProcessing(ReplacePutWithAssignmentInspection())
         _processings.add(UseExpressionBodyProcessing())
         _processings.add(UnnecessaryVariableProcessing())
 
@@ -296,21 +296,6 @@ object J2KPostProcessingRegistrar {
             return {
                 RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
                         .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
-            }
-        }
-    }
-
-    private class ReplacePutWithAssignmentProcessing : J2kPostProcessing {
-        override val writeActionNeeded = true
-
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is KtDotQualifiedExpression) return null
-            if (!ReplacePutWithAssignmentInspection.isActiveFor(element)) return null
-
-            return {
-                if (ReplacePutWithAssignmentInspection.isActiveFor(element)) {
-                    ReplacePutWithAssignmentInspection.simplify(element)
-                }
             }
         }
     }
