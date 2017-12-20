@@ -26,10 +26,9 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.callExpression
-import org.jetbrains.kotlin.idea.quickfix.checkUpdateRuntime
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -71,16 +70,16 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
             "java.util.Collections.fill" -> checkApiVersion(ApiVersion.KOTLIN_1_2, expression) && size == 2
             "java.util.Collections.reverse" -> size == 1
             "java.util.Collections.shuffle" -> checkApiVersion(ApiVersion.KOTLIN_1_2, expression) && (size == 1 || size == 2)
-            "java.util.Collections.sort" -> size == 1 || size == 2
+            "java.util.Collections.sort" -> {
+                size == 1 || (size == 2 && args.getOrNull(1)?.getArgumentExpression() is KtLambdaExpression)
+            }
             else -> false
         }
     }
 
     private fun checkApiVersion(requiredVersion: ApiVersion, expression: KtDotQualifiedExpression): Boolean {
         val module = ModuleUtilCore.findModuleForPsiElement(expression) ?: return true
-        val version = getRuntimeLibraryVersion(module) ?: return true
-        val apiVersion = ApiVersion.parse(version.substringBefore("-")) ?: return true
-        return apiVersion >= requiredVersion
+        return module.languageVersionSettings.apiVersion >= requiredVersion
     }
 
 }
@@ -94,30 +93,17 @@ private class ReplaceWithStdLibFix(private val methodName: String, private val r
         val expression = descriptor.psiElement as? KtDotQualifiedExpression ?: return
         val callExpression = expression.callExpression ?: return
         val valueArguments = callExpression.valueArguments
-        val arg1 = valueArguments.getOrNull(0)?.getArgumentExpression()
-        val arg2 = valueArguments.getOrNull(1)?.getArgumentExpression()
+        val firstArg = valueArguments.getOrNull(0)?.getArgumentExpression() ?: return
+        val secondArg = valueArguments.getOrNull(1)?.getArgumentExpression()
         val factory = KtPsiFactory(project)
-        val newExpression = when (methodName) {
-            "fill" -> when {
-                arg1 != null && arg2 != null -> factory.createExpressionByPattern("$0.fill($1)", arg1, arg2)
-                else -> null
-            }
-            "reverse" -> when {
-                arg1 != null -> factory.createExpressionByPattern("$0.reverse()", arg1)
-                else -> null
-            }
-            "shuffle" -> when {
-                arg1 != null && arg2 != null -> factory.createExpressionByPattern("$0.shuffle($1)", arg1, arg2)
-                arg1 != null -> factory.createExpressionByPattern("$0.shuffle()", arg1)
-                else -> null
-            }
-            "sort" -> when {
-                arg1 != null && arg2 != null -> factory.createExpressionByPattern("$0.sortWith(Comparator $1)", arg1, arg2.text)
-                arg1 != null -> factory.createExpressionByPattern("$0.sort()", arg1)
-                else -> null
-            }
-            else -> null
+        val newExpression = if (secondArg != null) {
+            if (methodName == "sort")
+                factory.createExpressionByPattern("$0.sortWith(Comparator $1)", firstArg, secondArg.text)
+            else
+                factory.createExpressionByPattern("$0.$methodName($1)", firstArg, secondArg)
         }
-        if (newExpression != null) expression.replace(newExpression)
+        else
+            factory.createExpressionByPattern("$0.$methodName()", firstArg)
+        expression.replace(newExpression)
     }
 }
