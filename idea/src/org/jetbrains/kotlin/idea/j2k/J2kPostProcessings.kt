@@ -180,14 +180,17 @@ object J2KPostProcessingRegistrar {
             // Inspection can either need or not need write action
             override val writeActionNeeded = inspection.startFixInWriteAction
 
+            private fun isApplicable(element: TElement): Boolean {
+                if (!inspection.isApplicable(element)) return false
+                return acceptInformationLevel || inspection.inspectionHighlightType(element) != ProblemHighlightType.INFORMATION
+            }
+
             override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
                 if (!TElement::class.java.isInstance(element)) return null
                 val tElement = element as TElement
-                if (!inspection.isApplicable(tElement)) return null
-                val highlightType = inspection.inspectionHighlightType(tElement)
-                if (!acceptInformationLevel && highlightType == ProblemHighlightType.INFORMATION) return null
+                if (!isApplicable(tElement)) return null
                 return {
-                    if (inspection.isApplicable(tElement)) { // check availability of the intention again because something could change
+                    if (isApplicable(tElement)) { // check availability of the inspection again because something could change
                         val apply = { inspection.applyTo(element) }
                         apply()
                     }
