@@ -34,7 +34,10 @@ class KotlinReportSubmitter : ITNReporter() {
     private var hasUpdate = false
     private var hasLatestVersion = false
 
-    override fun showErrorInRelease(event: IdeaLoggingEvent) = !hasUpdate || KotlinInternalMode.enabled
+    override fun showErrorInRelease(event: IdeaLoggingEvent): Boolean {
+        val notificationEnabled = "disabled" != System.getProperty("idea.fatal.error.notification", "enabled")
+        return (!hasUpdate && notificationEnabled) || KotlinInternalMode.enabled
+    }
 
     override fun submit(events: Array<IdeaLoggingEvent>, additionalInfo: String?, parentComponent: Component, consumer: Consumer<SubmittedReportInfo>): Boolean {
         if (hasUpdate) {
