@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 // WITH_RUNTIME
 fun foo() {
     var list1 = java.util.Collections.emptyList<String>()

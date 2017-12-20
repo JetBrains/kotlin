@@ -3294,6 +3294,87 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceWithOperatorAssignment extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInReplaceWithOperatorAssignment() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceWithOperatorAssignment"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("flexibleTypeBug.kt")
+        public void testFlexibleTypeBug() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/flexibleTypeBug.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("illegalMultipleOperators.kt")
+        public void testIllegalMultipleOperators() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/illegalMultipleOperators.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("illegalMultipleOperatorsMiddle.kt")
+        public void testIllegalMultipleOperatorsMiddle() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/illegalMultipleOperatorsMiddle.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invalidSubtraction.kt")
+        public void testInvalidSubtraction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/invalidSubtraction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleOperators.kt")
+        public void testMultipleOperators() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/multipleOperators.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleOperatorsRightSideRepeat.kt")
+        public void testMultipleOperatorsRightSideRepeat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/multipleOperatorsRightSideRepeat.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonCommutativeRepeat.kt")
+        public void testNonCommutativeRepeat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/nonCommutativeRepeat.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonRepeatingAssignment.kt")
+        public void testNonRepeatingAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/nonRepeatingAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("plusAssignConflict.kt")
+        public void testPlusAssignConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/plusAssignConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rightSideRepeat.kt")
+        public void testRightSideRepeat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/rightSideRepeat.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleAssign.kt")
+        public void testSimpleAssign() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/simpleAssign.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("validSubtraction.kt")
+        public void testValidSubtraction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/validSubtraction.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/selfAssignment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

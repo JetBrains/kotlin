@@ -1,4 +1,0 @@
-fun foo(x: Int) {
-  var y = 1
-  y += x
-}

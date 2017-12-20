@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 class A
 
 operator fun A.plus(a: A): A = A()
