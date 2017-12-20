@@ -25,6 +25,7 @@ mainClassName = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-compiler:$buildKotlinVersion"
     compile project(':Interop:Indexer')
     compile project(':shared')
 }

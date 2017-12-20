@@ -76,7 +76,7 @@ fun invokeCinterop(args: Array<String>) {
         manifestProperties["package"]?.let {
             val pkg = it as String
             val headerIds = (manifestProperties["includedHeaders"] as String).split(' ')
-            val arg = "$pkg:${headerIds.joinToString(",")}"
+            val arg = "$pkg:${headerIds.joinToString(";")}"
             listOf("-import", arg)
         } ?: emptyList()
     }
