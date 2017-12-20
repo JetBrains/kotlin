@@ -2492,7 +2492,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ReplaceToWithInfixForm extends AbstractLocalInspectionTest {
         public void testAllFilesPresentInReplaceToWithInfixForm() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceToWithInfixForm"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceToWithInfixForm"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("base.kt")
