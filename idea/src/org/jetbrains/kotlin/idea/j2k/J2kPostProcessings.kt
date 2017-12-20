@@ -89,7 +89,7 @@ object J2KPostProcessingRegistrar {
 
         registerInspectionBasedProcessing(IfThenToSafeAccessInspection())
         registerIntentionBasedProcessing(IfThenToElvisIntention())
-        registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention())
+        registerInspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection())
         registerInspectionBasedProcessing(ReplaceGetOrSetInspection())
         registerIntentionBasedProcessing(AddOperatorModifierIntention())
         registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention())

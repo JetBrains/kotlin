@@ -1,4 +1,4 @@
-// INTENTION_TEXT: Simplify negated '!in' expression to 'in'
+// FIX: Simplify negated '!in' expression to 'in'
 class A(val e: Int) {
     operator fun contains(i: Int): Boolean = e == i
 }

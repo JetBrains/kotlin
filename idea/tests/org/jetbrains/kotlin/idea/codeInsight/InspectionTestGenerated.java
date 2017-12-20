@@ -85,12 +85,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/inspectionData/inspections.test");
             doTest(fileName);
         }
-
-        @TestMetadata("simplifyNegatedBinaryExpression/inspectionData/inspections.test")
-        public void testSimplifyNegatedBinaryExpression_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/inspectionData/inspections.test");
-            doTest(fileName);
-        }
     }
 
     @TestMetadata("idea/testData/inspections")
@@ -491,6 +485,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test")
         public void testConventionNameCalls_replaceGetOrSet_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simplifyNegatedBinaryExpression/inspectionData/inspections.test")
+        public void testSimplifyNegatedBinaryExpression_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/inspectionData/inspections.test");
             doTest(fileName);
         }
     }

@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 fun test(n: Int) {
     !<caret>true
 }

@@ -3516,6 +3516,87 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SimplifyNegatedBinaryExpression extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInSimplifyNegatedBinaryExpression() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("equals.kt")
+        public void testEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/equals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("greaterThan.kt")
+        public void testGreaterThan() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/greaterThan.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("greaterThanOrEquals.kt")
+        public void testGreaterThanOrEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/greaterThanOrEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("in.kt")
+        public void testIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/in.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableBinaryOperation.kt")
+        public void testInapplicableBinaryOperation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/inapplicableBinaryOperation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("is.kt")
+        public void testIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/is.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lessThan.kt")
+        public void testLessThan() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/lessThan.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lessThanOrEquals.kt")
+        public void testLessThanOrEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/lessThanOrEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notEquals.kt")
+        public void testNotEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/notEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notIn.kt")
+        public void testNotIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/notIn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notIs.kt")
+        public void testNotIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/notIs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleInvert.kt")
+        public void testSimpleInvert() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression/simpleInvert.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/simplifyWhenWithBooleanConstantCondition")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
