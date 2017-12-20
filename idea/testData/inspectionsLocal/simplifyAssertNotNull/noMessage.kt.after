@@ -1,4 +1,4 @@
-// INTENTION_TEXT: "Replace with '!!' operator"
+// FIX: "Replace with '!!' operator"
 // WITH_RUNTIME
 
 fun foo(p: Array<String?>) {

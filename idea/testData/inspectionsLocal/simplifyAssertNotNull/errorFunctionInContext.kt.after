@@ -1,4 +1,4 @@
-// INTENTION_TEXT: "Replace with '?: error(...)'"
+// FIX: "Replace with '?: error(...)'"
 // WITH_RUNTIME
 
 class C {

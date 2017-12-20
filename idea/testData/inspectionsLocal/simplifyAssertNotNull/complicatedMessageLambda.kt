@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 // WITH_RUNTIME
 
 fun foo(p: Array<String?>) {

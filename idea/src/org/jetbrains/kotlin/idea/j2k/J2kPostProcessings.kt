@@ -96,7 +96,7 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention())
         registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention())
         registerIntentionBasedProcessing(DestructureIntention())
-        registerIntentionBasedProcessing(SimplifyAssertNotNullIntention())
+        registerInspectionBasedProcessing(SimplifyAssertNotNullInspection())
         registerIntentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention())
 
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->

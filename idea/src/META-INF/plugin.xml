@@ -783,11 +783,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.SimplifyAssertNotNullIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ImportMemberIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1546,7 +1541,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyAssertNotNullInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimplifyAssertNotNullInspection"
                      displayName="‘assert’ call can be replaced with ‘!!’ or ‘?:'"
                      groupPath="Kotlin"
                      groupName="Style issues"

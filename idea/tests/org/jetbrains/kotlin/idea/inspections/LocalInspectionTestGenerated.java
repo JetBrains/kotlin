@@ -3516,6 +3516,81 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SimplifyAssertNotNull extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInSimplifyAssertNotNull() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/simplifyAssertNotNull"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("comments.kt")
+        public void testComments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/comments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("commentsNoMessage.kt")
+        public void testCommentsNoMessage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/commentsNoMessage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complicatedMessageLambda.kt")
+        public void testComplicatedMessageLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/complicatedMessageLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("eqNull.kt")
+        public void testEqNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/eqNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("errorFunctionInContext.kt")
+        public void testErrorFunctionInContext() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/errorFunctionInContext.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("falseAssert.kt")
+        public void testFalseAssert() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/falseAssert.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noMessage.kt")
+        public void testNoMessage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/noMessage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("otherVariable.kt")
+        public void testOtherVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/otherVariable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("qualifiedAccess.kt")
+        public void testQualifiedAccess() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/qualifiedAccess.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withMessage.kt")
+        public void testWithMessage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/withMessage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withMessageLambdaOutside.kt")
+        public void testWithMessageLambdaOutside() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull/withMessageLambdaOutside.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/simplifyNegatedBinaryExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

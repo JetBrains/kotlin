@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 // WITH_RUNTIME
 
 class C(val v: String?) {
