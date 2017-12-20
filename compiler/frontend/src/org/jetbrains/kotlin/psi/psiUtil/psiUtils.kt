@@ -20,6 +20,7 @@ import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
@@ -398,5 +399,13 @@ fun ASTNode.siblings(forward: Boolean = true): Sequence<ASTNode> {
         return generateSequence(treeNext) { it.treeNext }
     } else {
         return generateSequence(treePrev) { it.treePrev }
+    }
+}
+
+fun ASTNode.leaves(forward: Boolean = true): Sequence<ASTNode> {
+    if (forward) {
+        return generateSequence(TreeUtil.nextLeaf(this)) { TreeUtil.nextLeaf(it) }
+    } else {
+        return generateSequence(TreeUtil.prevLeaf(this)) { TreeUtil.prevLeaf(it) }
     }
 }
