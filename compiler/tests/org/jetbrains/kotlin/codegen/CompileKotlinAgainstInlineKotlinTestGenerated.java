@@ -1147,6 +1147,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("defaultCallInDefaultLambda.kt")
+            public void testDefaultCallInDefaultLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultCallInDefaultLambda.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("defaultLambdaInNoInline.kt")
             public void testDefaultLambdaInNoInline() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultLambdaInNoInline.kt");
@@ -2972,57 +2978,48 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             }
         }
 
-        @TestMetadata("compiler/testData/codegen/boxInline/smap/default")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Default extends AbstractCompileKotlinAgainstInlineKotlinTest {
-            public void testAllFilesPresentInDefault() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/default"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("inlinInDefault.kt")
-            public void testInlinInDefault() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/default/inlinInDefault.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("inlinInDefault2.kt")
-            public void testInlinInDefault2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/default/inlinInDefault2.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("inlineAnonymousInDefault.kt")
-            public void testInlineAnonymousInDefault() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/default/inlineAnonymousInDefault.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("inlineAnonymousInDefault2.kt")
-            public void testInlineAnonymousInDefault2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/default/inlineAnonymousInDefault2.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt21827.kt")
-            public void testKt21827() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/default/kt21827.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("simple.kt")
-            public void testSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/default/simple.kt");
-                doTest(fileName);
-            }
-        }
-
         @TestMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultLambda extends AbstractCompileKotlinAgainstInlineKotlinTest {
             public void testAllFilesPresentInDefaultLambda() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("defaultLambdaInAnonymous.kt")
+            public void testDefaultLambdaInAnonymous() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda/defaultLambdaInAnonymous.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlinInDefault.kt")
+            public void testInlinInDefault() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda/inlinInDefault.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlinInDefault2.kt")
+            public void testInlinInDefault2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda/inlinInDefault2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineAnonymousInDefault.kt")
+            public void testInlineAnonymousInDefault() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda/inlineAnonymousInDefault.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineAnonymousInDefault2.kt")
+            public void testInlineAnonymousInDefault2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda/inlineAnonymousInDefault2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt21827.kt")
+            public void testKt21827() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda/kt21827.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("nested.kt")
@@ -3034,6 +3031,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple2.kt")
+            public void testSimple2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda/simple2.kt");
                 doTest(fileName);
             }
         }

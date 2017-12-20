@@ -230,7 +230,8 @@ class MethodInliner(
 
                     val inliner = MethodInliner(
                             info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
-                            newCapturedRemapper, true /*cause all calls in same module as lambda*/,
+                            newCapturedRemapper,
+                            if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
                             "Lambda inlining " + info.lambdaClassType.internalName,
                             childSourceMapper, inlineCallSiteInfo, null
                     )
