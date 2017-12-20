@@ -2,17 +2,18 @@
 package com.intellij.debugger.streams.kotlin.psi.sequence
 
 import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor
-import org.jetbrains.kotlin.psi.KtCallExpression
+import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
+import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * @author Vitaliy.Bibaev
  */
-class SequenceTypeExtractor : CallTypeExtractor {
-  override fun extractIntermediateCallTypes(call: KtCallExpression): CallTypeExtractor.IntermediateCallTypes {
+class SequenceTypeExtractor : CallTypeExtractor.Base() {
+  override fun extractItemsType(type: KotlinType?): GenericType {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 
-  override fun extractTerminalCallTypes(call: KtCallExpression): CallTypeExtractor.TerminatorCallTypes {
+  override fun getResultType(type: KotlinType): GenericType {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 }
