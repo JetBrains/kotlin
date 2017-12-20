@@ -19,10 +19,11 @@ package org.jetbrains.kotlin.idea.debugger;
 import com.intellij.debugger.PositionManager;
 import com.intellij.debugger.PositionManagerFactory;
 import com.intellij.debugger.engine.DebugProcess;
+import org.jetbrains.annotations.NotNull;
 
 public class KotlinPositionManagerFactory extends PositionManagerFactory {
     @Override
-    public PositionManager createPositionManager(DebugProcess process) {
+    public PositionManager createPositionManager(@NotNull DebugProcess process) {
         return new KotlinPositionManager(process);
     }
 }

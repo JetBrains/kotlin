@@ -49,17 +49,17 @@ fun numberOfInlinedFunctions(visibleVariables: List<LocalVariableProxyImpl>): In
 
 fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debugProcess: DebugProcessImpl): Boolean {
     val visibleVariables = location.visibleVariables(debugProcess)
-
-    val context = KotlinDebuggerCaches.getOrCreateTypeMapper(inlineArgument).bindingContext
-
-    val lambdaOrdinal = runReadAction { lambdaOrdinalByArgument(inlineArgument, context) }
     val markerLocalVariables = visibleVariables.filter { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) }
 
+    val context = KotlinDebuggerCaches.getOrCreateTypeMapper(inlineArgument).bindingContext
+    val lambdaOrdinal = runReadAction { lambdaOrdinalByArgument(inlineArgument, context) }
     val functionName = runReadAction { functionNameByArgument(inlineArgument, context) }
 
-    return markerLocalVariables.firstOrNull {
-        lambdaOrdinalByLocalVariable(it.name()) == lambdaOrdinal && functionNameByLocalVariable(it.name()) == functionName
-    } != null
+    return markerLocalVariables
+            .map { it.name() }
+            .any { variableName ->
+                lambdaOrdinalByLocalVariable(variableName) == lambdaOrdinal && functionNameByLocalVariable(variableName) == functionName
+            }
 }
 
 fun <T : Any> DebugProcessImpl.invokeInManagerThread(f: (DebuggerContextImpl) -> T?): T? {
