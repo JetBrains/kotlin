@@ -1,9 +1,8 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.psi.java
+package com.intellij.debugger.streams.kotlin.psi.impl
 
 import com.intellij.debugger.streams.kotlin.psi.StreamCallChecker
-import com.intellij.debugger.streams.kotlin.psi.impl.KotlinChainBuilderBase
-import com.intellij.debugger.streams.kotlin.psi.impl.KotlinChainTransformerImpl
+import com.intellij.debugger.streams.kotlin.psi.java.JavaStreamChainTypeExtractor
 import com.intellij.debugger.streams.kotlin.psi.previousCall
 import org.jetbrains.kotlin.psi.KtCallExpression
 import java.util.*

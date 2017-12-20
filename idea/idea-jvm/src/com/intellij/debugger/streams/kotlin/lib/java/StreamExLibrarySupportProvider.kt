@@ -2,7 +2,7 @@
 package com.intellij.debugger.streams.kotlin.lib.java
 
 import com.intellij.debugger.streams.kotlin.lib.LibraryUtil
-import com.intellij.debugger.streams.kotlin.psi.java.KotlinJavaStreamChainBuilder
+import com.intellij.debugger.streams.kotlin.psi.impl.KotlinJavaStreamChainBuilder
 import com.intellij.debugger.streams.kotlin.psi.impl.PackageBasedCallChecker
 import com.intellij.debugger.streams.kotlin.trace.dsl.JavaPeekCallFactory
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinStatementFactory
