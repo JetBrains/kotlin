@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import java.util.*
 
 enum class ClassKind(val keyword: String, val description: String) {
@@ -101,14 +102,19 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (editor == null) return
 
+        val applicableParents = if (classInfo.kind == ClassKind.INTERFACE)
+            classInfo.applicableParents.filter { it != element?.containingClass() }
+        else
+            classInfo.applicableParents
+
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            val targetParent = classInfo.applicableParents.firstOrNull {
+            val targetParent = applicableParents.firstOrNull {
                 it.allChildren.any { it is PsiComment && it.text == "// TARGET_PARENT:" }
             } ?: classInfo.applicableParents.last()
             return doInvoke(targetParent, editor, file)
         }
 
-        chooseContainerElementIfNecessary(classInfo.applicableParents, editor, "Choose class container", true, { it }) {
+        chooseContainerElementIfNecessary(applicableParents, editor, "Choose class container", true, { it }) {
             doInvoke(it, editor, file)
         }
     }
