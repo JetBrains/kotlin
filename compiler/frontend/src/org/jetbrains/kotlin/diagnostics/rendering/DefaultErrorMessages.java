@@ -151,6 +151,13 @@ public class DefaultErrorMessages {
         MAP.put(EXPERIMENTAL_API_USAGE, "This declaration is experimental and its usage should be marked with ''@{0}''{1}", TO_STRING, renderUseExperimental);
         MAP.put(EXPERIMENTAL_API_USAGE_ERROR, "This declaration is experimental and its usage must be marked with ''@{0}''{1}", TO_STRING, renderUseExperimental);
 
+        MAP.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@UseExperimental without any arguments has no effect");
+        MAP.put(USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not an experimental API marker, therefore its usage in @UseExperimental is ignored", TO_STRING);
+        MAP.put(USE_EXPERIMENTAL_ARGUMENT_HAS_NON_COMPILATION_IMPACT,
+                "Experimental annotation ''{0}'' has impact other than COMPILATION, therefore its usage in @UseExperimental is forbidden", TO_STRING);
+        MAP.put(EXPERIMENTAL_ANNOTATION_WITH_NO_IMPACT, "Experimental annotation with changesMayBreak = [] is not allowed");
+        MAP.put(EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET, "Experimental annotation cannot be used on the following code elements: {0}. Please remove these targets", STRING);
+
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members");
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");

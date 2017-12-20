@@ -6,7 +6,7 @@ package api
 
 @Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS,
-        AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
+        AnnotationTarget.VALUE_PARAMETER)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI
