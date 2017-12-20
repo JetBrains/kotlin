@@ -57,13 +57,12 @@ object TopDownAnalyzerFacadeForKonan {
             config: KonanConfig
     ): AnalysisResult {
 
-        val verbose = config.configuration.get(KonanConfigKeys.VERBOSE_PHASES)
-                ?.contains(KonanPhase.FRONTEND.visibleName)
-                ?: false
-        if (verbose) {
-            // we print out each file we compile for now
-            files.forEach { println(it) }
-        }
+        // we print out each file we compile if frontend phase is verbose
+        files.takeIf {
+            config.configuration.get(KonanConfigKeys.VERBOSE_PHASES)
+                    ?.contains(KonanPhase.FRONTEND.visibleName)
+                    ?: false
+        } ?.forEach(::println)
 
         val analyzerForKonan = createTopDownAnalyzerForKonan(
                 moduleContext, trace,
