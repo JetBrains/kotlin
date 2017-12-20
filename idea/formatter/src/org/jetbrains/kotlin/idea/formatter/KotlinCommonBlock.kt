@@ -792,7 +792,14 @@ private fun getWrappingStrategyForItemList(wrapType: Int, itemTypes: TokenSet, w
     val itemWrap = Wrap.createWrap(wrapType, wrapFirstElement)
     return object : WrappingStrategy {
         override fun getWrap(childElement: ASTNode): Wrap? {
-            return if (childElement.elementType in itemTypes) itemWrap else null
+            val thisType = childElement.elementType
+            val prevType = getPrevWithoutWhitespace(childElement)?.elementType
+            return if (thisType in itemTypes || prevType in itemTypes &&
+                       thisType != KtTokens.EOL_COMMENT && prevType != KtTokens.EOL_COMMENT
+                    )
+                itemWrap
+            else
+                null
         }
     }
 }

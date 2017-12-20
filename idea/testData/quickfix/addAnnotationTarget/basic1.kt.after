@@ -1,6 +1,7 @@
 // "Add annotation target" "true"
 
-@Target(AnnotationTarget.TYPE) annotation class Foo
+@Target(AnnotationTarget.TYPE)
+annotation class Foo
 
 class Test {
     fun foo(): @Foo Int = 1
