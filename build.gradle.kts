@@ -30,7 +30,7 @@ dependencies {
     compile(project(":idea:ide-common")) { isTransitive = false }
     compile(project(":idea:idea-gradle")) { isTransitive = false }
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijUltimateDep()) { includeJars("annotations", "trove4j", "openapi", "idea", "util", "jdom") }
+    compileOnly(intellijDep()) { includeJars("annotations", "trove4j", "openapi", "idea", "util", "jdom") }
     compileOnly(intellijPluginDep("CSS"))
     compileOnly(intellijPluginDep("DatabaseTools"))
     compileOnly(intellijPluginDep("JavaEE"))
@@ -86,7 +86,7 @@ dependencies {
     springClasspath(commonDep("org.springframework", "spring-web"))
 
     testCompileOnly(intellijDep()) { includeJars("gson-2.5", "annotations", "trove4j", "openapi", "idea", "util", "jdom") }
-    testRuntime(intellijUltimateDep())
+    testRuntime(intellijDep())
     testCompile(intellijPluginDep("CSS"))
     testCompile(intellijPluginDep("DatabaseTools"))
     testCompile(intellijPluginDep("JavaEE"))
