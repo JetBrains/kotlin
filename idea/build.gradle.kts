@@ -35,8 +35,9 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) {
         includeJars("annotations", "openapi", "idea", "velocity", "boot", "gson-2.5", "log4j", "asm-all",
-                    "swingx-core-1.6.2", "jsr305", "forms_rt", "util", "jdom", "trove4j", "guava-21.0")
+                    "swingx-core-1.6.2", "forms_rt", "util", "jdom", "trove4j", "guava-21.0")
     }
+    compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     compileOnly(intellijPluginDep("IntelliLang"))
     compileOnly(intellijPluginDep("copyright"))
     compileOnly(intellijPluginDep("properties"))
@@ -76,8 +77,8 @@ dependencies {
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
     testCompile(intellijPluginDep("java-i18n"))
-    testCompileOnly(intellijDep()) { includeJars("groovy-all-2.4.6", "velocity", "gson-2.5", "jsr305", "idea_rt", "util",
-                                                 "log4j") }
+    testCompileOnly(intellijDep()) { includeJars("groovy-all-2.4.6", "velocity", "gson-2.5", "idea_rt", "util", "log4j") }
+    testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     testCompileOnly(intellijPluginDep("gradle")) { includeJars("gradle-base-services-3.5", "gradle-tooling-extension-impl", "gradle-wrapper-3.5") }
     testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
