@@ -28,7 +28,7 @@ class SequenceTypeExtractor : CallTypeExtractor.Base() {
     val typeName = KotlinPsiUtil.getTypeWithoutTypeParameters(type)
     return KotlinTypes.primitiveTypeByName(typeName)
         ?: KotlinTypes.primitiveArrayByName(typeName)
-        ?: ClassTypeImpl(typeName)
+        ?: ClassTypeImpl(KotlinPsiUtil.getTypeName(type))
   }
 
   private fun tryToFindElementType(type: KotlinType): GenericType? {
