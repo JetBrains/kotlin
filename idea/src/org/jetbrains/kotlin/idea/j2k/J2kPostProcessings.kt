@@ -190,7 +190,7 @@ object J2KPostProcessingRegistrar {
                 if (!isApplicable(tElement)) return null
                 return {
                     if (isApplicable(tElement)) { // check availability of the inspection again because something could change
-                        inspection.applyTo(element)
+                        inspection.applyTo(inspection.inspectionTarget(tElement))
                     }
                 }
             }
