@@ -6,7 +6,6 @@ import com.intellij.debugger.streams.kotlin.psi.KotlinPsiUtil
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.ANY
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.NULLABLE_ANY
-import com.intellij.debugger.streams.trace.impl.handler.type.ArrayType
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.types.KotlinType
@@ -18,9 +17,6 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 class KotlinCollectionsTypeExtractor : CallTypeExtractor.Base() {
   private companion object {
     val LOG = Logger.getInstance(KotlinCollectionsTypeExtractor::class.java)
-    val primitives: Set<GenericType> = setOf(KotlinTypes.BOOLEAN, KotlinTypes.BYTE, KotlinTypes.INT, KotlinTypes.SHORT,
-        KotlinTypes.CHAR, KotlinTypes.LONG, KotlinTypes.FLOAT, KotlinTypes.DOUBLE)
-    val primitiveArrays: Set<ArrayType> = primitives.map(KotlinTypes::array).toSet()
   }
 
   override fun extractItemsType(type: KotlinType?): GenericType {
@@ -31,7 +27,7 @@ class KotlinCollectionsTypeExtractor : CallTypeExtractor.Base() {
 
   override fun getResultType(type: KotlinType): GenericType {
     val typeName = KotlinPsiUtil.getTypeWithoutTypeParameters(type)
-    return tryToGetPrimitiveByName(typeName) ?: tryToGetPrimitiveArrayByName(typeName) ?: getAny(type)
+    return KotlinTypes.primitiveTypeByName(typeName) ?: KotlinTypes.primitiveArrayByName(typeName) ?: getAny(type)
   }
 
   private fun tryToFindElementType(type: KotlinType): GenericType? {
@@ -40,13 +36,13 @@ class KotlinCollectionsTypeExtractor : CallTypeExtractor.Base() {
       if (type.arguments.isEmpty()) return NULLABLE_ANY
       val itemsType = type.arguments.first().type
       if (itemsType.isMarkedNullable) return NULLABLE_ANY
-      val primitiveType = tryToGetPrimitiveByName(KotlinPsiUtil.getTypeWithoutTypeParameters(itemsType))
+      val primitiveType = KotlinTypes.primitiveTypeByName(KotlinPsiUtil.getTypeWithoutTypeParameters(itemsType))
       return primitiveType ?: ANY
     }
 
     if (typeName == "kotlin.String" || typeName == "kotlin.CharSequence") return KotlinTypes.CHAR
 
-    val primitiveArray = tryToGetPrimitiveArrayByName(typeName)
+    val primitiveArray = KotlinTypes.primitiveArrayByName(typeName)
     if (primitiveArray != null) return primitiveArray.elementType
 
     return type.supertypes().asSequence()
@@ -60,10 +56,4 @@ class KotlinCollectionsTypeExtractor : CallTypeExtractor.Base() {
   }
   
   private fun getAny(type: KotlinType): GenericType = if (type.isMarkedNullable) NULLABLE_ANY else ANY
-
-  private fun tryToGetPrimitiveByName(name: String): GenericType? =
-      primitives.firstOrNull { x -> x.variableTypeName == name }
-
-  private fun tryToGetPrimitiveArrayByName(name: String): ArrayType? =
-      primitiveArrays.firstOrNull { it.variableTypeName == name }
 }
