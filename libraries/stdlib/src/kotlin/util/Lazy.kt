@@ -181,14 +181,19 @@ private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Se
 
     override val value: T
         get() {
-            if (_value === UNINITIALIZED_VALUE) {
-                val initializerValue = initializer
-                // if we see null in initializer here, it means that the value is already set by another thread
-                if (initializerValue != null) {
-                    val newValue = initializerValue()
-                    if (valueUpdater.compareAndSet(this, UNINITIALIZED_VALUE, newValue)) {
-                        initializer = null
-                    }
+            val value = _value
+            if (value !== UNINITIALIZED_VALUE) {
+                @Suppress("UNCHECKED_CAST")
+                return value as T
+            }
+
+            val initializerValue = initializer
+            // if we see null in initializer here, it means that the value is already set by another thread
+            if (initializerValue != null) {
+                val newValue = initializerValue()
+                if (valueUpdater.compareAndSet(this, UNINITIALIZED_VALUE, newValue)) {
+                    initializer = null
+                    return newValue
                 }
             }
             @Suppress("UNCHECKED_CAST")
