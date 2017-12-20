@@ -33,7 +33,7 @@ class SequenceTypeExtractor : CallTypeExtractor.Base() {
 
   private fun tryToFindElementType(type: KotlinType): GenericType? {
     val typeName = KotlinPsiUtil.getTypeWithoutTypeParameters(type)
-    if (typeName == "kotlin.collections.Sequence") {
+    if (typeName == "kotlin.sequences.Sequence") {
       if (type.arguments.isEmpty()) return KotlinTypes.NULLABLE_ANY
       val itemsType = type.arguments.single().type
       if (itemsType.isMarkedNullable) return KotlinTypes.NULLABLE_ANY
