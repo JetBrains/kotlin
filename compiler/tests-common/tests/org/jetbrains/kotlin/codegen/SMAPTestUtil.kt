@@ -45,8 +45,8 @@ object SMAPTestUtil {
         }
     }
 
-    private fun extractSmapFromTestDataFile(file: CodegenTestCase.TestFile): SMAPAndFile? {
-        if (!file.name.endsWith(".smap")) return null
+    private fun extractSmapFromTestDataFile(file: CodegenTestCase.TestFile, separateCompilation: Boolean): SMAPAndFile? {
+        if (!checkExtension(file, separateCompilation)) return null
 
         val content = buildString {
             StringReader(file.content).forEachLine { line ->
@@ -60,10 +60,13 @@ object SMAPTestUtil {
         return SMAPAndFile(if (content.isNotEmpty()) content else null, SMAPAndFile.getPath(file.name), "NOT_SORTED")
     }
 
-    fun checkSMAP(inputFiles: List<CodegenTestCase.TestFile>, outputFiles: Iterable<OutputFile>) {
+    private fun checkExtension(file: CodegenTestCase.TestFile, separateCompilation: Boolean) =
+            file.name.run { endsWith(".smap") || if (separateCompilation) endsWith(".smap-separate-compilation") else endsWith(".smap-nonseparate-compilation") }
+
+    fun checkSMAP(inputFiles: List<CodegenTestCase.TestFile>, outputFiles: Iterable<OutputFile>, separateCompilation: Boolean) {
         if (!GENERATE_SMAP) return
 
-        val sourceData = inputFiles.mapNotNull { extractSmapFromTestDataFile(it) }
+        val sourceData = inputFiles.mapNotNull { extractSmapFromTestDataFile(it, separateCompilation) }
         val compiledSmaps = extractSMAPFromClasses(outputFiles)
         val compiledData = compiledSmaps.groupBy {
             it.sourceFile
@@ -73,7 +76,10 @@ object SMAPTestUtil {
         }.associateBy { it.sourceFile }
 
         for (source in sourceData) {
-            val ktFileName = "/" + source.sourceFile.replace(".smap", ".kt")
+            val ktFileName = "/" + source.sourceFile.
+                    replace(".smap-nonseparate-compilation", ".kt").
+                    replace(".smap-separate-compilation", ".kt").
+                    replace(".smap", ".kt")
             val data = compiledData[ktFileName]
             Assert.assertEquals("Smap data differs for $ktFileName", normalize(source.smap), normalize(data?.smap))
         }
