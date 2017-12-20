@@ -15,6 +15,7 @@ val intellijFlavour = if (intellijUltimateEnabled) "ideaIU" else "ideaIC"
 
 repositories {
     maven { setUrl("$intellijRepo/$intellijReleaseType") }
+    maven { setUrl("https://plugins.jetbrains.com/maven") }
 }
 
 val intellij by configurations.creating
@@ -22,6 +23,7 @@ val sources by configurations.creating
 val `jps-standalone` by configurations.creating
 val `jps-build-test` by configurations.creating
 val `intellij-core` by configurations.creating
+val `plugins-NodeJS` by configurations.creating
 
 val customDepsRepoDir = File(buildDir, "repo")
 val customDepsOrg: String by rootProject.extra
@@ -35,6 +37,7 @@ dependencies {
     `jps-standalone`("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
     `jps-build-test`("com.jetbrains.intellij.idea:jps-build-test:$intellijVersion")
     `intellij-core`("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
+    `plugins-NodeJS`("com.jetbrains.plugins:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}@zip")
 }
 
 fun Task.configureExtractFromConfigurationTask(sourceConfig: Configuration, extractor: (Configuration) -> Any) {
@@ -59,6 +62,8 @@ val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask
 val copyIntellijSdkSources by tasks.creating { configureExtractFromConfigurationTask(sources) { it.singleFile } }
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }
+
+val unzipNodeJSPlugin by tasks.creating { configureExtractFromConfigurationTask(`plugins-NodeJS`) { zipTree(it.singleFile) } }
 
 fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, baseDir: File, sourcesJar: File) {
     with(IvyDescriptorFileGenerator(DefaultIvyPublicationIdentity(customDepsOrg, moduleName, intellijVersion))) {
@@ -90,6 +95,12 @@ val prepareIvyXml by tasks.creating {
     }
     inputs.dir(File(repoDir, sources.name))
 
+    if (intellijUltimateEnabled) {
+        dependsOn(unzipNodeJSPlugin)
+        inputs.dir(File(repoDir, `plugins-NodeJS`.name))
+        outputs.file(File(repoDir, "${`plugins-NodeJS`.name}.ivy.xml"))
+    }
+
     doFirst {
         val sourcesFile = File(repoDir, "${sources.name}/${sources.singleFile.name}")
         writeIvyXml(intellij.name, intellij.name,
@@ -102,6 +113,11 @@ val prepareIvyXml by tasks.creating {
 
         flatDeps.forEach {
             writeIvyXml(it.name, it.name, files("$repoDir/${it.name}"), File(repoDir, it.name), sourcesFile)
+        }
+
+        if (intellijUltimateEnabled) {
+            val nodeJsBaseDir = "${`plugins-NodeJS`.name}/NodeJS/lib"
+            writeIvyXml("NodeJS", `plugins-NodeJS`.name, files("$repoDir/$nodeJsBaseDir"), File(repoDir, nodeJsBaseDir), sourcesFile)
         }
     }
 }

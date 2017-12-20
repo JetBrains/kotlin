@@ -37,6 +37,7 @@ extra["intellijReleaseType"] = "releases" // or "snapshots"
 extra["versions.intellijSdk"] = "172.4343.14"
 extra["versions.androidBuildTools"] = "r23.0.1"
 extra["versions.androidDxSources"] = "5.0.0_r2"
+extra["versions.idea.NodeJS"] = "172.3757.32"
 
 extra["customDepsRepo"] = "$rootDir/repo"
 extra["customDepsOrg"] = "kotlin.build.custom.deps"
