@@ -44,7 +44,6 @@ class AnnotationChecker(
     private val additionalCheckers: Iterable<AdditionalAnnotationChecker>,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
-
     fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
         val actualTargets = getActualTargetList(annotated, descriptor, trace)
         checkEntries(annotated.annotationEntries, actualTargets, trace, annotated)
@@ -106,6 +105,8 @@ class AnnotationChecker(
         trace: BindingTrace,
         annotated: KtAnnotated? = null
     ) {
+        if (entries.isEmpty()) return
+
         val entryTypesWithAnnotations = hashMapOf<KotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
         for (entry in entries) {
@@ -124,7 +125,10 @@ class AnnotationChecker(
 
             existingTargetsForAnnotation.add(useSiteTarget)
         }
-        additionalCheckers.forEach { it.checkEntries(entries, actualTargets.defaultTargets, trace) }
+
+        for (checker in additionalCheckers) {
+            checker.checkEntries(entries, actualTargets.defaultTargets, trace)
+        }
     }
 
     private fun checkAnnotationEntry(entry: KtAnnotationEntry, actualTargets: TargetList, trace: BindingTrace) {
