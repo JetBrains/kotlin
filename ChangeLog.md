@@ -328,3 +328,8 @@
 - [`KT-21565`](https://youtrack.jetbrains.com/issue/KT-21565) Kapt, Maven: Support passing arguments for annotation processors
 - [`KT-21566`](https://youtrack.jetbrains.com/issue/KT-21566) Kapt, Maven: Support passing Javac options
 - [`KT-21729`](https://youtrack.jetbrains.com/issue/KT-21729) Error message says "androidProcessor" should be "annotationProcessor"
+
+## Previous releases
+
+This release also includes the fixes and improvements from the previous
+[`1.2.10`](https://github.com/JetBrains/kotlin/blob/1.2.0/ChangeLog.md) release.
