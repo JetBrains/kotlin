@@ -5886,6 +5886,51 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/kotlin.test")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Kotlin_test extends AbstractBoxJsTest {
+        public void testAllFilesPresentInKotlin_test() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("beforeAfter.kt")
+        public void testBeforeAfter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/kotlin.test/beforeAfter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ignore.kt")
+        public void testIgnore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/kotlin.test/ignore.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inherited.kt")
+        public void testInherited() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/kotlin.test/inherited.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mpp.kt")
+        public void testMpp() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/kotlin.test/mpp.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nested.kt")
+        public void testNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/kotlin.test/nested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/kotlin.test/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/labels")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
