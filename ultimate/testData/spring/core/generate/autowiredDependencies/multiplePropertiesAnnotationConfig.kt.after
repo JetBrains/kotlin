@@ -11,8 +11,10 @@ import org.springframework.context.annotation.ComponentScan
 @Component
 open class FooBean {
     @Qualifier("application")
-    @Autowired lateinit var application: Application
-    @Autowired lateinit var barBean<caret>: BarBean
+    @Autowired
+    lateinit var application: Application
+    @Autowired
+    lateinit var barBean<caret>: BarBean
 
 }
 
