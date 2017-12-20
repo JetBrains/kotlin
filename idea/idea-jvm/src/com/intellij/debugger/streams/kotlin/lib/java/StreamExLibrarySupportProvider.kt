@@ -2,8 +2,10 @@
 package com.intellij.debugger.streams.kotlin.lib.java
 
 import com.intellij.debugger.streams.kotlin.lib.LibraryUtil
-import com.intellij.debugger.streams.kotlin.psi.impl.KotlinJavaStreamChainBuilder
+import com.intellij.debugger.streams.kotlin.psi.impl.KotlinChainTransformerImpl
 import com.intellij.debugger.streams.kotlin.psi.impl.PackageBasedCallChecker
+import com.intellij.debugger.streams.kotlin.psi.impl.TerminatedChainBuilder
+import com.intellij.debugger.streams.kotlin.psi.java.JavaStreamChainTypeExtractor
 import com.intellij.debugger.streams.kotlin.trace.dsl.JavaPeekCallFactory
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinStatementFactory
 import com.intellij.debugger.streams.kotlin.trace.impl.KotlinTraceExpressionBuilder
@@ -20,7 +22,8 @@ import com.intellij.openapi.project.Project
  */
 class StreamExLibrarySupportProvider : LibrarySupportProvider {
   private companion object {
-    val streamChainBuilder = KotlinJavaStreamChainBuilder(PackageBasedCallChecker("one.util.streamex"))
+    val streamChainBuilder = TerminatedChainBuilder(KotlinChainTransformerImpl(JavaStreamChainTypeExtractor()),
+        PackageBasedCallChecker("one.util.streamex"))
     val support = StreamExLibrarySupport()
     val dsl = DslImpl(KotlinStatementFactory(JavaPeekCallFactory()))
     val expressionBuilder = KotlinTraceExpressionBuilder(dsl, support.createHandlerFactory(dsl))
