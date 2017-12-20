@@ -524,6 +524,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("KT15099.after.kt")
+        public void testKT15099() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT15099.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KT20362.after.kt")
+        public void testKT20362() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT20362.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("KeepLineBreak.after.kt")
         public void testKeepLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KeepLineBreak.after.kt");
