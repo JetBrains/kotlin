@@ -63,9 +63,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             return ExitCode.COMPILATION_ERROR
         } catch (e: Throwable) {
             configuration.report(ERROR, """
-                |Compilation failed with exception: ${e.message}, caused by ${e.cause?.message ?: ""}
+                |Compilation failed: ${e.message}
 
-                |Source files: ${ environment.getSourceFiles().joinToString(transform = KtFile::getName) }
+                | * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}
+                | * Compiler version info: Konan: ${KonanVersion.CURRENT} / Kotlin: ${KotlinVersion.CURRENT}
+                | * Output kind: ${configuration.get(KonanConfigKeys.PRODUCE)}
+
                 """.trimMargin())
             throw e
         }
