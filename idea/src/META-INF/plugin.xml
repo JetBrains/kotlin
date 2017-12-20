@@ -828,11 +828,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceCallWithBinaryOperatorIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -2005,8 +2000,8 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceCallWithComparisonInspection"
-                     displayName="Can be replaced with comparison"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceCallWithBinaryOperatorInspection"
+                     displayName="Can be replaced with binary operator"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
