@@ -2,25 +2,20 @@
 package com.intellij.debugger.streams.kotlin.psi.collections
 
 import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor
-import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor.IntermediateCallTypes
-import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor.TerminatorCallTypes
 import com.intellij.debugger.streams.kotlin.psi.KotlinPsiUtil
-import com.intellij.debugger.streams.kotlin.psi.receiverType
-import com.intellij.debugger.streams.kotlin.psi.resolveType
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.ANY
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.NULLABLE_ANY
 import com.intellij.debugger.streams.trace.impl.handler.type.ArrayType
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinCollectionsTypeExtractor : CallTypeExtractor {
+class KotlinCollectionsTypeExtractor : CallTypeExtractor.Base() {
   private companion object {
     val LOG = Logger.getInstance(KotlinCollectionsTypeExtractor::class.java)
     val primitives: Set<GenericType> = setOf(KotlinTypes.BOOLEAN, KotlinTypes.BYTE, KotlinTypes.INT, KotlinTypes.SHORT,
@@ -28,17 +23,15 @@ class KotlinCollectionsTypeExtractor : CallTypeExtractor {
     val primitiveArrays: Set<ArrayType> = primitives.map(KotlinTypes::array).toSet()
   }
 
-  override fun extractIntermediateCallTypes(call: KtCallExpression): IntermediateCallTypes =
-      IntermediateCallTypes(extractItemsType(call.receiverType()), extractItemsType(call.resolveType()))
-
-
-  override fun extractTerminalCallTypes(call: KtCallExpression): TerminatorCallTypes =
-      TerminatorCallTypes(extractItemsType(call.receiverType()), getResultType(call.resolveType()))
-
-  private fun extractItemsType(type: KotlinType?): GenericType {
+  override fun extractItemsType(type: KotlinType?): GenericType {
     if (type == null) return NULLABLE_ANY
 
     return tryToFindElementType(type) ?: defaultType(type)
+  }
+
+  override fun getResultType(type: KotlinType): GenericType {
+    val typeName = KotlinPsiUtil.getTypeWithoutTypeParameters(type)
+    return tryToGetPrimitiveByName(typeName) ?: tryToGetPrimitiveArrayByName(typeName) ?: getAny(type)
   }
 
   private fun tryToFindElementType(type: KotlinType): GenericType? {
@@ -64,11 +57,6 @@ class KotlinCollectionsTypeExtractor : CallTypeExtractor {
   private fun defaultType(type: KotlinType): GenericType {
     LOG.warn("Could not find type of items for type ${KotlinPsiUtil.getTypeName(type)}")
     return getAny(type)
-  }
-
-  private fun getResultType(type: KotlinType): GenericType {
-    val typeName = KotlinPsiUtil.getTypeWithoutTypeParameters(type)
-    return tryToGetPrimitiveByName(typeName) ?: tryToGetPrimitiveArrayByName(typeName) ?: getAny(type)
   }
   
   private fun getAny(type: KotlinType): GenericType = if (type.isMarkedNullable) NULLABLE_ANY else ANY

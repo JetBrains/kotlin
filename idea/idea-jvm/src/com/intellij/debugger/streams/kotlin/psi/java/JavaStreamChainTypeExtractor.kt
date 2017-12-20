@@ -2,33 +2,19 @@
 package com.intellij.debugger.streams.kotlin.psi.java
 
 import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor
-import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor.IntermediateCallTypes
-import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor.TerminatorCallTypes
 import com.intellij.debugger.streams.kotlin.psi.KotlinPsiUtil
-import com.intellij.debugger.streams.kotlin.psi.receiverType
-import com.intellij.debugger.streams.kotlin.psi.resolveType
 import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
 import com.intellij.debugger.streams.trace.impl.handler.type.ClassTypeImpl
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.psi.CommonClassNames
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 
 /**
  * @author Vitaliy.Bibaev
  */
-class JavaStreamChainTypeExtractor : CallTypeExtractor {
-  override fun extractIntermediateCallTypes(call: KtCallExpression): IntermediateCallTypes {
-    val resultType = call.resolveType()
-    val receiverType = call.receiverType()
-    return IntermediateCallTypes(extractItemsType(receiverType), extractItemsType(resultType))
-  }
-
-  override fun extractTerminalCallTypes(call: KtCallExpression): TerminatorCallTypes =
-      TerminatorCallTypes(extractItemsType(call.receiverType()), getResultType(call.resolveType()))
-
-  private fun extractItemsType(type: KotlinType?): GenericType {
+class JavaStreamChainTypeExtractor : CallTypeExtractor.Base() {
+  override fun extractItemsType(type: KotlinType?): GenericType {
     if (type == null) {
       return KotlinTypes.NULLABLE_ANY
     }
@@ -42,5 +28,5 @@ class JavaStreamChainTypeExtractor : CallTypeExtractor {
     }
   }
 
-  private fun getResultType(type: KotlinType): GenericType = ClassTypeImpl(KotlinPsiUtil.getTypeName(type))
+  override fun getResultType(type: KotlinType): GenericType = ClassTypeImpl(KotlinPsiUtil.getTypeName(type))
 }
