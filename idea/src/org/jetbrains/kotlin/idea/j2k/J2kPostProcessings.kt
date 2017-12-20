@@ -161,8 +161,7 @@ object J2KPostProcessingRegistrar {
                 if (!additionalChecker(tElement)) return null
                 return {
                     if (intention.applicabilityRange(tElement) != null) { // check availability of the intention again because something could change
-                        val apply = { intention.applyTo(element, null) }
-                        apply()
+                        intention.applyTo(element, null)
                     }
                 }
             }
@@ -191,8 +190,7 @@ object J2KPostProcessingRegistrar {
                 if (!isApplicable(tElement)) return null
                 return {
                     if (isApplicable(tElement)) { // check availability of the inspection again because something could change
-                        val apply = { inspection.applyTo(element) }
-                        apply()
+                        inspection.applyTo(element)
                     }
                 }
             }
