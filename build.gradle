@@ -361,6 +361,14 @@ task crossDist {
     dependsOn 'crossDistRuntime', 'distCompiler'
 }
 
+configurations {
+    ftpAntTask
+}
+
+dependencies {
+    ftpAntTask 'org.apache.ant:ant-commons-net:1.9.9'
+}
+
 task bundle(type: (isWindows()) ? Zip : Tar) {
     dependsOn('crossDistPlatformLibs')
     dependsOn('crossDist')
@@ -407,6 +415,28 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     if (!isWindows()) {
         extension = 'tar.gz'
         compression = Compression.GZIP
+    }
+}
+
+task uploadBundle {
+    dependsOn ':bundle'
+    doLast {
+        def kind = konanVersion.contains("dev") ? "dev" : "releases"
+        def ftpSettings = [
+                server: "upload.cds.intellij.net",
+                userid: project.findProperty("cdnUser") ?: System.getenv("CDN_USER"),
+                password: project.findProperty("cdnPass") ?: System.getenv("CDN_PASS"),
+                remoteDir: "/builds/$kind/$konanVersion/${TargetManager.simpleOsName()}"
+        ]
+        ant {
+            taskdef(name: 'ftp',
+                    classname: 'org.apache.tools.ant.taskdefs.optional.net.FTP',
+                    classpath: configurations.ftpAntTask.asPath)
+            ftp([action: "mkdir"] + ftpSettings)
+            ftp(ftpSettings) {
+                fileset(file: bundle.archivePath)
+            }
+        }
     }
 }
 
