@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.I
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
-import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -80,7 +79,7 @@ object J2KPostProcessingRegistrar {
         _processings.add(RemoveRedundantCastToNullableProcessing())
         registerInspectionBasedProcessing(ReplacePutWithAssignmentInspection())
         _processings.add(UseExpressionBodyProcessing())
-        _processings.add(UnnecessaryVariableProcessing())
+        registerInspectionBasedProcessing(UnnecessaryVariableInspection())
 
         registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
 
@@ -313,21 +312,6 @@ object J2KPostProcessingRegistrar {
                 if (inspection.isActiveFor(element)) {
                     inspection.simplify(element, false)
                 }
-            }
-        }
-    }
-
-    private class UnnecessaryVariableProcessing : J2kPostProcessing {
-        // Refactoring
-        override val writeActionNeeded = false
-
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is KtProperty) return null
-
-            if (!UnnecessaryVariableInspection.isActiveFor(element)) return null
-
-            return {
-                KotlinInlineValHandler(withPrompt = false).inlineElement(element.project, element.findExistingEditor(), element)
             }
         }
     }
