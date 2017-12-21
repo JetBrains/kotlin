@@ -426,6 +426,7 @@
 
     <codeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinLanguageCodeStyleSettingsProvider"/>
+    <predefinedCodeStyle implementation="org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle"/>
 
     <projectConfigurable instance="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab"
                          id="project.kotlinCompiler"
