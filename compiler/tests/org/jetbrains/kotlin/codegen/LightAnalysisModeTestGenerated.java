@@ -140,6 +140,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("parameterAnnotationInDefaultImpls.kt")
+        public void testParameterAnnotationInDefaultImpls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/annotations/parameterAnnotationInDefaultImpls.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("parameterWithPrimitiveType.kt")
         public void testParameterWithPrimitiveType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/annotations/parameterWithPrimitiveType.kt");
