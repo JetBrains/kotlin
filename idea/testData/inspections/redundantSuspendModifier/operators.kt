@@ -41,3 +41,24 @@ class C(val x: Int, val y: Int) {
 suspend fun foo(c1: C, c2: C): Int {
     return c1() + c2()
 }
+
+interface C {
+    // Not redundant
+    suspend fun foo()
+}
+
+class D : C {
+    // Not redundant
+    override suspend fun foo() {
+
+    }
+}
+
+open class E {
+    // Not redundant
+    open suspend fun bar() {
+
+    }
+    // Not redundant
+    abstract suspend fun baz()
+}
