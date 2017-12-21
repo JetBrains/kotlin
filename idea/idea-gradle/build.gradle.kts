@@ -3,6 +3,7 @@ apply { plugin("kotlin") }
 val androidSdk by configurations.creating
 
 dependencies {
+    testRuntime(intellijDep())
 
     compileOnly(project(":idea"))
     compileOnly(project(":idea:idea-jvm"))
@@ -35,7 +36,6 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
-    testRuntime(intellijDep())
     // TODO: the order of the plugins matters here, consider avoiding order-dependency
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("testng")) { includeJars("jcommander", "resources_en") }

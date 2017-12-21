@@ -32,7 +32,8 @@ import java.io.File
 
 class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testNoErrors() {
-        val root = myFixture.copyDirectoryToProject("../libraries/stdlib/src", "")
+        val relativePathToProjectRoot = File(System.getProperty("user.dir")).relativeTo(File(myFixture.testDataPath)).path
+        val root = myFixture.copyDirectoryToProject("$relativePathToProjectRoot/libraries/stdlib/src", "")
 
         val psiManager = psiManager // workaround for KT-3974 IllegalAccessError when accessing protected method inherited by outer class
 

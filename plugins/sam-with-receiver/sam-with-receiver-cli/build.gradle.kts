@@ -4,6 +4,9 @@ description = "Kotlin SamWithReceiver Compiler Plugin"
 apply { plugin("kotlin") }
 
 dependencies {
+    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntime(intellijDep())
+
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
@@ -17,7 +20,6 @@ dependencies {
     testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-    testRuntime(intellijDep())
 }
 
 sourceSets {

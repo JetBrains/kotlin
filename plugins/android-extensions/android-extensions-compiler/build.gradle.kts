@@ -7,6 +7,8 @@ val robolectricClasspath by configurations.creating
 val androidJar by configurations.creating
 
 dependencies {
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+
     compile(project(":compiler:util"))
     compile(project(":compiler:plugin-api"))
     compile(project(":compiler:frontend"))

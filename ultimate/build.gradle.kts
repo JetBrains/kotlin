@@ -48,9 +48,9 @@ dependencies {
     compileOnly(intellijPluginDep("NodeJS"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
-    testCompile(project(":plugins:lint")) { isTransitive = false }
-    testCompile(project(":idea:idea-jvm")) { isTransitive = false }
+    testCompileOnly(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompileOnly(project(":plugins:lint")) { isTransitive = false }
+    testCompileOnly(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea")) { isTransitive = false }
     testCompile(projectTests(":generators:test-generator"))
@@ -77,7 +77,10 @@ dependencies {
     testRuntime(project(":plugins:uast-kotlin"))
     testRuntime(project(":plugins:uast-kotlin-idea"))
     testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
-    testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
+    testRuntime(project(":plugins:kapt3-idea"))
+    testRuntime(project(":idea:idea-test-framework"))
+    testRuntime(project(":plugins:lint"))
+    testRuntime(project(":idea:idea-jvm"))
 
     springClasspath(commonDep("org.springframework", "spring-core"))
     springClasspath(commonDep("org.springframework", "spring-beans"))

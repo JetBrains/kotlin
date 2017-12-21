@@ -15,12 +15,14 @@ apply { plugin("kotlin") }
 val antLauncherJar by configurations.creating
 
 dependencies {
+    testRuntime(intellijDep())
+
     testCompile(protobufFull())
     testCompile(projectTests(":compiler:tests-common"))
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:util"))
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util") }
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
@@ -36,7 +38,6 @@ dependencies {
     testRuntime(projectDist(":kotlin-preloader")) // it's required for ant tests
     testRuntime(project(":compiler:backend-common"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
-    testRuntime(intellijDep())
 
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(files(toolsJar()))

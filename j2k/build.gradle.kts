@@ -18,6 +18,8 @@ val usedIntellijPlugins = arrayOf(
         "java-decompiler")
 
 dependencies {
+    testRuntime(intellijDep())
+
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
@@ -38,7 +40,6 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
-    testRuntime(intellijDep())
     usedIntellijPlugins.forEach {
         testRuntime(intellijPluginDep(it))
     }

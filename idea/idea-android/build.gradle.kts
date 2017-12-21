@@ -45,6 +45,7 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
 
+    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep())
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("copyright"))

@@ -3,6 +3,8 @@ import org.gradle.jvm.tasks.Jar
 apply { plugin("kotlin") }
 
 dependencies {
+    testRuntime(intellijDep())
+
     compile(project(":kotlin-stdlib"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
@@ -72,7 +74,7 @@ dependencies {
     (rootProject.extra["compilerModules"] as Array<String>).forEach {
         testCompile(project(it))
     }
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijPluginDep("IntelliLang"))
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
@@ -83,7 +85,6 @@ dependencies {
     testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
 
-    testRuntime(intellijDep())
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))

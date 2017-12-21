@@ -4,6 +4,8 @@ description = "Kotlin AllOpen Compiler Plugin"
 apply { plugin("kotlin") }
 
 dependencies {
+    testRuntime(intellijDep())
+
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
@@ -16,8 +18,6 @@ dependencies {
     testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-
-    testRuntime(intellijDep())
 }
 
 sourceSets {

@@ -40,6 +40,8 @@ val testJvm6ServerRuntime by configurations.creating
 val antLauncherJar by configurations.creating
 
 dependencies {
+    testRuntime(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
+
     depDistProjects.forEach {
         testCompile(projectDist(it))
     }
@@ -62,7 +64,6 @@ dependencies {
     testRuntime(projectDist(":kotlin-daemon-client"))
     testRuntime(androidDxJar())
     testRuntime(files(toolsJar()))
-    testRuntime(intellijDep())
 
     testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))
 
