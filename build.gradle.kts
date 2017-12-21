@@ -137,22 +137,7 @@ extra["versions.jflex"] = "1.7.0"
 val markdownVer =  "4054 - Kotlin 1.0.2-dev-566".replace(" ", "%20") // fixed here, was last with "status:SUCCESS,tag:forKotlin"
 extra["markdownParserRepo"] = "https://teamcity.jetbrains.com/guestAuth/repository/download/IntelliJMarkdownParser_Build/$markdownVer/([artifact]_[ext]/)[artifact](.[ext])"
 
-// the former "ideaSdk/core" dir contents without intellij-core.jar
 extra["IntellijCoreDependencies"] =
-        listOf("annotations.jar",
-               "asm-all.jar",
-               "guava-21.0.jar",
-               "jdom.jar",
-               "jna.jar",
-               "log4j.jar",
-               "picocontainer.jar",
-               "snappy-in-java-*.jar",
-               "streamex-*.jar",
-               "trove4j.jar",
-               "xpp3-1.1.4-min.jar",
-               "xstream-*.jar")
-
-extra["IntellijCoreDependenciesJars"] = // TODO: rename to IntellijCoreDependencies after old usages are cleared
         listOf("annotations",
                "asm-all",
                "guava-21.0",
@@ -251,21 +236,6 @@ apply {
         from("libraries/prepareSonatypeStaging.gradle")
     }
 }
-
-val importedAntTasksPrefix = "imported-ant-update-"
-
-// TODO: check the reasons of import conflict with xerces
-//ant.importBuild("$rootDir/update_dependencies.xml") { antTaskName -> importedAntTasksPrefix + antTaskName }
-
-tasks.matching { task ->
-    task.name.startsWith(importedAntTasksPrefix)
-}.forEach {
-    it.group = "Imported ant"
-}
-
-//task("update-dependencies") {
-//    dependsOn(tasks.getByName(importedAntTasksPrefix + "update"))
-//}
 
 fun Project.allprojectsRecursive(body: Project.() -> Unit) {
     this.body()

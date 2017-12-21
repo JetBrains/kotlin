@@ -38,10 +38,10 @@ fun ModuleDependency.includeJars(vararg names: String) {
 }
 
 fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project) =
-        includeJars(*(project.rootProject.extra["IntellijCoreDependenciesJars"] as List<String>).toTypedArray())
+        includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).toTypedArray())
 
 fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilterPredicate: (String) -> Boolean) =
-        includeJars(*(project.rootProject.extra["IntellijCoreDependenciesJars"] as List<String>).filter { jarsFilterPredicate(it) }.toTypedArray())
+        includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter { jarsFilterPredicate(it) }.toTypedArray())
 
 fun Project.intellijRootDir() = File(intellijRepoDir(), "kotlin.build.custom.deps/${rootProject.extra["versions.intellijSdk"]}/intellij")
 
