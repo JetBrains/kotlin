@@ -1,0 +1,35 @@
+LineBreakpoint created at Chunked.kt:5
+Run Java
+Connected to the target VM
+Chunked.kt:5
+(0..5).asSequence()
+.chunked(4)
+.count()
+chunked
+    before: 1,2,3,4,6,7
+    after: 5,8
+count
+    before: 5,8
+    after: nothing
+mappings for chunked
+  direct:
+    1 -> nothing
+    2 -> nothing
+    3 -> nothing
+    4 -> nothing
+    6 -> nothing
+    7 -> nothing
+  reverse:
+    nothing <- 5
+    nothing <- 8
+mappings for count
+  direct:
+    5 -> nothing
+    8 -> nothing
+  reverse:
+    empty
+Disconnected from the target VM
+
+WRONG!
+
+Process finished with exit code 0

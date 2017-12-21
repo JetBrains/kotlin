@@ -1,0 +1,38 @@
+LineBreakpoint created at ZipWithNextMany.kt:5
+Run Java
+Connected to the target VM
+ZipWithNextMany.kt:5
+sequenceOf(1, 2, 3, 2, 1)
+.zipWithNext({ prev, next -> next + prev })
+.count()
+zipWithNext
+    before: 1,2,4,6,8
+    after: 3,5,7,9
+count
+    before: 3,5,7,9
+    after: nothing
+mappings for zipWithNext
+  direct:
+    1 -> nothing
+    2 -> nothing
+    4 -> nothing
+    6 -> nothing
+    8 -> nothing
+  reverse:
+    nothing <- 3
+    nothing <- 5
+    nothing <- 7
+    nothing <- 9
+mappings for count
+  direct:
+    3 -> nothing
+    5 -> nothing
+    7 -> nothing
+    9 -> nothing
+  reverse:
+    empty
+Disconnected from the target VM
+
+WRONG
+
+Process finished with exit code 0

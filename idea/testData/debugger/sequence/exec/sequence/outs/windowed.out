@@ -1,0 +1,10 @@
+LineBreakpoint created at Windowed.kt:5
+Run Java
+Connected to the target VM
+Windowed.kt:5
+Exception caught: junit.framework.AssertionFailedError: Unresolved reference: it, Unresolved reference: it
+Disconnected from the target VM
+
+WRONG!
+
+Process finished with exit code 0
