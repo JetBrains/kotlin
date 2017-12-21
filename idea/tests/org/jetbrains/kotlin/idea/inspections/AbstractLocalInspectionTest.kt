@@ -75,7 +75,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         return Class.forName(className).newInstance() as AbstractKotlinInspection
     }
 
-    protected fun doTest(path: String) {
+    protected open fun doTest(path: String) {
         val mainFile = File(path)
         val inspection = createInspection(mainFile)
 
@@ -114,13 +114,14 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         }
     }
 
-    private fun doTestFor(mainFilePath: String, file: VirtualFile, inspection: AbstractKotlinInspection, fileText: String) {
-        val problemExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
-                fileText, "// $expectedProblemDirectiveName: ")
+    protected fun runInspectionWithFixesAndCheck(
+            file: VirtualFile,
+            inspection: AbstractKotlinInspection,
+            problemExpectedString: String?,
+            highlightExpectedString: String?,
+            localFixTextString: String?
+    ): Boolean {
         val problemExpected = problemExpectedString == null || problemExpectedString != "none"
-        val highlightExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
-                fileText, "// $expectedProblemHighlightType: ")
-
         val presentation = runInspection(inspection, project, listOf(file))
         val problemDescriptors = presentation.problemDescriptors
                 .filterIsInstance<ProblemDescriptor>()
@@ -135,7 +136,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
                 else
                     "Expected at least one problem at caret",
                 problemExpected == problemDescriptors.isNotEmpty())
-        if (!problemExpected) return
+        if (!problemExpected) return false
         if (problemExpectedString != null) {
             Assert.assertTrue("Expected the following problem at caret: $problemExpectedString\n" +
                               "Active problems: ${problemDescriptors.joinToString { it.descriptionTemplate }}",
@@ -147,9 +148,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
                               problemDescriptors.all { it.highlightType.toString() == highlightExpectedString })
         }
 
-        val localFixTextString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $fixTextDirectiveName: ")
-        val localFixActions = problemDescriptors.flatMap {
-            problem ->
+        val localFixActions = problemDescriptors.flatMap { problem ->
             val fixes = problem.fixes
             fixes?.toList() ?: emptyList()
         }.filter { fix -> localFixTextString == null || fix.name == localFixTextString }
@@ -171,6 +170,21 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         project.executeWriteCommand(localFixAction!!.name, null) {
             localFixAction.applyFix(project, problemDescriptor)
         }
+        return true
+    }
+
+    private fun doTestFor(mainFilePath: String, file: VirtualFile, inspection: AbstractKotlinInspection, fileText: String) {
+        val problemExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
+                fileText, "// $expectedProblemDirectiveName: ")
+        val highlightExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
+                fileText, "// $expectedProblemHighlightType: ")
+        val localFixTextString = InTextDirectivesUtils.findStringWithPrefixes(
+                fileText, "// $fixTextDirectiveName: ")
+
+        if (!runInspectionWithFixesAndCheck(file, inspection, problemExpectedString, highlightExpectedString, localFixTextString)) {
+            return
+        }
+
         val canonicalPathToExpectedFile = mainFilePath + afterFileNameSuffix
         try {
             myFixture.checkResultByFile(canonicalPathToExpectedFile)
@@ -182,6 +196,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
             )
         }
     }
+
     companion object {
         private val EXTENSIONS = arrayOf(".kt", ".kts", ".java", ".groovy")
     }
