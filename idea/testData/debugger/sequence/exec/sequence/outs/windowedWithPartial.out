@@ -1,0 +1,10 @@
+LineBreakpoint created at WindowedWithPartial.kt:5
+Run Java
+Connected to the target VM
+WindowedWithPartial.kt:5
+Exception caught: junit.framework.AssertionFailedError: Expected: <null> but was: CHAIN_CONSTRUCTION, Expected: <null> but was: CHAIN_CONSTRUCTION
+Disconnected from the target VM
+
+WRONG!
+
+Process finished with exit code 0
