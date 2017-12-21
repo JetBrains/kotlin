@@ -20,7 +20,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
 
-    testRuntime(ideaSdkDeps("*.jar"))
+    testRuntime(intellijDep())
 }
 
 sourceSets {

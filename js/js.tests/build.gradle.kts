@@ -42,7 +42,6 @@ dependencies {
     antLauncherJar(files(toolsJar()))
 }
 
-
 sourceSets {
     "main" {}
     "test" { projectDefault() }
@@ -76,19 +75,6 @@ projectTest("quickTest") {
         systemProperty("ant.classpath", antLauncherJar.asPath)
         systemProperty("ant.launcher.class", "org.apache.tools.ant.Main")
     }
-}
-
-ant.importBuild(File(rootDir, "node_utils.xml"))
-
-val prepareNode: Task = tasks["download-nodejs-and-npm"]
-prepareNode.apply {
-    outputs.upToDateWhen { File(rootDir, "dependencies/node").exists() }
-}
-
-projectTest("nodeTest") {
-    workingDir = rootDir
-    dependsOn(prepareNode)
-    dependsOn("run-nodejs-tests")
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")

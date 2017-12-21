@@ -10,6 +10,7 @@ dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.frontend"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("annotations", "asm-all", "trove4j", "util") }
     compileOnly(project(":kotlin-reflect-api"))
 
