@@ -15,8 +15,8 @@ class KotlinSequencesSupport : LibrarySupportBase() {
     addIntermediateOperationsSupport(*filterOperations("filter", "filterNot", "filterIndexed",
         "filterIsInstance", "drop", "dropWhile", "minus", "minusElement", "take", "takeWhile", "onEach"))
 
-    addIntermediateOperationsSupport(*mapOperations("map", "mapNotNull", "mapIndexed",
-        "requireNoNulls", "withIndex", "zip", "constrainOnce"))
+    addIntermediateOperationsSupport(*mapOperations("map", "mapIndexed", "requireNoNulls", "withIndex",
+        "zip", "constrainOnce"))
 
     addIntermediateOperationsSupport(*flatMapOperations("flatMap", "flatten"))
 
