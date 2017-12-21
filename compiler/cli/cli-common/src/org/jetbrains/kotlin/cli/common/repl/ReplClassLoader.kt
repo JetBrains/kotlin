@@ -34,20 +34,36 @@ class ReplClassLoader(
         parent: ClassLoader?
 ) : URLClassLoader(files.map { it.toURI().toURL() }.toTypedArray(), parent) {
     private val classes = LinkedHashMap<JvmClassName, ByteArray>()
+    private val loadedClasses = HashMap<JvmClassName, Class<*>>()
 
     fun addJar(file: File) {
         super.addURL(file.toURI().toURL())
     }
 
-    override fun findClass(name: String): Class<*> {
-        val classBytes = classes[JvmClassName.byFqNameWithoutInnerClasses(name)]
+    override fun loadClass(name: String, resolve: Boolean): Class<*> {
+        val className = JvmClassName.byFqNameWithoutInnerClasses(name)
 
-        return if (classBytes != null) {
-            defineClass(name, classBytes, 0, classBytes.size)
+        val classBytes = classes[className]
+        if (classBytes != null) {
+            return loadedClasses.getOrPut(className) {
+                defineClass(name, classBytes, 0, classBytes.size)
+            }
         }
-        else {
-            super.findClass(name)
+
+        return super.loadClass(name, resolve)
+    }
+
+    override fun findClass(name: String): Class<*> {
+        val className = JvmClassName.byFqNameWithoutInnerClasses(name)
+
+        val classBytes = classes[className]
+        if (classBytes != null) {
+            return loadedClasses.getOrPut(className) {
+                defineClass(name, classBytes, 0, classBytes.size)
+            }
         }
+
+        return super.findClass(name)
     }
 
     override fun findResource(name: String): URL {

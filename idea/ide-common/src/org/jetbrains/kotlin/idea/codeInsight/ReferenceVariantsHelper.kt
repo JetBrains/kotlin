@@ -51,7 +51,7 @@ class ReferenceVariantsHelper(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacadeBase,
         private val moduleDescriptor: ModuleDescriptor,
-        private val visibilityFilter: (DeclarationDescriptor) -> Boolean,
+        private val visibilityFilter: (DeclarationDescriptor) -> Boolean = { _ -> true },
         private val notProperties: Set<FqNameUnsafe> = setOf()
 ) {
     fun getReferenceVariants(

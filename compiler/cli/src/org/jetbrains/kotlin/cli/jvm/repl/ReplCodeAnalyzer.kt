@@ -26,16 +26,14 @@ import org.jetbrains.kotlin.cli.common.repl.ReplHistory
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
-import org.jetbrains.kotlin.resolve.TopDownAnalysisContext
-import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.*
@@ -49,7 +47,6 @@ import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
-
     private val topDownAnalysisContext: TopDownAnalysisContext
     private val topDownAnalyzer: LazyTopDownAnalyzer
     private val resolveSession: ResolveSession
@@ -59,6 +56,8 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
 
     val project: Project
     val module: ModuleDescriptorImpl
+
+    val componentProvider: ComponentProvider
 
     val trace: BindingTraceContext = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
 
@@ -76,6 +75,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         )
 
         this.project = environment.project
+        this.componentProvider = container
 
         this.module = container.get<ModuleDescriptorImpl>()
         this.scriptDeclarationFactory = container.get<ScriptMutableDeclarationProviderFactory>()
