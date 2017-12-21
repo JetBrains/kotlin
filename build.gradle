@@ -423,7 +423,7 @@ task uploadBundle {
     doLast {
         def kind = konanVersion.contains("dev") ? "dev" : "releases"
         def ftpSettings = [
-                server: "upload.cds.intellij.net",
+                server: project.findProperty("cdnUrl") ?: System.getenv("CDN_URL"),
                 userid: project.findProperty("cdnUser") ?: System.getenv("CDN_USER"),
                 password: project.findProperty("cdnPass") ?: System.getenv("CDN_PASS"),
                 remoteDir: "/builds/$kind/$konanVersion/${TargetManager.simpleOsName()}"
