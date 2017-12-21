@@ -212,8 +212,8 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
             assertTrue("Source map should contain reference to main.kt") { map.contains("\"./src/main/kotlin/main.kt\"") }
             assertTrue("Source map should contain reference to foo.kt") { map.contains("\"./src/main/kotlin/foo.kt\"") }
-            assertTrue("Source map should contain source of main.kt") { map.contains("\"fun main(args: Array<String>) {\\n") }
-            assertTrue("Source map should contain source of foo.kt") { map.contains("\"inline fun foo(): String {\\n") }
+            assertTrue("Source map should contain source of main.kt") { map.contains("\"fun main(args: Array<String>) {") }
+            assertTrue("Source map should contain source of foo.kt") { map.contains("\"inline fun foo(): String {") }
         }
     }
 
