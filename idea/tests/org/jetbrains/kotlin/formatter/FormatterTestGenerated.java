@@ -494,6 +494,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("IfRParen.after.kt")
+        public void testIfRParen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfRParen.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IfSpacing.after.kt")
         public void testIfSpacing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfSpacing.after.kt");

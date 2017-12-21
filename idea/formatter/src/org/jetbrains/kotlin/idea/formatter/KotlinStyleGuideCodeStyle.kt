@@ -30,6 +30,7 @@ class KotlinStyleGuideCodeStyle : PredefinedCodeStyle("Kotlin style guide", Kotl
             CONTINUATION_INDENT_IN_SUPERTYPE_LISTS = false
             CONTINUATION_INDENT_IN_IF_CONDITIONS = false
             WRAP_EXPRESSION_BODY_FUNCTIONS = CodeStyleSettings.WRAP_AS_NEEDED
+            IF_RPAREN_ON_NEW_LINE = true
         }
 
         settings.kotlinCommonSettings.apply {
