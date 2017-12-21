@@ -26,6 +26,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.requests.ClassPrepareRequestor
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -87,7 +88,10 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         if (!DebuggerUtils.isKotlinSourceFile(fileName)) throw NoDataException.INSTANCE
 
-        val psiFile = getPsiFileByLocation(location)
+        val psiFile = getPsiFileByLocation(location)?.let {
+            replaceWithAlternativeSource(it, location)
+        }
+
         if (psiFile == null) {
             val isKotlinStrataAvailable = location.declaringType().containsKotlinStrata()
             if (isKotlinStrataAvailable) {
@@ -147,6 +151,17 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     class KotlinReentrantSourcePosition(delegate: SourcePosition) : DelegateSourcePosition(delegate)
+
+    private fun replaceWithAlternativeSource(psiFile: PsiFile, location: Location): PsiFile {
+        fun findAlternativeSource(): PsiFile? {
+            val qName = location.declaringType().name()
+            val alternativeFileUrl = DebuggerUtilsEx.getAlternativeSourceUrl(qName, myDebugProcess.project) ?: return null
+            val alternativePsiFile = VirtualFileManager.getInstance().findFileByUrl(alternativeFileUrl) ?: return null
+            return psiFile.manager.findFile(alternativePsiFile)
+        }
+
+        return findAlternativeSource() ?: psiFile
+    }
 
     // Returns a property or a constructor if debugger stops at class declaration
     private fun getElementForDeclarationLine(location: Location, file: KtFile, lineNumber: Int): KtElement? {
