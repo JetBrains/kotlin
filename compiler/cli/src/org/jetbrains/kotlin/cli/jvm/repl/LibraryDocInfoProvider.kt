@@ -28,6 +28,12 @@ import java.io.File
 import java.util.jar.JarFile
 
 class LibraryDocInfoProvider(val project: Project) {
+    private companion object {
+        private val LINE_SEPARATOR = System.getProperty("line.separator")
+
+        private val FILTERED_JAVA_TAGS = listOf("see", "author", "since")
+    }
+
     private val kotlinLibraryCache = KotlinLibraryNameCache(project)
     private val javaFileFactory = PsiFileFactory.getInstance(project)
 
@@ -80,7 +86,7 @@ class LibraryDocInfoProvider(val project: Project) {
             }
 
             val kdoc = findDeclaration(ktFile, declarationName.split('.'))?.docComment ?: return null
-            return kdoc.getChildrenOfType<KDocSection>().firstOrNull()?.text
+            return kdoc.getChildrenOfType<KDocSection>().firstOrNull()?.text?.let { prettifyKdoc(it) }
         }
     }
 
@@ -131,7 +137,29 @@ class LibraryDocInfoProvider(val project: Project) {
             }
 
             val javadoc = findDeclaration(topLevelClass, segments.drop(1))?.docComment ?: return null
-            return javadoc.text
+            return prettifyJavaDoc(javadoc.text)
         }
+    }
+
+    private fun prettifyKdoc(rawString: String): String {
+        val withoutLeadingStars = rawString.trimMargin("*")
+
+        return withoutLeadingStars
+                .lines()
+                .joinToString(LINE_SEPARATOR) { it.trim() }
+                .replace(Regex("\n\n\n+"), "\n\n")
+    }
+
+    private fun prettifyJavaDoc(rawString: String): String {
+        val withoutCommentSymbols = rawString.trim().substringAfter("/**").substringBeforeLast("*/").trim()
+        val withoutHtmlTags = withoutCommentSymbols.replace(Regex("<[^A-Z>]*>"), "")
+        val withoutLeadingStars = withoutHtmlTags.trimMargin("*")
+
+        return withoutLeadingStars.lines()
+                .map { it.trim() }
+                .filter { line -> FILTERED_JAVA_TAGS.none { line.startsWith("@$it ") } }
+                .joinToString(LINE_SEPARATOR)
+                .replace(Regex("  +"), " ")
+                .replace(Regex("\n\n\n+"), "\n\n")
     }
 }
