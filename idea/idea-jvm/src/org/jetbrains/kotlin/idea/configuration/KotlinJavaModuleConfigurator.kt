@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.idea.versions.isKotlinJavaRuntime
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibraryConfigurator() {
+open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibraryConfigurator() {
     override fun isApplicable(module: Module): Boolean {
         return super.isApplicable(module) && !hasBrokenJsRuntime(module)
     }

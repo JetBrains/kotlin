@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.ide.highlighter.ArchiveFileType
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.injected.editor.VirtualFileWindow
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
@@ -38,9 +39,22 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
-private val kotlinBinaries = listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType, KotlinModuleFileType.INSTANCE)
+abstract class KotlinBinaryExtension(val fileType: FileType) {
+    companion object {
+        val EP_NAME: ExtensionPointName<KotlinBinaryExtension> =
+                ExtensionPointName.create<KotlinBinaryExtension>("org.jetbrains.kotlin.binaryExtension")
 
-fun FileType.isKotlinBinary(): Boolean = this in kotlinBinaries
+        val kotlinBinaries: List<FileType> by lazy(LazyThreadSafetyMode.NONE) {
+            EP_NAME.extensions.map { it.fileType }
+        }
+    }
+}
+
+class JavaClassBinary: KotlinBinaryExtension(JavaClassFileType.INSTANCE)
+class KotlinBuiltInBinary: KotlinBinaryExtension(KotlinBuiltInFileType)
+class KotlinModuleBinary: KotlinBinaryExtension(KotlinModuleFileType.INSTANCE)
+
+fun FileType.isKotlinBinary(): Boolean = this in KotlinBinaryExtension.kotlinBinaries
 
 fun FileIndex.isInSourceContentWithoutInjected(file: VirtualFile): Boolean {
     return file !is VirtualFileWindow && isInSourceContent(file)

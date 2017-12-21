@@ -1,13 +1,17 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
 import groovy.lang.Closure
-import org.gradle.api.*
-import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.*
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.AbstractTask
-import org.gradle.jvm.tasks.Jar
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.SourceSetOutput
+import org.gradle.kotlin.dsl.creating
+import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.the
 import java.io.File
 
 inline fun <reified T : Task> Project.task(noinline configuration: T.() -> Unit) = tasks.creating(T::class, configuration)
