@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections.conventionNameCalls
 
-import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -39,14 +37,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): KtVisitorVoid =
-            object : KtVisitorVoid() {
-                override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-                    super.visitDotQualifiedExpression(expression)
-                    visitTargetElement(expression, holder, isOnTheFly)
-                }
-            }
+class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
+        KtDotQualifiedExpression::class.java
+) {
 
     private fun IElementType.inverted(): KtSingleValueToken? = when (this) {
         KtTokens.LT -> KtTokens.GT

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -32,14 +30,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspection<KtBinaryExpression>() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): KtVisitorVoid =
-            object : KtVisitorVoid() {
-                override fun visitBinaryExpression(expression: KtBinaryExpression) {
-                    super.visitBinaryExpression(expression)
-                    visitTargetElement(expression, holder, isOnTheFly)
-                }
-            }
+class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspection<KtBinaryExpression>(
+        KtBinaryExpression::class.java
+) {
 
     override fun isApplicable(element: KtBinaryExpression): Boolean {
         if (element.operationToken != KtTokens.EQ) return false

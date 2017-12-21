@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -31,14 +30,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 
-class ReplacePutWithAssignmentInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): KtVisitorVoid =
-            object : KtVisitorVoid() {
-                override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-                    super.visitDotQualifiedExpression(expression)
-                    visitTargetElement(expression, holder, isOnTheFly)
-                }
-            }
+class ReplacePutWithAssignmentInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
+        KtDotQualifiedExpression::class.java
+) {
 
     override fun isApplicable(element: KtDotQualifiedExpression): Boolean {
         val callExpression = element.callExpression

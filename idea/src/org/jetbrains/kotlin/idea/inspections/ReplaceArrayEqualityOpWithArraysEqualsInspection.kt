@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -25,11 +24,12 @@ import org.jetbrains.kotlin.idea.intentions.resolvedToArrayType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-class ReplaceArrayEqualityOpWithArraysEqualsInspection : AbstractApplicabilityBasedInspection<KtBinaryExpression>() {
+class ReplaceArrayEqualityOpWithArraysEqualsInspection : AbstractApplicabilityBasedInspection<KtBinaryExpression>(
+        KtBinaryExpression::class.java
+) {
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
         val expression = element as? KtBinaryExpression ?: return
         val right = expression.right ?: return
@@ -56,14 +56,6 @@ class ReplaceArrayEqualityOpWithArraysEqualsInspection : AbstractApplicabilityBa
         val leftResolvedCall = left.getResolvedCall(context)
         return rightResolvedCall?.resolvedToArrayType() == true && leftResolvedCall?.resolvedToArrayType() == true
     }
-
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            object : KtVisitorVoid() {
-                override fun visitBinaryExpression(expression: KtBinaryExpression) {
-                    super.visitBinaryExpression(expression)
-                    visitTargetElement(expression, holder, isOnTheFly)
-                }
-            }
 
     override fun inspectionText(element: KtBinaryExpression) = "Dangerous array comparison"
 

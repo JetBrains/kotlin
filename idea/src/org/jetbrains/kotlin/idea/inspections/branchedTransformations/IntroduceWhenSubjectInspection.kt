@@ -16,26 +16,16 @@
 
 package org.jetbrains.kotlin.idea.inspections.branchedTransformations
 
-import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
-import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-class IntroduceWhenSubjectInspection : AbstractApplicabilityBasedInspection<KtWhenExpression>() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): KtVisitorVoid =
-            object : KtVisitorVoid() {
-                override fun visitWhenExpression(expression: KtWhenExpression) {
-                    super.visitWhenExpression(expression)
-                    visitTargetElement(expression, holder, isOnTheFly)
-                }
-            }
+class IntroduceWhenSubjectInspection : AbstractApplicabilityBasedInspection<KtWhenExpression>(KtWhenExpression::class.java) {
 
     override fun isApplicable(element: KtWhenExpression) = element.getSubjectToIntroduce() != null
 

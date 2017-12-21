@@ -23,9 +23,19 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
-abstract class AbstractApplicabilityBasedInspection<in TElement: KtElement> : AbstractKotlinInspection() {
+abstract class AbstractApplicabilityBasedInspection<TElement: KtElement>(
+        val elementType: Class<TElement>
+) : AbstractKotlinInspection() {
 
-    abstract override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): KtVisitorVoid
+    final override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
+            object : KtVisitorVoid() {
+                override fun visitKtElement(element: KtElement) {
+                    super.visitKtElement(element)
+
+                    if (!elementType.isInstance(element) || element.textLength == 0) return
+                    visitTargetElement(element as TElement, holder, isOnTheFly)
+                }
+            }
 
     // This function should be called from visitor built by a derived inspection
     protected fun visitTargetElement(element: TElement, holder: ProblemsHolder, isOnTheFly: Boolean) {

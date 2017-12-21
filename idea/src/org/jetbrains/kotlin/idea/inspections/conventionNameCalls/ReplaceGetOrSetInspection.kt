@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections.conventionNameCalls
 
-import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -29,7 +27,10 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -39,21 +40,15 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
 
-class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>() {
+class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
+        KtDotQualifiedExpression::class.java
+) {
     private fun FunctionDescriptor.isExplicitOperator(): Boolean {
         return if (overriddenDescriptors.isEmpty())
             containingDeclaration !is JavaClassDescriptor && isOperator
         else
             overriddenDescriptors.any { it.isExplicitOperator() }
     }
-
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): KtVisitorVoid =
-            object : KtVisitorVoid() {
-                override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-                    super.visitDotQualifiedExpression(expression)
-                    visitTargetElement(expression, holder, isOnTheFly)
-                }
-            }
 
     private val operatorNames = setOf(OperatorNameConventions.GET, OperatorNameConventions.SET)
 

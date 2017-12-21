@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInsight.CodeInsightUtilCore
-import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -39,14 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtCallExpression>() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): KtVisitorVoid =
-            object : KtVisitorVoid() {
-                override fun visitCallExpression(expression: KtCallExpression) {
-                    super.visitCallExpression(expression)
-                    visitTargetElement(expression, holder, isOnTheFly)
-                }
-            }
+class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(KtCallExpression::class.java) {
 
     override fun isApplicable(element: KtCallExpression): Boolean {
         if ((element.calleeExpression as? KtNameReferenceExpression)?.getReferencedName() != "assert") return false
