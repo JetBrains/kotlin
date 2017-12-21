@@ -4,6 +4,7 @@ package com.intellij.debugger.streams.kotlin.lib.sequence
 import com.intellij.debugger.streams.lib.IntermediateOperation
 import com.intellij.debugger.streams.lib.impl.*
 import com.intellij.debugger.streams.resolve.AppendResolver
+import com.intellij.debugger.streams.resolve.PairMapResolver
 import com.intellij.debugger.streams.trace.impl.handler.unified.DistinctByKeyHandler
 import com.intellij.debugger.streams.trace.impl.handler.unified.DistinctTraceHandler
 
@@ -28,7 +29,7 @@ class KotlinSequencesSupport : LibrarySupportBase() {
     addIntermediateOperationsSupport(ConcatOperation("plus", AppendResolver()))
     addIntermediateOperationsSupport(ConcatOperation("plusElement", AppendResolver()))
 
-    addIntermediateOperationsSupport()
+    addIntermediateOperationsSupport(OrderBasedOperation("zipWithNext", PairMapResolver()))
   }
 
   private fun filterOperations(vararg names: String): Array<IntermediateOperation> =
