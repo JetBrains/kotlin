@@ -185,11 +185,9 @@ class ReplInterpreter(
             else -> return null
         }.takeIf { it.isNotEmpty() } ?: return null
 
-        val libraries = classpathRoots
-
         return descriptors.joinToString(LINE_SEPARATOR + LINE_SEPARATOR) { descriptor ->
             val fqName = descriptor.fqNameSafe
-            val documentation = findDocumentation(libraries, descriptor)
+            val documentation = findDocumentation(classpathRootsWithSources, descriptor)
             fqName.asString() + LINE_SEPARATOR + documentation.lines().joinToString(LINE_SEPARATOR) { "    " + it }
         }
     }
