@@ -5471,6 +5471,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kfunction.kt")
+        public void testKfunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/kfunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kproperty.kt")
+        public void testKproperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/kproperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kproperty0.kt")
+        public void testKproperty0() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/kproperty0.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("length.kt")
         public void testLength() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/length.kt");
