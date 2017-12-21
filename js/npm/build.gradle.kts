@@ -13,7 +13,7 @@ node {
 
 val deployDir = "$buildDir/deploy_to_npm"
 val templateDir = "$projectDir/templates"
-val kotlincDir = rootProject.extra["distKotlinHomeDir"] as String
+val kotlincDir = "$projectDir/../../dist/kotlinc"
 
 fun getProperty(name: String, default: String = "") = findProperty(name)?.toString() ?: default
 
