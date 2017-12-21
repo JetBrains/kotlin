@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.SERIALIZER_CLASS_NAME
 
 internal val packageFqName = FqName("kotlinx.serialization")
@@ -136,9 +137,19 @@ internal val ClassDescriptor?.classSerializer: KotlinType?
 internal val ClassDescriptor.hasCompanionObjectAsSerializer: Boolean
     get() = companionObjectDescriptor?.annotations?.serializerForClass == this.defaultType
 
+internal fun checkSerializerNullability(classType: KotlinType, serializerType: KotlinType): KotlinType {
+    val castedToKSerial = requireNotNull(
+            serializerType.supertypes().find { isKSerializer(it) },
+            { "KSerializer is not a supertype of $serializerType" }
+    )
+    if (!classType.isMarkedNullable && castedToKSerial.arguments.first().type.isMarkedNullable)
+        throw IllegalStateException("Can't serialize non-nullable field of type ${classType} with nullable serializer ${serializerType}")
+    return serializerType
+}
+
 // serializer that was declared for this specific type or annotation from a class declaration
 val KotlinType.typeSerializer: KotlinType?
-    get() = this.annotations.serializableWith ?: (this.toClassDescriptor).classSerializer
+    get() = (this.annotations.serializableWith ?: (this.toClassDescriptor).classSerializer)?.let { checkSerializerNullability(this, it) }
 
 val KotlinType.genericIndex: Int?
     get() = (this.constructor.declarationDescriptor as? TypeParameterDescriptor)?.index
