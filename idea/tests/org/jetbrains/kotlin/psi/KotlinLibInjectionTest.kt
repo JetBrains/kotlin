@@ -55,8 +55,8 @@ class KotlinLibInjectionTest : AbstractInjectionTest() {
 
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        val ideaSdkPath = System.getProperty("ideaSdk.path")?.takeIf { File(it).isDirectory }
-                          ?: throw RuntimeException("Unable to get a valid path from 'ideaSdk.path' property, please point it to the Idea SDK location")
+        val ideaSdkPath = System.getProperty("idea.home.path")?.takeIf { File(it).isDirectory }
+                          ?: throw RuntimeException("Unable to get a valid path from 'idea.home.path' property, please point it to the Idea location")
         return SdkAndMockLibraryProjectDescriptor(
                 PluginTestCaseBase.getTestDataPathBase() + "/injection/lib/", false, false, false, true,
                 listOf(File(ideaSdkPath, "lib/annotations.jar").absolutePath))

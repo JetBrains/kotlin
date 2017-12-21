@@ -118,7 +118,7 @@ projectTest {
     dependsOnTaskIfExistsRec("dist", project = rootProject)
     workingDir = rootDir
     afterEvaluate {
-        systemProperty("ideaSdk.path", intellijRootDir().canonicalPath)
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
 }
 
