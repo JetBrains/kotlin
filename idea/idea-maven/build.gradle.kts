@@ -15,6 +15,7 @@ dependencies {
     compile(project(":js:js.frontend"))
 
     compile(project(":idea"))
+    compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-jps-common"))
 
     testCompile(projectTests(":idea"))

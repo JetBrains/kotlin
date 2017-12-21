@@ -29,7 +29,6 @@ import com.intellij.openapi.updateSettings.impl.UpdateChecker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.searches.IndexPatternSearch;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTodoSearcher;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -54,12 +53,6 @@ public class PluginStartupComponent implements ApplicationComponent {
     @Override
     public void initComponent() {
         registerPathVariable();
-
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            ThreadTrackerPatcherForTeamCityTesting.INSTANCE.patchThreadTracker();
-        }
-
-        DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
 
         try {
             // API added in 15.0.2

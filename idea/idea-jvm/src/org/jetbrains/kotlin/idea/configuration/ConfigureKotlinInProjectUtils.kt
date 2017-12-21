@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
 import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.versions.hasKotlinJsKjsmFile
+import org.jetbrains.kotlin.idea.versions.isSnapshot
 import org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.utils.ifEmpty
@@ -255,10 +256,6 @@ fun hasKotlinFilesOnlyInTests(module: Module): Boolean {
 
 fun hasKotlinFilesInSources(module: Module): Boolean {
     return FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(false))
-}
-
-fun isSnapshot(version: String): Boolean {
-    return version.contains("SNAPSHOT", ignoreCase = true)
 }
 
 fun isEap(version: String): Boolean {

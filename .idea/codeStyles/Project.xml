@@ -228,7 +228,6 @@
       <option name="WHILE_BRACE_FORCE" value="1" />
       <option name="FOR_BRACE_FORCE" value="1" />
       <option name="FIELD_ANNOTATION_WRAP" value="0" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
       <option name="ELSE_ON_NEW_LINE" value="true" />

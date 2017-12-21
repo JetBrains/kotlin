@@ -13,6 +13,9 @@
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleProjectImportHandler" area="IDEA_PROJECT"
                         interface="org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleModelFacade"
+                        interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="com.intellij">
