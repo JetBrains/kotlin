@@ -22,7 +22,7 @@ class KotlinMapVariable(type: MapType, name: String) : MapVariableBase(type, nam
   override fun keys(): Expression = TextExpression("${toCode()}.keys")
 
   override fun computeIfAbsent(key: Expression, supplier: Lambda): Expression =
-      TextExpression("${toCode()}.getOrPut(${key.toCode()}, ${supplier.toCode()})")
+      TextExpression("${toCode()}.computeIfAbsent(${key.toCode()}, ${supplier.toCode()})")
 
   override fun defaultDeclaration(isMutable: Boolean): VariableDeclaration =
     KotlinVariableDeclaration(this, false, type.defaultValue)
