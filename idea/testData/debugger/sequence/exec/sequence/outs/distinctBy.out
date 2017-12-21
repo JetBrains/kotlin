@@ -1,0 +1,10 @@
+LineBreakpoint created at DistinctBy.kt:5
+Run Java
+Connected to the target VM
+DistinctBy.kt:5
+Exception caught: junit.framework.AssertionFailedError: Unresolved reference: andThen, Unresolved reference: andThen
+Disconnected from the target VM
+
+WRONG! Should be fixed in the platform
+
+Process finished with exit code 0
