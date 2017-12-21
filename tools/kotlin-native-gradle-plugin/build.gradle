@@ -79,6 +79,9 @@ test {
         dependsOn ':dist'
         systemProperty("konan.home", distDir.absolutePath)
     }
+    if (project.hasProperty("konan.jvmArgs")) {
+        systemProperty("konan.jvmArgs", project.property("konan.jvmArgs"))
+    }
     // Uncomment for debugging.
     //testLogging.showStandardStreams = true
     if (project.hasProperty("maxParallelForks")) {

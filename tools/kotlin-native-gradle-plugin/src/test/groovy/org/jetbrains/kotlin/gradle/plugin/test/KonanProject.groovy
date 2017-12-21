@@ -39,8 +39,8 @@ class KonanProject {
     Set<File>    srcFiles = []
     Set<File>    defFiles = []
 
-    List<String>  interopTasks = []
-    List<String>  compilationTasks = []
+    List<String> interopTasks = []
+    List<String> compilationTasks = []
     String       downloadTask = ":checkKonanCompiler"
 
     List<String> targets
@@ -193,9 +193,13 @@ class KonanProject {
         return generateDefFile(fileName, DEFAULT_DEF_CONTENT)
     }
 
-    /** Generates gradle.properties file with the konan.home property set. */
-    File generatePropertiesFile(String konanHome) {
-        propertiesFile = createFile(projectPath, "gradle.properties", "konan.home=$konanHome\n")
+    /** Generates gradle.properties file with the konan.home and konan.jvmArgs properties set. */
+    File generatePropertiesFile(String konanHome, String konanJvmArgs = System.getProperty("konan.jvmArgs") ?: "") {
+        propertiesFile = createFile(projectPath, "gradle.properties", """\
+            konan.home=$konanHome
+            ${!konanJvmArgs.isEmpty() ? "konan.jvmArgs=$konanJvmArgs\n" : ""}
+        """.stripIndent())
+        println(propertiesFile.text)
         return propertiesFile
     }
 
