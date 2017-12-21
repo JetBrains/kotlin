@@ -41,29 +41,36 @@ import kotlin.reflect.KClass
 // Since IDEA 2017.1, it's possible to have inspection severity "No highlighting, only fix"
 // thus making the original purpose useless.
 // The class still can be used, if you want to create a pair for existing intention with additional checker
-abstract class IntentionBasedInspection<TElement : PsiElement>(
-        private val intentionInfos: List<IntentionBasedInspection.IntentionData<TElement>>,
+abstract class IntentionBasedInspection<TElement : PsiElement> private constructor(
+        private val intentionInfo: IntentionBasedInspection.IntentionData<TElement>,
         protected open val problemText: String?
 ) : AbstractKotlinInspection() {
+
+    val intention: SelfTargetingRangeIntention<TElement> by lazy {
+        val intentionClass = intentionInfo.intention
+        intentionClass.constructors.single { it.parameters.isEmpty() }.call().apply {
+            inspection = this@IntentionBasedInspection
+        }
+    }
 
     @Suppress("DEPRECATION")
     @Deprecated("Please do not use for new inspections. Use AbstractKotlinInspection as base class for them")
     constructor(
             intention: KClass<out SelfTargetingRangeIntention<TElement>>,
             problemText: String? = null
-    ) : this(listOf(IntentionData(intention)), problemText)
+    ) : this(IntentionData(intention), problemText)
 
     constructor(
             intention: KClass<out SelfTargetingRangeIntention<TElement>>,
             additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
             problemText: String? = null
-    ) : this(listOf(IntentionData(intention, additionalChecker)), problemText)
+    ) : this(IntentionData(intention, additionalChecker), problemText)
 
     constructor(
             intention: KClass<out SelfTargetingRangeIntention<TElement>>,
             additionalChecker: (TElement) -> Boolean,
             problemText: String? = null
-    ) : this(listOf(IntentionData(intention, { element, _ -> additionalChecker(element) } )), problemText)
+    ) : this(IntentionData(intention, { element, _ -> additionalChecker(element) } ), problemText)
 
 
 
@@ -83,14 +90,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
 
-        val intentionsAndCheckers = intentionInfos.map {
-            val instance = it.intention.constructors.single { it.parameters.isEmpty() } .call()
-            instance.inspection = this
-            instance to it.additionalChecker
-        }
-        val elementType = intentionsAndCheckers.map { it.first.elementType }.distinct().singleOrNull()
-                          ?: error("$intentionInfos should have the same elementType")
-
+        val elementType = intention.elementType
         return object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 if (!elementType.isInstance(element) || element.textLength == 0) return
@@ -101,7 +101,8 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                 var problemRange: TextRange? = null
                 var fixes: SmartList<LocalQuickFix>? = null
 
-                for ((intention, additionalChecker) in intentionsAndCheckers) {
+                val additionalChecker = intentionInfo.additionalChecker
+                run {
                     val range = intention.applicabilityRange(targetElement)?.let { range ->
                         val elementRange = targetElement.textRange
                         assert(range in elementRange) { "Wrong applicabilityRange() result for $intention - should be within element's range" }
@@ -111,15 +112,15 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                     if (range != null && additionalChecker(targetElement, this@IntentionBasedInspection)) {
                         problemRange = problemRange?.union(range) ?: range
                         if (fixes == null) {
-                            fixes = SmartList<LocalQuickFix>()
+                            fixes = SmartList()
                         }
-                        fixes.add(createQuickFix(intention, additionalChecker, targetElement))
+                        fixes!!.add(createQuickFix(intention, additionalChecker, targetElement))
                     }
                 }
 
                 val range = inspectionTarget(targetElement)?.toRange(element) ?: problemRange
                 if (range != null) {
-                    val allFixes = fixes ?: SmartList<LocalQuickFix>()
+                    val allFixes = fixes ?: SmartList()
                     additionalFixes(targetElement)?.let { allFixes.addAll(it) }
                     if (!allFixes.isEmpty()) {
                         holder.registerProblemWithoutOfflineInformation(
