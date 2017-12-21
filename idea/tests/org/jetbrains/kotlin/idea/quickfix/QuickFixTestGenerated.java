@@ -11012,6 +11012,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyHasType.kt")
+        public void testPropertyHasType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/propertyHasType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyWithGetterWithBlockBody.kt")
         public void testPropertyWithGetterWithBlockBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/propertyWithGetterWithBlockBody.kt");
