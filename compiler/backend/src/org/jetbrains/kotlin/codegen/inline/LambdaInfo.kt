@@ -164,7 +164,7 @@ class DefaultLambda(
                 classReader.b,
                 invokeMethod.name,
                 invokeMethod.descriptor,
-                lambdaClassType)!!
+                lambdaClassType) ?: error("Can't find method '${invokeMethod.name}${invokeMethod.descriptor}' in '${classReader.className}'")
 
         if (needReification) {
             //nested classes could also require reification

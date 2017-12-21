@@ -164,7 +164,9 @@ class MethodInliner(
                     result.merge(transformResult)
                     result.addChangedType(oldClassName, newClassName)
 
-                    if (inliningContext.isInliningLambda && transformationInfo!!.canRemoveAfterTransformation()) {
+                    if (inliningContext.isInliningLambda &&
+                        inliningContext.lambdaInfo !is DefaultLambda && //never delete default lambda classes
+                        transformationInfo!!.canRemoveAfterTransformation()) {
                         // this class is transformed and original not used so we should remove original one after inlining
                         result.addClassToRemove(oldClassName)
                     }

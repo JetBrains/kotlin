@@ -158,6 +158,42 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("checkLambdaClassIsPresent.kt")
+        public void testCheckLambdaClassIsPresent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkLambdaClassIsPresent.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("checkLambdaClassesArePresent.kt")
+        public void testCheckLambdaClassesArePresent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkLambdaClassesArePresent.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("checkObjectClassIsPresent.kt")
+        public void testCheckObjectClassIsPresent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkObjectClassIsPresent.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("checkStaticLambdaClassIsPresent.kt")
+        public void testCheckStaticLambdaClassIsPresent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkStaticLambdaClassIsPresent.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("checkStaticLambdaClassesArePresent.kt")
+        public void testCheckStaticLambdaClassesArePresent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkStaticLambdaClassesArePresent.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("checkStaticObjectClassIsPresent.kt")
+        public void testCheckStaticObjectClassIsPresent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkStaticObjectClassIsPresent.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultCallInDefaultLambda.kt")
         public void testDefaultCallInDefaultLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultCallInDefaultLambda.kt");
@@ -167,6 +203,12 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
         @TestMetadata("defaultLambdaInNoInline.kt")
         public void testDefaultLambdaInNoInline() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultLambdaInNoInline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("genericLambda.kt")
+        public void testGenericLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/genericLambda.kt");
             doTest(fileName);
         }
 
