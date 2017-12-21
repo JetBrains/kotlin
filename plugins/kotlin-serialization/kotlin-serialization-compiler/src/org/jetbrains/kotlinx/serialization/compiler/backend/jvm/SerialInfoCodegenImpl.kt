@@ -76,12 +76,14 @@ class SerialInfoCodegenImpl(val codegen: ImplementationBodyCodegen, val thisClas
         codegen.generateMethod(constr, { _, _ ->
             load(0, thisAsmType)
             invokespecial("java/lang/Object", "<init>", "()V", false)
-            props.forEachIndexed { index, prop ->
+            var varOffset = 1
+            props.forEach { prop ->
                 val propType = codegen.typeMapper.mapType(prop.type)
                 val propFieldName = "_" + prop.name.identifier
                 load(0, thisAsmType)
-                load(index + 1, propType)
+                load(varOffset, propType)
                 putfield(thisAsmType.internalName, propFieldName, propType.descriptor)
+                varOffset += propType.size
             }
             areturn(Type.VOID_TYPE)
         })
