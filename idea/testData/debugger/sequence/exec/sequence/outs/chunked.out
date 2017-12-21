@@ -13,15 +13,15 @@ count
     after: nothing
 mappings for chunked
   direct:
-    1 -> nothing
-    2 -> nothing
-    3 -> nothing
-    4 -> nothing
-    6 -> nothing
-    7 -> nothing
+    1 -> 5
+    2 -> 5
+    3 -> 5
+    4 -> 5
+    6 -> 8
+    7 -> 8
   reverse:
-    nothing <- 5
-    nothing <- 8
+    1,2,3,4 <- 5
+    6,7 <- 8
 mappings for count
   direct:
     5 -> nothing
@@ -29,7 +29,5 @@ mappings for count
   reverse:
     empty
 Disconnected from the target VM
-
-WRONG!
 
 Process finished with exit code 0
