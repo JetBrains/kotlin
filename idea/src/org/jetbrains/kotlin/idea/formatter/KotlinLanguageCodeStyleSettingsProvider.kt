@@ -65,6 +65,10 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                        foo.toUpperCase().trim()
                            .length
                        val barLen = bar?.length() ?: x ?: -1
+                       if (foo.length > 0 &&
+                           barLen > 0) {
+                           println("> 0")
+                       }
                    }
                }
 

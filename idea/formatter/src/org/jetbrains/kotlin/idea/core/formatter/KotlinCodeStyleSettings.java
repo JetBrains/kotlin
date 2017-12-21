@@ -49,6 +49,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public int BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES = 0;
     public int WRAP_EXPRESSION_BODY_FUNCTIONS = 0;
     public int WRAP_ELVIS_EXPRESSIONS = 1;
+    public boolean IF_RPAREN_ON_NEW_LINE = false;
 
     public KotlinCodeStyleSettings(CodeStyleSettings container) {
         super("JetCodeStyleSettings", container);

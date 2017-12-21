@@ -185,6 +185,18 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     createSpacing(0)
                 }
             }
+
+            inPosition(left = CONDITION, right = RPAR).customRule { parent, _, _ ->
+                if (kotlinCustomSettings.IF_RPAREN_ON_NEW_LINE) {
+                    Spacing.createDependentLFSpacing(0, 0,
+                                                     excludeLambdasAndObjects(parent),
+                                                     commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                                                     commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+                }
+                else {
+                    createSpacing(0)
+                }
+            }
         }
 
         simple {
