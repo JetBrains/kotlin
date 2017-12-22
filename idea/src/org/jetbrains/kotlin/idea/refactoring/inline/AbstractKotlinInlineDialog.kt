@@ -30,6 +30,7 @@ abstract class AbstractKotlinInlineDialog(
         project: Project = callable.project
 ) : InlineOptionsDialog(project, true, callable)  {
 
+    // NB: can be -1 in case of too expensive search!
     protected val occurrencesNumber = initOccurrencesNumber(callable)
 
     private val occurrencesString get() = if (occurrencesNumber >= 0) {
@@ -59,19 +60,20 @@ abstract class AbstractKotlinInlineDialog(
     override fun getBorderTitle() = refactoringName
 
     override fun getNameLabelText(): String {
-        val occurrencesString =
-                if (occurrencesNumber >= 0) " - $occurrencesString"
-                else ""
+        val occurrencesString = occurrencesString?.let { " - $it" } ?: ""
         return "${kind.capitalize()} ${callable.nameAsSafeName} $occurrencesString"
     }
 
+    private fun getInlineText(verb: String) =
+            "Inline all references and $verb the $kind " + (occurrencesString?.let { "($it)" } ?: "")
+
     override fun getInlineAllText() =
-            "Inline all references and remove the $kind ($occurrencesString)"
+            getInlineText("remove")
 
     override fun getKeepTheDeclarationText(): String? =
             // With non-writable callable refactoring does not work anyway (for both property or function)
             if (callable.isWritable && (occurrencesNumber > 1 || !myInvokedOnReference)) {
-                "Inline all references and keep the $kind ($occurrencesString)"
+                getInlineText("keep")
             }
             else {
                 null
