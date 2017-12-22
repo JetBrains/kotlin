@@ -2,8 +2,8 @@
  A1
  -A2
   a: Int
-  b: [ERROR : Annotation is absent]
-  constructor A2(Int, [ERROR : Type annotation was missing for parameter b] = ...)
+  b: String
+  constructor A2(Int, String = ...)
  -A3
   a: Int
   b: String
