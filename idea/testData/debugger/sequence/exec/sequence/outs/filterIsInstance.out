@@ -1,7 +1,7 @@
-LineBreakpoint created at FilterIsInstance.kt:6
+LineBreakpoint created at FilterIsInstance.kt:5
 Run Java
 Connected to the target VM
-FilterIsInstance.kt:6
+FilterIsInstance.kt:5
 Exception caught: junit.framework.AssertionFailedError: Type inference failed: Not enough information to infer parameter R in inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<R>
 Please specify it explicitly.
 , Type inference failed: Not enough information to infer parameter R in inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<R>

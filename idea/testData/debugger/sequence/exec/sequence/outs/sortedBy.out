@@ -1,7 +1,7 @@
-LineBreakpoint created at SortedBy.kt:6
+LineBreakpoint created at SortedBy.kt:5
 Run Java
 Connected to the target VM
-SortedBy.kt:6
+SortedBy.kt:5
 arrayOf(Person("Bob", 42), Person("Alice", 27)).asSequence()
 .sortedBy({ it.age })
 .count()

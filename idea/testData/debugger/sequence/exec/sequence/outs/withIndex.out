@@ -1,7 +1,7 @@
-LineBreakpoint created at WithIndex.kt:6
+LineBreakpoint created at WithIndex.kt:5
 Run Java
 Connected to the target VM
-WithIndex.kt:6
+WithIndex.kt:5
 intArrayOf(1, 2, 3).asSequence()
 .withIndex()
 .forEach({})

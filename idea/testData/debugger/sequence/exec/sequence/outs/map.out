@@ -1,7 +1,7 @@
-LineBreakpoint created at Map.kt:6
+LineBreakpoint created at Map.kt:5
 Run Java
 Connected to the target VM
-Map.kt:6
+Map.kt:5
 doubleArrayOf(1.0, 2.0).asSequence()
 .map({ it * it })
 .contains(3.0)
