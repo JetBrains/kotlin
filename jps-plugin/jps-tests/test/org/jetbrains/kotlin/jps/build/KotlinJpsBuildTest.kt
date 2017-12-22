@@ -82,7 +82,6 @@ import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KProperty1
 
 class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     var isICEnabledBackup: Boolean = false
@@ -841,29 +840,46 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         buildAllModules().assertSuccessful()
     }
 
-    fun testCancelLongKotlinCompilation() {
-        generateLongKotlinFile("Foo.kt", "foo", "Foo")
+    fun testCheckIsCancelledIsCalledOftenEnough() {
+        val classCount = 30
+        val methodCount = 30
+
+        fun generateFiles() {
+            val srcDir = File(workDir, "src")
+            srcDir.mkdirs()
+
+            for (i in 0..classCount) {
+                val code = buildString {
+                    appendln("package foo")
+                    appendln("class Foo$i {")
+                    for (j in 0..methodCount) {
+                        appendln("  fun get${j*j}(): Int = square($j)")
+                    }
+                    appendln("}")
+
+                }
+                File(srcDir, "Foo$i.kt").writeText(code)
+            }
+        }
+
+        generateFiles()
         initProject(JVM_MOCK_RUNTIME)
 
-        val INITIAL_DELAY = 2000
-
-        val start = System.currentTimeMillis()
-        val canceledStatus = CanceledStatus() { System.currentTimeMillis() - start > INITIAL_DELAY }
+        var checkCancelledCalledCount = 0
+        val countingCancelledStatus = CanceledStatus {
+            checkCancelledCalledCount++
+            false
+        }
 
         val logger = TestProjectBuilderLogger()
         val buildResult = BuildResult()
-        buildCustom(canceledStatus, logger, buildResult)
-        val interval = System.currentTimeMillis() - start - INITIAL_DELAY
 
-        assertCanceled(buildResult)
+        buildCustom(countingCancelledStatus, logger, buildResult)
+
         buildResult.assertSuccessful()
-        assert(interval < 8000) { "expected time for canceled compilation < 8000 ms, but $interval" }
-
-        val module = myProject.modules.get(0)
-        assertFilesNotExistInOutput(module, "foo/Foo.class")
-
-        val expectedLog = workDir.absolutePath + File.separator + "expected.log"
-        checkFullLog(logger, File(expectedLog))
+        assert(checkCancelledCalledCount > classCount) {
+            "isCancelled should be called at least once per class. Expected $classCount, but got $checkCancelledCalledCount"
+        }
     }
 
     fun testCancelKotlinCompilation() {
@@ -1121,32 +1137,9 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
     }
 
-    private fun checkFullLog(logger: TestProjectBuilderLogger, expectedLogFile: File) {
-        UsefulTestCase.assertSameLinesWithFile(expectedLogFile.absolutePath, logger.getFullLog(orCreateProjectDir, myDataStorageRoot))
-    }
-
     private fun assertCanceled(buildResult: BuildResult) {
         val list = buildResult.getMessages(BuildMessage.Kind.INFO)
         assertTrue("The build has been canceled" == list.last().messageText)
-    }
-
-    private fun generateLongKotlinFile(filePath: String, packagename: String, className: String)  {
-        val file = File(workDir.absolutePath + File.separator + "src" + File.separator + filePath)
-        FileUtilRt.createIfNotExists(file)
-        val writer = BufferedWriter(FileWriter(file))
-        try {
-            writer.write("package $packagename\n\n")
-            writer.write("public class $className {\n")
-
-            for (i in 0..10000) {
-                writer.write("fun f$i():Int = $i\n\n")
-            }
-
-            writer.write("}\n")
-        }
-        finally {
-            writer.close()
-        }
     }
 
     private fun findModule(name: String): JpsModule {
