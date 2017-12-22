@@ -45,7 +45,7 @@ afterEvaluate {
         dependsOn(prepareSandbox)
         group = "intellij"
         description = "Runs Intellij IDEA Ultimate with installed plugin."
-        setIdeaDirectory(intellijRootDir())
+        setIdeaDirectory(intellijUltimateRootDir())
         setConfigDirectory(File(ideaUltimateSandboxDir, "config"))
         setSystemDirectory(ideaUltimateSandboxDir)
         setPluginsDirectory(ideaUltimatePluginDir.parent)
