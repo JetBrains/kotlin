@@ -41,6 +41,16 @@ model {
         }
    }
 
+   /* HACK over gradle 4.4, it adds /usr/include, that affects our --sysroot flag */
+   toolChains {
+     clang(Clang) {
+       eachPlatform {
+         cCompiler.withArguments { args ->
+           args.remove "/usr/include"
+         }
+       }
+     }
+   }
 }
 
 dependencies {

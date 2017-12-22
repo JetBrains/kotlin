@@ -89,6 +89,9 @@ model {
         cppCompiler.withArguments { args ->
           args.remove "/usr/include"
         }
+	cCompiler.withArguments { args ->
+          args.remove "/usr/include"
+        }
       }
     }
   }
