@@ -74,12 +74,7 @@ expect inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): C
 
 // From kotlin.kt
 
-internal expect fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T>
-internal inline expect fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V>
-internal inline expect fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
-internal inline expect fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?>
 
-internal expect interface Serializable
 
 // From numbers.kt
 
@@ -135,8 +130,8 @@ public expect fun Float.Companion.fromBits(bits: Int): Float
 
 // From concurrent.kt
 
-@Target(PROPERTY, FIELD)
-expect annotation class Volatile()
+@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
+public typealias Volatile = kotlin.jvm.Volatile
 
 public expect inline fun <R> synchronized(lock: Any, block: () -> R): R
 
