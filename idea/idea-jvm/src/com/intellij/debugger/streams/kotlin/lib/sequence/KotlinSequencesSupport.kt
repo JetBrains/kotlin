@@ -8,7 +8,6 @@ import com.intellij.debugger.streams.lib.IntermediateOperation
 import com.intellij.debugger.streams.lib.impl.*
 import com.intellij.debugger.streams.resolve.AppendResolver
 import com.intellij.debugger.streams.resolve.PairMapResolver
-import com.intellij.debugger.streams.trace.impl.handler.unified.DistinctByKeyHandler
 import com.intellij.debugger.streams.trace.impl.handler.unified.DistinctTraceHandler
 
 /**
@@ -27,7 +26,7 @@ class KotlinSequencesSupport : LibrarySupportBase() {
     addIntermediateOperationsSupport(*sortedOperations("sorted", "sortedBy", "sortedDescending", "sortedWith"))
 
     addIntermediateOperationsSupport(DistinctOperation("distinct", ::DistinctTraceHandler))
-    addIntermediateOperationsSupport(DistinctOperation("distinctBy", ::DistinctByKeyHandler))
+//    addIntermediateOperationsSupport(DistinctOperation("distinctBy", ::DistinctByKeyHandler)) waiting for a fix in the platform
 
     addIntermediateOperationsSupport(ConcatOperation("plus", AppendResolver()))
     addIntermediateOperationsSupport(ConcatOperation("plusElement", AppendResolver()))
