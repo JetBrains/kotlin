@@ -77,7 +77,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
 
     private val compileClasspath =
             listOf(
-                File(bootstrapKotlincLib, "kotlin-stdlib.jar"),
+                kotlinStdlibJvm,
                 KotlinTestUtils.getAnnotationsJar()
             ).joinToString(File.pathSeparator) { it.canonicalPath }
 }
