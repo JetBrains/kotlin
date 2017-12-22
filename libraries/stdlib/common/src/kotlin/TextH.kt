@@ -43,6 +43,9 @@ expect class Regex {
     constructor(pattern: String, option: RegexOption)
     constructor(pattern: String, options: Set<RegexOption>)
 
+    val pattern: String
+    val options: Set<RegexOption>
+
     fun matchEntire(input: CharSequence): MatchResult?
     infix fun matches(input: CharSequence): Boolean
     fun containsMatchIn(input: CharSequence): Boolean
