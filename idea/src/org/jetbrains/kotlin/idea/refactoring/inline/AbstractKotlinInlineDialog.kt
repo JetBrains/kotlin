@@ -73,5 +73,5 @@ abstract class AbstractKotlinInlineDialog(
             if (callable.isWritable && occurrencesNumber > 1) "Inline all references and keep the $kind ($occurrencesString)"
             else null
 
-    override fun getInlineThisText() = "Inline this occurrence and leave the $kind"
+    override fun getInlineThisText() = "Inline this reference and keep the $kind"
 }
