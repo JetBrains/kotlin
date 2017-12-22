@@ -137,6 +137,20 @@ extra["versions.jflex"] = "1.7.0"
 val markdownVer =  "4054 - Kotlin 1.0.2-dev-566".replace(" ", "%20") // fixed here, was last with "status:SUCCESS,tag:forKotlin"
 extra["markdownParserRepo"] = "https://teamcity.jetbrains.com/guestAuth/repository/download/IntelliJMarkdownParser_Build/$markdownVer/([artifact]_[ext]/)[artifact](.[ext])"
 
+fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty("intellijUltimateEnabled")?.let {
+    val v = it.toString()
+    if (v.isBlank()) true
+    else v.toBoolean()
+}
+
+val intellijUltimateEnabled = project.getBooleanProperty("intellijUltimateEnabled")
+                              ?: project.hasProperty("teamcity")
+                              || System.getenv("TEAMCITY_VERSION") != null
+val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
+
+extra["intellijUltimateEnabled"] = intellijUltimateEnabled
+extra["intellijSeparateSdks"] = intellijSeparateSdks
+
 extra["IntellijCoreDependencies"] =
         listOf("annotations",
                "asm-all",

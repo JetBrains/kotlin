@@ -4,6 +4,7 @@ description = "Kotlin NoArg Compiler Plugin"
 apply { plugin("kotlin") }
 
 dependencies {
+    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep())
 
     compileOnly(project(":compiler:frontend"))

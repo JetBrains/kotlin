@@ -40,6 +40,7 @@ val testJvm6ServerRuntime by configurations.creating
 val antLauncherJar by configurations.creating
 
 dependencies {
+    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
 
     depDistProjects.forEach {

@@ -7,6 +7,7 @@ apply {
 dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":idea"))
+    compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:idea-android"))
     compile(project(":plugins:uast-kotlin"))

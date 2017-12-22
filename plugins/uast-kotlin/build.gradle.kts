@@ -43,4 +43,7 @@ testsJar {}
 
 projectTest {
     workingDir = rootDir
+    doFirst {
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+    }
 }

@@ -4,6 +4,7 @@ apply { plugin("kotlin") }
 dependencies {
     compile(protobufFull())
     compile(project(":idea"))
+    compile(project(":idea:idea-jvm"))
     compile(project(":j2k"))
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))

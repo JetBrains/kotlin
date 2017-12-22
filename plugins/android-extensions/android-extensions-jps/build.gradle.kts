@@ -4,6 +4,9 @@ apply { plugin("kotlin") }
 val androidSdk by configurations.creating
 
 dependencies {
+    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntime(intellijDep())
+
     compile(project(":compiler:util"))
     compile(project(":jps-plugin"))
     compile(project(":plugins:android-extensions-compiler"))
@@ -18,10 +21,9 @@ dependencies {
     testCompile(projectTests(":kotlin-build-common"))
     testCompileOnly(intellijDep()) { includeJars("openapi", "jps-builders") }
     testCompileOnly(intellijDep("jps-build-test")) { includeJars("jps-build-test") }
+    testCompileOnly(intellijDep()) { includeJars("jps-model") }
 
     testRuntime(intellijPluginDep("android"))
-    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntime(intellijDep())
     testRuntime(intellijDep("jps-build-test"))
     testRuntime(intellijDep("jps-standalone"))
 
@@ -37,6 +39,7 @@ projectTest {
     workingDir = rootDir
     doFirst {
         systemProperty("android.sdk", androidSdk.singleFile.canonicalPath)
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
 }
 

@@ -18,6 +18,7 @@ val usedIntellijPlugins = arrayOf(
         "java-decompiler")
 
 dependencies {
+    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep())
 
     compile(projectDist(":kotlin-stdlib"))
@@ -53,6 +54,9 @@ sourceSets {
 projectTest {
     dependsOnTaskIfExistsRec("dist", project = rootProject)
     workingDir = rootDir
+    doFirst {
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+    }
 }
 
 testsJar()

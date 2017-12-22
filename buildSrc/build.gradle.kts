@@ -31,7 +31,18 @@ plugins {
     `kotlin-dsl`
 }
 
-extra["intellijUltimateEnabled"] = true
+fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty("intellijUltimateEnabled")?.let {
+    val v = it.toString()
+    if (v.isBlank()) true
+    else v.toBoolean()
+}
+
+val intellijUltimateEnabled = project.getBooleanProperty("intellijUltimateEnabled")
+                              ?: project.hasProperty("teamcity")
+                              || System.getenv("TEAMCITY_VERSION") != null
+val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
+extra["intellijUltimateEnabled"] = intellijUltimateEnabled
+extra["intellijSeparateSdks"] = intellijSeparateSdks
 extra["intellijRepo"] = "https://www.jetbrains.com/intellij-repository"
 extra["intellijReleaseType"] = "releases" // or "snapshots"
 extra["versions.intellijSdk"] = "172.4343.14"

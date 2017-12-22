@@ -11,7 +11,9 @@ val intellijUltimateEnabled: Boolean by rootProject.extra
 val intellijRepo: String by rootProject.extra
 val intellijReleaseType: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
-val intellijFlavour = if (intellijUltimateEnabled) "ideaIU" else "ideaIC"
+val intellijSeparateSdks: Boolean by rootProject.extra
+val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
+val installIntellijUltimate = intellijUltimateEnabled
 
 repositories {
     maven { setUrl("$intellijRepo/$intellijReleaseType") }
@@ -19,6 +21,7 @@ repositories {
 }
 
 val intellij by configurations.creating
+val intellijUltimate by configurations.creating
 val sources by configurations.creating
 val `jps-standalone` by configurations.creating
 val `jps-build-test` by configurations.creating
@@ -32,12 +35,19 @@ val customDepsRepoModulesDir = File(customDepsRepoDir, "$customDepsOrg/$customDe
 val repoDir = customDepsRepoModulesDir
 
 dependencies {
-    intellij("com.jetbrains.intellij.idea:$intellijFlavour:$intellijVersion")
+    if (installIntellijCommunity) {
+        intellij("com.jetbrains.intellij.idea:ideaIC:$intellijVersion")
+    }
+    if (installIntellijUltimate) {
+        intellijUltimate("com.jetbrains.intellij.idea:ideaIU:$intellijVersion")
+    }
     sources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
     `jps-standalone`("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
     `jps-build-test`("com.jetbrains.intellij.idea:jps-build-test:$intellijVersion")
     `intellij-core`("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
-    `plugins-NodeJS`("com.jetbrains.plugins:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}@zip")
+    if (intellijUltimateEnabled) {
+        `plugins-NodeJS`("com.jetbrains.plugins:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}@zip")
+    }
 }
 
 fun Task.configureExtractFromConfigurationTask(sourceConfig: Configuration, extractor: (Configuration) -> Any) {
@@ -54,6 +64,8 @@ fun Task.configureExtractFromConfigurationTask(sourceConfig: Configuration, extr
 }
 
 val unzipIntellijSdk by tasks.creating { configureExtractFromConfigurationTask(intellij) { zipTree(it.singleFile) } }
+
+val unzipIntellijUltimateSdk by tasks.creating { configureExtractFromConfigurationTask(intellijUltimate) { zipTree(it.singleFile) } }
 
 val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(`intellij-core`) { zipTree(it.singleFile) } }
 
@@ -81,12 +93,23 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
     }
 }
 
-val prepareIvyXml by tasks.creating {
-    dependsOn(unzipIntellijSdk, unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest)
+val prepareIvyXmls by tasks.creating {
+    dependsOn(unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest)
 
     val intellijSdkDir = File(repoDir, intellij.name)
-    inputs.dir(intellijSdkDir)
-    outputs.file(File(repoDir, "${intellij.name}.ivy.xml"))
+    val intellijUltimateSdkDir = File(repoDir, intellijUltimate.name)
+
+    if (installIntellijCommunity) {
+        dependsOn(unzipIntellijSdk)
+        inputs.dir(intellijSdkDir)
+        outputs.file(File(repoDir, "${intellij.name}.ivy.xml"))
+    }
+
+    if (installIntellijUltimate) {
+        dependsOn(unzipIntellijUltimateSdk)
+        inputs.dir(intellijUltimateSdkDir)
+        outputs.file(File(repoDir, "${intellijUltimate.name}.ivy.xml"))
+    }
 
     val flatDeps = listOf(`intellij-core`, `jps-standalone`, `jps-build-test`)
     flatDeps.forEach {
@@ -103,12 +126,25 @@ val prepareIvyXml by tasks.creating {
 
     doFirst {
         val sourcesFile = File(repoDir, "${sources.name}/${sources.singleFile.name}")
-        writeIvyXml(intellij.name, intellij.name,
-                    files("$intellijSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
-                    File(intellijSdkDir, "lib"),
-                    sourcesFile)
-        File(intellijSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
-            writeIvyXml(it.name, "intellij.plugin.${it.name}", files("$it/lib/"), File(it, "lib"), sourcesFile)
+
+        if (installIntellijCommunity) {
+            writeIvyXml(intellij.name, intellij.name,
+                        files("$intellijSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
+                        File(intellijSdkDir, "lib"),
+                        sourcesFile)
+            File(intellijSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
+                writeIvyXml(it.name, "intellij.plugin.${it.name}", files("$it/lib/"), File(it, "lib"), sourcesFile)
+            }
+        }
+
+        if (installIntellijUltimate) {
+            writeIvyXml(intellij.name /* important! the module name should be "intellij" */ , intellijUltimate.name,
+                        files("$intellijUltimateSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
+                        File(intellijUltimateSdkDir, "lib"),
+                        sourcesFile)
+            File(intellijUltimateSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
+                writeIvyXml(it.name, "intellijUltimate.plugin.${it.name}", files("$it/lib/"), File(it, "lib"), sourcesFile)
+            }
         }
 
         flatDeps.forEach {
@@ -123,7 +159,7 @@ val prepareIvyXml by tasks.creating {
 }
 
 val build by tasks.creating {
-    dependsOn(prepareIvyXml)
+    dependsOn(prepareIvyXmls)
 }
 
 val clean by tasks.creating(Delete::class) {

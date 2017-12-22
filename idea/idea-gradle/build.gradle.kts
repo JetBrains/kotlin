@@ -3,6 +3,7 @@ apply { plugin("kotlin") }
 val androidSdk by configurations.creating
 
 dependencies {
+    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep())
 
     compileOnly(project(":idea"))
@@ -64,6 +65,7 @@ projectTest {
     dependsOn(androidSdk)
     doFirst {
         systemProperty("android.sdk", androidSdk.singleFile.canonicalPath)
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
 }
 

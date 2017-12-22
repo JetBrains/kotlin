@@ -8,6 +8,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:cli-common"))
     compile(project(":idea"))
+    compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":idea:idea-gradle"))
     compile(project(":idea:idea-maven"))

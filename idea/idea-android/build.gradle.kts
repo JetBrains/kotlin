@@ -5,6 +5,9 @@ apply { plugin("kotlin") }
 val androidSdk by configurations.creating
 
 dependencies {
+    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntime(intellijDep())
+
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":compiler:util"))
     compile(project(":compiler:light-classes"))
@@ -45,8 +48,6 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
 
-    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntime(intellijDep())
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("copyright"))
     testRuntime(intellijPluginDep("coverage"))
@@ -72,6 +73,7 @@ projectTest {
     workingDir = rootDir
     doFirst {
         systemProperty("android.sdk", androidSdk.singleFile.canonicalPath)
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
 }
 

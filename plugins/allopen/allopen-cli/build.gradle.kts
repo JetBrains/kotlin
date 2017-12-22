@@ -4,6 +4,7 @@ description = "Kotlin AllOpen Compiler Plugin"
 apply { plugin("kotlin") }
 
 dependencies {
+    testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep())
 
     compileOnly(project(":compiler:plugin-api"))
