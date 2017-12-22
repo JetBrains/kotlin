@@ -64,9 +64,9 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
         get() = sourceMapField ?: false
         set(value) { sourceMapField = value }
 
-    private var sourceMapEmbedSourcesField: kotlin.String? = null
-    override var sourceMapEmbedSources: kotlin.String
-        get() = sourceMapEmbedSourcesField ?: "inlining"
+    private var sourceMapEmbedSourcesField: kotlin.String?? = null
+    override var sourceMapEmbedSources: kotlin.String?
+        get() = sourceMapEmbedSourcesField ?: null
         set(value) { sourceMapEmbedSourcesField = value }
 
     private var sourceMapPrefixField: kotlin.String?? = null
@@ -117,7 +117,7 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments.fil
     noStdlib = true
     outputFile = null
     sourceMap = false
-    sourceMapEmbedSources = "inlining"
+    sourceMapEmbedSources = null
     sourceMapPrefix = null
     target = "v5"
     typedArrays = true
