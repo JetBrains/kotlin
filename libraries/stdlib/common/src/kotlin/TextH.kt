@@ -25,7 +25,7 @@ expect interface Appendable {
 expect class StringBuilder : Appendable, CharSequence {
     constructor()
     constructor(capacity: Int)
-    constructor(seq: CharSequence)
+    constructor(content: CharSequence)
 
     override val length: Int
     override operator fun get(index: Int): Char
@@ -54,12 +54,12 @@ expect class Regex {
     fun replaceFirst(input: CharSequence, replacement: String): String
 
     // TODO: requires optional parameters
-    fun find(input: CharSequence): MatchResult?
-    fun find(input: CharSequence, startIndex: Int): MatchResult?
-    fun findAll(input: CharSequence): Sequence<MatchResult>
-    fun findAll(input: CharSequence, startIndex: Int): Sequence<MatchResult>
-    fun split(input: CharSequence): List<String>
-    fun split(input: CharSequence, limit: Int): List<String>
+    @Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+    fun find(input: CharSequence, startIndex: Int = 0): MatchResult?
+    @Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+    fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult>
+    @Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+    fun split(input: CharSequence, limit: Int = 0): List<String>
 
     companion object {
         fun fromLiteral(literal: String): Regex
@@ -90,32 +90,30 @@ expect fun Char.isLowSurrogate(): Boolean
 
 internal expect fun String.nativeIndexOf(str: String, fromIndex: Int): Int
 internal expect fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
-internal expect fun String.nativeStartsWith(s: String, position: Int): Boolean
-internal expect fun String.nativeEndsWith(s: String): Boolean
 
 
 public expect fun String.substring(startIndex: Int): String
 public expect fun String.substring(startIndex: Int, endIndex: Int): String
 
 
-public expect inline fun String.toUpperCase(): String
-public expect inline fun String.toLowerCase(): String
-public expect inline fun String.capitalize(): String
-public expect inline fun String.decapitalize(): String
+public expect fun String.toUpperCase(): String
+public expect fun String.toLowerCase(): String
+public expect fun String.capitalize(): String
+public expect fun String.decapitalize(): String
 public expect fun CharSequence.repeat(n: Int): String
 
 
-// TOOD: requires optional parameters (and named!)
-expect fun String.replace(oldChar: Char, newChar: Char): String
-expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String
-expect fun String.replace(oldValue: String, newValue: String): String
-expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String
-expect fun String.replaceFirst(oldChar: Char, newChar: Char): String
-expect fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean): String
-expect fun String.replaceFirst(oldValue: String, newValue: String): String
-expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean): String
-expect fun String?.equals(other: String?): Boolean
-expect fun String?.equals(other: String?, ignoreCase: Boolean): Boolean
+// TODO: requires optional parameters (and named!)
+@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
+@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
+@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+expect fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
+@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
+@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+expect fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean
 
 // From stringsCode.kt
 
@@ -123,7 +121,8 @@ internal inline expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
 internal inline expect fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
 
 expect fun CharSequence.isBlank(): Boolean
-expect fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean): Boolean
+@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+expect fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean
 
 
 
