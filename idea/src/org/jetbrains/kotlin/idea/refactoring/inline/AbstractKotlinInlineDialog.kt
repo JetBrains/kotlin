@@ -70,8 +70,12 @@ abstract class AbstractKotlinInlineDialog(
 
     override fun getKeepTheDeclarationText(): String? =
             // With non-writable callable refactoring does not work anyway (for both property or function)
-            if (callable.isWritable && occurrencesNumber > 1) "Inline all references and keep the $kind ($occurrencesString)"
-            else null
+            if (callable.isWritable && (occurrencesNumber > 1 || !myInvokedOnReference)) {
+                "Inline all references and keep the $kind ($occurrencesString)"
+            }
+            else {
+                null
+            }
 
     override fun getInlineThisText() = "Inline this reference and keep the $kind"
 }
