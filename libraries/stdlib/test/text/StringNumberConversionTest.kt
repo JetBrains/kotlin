@@ -1,5 +1,6 @@
 package test.text
 
+import test.*
 import kotlin.test.*
 
 class StringNumberConversionTest {
@@ -334,13 +335,3 @@ private class ConversionWithRadixContext<T: Any>(val convertOrFail: (String, Int
         assertNull(convertOrNull(input, radix), message = "On input \"$input\" with radix $radix")
     }
 }
-
-@kotlin.jvm.JvmVersion
-private val isJava6 = System.getProperty("java.version").startsWith("1.6.")
-
-@kotlin.jvm.JvmVersion
-private fun String.removeLeadingPlusOnJava6(): String =
-        if (isJava6) removePrefix("+") else this
-
-@kotlin.jvm.JvmVersion
-private fun doubleTotalOrderEquals(a: Any?, b: Any?) = a == b

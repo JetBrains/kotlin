@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package test
+package test.collections.js
 
-import kotlin.test.assertEquals
-
-@JvmVersion
-public fun assertTypeEquals(expected: Any?, actual: Any?) {
-    assertEquals(expected?.javaClass, actual?.javaClass)
-}
-
-
-@kotlin.jvm.JvmVersion
-private val isJava6 = System.getProperty("java.version").startsWith("1.6.")
-
-@kotlin.jvm.JvmVersion
-internal fun String.removeLeadingPlusOnJava6(): String =
-        if (isJava6) removePrefix("+") else this
-
-@kotlin.jvm.JvmVersion
-internal fun doubleTotalOrderEquals(a: Any?, b: Any?) = a == b
+// TODO: These have actuals only in JVM tests, and in JS they are in stdlib
+public expect fun <V> stringMapOf(vararg pairs: Pair<String, V>): HashMap<String, V>
+public expect fun <V> linkedStringMapOf(vararg pairs: Pair<String, V>): LinkedHashMap<String, V>
+public expect fun stringSetOf(vararg elements: String): HashSet<String>
+public expect fun linkedStringSetOf(vararg elements: String): LinkedHashSet<String>

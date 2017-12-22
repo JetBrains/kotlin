@@ -1,3 +1,4 @@
+@file:Suppress("NAMED_ARGUMENTS_NOT_ALLOWED") // for common tests
 package test.text
 
 import kotlin.text.*
