@@ -336,7 +336,7 @@ fun getStepOverAction(
         return ktFile?.name ?: this.sourceName(KOTLIN_STRATA_NAME)
     }
 
-    fun isLocationSuitable(nextLocation: Location): Boolean {
+    fun isThisMethodLocation(nextLocation: Location): Boolean {
         if (nextLocation.method() != location.method()) {
             return false
         }
@@ -358,7 +358,7 @@ fun getStepOverAction(
         val previousSuitableLocation = methodLocations.reversed()
                 .dropWhile { it != location }
                 .drop(1)
-                .filter(::isLocationSuitable)
+                .filter(::isThisMethodLocation)
                 .dropWhile { it.ktLineNumber() == location.ktLineNumber() }
                 .firstOrNull()
 
@@ -368,7 +368,7 @@ fun getStepOverAction(
     val patchedLocation = if (isBackEdgeLocation()) {
         // Pretend we had already done a backing step
         methodLocations
-                .filter(::isLocationSuitable)
+                .filter(::isThisMethodLocation)
                 .firstOrNull { it.ktLineNumber() == location.ktLineNumber() } ?: location
     }
     else {
@@ -388,22 +388,22 @@ fun getStepOverAction(
 
     val inlineRangeVariables = getInlineRangeLocalVariables(frameProxy)
 
-    // Try to find the range of inlined lines:
-    // - Lines from other files and from functions that are not in range of current one are definitely inlined
+    // Try to find the range for step over:
+    // - Lines from other files and from functions that are not in range of current one are definitely inlined and should be stepped over.
     // - Lines in function arguments of inlined functions are inlined too as we found them starting from the position of inlined call.
+    // - Current line locations should also be stepped over.
     //
-    // It also thinks that too many lines are inlined when there's a call of function argument or other
-    // inline function in last statement of inline function. The list of inlineRangeVariables is used to overcome it.
-    val probablyInlinedLocations = methodLocations
+    // We might erroneously extend this range too much when there's a call of function argument or other
+    // inline function in last statement of inline function. The list of inlineRangeVariables will be used later to overcome it.
+    val stepOverLocations = methodLocations
             .dropWhile { it != patchedLocation }
             .drop(1)
             .dropWhile { it.ktLineNumber() == patchedLineNumber }
             .takeWhile { loc ->
-                !isLocationSuitable(loc) || lambdaArgumentRanges.any { loc.ktLineNumber() in it }
+                !isThisMethodLocation(loc) || lambdaArgumentRanges.any { loc.ktLineNumber() in it } || loc.ktLineNumber() == patchedLineNumber
             }
-            .dropWhile { it.ktLineNumber() == patchedLineNumber }
 
-    if (!probablyInlinedLocations.isEmpty()) {
+    if (!stepOverLocations.isEmpty()) {
         // Some Kotlin inlined methods with 'for' (and maybe others) generates bytecode that after dexing have a strange artifact.
         // GOTO instructions are moved to the end of method and as they don't have proper line, line is obtained from the previous
         // instruction. It might be method return or previous GOTO from the inlining. Simple stepping over such function is really
@@ -423,7 +423,7 @@ fun getStepOverAction(
 
         return Action.STEP_OVER_INLINED(StepOverFilterData(
                 patchedLineNumber,
-                probablyInlinedLocations.map { it.ktLineNumber() }.toSet(),
+                stepOverLocations.map { it.ktLineNumber() }.toSet(),
                 inlineRangeVariables,
                 isDexDebug,
                 returnCodeIndex
