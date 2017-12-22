@@ -9,8 +9,8 @@ abstract class OperationsTestCase(private val packageName: String) : KotlinTrace
     override val appName: String = "sequence"
     override val librarySupport: LibrarySupportProvider = KotlinSequenceSupportProvider()
 
-    fun doTestWithResult() = doTest(false, fullyQualifiedClassName())
-    fun doTestWithoutResult() = doTest(true, fullyQualifiedClassName())
+    protected fun doTestWithResult() = doTest(false, fullyQualifiedClassName())
+    protected fun doTestWithoutResult() = doTest(true, fullyQualifiedClassName())
 
     private fun fullyQualifiedClassName() = "$packageName.${getTestName(false)}"
 }
