@@ -3,10 +3,13 @@
  -A2
   a: Int
   b: [ERROR : Annotation is absent]
+  constructor A2(Int, [ERROR : Type annotation was missing for parameter b] = ...)
  -A3
   a: Int
   b: String
+  constructor A3(Int)
  -A4
+  constructor A4(T?)
   t: T?
  -A5
   Inner1
@@ -39,3 +42,4 @@
  withDefaulArgs(Int = ..., String = ...): Unit
  -WithDefaultArgs
   a: Int
+  constructor WithDefaultArgs(Int = ..., String = ...)
