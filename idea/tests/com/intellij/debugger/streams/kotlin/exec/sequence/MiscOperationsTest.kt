@@ -25,4 +25,6 @@ class MiscOperationsTest : OperationsTestCase("misc") {
   fun testWindowedWithPartial() = doTestWithResult()
   fun testWindowedWithBigStep() = doTestWithResult()
   fun testWindowedWithStep() = doTestWithResult()
+
+  fun testAsSequence() = doTestWithResult()
 }

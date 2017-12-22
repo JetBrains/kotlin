@@ -16,7 +16,7 @@ import com.intellij.debugger.streams.trace.impl.handler.unified.DistinctTraceHan
 class KotlinSequencesSupport : LibrarySupportBase() {
   init {
     addIntermediateOperationsSupport(*filterOperations("filter", "filterNot", "filterIndexed",
-        "filterIsInstance", "drop", "dropWhile", "minus", "minusElement", "take", "takeWhile", "onEach"))
+        "filterIsInstance", "drop", "dropWhile", "minus", "minusElement", "take", "takeWhile", "onEach", "asSequence"))
 
     addIntermediateOperationsSupport(*mapOperations("map", "mapIndexed", "requireNoNulls", "withIndex",
         "zip", "constrainOnce"))
