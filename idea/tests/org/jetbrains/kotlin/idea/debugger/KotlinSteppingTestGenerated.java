@@ -524,6 +524,18 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("soBreakpointWithInline.kt")
+        public void testSoBreakpointWithInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soBreakpointWithInline.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soBreakpointWithOrdinalOnInlineCallsInOneLine.kt")
+        public void testSoBreakpointWithOrdinalOnInlineCallsInOneLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soBreakpointWithOrdinalOnInlineCallsInOneLine.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("soInlineAnonymousFunctionArgument.kt")
         public void testSoInlineAnonymousFunctionArgument() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soInlineAnonymousFunctionArgument.kt");

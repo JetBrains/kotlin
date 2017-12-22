@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.sun.jdi.Location
 import com.sun.jdi.Method
 
 class MockMethod : Method {
     override fun name() = ""
+    override fun allLineLocations() = emptyList<Location>()
 
     override fun isSynthetic() = throw UnsupportedOperationException()
     override fun isFinal() = throw UnsupportedOperationException()
@@ -33,7 +35,6 @@ class MockMethod : Method {
     override fun isBridge() = throw UnsupportedOperationException()
     override fun isObsolete() = throw UnsupportedOperationException()
     override fun isSynchronized() = throw UnsupportedOperationException()
-    override fun allLineLocations() = throw UnsupportedOperationException()
     override fun allLineLocations(stratum: String?, sourceName: String?) = throw UnsupportedOperationException()
     override fun isNative() = throw UnsupportedOperationException()
     override fun locationOfCodeIndex(codeIndex: Long) = throw UnsupportedOperationException()

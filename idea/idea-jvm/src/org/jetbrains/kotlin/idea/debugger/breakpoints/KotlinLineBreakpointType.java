@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProperties;
 import org.jetbrains.kotlin.idea.KotlinIcons;
+import org.jetbrains.kotlin.idea.debugger.KotlinPositionManager;
 import org.jetbrains.kotlin.psi.KtClassInitializer;
 import org.jetbrains.kotlin.psi.KtFunction;
 
@@ -51,7 +52,11 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
     public boolean matchesPosition(@NotNull LineBreakpoint<?> breakpoint, @NotNull SourcePosition position) {
         JavaBreakpointProperties properties = getProperties(breakpoint);
         if (properties == null || properties instanceof JavaLineBreakpointProperties) {
-            if (properties != null && ((JavaLineBreakpointProperties)properties).getLambdaOrdinal() == null) return true;
+            if (position instanceof KotlinPositionManager.KotlinReentrantSourcePosition) {
+                return false;
+            }
+
+            if (properties != null && ((JavaLineBreakpointProperties) properties).getLambdaOrdinal() == null) return true;
 
             PsiElement containingMethod = getContainingMethod(breakpoint);
             if (containingMethod == null) return false;

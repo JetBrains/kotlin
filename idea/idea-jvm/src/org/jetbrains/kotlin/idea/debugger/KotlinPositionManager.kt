@@ -23,6 +23,7 @@ import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.PositionManagerEx
 import com.intellij.debugger.engine.evaluation.EvaluationContext
+import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.requests.ClassPrepareRequestor
 import com.intellij.psi.PsiFile
@@ -32,6 +33,7 @@ import com.intellij.util.ThreeState
 import com.intellij.xdebugger.frame.XStackFrame
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Location
+import com.sun.jdi.Method
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
@@ -78,6 +80,11 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         if (location == null) throw NoDataException.INSTANCE
 
         val fileName = location.safeSourceName ?: throw NoDataException.INSTANCE
+        val lineNumber = location.safeLineNumber
+        if (lineNumber < 0) {
+            throw NoDataException.INSTANCE
+        }
+
         if (!DebuggerUtils.isKotlinSourceFile(fileName)) throw NoDataException.INSTANCE
 
         val psiFile = getPsiFileByLocation(location)
@@ -102,21 +109,18 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
 
-        val sourceLineNumber = try {
-            location.lineNumber() - 1
-        }
-        catch (e: InternalError) {
-            -1
-        }
+        if (psiFile !is KtFile) throw NoDataException.INSTANCE
 
+        val sourceLineNumber = location.safeSourceLineNumber
         if (sourceLineNumber < 0) {
             throw NoDataException.INSTANCE
         }
 
-        val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile as KtFile, sourceLineNumber)
+        val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile, sourceLineNumber)
         if (lambdaOrFunIfInside != null) {
             return SourcePosition.createFromElement(lambdaOrFunIfInside.bodyExpression!!)
         }
+
         val elementInDeclaration = getElementForDeclarationLine(location, psiFile, sourceLineNumber)
         if (elementInDeclaration != null) {
             return SourcePosition.createFromElement(elementInDeclaration)
@@ -127,8 +131,22 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             return SourcePosition.createFromLine(ktFile ?: psiFile, line - 1)
         }
 
+        val sameLineLocations = location.safeMethod?.safeAllLineLocations?.filter { it.safeLineNumber == lineNumber && it.safeSourceName == fileName }
+        if (sameLineLocations != null) {
+            // There're several locations for same source line. If same source position would be created for all of them,
+            // breakpoints at this line will stop on every location.
+            // Each location is probably some code in arguments between inlined invocations (otherwise same line locations would
+            // have been merged into one), but it's impossible to correctly map locations to actual source expressions now.
+            val locationIndex = sameLineLocations.indexOf(location)
+            if (locationIndex > 0) {
+                return KotlinReentrantSourcePosition(SourcePosition.createFromLine(psiFile, sourceLineNumber))
+            }
+        }
+
         return SourcePosition.createFromLine(psiFile, sourceLineNumber)
     }
+
+    class KotlinReentrantSourcePosition(delegate: SourcePosition) : DelegateSourcePosition(delegate)
 
     // Returns a property or a constructor if debugger stops at class declaration
     private fun getElementForDeclarationLine(location: Location, file: KtFile, lineNumber: Int): KtElement? {
@@ -198,6 +216,11 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             null
         }
     }
+
+    private val Location.safeLineNumber: Int get() = DebuggerUtilsEx.getLineNumber(this, false)
+    private val Location.safeSourceLineNumber: Int get() = DebuggerUtilsEx.getLineNumber(this, true)
+    private val Location.safeMethod: Method? get() = DebuggerUtilsEx.getMethod(this)
+    private val Method.safeAllLineLocations: MutableList<Location>? get() = DebuggerUtilsEx.allLineLocations(this)
 
     private fun getPsiFileByLocation(location: Location): PsiFile? {
         val sourceName = location.safeSourceName ?: return null
