@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.types.KotlinType
  * @author Vitaliy.Bibaev
  */
 class CollectionChainTransformer : ChainTransformer<KtCallExpression> {
+  private val transformer = KotlinChainTransformerImpl(KotlinCollectionsTypeExtractor())
+
   override fun transform(chainCalls: List<KtCallExpression>, context: PsiElement): StreamChain {
-    val transformer = KotlinChainTransformerImpl(KotlinCollectionsTypeExtractor())
     val chain = transformer.transform(chainCalls, context)
 
     if (chainCalls.first().resolveType().isArray) {
