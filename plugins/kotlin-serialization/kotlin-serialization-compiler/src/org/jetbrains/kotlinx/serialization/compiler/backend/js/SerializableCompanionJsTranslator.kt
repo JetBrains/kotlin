@@ -17,7 +17,9 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.js
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.js.backend.ast.JsReturn
@@ -33,8 +35,8 @@ class SerializableCompanionJsTranslator(declaration: KtPureClassOrObject,
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
         val f = context.buildFunction(methodDescriptor) {jsFun, context ->
             val serializer = serializableDescriptor.classSerializer?.toClassDescriptor!!
-            val stmt = if (serializableDescriptor.declaredTypeParameters.isEmpty()) {
-                context.getQualifiedReference(serializer)
+            val stmt: JsExpression = if (serializer.kind == ClassKind.OBJECT) {
+                context.serializerObjectGetter(serializer)
             } else {
                 val args = jsFun.parameters.map { JsNameRef(it.name) }
                 val ref = context.getInnerNameForDescriptor(

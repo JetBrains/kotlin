@@ -1,11 +1,16 @@
 
 description = "Kotlin Serialization Compiler Plugin"
 
-apply { plugin("kotlin") }
-
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 dependencies {
-    compileOnly(ideaSdkCoreDeps("intellij-core"))
-    compileOnly(ideaPluginDeps("maven", plugin = "maven"))
+//    val compileOnly by configurations
+//    val runtime by configurations
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep())
+    compileOnly(intellijPluginDep("maven"))
     compileOnly(project(":jps-plugin"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend"))
@@ -19,8 +24,6 @@ dependencies {
 
     runtime(projectRuntimeJar(":kotlin-compiler"))
     runtime(projectDist(":kotlin-stdlib"))
-//    val compileOnly by configurations
-//    val runtime by configurations
 }
 
 sourceSets {

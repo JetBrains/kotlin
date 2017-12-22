@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
+import org.jetbrains.kotlin.types.typeUtil.isBoolean
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
@@ -36,29 +39,32 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySe
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 open class SerialTypeInfo(
-        val property: SerializableProperty,
-        val elementMethodPrefix: String,
-        val serializer: ClassDescriptor? = null,
-        val unit: Boolean = false
+    val property: SerializableProperty,
+    val elementMethodPrefix: String,
+    val serializer: ClassDescriptor? = null,
+    val unit: Boolean = false
 )
 
 fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
     val T = property.type
     return when {
         T.isTypeParameter() -> SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", null)
-        T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(property,
-                                                                     T.nameIfStandardType.toString().capitalize())
+        T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(
+            property,
+            T.nameIfStandardType.toString().capitalize()
+        )
         KotlinBuiltIns.isString(T) -> SerialTypeInfo(property, "String")
         KotlinBuiltIns.isUnit(T) -> SerialTypeInfo(property, "Unit", unit = true)
         KotlinBuiltIns.isPrimitiveArray(T) -> TODO("primitive arrays are not supported yet")
         KotlinBuiltIns.isNonPrimitiveArray(T.toClassDescriptor!!) -> {
-            val serializer = property.serializableWith?.toClassDescriptor ?:
-                             property.module.findClassAcrossModuleDependencies(referenceArraySerializerId)
+            val serializer = property.serializableWith?.toClassDescriptor ?: property.module.findClassAcrossModuleDependencies(
+                referenceArraySerializerId
+            )
             SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
         T.toClassDescriptor?.kind == ClassKind.ENUM_CLASS -> {
-            val serializer = property.serializableWith?.toClassDescriptor ?:
-                             property.module.findClassAcrossModuleDependencies(enumSerializerId)
+            val serializer =
+                property.serializableWith?.toClassDescriptor ?: property.module.findClassAcrossModuleDependencies(enumSerializerId)
             SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
         else -> {
@@ -72,9 +78,9 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
     return if (kType.requiresPolymorphism()) findPolymorphicSerializer(module)
     else if (kType.isTypeParameter()) return null
     else kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
-         ?: findStandardKotlinTypeSerializer(module, kType) // otherwise see if there is a standard serializer
-         ?: findEnumTypeSerializer(module, kType)
-         ?: module.findClassAcrossModuleDependencies(contextSerializerId)
+            ?: findStandardKotlinTypeSerializer(module, kType) // otherwise see if there is a standard serializer
+            ?: findEnumTypeSerializer(module, kType)
+            ?: module.findClassAcrossModuleDependencies(contextSerializerId)
 }
 
 fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
@@ -110,8 +116,8 @@ fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDe
 
 fun KotlinType.requiresPolymorphism(): Boolean {
     return this.toClassDescriptor?.getSuperClassNotAny()?.isInternalSerializable == true
-           || (this.toClassDescriptor?.modality == Modality.OPEN && this.toClassDescriptor?.unsubstitutedPrimaryConstructor != null) // open not java class
-           || this.containsTypeProjectionsInTopLevelArguments() // List<*>
+            || (this.toClassDescriptor?.modality == Modality.OPEN && this.toClassDescriptor?.unsubstitutedPrimaryConstructor != null) // open not java class
+            || this.containsTypeProjectionsInTopLevelArguments() // List<*>
 }
 
 fun findPolymorphicSerializer(module: ModuleDescriptor): ClassDescriptor {
@@ -119,20 +125,23 @@ fun findPolymorphicSerializer(module: ModuleDescriptor): ClassDescriptor {
 }
 
 fun KtPureClassOrObject.bodyPropertiesDescriptorsMap(bindingContext: BindingContext): Map<PropertyDescriptor, KtProperty> = declarations
-        .asSequence()
-        .filterIsInstance<KtProperty>()
-        .associateBy { (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? PropertyDescriptor)!! }
+    .asSequence()
+    .filterIsInstance<KtProperty>()
+    // can filter here because it's impossible to create body property w/ backing field w/o explicit delegating or initializing
+    .filter { it.delegateExpressionOrInitializer != null }
+    .associateBy { (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? PropertyDescriptor)!! }
 
-fun KtPureClassOrObject.primaryPropertiesDescriptorsMap(bindingContext: BindingContext): Map<PropertyDescriptor, KtParameter> = primaryConstructorParameters
+fun KtPureClassOrObject.primaryPropertiesDescriptorsMap(bindingContext: BindingContext): Map<PropertyDescriptor, KtParameter> =
+    primaryConstructorParameters
         .asSequence()
         .filter { it.hasValOrVar() }
         .associateBy { bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it]!! }
 
 fun KtPureClassOrObject.anonymousInitializers() = declarations
-        .asSequence()
-        .filterIsInstance<KtAnonymousInitializer>()
-        .mapNotNull { it.body }
-        .toList()
+    .asSequence()
+    .filterIsInstance<KtAnonymousInitializer>()
+    .mapNotNull { it.body }
+    .toList()
 
 fun SerializableProperty.annotationVarsAndDesc(annotationClass: ClassDescriptor): Pair<List<ValueArgument>, List<ValueParameterDescriptor>> {
     val args: List<ValueArgument> = (this.descriptor.annotations.findAnnotation(annotationClass.fqNameSafe) as? LazyAnnotationDescriptor)?.annotationEntry?.valueArguments.orEmpty()

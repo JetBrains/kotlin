@@ -34,12 +34,13 @@ class KotlinSerializationJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     override fun getClasspath(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val inJar = File(PathUtil.getJarPathForClass(this::class.java)).isFile
         return listOf(
-                if (inJar) {
-                    File(PathUtil.getJarPathForClass(this::class.java)).absolutePath
-                } else {
-                    // We're in tests now
-                    val kotlinProjectDirectory = File(PathUtil.getJarPathForClass(javaClass)).parentFile.parentFile.parentFile
-                    File(kotlinProjectDirectory, "dist/artifacts/Serialization/lib/$JAR_FILE_NAME").absolutePath
-                })
+            if (inJar) {
+                File(PathUtil.getJarPathForClass(this::class.java)).absolutePath
+            } else {
+                // We're in tests now
+                val kotlinProjectDirectory = File(PathUtil.getJarPathForClass(javaClass)).parentFile.parentFile.parentFile
+                File(kotlinProjectDirectory, "dist/artifacts/Serialization/lib/$JAR_FILE_NAME").absolutePath
+            }
+        )
     }
 }

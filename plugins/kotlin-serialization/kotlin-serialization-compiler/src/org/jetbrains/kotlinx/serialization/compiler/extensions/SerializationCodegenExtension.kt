@@ -30,4 +30,7 @@ class SerializationCodegenExtension : ExpressionCodegenExtension {
         SerializerCodegenImpl.generateSerializerExtensions(codegen)
         SerializableCompanionCodegenImpl.generateSerializableExtensions(codegen)
     }
+
+    override val shouldGenerateClassSyntheticPartsInLightClassesMode: Boolean
+        get() = false
 }
