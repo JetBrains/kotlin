@@ -376,7 +376,6 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
                 returnTypeInfo,
                 listOf(targetContainer),
                 parameterInfos,
-                isAbstract = JvmModifier.ABSTRACT in request.modifiers,
                 isForCompanion = JvmModifier.STATIC in request.modifiers,
                 modifierList = modifierBuilder.modifierList,
                 preferEmptyBody = true

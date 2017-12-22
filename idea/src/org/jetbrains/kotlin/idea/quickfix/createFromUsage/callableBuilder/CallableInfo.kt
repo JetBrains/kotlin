@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassInfo
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.getResolvableApproximations
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -177,16 +178,17 @@ abstract class CallableInfo (
         val returnTypeInfo: TypeInfo,
         val possibleContainers: List<KtElement>,
         val typeParameterInfos: List<TypeInfo>,
-        val isAbstract: Boolean = false,
         val isForCompanion: Boolean = false,
         val modifierList: KtModifierList? = null
 ) {
     abstract val kind: CallableKind
     abstract val parameterInfos: List<ParameterInfo>
 
+    val isAbstract get() = modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) == true
+
     abstract fun copy(receiverTypeInfo: TypeInfo = this.receiverTypeInfo,
                       possibleContainers: List<KtElement> = this.possibleContainers,
-                      isAbstract: Boolean = this.isAbstract): CallableInfo
+                      modifierList: KtModifierList? = this.modifierList): CallableInfo
 }
 
 class FunctionInfo(name: String,
@@ -195,25 +197,25 @@ class FunctionInfo(name: String,
                    possibleContainers: List<KtElement> = Collections.emptyList(),
                    override val parameterInfos: List<ParameterInfo> = Collections.emptyList(),
                    typeParameterInfos: List<TypeInfo> = Collections.emptyList(),
-                   val isOperator: Boolean = false,
-                   val isInfix: Boolean = false,
-                   isAbstract: Boolean = false,
                    isForCompanion: Boolean = false,
                    modifierList: KtModifierList? = null,
                    val preferEmptyBody: Boolean = false
-) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos, isAbstract, isForCompanion, modifierList) {
+) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos, isForCompanion, modifierList) {
     override val kind: CallableKind get() = CallableKind.FUNCTION
 
-    override fun copy(receiverTypeInfo: TypeInfo, possibleContainers: List<KtElement>, isAbstract: Boolean) = FunctionInfo(
+    override fun copy(
+            receiverTypeInfo: TypeInfo,
+            possibleContainers: List<KtElement>,
+            modifierList: KtModifierList?
+    ) = FunctionInfo(
             name,
             receiverTypeInfo,
             returnTypeInfo,
             possibleContainers,
             parameterInfos,
             typeParameterInfos,
-            isOperator,
-            isInfix,
-            isAbstract
+            isForCompanion,
+            modifierList
     )
 }
 
@@ -227,7 +229,11 @@ class ClassWithPrimaryConstructorInfo(
     override val kind: CallableKind get() = CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR
     override val parameterInfos: List<ParameterInfo> get() = classInfo.parameterInfos
 
-    override fun copy(receiverTypeInfo: TypeInfo, possibleContainers: List<KtElement>, isAbstract: Boolean) = throw UnsupportedOperationException()
+    override fun copy(
+            receiverTypeInfo: TypeInfo,
+            possibleContainers: List<KtElement>,
+            modifierList: KtModifierList?
+    ) = throw UnsupportedOperationException()
 }
 
 class ConstructorInfo(
@@ -239,7 +245,11 @@ class ConstructorInfo(
 ): CallableInfo("", TypeInfo.Empty, TypeInfo.Empty, Collections.emptyList(), Collections.emptyList(), false, modifierList = modifierList) {
     override val kind: CallableKind get() = CallableKind.CONSTRUCTOR
 
-    override fun copy(receiverTypeInfo: TypeInfo, possibleContainers: List<KtElement>, isAbstract: Boolean) = throw UnsupportedOperationException()
+    override fun copy(
+            receiverTypeInfo: TypeInfo,
+            possibleContainers: List<KtElement>,
+            modifierList: KtModifierList?
+    ) = throw UnsupportedOperationException()
 }
 
 class PropertyInfo(name: String,
@@ -248,22 +258,24 @@ class PropertyInfo(name: String,
                    val writable: Boolean,
                    possibleContainers: List<KtElement> = Collections.emptyList(),
                    typeParameterInfos: List<TypeInfo> = Collections.emptyList(),
-                   isAbstract: Boolean = false,
                    val isLateinitPreferred: Boolean = false,
                    isForCompanion: Boolean = false,
                    modifierList: KtModifierList? = null,
                    val withInitializer: Boolean = false
-) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos, isAbstract, isForCompanion, modifierList) {
+) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos, isForCompanion, modifierList) {
     override val kind: CallableKind get() = CallableKind.PROPERTY
     override val parameterInfos: List<ParameterInfo> get() = Collections.emptyList()
 
-    override fun copy(receiverTypeInfo: TypeInfo, possibleContainers: List<KtElement>, isAbstract: Boolean) =
-            copyProperty(receiverTypeInfo, possibleContainers, isAbstract)
+    override fun copy(
+            receiverTypeInfo: TypeInfo,
+            possibleContainers: List<KtElement>,
+            modifierList: KtModifierList?
+    ) = copyProperty(receiverTypeInfo, possibleContainers, modifierList)
 
     fun copyProperty(
             receiverTypeInfo: TypeInfo = this.receiverTypeInfo,
             possibleContainers: List<KtElement> = this.possibleContainers,
-            isAbstract: Boolean = this.isAbstract,
+            modifierList: KtModifierList? = this.modifierList,
             isLateinitPreferred: Boolean = this.isLateinitPreferred
     ) = PropertyInfo(
             name,
@@ -272,7 +284,6 @@ class PropertyInfo(name: String,
             writable,
             possibleContainers,
             typeParameterInfos,
-            isAbstract,
             isLateinitPreferred,
             isForCompanion,
             modifierList,
