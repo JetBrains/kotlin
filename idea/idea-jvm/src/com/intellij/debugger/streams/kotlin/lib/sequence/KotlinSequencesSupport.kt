@@ -3,6 +3,7 @@ package com.intellij.debugger.streams.kotlin.lib.sequence
 
 import com.intellij.debugger.streams.kotlin.resolve.ChunkedResolver
 import com.intellij.debugger.streams.kotlin.resolve.MapNotNullResolver
+import com.intellij.debugger.streams.kotlin.resolve.WindowedResolver
 import com.intellij.debugger.streams.lib.IntermediateOperation
 import com.intellij.debugger.streams.lib.impl.*
 import com.intellij.debugger.streams.resolve.AppendResolver
@@ -35,6 +36,7 @@ class KotlinSequencesSupport : LibrarySupportBase() {
 
     addIntermediateOperationsSupport(OrderBasedOperation("mapNotNull", MapNotNullResolver()))
     addIntermediateOperationsSupport(OrderBasedOperation("chunked", ChunkedResolver()))
+    addIntermediateOperationsSupport(OrderBasedOperation("windowed", WindowedResolver()))
   }
 
   private fun filterOperations(vararg names: String): Array<IntermediateOperation> =
