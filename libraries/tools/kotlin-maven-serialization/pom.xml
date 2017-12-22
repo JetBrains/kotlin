@@ -19,7 +19,7 @@
     <groupId>org.jetbrains.kotlinx</groupId>
     <artifactId>kotlinx-maven-serialization-plugin</artifactId>
     <packaging>jar</packaging>
-    <version>0.3</version>
+    <version>0.4</version>
     <description>Serialization plugin for Maven</description>
 
     <repositories>
