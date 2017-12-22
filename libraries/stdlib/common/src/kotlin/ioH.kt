@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package kotlin.jvm
+package kotlin.io
 
-import kotlin.annotation.AnnotationTarget.*
 
-@Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, FILE)
-expect annotation class JvmName(val name: String)
+/** Prints a newline to the standard output stream. */
+public expect fun println()
 
-@Target(FILE)
-expect annotation class JvmMultifileClass()
+/** Prints the given message and newline to the standard output stream. */
+public expect fun println(message: Any?)
 
-expect annotation class JvmField()
+/** Prints the given message to the standard output stream. */
+public expect fun print(message: Any?)
 
-@Target(FIELD)
-expect annotation class Volatile()
+
+internal expect interface Serializable

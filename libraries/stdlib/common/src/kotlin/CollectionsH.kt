@@ -167,3 +167,8 @@ public expect fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int>
 internal expect fun copyToArrayImpl(collection: Collection<*>): Array<Any?>
 
 internal expect fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T>
+
+internal expect fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T>
+internal expect fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V>
+internal expect fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
+internal expect fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?>
