@@ -34,7 +34,7 @@ We usually mark 0.X releases as pre-releases.
 
  Upload build to CDN at upload.cds.intellij.net/builds/releases/<version>/<macos|linux|windows>:
  
-    CDN_USER=... CDN_PASS=... ./gradlew :uploadBundle
+    CDN_URL=upload.cds.intellij.net CDN_USER=... CDN_PASS=... ./gradlew :uploadBundle
  
 Bundles are available at http://download.jetbrains.com/kotlin/native/releases/<version>/<platform>/<build>
 in few minutes after upload.
