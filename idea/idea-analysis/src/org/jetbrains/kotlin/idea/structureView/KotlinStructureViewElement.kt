@@ -126,5 +126,8 @@ private class AssignableLazyProperty<in R, T : Any>(val init: () -> T) : ReadWri
     }
 }
 
-fun KtClassOrObject.getStructureDeclarations() = primaryConstructorParameters.filter { it.hasValOrVar() } + declarations
+fun KtClassOrObject.getStructureDeclarations() =
+        (primaryConstructor?.let { listOf(it) } ?: emptyList()) +
+        primaryConstructorParameters.filter { it.hasValOrVar() } +
+        declarations
 
