@@ -51,7 +51,7 @@ class SerializableJsTranslator(val declaration: KtPureClassOrObject,
 
         val f = context.buildFunction(constructorDescriptor) { jsFun, context ->
             val thiz = jsFun.scope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME).makeRef()
-            val context = context.innerContextWithAliased(serializableDescriptor, thiz)
+            val context = context.innerContextWithAliased(serializableDescriptor.thisAsReceiverParameter, thiz)
 
             +JsVars(JsVars.JsVar(thiz.name, Namer.createObjectWithPrototypeFrom(context.getQualifiedReference(serializableDescriptor))))
             val seenVar = jsFun.parameters[0].name.makeRef()
