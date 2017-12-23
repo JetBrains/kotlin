@@ -115,6 +115,16 @@ open class AddModifierFix(
                     if (parentClassOrObject is KtEnumEntry) return null
                 }
             }
+            if (modifier == INNER_KEYWORD) {
+                if (modifierListOwner is KtObjectDeclaration) return null
+                if (modifierListOwner is KtClass) {
+                    if (modifierListOwner.isInterface() ||
+                        modifierListOwner.isSealed() ||
+                        modifierListOwner.isEnum() ||
+                        modifierListOwner.isData() ||
+                        modifierListOwner.isAnnotation()) return null
+                }
+            }
             return AddModifierFix(modifierListOwner, modifier)
         }
 

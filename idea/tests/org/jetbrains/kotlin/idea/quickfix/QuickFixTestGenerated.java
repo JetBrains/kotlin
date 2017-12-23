@@ -7640,9 +7640,51 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nestedAbstractClass.kt")
+        public void testNestedAbstractClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedAbstractClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedAnnotationClass.kt")
+        public void testNestedAnnotationClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedAnnotationClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nestedClassNotAllowed.kt")
         public void testNestedClassNotAllowed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedClassNotAllowed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedDataClass.kt")
+        public void testNestedDataClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedDataClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedEnumClass.kt")
+        public void testNestedEnumClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedEnumClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedInterface.kt")
+        public void testNestedInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedObject.kt")
+        public void testNestedObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedSealedClass.kt")
+        public void testNestedSealedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedSealedClass.kt");
             doTest(fileName);
         }
 
