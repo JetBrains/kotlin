@@ -14663,6 +14663,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("overrideNotNullFunction.kt")
+        public void testOverrideNotNullFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/overrideNotNullFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideNotNullProperty.kt")
+        public void testOverrideNotNullProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/overrideNotNullProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideNullableFunction.kt")
+        public void testOverrideNullableFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/overrideNullableFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideNullableProperty.kt")
+        public void testOverrideNullableProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/overrideNullableProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyTypeFromGetter.kt")
         public void testPropertyTypeFromGetter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/propertyTypeFromGetter.kt");
