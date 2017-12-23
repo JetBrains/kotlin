@@ -1447,6 +1447,14 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             generateCallOrMarkUnresolved(call)
         }
 
+        override fun visitInitializerList(list: KtInitializerList) {
+            list.initializers
+                    .filterIsInstance<KtSuperTypeCallEntry>()
+                    .forEach {
+                        generateCallOrMarkUnresolved(it)
+                    }
+        }
+
         private fun generateCallOrMarkUnresolved(call: KtCallElement) {
             if (!generateCall(call)) {
                 val arguments = call.valueArguments.mapNotNull(ValueArgument::getArgumentExpression)
